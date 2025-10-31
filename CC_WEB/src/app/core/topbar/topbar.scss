@@ -1,0 +1,67 @@
+.topbar {
+    height: 60px;
+    background: #fff;
+    border-bottom: 1px solid #e6e6e6;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    justify-content: space-between;
+    font-family: 'Poppins', sans-serif;
+
+    .left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .logo {
+            height: 28px;
+        }
+
+        .app-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #6d3dfb;
+            /* purple brand color */
+        }
+    }
+
+    .nav {
+        display: flex;
+        gap: 25px;
+
+        a {
+            font-size: 14px;
+            color: #5e5e70;
+            text-decoration: none;
+            font-weight: 500;
+
+            &:hover,
+            &.active {
+                color: #7b41f1;
+                border-bottom: 2px solid #7b41f1;
+                padding-bottom: 4px;
+            }
+        }
+    }
+
+    .right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .avatar {
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #e0d7ff;
+        }
+
+        .name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #4e4e60;
+            margin-right: 4px;
+        }
+    }
+}

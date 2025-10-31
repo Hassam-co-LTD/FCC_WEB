@@ -1,8 +1,91 @@
-.home-container {
+.screen {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-size: 24px;
+    height: calc(100vh - 60px);
+    background: #faf9ff;
+}
+
+.side-nav {
+    width: 220px;
+    background: #fff;
+    padding: 10px 0;
+    border-right: 1px solid #e6e6e6;
+
+    ul {
+        list-style: none;
+        padding: 0 10px;
+
+        li {
+            padding: 8px 10px;
+            margin: 5px 0;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .num {
+                background: #dacbff;
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+            }
+
+            &.active {
+                background: #f1e9ff;
+                color: #7b41f1;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.content {
+    flex: 1;
+    padding: 25px 40px;
+
+    h3 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 20px 0 5px;
+        color: #4c379a;
+    }
+
+    .form-grid {
+        display: flex;
+        gap: 30px;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .full {
+        width: 100%;
+    }
+
+    mat-form-field {
+        background: #f8f5ff;
+        border-radius: 6px;
+        width: 100%;
+    }
+
+    .actions {
+        margin-top: 40px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+}
+
+/* Button Theme */
+button[mat-flat-button] {
+    background: #c623af;
+    color: white;
 }

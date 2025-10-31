@@ -1,0 +1,72 @@
+.layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.body-wrapper {
+    display: flex;
+    flex: 1;
+    background: #f9fafc;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #e6e6e6;
+    padding-top: 10px;
+    transition: width 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    &.collapsed {
+        width: 70px;
+    }
+
+    .toggle-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+        width: 100%;
+        text-align: right;
+        color: #6d3dfb;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 15px;
+
+        a {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: background 0.2s;
+
+            &:hover {
+                background: #f2edff;
+                color: #6d3dfb;
+            }
+
+            mat-icon {
+                font-size: 22px;
+            }
+        }
+    }
+}
+
+.content {
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    background: #f8f9ff;
+}

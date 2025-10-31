@@ -1,0 +1,46 @@
+<div class="layout">
+
+    <!-- Top Navigation -->
+    <app-topbar />
+
+    <div class="body-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" [class.collapsed]="isCollapsed()">
+
+            <button class="toggle-btn" (click)="toggleSidebar()">
+                <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+            </button>
+
+            <nav>
+                <a routerLink="/dashboard">
+                    <mat-icon>dashboard</mat-icon>
+                    <span *ngIf="!isCollapsed()">Dashboard</span>
+                </a>
+
+                <a routerLink="/import-lc">
+                    <mat-icon>article</mat-icon>
+                    <span *ngIf="!isCollapsed()">Import LC</span>
+                </a>
+
+                <a routerLink="/guarantees">
+                    <mat-icon>verified</mat-icon>
+                    <span *ngIf="!isCollapsed()">Guarantees</span>
+                </a>
+
+                <a routerLink="/settings">
+                    <mat-icon>settings</mat-icon>
+                    <span *ngIf="!isCollapsed()">Settings</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <router-outlet />
+        </main>
+
+    </div>
+
+</div>

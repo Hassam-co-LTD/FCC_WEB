@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LayoutComponent } from './core/layout/layout';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -12,8 +13,12 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/signup/signup.component').then((m) => m.SignupComponent),
     },
-    { path: 'import-screen', loadComponent: () => import('./screens/import-screen/import-screen').then(m => m.ImportScreen) },
+    {
+        path: '',
+        component: LayoutComponent,
+        children:[
 
-
-    { path: '**', redirectTo: 'login' }
+            { path: 'import-screen', loadComponent: () => import('./screens/import-screen/import-screen').then(m => m.ImportScreen) },
+        ]
+    }
 ];
