@@ -1,20 +1,34 @@
 <header class="topbar">
 
-    <!-- Left logo + app name -->
+    <!-- Left App Name -->
     <div class="left">
-        <!-- <img src="assets/logo.png" class="logo" alt="Bank Logo" /> -->
         <span class="app-title">Trade Finance Portal</span>
     </div>
 
-    <!-- Center Nav -->
+    <!-- Center Navigation -->
     <nav class="nav">
-        <a routerLink="/">Home</a>
+
         <a routerLink="/dashboard">Dashboard</a>
-        <a routerLink="/import-lc">Import LC</a>
-        <a routerLink="/guarantees">Guarantees</a>
+
+        <!-- Trade Services Dropdown -->
+        <div class="dropdown">
+            <button class="menu-btn" (click)="toggleMenu()" [class.active]="menuOpen">
+                Trade Services
+                <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+
+            <ul class="dropdown-menu" *ngIf="menuOpen">
+                <li><a routerLink="/import-lc" (click)="closeMenu()">Import LC</a></li>
+                <li><a routerLink="/export-lc" (click)="closeMenu()">Export LC</a></li>
+                <li><a routerLink="/guarantees" (click)="closeMenu()">Bank Guarantees</a></li>
+            </ul>
+        </div>
+
+        <a routerLink="/settings">Settings</a>
+
     </nav>
 
-    <!-- Right User Panel -->
+    <!-- Right User Menu -->
     <div class="right">
 
         <button mat-icon-button>
@@ -22,25 +36,22 @@
         </button>
 
         <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
-            <!-- <img src="assets/user-avatar.png" class="avatar" /> -->
             <span class="name">Hassam</span>
             <mat-icon>keyboard_arrow_down</mat-icon>
         </button>
 
         <mat-menu #userMenu="matMenu">
             <button mat-menu-item>
-                <mat-icon>person</mat-icon>
-                Profile
+                <mat-icon>person</mat-icon> Profile
             </button>
             <button mat-menu-item>
-                <mat-icon>settings</mat-icon>
-                Settings
+                <mat-icon>settings</mat-icon> Settings
             </button>
             <button mat-menu-item>
-                <mat-icon>logout</mat-icon>
-                Logout
+                <mat-icon>logout</mat-icon> Logout
             </button>
         </mat-menu>
+
     </div>
 
 </header>

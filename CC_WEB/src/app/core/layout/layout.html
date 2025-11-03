@@ -6,7 +6,7 @@
     <div class="body-wrapper">
 
         <!-- Sidebar -->
-        <aside class="sidebar" [class.collapsed]="isCollapsed()">
+        <!-- <aside class="sidebar" [class.collapsed]="isCollapsed()">
 
             <button class="toggle-btn" (click)="toggleSidebar()">
                 <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
@@ -20,7 +20,7 @@
 
                 <a routerLink="/import-lc">
                     <mat-icon>article</mat-icon>
-                    <span *ngIf="!isCollapsed()">Import LC</span>
+                    <span *ngIf="!isCollapsed()">Trade Services</span>
                 </a>
 
                 <a routerLink="/guarantees">
@@ -34,7 +34,45 @@
                 </a>
             </nav>
 
-        </aside>
+        </aside> -->
+<!-- Sidebar -->
+<aside class="sidebar" [class.collapsed]="isCollapsed()">
+
+    <button class="toggle-btn" (click)="toggleSidebar()">
+        <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+
+    <nav>
+        <a routerLink="/dashboard">
+            <mat-icon>dashboard</mat-icon>
+            <span *ngIf="!isCollapsed()">Dashboard</span>
+        </a>
+
+        <!-- Trade Services Collapsible Menu -->
+        <div class="menu-group" [class.open]="tradeMenuOpen">
+
+            <button class="menu-btn" (click)="tradeMenuOpen = !tradeMenuOpen">
+                <mat-icon>article</mat-icon>
+                <span *ngIf="!isCollapsed()">Trade Services</span>
+                <mat-icon class="arrow" *ngIf="!isCollapsed()">
+                    {{ tradeMenuOpen ? 'expand_less' : 'expand_more' }}
+                </mat-icon>
+            </button>
+
+            <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
+                <a routerLink="/import-lc">Import LC</a>
+                <a routerLink="/export-lc">Export LC</a>
+                <a routerLink="/guarantees">Bank Guarantees</a>
+            </div>
+        </div>
+
+        <a routerLink="/settings">
+            <mat-icon>settings</mat-icon>
+            <span *ngIf="!isCollapsed()">Settings</span>
+        </a>
+    </nav>
+
+</aside>
 
         <!-- Main Content -->
         <main class="content">

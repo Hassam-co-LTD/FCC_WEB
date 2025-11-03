@@ -20,9 +20,15 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    padding: 12px 10px;
 
     &.collapsed {
         width: 70px;
+
+        nav .submenu {
+            display: none !important;
+            /* hide submenu when collapsed */
+        }
     }
 
     .toggle-btn {
@@ -33,32 +39,100 @@
         width: 100%;
         text-align: right;
         color: #6d3dfb;
+        border-radius: 8px;
+
+        &:hover {
+            background: #f5f0ff;
+        }
     }
 
     nav {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        margin-top: 15px;
+        gap: 6px;
+        margin-top: 10px;
 
         a {
-            padding: 12px;
+            padding: 10px 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             text-decoration: none;
-            color: #555;
+            color: #444;
+            font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
-            transition: background 0.2s;
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
 
             &:hover {
-                background: #f2edff;
+                background: #f4efff;
                 color: #6d3dfb;
+                border-color: #e3d8ff;
             }
 
             mat-icon {
                 font-size: 22px;
+            }
+        }
+
+        /* Dropdown Menu Group */
+        .menu-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-btn {
+            background: none;
+            border: 1px solid transparent;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 12px;
+            cursor: pointer;
+            color: #444;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.25s ease;
+
+            &:hover {
+                background: #f4efff;
+                color: #6d3dfb;
+                border-color: #e3d8ff;
+            }
+
+            .arrow {
+                margin-left: auto;
+                font-size: 18px;
+            }
+        }
+
+        /* Submenu */
+        .submenu {
+            display: flex;
+            flex-direction: column;
+            margin-left: 38px;
+            margin-top: 6px;
+            padding-left: 10px;
+            border-left: 2px solid #e8ddff;
+            gap: 4px;
+            animation: slideFade 0.25s ease-in-out;
+
+            a {
+                padding: 6px 8px;
+                font-size: 13px;
+                color: #666;
+                border-radius: 6px;
+                border: 1px solid transparent;
+
+                &:hover {
+                    background: #f6f1ff;
+                    color: #6d3dfb;
+                    border-color: #e2d7ff;
+                }
             }
         }
     }
@@ -69,4 +143,17 @@
     padding: 18px;
     overflow-y: auto;
     background: #f8f9ff;
+}
+
+
+@keyframes slideFade {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

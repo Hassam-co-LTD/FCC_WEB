@@ -11,4 +11,15 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './topbar.html',
   styleUrls: ['./topbar.scss'],
 })
-export class TopbarComponent { }
+export class TopbarComponent { 
+  menuOpen = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu() {
+    this.menuOpen = false;
+  }
+
+}

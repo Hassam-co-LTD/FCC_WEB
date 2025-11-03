@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 })
 export class LayoutComponent {
   isCollapsed = signal(false);
+  tradeMenuOpen = false;
+
 
   toggleSidebar() {
     this.isCollapsed.set(!this.isCollapsed());
