@@ -17,7 +17,7 @@ export const routes: Routes = [
         path: '',
         component: LayoutComponent,
         children:[
-
+            { path: 'dashboard', loadComponent: () => import('./screens/dashboard/dashboard').then(m => m.Dashboard) },
             { path: 'import-screen', loadComponent: () => import('./screens/import-screen/import-screen').then(m => m.ImportScreen) },
         ]
     }

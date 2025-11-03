@@ -35,7 +35,7 @@ export class LoginComponent {
     console.log("Login clicked", this.email, this.password);
 
     if (this.email && this.password) {
-      this.router.navigate(['/import-screen']);
+      this.router.navigate(['/dashboard']);
     } else {
       console.log("Email or password missing");
     }

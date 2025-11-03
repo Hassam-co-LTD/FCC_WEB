@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
@@ -14,6 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 export class TopbarComponent { 
   menuOpen = false;
 
+  constructor(private router: Router,
+    // private auth: AuthService
+  ) { }
+
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
@@ -21,5 +26,10 @@ export class TopbarComponent {
   closeMenu() {
     this.menuOpen = false;
   }
+
+  goToImportLC() {
+    this.router.navigate(['/import-screen']);
+  }
+
 
 }
