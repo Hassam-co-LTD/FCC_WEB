@@ -1,12 +1,14 @@
 .topbar {
     height: 60px;
-    background: #fff;
-    border-bottom: 1px solid #e4e4e4;
+    background: #ffffff;
+    border-bottom: 1px solid #d7e3ff;
+    /* soft blue border */
     padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 6px rgba(13, 71, 161, 0.08);
+    /* blue-tinted shadow */
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -15,7 +17,9 @@
 .app-title {
     font-size: 18px;
     font-weight: 600;
-    color: #5a40f5;
+    color: #0b4eb3;
+    /* primary blue */
+    letter-spacing: 0.3px;
 }
 
 .nav {
@@ -24,21 +28,26 @@
     gap: 25px;
 }
 
+/* Menu Links */
 .nav a {
     text-decoration: none;
     font-size: 14px;
-    color: #333;
-    transition: color .2s;
+    color: #2c3e50;
+    transition: 0.2s;
+    font-weight: 500;
 }
 
 .nav a:hover {
-    color: #5a40f5;
+    color: #1565d8;
+    /* hover blue */
 }
 
+/* Dropdown Wrapper */
 .dropdown {
     position: relative;
 }
 
+/* Dropdown button */
 .menu-btn {
     background: transparent;
     border: none;
@@ -46,9 +55,18 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 3px;
-    color: #333;
+    gap: 4px;
+    color: #2c3e50;
     padding: 8px 6px;
+    transition: 0.2s;
+    font-weight: 500;
+}
+
+.menu-btn:hover {
+    color: #1565d8;
+    background: #e9f2ff;
+    /* blue hover */
+    border-radius: 6px;
 }
 
 .menu-btn mat-icon {
@@ -59,18 +77,18 @@
     transform: rotate(180deg);
 }
 
-/* Show menu only on click */
+/* Dropdown Menu */
 .dropdown-menu {
     position: absolute;
     top: 38px;
     left: 0;
-    background: white;
-    border: 1px solid #ddd;
-    width: 180px;
-    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #c8dafc;
+    width: 190px;
+    border-radius: 8px;
     padding: 0;
     list-style: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 20px rgba(21, 101, 217, 0.15);
     animation: fadeIn .2s ease-in-out;
     z-index: 1200;
 }
@@ -83,15 +101,20 @@
     display: block;
     padding: 10px 12px;
     text-decoration: none;
-    color: #333;
+    color: #1f2d3d;
     font-size: 14px;
+    transition: .2s;
 }
 
 .dropdown-menu a:hover {
-    background: #f4f0ff;
-    color: #5a40f5;
+    background: #e8f0ff;
+    /* light blue hover */
+    color: #0b4eb3;
+    border-left: 3px solid #0b4eb3;
+    padding-left: 14px;
 }
 
+/* Right profile section */
 .right {
     display: flex;
     align-items: center;
@@ -101,9 +124,19 @@
 .profile-btn {
     display: flex;
     align-items: center;
-    color: #444;
+    color: #1f2d3d;
+    font-weight: 500;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: 0.2s;
 }
 
+.profile-btn:hover {
+    background: #e8f0ff;
+    color: #1565d8;
+}
+
+/* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;

@@ -8,55 +8,39 @@
             </li>
         </ul>
     </aside> -->
+        <aside class="side-nav">
+            <ul>
+                <li *ngFor="let s of steps; let i=index" (click)="changeStep(i)" [class.active]="i===currentStep">
+                    <span class="num">{{ i+1 }}</span> {{ s.label }}
+                </li>
+            </ul>
+        </aside>
 
+    
     <!-- Main Content -->
     <div class="content">
+    <div class="scroll-area">
+   
+<div>
+    <app-general-details></app-general-details>
 
-        <!-- Example form block -->
-        <h3>Feature of LC</h3>
+    <hr class="section-divider" />
 
-        <div class="form-grid">
-            <mat-checkbox>Irrevocable</mat-checkbox>
-            <mat-checkbox>Revolving</mat-checkbox>
-            <mat-checkbox>Transferable</mat-checkbox>
-        </div>
-
-        <h3>Applicable Rules</h3>
-        <mat-form-field appearance="outline" class="full">
-            <mat-select placeholder="Applicable Rules" required>
-                <mat-option value="UCP600">UCP 600</mat-option>
-                <mat-option value="ISP98">ISP98</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <h3>Confirmation Instructions</h3>
-        <mat-radio-group>
-            <mat-radio-button value="confirm">Confirm</mat-radio-button>
-            <mat-radio-button value="without">Without</mat-radio-button>
-            <mat-radio-button value="mayAdd">May Add</mat-radio-button>
-        </mat-radio-group>
-
-        <h3>References</h3>
-
-        <div class="form-grid-2">
-            <mat-form-field appearance="outline">
-                <input matInput placeholder="Beneficiary Reference">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <input matInput placeholder="Customer Reference">
-            </mat-form-field>
-        </div>
-
-        <mat-form-field appearance="outline" class="full">
-            <input matInput placeholder="Purchase Order(s)">
-        </mat-form-field>
+    <app-applicant-beneficiary></app-applicant-beneficiary>
+</div>
 
         <!-- Footer Buttons -->
-        <div class="actions">
+        <!-- <div class="actions">
             <button mat-stroked-button>Exit</button>
             <button mat-flat-button color="primary" (click)="next()">Next</button>
         </div>
+         -->
+        <div class="actions">
+                        <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
+                        <button mat-flat-button color="primary" (click)="next()">Submit</button>
+            </div>
 
+    </div>
     </div>
 
 </div>

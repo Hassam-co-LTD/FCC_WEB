@@ -18,7 +18,16 @@ export const routes: Routes = [
         component: LayoutComponent,
         children:[
             { path: 'dashboard', loadComponent: () => import('./screens/dashboard/dashboard').then(m => m.Dashboard) },
-            { path: 'import-screen', loadComponent: () => import('./screens/import-screen/import-screen').then(m => m.ImportScreen) },
+            { path: 'import-screen', loadComponent: () => import('./screens/import-screen/import-screen').then(m => m.ImportScreen),children:[
+                {
+                    path: 'general-details',
+                    loadComponent: () => import('./screens/import-screen/components/general-details/general-details').then(m => m.GeneralDetails)
+                },
+                {
+                    path: 'applicant-beneficiary',
+                    loadComponent: () => import('./screens/import-screen/components/applicant-beneficiary/applicant-beneficiary').then(m => m.ApplicantBeneficiary)
+                },
+            ] },
         ]
     }
 ];
