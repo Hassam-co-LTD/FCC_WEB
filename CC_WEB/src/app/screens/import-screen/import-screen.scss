@@ -1,17 +1,19 @@
+@import "../../../styles/theme";
+
 /* Page Screen Layout */
 .screen {
     display: flex;
     height: calc(100vh - 60px);
-    background: #f4f8ff; // light blue background
+    background: $screen-bg;
     overflow: hidden;
 }
 
 /* Sidebar Navigation */
 .side-nav {
     width: 220px;
-    background: #ffffff;
+    background: $sidebar-bg;
     padding: 10px 0;
-    border-right: 1px solid #d4e3ff; // subtle blue border
+    border-right: 1px solid $step-border;
     position: sticky;
     top: 60px;
     height: calc(100vh - 60px);
@@ -30,9 +32,10 @@
             align-items: center;
             gap: 10px;
             transition: all 0.2s ease-in-out;
+            color: $sidebar-text;
 
             .num {
-                background: #c6dafd; // badge bg blue
+                background: $step-badge-bg;
                 width: 22px;
                 height: 22px;
                 border-radius: 50%;
@@ -40,23 +43,23 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 11px;
-                color: #003c8f; // deep blue
+                color: $step-badge-text;
                 font-weight: 600;
             }
 
             &:hover {
-                background: #e9f1ff; // hover soft blue
-                color: #0056d2;
+                background: $step-hover-bg;
+                color: $step-hover-text;
             }
 
             &.active {
-                background: #d8e8ff;
-                color: #0056d2;
+                background: $step-active-bg;
+                color: $step-active-text;
                 font-weight: 600;
 
                 .num {
-                    background: #0056d2;
-                    color: #fff;
+                    background: $step-badge-active-bg;
+                    color: $step-badge-active-text;
                 }
             }
         }
@@ -67,7 +70,7 @@
 .content {
     flex: 1;
     padding: 0;
-    background: #f1f6ff; // light blue shade
+    background: $screen-content-bg;
     overflow: hidden;
 
     .actions {
@@ -89,25 +92,25 @@
 
 /* Primary Action Buttons */
 button[mat-flat-button] {
-    background: #1976d2 !important; // primary blue
+    background: $primary-btn-bg !important;
     color: #fff !important;
     font-weight: 500;
-    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.2);
     border-radius: 6px;
+    box-shadow: 0 2px 6px $primary-btn-shadow;
 
     &:hover {
-        background: #0b5dc1 !important;
+        background: $primary-btn-hover-bg !important;
     }
 }
 
 /* Secondary Button */
 button[mat-stroked-button] {
-    border-color: #1976d2;
-    color: #1976d2;
+    border-color: $secondary-btn-border;
+    color: $secondary-btn-text;
     font-weight: 500;
     border-radius: 6px;
 
     &:hover {
-        background: rgba(25, 118, 210, 0.1);
+        background: $secondary-btn-hover-bg;
     }
 }

@@ -1,0 +1,116 @@
+/* ============================
+   Global Theme Colors (Blue UI)
+   ============================ */
+
+/* Primary Brand Colors */
+$primary-color: #0b4eb3; // Main Blue
+$primary-hover: #1565d8; // Hover Blue
+$primary-light: #e9f2ff; // Very light blue background
+$primary-border: #d7e3ff; // Soft blue border
+$primary-shadow: rgba(13, 71, 161, 0.08); // Blue tinted shadow
+
+/* Dropdown / Menu Colors */
+$dropdown-border: #c8dafc;
+$dropdown-hover-bg: #e8f0ff;
+$dropdown-hover-text: #0b4eb3;
+
+/* Text Colors */
+$text-dark: #2c3e50;
+$text-medium: #1f2d3d;
+
+/* Background */
+$white: #ffffff;
+
+
+/* ===== Background & Sidebar Shades ===== */
+$bg-body: #f2f6ff; // body background soft blue
+$bg-content: #f6f9ff; // content section lighter blue
+
+/* Sidebar */
+$sidebar-bg: #ffffff;
+$sidebar-border: $primary-border; // already #d7e3ff
+$sidebar-hover-bg: $dropdown-hover-bg; // #e8f0ff
+$sidebar-hover-border: #bcd6ff;
+$sidebar-active-bg: #d9e7ff;
+$sidebar-active-border: #a8c9ff;
+
+/* Text */
+$sidebar-text: #334;
+$sidebar-subtext: #556;
+
+/* Accent Indication Border */
+$submenu-line: #bcd6ff;
+$submenu-hover-bg: #eaf2ff;
+$submenu-active-bg: #d7e6ff;
+
+
+/* ===== Import Screen / Stepper Theme ===== */
+
+/* Screen Backgrounds */
+$screen-bg: #f4f8ff;
+$screen-content-bg: #f1f6ff;
+
+/* Step Sidebar */
+$step-border: $primary-border;
+$step-hover-bg: $sidebar-hover-bg;
+$step-hover-text: $primary-hover;
+$step-active-bg: $sidebar-active-bg;
+$step-active-text: $primary-hover;
+
+/* Step Number Badge */
+$step-badge-bg: #c6dafd;
+$step-badge-text: #003c8f;
+$step-badge-active-bg: $primary-hover; // #1565d8
+$step-badge-active-text: #ffffff;
+
+/* Buttons */
+$primary-btn-bg: $primary-color;
+$primary-btn-hover-bg: $primary-hover;
+$primary-btn-shadow: rgba(21, 101, 217, 0.25);
+
+$secondary-btn-text: $primary-color;
+$secondary-btn-border: $primary-color;
+$secondary-btn-hover-bg: rgba(21, 101, 217, 0.15);
+
+
+
+/* ============================
+   GLOBAL BRAND COLOR SYSTEM
+   Blue Fintech Theme
+============================ */
+
+/* Primary Palette */
+$primary: #0b4eb3; // Primary blue
+$primary-dark: #08408f; // Darker hover blue
+$primary-light: #e9f2ff; // Ultra light blue background
+
+/* Backgrounds */
+$light-bg: #f8faff; // Form section bg
+$screen-bg: #f4f8ff; // Screen outer bg
+$white: #ffffff;
+
+/* Borders */
+$border-light: #d7e3ff; // Light subtle border
+$border-primary: #a8c9ff;
+
+/* Text Colors */
+$text-dark: #2c3e50;
+$text-medium: #4b5563;
+$text-light: #ffffff;
+
+/* Hover & Active */
+$hover-bg: #e8f0ff;
+$hover-border: #bcd6ff;
+
+/* Shadows */
+$shadow-primary: 0 3px 8px rgba(13, 71, 161, 0.18);
+$button-shadow: 0 2px 6px rgba(13, 71, 161, 0.22);
+
+/* Button Colors */
+$primary-btn: $primary;
+$primary-btn-hover: $primary-dark;
+
+/* Spacing variables (for consistency) */
+$radius-default: 6px;
+$radius-large: 8px;
+$gap-default: 16px;

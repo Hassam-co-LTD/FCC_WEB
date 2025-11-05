@@ -1,3 +1,5 @@
+@import "../../../styles/theme";
+
 .layout {
     height: 100vh;
     display: flex;
@@ -7,15 +9,15 @@
 .body-wrapper {
     display: flex;
     flex: 1;
-    background: #f2f6ff; // soft light blue
+    background: $bg-body;
     overflow: hidden;
 }
 
 /* Sidebar */
 .sidebar {
     width: 240px;
-    background: #ffffff;
-    border-right: 1px solid #d7e3ff; // subtle blue border
+    background: $sidebar-bg;
+    border-right: 1px solid $sidebar-border;
     padding: 12px 10px;
     display: flex;
     flex-direction: column;
@@ -37,13 +39,12 @@
         padding: 10px;
         width: 100%;
         text-align: right;
-        color: #1565d8; // blue button icon
-
+        color: $primary-hover;
         border-radius: 8px;
         transition: 0.2s;
 
         &:hover {
-            background: #e8f0ff; // soft hover blue
+            background: $sidebar-hover-bg;
         }
     }
 
@@ -59,7 +60,7 @@
             align-items: center;
             gap: 14px;
             text-decoration: none;
-            color: #334;
+            color: $sidebar-text;
             font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
@@ -67,16 +68,16 @@
             transition: all 0.25s ease;
 
             &:hover {
-                background: #e8f0ff; // hover light blue
-                color: #1565d8;
-                border-color: #bcd6ff;
+                background: $sidebar-hover-bg;
+                color: $primary-hover;
+                border-color: $sidebar-hover-border;
             }
 
             &.active {
-                background: #d9e7ff;
-                color: #0b4eb3;
+                background: $sidebar-active-bg;
+                color: $primary-color;
                 font-weight: 600;
-                border-color: #a8c9ff;
+                border-color: $sidebar-active-border;
             }
 
             mat-icon {
@@ -100,16 +101,16 @@
             gap: 14px;
             padding: 10px 12px;
             cursor: pointer;
-            color: #334;
+            color: $sidebar-text;
             font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
             transition: all 0.25s ease;
 
             &:hover {
-                background: #e8f0ff;
-                color: #1565d8;
-                border-color: #bcd6ff;
+                background: $sidebar-hover-bg;
+                color: $primary-hover;
+                border-color: $sidebar-hover-border;
             }
 
             .arrow {
@@ -124,28 +125,28 @@
             margin-left: 38px;
             margin-top: 6px;
             padding-left: 10px;
-            border-left: 2px solid #bcd6ff; // blue edge indicator
+            border-left: 2px solid $submenu-line;
             gap: 4px;
             animation: slideFade 0.25s ease-in-out;
 
             a {
                 padding: 6px 8px;
                 font-size: 13px;
-                color: #556;
+                color: $sidebar-subtext;
                 border-radius: 6px;
                 border: 1px solid transparent;
 
                 &:hover {
-                    background: #eaf2ff;
-                    color: #1565d8;
-                    border-color: #bcd6ff;
+                    background: $submenu-hover-bg;
+                    color: $primary-hover;
+                    border-color: $sidebar-hover-border;
                 }
 
                 &.active {
-                    background: #d7e6ff;
-                    color: #0b4eb3;
+                    background: $submenu-active-bg;
+                    color: $primary-color;
                     font-weight: 600;
-                    border-color: #a8c9ff;
+                    border-color: $sidebar-active-border;
                 }
             }
         }
@@ -157,7 +158,7 @@
     flex: 1;
     padding: 18px;
     overflow-y: auto;
-    background: #f6f9ff; // material light blue tone
+    background: $bg-content;
 }
 
 /* Submenu animation */
@@ -172,3 +173,177 @@
         transform: translateY(0);
     }
 }
+// .layout {
+//     height: 100vh;
+//     display: flex;
+//     flex-direction: column;
+// }
+
+// .body-wrapper {
+//     display: flex;
+//     flex: 1;
+//     background: #f2f6ff; // soft light blue
+//     overflow: hidden;
+// }
+
+// /* Sidebar */
+// .sidebar {
+//     width: 240px;
+//     background: #ffffff;
+//     border-right: 1px solid #d7e3ff; // subtle blue border
+//     padding: 12px 10px;
+//     display: flex;
+//     flex-direction: column;
+//     transition: width 0.25s ease;
+//     position: relative;
+
+//     &.collapsed {
+//         width: 70px;
+
+//         nav .submenu {
+//             display: none !important;
+//         }
+//     }
+
+//     .toggle-btn {
+//         background: transparent;
+//         border: none;
+//         cursor: pointer;
+//         padding: 10px;
+//         width: 100%;
+//         text-align: right;
+//         color: #1565d8; // blue button icon
+
+//         border-radius: 8px;
+//         transition: 0.2s;
+
+//         &:hover {
+//             background: #e8f0ff; // soft hover blue
+//         }
+//     }
+
+//     nav {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 6px;
+//         margin-top: 10px;
+
+//         a {
+//             padding: 10px 12px;
+//             display: flex;
+//             align-items: center;
+//             gap: 14px;
+//             text-decoration: none;
+//             color: #334;
+//             font-size: 14px;
+//             font-weight: 500;
+//             border-radius: 8px;
+//             border: 1px solid transparent;
+//             transition: all 0.25s ease;
+
+//             &:hover {
+//                 background: #e8f0ff; // hover light blue
+//                 color: #1565d8;
+//                 border-color: #bcd6ff;
+//             }
+
+//             &.active {
+//                 background: #d9e7ff;
+//                 color: #0b4eb3;
+//                 font-weight: 600;
+//                 border-color: #a8c9ff;
+//             }
+
+//             mat-icon {
+//                 font-size: 22px;
+//                 color: inherit;
+//             }
+//         }
+
+//         .menu-group {
+//             width: 100%;
+//             display: flex;
+//             flex-direction: column;
+//         }
+
+//         .menu-btn {
+//             background: none;
+//             border: 1px solid transparent;
+//             width: 100%;
+//             display: flex;
+//             align-items: center;
+//             gap: 14px;
+//             padding: 10px 12px;
+//             cursor: pointer;
+//             color: #334;
+//             font-size: 14px;
+//             font-weight: 500;
+//             border-radius: 8px;
+//             transition: all 0.25s ease;
+
+//             &:hover {
+//                 background: #e8f0ff;
+//                 color: #1565d8;
+//                 border-color: #bcd6ff;
+//             }
+
+//             .arrow {
+//                 margin-left: auto;
+//                 font-size: 18px;
+//             }
+//         }
+
+//         .submenu {
+//             display: flex;
+//             flex-direction: column;
+//             margin-left: 38px;
+//             margin-top: 6px;
+//             padding-left: 10px;
+//             border-left: 2px solid #bcd6ff; // blue edge indicator
+//             gap: 4px;
+//             animation: slideFade 0.25s ease-in-out;
+
+//             a {
+//                 padding: 6px 8px;
+//                 font-size: 13px;
+//                 color: #556;
+//                 border-radius: 6px;
+//                 border: 1px solid transparent;
+
+//                 &:hover {
+//                     background: #eaf2ff;
+//                     color: #1565d8;
+//                     border-color: #bcd6ff;
+//                 }
+
+//                 &.active {
+//                     background: #d7e6ff;
+//                     color: #0b4eb3;
+//                     font-weight: 600;
+//                     border-color: #a8c9ff;
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// /* Main Content Area */
+// .content {
+//     flex: 1;
+//     padding: 18px;
+//     overflow-y: auto;
+//     background: #f6f9ff; // material light blue tone
+// }
+
+// /* Submenu animation */
+// @keyframes slideFade {
+//     from {
+//         opacity: 0;
+//         transform: translateY(-4px);
+//     }
+
+//     to {
+//         opacity: 1;
+//         transform: translateY(0);
+//     }
+// }

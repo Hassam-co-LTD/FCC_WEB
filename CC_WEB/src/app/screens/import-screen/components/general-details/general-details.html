@@ -6,13 +6,13 @@
 <div class="collapsible" [class.open]="isOpen">
 
     <!-- Request Type -->
-    <h3>Request Type</h3>
+    <h4>Request Type</h4>
     <div class="form-row">
         <mat-slide-toggle>Is this a back-to-back LC?</mat-slide-toggle>
     </div>
 
     <!-- Mode of Transmission -->
-    <h3>Mode of Transmission</h3>
+    <h4>Mode of Transmission</h4>
     <div class="btn-row">
         <button mat-stroked-button color="primary">SWIFT ✅</button>
         <button mat-stroked-button>Courier/Mail</button>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Create From -->
-    <h3>Create From</h3>
+    <h4>Create From</h4>
     <div class="btn-row">
         <button mat-stroked-button>Template</button>
         <button mat-stroked-button>Existing LC</button>
@@ -43,14 +43,14 @@
         </mat-form-field>
     </div>
 
-    <h3>Feature of LC</h3>
+    <h4>Feature of LC</h4>
     <div class="form-grid">
         <mat-checkbox>Irrevocable</mat-checkbox>
         <mat-checkbox>Revolving</mat-checkbox>
         <mat-checkbox>Transferable</mat-checkbox>
     </div>
 
-    <h3>Applicable Rules</h3>
+    <h4>Applicable Rules</h4>
     <mat-form-field appearance="outline" class="full">
         <mat-select placeholder="Applicable Rules" required>
             <mat-option value="EUCP">EUCP LATEST VERSION</mat-option>
@@ -59,14 +59,14 @@
         </mat-select>
     </mat-form-field>
 
-    <h3>Confirmation Instructions</h3>
+    <h4>Confirmation Instructions</h4>
     <mat-radio-group>
         <mat-radio-button value="confirm">Confirm</mat-radio-button>
         <mat-radio-button value="without">Without</mat-radio-button>
         <mat-radio-button value="mayAdd">May Add</mat-radio-button>
     </mat-radio-group>
 
-    <h3>References</h3>
+    <h4>References</h4>
     <div class="form-grid-2">
         <mat-form-field appearance="outline">
             <input matInput placeholder="Beneficiary Reference">

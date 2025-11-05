@@ -27,22 +27,21 @@ import { MatRadioModule } from '@angular/material/radio';
   styleUrls: ['./applicant-beneficiary.scss']
 })
 export class ApplicantBeneficiary {
-  isOpen = true;
-  toggle() {
-    this.isOpen = !this.isOpen;
-  }
-
-  form: FormGroup;
-  showAlternate = false;
+  formGroup!: FormGroup;
+  isOpen: boolean = true; // default open
+  showAlternate: boolean = false;
 
   constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
+    this.createForm();
+  }
+
+  createForm() {
+    this.formGroup = this.fb.group({
       applicantName: ['', Validators.required],
       applicantAddress1: ['', Validators.required],
       applicantAddress2: [''],
       applicantAddress3: [''],
 
-      hasAlternateApplicant: [false],
       alternateName: [''],
       alternateAddress1: [''],
       alternateAddress2: [''],
@@ -56,16 +55,11 @@ export class ApplicantBeneficiary {
     });
   }
 
-  toggleAlternate() {
-    this.showAlternate = !this.showAlternate;
+  toggle() {
+    this.isOpen = !this.isOpen;
   }
 
-  next() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    console.log(this.form.value);
+  toggleAlternate() {
+    this.showAlternate = !this.showAlternate;
   }
 }
