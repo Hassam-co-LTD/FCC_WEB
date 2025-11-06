@@ -11,6 +11,7 @@ import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applica
 import { BankDetails } from './components/bank-details/bank-details';
 import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
 import { PaymentDetails } from './components/payment-details/payment-details';
+import { ShipmentDetails } from './components/shipment-details/shipment-details';
 
 @Component({
   selector: 'app-import-lc',
@@ -27,7 +28,8 @@ import { PaymentDetails } from './components/payment-details/payment-details';
     ApplicantBeneficiary,
     BankDetails,
     AmountChargeDetails,
-    PaymentDetails
+    PaymentDetails,
+    ShipmentDetails
 ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']
