@@ -34,6 +34,10 @@ export const routes: Routes = [
                 {
                     path: 'amount-charge-details',
                     loadComponent: () => import('./screens/import-screen/components/amount-charge-details/amount-charge-details').then(m => m.AmountChargeDetails)
+                },
+                {
+                    path: 'payment-details',
+                    loadComponent: () => import('./screens/import-screen/components/payment-details/payment-details').then(m => m.PaymentDetails)
                 }
             ] },
         ]
