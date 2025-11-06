@@ -1,52 +1,42 @@
 <div class="screen">
-
     <!-- Sidebar -->
-    <!-- <aside class="side-nav">
+    <aside class="side-nav">
         <ul>
-            <li *ngFor="let s of steps; let i = index" (click)="selectStep(i)" [class.active]="i===currentStep">
-                <span class="num">{{ i+1 }}</span> {{ s }}
+            <li *ngFor="let s of steps; let i=index" (click)="scrollToSection(i)" [class.active]="i===currentStep">
+                <span class="num">{{ i + 1 }}</span> {{ s.label }}
             </li>
         </ul>
-    </aside> -->
-        <aside class="side-nav">
-            <ul>
-                <li *ngFor="let s of steps; let i=index" (click)="changeStep(i)" [class.active]="i===currentStep">
-                    <span class="num">{{ i+1 }}</span> {{ s.label }}
-                </li>
-            </ul>
-        </aside>
+    </aside>
 
-    
     <!-- Main Content -->
     <div class="content">
-    <div class="scroll-area">
-   
-<div>
-    <app-general-details></app-general-details>
-    <hr class="section-divider" />
-    <app-applicant-beneficiary></app-applicant-beneficiary>
-    <hr class="section-divider" />
-    <app-bank-details></app-bank-details>
-    <hr class="section-divider" />
-    <app-amount-charge-details></app-amount-charge-details>
-    <hr class="section-divider" />
-    <app-payment-details></app-payment-details>
-    <hr class="section-divider" />
-    <app-shipment-details></app-shipment-details>
-</div>
+        <div class="scroll-area">
 
-        <!-- Footer Buttons -->
-        <!-- <div class="actions">
-            <button mat-stroked-button>Exit</button>
-            <button mat-flat-button color="primary" (click)="next()">Next</button>
-        </div>
-         -->
-        <div class="actions">
-                        <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
-                        <button mat-flat-button color="primary" (click)="next()">Submit</button>
+            <div>
+            <section id="section-0"><app-general-details></app-general-details></section>
+            <hr class="section-divider" />
+
+            <section id="section-1"><app-applicant-beneficiary></app-applicant-beneficiary></section>
+            <hr class="section-divider" />
+
+            <section id="section-2"><app-bank-details></app-bank-details></section>
+            <hr class="section-divider" />
+
+            <section id="section-3"><app-amount-charge-details></app-amount-charge-details></section>
+            <hr class="section-divider" />
+
+            <section id="section-4"><app-payment-details></app-payment-details></section>
+            <hr class="section-divider" />
+
+            <section id="section-5"><app-shipment-details></app-shipment-details></section>
             </div>
 
-    </div>
-    </div>
+            <!-- Footer Buttons -->
+            <div class="actions">
+                <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
+                <button mat-flat-button color="primary" (click)="next()">Submit</button>
+            </div>
 
+        </div>
+    </div>
 </div>
