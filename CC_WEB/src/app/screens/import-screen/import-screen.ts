@@ -9,6 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GeneralDetails } from "./components/general-details/general-details";
 import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
 import { BankDetails } from './components/bank-details/bank-details';
+import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
 
 @Component({
   selector: 'app-import-lc',
@@ -23,7 +24,8 @@ import { BankDetails } from './components/bank-details/bank-details';
     MatSlideToggleModule,
     GeneralDetails,
     ApplicantBeneficiary,
-    BankDetails
+    BankDetails,
+    AmountChargeDetails
 ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']

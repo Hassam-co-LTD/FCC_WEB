@@ -30,8 +30,11 @@ export const routes: Routes = [
                 {
                     path: 'bank-details',
                     loadComponent: () => import('./screens/import-screen/components/bank-details/bank-details').then(m => m.BankDetails)
+                },
+                {
+                    path: 'amount-charge-details',
+                    loadComponent: () => import('./screens/import-screen/components/amount-charge-details/amount-charge-details').then(m => m.AmountChargeDetails)
                 }
-
             ] },
         ]
     }
