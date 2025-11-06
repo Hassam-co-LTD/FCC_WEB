@@ -8,6 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { GeneralDetails } from "./components/general-details/general-details";
 import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
+import { BankDetails } from './components/bank-details/bank-details';
 
 @Component({
   selector: 'app-import-lc',
@@ -21,7 +22,8 @@ import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applica
     MatCheckboxModule,
     MatSlideToggleModule,
     GeneralDetails,
-    ApplicantBeneficiary
+    ApplicantBeneficiary,
+    BankDetails
 ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']
@@ -52,8 +54,16 @@ export class ImportScreen {
 
   steps = [
     { label: "General Details" },
-    { label: "Shipment Details" },
-    { label: "Documents Upload" }
+    { label: "Applicant Details" },
+    { label: "Bank Details" },
+    { label: "Amount & Charges" },
+    { label: "Shipment" },
+    { label: "Goods" },
+    { label: "Narrative Details" },
+    { label: "Licenses" },
+    { label: "Instructions to Bank" },
+    { label: "Attachments" },
+    { label: "Preview" }
   ];
 
   changeStep(i: number) {

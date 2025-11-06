@@ -27,6 +27,11 @@ export const routes: Routes = [
                     path: 'applicant-beneficiary',
                     loadComponent: () => import('./screens/import-screen/components/applicant-beneficiary/applicant-beneficiary').then(m => m.ApplicantBeneficiary)
                 },
+                {
+                    path: 'bank-details',
+                    loadComponent: () => import('./screens/import-screen/components/bank-details/bank-details').then(m => m.BankDetails)
+                }
+
             ] },
         ]
     }

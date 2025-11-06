@@ -3,7 +3,7 @@
 /* Page Screen Layout */
 .screen {
     display: flex;
-    height: calc(100vh - 60px);
+    height: calc(100vh);
     background: $screen-bg;
     overflow: hidden;
 }
@@ -16,7 +16,7 @@
     border-right: 1px solid $step-border;
     position: sticky;
     top: 60px;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 30px);
 
     ul {
         list-style: none;
