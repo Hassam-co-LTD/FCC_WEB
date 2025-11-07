@@ -31,5 +31,9 @@ export class TopbarComponent {
     this.router.navigate(['/import-screen']);
   }
 
+  goToexportLC() {
+    this.router.navigate(['/export-screen']);
+  }
+
 
 }

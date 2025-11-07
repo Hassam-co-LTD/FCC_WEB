@@ -61,7 +61,7 @@
 
             <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
                 <a (click)="goToImportLC()">Import LC</a>
-                <a routerLink="/export-lc">Export LC</a>
+                <a routerLink="/export-lc" (click)="goToexportLC()">Export LC</a>
                 <a routerLink="/guarantees">Bank Guarantees</a>
             </div>
         </div>

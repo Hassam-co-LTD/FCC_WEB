@@ -27,4 +27,7 @@ export class LayoutComponent {
   goToImportLC() {
     this.router.navigate(['/import-screen']);
   }
+  goToexportLC() {
+    this.router.navigate(['/export-screen']);
+  }
 }

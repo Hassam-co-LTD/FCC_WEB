@@ -46,7 +46,6 @@ export class ImportScreen implements AfterViewInit {
     { label: "Amount & Charges" },
     { label: "Payment Details" },
     { label: "Shipment Details" },
-    { label: "Goods" },
     { label: "Narrative Details" },
     { label: "Licenses" },
     { label: "Instructions to Bank" },

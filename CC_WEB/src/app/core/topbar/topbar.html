@@ -1,57 +1,57 @@
 <header class="topbar">
 
-    <!-- Left App Name -->
-    <div class="left">
-        <span class="app-title">Trade Finance Portal</span>
+  <!-- Left App Name -->
+  <div class="left">
+    <span class="app-title">Trade Finance Portal</span>
+  </div>
+
+  <!-- Center Navigation -->
+  <nav class="nav">
+
+    <a routerLink="/dashboard">Dashboard</a>
+
+    <!-- Trade Services Dropdown -->
+    <div class="dropdown">
+      <button class="menu-btn" (click)="toggleMenu()" [class.active]="menuOpen">
+        Trade Services
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+
+      <ul class="dropdown-menu" *ngIf="menuOpen">
+        <li><a routerLink="/import-screen" (click)="closeMenu()">Import LC</a></li>
+        <li><a routerLink="/export-screen" (click)="closeMenu()">Export LC</a></li>
+        <li><a routerLink="/guarantees" (click)="closeMenu()">Bank Guarantees</a></li>
+      </ul>
     </div>
 
-    <!-- Center Navigation -->
-    <nav class="nav">
+    <a routerLink="/settings">Settings</a>
 
-        <a routerLink="/dashboard" (click)="goToImportLC()">Dashboard</a>
+  </nav>
 
-        <!-- Trade Services Dropdown -->
-        <div class="dropdown">
-            <button class="menu-btn" (click)="toggleMenu()" [class.active]="menuOpen">
-                Trade Services
-                <mat-icon>arrow_drop_down</mat-icon>
-            </button>
+  <!-- Right User Menu -->
+  <div class="right">
 
-            <ul class="dropdown-menu" *ngIf="menuOpen">
-                <li><a routerLink="/import-screen" (click)="closeMenu()" (click)="goToImportLC()">Import LC</a></li>
-                <li><a routerLink="/export-lc" (click)="closeMenu()">Export LC</a></li>
-                <li><a routerLink="/guarantees" (click)="closeMenu()">Bank Guarantees</a></li>
-            </ul>
-        </div>
+    <button mat-icon-button>
+      <mat-icon>notifications</mat-icon>
+    </button>
 
-        <a routerLink="/settings">Settings</a>
+    <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
+      <span class="name">Hassam</span>
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </button>
 
-    </nav>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon> Profile
+      </button>
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon> Settings
+      </button>
+      <button mat-menu-item>
+        <mat-icon>logout</mat-icon> Logout
+      </button>
+    </mat-menu>
 
-    <!-- Right User Menu -->
-    <div class="right">
-
-        <button mat-icon-button>
-            <mat-icon>notifications</mat-icon>
-        </button>
-
-        <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
-            <span class="name">Hassam</span>
-            <mat-icon>keyboard_arrow_down</mat-icon>
-        </button>
-
-        <mat-menu #userMenu="matMenu">
-            <button mat-menu-item>
-                <mat-icon>person</mat-icon> Profile
-            </button>
-            <button mat-menu-item>
-                <mat-icon>settings</mat-icon> Settings
-            </button>
-            <button mat-menu-item>
-                <mat-icon>logout</mat-icon> Logout
-            </button>
-        </mat-menu>
-
-    </div>
+  </div>
 
 </header>

@@ -1,4 +1,4 @@
-@import "../../../styles/theme";
+@use "../../../styles/theme" as theme;
 
 .layout {
     height: 100vh;
@@ -9,15 +9,15 @@
 .body-wrapper {
     display: flex;
     flex: 1;
-    background: $bg-body;
+    background: theme.$bg-body;
     overflow: hidden;
 }
 
 /* Sidebar */
 .sidebar {
     width: 240px;
-    background: $sidebar-bg;
-    border-right: 1px solid $sidebar-border;
+    background: theme.$sidebar-bg;
+    border-right: 1px solid theme.$sidebar-border;
     padding: 12px 10px;
     display: flex;
     flex-direction: column;
@@ -39,12 +39,12 @@
         padding: 10px;
         width: 100%;
         text-align: right;
-        color: $primary-hover;
+        color: theme.$primary-hover;
         border-radius: 8px;
         transition: 0.2s;
 
         &:hover {
-            background: $sidebar-hover-bg;
+            background: theme.$sidebar-hover-bg;
         }
     }
 
@@ -60,7 +60,7 @@
             align-items: center;
             gap: 14px;
             text-decoration: none;
-            color: $sidebar-text;
+            color: theme.$sidebar-text;
             font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
@@ -68,16 +68,16 @@
             transition: all 0.25s ease;
 
             &:hover {
-                background: $sidebar-hover-bg;
-                color: $primary-hover;
-                border-color: $sidebar-hover-border;
+                background: theme.$sidebar-hover-bg;
+                color: theme.$primary-hover;
+                border-color: theme.$sidebar-hover-border;
             }
 
             &.active {
-                background: $sidebar-active-bg;
-                color: $primary-color;
+                background: theme.$sidebar-active-bg;
+                color: theme.$primary-color;
                 font-weight: 600;
-                border-color: $sidebar-active-border;
+                border-color: theme.$sidebar-active-border;
             }
 
             mat-icon {
@@ -101,16 +101,16 @@
             gap: 14px;
             padding: 10px 12px;
             cursor: pointer;
-            color: $sidebar-text;
+            color: theme.$sidebar-text;
             font-size: 14px;
             font-weight: 500;
             border-radius: 8px;
             transition: all 0.25s ease;
 
             &:hover {
-                background: $sidebar-hover-bg;
-                color: $primary-hover;
-                border-color: $sidebar-hover-border;
+                background: theme.$sidebar-hover-bg;
+                color: theme.$primary-hover;
+                border-color: theme.$sidebar-hover-border;
             }
 
             .arrow {
@@ -125,28 +125,28 @@
             margin-left: 38px;
             margin-top: 6px;
             padding-left: 10px;
-            border-left: 2px solid $submenu-line;
+            border-left: 2px solid theme.$submenu-line;
             gap: 4px;
             animation: slideFade 0.25s ease-in-out;
 
             a {
                 padding: 6px 8px;
                 font-size: 13px;
-                color: $sidebar-subtext;
+                color: theme.$sidebar-subtext;
                 border-radius: 6px;
                 border: 1px solid transparent;
 
                 &:hover {
-                    background: $submenu-hover-bg;
-                    color: $primary-hover;
-                    border-color: $sidebar-hover-border;
+                    background: theme.$submenu-hover-bg;
+                    color: theme.$primary-hover;
+                    border-color: theme.$sidebar-hover-border;
                 }
 
                 &.active {
-                    background: $submenu-active-bg;
-                    color: $primary-color;
+                    background: theme.$submenu-active-bg;
+                    color: theme.$primary-color;
                     font-weight: 600;
-                    border-color: $sidebar-active-border;
+                    border-color: theme.$sidebar-active-border;
                 }
             }
         }
@@ -158,7 +158,7 @@
     flex: 1;
     padding: 18px;
     overflow-y: auto;
-    background: $bg-content;
+    background: theme.$bg-content;
 }
 
 /* Submenu animation */

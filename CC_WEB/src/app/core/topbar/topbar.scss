@@ -1,14 +1,14 @@
-@import "../../../styles/theme";
+@use "../../../styles/theme" as theme;
 
 .topbar {
     height: 60px;
-    background: $white;
-    border-bottom: 1px solid $primary-border;
+    background: theme.$white;
+    border-bottom: 1px solid theme.$primary-border;
     padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 6px $primary-shadow;
+    box-shadow: 0 2px 6px theme.$primary-shadow;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -17,7 +17,7 @@
 .app-title {
     font-size: 18px;
     font-weight: 600;
-    color: $primary-color;
+    color: theme.$primary-color;
     letter-spacing: 0.3px;
 }
 
@@ -31,13 +31,13 @@
 .nav a {
     text-decoration: none;
     font-size: 14px;
-    color: $text-dark;
+    color: theme.$text-dark;
     transition: 0.2s;
     font-weight: 500;
 }
 
 .nav a:hover {
-    color: $primary-hover;
+    color: theme.$primary-hover;
 }
 
 /* Dropdown Wrapper */
@@ -54,15 +54,15 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    color: $text-dark;
+    color: theme.$text-dark;
     padding: 8px 6px;
     transition: 0.2s;
     font-weight: 500;
 }
 
 .menu-btn:hover {
-    color: $primary-hover;
-    background: $primary-light;
+    color: theme.$primary-hover;
+    background: theme.$primary-light;
     border-radius: 6px;
 }
 
@@ -79,8 +79,8 @@
     position: absolute;
     top: 38px;
     left: 0;
-    background: $white;
-    border: 1px solid $dropdown-border;
+    background: theme.$white;
+    border: 1px solid theme.$dropdown-border;
     width: 190px;
     border-radius: 8px;
     padding: 0;
@@ -94,15 +94,15 @@
     display: block;
     padding: 10px 12px;
     text-decoration: none;
-    color: $text-medium;
+    color: theme.$text-medium;
     font-size: 14px;
     transition: .2s;
 }
 
 .dropdown-menu a:hover {
-    background: $dropdown-hover-bg;
-    color: $dropdown-hover-text;
-    border-left: 3px solid $dropdown-hover-text;
+    background: theme.$dropdown-hover-bg;
+    color: theme.$dropdown-hover-text;
+    border-left: 3px solid theme.$dropdown-hover-text;
     padding-left: 14px;
 }
 
@@ -116,7 +116,7 @@
 .profile-btn {
     display: flex;
     align-items: center;
-    color: $text-medium;
+    color: theme.$text-medium;
     font-weight: 500;
     padding: 6px 8px;
     border-radius: 6px;
@@ -124,8 +124,8 @@
 }
 
 .profile-btn:hover {
-    background: $dropdown-hover-bg;
-    color: $primary-hover;
+    background: theme.$dropdown-hover-bg;
+    color: theme.$primary-hover;
 }
 
 /* Animation */
