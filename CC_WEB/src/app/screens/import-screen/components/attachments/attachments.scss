@@ -56,57 +56,83 @@ h2 {
     margin: 0;
     color: theme.$white;
 }
-
-.form-wrapper {
-    margin-top: 10px;
+.instruction-form {
+    background: #fafaff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.sub-heading {
-    font-weight: 600;
-    color: #374151;
-    font-size: 16px;
-    margin-bottom: 12px;
-}
+.header-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
 
-.tab-container {
-    margin-top: 10px;
-
-    ::ng-deep .mat-mdc-tab-label-container {
-        background: #fafbff;
-    }
-
-    ::ng-deep .mat-mdc-tab-label-active {
-        color: #d81b60 !important;
-        font-weight: 600;
-    }
-
-    ::ng-deep .mat-mdc-tab-header-pagination-controls-enabled .mat-mdc-tab-header-pagination {
-        display: none !important;
+    .save-btn {
+        color: #d63384;
+        font-weight: 500;
     }
 }
 
-.inner-tabs {
-    margin-top: 12px;
+.hint,
+.extensions {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0.3rem 0;
+}
 
-    ::ng-deep .mat-mdc-tab-label-active {
-        color: #d81b60 !important;
-        font-weight: 600;
+.dropzone {
+    border: 2px dashed #c5cae9;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: #6c63ff;
+    background: #fff;
+    cursor: pointer;
+    margin: 1rem 0;
+
+    mat-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    &:hover {
+        background: #f4f5fb;
+    }
+
+    button {
+        margin-top: 0.8rem;
     }
 }
 
-.tab-content {
-    margin-top: 16px;
+.file-list {
+    margin-top: 1rem;
+
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fff;
+        margin-bottom: 0.5rem;
+
+        span {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        button {
+            color: #e53935;
+        }
+    }
 }
 
-mat-form-field {
-    width: 100%;
-}
-
-mat-hint {
-    color: #6b7280 !important;
-}
-
-mat-error {
-    font-size: 12px;
-    color: #e53935 !important;
+.reference {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 1rem;
 }

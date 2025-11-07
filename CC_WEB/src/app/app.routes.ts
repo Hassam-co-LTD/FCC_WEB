@@ -39,7 +39,15 @@ export const routes: Routes = [
                 {
                     path: 'payment-details',
                     loadComponent: () => import('./screens/import-screen/components/payment-details/payment-details').then(m => m.PaymentDetails)
-                }
+                },
+                {
+                    path: 'shipment-details',
+                    loadComponent: () => import('./screens/import-screen/components/shipment-details/shipment-details').then(m => m.ShipmentDetails)
+                },
+                {
+                    path: 'narrative-details',
+                    loadComponent: () => import('./screens/import-screen/components/narrative-details/narrative-details').then(m => m.NarrativeDetails)
+                },
             ] },
         ]
     }

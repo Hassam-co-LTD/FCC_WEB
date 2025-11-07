@@ -1,1 +1,81 @@
-<p>narrative-details works!</p>
+<div class="section-header" (click)="toggle()">
+    <h2>Narrative Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+    <div class="form-wrapper">
+        <h3 class="sub-heading">Narrative Details</h3>
+
+        <mat-tab-group (selectedIndexChange)="onTabChange($event)" class="tab-container">
+
+            <!-- Tab 1: Goods and Documents -->
+            <mat-tab label="Goods and Documents">
+                <mat-tab-group mat-align-tabs="start" class="inner-tabs">
+
+                    <!-- Subtab 1: Description of Goods -->
+                    <mat-tab label="Description of Goods">
+                        <div class="tab-content">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Description of Goods *</mat-label>
+                                <textarea matInput formControlName="descriptionOfGoods" rows="6" maxlength="6500">
+                </textarea>
+                                <mat-hint align="end">
+                                    {{ narrativeForm.get('descriptionOfGoods')?.value?.length || 0 }}/6500
+                                </mat-hint>
+                                <mat-error *ngIf="narrativeForm.get('descriptionOfGoods')?.hasError('required')">
+                                    You must enter Description of Goods
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </mat-tab>
+
+                    <!-- Subtab 2: Documents Required -->
+                    <mat-tab label="Documents Required">
+                        <div class="tab-content">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Documents Required *</mat-label>
+                                <textarea matInput formControlName="documentsRequired" rows="6" maxlength="6500">
+                </textarea>
+                                <mat-hint align="end">
+                                    {{ narrativeForm.get('documentsRequired')?.value?.length || 0 }}/6500
+                                </mat-hint>
+                                <mat-error *ngIf="narrativeForm.get('documentsRequired')?.hasError('required')">
+                                    You must enter Documents Required
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </mat-tab>
+
+                    <!-- Subtab 3: Additional Instructions -->
+                    <mat-tab label="Additional Instructions">
+                        <div class="tab-content">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Additional Instructions</mat-label>
+                                <textarea matInput formControlName="additionalInstructions" rows="4" maxlength="2000">
+                </textarea>
+                                <mat-hint align="end">
+                                    {{ narrativeForm.get('additionalInstructions')?.value?.length || 0 }}/2000
+                                </mat-hint>
+                            </mat-form-field>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-tab>
+
+            <!-- Tab 2: Other Details -->
+            <mat-tab label="Other Details">
+                <div class="tab-content">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Other Details</mat-label>
+                        <textarea matInput formControlName="otherDetails" rows="4" maxlength="2000">
+            </textarea>
+                        <mat-hint align="end">
+                            {{ narrativeForm.get('otherDetails')?.value?.length || 0 }}/2000
+                        </mat-hint>
+                    </mat-form-field>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
