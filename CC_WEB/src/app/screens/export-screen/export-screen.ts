@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-export-screen',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './export-screen.html',
@@ -92,9 +88,10 @@ export class ExportScreenComponent {
     this.files = [];
   }
 }
-
+{
   styleUrls: ['./export-screen.scss']
-})
+
+}
 export class ExportScreen {
   currentStep = 1;
   formSubmitted = false;

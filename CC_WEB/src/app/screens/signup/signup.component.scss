@@ -1,4 +1,4 @@
-@import '../../../styles/_theme.scss';
+@use '../../../styles/_theme.scss' as theme;
 
 .auth-container {
   display: flex;
