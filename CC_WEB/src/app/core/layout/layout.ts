@@ -1,33 +1,31 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { TopbarComponent } from '../topbar/topbar';
-import { MatIconModule } from '@angular/material/icon';
+import { Component } from '@angular/core';
+import { Router, RouterOutlet, RouterLinkWithHref } from '@angular/router';
+import { MatIcon, MatIconModule } from "@angular/material/icon";
+import { TopbarComponent } from "../topbar/topbar";
 import { CommonModule } from '@angular/common';
-import { Router} from '@angular/router';
+import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
   selector: 'app-layout',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet, TopbarComponent, MatIconModule],
   templateUrl: './layout.html',
-  styleUrls: ['./layout.scss']
+  styleUrls: ['./layout.scss'],
+  imports: [CommonModule, RouterOutlet, TopbarComponent, MatIconModule, RouterLinkWithHref, MatMenuModule],
 })
 export class LayoutComponent {
-  isCollapsed = signal(false);
+  collapsed = false;
   tradeMenuOpen = false;
 
-  constructor(private router: Router,
-    // private auth: AuthService
-  ) { }
+  constructor(private router: Router) { }
 
   toggleSidebar() {
-    this.isCollapsed.set(!this.isCollapsed());
+    this.collapsed = !this.collapsed;
   }
 
-  goToImportLC() {
-    this.router.navigate(['/import-screen']);
+  isCollapsed(): boolean {
+    return this.collapsed;
   }
-  goToexportLC() {
-    this.router.navigate(['/export-screen']);
+
+  toggleTradeMenu() {
+    this.tradeMenuOpen = !this.tradeMenuOpen;
   }
 }

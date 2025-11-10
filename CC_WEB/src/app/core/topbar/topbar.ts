@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule, RouterLink,RouterLinkActive],
   templateUrl: './topbar.html',
   styleUrls: ['./topbar.scss'],
 })

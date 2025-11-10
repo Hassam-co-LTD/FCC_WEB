@@ -15,21 +15,17 @@
 
 /* Sidebar */
 .sidebar {
-    width: 240px;
-    background: theme.$sidebar-bg;
-    border-right: 1px solid theme.$sidebar-border;
-    padding: 12px 10px;
+    width: 250px;
+    background: linear-gradient(160deg, #3f51b5, #5c6bc0, #2196f3);
+    color: transparent;
     display: flex;
     flex-direction: column;
-    transition: width 0.25s ease;
-    position: relative;
+    padding-top: 10px;
+    transition: width 0.3s ease;
+    overflow: hidden;
 
     &.collapsed {
-        width: 70px;
-
-        nav .submenu {
-            display: none !important;
-        }
+        width: 80px;
     }
 
     .toggle-btn {
@@ -39,12 +35,12 @@
         padding: 10px;
         width: 100%;
         text-align: right;
-        color: theme.$primary-hover;
+        color: #fff;
         border-radius: 8px;
         transition: 0.2s;
 
         &:hover {
-            background: theme.$sidebar-hover-bg;
+            background: transparent;
         }
     }
 
@@ -52,102 +48,75 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
-        margin-top: 10px;
 
-        a {
-            padding: 10px 12px;
+        a,
+        button.menu-btn {
+            background: transparent;
+            color: #fff;
+            text-align: left;
+            border: none;
             display: flex;
             align-items: center;
-            gap: 14px;
-            text-decoration: none;
-            color: theme.$sidebar-text;
-            font-size: 14px;
-            font-weight: 500;
+            gap: 10px;
+            padding: 10px 20px;
             border-radius: 8px;
-            border: 1px solid transparent;
-            transition: all 0.25s ease;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.15s ease;
+            font-size: 14px;
+            width: 100%;
+            text-decoration: none; // remove underline
 
             &:hover {
-                background: theme.$sidebar-hover-bg;
-                color: theme.$primary-hover;
-                border-color: theme.$sidebar-hover-border;
-            }
-
-            &.active {
-                background: theme.$sidebar-active-bg;
-                color: theme.$primary-color;
-                font-weight: 600;
-                border-color: theme.$sidebar-active-border;
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateX(4px);
             }
 
             mat-icon {
                 font-size: 22px;
                 color: inherit;
             }
-        }
 
-        .menu-group {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
+            &.active-link,
+            &.active-sub {
+                background: rgba(255, 255, 255, 0.25);
+                box-shadow: inset 2px 0 0 0 #fff;
+                font-weight: 600;
+            }
         }
+    }
 
-        .menu-btn {
-            background: none;
-            border: 1px solid transparent;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 10px 12px;
+    /* Submenu styling */
+    .submenu {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        padding-left: 10px;
+        margin-top: 4px;
+        animation: fadeIn 0.25s ease-in-out;
+
+        button {
+            background: transparent;
+            color: #e0e0e0;
+            border: none;
+            padding: 8px 18px;
+            text-align: left;
             cursor: pointer;
-            color: theme.$sidebar-text;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.25s ease;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+            text-decoration: none; // remove underline
 
             &:hover {
-                background: theme.$sidebar-hover-bg;
-                color: theme.$primary-hover;
-                border-color: theme.$sidebar-hover-border;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                transform: translateX(3px);
             }
 
-            .arrow {
-                margin-left: auto;
-                font-size: 18px;
-            }
-        }
-
-        .submenu {
-            display: flex;
-            flex-direction: column;
-            margin-left: 38px;
-            margin-top: 6px;
-            padding-left: 10px;
-            border-left: 2px solid theme.$submenu-line;
-            gap: 4px;
-            animation: slideFade 0.25s ease-in-out;
-
-            a {
-                padding: 6px 8px;
-                font-size: 13px;
-                color: theme.$sidebar-subtext;
-                border-radius: 6px;
-                border: 1px solid transparent;
-
-                &:hover {
-                    background: theme.$submenu-hover-bg;
-                    color: theme.$primary-hover;
-                    border-color: theme.$sidebar-hover-border;
-                }
-
-                &.active {
-                    background: theme.$submenu-active-bg;
-                    color: theme.$primary-color;
-                    font-weight: 600;
-                    border-color: theme.$sidebar-active-border;
-                }
+            &.active-sub {
+                background: rgba(255, 255, 255, 0.3);
+                color: #fff;
+                font-weight: 600;
             }
         }
     }
@@ -161,7 +130,19 @@
     background: theme.$bg-content;
 }
 
-/* Submenu animation */
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes slideFade {
     from {
         opacity: 0;
@@ -173,177 +154,3 @@
         transform: translateY(0);
     }
 }
-// .layout {
-//     height: 100vh;
-//     display: flex;
-//     flex-direction: column;
-// }
-
-// .body-wrapper {
-//     display: flex;
-//     flex: 1;
-//     background: #f2f6ff; // soft light blue
-//     overflow: hidden;
-// }
-
-// /* Sidebar */
-// .sidebar {
-//     width: 240px;
-//     background: #ffffff;
-//     border-right: 1px solid #d7e3ff; // subtle blue border
-//     padding: 12px 10px;
-//     display: flex;
-//     flex-direction: column;
-//     transition: width 0.25s ease;
-//     position: relative;
-
-//     &.collapsed {
-//         width: 70px;
-
-//         nav .submenu {
-//             display: none !important;
-//         }
-//     }
-
-//     .toggle-btn {
-//         background: transparent;
-//         border: none;
-//         cursor: pointer;
-//         padding: 10px;
-//         width: 100%;
-//         text-align: right;
-//         color: #1565d8; // blue button icon
-
-//         border-radius: 8px;
-//         transition: 0.2s;
-
-//         &:hover {
-//             background: #e8f0ff; // soft hover blue
-//         }
-//     }
-
-//     nav {
-//         display: flex;
-//         flex-direction: column;
-//         gap: 6px;
-//         margin-top: 10px;
-
-//         a {
-//             padding: 10px 12px;
-//             display: flex;
-//             align-items: center;
-//             gap: 14px;
-//             text-decoration: none;
-//             color: #334;
-//             font-size: 14px;
-//             font-weight: 500;
-//             border-radius: 8px;
-//             border: 1px solid transparent;
-//             transition: all 0.25s ease;
-
-//             &:hover {
-//                 background: #e8f0ff; // hover light blue
-//                 color: #1565d8;
-//                 border-color: #bcd6ff;
-//             }
-
-//             &.active {
-//                 background: #d9e7ff;
-//                 color: #0b4eb3;
-//                 font-weight: 600;
-//                 border-color: #a8c9ff;
-//             }
-
-//             mat-icon {
-//                 font-size: 22px;
-//                 color: inherit;
-//             }
-//         }
-
-//         .menu-group {
-//             width: 100%;
-//             display: flex;
-//             flex-direction: column;
-//         }
-
-//         .menu-btn {
-//             background: none;
-//             border: 1px solid transparent;
-//             width: 100%;
-//             display: flex;
-//             align-items: center;
-//             gap: 14px;
-//             padding: 10px 12px;
-//             cursor: pointer;
-//             color: #334;
-//             font-size: 14px;
-//             font-weight: 500;
-//             border-radius: 8px;
-//             transition: all 0.25s ease;
-
-//             &:hover {
-//                 background: #e8f0ff;
-//                 color: #1565d8;
-//                 border-color: #bcd6ff;
-//             }
-
-//             .arrow {
-//                 margin-left: auto;
-//                 font-size: 18px;
-//             }
-//         }
-
-//         .submenu {
-//             display: flex;
-//             flex-direction: column;
-//             margin-left: 38px;
-//             margin-top: 6px;
-//             padding-left: 10px;
-//             border-left: 2px solid #bcd6ff; // blue edge indicator
-//             gap: 4px;
-//             animation: slideFade 0.25s ease-in-out;
-
-//             a {
-//                 padding: 6px 8px;
-//                 font-size: 13px;
-//                 color: #556;
-//                 border-radius: 6px;
-//                 border: 1px solid transparent;
-
-//                 &:hover {
-//                     background: #eaf2ff;
-//                     color: #1565d8;
-//                     border-color: #bcd6ff;
-//                 }
-
-//                 &.active {
-//                     background: #d7e6ff;
-//                     color: #0b4eb3;
-//                     font-weight: 600;
-//                     border-color: #a8c9ff;
-//                 }
-//             }
-//         }
-//     }
-// }
-
-// /* Main Content Area */
-// .content {
-//     flex: 1;
-//     padding: 18px;
-//     overflow-y: auto;
-//     background: #f6f9ff; // material light blue tone
-// }
-
-// /* Submenu animation */
-// @keyframes slideFade {
-//     from {
-//         opacity: 0;
-//         transform: translateY(-4px);
-//     }
-
-//     to {
-//         opacity: 1;
-//         transform: translateY(0);
-//     }
-// }

@@ -1,82 +1,58 @@
 <div class="layout">
 
     <!-- Top Navigation -->
-    <app-topbar />
+    <app-topbar></app-topbar>
 
     <div class="body-wrapper">
 
         <!-- Sidebar -->
-        <!-- <aside class="sidebar" [class.collapsed]="isCollapsed()">
+        <aside class="sidebar" [class.collapsed]="isCollapsed()">
 
             <button class="toggle-btn" (click)="toggleSidebar()">
                 <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
             </button>
 
             <nav>
-                <a routerLink="/dashboard">
+                <a routerLink="/dashboard" routerLinkActive="active-link">
                     <mat-icon>dashboard</mat-icon>
                     <span *ngIf="!isCollapsed()">Dashboard</span>
                 </a>
 
-                <a routerLink="/import-lc">
-                    <mat-icon>article</mat-icon>
-                    <span *ngIf="!isCollapsed()">Trade Services</span>
-                </a>
+                <!-- Trade Services Collapsible Menu -->
+                <div class="menu-group" [class.open]="tradeMenuOpen">
+                    <button class="menu-btn" (click)="toggleTradeMenu()">
+                        <mat-icon>article</mat-icon>
+                        <span *ngIf="!isCollapsed()">Trade Services</span>
+                        <mat-icon class="arrow" *ngIf="!isCollapsed()">
+                            {{ tradeMenuOpen ? 'expand_less' : 'expand_more' }}
+                        </mat-icon>
+                    </button>
 
-                <a routerLink="/guarantees">
-                    <mat-icon>verified</mat-icon>
-                    <span *ngIf="!isCollapsed()">Guarantees</span>
-                </a>
+<div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
+    <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">
+        Import LC
+    </button>
+    <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
+        Export LC
+    </button>
+    <button type="button" [routerLink]="['/guarantees']" routerLinkActive="active-sub">
+        Bank Guarantees
+    </button>
+</div>
 
-                <a routerLink="/settings">
+                </div>
+
+                <a routerLink="/settings" routerLinkActive="active-link">
                     <mat-icon>settings</mat-icon>
                     <span *ngIf="!isCollapsed()">Settings</span>
                 </a>
             </nav>
 
-        </aside> -->
-<!-- Sidebar -->
-<aside class="sidebar" [class.collapsed]="isCollapsed()">
-
-    <button class="toggle-btn" (click)="toggleSidebar()">
-        <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-    </button>
-
-    <nav>
-        <a routerLink="/dashboard">
-            <mat-icon>dashboard</mat-icon>
-            <span *ngIf="!isCollapsed()">Dashboard</span>
-        </a>
-
-        <!-- Trade Services Collapsible Menu -->
-        <div class="menu-group" [class.open]="tradeMenuOpen">
-
-            <button class="menu-btn" (click)="tradeMenuOpen = !tradeMenuOpen">
-                <mat-icon>article</mat-icon>
-                <span *ngIf="!isCollapsed()">Trade Services</span>
-                <mat-icon class="arrow" *ngIf="!isCollapsed()">
-                    {{ tradeMenuOpen ? 'expand_less' : 'expand_more' }}
-                </mat-icon>
-            </button>
-
-            <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
-                <a (click)="goToImportLC()">Import LC</a>
-                <a routerLink="/export-lc" (click)="goToexportLC()">Export LC</a>
-                <a routerLink="/guarantees">Bank Guarantees</a>
-            </div>
-        </div>
-
-        <a routerLink="/settings">
-            <mat-icon>settings</mat-icon>
-            <span *ngIf="!isCollapsed()">Settings</span>
-        </a>
-    </nav>
-
-</aside>
+        </aside>
 
         <!-- Main Content -->
         <main class="content">
-            <router-outlet />
+            <router-outlet></router-outlet>
         </main>
 
     </div>
