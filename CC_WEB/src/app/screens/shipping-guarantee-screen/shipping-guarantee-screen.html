@@ -1,1 +1,248 @@
-<h1>Shipping Guarantee</h1>
+<div class="shipping-guarantee-screen">
+  <!-- Gradient Header -->
+  <header class="gradient-header">
+    <h1>Shipping Guarantee Application</h1>
+  </header>
+
+  <div class="content-wrapper">
+    <!-- Sidebar Steps -->
+    <aside class="sidebar">
+      <ul class="steps">
+        <li [class.active]="activeSection === 'general'">
+          General Details <br />
+        <li [class.active]="activeSection === 'applicant'">
+          Applicant & Beneficiary <br />
+        </li>
+        <li [class.active]="activeSection === 'bank'">
+          Issuing Bank and Amount <br />
+        <li [class.active]="activeSection === 'instructions'">Instructions to Bank</li>
+        <li [class.active]="activeSection === 'attachments'">Attachments</li>
+        <li [class.active]="activeSection === 'preview'">Preview</li>
+      </ul>
+    </aside>
+
+    <!-- Main Form Section -->
+    <section class="form-section">
+      <form [formGroup]="shippingForm">
+
+        <!-- Accordion: General Details -->
+        <div class="accordion-section">
+          <div class="accordion-header" (click)="toggleSection('general')">
+            <h2>General Details</h2>
+            <span class="arrow" [class.rotate]="activeSection === 'general'">&#9662;</span>
+          </div>
+
+          <div class="accordion-content" *ngIf="activeSection === 'general'">
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Expiry Date<span class="required">*</span></label>
+                <input type="date" formControlName="expiryDate" />
+              </div>
+              <div class="input-field">
+                <label>Beneficiary Reference</label>
+                <input type="text" formControlName="beneficiaryReference" />
+              </div>
+            </div>
+
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Customer Reference</label>
+                <input type="text" formControlName="customerReference" />
+              </div>
+              <div class="input-field">
+                <label>Bill of Lading / Airway Bill Number<span class="required">*</span></label>
+                <input type="text" formControlName="billNumber" />
+              </div>
+            </div>
+
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Mode of Shipment<span class="required">*</span></label>
+                <select formControlName="modeOfShipment">
+                  <option value="">Select Mode</option>
+                  <option value="Air">Air</option>
+                  <option value="Sea">Sea</option>
+                  <option value="Road">Road</option>
+                </select>
+              </div>
+              <div class="input-field">
+                <label>Shipping Details</label>
+                <textarea formControlName="shippingDetails" rows="2"></textarea>
+              </div>
+            </div>
+
+            <div class="input-field">
+              <label>Description of Goods<span class="required">*</span></label>
+              <textarea formControlName="descriptionOfGoods" rows="3" maxlength="222"></textarea>
+              <div class="word-counter">
+                {{ shippingForm.get('descriptionOfGoods')?.value?.length || 0 }}/222
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Applicant & Beneficiary -->
+        <div class="accordion-section">
+          <div class="accordion-header" (click)="toggleSection('applicant')">
+            <h2>Applicant and Beneficiary Details</h2>
+            <span class="arrow" [class.rotate]="activeSection === 'applicant'">&#9662;</span>
+          </div>
+
+          <div class="accordion-content" *ngIf="activeSection === 'applicant'">
+            <div class="section-header">Applicant Details</div>
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Applicant Name<span class="required">*</span></label>
+                <input type="text" formControlName="applicantName" />
+              </div>
+              <div class="input-field">
+                <label>Applicant Address<span class="required">*</span></label>
+                <input type="text" formControlName="applicantAddress" />
+              </div>
+            </div>
+
+            <div class="section-header" style="margin-top: 25px;">Beneficiary Details</div>
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Beneficiary Name<span class="required">*</span></label>
+                <input type="text" formControlName="beneficiaryName" />
+              </div>
+              <div class="input-field">
+                <label>Beneficiary Address<span class="required">*</span></label>
+                <input type="text" formControlName="beneficiaryAddress" />
+              </div>
+            </div>
+
+            <div class="input-field">
+              <label>Country<span class="required">*</span></label>
+              <select formControlName="beneficiaryCountry">
+                <option value="">Select Country</option>
+                <option value="PK">Pakistan (+92)</option>
+                <option value="US">United States (+1)</option>
+                <option value="IR">Iran (+98)</option>
+                <option value="BD">Bangladesh (+880)</option>
+                <option value="PS">Palestine (+970)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Issuing Bank -->
+        <div class="accordion-section">
+          <div class="accordion-header" (click)="toggleSection('bank')">
+            <h2>Issuing Bank and Amount</h2>
+            <span class="arrow" [class.rotate]="activeSection === 'bank'">&#9662;</span>
+          </div>
+
+          <div class="accordion-content" *ngIf="activeSection === 'bank'">
+            <div class="form-group two-col">
+              <div class="input-field">
+                <label>Bank Name<span class="required">*</span></label>
+                <select formControlName="bankName">
+                  <option value="">Select Bank</option>
+                  <option *ngFor="let bank of issuingBanks" [value]="bank">{{ bank }}</option>
+                </select>
+              </div>
+              <div class="input-field">
+                <label>Issuer's Reference<span class="required">*</span></label>
+                <input type="text" formControlName="issuersReference" />
+              </div>
+              <div class="input-field">
+                <label>Guarantee Amount<span class="required">*</span></label>
+                <input type="text" formControlName="guaranteeAmount" />
+              </div>
+              <div class="input-field">
+                <label>Currency<span class="required">*</span></label>
+                <select formControlName="currency">
+                  <option value="">Select Currency</option>
+                  <option value="PKR">PKR</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accordion: Instructions -->
+        <div class="accordion-section">
+          <div class="accordion-header" (click)="toggleSection('instructions')">
+            <h2>Instructions to Bank</h2>
+            <span class="arrow" [class.rotate]="activeSection === 'instructions'">&#9662;</span>
+          </div>
+          <div class="accordion-content" *ngIf="activeSection === 'instructions'">
+            <textarea formControlName="instructions" rows="3" placeholder="Enter any special instructions..."></textarea>
+          </div>
+        </div>
+
+ <!-- Accordion: attachments -->
+        <div class="accordion-section">
+  <div class="accordion-header" (click)="toggleSection('attachments')">
+    <h2>Attachments</h2>
+    <span class="arrow" [class.rotate]="activeSection === 'attachments'">&#9662;</span>
+  </div>
+
+  <div class="accordion-content" *ngIf="activeSection === 'attachments'">
+    <div
+      class="drop-zone"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      [class.dragover]="isDragging"
+    >
+      <p>Drag & drop files here or <span class="browse-text" (click)="fileInput.click()">browse</span></p>
+      <p class="hint">
+        Allowed: pdf, txt, docx, gif, doc, png, csv, xls, xlsx, jpg, jpeg | Max: 5 files, 1MB each
+      </p>
+      <input
+        type="file"
+        #fileInput
+        (change)="onFileSelect($event)"
+        multiple
+        accept=".pdf,.txt,.docx,.gif,.doc,.png,.csv,.xls,.xlsx,.jpg,.jpeg"
+        hidden
+      />
+    </div>
+
+    <div *ngIf="uploadedFiles.length > 0" class="file-list">
+      <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
+        <span>{{ file.name }} ({{ file.size / 1024 | number:'1.0-0' }} KB)</span>
+        <button type="button" (click)="removeFile(i)">Remove</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
+</div>
+
+
+        <!-- Accordion: Preview -->
+        <div class="accordion-section">
+          <div class="accordion-header" (click)="toggleSection('preview')">
+            <h2>Preview</h2>
+            <span class="arrow" [class.rotate]="activeSection === 'preview'">&#9662;</span>
+          </div>
+          <div class="accordion-content" *ngIf="activeSection === 'preview'">
+            <h3>General Details</h3>
+            <p><strong>Expiry:</strong> {{ shippingForm.value.expiryDate }}</p>
+            <p><strong>Bill #:</strong> {{ shippingForm.value.billNumber }}</p>
+
+            <h3>Applicant & Beneficiary</h3>
+            <p><strong>Applicant:</strong> {{ shippingForm.value.applicantName }} ({{ shippingForm.value.applicantAddress }})</p>
+            <p><strong>Beneficiary:</strong> {{ shippingForm.value.beneficiaryName }} ({{ shippingForm.value.beneficiaryAddress }})</p>
+
+            <h3>Bank & Amount</h3>
+            <p><strong>Bank:</strong> {{ shippingForm.value.issuingBank }}</p>
+            <p><strong>Amount:</strong> {{ shippingForm.value.guaranteeAmount }} {{ shippingForm.value.currency }}</p>
+
+            <h3>Instructions</h3>
+            <p>{{ shippingForm.value.instructions }}</p>
+
+            <div *ngIf="fileName"><strong>Attachment:</strong> {{ fileName }}</div>
+          </div>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

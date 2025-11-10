@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShippingGuaranteeScreen } from './shipping-guarantee-screen';
+import { ShippingGuarantee } from './shipping-guarantee-screen';
 
-describe('ShippingGuaranteeScreen', () => {
-  let component: ShippingGuaranteeScreen;
-  let fixture: ComponentFixture<ShippingGuaranteeScreen>;
+describe('ShippingGuarantee', () => {
+  let component: ShippingGuarantee;
+  let fixture: ComponentFixture<ShippingGuarantee>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShippingGuaranteeScreen]
+      imports: [ShippingGuarantee]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ShippingGuaranteeScreen);
+    fixture = TestBed.createComponent(ShippingGuarantee);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
