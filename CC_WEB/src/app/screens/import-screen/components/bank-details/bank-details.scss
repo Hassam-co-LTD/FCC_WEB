@@ -1,0 +1,77 @@
+@use '../../../../../../src/styles/_theme.scss' as theme;
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
+
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+    }
+}
+
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+}
+
+.collapsible.open {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: 6px;
+    border: 1px solid theme.$border-light;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$white;
+}
+
+
+// .form-grid {
+//     display: grid;
+//     grid-template-columns: repeat(2, 1fr);
+//     gap: 20px;
+// }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: theme.$gap-default;
+    margin-top: 15px;
+}
+
+.note-text {
+    margin-top: 8px;
+    font-size: 13px;
+    color: theme.$text-dark;
+    // #5e5eaa
+}
+
+// .btn-row-bottom {
+//     display: flex;
+//     justify-content: flex-end;
+//     gap: 10px;
+//     margin-top: 30px;
+// }

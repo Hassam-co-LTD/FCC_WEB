@@ -1,0 +1,60 @@
+<div class="layout">
+
+    <!-- Top Navigation -->
+    <app-topbar></app-topbar>
+
+    <div class="body-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" [class.collapsed]="isCollapsed()">
+
+            <button class="toggle-btn" (click)="toggleSidebar()">
+                <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+            </button>
+
+            <nav>
+                <a routerLink="/dashboard" routerLinkActive="active-link">
+                    <mat-icon>dashboard</mat-icon>
+                    <span *ngIf="!isCollapsed()">Dashboard</span>
+                </a>
+
+                <!-- Trade Services Collapsible Menu -->
+                <div class="menu-group" [class.open]="tradeMenuOpen">
+                    <button class="menu-btn" (click)="toggleTradeMenu()">
+                        <mat-icon>article</mat-icon>
+                        <span *ngIf="!isCollapsed()">Trade Services</span>
+                        <mat-icon class="arrow" *ngIf="!isCollapsed()">
+                            {{ tradeMenuOpen ? 'expand_less' : 'expand_more' }}
+                        </mat-icon>
+                    </button>
+
+<div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
+    <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">
+        Import LC
+    </button>
+    <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
+        Export LC
+    </button>
+    <button type="button" [routerLink]="['/guarantees']" routerLinkActive="active-sub">
+        Bank Guarantees
+    </button>
+</div>
+
+                </div>
+
+                <a routerLink="/settings" routerLinkActive="active-link">
+                    <mat-icon>settings</mat-icon>
+                    <span *ngIf="!isCollapsed()">Settings</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+
+</div>

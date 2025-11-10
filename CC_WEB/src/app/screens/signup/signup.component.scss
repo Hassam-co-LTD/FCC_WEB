@@ -1,0 +1,116 @@
+@import '../../../styles/_theme.scss';
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, $screen-bg 0%, $light-bg 100%);
+  font-family: 'Poppins', sans-serif;
+  padding: 1.5rem;
+
+  mat-card {
+    width: 100%;
+    max-width: 420px;
+    background: $white;
+    border: 1px solid $border-light;
+    box-shadow: $shadow-primary;
+    border-radius: $radius-large;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(11, 78, 179, 0.15);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: $primary;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .full-width {
+        width: 100%;
+      }
+
+      mat-form-field {
+        width: 100%;
+
+        ::ng-deep .mat-mdc-text-field-wrapper {
+          background-color: $light-bg;
+          border-radius: $radius-default;
+          transition: border-color 0.2s ease;
+
+          &:hover {
+            border-color: $border-primary;
+          }
+        }
+
+        ::ng-deep .mdc-text-field--focused {
+          border-color: $primary;
+        }
+
+        input {
+          font-size: 0.95rem;
+          color: $text-dark;
+        }
+      }
+
+      button {
+        background-color: $primary-btn;
+        color: $text-light;
+        font-weight: 600;
+        border-radius: $radius-default;
+        padding: 0.75rem 0;
+        box-shadow: $button-shadow;
+        transition: background 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: $primary-btn-hover;
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+
+    p {
+      margin-top: 1.25rem;
+      color: $text-medium;
+      font-size: 0.9rem;
+
+      a {
+        color: $primary;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.3s;
+
+        &:hover {
+          color: $primary-hover;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* Small screen optimization */
+@media (max-width: 480px) {
+  .auth-container mat-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .auth-container h2 {
+    font-size: 1.5rem;
+  }
+}

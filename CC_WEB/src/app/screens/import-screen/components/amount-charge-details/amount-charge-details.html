@@ -1,0 +1,83 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Amount and Charge Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+    <form [formGroup]="amountChargeForm" (ngSubmit)="onSubmit()">
+
+        <!-- Currency and Amount -->
+        <div class="row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Currency *</mat-label>
+                <mat-select formControlName="currency">
+                    <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="amountChargeForm.get('currency')?.hasError('required')">
+                    Currency is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Amount *</mat-label>
+                <input matInput formControlName="amount" placeholder="Enter amount" />
+                <mat-error *ngIf="amountChargeForm.get('amount')?.hasError('required')">
+                    Amount is required
+                </mat-error>
+                <mat-error *ngIf="amountChargeForm.get('amount')?.hasError('pattern')">
+                    Enter a valid number
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Variation -->
+        <div class="row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Variation in Drawing (+)</mat-label>
+                <input matInput formControlName="variationPlus" placeholder="Percentage (+)" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Variation in Drawing (-)</mat-label>
+                <input matInput formControlName="variationMinus" placeholder="Percentage (-)" />
+            </mat-form-field>
+        </div>
+
+        <!-- Issuing Bank Charges -->
+        <div class="row radio-section">
+            <label class="radio-label">Issuing Bank Charges:</label>
+            <mat-radio-group formControlName="issuingBankCharges">
+                <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+                <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <!-- Outside Country Charges -->
+        <div class="row radio-section">
+            <label class="radio-label">Outside Country Charges:</label>
+            <mat-radio-group formControlName="outsideCountryCharges">
+                <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+                <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <!-- Additional Details -->
+        <div class="row">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Additional Amount Details</mat-label>
+                <textarea matInput formControlName="additionalAmountDetails" placeholder="Additional Amount Covered"
+                    maxlength="140"></textarea>
+                <mat-hint align="end">
+                    {{ amountChargeForm.get('additionalAmountDetails')?.value?.length || 0 }}/140
+                </mat-hint>
+            </mat-form-field>
+        </div>
+
+        <!-- Buttons -->
+        <!-- <div class="form-actions">
+            <button mat-stroked-button color="primary" type="button">Exit</button>
+            <button mat-stroked-button color="accent" type="button">Previous</button>
+            <button mat-flat-button color="primary" type="submit">Next</button>
+        </div> -->
+    </form>
+</div>
