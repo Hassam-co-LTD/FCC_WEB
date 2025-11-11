@@ -1,0 +1,76 @@
+@use "../../../styles/theme";
+
+/* Sidebar Navigation */
+.side-nav {
+    width: 240px;
+    background: theme.$sidebar-bg;
+    border-right: 1px solid theme.$step-border;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 0;
+    box-sizing: border-box;
+    position: sticky; // ✅ stays fixed during scroll
+    top: 0;
+    z-index: 10; // ✅ ensures hover visuals appear above content
+    overflow-y: auto; // ✅ allow scrolling if sidebar exceeds viewport
+    overflow-x: visible; // ✅ prevent hover clipping
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0 12px;
+
+        li {
+            padding: 10px 12px;
+            margin: 4px 0;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease-in-out;
+            color: theme.$sidebar-text;
+            box-sizing: border-box;
+            width: 100%;
+
+            // ❌ remove overflow hidden so hover animations are visible
+            overflow: visible;
+
+            .num {
+                background: theme.$step-badge-bg;
+                width: 22px;
+                height: 22px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                color: theme.$step-badge-text;
+                font-weight: 600;
+                flex-shrink: 0;
+            }
+
+            &:hover {
+                background: theme.$step-hover-bg;
+                color: theme.$step-hover-text;
+                transform: translateX(2px);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); // ✅ subtle hover depth
+            }
+
+            &.active {
+                background: theme.$step-active-bg;
+                color: theme.$step-active-text;
+                font-weight: 600;
+                transform: none;
+
+                .num {
+                    background: theme.$step-badge-active-bg;
+                    color: theme.$step-badge-active-text;
+                }
+            }
+        }
+    }
+}

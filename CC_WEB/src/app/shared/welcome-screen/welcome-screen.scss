@@ -1,0 +1,25 @@
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    text-align: center;
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        color: #1e88e5;
+    }
+
+    p {
+        max-width: 600px;
+        color: #555;
+        margin-bottom: 24px;
+    }
+
+    button {
+        border-radius: 8px;
+        padding: 8px 20px;
+    }
+}

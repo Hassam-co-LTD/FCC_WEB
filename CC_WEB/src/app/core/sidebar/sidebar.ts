@@ -1,47 +1,27 @@
-import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { GeneralDetails } from "./components/general-details/general-details";
-import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
-import { BankDetails } from './components/bank-details/bank-details';
-import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
-import { PaymentDetails } from './components/payment-details/payment-details';
-import { ShipmentDetails } from './components/shipment-details/shipment-details';
-import { NarrativeDetails } from './components/narrative-details/narrative-details';
-import { Licenses } from "./components/licenses/licenses";
-import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
-import { Attachments } from "./components/attachments/attachments";
-import { Preview } from "./components/preview/preview";
-import { Sidebar } from "../../core/sidebar/sidebar";
-
 @Component({
-  selector: 'app-import-lc',
-  standalone: true,
+  selector: 'app-sidebar',
   imports: [
-    GeneralDetails,
-    ApplicantBeneficiary,
-    BankDetails,
-    AmountChargeDetails,
-    PaymentDetails,
-    ShipmentDetails,
-    NarrativeDetails,
-    Licenses,
-    InstructionToBank,
-    Attachments,
-    Preview,
-    Sidebar
-],
-  templateUrl: './import-screen.html',
-  styleUrls: ['./import-screen.scss']
+    CommonModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+  ],
+  templateUrl: './sidebar.html',
+  styleUrl: './sidebar.scss',
 })
-export class ImportScreen implements AfterViewInit {
-
+export class Sidebar {
   currentStep = 0;
 
   steps = [
