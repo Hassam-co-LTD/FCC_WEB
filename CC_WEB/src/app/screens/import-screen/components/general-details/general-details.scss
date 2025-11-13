@@ -1,5 +1,8 @@
 @use '../../../../../../src/styles/_theme.scss' as theme;
 
+/* ===========================
+   Section Header
+=========================== */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -23,6 +26,7 @@
   }
 }
 
+/* Collapsible content */
 .collapsible {
   max-height: 0;
   overflow: hidden;
@@ -41,6 +45,7 @@
   border: 1px solid theme.$border-light;
 }
 
+/* Headings */
 h2 {
   font-size: 20px;
   font-weight: 600;
@@ -49,14 +54,15 @@ h2 {
 }
 
 h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
 }
 
+/* Form Grids */
 .form-row {
   display: flex;
   align-items: center;
@@ -77,22 +83,17 @@ h4 {
   margin-bottom: 22px;
   align-items: start;
 }
+
 .field-group {
   display: flex;
   flex-direction: column;
-  gap: 8px; // spacing between h4 and dropdown
-}
-
-h3 {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 20px 0 5px;
-  color: theme.$primary-dark;
+  gap: 8px;
 }
 
 .form-grid {
   display: flex;
   gap: 30px;
+  flex-wrap: wrap;
 }
 
 .full {
@@ -103,6 +104,7 @@ mat-form-field {
   width: 100%;
   font-size: 14px;
 }
+
 .mat-mdc-select-value,
 .mat-mdc-select-placeholder {
   font-size: 14px !important;
@@ -117,7 +119,7 @@ mat-form-field {
   gap: 10px;
 }
 
-/* Primary Button */
+/* Buttons */
 button[mat-flat-button] {
   background: theme.$primary !important;
   color: theme.$text-light !important;
@@ -126,5 +128,79 @@ button[mat-flat-button] {
 
   &:hover {
     background: theme.$primary-dark !important;
+  }
+}
+
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Tablets (≤992px) */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr; // stack columns
+    gap: 15px;
+  }
+
+  .form-grid {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  h4 {
+    font-size: 15px;
+  }
+
+  .collapsible.open {
+    padding: 12px 8px;
+  }
+}
+
+/* Small Tablets / Large Phones (≤768px) */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 14px;
+    margin: 15px 0 8px;
+  }
+
+  .btn-row {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+}
+
+/* Mobile Phones (≤480px) */
+@media (max-width: 480px) {
+  .collapsible.open {
+    padding: 10px 5px;
+  }
+
+  .form-grid-2,
+  .form-grid {
+    gap: 10px;
+  }
+
+  mat-radio-group,
+  mat-checkbox {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  button[mat-flat-button] {
+    width: 100%;
   }
 }

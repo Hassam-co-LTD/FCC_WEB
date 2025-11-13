@@ -1,5 +1,8 @@
 @use '../../../../../../src/styles/_theme.scss' as theme;
 
+/* ===========================
+   Section Header
+=========================== */
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -19,9 +22,18 @@
 
     mat-icon {
         color: theme.$text-light;
+        font-size: 22px;
+        transition: transform 0.3s ease;
+    }
+
+    &.open mat-icon {
+        transform: rotate(180deg);
     }
 }
 
+/* ===========================
+   Collapsible Container
+=========================== */
 .collapsible {
     max-height: 0;
     overflow: hidden;
@@ -40,6 +52,9 @@
     border: 1px solid theme.$border-light;
 }
 
+/* ===========================
+   Titles
+=========================== */
 h2 {
     font-size: 20px;
     font-weight: 600;
@@ -56,6 +71,9 @@ h4 {
     padding-left: 8px;
 }
 
+/* ===========================
+   Form Layout
+=========================== */
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -89,6 +107,38 @@ button[mat-flat-button] {
 
     &:hover {
         background: theme.$primary-dark !important;
+    }
+}
+
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Tablets ≤992px */
+@media (max-width: 992px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        /* stack fields vertically */
+    }
+
+    h4 {
+        font-size: 15px;
+    }
+}
+
+/* Mobile ≤480px */
+@media (max-width: 480px) {
+    .collapsible.open {
+        padding: 12px;
+    }
+
+    h4 {
+        font-size: 14px;
+    }
+
+    button[mat-flat-button] {
+        font-size: 14px;
+        padding: 8px 12px;
     }
 }
 // @use '../../../../../../src/styles/_theme.scss' as theme;

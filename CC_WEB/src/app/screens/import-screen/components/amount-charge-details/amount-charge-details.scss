@@ -1,7 +1,7 @@
 @use '../../../../../styles/theme' as theme;
 
 /* ===========================
-   Section Header (Collapsible Title)
+   Section Header
 =========================== */
 .section-header {
     display: flex;
@@ -26,9 +26,7 @@
     }
 }
 
-/* ===========================
-   Collapsible Container
-=========================== */
+/* Collapsible */
 .collapsible {
     max-height: 0;
     overflow: hidden;
@@ -47,6 +45,7 @@
     border: 1px solid theme.$border-light;
 }
 
+/* Headings */
 h2 {
     font-size: 20px;
     font-weight: 600;
@@ -54,20 +53,22 @@ h2 {
     color: theme.$white;
 }
 
+h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    border-left: 4px solid theme.$primary;
+    padding-left: 8px;
+    margin: 20px 0 12px;
+}
 
+/* Form Grids */
 .form-grid-2.unequal {
     display: grid;
     grid-template-columns: 1fr 2fr;
     /* Currency smaller, Amount bigger */
     gap: 16px;
-}
-
-.currency-field {
-    min-width: 120px;
-}
-
-.amount-field {
-    width: 100%;
+    margin-bottom: 20px;
 }
 
 .form-grid-2 {
@@ -84,13 +85,12 @@ h2 {
     margin-bottom: 20px;
 }
 
-h4 {
-    font-size: 16px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-    margin: 20px 0 12px;
+.currency-field {
+    min-width: 120px;
+}
+
+.amount-field {
+    width: 100%;
 }
 
 mat-form-field {
@@ -120,6 +120,73 @@ textarea {
 
 .full-width {
     width: 100%;
+}
+
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Tablets ≤992px */
+@media (max-width: 992px) {
+
+    .form-grid-2.unequal,
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+        /* stack columns vertically */
+    }
+
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+        /* stack all three columns vertically */
+    }
+
+    .radio-section {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .radio-label {
+            width: 100%;
+            margin-bottom: 6px;
+        }
+    }
+
+    h4 {
+        font-size: 15px;
+    }
+
+    .collapsible.open {
+        padding: 12px 8px;
+    }
+}
+
+/* Small Tablets / Large Phones ≤768px */
+@media (max-width: 768px) {
+    .section-header {
+        padding: 12px 14px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    h4 {
+        font-size: 14px;
+        margin: 15px 0 8px;
+    }
+}
+
+/* Mobile ≤480px */
+@media (max-width: 480px) {
+    .collapsible.open {
+        padding: 10px 5px;
+    }
+
+    mat-radio-group,
+    mat-checkbox {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
 }
 // @use '../../../../../../src/styles/_theme.scss' as theme;
 
