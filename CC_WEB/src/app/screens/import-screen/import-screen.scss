@@ -1,4 +1,5 @@
-@import "../../../styles/theme";
+@use "sass:color";
+@use "../../../styles/theme" as theme;
 
 /* ------------------------------
    Page Screen Layout
@@ -6,7 +7,7 @@
 .screen {
     display: flex;
     height: 100vh;
-    background: $screen-bg;
+    background: theme.$screen-bg;
     overflow: visible; // ✅ allow hover shadows from sidebar
     align-items: stretch;
     position: relative;
@@ -18,7 +19,7 @@
 --------------------------------*/
 .content {
     flex: 1;
-    background: $screen-content-bg;
+    background: theme.$screen-content-bg;
     overflow: hidden; // ✅ prevent horizontal scrolls, allow sidebar visuals
     display: flex;
     flex-direction: column;
@@ -32,19 +33,19 @@
         overflow-y: auto;
         scrollbar-width: thin;
         scroll-behavior: smooth;
-        scrollbar-color: $step-border transparent;
+        scrollbar-color: theme.$step-border transparent;
 
         &::-webkit-scrollbar {
             width: 6px;
         }
 
         &::-webkit-scrollbar-thumb {
-            background-color: rgba($primary, 0.3);
+            background-color: rgba(theme.$primary, 0.3);
             border-radius: 4px;
         }
 
         &::-webkit-scrollbar-thumb:hover {
-            background-color: rgba($primary, 0.5);
+            background-color: rgba(theme.$primary, 0.5);
         }
     }
 
@@ -53,7 +54,7 @@
         transition: background 0.3s ease;
 
         &:hover {
-            background: rgba($primary, 0.02);
+            background: rgba(theme.$primary, 0.02);
         }
     }
 
@@ -72,7 +73,7 @@
 --------------------------------*/
 .section-divider {
     border: none;
-    border-top: 1px solid $step-border;
+    border-top: 1px solid theme.$step-border;
     margin: 24px 0;
     opacity: 0.7;
 }
@@ -81,15 +82,15 @@
    Buttons
 --------------------------------*/
 button[mat-flat-button] {
-    background: $primary-btn-bg !important;
+    background: theme.$primary-btn-bg !important;
     color: #fff !important;
     font-weight: 500;
     border-radius: 6px;
-    box-shadow: 0 2px 6px $primary-btn-shadow;
+    box-shadow: 0 2px 6px theme.$primary-btn-shadow;
     transition: all 0.2s ease-in-out;
 
     &:hover {
-        background: $primary-btn-hover-bg !important;
+        background: theme.$primary-btn-hover-bg !important;
         transform: translateY(-1px);
     }
 
@@ -100,15 +101,15 @@ button[mat-flat-button] {
 }
 
 button[mat-stroked-button] {
-    border-color: $secondary-btn-border;
-    color: $secondary-btn-text;
+    border-color: theme.$secondary-btn-border;
+    color: theme.$secondary-btn-text;
     font-weight: 500;
     border-radius: 6px;
     transition: all 0.2s ease-in-out;
 
     &:hover {
-        background: $secondary-btn-hover-bg;
-        border-color: darken($secondary-btn-border, 10%);
+        background: theme.$secondary-btn-hover-bg;
+        border-color: color.adjust(theme.$secondary-btn-border, $lightness: -10%);
     }
 
     &:active {
