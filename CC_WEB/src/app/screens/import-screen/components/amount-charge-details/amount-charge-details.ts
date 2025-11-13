@@ -29,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class AmountChargeDetails {
   amountChargeForm: FormGroup;
   isOpen = true;
+  variationType: string = 'percent';
 
   currencies = ['USD', 'EUR', 'GBP', 'PKR', 'JPY'];
 
@@ -41,6 +42,15 @@ export class AmountChargeDetails {
       issuingBankCharges: ['Applicant', Validators.required],
       outsideCountryCharges: ['Beneficiary', Validators.required],
       additionalAmountDetails: ['', Validators.maxLength(140)]
+    });
+  }
+
+  onVariationTypeChange(value: string) {
+    this.variationType = value;
+    // Optionally clear fields when switching type:
+    this.amountChargeForm.patchValue({
+      variationPlus: '',
+      variationMinus: ''
     });
   }
 

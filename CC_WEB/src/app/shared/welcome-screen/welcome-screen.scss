@@ -1,25 +1,73 @@
+@use '../../../styles/theme' as theme;
+
 .welcome-container {
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 80vh;
-    text-align: center;
+    height: 85vh;
+    background: linear-gradient(135deg, theme.$light-bg, #f9fafc);
+    padding: 20px;
 
-    h1 {
-        font-size: 2rem;
-        margin-bottom: 12px;
-        color: #1e88e5;
-    }
-
-    p {
+    .welcome-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        padding: 40px 60px;
         max-width: 600px;
-        color: #555;
-        margin-bottom: 24px;
-    }
+        width: 100%;
+        transition: all 0.3s ease;
 
-    button {
-        border-radius: 8px;
-        padding: 8px 20px;
+        &:hover {
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: theme.$primary;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 28px;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: theme.$primary-dark;
+            margin-bottom: 16px;
+            // border-left: 4px solid theme.$primary;
+            padding-left: 8px;
+            display: inline-block;
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+
+            button {
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-color: theme.$primary;
+                color: theme.$primary;
+                transition: all 0.25s ease;
+
+                &:hover {
+                    background: theme.$primary;
+                    color: theme.$text-light;
+                    box-shadow: theme.$button-shadow;
+                }
+            }
+        }
     }
 }

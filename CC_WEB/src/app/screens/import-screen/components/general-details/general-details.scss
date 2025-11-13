@@ -75,6 +75,12 @@ h4 {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 22px;
+  align-items: start;
+}
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; // spacing between h4 and dropdown
 }
 
 h3 {
@@ -95,6 +101,12 @@ h3 {
 
 mat-form-field {
   width: 100%;
+  font-size: 14px;
+}
+.mat-mdc-select-value,
+.mat-mdc-select-placeholder {
+  font-size: 14px !important;
+  color: theme.$primary-dark !important;
 }
 
 .actions {
