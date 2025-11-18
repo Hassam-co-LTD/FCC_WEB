@@ -1,38 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { MatIcon } from "@angular/material/icon";
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
 })
 export class Sidebar {
   collapsed = false;
-  tradeMenuOpen = false;
-  @Input() currentStep = 0;
-  @Output() stepChange = new EventEmitter<number>();
 
-  steps = [
-    { label: "General Details" },
-    { label: "Applicant Details" },
-    { label: "Bank Details" },
-    { label: "Amount & Charges" },
-    { label: "Payment Details" },
-    { label: "Shipment Details" },
-    { label: "Narrative Details" },
-    { label: "Licenses" },
-    { label: "Instructions to Bank" },
-    { label: "Attachments" },
-    { label: "Preview" }
-  ];
+  @Input() currentStep = 0;
+
+  // Dynamic steps injected from parent
+  @Input() steps: { label: string }[] = [];
+
+  @Output() stepChange = new EventEmitter<number>();
 
   scrollTo(i: number) {
     this.stepChange.emit(i);
   }
-
 
   toggleSidebar() {
     this.collapsed = !this.collapsed;
@@ -41,7 +31,6 @@ export class Sidebar {
   isCollapsed(): boolean {
     return this.collapsed;
   }
-
 }
 
 // import { CommonModule } from '@angular/common';

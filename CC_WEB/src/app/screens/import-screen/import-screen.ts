@@ -44,7 +44,7 @@ export class ImportScreen implements AfterViewInit {
 
   currentStep = 0;
 
-  steps = [
+  importSteps = [
     { label: "General Details" },
     { label: "Applicant Details" },
     { label: "Bank Details" },
@@ -116,7 +116,7 @@ export class ImportScreen implements AfterViewInit {
   // }
 
   next() {
-    if (this.currentStep < this.steps.length - 1) {
+    if (this.currentStep < this.importSteps.length - 1) {
       this.scrollToSection(this.currentStep + 1);
     }
   }

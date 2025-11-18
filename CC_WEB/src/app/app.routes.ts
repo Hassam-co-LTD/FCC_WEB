@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 
 export const routes: Routes = [
-    // Default redirect to login
+    // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
 
     // Auth routes
@@ -36,13 +36,58 @@ export const routes: Routes = [
                     import('./screens/export-screen/export-screen').then((m) => m.ExportScreen),
             },
 
+            // ==============================
+            // UNDERTAKING ISSUANCE (FIXED)
+            // ==============================
+
             {
                 path: 'undertaking-issuance',
                 loadComponent: () =>
-                    import('./screens/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance),
+                    import('./screens/undertaking-issuance/undertaking-issuance')
+                        .then((m) => m.UndertakingIssuance),
             },
 
-            // Import LC Parent Route
+            {
+                path: 'undertaking-issuance/request-undertaking',
+                loadComponent: () =>
+                    import(
+                        './screens/undertaking-issuance/request-undertaking/request-undertaking'
+                    ).then((m) => m.RequestUndertaking),
+                children: [
+                    {
+                        path: 'general-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/undertaking-issuance/components/general-details/general-details'
+                            ).then((m) => m.GeneralDetails),
+                    },
+                    {
+                        path: 'beneficiary-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/undertaking-issuance/components/application-beneficiary/application-beneficiary'
+                            ).then((m) => m.ApplicationBeneficiary),
+                    },
+                ],
+            },
+
+            {
+                path: 'undertaking-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Undertaking Issuance',
+                    description:
+                        'Manage all Undertaking Issuance related activities here.',
+                },
+            },
+
+            // ==============================
+            // IMPORT LC
+            // ==============================
+
             {
                 path: 'import-screen',
                 loadComponent: () =>
@@ -99,6 +144,7 @@ export const routes: Routes = [
                     },
                 ],
             },
+
             {
                 path: 'import-welcome',
                 loadComponent: () =>
@@ -110,19 +156,8 @@ export const routes: Routes = [
                     description: 'Manage all Import LC related activities here.',
                 },
             },
-            {
-                path: 'undertaking-welcome',
-                loadComponent: () =>
-                    import('./shared/welcome-screen/welcome-screen').then(
-                        (m) => m.WelcomeScreen
-                    ),
-                data: {
-                    title: 'Welcome to Undertaking Issuance',
-                    description: 'Manage all Undertaking Issuance related activities here.',
-                },
-            },
 
-            // 🆕 Import Amend Route
+            // Import Amend Route
             {
                 path: 'import-screen/amend',
                 loadComponent: () =>
@@ -131,7 +166,7 @@ export const routes: Routes = [
                     ).then((m) => m.AmendScreen),
             },
 
-            // Default child route (dashboard)
+            // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
     },
