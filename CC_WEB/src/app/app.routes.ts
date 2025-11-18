@@ -35,13 +35,43 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'shipping-guarantee-screen',
+  path: 'shipping-guarantee-screen',
+  loadComponent: () =>
+    import('./screens/shipping-guarantee-screen/shipping-guarantee-screen')
+      .then((m) => m.shippingguaranteescreen),
+
+  children: [
+    // {
+    //   path: '',
+    //   loadComponent: () =>
+    //     import(
+    //       './screens/shipping-guarantee-screen/welcome/welcome.component'
+    //     ).then((m) => m.WelcomeComponent),
+    // },
+    {
+      path: 'create-screen',
+      loadComponent: () =>
+        import(
+          './screens/shipping-guarantee-screen/component/create/create'
+        ).then((m) => m.CreateComponent),
+    },
+  ],
+},
+
+      {
+        path: 'export-collection',
         loadComponent: () =>
           import(
-            './screens/shipping-guarantee-screen/shipping-guarantee-screen'
-          ).then((m) => m.ShippingGuarantee),
+            './screens/export-collection/export-collection'
+          ).then((m) => m.ExportCollectionComponent),
       },
-
+      {
+        path: 'financial-request',
+        loadComponent: () =>
+          import(
+            './screens/financing-request/financing-request'
+          ).then((m) => m.FinancingRequest),
+      },
       // Import LC parent route
       {
         path: 'import-screen',

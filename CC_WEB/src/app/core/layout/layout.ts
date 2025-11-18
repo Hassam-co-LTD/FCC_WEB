@@ -4,7 +4,6 @@ import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { TopbarComponent } from "../topbar/topbar";
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from "@angular/material/menu";
-
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
@@ -14,6 +13,8 @@ import { MatMenuModule } from "@angular/material/menu";
 export class LayoutComponent {
   collapsed = false;
   tradeMenuOpen = false;
+  importLcOpen = false;
+shippingGuaranteeOpen = false;
 
   constructor(private router: Router) { }
 
@@ -28,4 +29,13 @@ export class LayoutComponent {
   toggleTradeMenu() {
     this.tradeMenuOpen = !this.tradeMenuOpen;
   }
+
+  toggleImportLcMenu() {
+    this.importLcOpen = !this.importLcOpen;
+  }
+
+  toggleShippingGuaranteeMenu() {
+    this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
+  }
 }
+  

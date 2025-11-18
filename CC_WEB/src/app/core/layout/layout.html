@@ -28,18 +28,40 @@
                         </mat-icon>
                     </button>
 
-<div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
-    <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">
-        Import LC
-    </button>
-    <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
-        Export LC
-    </button>
-        <button type="button" [routerLink]="['/shipping-guarantee-screen']" routerLinkActive="active-sub">
-        shipping-guarantee-screen
-    </button>
-</div>
+                    <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
+                        <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">
+                            Import LC
+                        </button>
 
+                        <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
+                            Export LC
+                        </button>
+
+                        <button type="button" [routerLink]="['/export-collection']" routerLinkActive="active-sub">
+                            Export Collection
+                        </button>
+
+                        <!-- Shipping Guarantee -->
+                        <div class="submenu-item" [class.open]="shippingGuaranteeOpen">
+                            <button type="button" (click)="toggleShippingGuaranteeMenu()"
+                                [routerLink]="['/shipping-guarantee-screen']" routerLinkActive="active-link">
+                                Shipping Guarantee
+                                <mat-icon class="arrow">
+                                    {{ shippingGuaranteeOpen ? 'expand_less' : 'expand_more' }}
+                                </mat-icon>
+                            </button>
+
+                            <!-- Nested Shipping Guarantee Dropdown -->
+                            <div class="nested-submenu" *ngIf="shippingGuaranteeOpen">
+
+                                <button type="button" [routerLink]="['/shipping-guarantee-screen/create-screen']"
+                                    routerLinkActive="active-sub">
+                                    Create
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <a routerLink="/settings" routerLinkActive="active-link">
@@ -47,7 +69,6 @@
                     <span *ngIf="!isCollapsed()">Settings</span>
                 </a>
             </nav>
-
         </aside>
 
         <!-- Main Content -->
