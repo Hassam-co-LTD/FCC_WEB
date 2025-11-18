@@ -1,0 +1,7 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Undertaking Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+</div>

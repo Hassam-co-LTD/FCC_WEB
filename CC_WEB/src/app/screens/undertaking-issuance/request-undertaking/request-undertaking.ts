@@ -2,10 +2,12 @@ import { Component } from '@angular/core';
 import { Sidebar } from "../../../core/sidebar/sidebar";
 import { GeneralDetails } from "../components/general-details/general-details";
 import { ApplicationBeneficiary } from "../components/application-beneficiary/application-beneficiary";
+import { BankDetails } from "../../undertaking-issuance/components/bank-details/bank-details";
+import { UndertakingDetails } from "../components/undertaking-details/undertaking-details";
 
 @Component({
   selector: 'app-request-undertaking',
-  imports: [Sidebar, GeneralDetails, ApplicationBeneficiary],
+  imports: [Sidebar, GeneralDetails, ApplicationBeneficiary, BankDetails, UndertakingDetails],
   templateUrl: './request-undertaking.html',
   styleUrl: './request-undertaking.scss',
 })
@@ -17,7 +19,6 @@ export class RequestUndertaking {
     { label: "Applicant Details" },
     { label: "Bank Details" },
     { label: "Undertaking Details" },
-    { label: "Licenses" },
     { label: "Instructions For The Bank Only" },
     { label: "Attachments" },
     { label: "Preview" }
