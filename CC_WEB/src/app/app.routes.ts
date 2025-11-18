@@ -36,6 +36,12 @@ export const routes: Routes = [
                     import('./screens/export-screen/export-screen').then((m) => m.ExportScreen),
             },
 
+            {
+                path: 'undertaking-issuance',
+                loadComponent: () =>
+                    import('./screens/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance),
+            },
+
             // Import LC Parent Route
             {
                 path: 'import-screen',
@@ -110,7 +116,7 @@ export const routes: Routes = [
                 path: 'import-screen/amend',
                 loadComponent: () =>
                     import(
-                        './screens/import-screen/sub-menus/events/amend/amend'
+                        './screens/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
             },
 

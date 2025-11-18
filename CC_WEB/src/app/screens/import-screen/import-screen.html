@@ -1,6 +1,7 @@
 <div class="screen">
     <!-- Sidebar -->
-    <app-sidebar></app-sidebar>
+        <app-sidebar [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+        </app-sidebar>
     <!-- Main Content -->
     <div class="content">
         <div class="scroll-area">

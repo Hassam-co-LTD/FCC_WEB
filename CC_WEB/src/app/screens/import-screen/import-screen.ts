@@ -59,24 +59,26 @@ export class ImportScreen implements AfterViewInit {
   ];
 
   ngAfterViewInit() {
-    const sections = document.querySelectorAll('section');
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const index = Array.from(sections).indexOf(entry.target as HTMLElement);
-            this.currentStep = index;
+      const observer = new IntersectionObserver(
+        entries => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = index;
+            }
           }
+        },
+        {
+          threshold: 0.4,
+          root: document.querySelector('.scroll-area')
         }
-      },
-      {
-        threshold: 0.4, // Adjusts sensitivity (0.4 = when 40% of section visible)
-        root: document.querySelector('.scroll-area') // observe scrolling inside container
-      }
-    );
+      );
 
-    sections.forEach(section => observer.observe(section));
+      sections.forEach(section => observer.observe(section));
+    }, 200); // ← gives Angular time to render children
   }
 
   scrollToSection(i: number) {
@@ -84,6 +86,34 @@ export class ImportScreen implements AfterViewInit {
     const section = document.getElementById(`section-${i}`);
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+
+  // ngAfterViewInit() {
+  //   const sections = document.querySelectorAll('section');
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       for (const entry of entries) {
+  //         if (entry.isIntersecting) {
+  //           const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+  //           this.currentStep = index;
+  //         }
+  //       }
+  //     },
+  //     {
+  //       threshold: 0.4, // Adjusts sensitivity (0.4 = when 40% of section visible)
+  //       root: document.querySelector('.scroll-area') // observe scrolling inside container
+  //     }
+  //   );
+
+  //   sections.forEach(section => observer.observe(section));
+  // }
+
+  // scrollToSection(i: number) {
+  //   this.currentStep = i;
+  //   const section = document.getElementById(`section-${i}`);
+  //   section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
 
   next() {
     if (this.currentStep < this.steps.length - 1) {

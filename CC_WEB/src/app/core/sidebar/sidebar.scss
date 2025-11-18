@@ -1,100 +1,178 @@
 @use "../../../styles/theme";
 
-/* Sidebar Navigation */
+/* ================================
+   CLEAN, NO-SCROLL, REDUCED PADDING SIDEBAR
+   ================================ */
+
 .side-nav {
-    width: 240px;
+    width: 220px; // reduced width a bit
     background: theme.$sidebar-bg;
     border-right: 1px solid theme.$step-border;
     height: 100vh;
+
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px 0;
+    padding: 10px 0; // 🔥 reduced padding
     box-sizing: border-box;
-    position: sticky; // ✅ stays fixed during scroll
+
+    position: sticky;
     top: 0;
-    z-index: 10; // ✅ ensures hover visuals appear above content
-    overflow-y: auto; // ✅ allow scrolling if sidebar exceeds viewport
-    overflow-x: visible; // ✅ prevent hover clipping
-    scroll-behavior: smooth;
+    z-index: 10;
+
+    overflow-y: visible; // ❌ no scroll inside
+    overflow-x: visible;
+
+    transition: width 0.25s ease-in-out;
+
+    //     /* -----------------------------
+        //        COLLAPSED STATE
+        //        ----------------------------- */
+            &.collapsed {
+                width: 60px;
+                background: theme.$sidebar-bg;
+                padding: 20px 0;
+    
+                ul,
+                ul li,
+                .num,
+                .label {
+                    opacity: 0;
+                    visibility: hidden;
+                    height: 0;
+                    margin: 0;
+                    padding: 0;
+                    pointer-events: none;
+                }
+    
+                li {
+                    gap: 0;
+                }
+    
+                .toggle-btn {
+                    opacity: 1;
+                    visibility: visible;
+                    margin: 0 auto;
+                    background-color: #fff;
+                    width: fit-content;
+                    text-align: center;
+                }
+            }
+    
+            .toggle-btn {
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+                color: theme.$sidebar-text;
+                font-size: 18px;
+                border-radius: 8px;
+                transition: 0.2s ease;
+    
+                &:hover {
+                    background: rgba(0, 0, 0, 0.05);
+                }
+            }
+        }
+
+    .toggle-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+
+        padding: 8px 0; // 🔥 reduced
+        width: 100%;
+        text-align: center;
+
+        color: theme.$sidebar-text;
+        font-size: 18px;
+        border-radius: 8px;
+
+        transition: 0.2s ease;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    }
 
     ul {
         list-style: none;
         margin: 0;
-        padding: 0 12px;
+        padding: 5px 10px; // 🔥 reduced
 
         li {
-            padding: 10px 12px;
+            padding: 8px 10px; // 🔥 reduced
             margin: 4px 0;
+
             font-size: 0.85rem;
             cursor: pointer;
-            border-radius: 6px;
+
+            border-radius: 8px; // softer
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: all 0.2s ease-in-out;
-            color: theme.$sidebar-text;
-            box-sizing: border-box;
-            width: 100%;
 
-            // ❌ remove overflow hidden so hover animations are visible
-            overflow: visible;
+            transition: all 0.2s ease-in-out;
+
+            color: theme.$sidebar-text;
 
             .num {
+                width: 24px; // smaller
+                height: 24px;
+
+                border-radius: 6px;
                 background: theme.$step-badge-bg;
-                width: 22px;
-                height: 22px;
-                border-radius: 50%;
+
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
                 font-size: 11px;
-                color: theme.$step-badge-text;
                 font-weight: 600;
-                flex-shrink: 0;
-                transition: all 0.3s ease-in-out;
+
+                color: theme.$step-badge-text;
+
+                transition: all 0.25s ease;
             }
+
             .label {
                 flex: 1;
+                transition: opacity 0.25s ease, transform 0.25s ease;
             }
 
             &:hover {
                 background: theme.$step-hover-bg;
                 color: theme.$step-hover-text;
-                transform: translateX(2px);
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+                transform: translateX(3px);
+
                 .num {
-                        background: theme.$step-hover-text; // change color on hover
-                        color: #fff;
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-                    }
+                    background: theme.$step-hover-text;
+                    color: #fff;
+                    border-radius: 50%;
+                }
             }
 
             &.active {
                 background: theme.$step-active-bg;
                 color: theme.$step-active-text;
-                font-weight: 600;
-                transform: none;
 
                 .num {
                     background: theme.$step-badge-active-bg;
                     color: theme.$step-badge-active-text;
+                    border-radius: 50%;
                 }
             }
         }
     }
-}
 
-
-/* Tablet Mode ≤992px: show only numbers */
 @media (max-width: 992px) {
     .side-nav {
-        width: 60px;
-        padding: 20px 5px;
+        width: 65px;
+        padding: 12px 4px;
 
         ul li {
             justify-content: center;
-            gap: 0;
 
             .label {
                 display: none;
