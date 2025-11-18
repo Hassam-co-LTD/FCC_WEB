@@ -29,10 +29,8 @@
                     </button>
 
                     <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
-                        <!-- <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">
-                            Import LC
-                        </button> -->
-                        <!-- Import LC with nested dropdown -->
+
+                        <!-- Import LC Dropdown -->
                         <div class="submenu-item" [class.open]="importLcOpen">
                             <button type="button" (click)="toggleImportLcMenu()" [routerLink]="['/import-welcome']"
                                 routerLinkActive="active-link">
@@ -42,22 +40,38 @@
                                 </mat-icon>
                             </button>
 
-                        
-                            <!-- Nested Import LC Dropdown -->
                             <div class="nested-submenu" *ngIf="importLcOpen">
-                                <button type="button" [routerLink]="['/import-screen']" routerLinkActive="active-sub">Create</button>
-                                <button type="button" [routerLink]="['/import-screen/amend']" routerLinkActive="active-sub">Amend</button>
+                                <button type="button" [routerLink]="['/import-screen']"
+                                    routerLinkActive="active-sub">Create</button>
+                                <button type="button" [routerLink]="['/import-screen/amend']"
+                                    routerLinkActive="active-sub">Amend</button>
                             </div>
                         </div>
 
+                        <!-- Export LC -->
                         <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
                             Export LC
                         </button>
-                        <button type="button" [routerLink]="['/undertaking-issuance']" routerLinkActive="active-sub">
-                            Undertaking issuance
-                        </button>
-                    </div>
 
+                        <!-- Undertaking Issuance Dropdown -->
+                        <div class="submenu-item" [class.open]="undertakingOpen">
+                            <button type="button" (click)="toggleUndertakingMenu()"
+                                [routerLink]="['/undertaking-welcome']" routerLinkActive="active-link">
+                                Undertaking issuance
+                                <mat-icon class="arrow">
+                                    {{ undertakingOpen ? 'expand_less' : 'expand_more' }}
+                                </mat-icon>
+                            </button>
+
+                            <div class="nested-submenu" *ngIf="undertakingOpen">
+                                <button type="button" [routerLink]="['/undertaking-issuance']"
+                                    routerLinkActive="active-sub">Create</button>
+                                <button type="button" [routerLink]="['/undertaking/amend']"
+                                    routerLinkActive="active-sub">Amend</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
                 <a routerLink="/settings" routerLinkActive="active-link">

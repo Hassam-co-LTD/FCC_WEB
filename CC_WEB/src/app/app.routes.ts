@@ -110,6 +110,17 @@ export const routes: Routes = [
                     description: 'Manage all Import LC related activities here.',
                 },
             },
+            {
+                path: 'undertaking-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Undertaking Issuance',
+                    description: 'Manage all Undertaking Issuance related activities here.',
+                },
+            },
 
             // 🆕 Import Amend Route
             {

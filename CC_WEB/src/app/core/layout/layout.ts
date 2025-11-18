@@ -14,6 +14,7 @@ import { MatMenuModule } from "@angular/material/menu";
 export class LayoutComponent {
   collapsed = false;
   tradeMenuOpen = false;
+  undertakingOpen = false;
   importLcOpen = false;
 
   constructor(private router: Router) { }
@@ -28,6 +29,9 @@ export class LayoutComponent {
 
   toggleTradeMenu() {
     this.tradeMenuOpen = !this.tradeMenuOpen;
+  }
+  toggleUndertakingMenu() {
+    this.undertakingOpen = !this.undertakingOpen;
   }
   toggleImportLcMenu() {
     this.importLcOpen = !this.importLcOpen;
