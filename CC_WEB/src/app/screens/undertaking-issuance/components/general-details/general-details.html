@@ -30,70 +30,17 @@
         </div>
     </div>
 
-    <!-- <div class="btn-row">
-        <button mat-stroked-button color="primary">SWIFT ✅</button>
-        <button mat-stroked-button>Courier/Mail</button>
-        <button mat-stroked-button>Other</button>
-    </div> -->
-
-
-    <!-- Expiry Fields -->
-    <div class="form-grid-2">
-        <mat-form-field appearance="outline">
-            <mat-label>Expiry Date *</mat-label>
-            <input matInput type="date" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Place of Expiry *</mat-label>
-            <mat-select>
-                <mat-option value="beneficiary">In Beneficiary's Country</mat-option>
-                <mat-option value="issuing">In Issuing Country</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-
-    <h4>Feature of LC</h4>
-    <div class="form-grid">
-        <mat-checkbox>Irrevocable</mat-checkbox>
-        <mat-checkbox>Revolving</mat-checkbox>
-        <mat-checkbox>Transferable</mat-checkbox>
-    </div>
-
-    <h4>Applicable Rules</h4>
-    <mat-form-field appearance="outline" class="full">
-        <mat-select placeholder="Applicable Rules" required>
-            <mat-option value="EUCP">EUCP LATEST VERSION</mat-option>
-            <mat-option value="EUCPURR">EUCPURR LATEST VERSION</mat-option>
-            <mat-option value="Others">OTHERS</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <h4>Confirmation Instructions</h4>
+    <h4>Form Of Undertaking</h4>
     <mat-radio-group>
-        <mat-radio-button value="confirm">Confirm</mat-radio-button>
-        <mat-radio-button value="without">Without</mat-radio-button>
-        <mat-radio-button value="mayAdd">May Add</mat-radio-button>
+        <mat-radio-button value="demandguarantee">Demand Guarantee</mat-radio-button>
+        <mat-radio-button value="sloc">Standby Letter Of Credit </mat-radio-button>
+        <mat-radio-button value="dependentundertaking">Dependent Undertaking</mat-radio-button>
     </mat-radio-group>
 
-    <!-- <h4>References</h4>
-    <div class="form-grid-2">
-        <mat-form-field appearance="outline">
-            <input matInput placeholder="Beneficiary Reference">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <input matInput placeholder="Customer Reference">
-        </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline" class="full">
-        <input matInput placeholder="Purchase Order(s)">
-    </mat-form-field> -->
-
-    <!-- <div class="actions">
-        <button mat-stroked-button>Exit</button>
-        <button mat-flat-button color="primary" (click)="next()">Next</button>
-    </div> -->
-
-
+    <h4>Purpose</h4>
+    <mat-radio-group>
+        <mat-radio-button value="issuanceofundertaking">Issuance Of Undertaking</mat-radio-button>
+        <mat-radio-button value="clundertaking">Counter And Local Undertaking</mat-radio-button>
+        <mat-radio-button value="cccundertaking">Counter-Counter And Counter Undertaking</mat-radio-button>
+    </mat-radio-group>
 </div>
