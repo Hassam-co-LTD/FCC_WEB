@@ -35,42 +35,93 @@ export const routes: Routes = [
           ),
       },
       {
-  path: 'shipping-guarantee-screen',
-  loadComponent: () =>
-    import('./screens/shipping-guarantee-screen/shipping-guarantee-screen')
-      .then((m) => m.shippingguaranteescreen),
-
-  children: [
-    // {
-    //   path: '',
-    //   loadComponent: () =>
-    //     import(
-    //       './screens/shipping-guarantee-screen/welcome/welcome.component'
-    //     ).then((m) => m.WelcomeComponent),
-    // },
-    {
-      path: 'create-screen',
-      loadComponent: () =>
-        import(
-          './screens/shipping-guarantee-screen/component/create/create'
-        ).then((m) => m.CreateComponent),
-    },
-  ],
-},
-
+        path: 'shipping-guarantee-screen',
+        loadComponent: () =>
+          import(
+            './screens/shipping-guarantee-screen/shipping-guarantee-screen'
+          ).then((m) => m.shippingguaranteescreen),
+        children: [
+          {
+            path: 'create-screen',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/create/create'
+              ).then((m) => m.CreateComponent),
+          },
+        ],
+      },
       {
         path: 'export-collection',
         loadComponent: () =>
-          import(
-            './screens/export-collection/export-collection'
-          ).then((m) => m.ExportCollectionComponent),
+          import('./screens/export-collection/export-collection').then(
+            (m) => m.ExportCollectionComponent
+          ),
+        children: [
+          // { path: '', redirectTo: 'app-general-details', pathMatch: 'full' },
+          {
+            path: 'app-general-details',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/general-details/general-details'
+              ).then((m) => m.GeneralDetails),
+          },
+          {
+            path: 'drawer-drawee-details',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/drawer-drawee-details/drawer-drawee-details'
+              ).then((m) => m.DrawerDraweeDetails),
+          },
+          {
+            path: 'bank-details',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/bank-details/bank-details'
+              ).then((m) => m.BankDetailsComponent),
+          },
+          {
+            path: 'shipping-details',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/shipping-details/shipping-details'
+              ).then((m) => m.ShippingDetails),
+          },
+          {
+            path: 'license',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/license/license'
+              ).then((m) => m.License),
+          },
+          {
+            path: 'payment-amount',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/payment-amount/payment-amount'
+              ).then((m) => m.PaymentAmount),
+          },
+          {
+            path: 'collection-instructions',
+            loadComponent: () =>
+              import(
+                './screens/export-collection/components/collection-instructions/collection-instructions'
+              ).then((m) => m.CollectionInstructionsComponent),
+          },
+          {
+            path: 'preview',
+            loadComponent: () =>
+              import(
+               ( './screens/export-collection/components/preview/preview')
+              ).then((m) => m.PreviewSectionComponent),
+          },
+        ],
       },
       {
         path: 'financial-request',
         loadComponent: () =>
-          import(
-            './screens/financing-request/financing-request'
-          ).then((m) => m.FinancingRequest),
+          import('./screens/financing-request/financing-request').then(
+            (m) => m.FinancingRequest
+          ),
       },
       // Import LC parent route
       {

@@ -1,0 +1,245 @@
+/* ============================
+   ATTACHMENTS & DOCUMENTS
+============================ */
+.accordion-section#attachments {
+  background: #ffffff;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  .accordion-header {
+    padding: 1rem 1.3rem;
+    background: linear-gradient(90deg, #0b4eb3, #0b4eb3);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .arrow {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .accordion-content {
+    padding: 1.2rem 1.3rem;
+    background: #fff;
+    border-top: 1px solid #d9e4ff;
+    animation: fadeSlideIn 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    /* ----- Drag & Drop Upload ----- */
+    .upload-box {
+      border: 2px dashed #649ded;
+      border-radius: 12px;
+      padding: 45px 25px;
+      text-align: center;
+      background: linear-gradient(135deg, #f8fbff 0%, #f0f8ff 100%);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(100, 158, 237, 0.1);
+
+      &:hover {
+        border-color: #0b4eb3;
+        box-shadow: 0 4px 12px rgba(11, 78, 179, 0.15);
+        transform: translateY(-2px);
+      }
+
+      &.dragging {
+        border-color: #0b4eb3;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        box-shadow: 0 8px 20px rgba(11, 78, 179, 0.25);
+        transform: scale(1.02);
+      }
+
+      .cloud-icon {
+        font-size: 48px;
+        color: #0b4eb3;
+        margin-bottom: 15px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .upload-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #0b4eb3;
+        margin-bottom: 5px;
+      }
+
+      .browse-text {
+        font-weight: 600;
+        color: #0b4eb3;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .hint {
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: 8px;
+      }
+    }
+
+    /* ----- Uploaded Files List ----- */
+    .file-list {
+      margin-top: 10px;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fdfdff;
+        padding: 10px 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        border: 1px solid #e6e8ef;
+
+        button {
+          background: #dc3545;
+          border: none;
+          padding: 5px 12px;
+          border-radius: 6px;
+          color: #fff;
+          cursor: pointer;
+          transition: background 0.2s ease;
+
+          &:hover {
+            background: #c82333;
+          }
+        }
+      }
+    }
+
+    /* ----- Document List ----- */
+    .document-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+
+        &.two-col > .input-field {
+          flex: 1;
+          min-width: 45%;
+        }
+
+        .input-field {
+          display: flex;
+          flex-direction: column;
+
+          label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+
+            .required {
+              color: red;
+              font-weight: 700;
+            }
+          }
+
+          select,
+          input[type="text"],
+          input[type="date"] {
+            border: 1px solid #c7d6f7;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.95rem;
+            outline: none;
+            background: #f8fbff;
+            transition: border-color 0.2s ease;
+
+            &:focus {
+              border-color: #0b4eb3;
+              background: #ffffff;
+              box-shadow: 0 0 0 2px rgba(11, 78, 179, 0.1);
+            }
+          }
+
+          /* Attachment field with button */
+          .attachment-field {
+            display: flex;
+
+            input {
+              flex: 1;
+              cursor: pointer;
+            }
+
+            button {
+              margin-left: 8px;
+              padding: 0 10px;
+              background: #0b4eb3;
+              color: #fff;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              transition: 0.2s ease;
+
+              &:hover {
+                background: #093b8c;
+              }
+            }
+          }
+        }
+      }
+
+      .btn-add {
+        align-self: flex-start;
+        padding: 6px 12px;
+        background: #0b4eb3;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s ease;
+
+        &:hover {
+          background: #093b8c;
+        }
+      }
+    }
+
+    /* ----- Error Message ----- */
+    .error {
+      color: #d9534f;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+  }
+}
+
+/* Floating animation for cloud icon */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Accordion content fade animation */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

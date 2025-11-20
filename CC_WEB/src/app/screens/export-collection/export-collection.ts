@@ -1,104 +1,125 @@
-import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { GeneralDetails } from "../export-collection/components/general-details/general-details";
+import { DrawerDraweeDetails } from "./components/drawer-drawee-details/drawer-drawee-details";
+import { BankDetailsComponent } from '../export-collection/components/bank-details/bank-details';
+import { ShippingDetails } from '../export-collection/components/shipping-details/shipping-details';
+import { PaymentAmount } from '../export-collection/components/payment-amount/payment-amount';
+import { CollectionInstructionsComponent } from '../export-collection/components/collection-instructions/collection-instructions';
+import { Licenses } from "../import-screen/components/licenses/licenses";
+import { AttachmentsDocuments } from "./components/attachments-documents/attachments-documents";
+import { PreviewSectionComponent } from "./components/preview/preview";
 
 @Component({
   selector: 'app-export-collection',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    GeneralDetails,
+    DrawerDraweeDetails,
+    BankDetailsComponent,
+    ShippingDetails,
+    PaymentAmount,
+    CollectionInstructionsComponent,
+    Licenses,
+    AttachmentsDocuments,
+    PreviewSectionComponent
+  ],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss']
 })
-export class ExportCollectionComponent {
+export class ExportCollectionComponent implements OnInit, AfterViewInit {
 
-  @ViewChildren('accordionSection') sections!: QueryList<ElementRef>;
+  currentStep = 0;
+  activeSection: string | null = null;
 
-  activeSection = 'general';
-  ecForm: FormGroup;
-
-  banks = ['NBP', 'MCB', 'HBL', 'UBL', 'Bank Alfalah'];
-
-  isDragging = false;
-  uploadedFiles: File[] = [];
-  maxFiles = 5;
-  maxFileSize = 1 * 1024 * 1024;
-  errorMessage = '';
-
-  sidebarSteps = [
-    { number: 1, label: 'General Details', key: 'general' },
-    { number: 2, label: 'Drawer and Drawee Details', key: 'drawer' },
-    { number: 3, label: 'Bank Details', key: 'bank' },
-    { number: 4, label: 'Payment and Amount Details', key: 'payment' },
-    { number: 5, label: 'Shipment Details', key: 'shipment' },
-    { number: 6, label: 'Licenses', key: 'licenses' },
-    { number: 7, label: 'Collection Instructions', key: 'instructions' },
-    { number: 8, label: 'Attachments and Documents', key: 'attachments' },
-    { number: 9, label: 'Preview', key: 'preview' }
+  steps = [
+    { key: "general", label: "General Details" },
+    { key: "drawer", label: "Drawer and Drawee Details" },
+    { key: "bank", label: "Bank Details" },
+    { key: "payment", label: "Payment and Account Details" },
+    { key: "shipping", label: "Shipping Details" },
+    { key: "license", label: "Licenses" },
+    { key: "collection", label: "Collection Instructions" },
+    { key: "attachments", label: "Attachments and Documents" },
+    { key: "preview", label: "Preview" }
   ];
 
-  constructor(private fb: FormBuilder, private el: ElementRef) {
-    this.ecForm = this.fb.group({
-      collectionType: ['', Validators.required],
-      documentReference: [''],
-      drawerName: [''],
-      draweeName: [''],
-      issuingBank: ['', Validators.required],
-      amount: ['', Validators.required],
-      currency: ['', Validators.required],
-      shipmentMode: [''],
-      licenseNumber: [''],
-      collectionInstructions: ['']
+  constructor(private route: ActivatedRoute, private router: Router) {}
+
+  // -------------------------------------
+  // FIXED: Load correct section on reload
+  // -------------------------------------
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const section = params['section'];
+
+      if (section) {
+        this.activeSection = section;
+
+        // Scroll after DOM paint
+        setTimeout(() => this.scrollTo(section), 200);
+      }
     });
   }
 
-  toggleSection(key: string) {
-    this.activeSection = this.activeSection === key ? '' : key;
-  }
+  ngAfterViewInit() {
+    const sections = document.querySelectorAll('section');
 
-  scrollToSection(id: string) {
-    const el = this.el.nativeElement.querySelector('#' + id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      this.activeSection = id;
-    }
-  }
-
-  // ---------------- FILE UPLOAD ------------------
-  onDragOver(ev: DragEvent) {
-    ev.preventDefault();
-    this.isDragging = true;
-  }
-
-  onDragLeave(ev: DragEvent) {
-    this.isDragging = false;
-  }
-
-  onDrop(ev: DragEvent) {
-    ev.preventDefault();
-    this.isDragging = false;
-    if (ev.dataTransfer?.files) this.handleFiles(ev.dataTransfer.files);
-  }
-
-  onFileSelect(event: any) {
-    if (event.target.files) this.handleFiles(event.target.files);
-  }
-
-  removeFile(i: number) {
-    this.uploadedFiles.splice(i, 1);
-  }
-
-  handleFiles(files: FileList) {
-    if (this.uploadedFiles.length + files.length > this.maxFiles) {
-      this.errorMessage = `Max ${this.maxFiles} files allowed.`;
-      return;
-    }
-
-    for (let f of Array.from(files)) {
-      if (f.size > this.maxFileSize) {
-        this.errorMessage = `${f.name} exceeds 1MB limit.`;
-        continue;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+            this.currentStep = index;
+          }
+        }
+      },
+      {
+        threshold: 0.4,
+        root: document.querySelector('.scroll-area')
       }
-      this.uploadedFiles.push(f);
-    }
+    );
+
+    sections.forEach(section => observer.observe(section));
+  }
+
+  // -----------------------------
+  // FIXED: Sidebar route navigation
+  // -----------------------------
+  goTo(section: string) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { section },
+      queryParamsHandling: 'merge'
+    });
+
+    this.activeSection = section;
+
+    // Also scroll
+    setTimeout(() => this.scrollTo(section), 150);
+  }
+
+  // -------------------------------------
+  // FIXED: Smooth scroll by section ID
+  // -------------------------------------
+  scrollTo(id: string) {
+    const target = document.getElementById(id);
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
+  // KEEP OLD NUMBER-BASED SCROLL IF NEEDED
+  scrollToSection(i: number) {
+    const el = document.getElementById(`section-${i}`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }

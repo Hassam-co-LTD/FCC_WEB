@@ -1,0 +1,121 @@
+<form [formGroup]="collectionForm" (ngSubmit)="onSubmit()">
+  <!-- Collection Instructions Accordion -->
+  <div class="accordion-section" id="collection">
+    <div class="accordion-header" (click)="toggleSection('collection')">
+      <h2>Collection Instructions</h2>
+      <span class="arrow" [class.rotate]="activeSection==='collection'">&#9660;</span>
+    </div>
+
+    <div class="accordion-content" *ngIf="activeSection==='collection'">
+
+      <!-- Advice Payment -->
+      <div class="section-block">
+        <h3>Advice Payment</h3>
+        <div class="form-group two-col">
+          <div class="input-field">
+            <label>Advice Payment By <span class="required">*</span></label>
+            <select formControlName="advicePaymentBy">
+              <option *ngFor="let option of advicePaymentOptions" [value]="option.value">
+                {{ option.viewValue }}
+              </option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label>Advice Acceptance and Due Date By</label>
+            <input type="text" placeholder="Select option" formControlName="adviceAcceptanceDate" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Opening Charges -->
+      <div class="section-block">
+        <h3>Opening Charges</h3>
+        <div class="form-group two-col">
+          <div class="input-field">
+            <label><input type="radio" formControlName="openingCharges" value="drawee" /> Drawee</label>
+          </div>
+          <div class="input-field">
+            <label><input type="radio" formControlName="openingCharges" value="drawer" /> Drawer</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outside Country Charges -->
+      <div class="section-block">
+        <h3>Outside Country Charges</h3>
+        <div class="form-group two-col">
+          <div class="input-field">
+            <label><input type="radio" formControlName="outsideCountryCharges" value="drawee" /> Drawee</label>
+          </div>
+          <div class="input-field">
+            <label><input type="radio" formControlName="outsideCountryCharges" value="drawer" /> Drawer</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charges & Protest Checkboxes -->
+      <div class="section-block">
+        <div class="form-group two-col">
+          <div class="input-field">
+            <label><input type="checkbox" formControlName="waiveCharges" /> Waive all the charges if refused by the
+              Drawee</label>
+          </div>
+          <div class="input-field">
+            <label><input type="checkbox" formControlName="protestNonPayment" /> Protest in case of non-payment</label>
+          </div>
+          <div class="input-field">
+            <label><input type="checkbox" formControlName="protestNonAcceptance" /> Protest in case of
+              non-acceptance</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advice Reason of Refusal -->
+      <div class="section-block">
+        <h3>Advice Reason of Refusal</h3>
+        <div class="form-group">
+          <div class="input-field">
+            <label>Advice Reason of Refusal By</label>
+            <select formControlName="adviceReasonRefusal">
+              <!-- <option *ngFor="let reason of adviceRefusalReasons" [value]="reason.value"> -->
+              <option value="Swift">Swift</option>
+              <option value="couriermail">couriermail</option>
+
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deferred Acceptance & Warehouse -->
+      <div class="section-block">
+        <div class="form-group two-col">
+          <div class="input-field">
+            <label><input type="checkbox" formControlName="acceptanceDeferred" /> Acceptance may be deferred pending the
+              arrival of goods</label>
+          </div>
+          <div class="input-field">
+            <label><input type="checkbox" formControlName="warehouseInsurance" /> If necessary, warehouse/insure the
+              goods in case of delay</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Referral -->
+      <div class="section-block">
+        <h3>Referral</h3>
+        <div class="form-group">
+          <div class="input-field">
+            <label>In case of Need Refer To</label>
+            <textarea rows="4" formControlName="referTo"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button
+      <div class="form-actions">
+        <button type="submit">Save Collection Instructions</button>
+      </div> -->
+
+    </div>
+  </div>
+</form>

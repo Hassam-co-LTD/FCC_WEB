@@ -1,0 +1,81 @@
+/* ============================
+   PREVIEW SECTION
+============================ */
+.accordion-section#preview {
+  background: #ffffff;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  .accordion-header {
+    padding: 1rem 1.3rem;
+    background: linear-gradient(90deg, #0b4eb3, #0b4eb3);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .arrow {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .accordion-content {
+    padding: 1.2rem 1.3rem;
+    background: #fff;
+    border-top: 1px solid #d9e4ff;
+    animation: fadeSlideIn 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    pre {
+      background: #f8fbff;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      border: 1px solid #d9e4ff;
+    }
+
+    strong {
+      font-weight: 600;
+      color: #333;
+    }
+
+    ul {
+      list-style: disc inside;
+      margin: 0.5rem 0;
+      padding: 0;
+
+      li {
+        background: #f1f6ff;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+        border: 1px solid #d9e4ff;
+      }
+    }
+  }
+}
+
+/* Reuse fadeSlideIn for accordion content */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

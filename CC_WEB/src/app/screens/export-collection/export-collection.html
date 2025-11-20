@@ -1,188 +1,38 @@
 <div class="export-collection-screen">
-  <div class="content-wrapper">
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <ul class="steps">
-        <li *ngFor="let step of sidebarSteps"
-            [class.active]="activeSection === step.key"
-            (click)="scrollToSection(step.key)">
-          <span class="step-number">{{ step.number }}</span>
-          {{ step.label }}
-        </li>
-      </ul>
-    </aside>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <ul class="steps">
+      <li 
+        *ngFor="let step of steps; let i = index"
+        [class.active]="currentStep === i"
+        (click)="scrollToSection(i)"
+      >
+        <span class="step-number">{{ i + 1 }}</span>
+        <span class="step-label">{{ step.label }}</span>
+      </li>
+    </ul>
+  </aside>
 
-    <!-- Main Content -->
-    <div class="form-container">
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <div class="scroll-area">
 
-      <!-- 1. General Details -->
-      <div class="accordion-section" id="general" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('general')">
-          <h2>General Details</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'general'">&#9662;</span>
-        </div>
+      <!-- SECTIONS -->
+      <section id="section-0"><app-general-details></app-general-details></section>
+      <section id="section-1"><app-drawer-drawee-details></app-drawer-drawee-details></section>
+      <section id="section-2"><app-bank-details></app-bank-details></section>
+      <section id="section-3"><app-payment-amount></app-payment-amount></section>
+      <section id="section-4"><app-shipping-details></app-shipping-details></section>
+      <section id="section-5"><app-licenses></app-licenses></section>
+      <section id="section-6"><app-collection-instructions></app-collection-instructions></section>
+      <section id="section-7"><app-attachments-documents></app-attachments-documents></section>
+      <section id="section-8"><app-preview-section></app-preview-section></section>
 
-        <div class="accordion-content" *ngIf="activeSection === 'general'">
-          <form [formGroup]="ecForm">
-            <div class="row">
-              <div class="col">
-                <label>Collection Type</label>
-                <select formControlName="collectionType">
-                  <option value="regular">Regular</option>
-                  <option value="bankToBank">Bank to Bank</option>
-                  <option value="direct">Direct Customer</option>
-                </select>
-              </div>
-
-              <div class="col">
-                <label>Document Reference</label>
-                <input type="text" formControlName="documentReference" />
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- 2. Drawer and Drawee Details -->
-      <div class="accordion-section" id="drawer" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('drawer')">
-          <h2>Drawer & Drawee Details</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'drawer'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'drawer'">
-          <div class="row">
-            <div class="col">
-              <label>Drawer Name</label>
-              <input type="text" formControlName="drawerName" />
-            </div>
-            <div class="col">
-              <label>Drawee Name</label>
-              <input type="text" formControlName="draweeName" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Bank Details -->
-      <div class="accordion-section" id="bank" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('bank')">
-          <h2>Bank Details</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'bank'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'bank'">
-          <label>Issuing Bank</label>
-          <select formControlName="issuingBank">
-            <option *ngFor="let bank of banks" [value]="bank">{{ bank }}</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 4. Payment and Amount Details -->
-      <div class="accordion-section" id="payment" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('payment')">
-          <h2>Payment & Amount Details</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'payment'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'payment'">
-          <div class="row">
-            <div class="col">
-              <label>Amount</label>
-              <input type="number" formControlName="amount" />
-            </div>
-            <div class="col">
-              <label>Currency</label>
-              <select formControlName="currency">
-                <option value="USD">USD</option>
-                <option value="PKR">PKR</option>
-                <option value="AED">AED</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Shipment Details -->
-      <div class="accordion-section" id="shipment" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('shipment')">
-          <h2>Shipment Details</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'shipment'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'shipment'">
-          <label>Shipment Mode</label>
-          <input type="text" formControlName="shipmentMode" />
-        </div>
-      </div>
-
-      <!-- 6. Licenses -->
-      <div class="accordion-section" id="licenses" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('licenses')">
-          <h2>Licenses</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'licenses'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'licenses'">
-          <label>License Number</label>
-          <input type="text" formControlName="licenseNumber" />
-        </div>
-      </div>
-
-      <!-- 7. Collection Instructions -->
-      <div class="accordion-section" id="instructions" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('instructions')">
-          <h2>Collection Instructions</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'instructions'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'instructions'">
-          <textarea formControlName="collectionInstructions"></textarea>
-        </div>
-      </div>
-
-      <!-- 8. Attachments & Documents -->
-      <div class="accordion-section" id="attachments" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('attachments')">
-          <h2>Attachments & Documents</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'attachments'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'attachments'">
-          <div class="upload-box"
-               (dragover)="onDragOver($event)"
-               (dragleave)="onDragLeave($event)"
-               (drop)="onDrop($event)"
-               [class.dragging]="isDragging">
-            <p><i class="fa fa-cloud-upload cloud-icon"></i></p>
-            <p>Drag & drop files here or <span class="browse-text" (click)="fileInput.click()">browse</span></p>
-            <input type="file" hidden #fileInput (change)="onFileSelect($event)" multiple />
-          </div>
-
-          <ul class="file-list">
-            <li *ngFor="let file of uploadedFiles; let i = index">
-              {{ file.name }}
-              <span class="remove-file" (click)="removeFile(i)">×</span>
-            </li>
-          </ul>
-
-          <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
-        </div>
-      </div>
-
-      <!-- 9. Preview -->
-      <div class="accordion-section" id="preview" #accordionSection>
-        <div class="accordion-header" (click)="toggleSection('preview')">
-          <h2>Preview</h2>
-          <span class="arrow" [class.rotate]="activeSection === 'preview'">&#9662;</span>
-        </div>
-
-        <div class="accordion-content" *ngIf="activeSection === 'preview'">
-          <p>All summary preview will display here.</p>
-        </div>
-      </div>
+      <!-- SUBMIT BUTTON
+      <div class="actions-row">
+        <button type="submit" class="btn-primary">Submit</button>
+      </div> -->
 
     </div>
   </div>

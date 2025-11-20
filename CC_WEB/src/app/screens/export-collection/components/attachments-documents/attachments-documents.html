@@ -1,0 +1,64 @@
+<!-- Attachments & Documents -->
+<div class="accordion-section" id="attachments">
+  <div class="accordion-header" (click)="toggleSection('attachments')">
+    <h2>Attachments & Documents</h2>
+    <span class="arrow" [class.rotate]="activeSection==='attachments'">&#9660;</span>
+  </div>
+
+  <div class="accordion-content" *ngIf="activeSection==='attachments'">
+
+    <!-- Drag & Drop Upload -->
+    <div class="upload-box" [class.dragging]="isDragging" (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+      <i class="cloud-icon">&#9729;</i>
+      <div class="upload-text">Drag & Drop files here</div>
+      <div class="browse-text">or Browse</div>
+      <div class="hint">Max 5 files, 1MB each</div>
+      <input type="file" multiple (change)="onFileSelect($event)" hidden />
+    </div>
+
+    <!-- Uploaded Files List -->
+    <ul class="file-list">
+      <li *ngFor="let f of uploadedFiles; let i=index">
+        {{f.name}}
+        <button type="button" (click)="removeFile(i)">Remove</button>
+      </li>
+    </ul>
+
+    <!-- Document List -->
+    <div class="document-list">
+      <div class="form-group two-col" *ngFor="let doc of documents; let i=index">
+
+        <!-- Document Name & Type -->
+        <div class="input-field">
+          <label>Document Name & Type<span class="required">*</span></label>
+          <select [(ngModel)]="doc.type">
+            <option value="">Select Type</option>
+            <option value="airwayBill">Airway Bill</option>
+            <option value="billOfLading">Bill of Lading</option>
+          </select>
+        </div>
+
+        <!-- Attachment (searchable/selectable) -->
+        <div class="input-field">
+          <label>Attachment<span class="required">*</span></label>
+          <div class="attachment-field">
+            <input type="text" [value]="doc.attachment" placeholder="Search or select file" readonly />
+            <button type="button" (click)="selectAttachment(i)">📎</button>
+          </div>
+        </div>
+
+        <!-- Document Date -->
+        <div class="input-field">
+          <label>Document Date<span class="required">*</span></label>
+          <input type="date" [(ngModel)]="doc.date" />
+        </div>
+
+      </div>
+
+      <!-- <button type="button" class="btn-add" (click)="addDocument()">+ Add Document</button>
+    </div> -->
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>
