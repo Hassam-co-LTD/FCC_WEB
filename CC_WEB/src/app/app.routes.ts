@@ -68,6 +68,27 @@ export const routes: Routes = [
                                 './screens/undertaking-issuance/components/application-beneficiary/application-beneficiary'
                             ).then((m) => m.ApplicationBeneficiary),
                     },
+                    {
+                        path: 'bank-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/undertaking-issuance/components/bank-details/bank-details'
+                            ).then((m) => m.BankDetails),
+                    },
+                    {
+                        path: 'undertaking-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/undertaking-issuance/components/undertaking-details/undertaking-details'
+                            ).then((m) => m.UndertakingDetails),
+                    },
+                    {
+                        path: 'instruction-bank',
+                        loadComponent: () =>
+                            import(
+                                './screens/undertaking-issuance/components/instructions-bank/instructions-bank'
+                            ).then((m) => m.InstructionsBank),
+                    },
                 ],
             },
 

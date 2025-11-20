@@ -1,12 +1,4 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-
 import { GeneralDetails } from "./components/general-details/general-details";
 import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
 import { BankDetails } from './components/bank-details/bank-details';
