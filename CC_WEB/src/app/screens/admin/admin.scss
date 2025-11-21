@@ -1,0 +1,174 @@
+@use '../../../styles/theme' as theme;
+
+/* Admin Container */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif; // since no font defined in theme
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: theme.$primary-color;
+    border-right: 1px solid theme.$sidebar-border;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+
+    .sidebar-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: theme.$white;
+      margin-bottom: theme.$gap-default;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 1rem;
+
+        a {
+          text-decoration: none;
+          color: theme.$white;
+          font-weight: 500;
+          padding: 0.5rem 0.75rem;
+          display: block;
+          border-radius: theme.$radius-default;
+          transition: all 0.3s;
+
+          &:hover,
+          &.active {
+            background-color: theme.$sidebar-hover-bg;
+            color: theme.$primary-color;
+          }
+        }
+
+        .submenu {
+          list-style: none;
+          padding-left: theme.$gap-default / 2;
+          margin-top: theme.$gap-default / 4;
+
+          li {
+            margin-bottom: theme.$gap-default / 4;
+
+            a {
+              font-size: 0.9rem;
+              color: theme.$white;
+              padding: 0.3rem 0.5rem;
+              display: block;
+              border-radius: theme.$radius-default;
+
+              &:hover,
+              &.active {
+                background-color: theme.$submenu-hover-bg;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding: theme.$gap-default;
+    background: theme.$screen-bg;
+    display: flex;
+    flex-direction: column;
+
+    /* Stats Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: theme.$gap-default;
+      margin: theme.$gap-default 0;
+
+      .stat-card {
+        padding: 1rem 1.25rem;
+        background: theme.$white;
+        border-radius: theme.$radius-large;
+        box-shadow: 0 4px 10px theme.$primary-shadow;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 18px theme.$primary-shadow;
+        }
+
+        h3 {
+          font-size: 1rem;
+          color: theme.$primary-color;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: theme.$primary-color;
+        }
+      }
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: theme.$gap-default;
+      margin-bottom: theme.$gap-default;
+
+      button {
+        background-color: theme.$primary-btn-bg;
+        color: theme.$white;
+        font-weight: 600;
+        border-radius: theme.$radius-default;
+        padding: 0.65rem 1.2rem;
+        box-shadow: 0 4px 10px theme.$primary-btn-shadow;
+        transition: background 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: theme.$primary-btn-hover-bg;
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-container {
+    flex-direction: column;
+
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      padding: 1rem;
+
+      .sidebar-menu {
+        display: flex;
+        gap: theme.$gap-default;
+
+        li {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .main-content {
+      padding: 1.5rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+}

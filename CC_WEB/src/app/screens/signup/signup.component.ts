@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -18,6 +18,7 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatButtonModule,
     MatCardModule,
+    MatSelectModule
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
@@ -27,17 +28,20 @@ export class SignupComponent {
   email = '';
   password = '';
 
+  // ✅ Added userType
+  userType = '';
+
   constructor(private router: Router) {}
 
   onSignup() {
-    console.log('Signup attempt:', this.name, this.email, this.password);
+    console.log(
+      'Signup attempt:',
+      this.name,
+      this.email,
+      this.password,
+      this.userType
+    );
 
-    // TODO: replace with real API call
-    if (this.name && this.email && this.password) {
-      alert('Signup successful! Now redirecting to login...');
-      this.router.navigate(['/login']);
-    } else {
-      alert('Please fill all fields');
-    }
+   
   }
 }

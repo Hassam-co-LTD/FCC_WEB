@@ -1,0 +1,20 @@
+<div class="admin-header">
+  <!-- Left: Logo or Brand -->
+  <div class="header-left">
+    <img src="assets/logo.png" alt="Admin Logo" class="logo" />
+  </div>
+
+  <!-- Center: Navigation Links -->
+  <div class="header-center">
+    <a routerLink="/customers" routerLinkActive="active-link">Customers</a>
+    <a routerLink="/users" routerLinkActive="active-link">Users</a>
+  </div>
+
+  <!-- Right: User/Profile -->
+  <div class="header-right">
+    <div class="user-profile">
+      <mat-icon class="user-icon">account_circle</mat-icon>
+      <span class="user-name">{{ userName }}</span>
+    </div>
+  </div>
+</div>

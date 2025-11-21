@@ -2,8 +2,16 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 
 export const routes: Routes = [
+    
     // Default redirect to login
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', redirectTo: 'signup', pathMatch: 'full' },
+    // my working 
+   {
+        path: 'admin',
+        loadComponent: () =>
+            import('./screens/admin/admin').then((m) => m.AdminComponent),
+    },
+
 
     // Auth routes
     {
@@ -11,10 +19,11 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/login/login.component').then((m) => m.LoginComponent),
     },
-    {
+    { 
         path: 'signup',
         loadComponent: () =>
-            import('./screens/signup/signup.component').then((m) => m.SignupComponent),
+            import('./screens/admin-login/admin-login').then((m) => 
+             m.AdminLogin),
     },
 
     // Protected routes (with layout)

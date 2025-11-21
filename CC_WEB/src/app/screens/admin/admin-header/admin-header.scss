@@ -1,0 +1,71 @@
+@use '../../../../styles/theme' as theme;
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: theme.$gap-default theme.$gap-default * 2;
+  background-color: theme.$white;
+  border-bottom: 1px solid theme.$border-light;
+  box-shadow: theme.$shadow-primary;
+  font-family: 'Poppins', sans-serif;
+
+  .header-left {
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+  .header-center {
+    display: flex;
+    gap: theme.$gap-default * 2;
+
+    a {
+      text-decoration: none;
+      color: theme.$primary-color;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: theme.$gap-default / 4 theme.$gap-default / 2;
+      border-radius: theme.$radius-default;
+      transition: all 0.3s;
+
+      &.active-link,
+      &:hover {
+        background-color: theme.$hover-bg;
+        color: theme.$primary-dark;
+      }
+    }
+  }
+
+  .header-right {
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: theme.$gap-default / 4;
+
+      .user-icon {
+        font-size: 2rem;
+        color: theme.$primary-color;
+      }
+
+      .user-name {
+        font-weight: 500;
+        color: theme.$text-dark;
+      }
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: theme.$gap-default / 2;
+    justify-content: center;
+
+    .header-center {
+      gap: theme.$gap-default;
+      flex-wrap: wrap;
+    }
+  }
+}

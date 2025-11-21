@@ -1,5 +1,4 @@
-// Example: login.component.scss is in src/app/screens/login/
-@use '../../../styles/_theme.scss' as theme; // ✅ correct relative path
+@use '../../../styles/theme' as theme;
 
 .auth-container {
   display: flex;
@@ -8,35 +7,37 @@
   min-height: 100vh;
   background: linear-gradient(135deg, theme.$screen-bg 0%, theme.$light-bg 100%);
   font-family: 'Poppins', sans-serif;
-  padding: 1.5rem;
+  padding: theme.$gap-default;
 
   mat-card {
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
+    max-height: 90vh; // increased form height
     background: theme.$white;
     border: 1px solid theme.$border-light;
     box-shadow: theme.$shadow-primary;
     border-radius: theme.$radius-large;
-    padding: 2.5rem 2rem;
+    padding: theme.$gap-default 0.75 * theme.$gap-default;
     text-align: center;
     transition: all 0.3s ease-in-out;
+    overflow-y: auto;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(11, 78, 179, 0.15);
+      box-shadow: 0 8px 18px theme.$primary-shadow;
     }
 
     h2 {
-      font-size: 1.75rem;
+      font-size: 1.5rem; // slightly larger
       color: theme.$primary;
-      margin-bottom: 1.5rem;
+      margin-bottom: theme.$gap-default / 2;
       font-weight: 600;
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: theme.$gap-default; // increased spacing between fields
 
       .full-width {
         width: 100%;
@@ -44,14 +45,17 @@
 
       mat-form-field {
         width: 100%;
+        --mat-form-field-container-height: 48px; // increased height
+        --mat-form-field-container-vertical-padding: 4px; // adjusted padding
+        --mat-form-field-container-text-font-size: 1rem; // larger font
 
         ::ng-deep .mat-mdc-text-field-wrapper {
-          background-color:theme.$light-bg;
+          background-color: theme.$light-bg;
           border-radius: theme.$radius-default;
           transition: border-color 0.2s ease;
 
           &:hover {
-            border-color:theme.$border-primary;
+            border-color: theme.$border-primary;
           }
         }
 
@@ -60,17 +64,18 @@
         }
 
         input {
-          font-size: 0.95rem;
+          font-size: 1rem; // increased font size
           color: theme.$text-dark;
         }
       }
 
       button {
-        background-color:theme.$primary-btn;
+        background-color: theme.$primary-btn;
         color: theme.$text-light;
         font-weight: 600;
-        border-radius:theme.$radius-default;
-        padding: 0.75rem 0;
+        border-radius: theme.$radius-default;
+        padding: 0.6rem 0; // slightly taller
+        font-size: 0.95rem; // slightly larger font
         box-shadow: theme.$button-shadow;
         transition: background 0.3s ease, transform 0.2s ease;
 
@@ -86,9 +91,9 @@
     }
 
     p {
-      margin-top:1.25rem;
+      margin-top: theme.$gap-default / 2;
       color: theme.$text-medium;
-      font-size: 0.9rem;
+      font-size: 0.9rem; // slightly larger
 
       a {
         color: theme.$primary;
@@ -108,10 +113,10 @@
 /* Small screen optimization */
 @media (max-width: 480px) {
   .auth-container mat-card {
-    padding: 2rem 1.25rem;
+    padding: 0.75 * theme.$gap-default 0.5 * theme.$gap-default;
   }
 
   .auth-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem; // slightly larger for small screens
   }
 }

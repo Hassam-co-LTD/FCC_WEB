@@ -1,0 +1,63 @@
+<app-admin-header></app-admin-header>
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2 class="sidebar-title">Admin Panel</h2>
+    <ul class="sidebar-menu">
+      <li>
+        <a href="javascript:void(0)" (click)="toggleUsersMenu()" 
+           [class.active]="usersMenuOpen">
+          Customers
+        </a>
+        <ul class="submenu" *ngIf="usersMenuOpen">
+          <li><a routerLink="/users/create" routerLinkActive="active">Create New</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="javascript:void(0)" (click)="toggleCustomersMenu()" 
+           [class.active]="customersMenuOpen">
+          Users
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <h3>Total Users</h3>
+        <p>1,245</p>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <h3>Active Sessions</h3>
+        <p>87</p>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <h3>Pending Requests</h3>
+        <p>12</p>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <h3>Reports Generated</h3>
+        <p>54</p>
+      </mat-card>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="action-buttons">
+      <button mat-raised-button color="primary">Manage Users</button>
+      <button mat-raised-button color="primary">View Reports</button>
+      <button mat-raised-button color="primary">System Settings</button>
+    </div>
+
+    <!-- Router Outlet -->
+    <!-- <router-outlet></router-outlet> -->
+  </div>
+</div>
+
+
+<router-outlet></router-outlet>

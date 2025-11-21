@@ -1,4 +1,4 @@
-@import '../../../styles/_theme.scss';
+@use '../../../styles/theme' as *;
 
 .auth-container {
   display: flex;
@@ -11,14 +11,16 @@
 
   mat-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 380px;        // reduced width
+    max-height: 85vh;        // reduced height
     background: $white;
     border: 1px solid $border-light;
     box-shadow: $shadow-primary;
     border-radius: $radius-large;
-    padding: 2.5rem 2rem;
+    padding: 1.5rem 1.2rem;  // reduced padding
     text-align: center;
     transition: all 0.3s ease-in-out;
+    overflow-y: auto;        // allow scroll if content exceeds height
 
     &:hover {
       transform: translateY(-3px);
@@ -26,16 +28,16 @@
     }
 
     h2 {
-      font-size: 1.75rem;
+      font-size: 1.4rem;     // smaller title
       color: $primary;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       font-weight: 600;
     }
 
     form {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 0.6rem;           // reduced field spacing
 
       .full-width {
         width: 100%;
@@ -43,6 +45,9 @@
 
       mat-form-field {
         width: 100%;
+        --mat-form-field-container-height: 40px;     // smaller input height
+        --mat-form-field-container-vertical-padding: 2px;
+        --mat-form-field-container-text-font-size: 0.8rem;
 
         ::ng-deep .mat-mdc-text-field-wrapper {
           background-color: $light-bg;
@@ -59,7 +64,7 @@
         }
 
         input {
-          font-size: 0.95rem;
+          font-size: 0.8rem;    // smaller text
           color: $text-dark;
         }
       }
@@ -69,7 +74,8 @@
         color: $text-light;
         font-weight: 600;
         border-radius: $radius-default;
-        padding: 0.75rem 0;
+        padding: 0.5rem 0;      // smaller button height
+        font-size: 0.85rem;
         box-shadow: $button-shadow;
         transition: background 0.3s ease, transform 0.2s ease;
 
@@ -85,9 +91,9 @@
     }
 
     p {
-      margin-top: 1.25rem;
+      margin-top: 0.8rem;       // smaller spacing
       color: $text-medium;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
 
       a {
         color: $primary;
@@ -107,10 +113,10 @@
 /* Small screen optimization */
 @media (max-width: 480px) {
   .auth-container mat-card {
-    padding: 2rem 1.25rem;
+    padding: 1.2rem 1rem;
   }
 
   .auth-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 }

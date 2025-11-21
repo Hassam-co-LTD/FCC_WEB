@@ -1,0 +1,30 @@
+<div class="auth-container">
+  <mat-card>
+    <h2>Login</h2>
+    <form [formGroup]="adminFormData" (ngSubmit)="onSubmit()">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>ID</mat-label>
+        <input placeholder="Enter ID" matInput formControlName="id" type="text" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Company ID</mat-label>
+        <input placeholder="Enter Company ID" matInput formControlName="c_id" type="text" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input placeholder="Enter Password" matInput formControlName="passw" type="password" required />
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" class="full-width" type="submit">
+        Login
+      </button>
+    </form>
+    <p>
+      Don’t have an account?
+      <a routerLink="/signup">Sign up</a>
+    </p>
+  </mat-card>
+</div>
