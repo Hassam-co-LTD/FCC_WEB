@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ElementRef, QueryList, ViewChildren, OnChanges, SimpleChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-
 
 @Component({
   selector: 'app-sidebar',
@@ -10,15 +9,26 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
 })
-export class Sidebar {
+export class Sidebar implements AfterViewInit, OnChanges {
+
   collapsed = false;
 
   @Input() currentStep = 0;
-
-  // Dynamic steps injected from parent
   @Input() steps: { label: string }[] = [];
 
   @Output() stepChange = new EventEmitter<number>();
+
+  @ViewChildren('stepItem') stepItems!: QueryList<ElementRef>;
+
+  ngAfterViewInit() {
+    this.scrollActiveIntoView();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentStep']) {
+      setTimeout(() => this.scrollActiveIntoView(), 50);
+    }
+  }
 
   scrollTo(i: number) {
     this.stepChange.emit(i);
@@ -30,6 +40,19 @@ export class Sidebar {
 
   isCollapsed(): boolean {
     return this.collapsed;
+  }
+
+  /** 🔥 AUTO SCROLL ACTIVE ITEM INTO VIEW */
+  private scrollActiveIntoView() {
+    if (!this.stepItems) return;
+
+    const item = this.stepItems.toArray()[this.currentStep];
+    if (item) {
+      item.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
   }
 }
 

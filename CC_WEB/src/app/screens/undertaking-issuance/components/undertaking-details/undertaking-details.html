@@ -4,8 +4,8 @@
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE -->
-<div class="collapsible" [class.open]="isOpen" [formGroup]="undertakingForm">
+<!-- COLLAPSIBLE FORM -->
+<form class="collapsible" [class.open]="isOpen" [formGroup]="undertakingdetails">
 
     <!-- TYPE & CATEGORY -->
     <h4>Type and Category</h4>
@@ -117,24 +117,24 @@
     </mat-radio-group>
 
     <!-- CONTRACT INFO -->
-    <h4>Contract Information</h4>
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
+    <!-- <h4>Contract Information</h4> -->
+    <!-- <div class="form-grid"> -->
+    <!-- <mat-form-field appearance="outline">
             <mat-label>Contract Type</mat-label>
             <mat-select formControlName="contractType">
                 <mat-option value="sale">Sale</mat-option>
                 <mat-option value="service">Service</mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
 
-        <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
             <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
             <mat-datepicker-toggle matSuffix [for]="ctDate"></mat-datepicker-toggle>
             <mat-datepicker #ctDate></mat-datepicker>
-        </mat-form-field>
+        </mat-form-field> -->
 
-        <mat-form-field appearance="outline">
+    <!-- <mat-form-field appearance="outline">
             <mat-label>Contract Currency</mat-label>
             <mat-select formControlName="contractCurrency">
                 <mat-option value="USD">USD</mat-option>
@@ -149,13 +149,13 @@
         <mat-form-field appearance="outline">
             <mat-label>Percentage Covered</mat-label>
             <input matInput type="number" formControlName="percentageCovered" />
-        </mat-form-field>
+        </mat-form-field> -->
 
-        <mat-form-field appearance="outline">
-            <mat-label>Contract Reference</mat-label>
+    <!-- <mat-form-field appearance="outline">
+            <mat-label>Contract Narrative</mat-label>
             <input matInput formControlName="contractReference" />
-        </mat-form-field>
-    </div>
+        </mat-form-field> -->
+    <!-- </div> -->
 
     <!-- APPLICABLE RULES -->
     <h4>Applicable Rules</h4>
@@ -241,4 +241,4 @@
         <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
     </mat-form-field>
 
-</div>
+</form>

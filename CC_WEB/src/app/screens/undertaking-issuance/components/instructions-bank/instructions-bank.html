@@ -8,33 +8,30 @@
 <div class="collapsible" [class.open]="isOpen" [formGroup]="instructionsForm">
 
     <!-- Delivery Type & Mode -->
-    <div class="form-grid-2">
-        <!-- Delivery of Original Undertaking -->
-        <div class="field-group">
-            <h4>Delivery of Original Undertaking</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Delivery Type</mat-label>
-                <mat-select formControlName="deliveryType">
-                    <mat-option value="">Select</mat-option>
-                    <mat-option value="original">Delivery of Original Undertaking</mat-option>
-                    <mat-option value="copy">Copy</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
 
-        <!-- Mode of Delivery -->
-        <div class="field-group">
-            <h4>Mode of Delivery</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Delivery Mode</mat-label>
-                <mat-select formControlName="deliveryMode">
-                    <mat-option value="">Select Mode</mat-option>
-                    <mat-option value="courier">Courier</mat-option>
-                    <mat-option value="pickup">Pick Up</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+    <!-- Delivery of Original Undertaking -->
+
+    <h4>Delivery of Original Undertaking & Mode of Delivery</h4>
+    <div class="form-grid-2">
+        <mat-form-field appearance="outline">
+            <mat-label>Delivery Type</mat-label>
+            <mat-select formControlName="deliveryType">
+                <mat-option value="">Select</mat-option>
+                <mat-option value="original">Delivery of Original Undertaking</mat-option>
+                <mat-option value="copy">Copy</mat-option>
+            </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field appearance="outline">
+            <mat-label>Delivery Mode</mat-label>
+            <mat-select formControlName="deliveryMode">
+                <mat-option value="">Select Mode</mat-option>
+                <mat-option value="courier">Courier</mat-option>
+                <mat-option value="pickup">Pick Up</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
+
 
     <!-- Delivery To -->
     <h4>Delivery To</h4>
@@ -47,42 +44,35 @@
     </mat-radio-group>
 
     <!-- Accounts -->
-    <div class="form-grid-2">
-        <!-- Principal Account -->
-        <div class="field-group">
-            <h4>Principal Account</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Principal Account</mat-label>
-                <mat-select formControlName="principalAccount">
-                    <mat-option value="">Select Account</mat-option>
-                    <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+    <!-- <div class="form-grid-2"> -->
+    <!-- Principal Account -->
+<h4>Accounts</h4>
+<div class="form-grid-2">
+    <mat-form-field appearance="outline">
+        <mat-label>Principal Account</mat-label>
+        <mat-select formControlName="principalAccount">
+            <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
+        </mat-select>
+    </mat-form-field>
 
-        <!-- Fee Account -->
-        <div class="field-group">
-            <h4>Fee Account</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Fee Account</mat-label>
-                <mat-select formControlName="feeAccount">
-                    <mat-option value="">Select Fee Account</mat-option>
-                    <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-    </div>
+    <mat-form-field appearance="outline">
+        <mat-label>Fee Account</mat-label>
+        <mat-select formControlName="feeAccount">
+            <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
 
     <!-- Other Instructions -->
-    <div class="field-group full">
-        <h4>Other Instructions</h4>
-        <mat-form-field appearance="outline" class="full">
-            <textarea matInput formControlName="otherInstructions" maxlength="210"
-                placeholder="Type your instructions..."></textarea>
-        </mat-form-field>
-        <div class="char-count">
-            {{ instructionsForm.get('otherInstructions')?.value?.length || 0 }}/210
-        </div>
+
+    <h4>Other Instructions</h4>
+    <mat-form-field appearance="outline" class="full">
+        <textarea matInput formControlName="otherInstructions" maxlength="210"
+            placeholder="Type your instructions..."></textarea>
+    </mat-form-field>
+    <div class="char-count">
+        {{ instructionsForm.get('otherInstructions')?.value?.length || 0 }}/210
     </div>
+
 
 </div>

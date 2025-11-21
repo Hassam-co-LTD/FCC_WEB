@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,9 +25,9 @@ import { MatButtonModule } from '@angular/material/button';
 export class NarrativeDetails {
   isOpen = true;
   activeTabIndex = 0;
-  narrativeForm: FormGroup;
+  narrativeForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private el: ElementRef) {
     this.narrativeForm = this.fb.group({
       descriptionOfGoods: ['', [Validators.required, Validators.maxLength(6500)]],
       documentsRequired: ['', [Validators.required, Validators.maxLength(6500)]],

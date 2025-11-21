@@ -23,7 +23,7 @@ import { MatInputModule } from '@angular/material/input';
   ]
 })
 export class InstructionsBank implements OnInit {
-  isOpen = false;
+  isOpen = true;
 
   // FormGroup for reactive form
   

@@ -5,7 +5,8 @@
     </button>
 
     <ul>
-        <li *ngFor="let s of steps; let i = index" [class.active]="i === currentStep" (click)="scrollTo(i)">
+        <li #stepItem *ngFor="let s of steps; let i = index" [class.active]="i === currentStep" (click)="scrollTo(i)">
+
             <span class="num">{{ i + 1 }}</span>
             <span class="label">{{ s.label }}</span>
         </li>

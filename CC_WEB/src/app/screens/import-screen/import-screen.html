@@ -1,12 +1,11 @@
 <div class="screen">
     <!-- Sidebar -->
-        <app-sidebar [steps]="importSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
-        </app-sidebar>
+    <app-sidebar [steps]="importSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+    </app-sidebar>
     <!-- Main Content -->
     <div class="content">
         <div class="scroll-area">
 
-            <div>
             <section id="section-0"><app-general-details></app-general-details></section>
             <hr class="section-divider" />
 
@@ -24,21 +23,20 @@
 
             <section id="section-5"><app-shipment-details></app-shipment-details></section>
             <hr class="section-divider" />
-            
+
             <section id="section-6"><app-narrative-details></app-narrative-details></section>
             <hr class="section-divider" />
-            
+
             <section id="section-7"><app-licenses></app-licenses></section>
             <hr class="section-divider" />
-            
+
             <section id="section-8"><app-instruction-to-bank></app-instruction-to-bank></section>
             <hr class="section-divider" />
-            
+
             <section id="section-9"><app-attachments></app-attachments></section>
             <hr class="section-divider" />
-            
+
             <section id="section-10"><app-preview></app-preview></section>
-            </div>
 
             <!-- Footer Buttons -->
             <div class="actions">
