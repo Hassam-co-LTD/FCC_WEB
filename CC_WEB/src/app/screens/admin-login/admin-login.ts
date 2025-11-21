@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class AdminLogin {
 
-  private router = inject(Router); // <-- use inject instead of constructor
+  constructor(private router: Router) {}
 
   adminFormData = new FormGroup({
     id: new FormControl(),
@@ -32,19 +32,43 @@ export class AdminLogin {
     passw: new FormControl()
   });
 
-  data: any = {
-    adminId: 123,
-    adminPassword: "ameen123",
-    adminCompanyId: "info123"
-  };
+  data: any = [
+    {
+      adminId: 123,
+      adminPassword: "ameen123",
+      adminCompanyId: "info123"
+    },
+    {
+      userId: 1234,
+      userPassword: "ameen123",
+      userCompanyId: "info123"
+    }
+  ];
 
   onSubmit() {
     const { id, c_id, passw } = this.adminFormData.value;
 
-    if (id == this.data.adminId && c_id == this.data.adminCompanyId && passw === this.data.adminPassword) {
+    // ADMIN LOGIN
+    if (
+      id == this.data[0].adminId &&
+      c_id == this.data[0].adminCompanyId &&
+      passw === this.data[0].adminPassword
+    ) {
       this.router.navigate(['/admin']);
-    } else {
-      this.router.navigate(['/dashboard']);
+      return;
     }
+
+    // USER LOGIN
+    if (
+      id == this.data[1].userId &&
+      c_id == this.data[1].userCompanyId &&
+      passw === this.data[1].userPassword
+    ) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
+    // INVALID LOGIN
+    alert("Invalid Credentials!");
   }
 }
