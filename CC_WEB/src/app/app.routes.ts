@@ -121,7 +121,7 @@ export const routes: Routes = [
                 path: 'undertaking-issuance/amend',
                 loadComponent: () =>
                     import(
-                        './screens/undertaking-issuance/amend-import/amend'
+                        './screens/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
                     ).then((m) => m.AmendScreen),
             },
 

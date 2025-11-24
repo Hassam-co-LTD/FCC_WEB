@@ -8,78 +8,67 @@
         <!-- Sidebar -->
         <aside class="sidebar" [class.collapsed]="isCollapsed()">
 
+            <!-- Toggle Button -->
             <button class="toggle-btn" (click)="toggleSidebar()">
                 <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
             </button>
 
+            <!-- Menu -->
             <nav>
-                <a routerLink="/dashboard" routerLinkActive="active-link">
-                    <mat-icon>dashboard</mat-icon>
-                    <span *ngIf="!isCollapsed()">Dashboard</span>
-                </a>
+                <ng-container *ngFor="let item of menuItems">
 
-                <!-- Trade Services Collapsible Menu -->
-                <div class="menu-group" [class.open]="tradeMenuOpen">
-                    <button class="menu-btn" (click)="toggleTradeMenu()">
-                        <mat-icon>article</mat-icon>
-                        <span *ngIf="!isCollapsed()">Trade Services</span>
-                        <mat-icon class="arrow" *ngIf="!isCollapsed()">
-                            {{ tradeMenuOpen ? 'expand_less' : 'expand_more' }}
-                        </mat-icon>
-                    </button>
+                    <!-- Menu with children -->
+                    <div *ngIf="item.children?.length" class="menu-group">
 
-                    <div class="submenu" *ngIf="tradeMenuOpen && !isCollapsed()">
-
-                        <!-- Import LC Dropdown -->
-                        <div class="submenu-item" [class.open]="importLcOpen">
-                            <button type="button" (click)="toggleImportLcMenu()" [routerLink]="['/import-welcome']"
-                                routerLinkActive="active-link">
-                                Import LC
-                                <mat-icon class="arrow">
-                                    {{ importLcOpen ? 'expand_less' : 'expand_more' }}
-                                </mat-icon>
-                            </button>
-
-                            <div class="nested-submenu" *ngIf="importLcOpen">
-                                <button type="button" [routerLink]="['/import-screen']"
-                                    routerLinkActive="active-sub">Create</button>
-                                <button type="button" [routerLink]="['/import-screen/amend']"
-                                    routerLinkActive="active-sub">Amend</button>
-                            </div>
-                        </div>
-
-                        <!-- Export LC -->
-                        <button type="button" [routerLink]="['/export-screen']" routerLinkActive="active-sub">
-                            Export LC
+                        <!-- Parent Button -->
+                        <button class="menu-btn" [routerLink]="item.route" routerLinkActive="active-link"
+                            (click)="toggleMenu(item)">
+                            <mat-icon>{{ item.icon }}</mat-icon>
+                            <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+                            <mat-icon class="arrow" *ngIf="!isCollapsed()">
+                                {{ item.open ? 'expand_less' : 'expand_more' }}
+                            </mat-icon>
                         </button>
 
-                        <!-- Undertaking Issuance Dropdown -->
-                        <div class="submenu-item" [class.open]="undertakingOpen">
-                            <button type="button" (click)="toggleUndertakingMenu()"
-                                [routerLink]="['/undertaking-welcome']" routerLinkActive="active-link">
-                                Undertaking issuance
-                                <mat-icon class="arrow">
-                                    {{ undertakingOpen ? 'expand_less' : 'expand_more' }}
-                                </mat-icon>
-                            </button>
+                        <!-- Submenu -->
+                        <div class="submenu" *ngIf="item.open && !isCollapsed()">
+                            <ng-container *ngFor="let child of item.children">
 
-                            <div class="nested-submenu" *ngIf="undertakingOpen">
-                                <button type="button" [routerLink]="['/undertaking-issuance']"
-                                    routerLinkActive="active-sub">Create</button>
-                                <button type="button" [routerLink]="['/undertaking-issuance/amend']"
-                                    routerLinkActive="active-sub">Amend</button>
-                            </div>
+                                <!-- Nested child with its own submenu -->
+                                <div *ngIf="child.children?.length" class="submenu-item">
+                                    <button type="button" [routerLink]="child.route" routerLinkActive="active-link"
+                                        (click)="toggleMenu(child)">
+                                        {{ child.label }}
+                                        <mat-icon class="arrow">{{ child.open ? 'expand_less' : 'expand_more'
+                                            }}</mat-icon>
+                                    </button>
+
+                                    <div class="nested-submenu" *ngIf="child.open">
+                                        <button *ngFor="let sub of child.children" [routerLink]="sub.route"
+                                            routerLinkActive="active-sub">
+                                            {{ sub.label }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Single child -->
+                                <button *ngIf="!child.children" [routerLink]="child.route"
+                                    routerLinkActive="active-sub">
+                                    {{ child.label }}
+                                </button>
+
+                            </ng-container>
                         </div>
-
                     </div>
-                </div>
 
-                <a routerLink="/settings" routerLinkActive="active-link">
-                    <mat-icon>settings</mat-icon>
-                    <span *ngIf="!isCollapsed()">Settings</span>
-                </a>
+                    <!-- Single menu -->
+                    <a *ngIf="!item.children" [routerLink]="item.route" routerLinkActive="active-link">
+                        <mat-icon>{{ item.icon }}</mat-icon>
+                        <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+                    </a>
+
+                </ng-container>
             </nav>
-
         </aside>
 
         <!-- Main Content -->
@@ -88,5 +77,4 @@
         </main>
 
     </div>
-
 </div>
