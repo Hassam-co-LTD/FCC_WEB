@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-undertaking-details',
@@ -21,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatRadioModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatIconModule,
     MatButtonModule
   ],
@@ -72,21 +74,21 @@ export class UndertakingDetails {
       // contractReference: [''],
 
       // APPLICABLE RULES
-      applicableRules: [null, Validators.required],
+      applicableRules: ['none', Validators.required],
 
       // GOVERNING LAWS
-      governinglawsType: [null],
+      governinglawsType: [''],
       subdivision: [''],
       jurisdiction: [''],
 
       // DEMAND INDICATOR
-      DemandOption: [null],
+      DemandOption: [''],
 
       // TEXT STANDARD
-      tsOption: [null],
+      tsOption: [''],
 
       // LANGUAGE
-      languageType: [null],
+      languageType: [''],
 
       // TEXT FIELDS
       textofundertakingInfo: [''],

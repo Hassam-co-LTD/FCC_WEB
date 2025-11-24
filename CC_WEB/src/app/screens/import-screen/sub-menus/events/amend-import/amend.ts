@@ -8,17 +8,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Reuse same components
-import { GeneralDetails } from '../../../components/general-details/general-details';
-import { ApplicantBeneficiary } from '../../../components/applicant-beneficiary/applicant-beneficiary';
-import { BankDetails } from '../../../components/bank-details/bank-details';
-import { AmountChargeDetails } from '../../../components/amount-charge-details/amount-charge-details';
-import { PaymentDetails } from '../../../components/payment-details/payment-details';
-import { ShipmentDetails } from '../../../components/shipment-details/shipment-details';
-import { NarrativeDetails } from '../../../components/narrative-details/narrative-details';
-import { Licenses } from '../../../components/licenses/licenses';
-import { InstructionToBank } from '../../../components/instruction-to-bank/instruction-to-bank';
-import { Attachments } from '../../../components/attachments/attachments';
-import { Preview } from '../../../components/preview/preview';
+import { GeneralDetails } from '../amend-import/components/general-details/general-details';
+import { ApplicantBeneficiary } from '../amend-import/components/applicant-beneficiary/applicant-beneficiary';
+import { BankDetails } from '../amend-import/components/bank-details/bank-details';
+import { AmountChargeDetails } from '../amend-import/components/amount-charge-details/amount-charge-details';
+import { PaymentDetails } from '../amend-import/components/payment-details/payment-details';
+import { ShipmentDetails } from '../amend-import/components/shipment-details/shipment-details';
+import { NarrativeDetails } from '../amend-import/components/narrative-details/narrative-details';
+import { Licenses } from '../amend-import/components/licenses/licenses';
+import { InstructionToBank } from '../amend-import/components/instruction-to-bank/instruction-to-bank';
+import { Attachments } from '../amend-import/components/attachments/attachments';
+import { Preview } from '../amend-import/components/preview/preview';
 import { Sidebar } from '../../../../../core/sidebar/sidebar';
 
 @Component({
@@ -52,7 +52,7 @@ export class AmendScreen implements AfterViewInit {
 
   currentStep = 0;
 
-  steps = [
+  amendimportSteps = [
     { label: "General Details" },
     { label: "Applicant Details" },
     { label: "Bank Details" },
@@ -66,8 +66,65 @@ export class AmendScreen implements AfterViewInit {
     { label: "Preview" }
   ];
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
+
+      const observer = new IntersectionObserver(
+        entries => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = index;
+            }
+          }
+        },
+        {
+          threshold: 0.4,
+          root: document.querySelector('.scroll-area')
+        }
+      );
+
+      sections.forEach(section => observer.observe(section));
+    }, 200); // ← gives Angular time to render children
+  }
+
+  scrollToSection(i: number) {
+    this.currentStep = i;
+    const section = document.getElementById(`section-${i}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+
+  // ngAfterViewInit() {
+  //   const sections = document.querySelectorAll('section');
+
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       for (const entry of entries) {
+  //         if (entry.isIntersecting) {
+  //           const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+  //           this.currentStep = index;
+  //         }
+  //       }
+  //     },
+  //     {
+  //       threshold: 0.4, // Adjusts sensitivity (0.4 = when 40% of section visible)
+  //       root: document.querySelector('.scroll-area') // observe scrolling inside container
+  //     }
+  //   );
+
+  //   sections.forEach(section => observer.observe(section));
+  // }
+
+  // scrollToSection(i: number) {
+  //   this.currentStep = i;
+  //   const section = document.getElementById(`section-${i}`);
+  //   section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
+
   next() {
-    if (this.currentStep < this.steps.length - 1) {
+    if (this.currentStep < this.amendimportSteps.length - 1) {
       this.scrollToSection(this.currentStep + 1);
     }
   }
@@ -75,18 +132,6 @@ export class AmendScreen implements AfterViewInit {
   previous() {
     if (this.currentStep > 0) {
       this.scrollToSection(this.currentStep - 1);
-    }
-  }
-
-  ngAfterViewInit(): void {
-    // Optionally handle scroll initialization here
-  }
-
-  scrollToSection(index: number) {
-    const section = document.getElementById(`section-${index}`);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
-      this.currentStep = index;
     }
   }
 }

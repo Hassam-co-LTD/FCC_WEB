@@ -1,0 +1,99 @@
+<div class="section-header" (click)="toggle()">
+    <h2>General Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+    <div class="form-grid-2">
+        <!-- Product Type -->
+        <div class="field-group">
+            <h4>Product Type</h4>
+            <mat-form-field appearance="outline" class="full">
+                <mat-label>Product Type</mat-label>
+                <mat-select>
+                    <mat-option value="backtoback">Back-To-Back LC</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Mode of Transmission -->
+        <div class="field-group">
+            <h4>Mode of Transmission</h4>
+            <mat-form-field appearance="outline" class="full">
+                <mat-label>Mode of Transmission</mat-label>
+                <mat-select>
+                    <mat-option value="SWIFT">SWIFT ✅</mat-option>
+                    <mat-option value="Courier/Mail">Courier/Mail</mat-option>
+                    <mat-option value="Other">Other</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- <div class="btn-row">
+        <button mat-stroked-button color="primary">SWIFT ✅</button>
+        <button mat-stroked-button>Courier/Mail</button>
+        <button mat-stroked-button>Other</button>
+    </div> -->
+
+
+    <!-- Expiry Fields -->
+    <div class="form-grid-2">
+        <mat-form-field appearance="outline">
+            <mat-label>Expiry Date *</mat-label>
+            <input matInput type="date" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Place of Expiry *</mat-label>
+            <mat-select>
+                <mat-option value="beneficiary">In Beneficiary's Country</mat-option>
+                <mat-option value="issuing">In Issuing Country</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <h4>Feature of LC</h4>
+    <div class="form-grid">
+        <mat-checkbox>Irrevocable</mat-checkbox>
+        <mat-checkbox>Revolving</mat-checkbox>
+        <mat-checkbox>Transferable</mat-checkbox>
+    </div>
+
+    <h4>Applicable Rules</h4>
+    <mat-form-field appearance="outline" class="full">
+        <mat-select placeholder="Applicable Rules" required>
+            <mat-option value="EUCP">EUCP LATEST VERSION</mat-option>
+            <mat-option value="EUCPURR">EUCPURR LATEST VERSION</mat-option>
+            <mat-option value="Others">OTHERS</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <h4>Confirmation Instructions</h4>
+    <mat-radio-group>
+        <mat-radio-button value="confirm">Confirm</mat-radio-button>
+        <mat-radio-button value="without">Without</mat-radio-button>
+        <mat-radio-button value="mayAdd">May Add</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- <h4>References</h4>
+    <div class="form-grid-2">
+        <mat-form-field appearance="outline">
+            <input matInput placeholder="Beneficiary Reference">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <input matInput placeholder="Customer Reference">
+        </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+        <input matInput placeholder="Purchase Order(s)">
+    </mat-form-field> -->
+
+    <!-- <div class="actions">
+        <button mat-stroked-button>Exit</button>
+        <button mat-flat-button color="primary" (click)="next()">Next</button>
+    </div> -->
+
+
+</div>

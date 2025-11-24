@@ -105,6 +105,15 @@ export const routes: Routes = [
                 },
             },
 
+            {
+                path: 'undertaking-issuance/amend',
+                loadComponent: () =>
+                    import(
+                        './screens/undertaking-issuance/amend-import/amend'
+                    ).then((m) => m.AmendScreen),
+            },
+
+
             // ==============================
             // IMPORT LC
             // ==============================
