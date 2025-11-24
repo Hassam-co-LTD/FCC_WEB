@@ -1,21 +1,23 @@
 <div class="auth-container">
   <mat-card>
     <h2>Login</h2>
-    <form (ngSubmit)="onLogin()">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>User ID</mat-label>
+    <input placeholder="Enter User ID" type="text" matInput [(ngModel)]="userId">
+  </mat-form-field>
+
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input placeholder="Email" matInput [(ngModel)]="email" name="email" type="email" required />
+        <mat-label>Company ID</mat-label>
+        <input placeholder="Enter Company ID" matInput [(ngModel)]="companyId" type="text" required />
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input placeholder="Password" matInput [(ngModel)]="password" name="password" type="password" required />
+        <input placeholder="Enter Password" matInput [(ngModel)]="password" type="password" required />
       </mat-form-field>
 
-      <button mat-raised-button color="primary" class="full-width" type="submit">
-        Login
-      </button>
-    </form>
+      <button mat-flat-button color="primary" class="full-width" type="submit" (click)="login()">Login</button>
+    
     <p>
       Don’t have an account?
       <a routerLink="/signup">Sign up</a>
