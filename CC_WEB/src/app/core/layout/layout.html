@@ -21,8 +21,7 @@
                     <div *ngIf="item.children?.length" class="menu-group">
 
                         <!-- Parent Button -->
-                        <button class="menu-btn" [routerLink]="item.route" routerLinkActive="active-link"
-                            (click)="toggleMenu(item)">
+                        <button class="menu-btn" (click)="toggleMenu(item)">
                             <mat-icon>{{ item.icon }}</mat-icon>
                             <span *ngIf="!isCollapsed()">{{ item.label }}</span>
                             <mat-icon class="arrow" *ngIf="!isCollapsed()">
@@ -36,11 +35,11 @@
 
                                 <!-- Nested child with its own submenu -->
                                 <div *ngIf="child.children?.length" class="submenu-item">
-                                    <button type="button" [routerLink]="child.route" routerLinkActive="active-link"
-                                        (click)="toggleMenu(child)">
+                                    <button type="button" (click)="toggleMenu(child)">
                                         {{ child.label }}
-                                        <mat-icon class="arrow">{{ child.open ? 'expand_less' : 'expand_more'
-                                            }}</mat-icon>
+                                        <mat-icon class="arrow">
+                                            {{ child.open ? 'expand_less' : 'expand_more' }}
+                                        </mat-icon>
                                     </button>
 
                                     <div class="nested-submenu" *ngIf="child.open">
@@ -51,7 +50,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Single child -->
+                                <!-- Single child (no further children) -->
                                 <button *ngIf="!child.children" [routerLink]="child.route"
                                     routerLinkActive="active-sub">
                                     {{ child.label }}
@@ -61,7 +60,7 @@
                         </div>
                     </div>
 
-                    <!-- Single menu -->
+                    <!-- Single menu item (no children) -->
                     <a *ngIf="!item.children" [routerLink]="item.route" routerLinkActive="active-link">
                         <mat-icon>{{ item.icon }}</mat-icon>
                         <span *ngIf="!isCollapsed()">{{ item.label }}</span>

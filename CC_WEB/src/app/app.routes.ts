@@ -10,12 +10,12 @@ export const routes: Routes = [
     {
         path: 'login',
         loadComponent: () =>
-            import('./screens/login/login.component').then((m) => m.LoginComponent),
+            import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
     },
     {
         path: 'signup',
         loadComponent: () =>
-            import('./screens/signup/signup.component').then((m) => m.SignupComponent),
+            import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
     },
 
     // Protected routes (with layout)
@@ -30,7 +30,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'ADMIN' },
                 loadComponent: () =>
-                    import('./screens/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
+                    import('./screens/ADMIN/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
             },
             // Dashboard
             {
@@ -38,14 +38,14 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'USER' },
                 loadComponent: () =>
-                    import('./screens/dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Export Screen
             {
                 path: 'export-screen',
                 loadComponent: () =>
-                    import('./screens/export-screen/export-screen').then((m) => m.ExportScreen),
+                    import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
             },
 
             // ==============================
@@ -55,7 +55,7 @@ export const routes: Routes = [
             {
                 path: 'undertaking-issuance',
                 loadComponent: () =>
-                    import('./screens/undertaking-issuance/undertaking-issuance')
+                    import('./screens/USER/undertaking-issuance/undertaking-issuance')
                         .then((m) => m.UndertakingIssuance),
             },
 
@@ -63,42 +63,42 @@ export const routes: Routes = [
                 path: 'undertaking-issuance/request-undertaking',
                 loadComponent: () =>
                     import(
-                        './screens/undertaking-issuance/request-undertaking/request-undertaking'
+                        './screens/USER/undertaking-issuance/request-undertaking/request-undertaking'
                     ).then((m) => m.RequestUndertaking),
                 children: [
                     {
                         path: 'general-details',
                         loadComponent: () =>
                             import(
-                                './screens/undertaking-issuance/components/general-details/general-details'
+                                './screens/USER/undertaking-issuance/components/general-details/general-details'
                             ).then((m) => m.GeneralDetails),
                     },
                     {
                         path: 'beneficiary-details',
                         loadComponent: () =>
                             import(
-                                './screens/undertaking-issuance/components/application-beneficiary/application-beneficiary'
+                                './screens/USER/undertaking-issuance/components/application-beneficiary/application-beneficiary'
                             ).then((m) => m.ApplicationBeneficiary),
                     },
                     {
                         path: 'bank-details',
                         loadComponent: () =>
                             import(
-                                './screens/undertaking-issuance/components/bank-details/bank-details'
+                                './screens/USER/undertaking-issuance/components/bank-details/bank-details'
                             ).then((m) => m.BankDetails),
                     },
                     {
                         path: 'undertaking-details',
                         loadComponent: () =>
                             import(
-                                './screens/undertaking-issuance/components/undertaking-details/undertaking-details'
+                                './screens/USER/undertaking-issuance/components/undertaking-details/undertaking-details'
                             ).then((m) => m.UndertakingDetails),
                     },
                     {
                         path: 'instruction-bank',
                         loadComponent: () =>
                             import(
-                                './screens/undertaking-issuance/components/instructions-bank/instructions-bank'
+                                './screens/USER/undertaking-issuance/components/instructions-bank/instructions-bank'
                             ).then((m) => m.InstructionsBank),
                     },
                 ],
@@ -121,7 +121,7 @@ export const routes: Routes = [
                 path: 'undertaking-issuance/amend',
                 loadComponent: () =>
                     import(
-                        './screens/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
+                        './screens/USER/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
                     ).then((m) => m.AmendScreen),
             },
 
@@ -133,55 +133,55 @@ export const routes: Routes = [
             {
                 path: 'import-screen',
                 loadComponent: () =>
-                    import('./screens/import-screen/import-screen').then((m) => m.ImportScreen),
+                    import('./screens/USER/import-screen/import-screen').then((m) => m.ImportScreen),
                 children: [
                     {
                         path: 'general-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/general-details/general-details'
+                                './screens/USER/import-screen/components/general-details/general-details'
                             ).then((m) => m.GeneralDetails),
                     },
                     {
                         path: 'applicant-beneficiary',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/applicant-beneficiary/applicant-beneficiary'
+                                './screens/USER/import-screen/components/applicant-beneficiary/applicant-beneficiary'
                             ).then((m) => m.ApplicantBeneficiary),
                     },
                     {
                         path: 'bank-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/bank-details/bank-details'
+                                './screens/USER/import-screen/components/bank-details/bank-details'
                             ).then((m) => m.BankDetails),
                     },
                     {
                         path: 'amount-charge-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/amount-charge-details/amount-charge-details'
+                                './screens/USER/import-screen/components/amount-charge-details/amount-charge-details'
                             ).then((m) => m.AmountChargeDetails),
                     },
                     {
                         path: 'payment-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/payment-details/payment-details'
+                                './screens/USER/import-screen/components/payment-details/payment-details'
                             ).then((m) => m.PaymentDetails),
                     },
                     {
                         path: 'shipment-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/shipment-details/shipment-details'
+                                './screens/USER/import-screen/components/shipment-details/shipment-details'
                             ).then((m) => m.ShipmentDetails),
                     },
                     {
                         path: 'narrative-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/narrative-details/narrative-details'
+                                './screens/USER/import-screen/components/narrative-details/narrative-details'
                             ).then((m) => m.NarrativeDetails),
                     },
                 ],
@@ -204,7 +204,7 @@ export const routes: Routes = [
                 path: 'import-screen/amend',
                 loadComponent: () =>
                     import(
-                        './screens/import-screen/sub-menus/events/amend-import/amend'
+                        './screens/USER/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
             },
 

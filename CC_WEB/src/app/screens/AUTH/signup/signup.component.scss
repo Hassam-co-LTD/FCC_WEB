@@ -1,0 +1,116 @@
+@use '../../../../styles/theme' as theme;
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, theme.$screen-bg 0%, theme.$light-bg 100%);
+  font-family: 'Poppins', sans-serif;
+  padding: 1.5rem;
+
+  mat-card {
+    width: 100%;
+    max-width: 420px;
+    background: theme.$white;
+    border: 1px solid theme.$border-light;
+    box-shadow: theme.$shadow-primary;
+    border-radius: theme.$radius-large;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(11, 78, 179, 0.15);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: theme.$primary;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      .full-width {
+        width: 100%;
+      }
+
+      mat-form-field {
+        width: 100%;
+
+        ::ng-deep .mat-mdc-text-field-wrapper {
+          background-color: theme.$light-bg;
+          border-radius: theme.$radius-default;
+          transition: border-color 0.2s ease;
+
+          &:hover {
+            border-color: theme.$border-primary;
+          }
+        }
+
+        ::ng-deep .mdc-text-field--focused {
+          border-color: theme.$primary;
+        }
+
+        input {
+          font-size: 0.95rem;
+          color: theme.$text-dark;
+        }
+      }
+
+      button {
+        background-color: theme.$primary-btn;
+        color: theme.$text-light;
+        font-weight: 600;
+        border-radius: theme.$radius-default;
+        padding: 0.75rem 0;
+        box-shadow: theme.$button-shadow;
+        transition: background 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: theme.$primary-btn-hover;
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+
+    p {
+      margin-top: 1.25rem;
+      color: theme.$text-medium;
+      font-size: 0.9rem;
+
+      a {
+        color: theme.$primary;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.3s;
+
+        &:hover {
+          color: theme.$primary-hover;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* Small screen optimization */
+@media (max-width: 480px) {
+  .auth-container mat-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .auth-container h2 {
+    font-size: 1.5rem;
+  }
+}

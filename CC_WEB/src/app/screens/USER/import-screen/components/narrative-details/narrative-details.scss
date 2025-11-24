@@ -1,0 +1,180 @@
+@use '../../../../../../styles/_theme.scss' as theme;
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
+
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        transition: transform 0.3s ease;
+    }
+
+    &.open mat-icon {
+        transform: rotate(180deg);
+    }
+}
+
+/* Collapsible Container */
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+}
+
+.collapsible.open {
+    max-height: 2500px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: theme.$radius-default;
+    border: 1px solid theme.$border-light;
+}
+
+/* Titles */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$white;
+}
+
+.form-wrapper {
+    margin-top: 10px;
+}
+
+.sub-heading {
+    font-weight: 600;
+    color: #374151;
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.tab-container {
+    margin-top: 10px;
+
+    ::ng-deep .mat-mdc-tab-label-container {
+        background: #fafbff;
+    }
+
+    ::ng-deep .mat-mdc-tab-label-active {
+        color: #d81b60 !important;
+        font-weight: 600;
+    }
+
+    ::ng-deep .mat-mdc-tab-header-pagination-controls-enabled .mat-mdc-tab-header-pagination {
+        display: none !important;
+    }
+}
+
+.inner-tabs {
+    margin-top: 12px;
+
+    ::ng-deep .mat-mdc-tab-label-active {
+        color: #d81b60 !important;
+        font-weight: 600;
+    }
+}
+
+.tab-content {
+    margin-top: 16px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+mat-hint {
+    color: #6b7280 !important;
+}
+
+mat-error {
+    font-size: 12px;
+    color: #e53935 !important;
+}
+
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Tablets ≤992px */
+@media (max-width: 992px) {
+
+    .tab-container,
+    .inner-tabs {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 14px;
+            white-space: normal;
+            /* wrap long tab labels */
+        }
+    }
+
+    mat-form-field textarea {
+        font-size: 14px;
+    }
+
+    .sub-heading {
+        font-size: 15px;
+    }
+}
+
+/* Small Tablets / Large Phones ≤768px */
+@media (max-width: 768px) {
+    .tab-container {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 13px;
+        }
+    }
+
+    .sub-heading {
+        font-size: 14px;
+    }
+}
+
+/* Mobile ≤480px */
+@media (max-width: 480px) {
+
+    .tab-container,
+    .inner-tabs {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        ::ng-deep .mat-mdc-tab-label {
+            min-width: 80px;
+            /* reduce tab width for small screens */
+        }
+    }
+
+    .collapsible.open {
+        padding: 10px 5px;
+    }
+
+    mat-form-field textarea {
+        font-size: 13px;
+    }
+
+    .sub-heading {
+        font-size: 13px;
+    }
+}
