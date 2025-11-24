@@ -32,6 +32,28 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/ADMIN/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
             },
+
+
+            // ==============================
+            // System overview
+            // ==============================
+            {
+                path: 'system-overview',
+                loadComponent: () =>
+                    import('./screens/ADMIN/system-overview/system-overview').then((m) => m.SystemOverview),
+            },
+
+
+            // ==============================
+            // Middle-Office 
+            // ==============================
+            {
+                path: 'middle-office',
+                loadComponent: () =>
+                    import('./screens/ADMIN/middle-office/middle-office').then((m) => m.MiddleOffice),
+            },
+
+
             // Dashboard
             {
                 path: 'dashboard',
