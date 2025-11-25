@@ -33,7 +33,10 @@
 }
 
 .collapsible.open {
-    max-height: 2000px;
+    max-height: none;
+    /* Allow full expansion */
+    overflow: visible;
+    /* Ensure no content is hidden */
     opacity: 1;
     transform: translateY(0);
     padding: 15px 10px;
@@ -49,6 +52,7 @@ h2 {
     margin: 0;
     color: theme.$white;
 }
+
 h4 {
     font-size: 16px;
     margin: 20px 0 10px;
@@ -80,11 +84,13 @@ h4 {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    height: auto;
 
     mat-radio-group {
         display: flex;
         flex-wrap: wrap;
         gap: 22px;
+
     }
 }
 
@@ -97,5 +103,6 @@ h4 {
     .options-row mat-radio-group {
         flex-direction: column;
         gap: 10px;
+        height: auto;
     }
 }

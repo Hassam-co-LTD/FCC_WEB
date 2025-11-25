@@ -117,24 +117,24 @@
     </mat-radio-group>
 
     <!-- CONTRACT INFO -->
-    <!-- <h4>Contract Information</h4> -->
-    <!-- <div class="form-grid"> -->
-    <!-- <mat-form-field appearance="outline">
+    <h4>Contract Information</h4>
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
             <mat-label>Contract Type</mat-label>
             <mat-select formControlName="contractType">
                 <mat-option value="sale">Sale</mat-option>
                 <mat-option value="service">Service</mat-option>
             </mat-select>
-        </mat-form-field> -->
+        </mat-form-field>
 
-    <!-- <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
             <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
             <mat-datepicker-toggle matSuffix [for]="ctDate"></mat-datepicker-toggle>
             <mat-datepicker #ctDate></mat-datepicker>
-        </mat-form-field> -->
+        </mat-form-field>
 
-    <!-- <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>Contract Currency</mat-label>
             <mat-select formControlName="contractCurrency">
                 <mat-option value="USD">USD</mat-option>
@@ -149,26 +149,28 @@
         <mat-form-field appearance="outline">
             <mat-label>Percentage Covered</mat-label>
             <input matInput type="number" formControlName="percentageCovered" />
-        </mat-form-field> -->
+        </mat-form-field>
 
-    <!-- <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>Contract Narrative</mat-label>
             <input matInput formControlName="contractReference" />
-        </mat-form-field> -->
-    <!-- </div> -->
+        </mat-form-field>
+    </div>
 
     <!-- APPLICABLE RULES -->
-    <!-- <h4>Applicable Rules</h4>
-    <mat-radio-group formControlName="applicableRules">
-        <mat-radio-button value="urdg">URDG</mat-radio-button>
-        <mat-radio-button value="none">NONE</mat-radio-button>
-        <mat-radio-button value="eir">EIR</mat-radio-button>
-        <mat-radio-button value="usr">USR</mat-radio-button>
-        <mat-radio-button value="other">OTHER</mat-radio-button>
-    </mat-radio-group> -->
+    <h4>Applicable Rules</h4>
+    <div class="options-row">
+        <mat-radio-group formControlName="applicableRules">
+            <mat-radio-button value="urdg">URDG</mat-radio-button>
+            <mat-radio-button value="none">NONE</mat-radio-button>
+            <mat-radio-button value="eir">EIR</mat-radio-button>
+            <mat-radio-button value="usr">USR</mat-radio-button>
+            <mat-radio-button value="other">OTHER</mat-radio-button>
+        </mat-radio-group>
+    </div>
 
     <!-- GOVERNING LAWS -->
-    <!-- <div class="form-grid">
+    <div class="form-grid">
         <mat-form-field appearance="outline">
             <mat-label>Governing Laws</mat-label>
             <mat-select formControlName="governinglawsType">
@@ -188,22 +190,18 @@
             <mat-label>Place of Jurisdiction</mat-label>
             <input matInput formControlName="jurisdiction" />
         </mat-form-field>
-    </div> -->
+    </div>
 
     <!-- DEMAND INDICATOR -->
-    <!-- <h4>Demand Indicator</h4>
-    <div class="options-row">
-        <mat-radio-group formControlName="DemandOption">
-            <mat-radio-button value="multipleDemandnot">Multiple demand not permitted</mat-radio-button>
-            <mat-radio-button value="multiplepartialDemandnot">Multiple & partial demands not
-                permitted</mat-radio-button>
-            <mat-radio-button value="partialDemand">Partial demands permitted</mat-radio-button>
-            <mat-radio-button value="multiplepartialDemand">Multiple & partial demands permitted</mat-radio-button>
-        </mat-radio-group>
-    </div> -->
+    <mat-radio-group formControlName="DemandOption">
+        <mat-radio-button value="multipleDemandnot">Multiple demand not permitted</mat-radio-button>
+        <mat-radio-button value="multiplepartialDemandnot">Multiple & partial demands not permitted</mat-radio-button>
+        <mat-radio-button value="partialDemand">Partial demands permitted</mat-radio-button>
+        <mat-radio-button value="multiplepartialDemand">Multiple & partial demands permitted</mat-radio-button>
+    </mat-radio-group>
 
     <!-- TEXT STANDARD -->
-    <!-- <h4>Text Standard</h4>
+    <h4>Text Standard</h4>
     <div class="options-row">
         <mat-radio-group formControlName="tsOption">
             <mat-radio-button value="bkstandard">Bank Standard</mat-radio-button>
@@ -211,10 +209,10 @@
             <mat-radio-button value="partialDemand">Our wording</mat-radio-button>
             <mat-radio-button value="multiplepartialDemand">Same as (Specify)</mat-radio-button>
         </mat-radio-group>
-    </div> -->
+    </div>
 
     <!-- LANGUAGE -->
-    <!-- <div class="form-grid">
+    <div class="form-grid">
         <mat-form-field appearance="outline">
             <mat-label>Language</mat-label>
             <mat-select formControlName="languageType">
@@ -223,10 +221,10 @@
                 <mat-option value="ar">Arabic</mat-option>
             </mat-select>
         </mat-form-field>
-    </div> -->
+    </div>
 
     <!-- TEXT FIELDS -->
-    <!-- <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="full-width">
         <mat-label>Text of Undertaking</mat-label>
         <textarea matInput rows="1" formControlName="textofundertakingInfo"></textarea>
     </mat-form-field>
@@ -239,6 +237,6 @@
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Presentation Instruction</mat-label>
         <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
-    </mat-form-field> -->
+    </mat-form-field>
 
 </form>

@@ -36,7 +36,9 @@ export class UndertakingDetails {
   undertakingdetails!: FormGroup;
 
   constructor(private fb: FormBuilder) {
+
     this.undertakingdetails = this.fb.group({
+
       // TYPE & CATEGORY
       typeOfUndertaking: [null, Validators.required],
 
@@ -66,12 +68,12 @@ export class UndertakingDetails {
       increaseDecreaseType: [null, Validators.required],
 
       // CONTRACT INFO
-      // contractType: ['sale'],
-      // contractDate: [null],
-      // contractCurrency: [null],
-      // contractAmount: [null],
-      // percentageCovered: [null],
-      // contractReference: [''],
+      contractType: ['sale'],
+      contractDate: [null],
+      contractCurrency: [null],
+      contractAmount: [null],
+      percentageCovered: [null],
+      contractReference: [''],
 
       // APPLICABLE RULES
       applicableRules: ['none', Validators.required],
@@ -81,22 +83,21 @@ export class UndertakingDetails {
       subdivision: [''],
       jurisdiction: [''],
 
-      // DEMAND INDICATOR
+      // DEMAND INDICATOR (your working radio buttons)
       DemandOption: [''],
 
-      // TEXT STANDARD
+      // TEXT STANDARD (the section that was not rendering)
       tsOption: [''],
 
-      // LANGUAGE
+      // LANGUAGE DROPDOWN
       languageType: [''],
 
-      // TEXT FIELDS
+      // TEXT FIELDS (Textarea)
       textofundertakingInfo: [''],
       underlyingtransactionInfo: ['', Validators.required],
       presentationInfo: ['']
     });
   }
-
   toggle() {
     this.isOpen = !this.isOpen;
   }

@@ -6,7 +6,7 @@
     <div class="content">
         <div class="scroll-area">
 
-            <section id="section-0"><app-general-details></app-general-details></section>
+            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
             <hr class="section-divider" />
 
             <section id="section-1"><app-applicant-beneficiary></app-applicant-beneficiary></section>
@@ -36,7 +36,7 @@
             <section id="section-9"><app-attachments></app-attachments></section>
             <hr class="section-divider" />
 
-            <section id="section-10"><app-preview></app-preview></section>
+            <section id="section-10"><app-preview [form]="importForm"></app-preview></section>
 
             <!-- Footer Buttons -->
             <div class="actions">
