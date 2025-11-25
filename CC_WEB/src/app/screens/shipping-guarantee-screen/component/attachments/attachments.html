@@ -1,0 +1,42 @@
+<div class="accordion-section" id="attachments">
+  <div class="accordion-header" (click)="toggleSection('attachments')">
+    <h2>Attachments</h2>
+    <span class="arrow" [class.rotate]="activeSection === 'attachments'">&#9662;</span>
+  </div>
+
+  <div class="accordion-content" *ngIf="activeSection === 'attachments'">
+    <div
+      class="drop-zone"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      [class.dragover]="isDragging"
+    >
+      <div class="drop-zone-content">
+        <i class="fa fa-cloud-upload cloud-icon"></i>
+        <p>Drag & drop or <span class="browse-text" (click)="fileInput.click()">browse</span></p>
+        <p class="hint">
+          Allowed: pdf, txt, docx, gif, doc, png, csv, xls, xlsx, jpg, jpeg | Max: 5 files, 1MB each
+        </p>
+      </div>
+      <input
+        type="file"
+        #fileInput
+        (change)="onFileSelect($event)"
+        multiple
+        accept=".pdf,.txt,.docx,.gif,.doc,.png,.csv,.xls,.xlsx,.jpg,.jpeg"
+        hidden
+      />
+    </div>
+
+    <div *ngIf="uploadedFiles.length > 0" class="file-list">
+      <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
+        <span class="file-name">{{ file.name }}</span>
+        <span class="file-size">{{ file.size / 1024 | number:'1.0-0' }} KB</span>
+        <button type="button" (click)="removeFile(i)" class="remove-button">Remove</button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  </div>
+</div>

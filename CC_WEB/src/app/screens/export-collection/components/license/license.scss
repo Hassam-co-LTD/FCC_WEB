@@ -1,0 +1,91 @@
+/* ============================
+   LICENSE SECTION
+============================ */
+.accordion-section#license {
+  background: #ffffff;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  .accordion-header {
+    padding: 1rem 1.3rem;
+    background: linear-gradient(90deg, #0b4eb3, #0b4eb3);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .arrow {
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .accordion-content {
+    padding: 1.2rem 1.3rem;
+    background: #fff;
+    border-top: 1px solid #d9e4ff;
+    animation: fadeSlideIn 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      &.two-col > .input-field {
+        flex: 1;
+        min-width: 45%;
+      }
+
+      .input-field {
+        display: flex;
+        flex-direction: column;
+
+        label {
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 0.3rem;
+        }
+
+        input,
+        select {
+          border: 1px solid #c7d6f7;
+          border-radius: 8px;
+          padding: 0.6rem 0.8rem;
+          font-size: 0.95rem;
+          outline: none;
+          background: #f8fbff;
+          transition: border-color 0.2s ease;
+
+          &:focus {
+            border-color: #0b4eb3;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(11, 78, 179, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Reuse fadeSlideIn for accordion content */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}

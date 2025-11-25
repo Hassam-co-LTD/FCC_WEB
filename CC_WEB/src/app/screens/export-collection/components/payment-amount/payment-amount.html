@@ -1,0 +1,75 @@
+<div class="accordion-section">
+
+  <!-- HEADER -->
+  <div class="accordion-header" (click)="toggleSection('paymentAmount')">
+    <h2>Payment & Amount</h2>
+    <mat-icon>{{ activeSection === 'paymentAmount' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="accordion-content" [class.open]="activeSection === 'paymentAmount'">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Row 1 -->
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Amount *</mat-label>
+          <input matInput type="number" formControlName="amount" placeholder="Enter amount" />
+          <mat-error *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid">
+            Amount is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Currency *</mat-label>
+          <mat-select formControlName="currency">
+            <mat-option value="" disabled>Select currency</mat-option>
+            <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('currency')?.touched && form.get('currency')?.invalid">
+            Currency is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Payment Type *</mat-label>
+          <mat-select formControlName="paymentType">
+            <mat-option value="" disabled>Select payment type</mat-option>
+            <mat-option value="Documentagainstpayment">Sight / Document Against Payment</mat-option>
+            <mat-option value="DocumentagainstAcceptance">Document Against Acceptance</mat-option>
+            <mat-option value="PourAval">Pour Aval</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('paymentType')?.touched && form.get('paymentType')?.invalid">
+            Payment type is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Tenor *</mat-label>
+          <mat-select formControlName="tenor">
+            <mat-option value="" disabled>Select tenor</mat-option>
+            <mat-option value="billOfLading">Bill of Lading</mat-option>
+            <mat-option value="invoice">Invoice</mat-option>
+            <mat-option value="shipmentDate">Shipment Date</mat-option>
+            <mat-option value="Sight">Sight</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('tenor')?.touched && form.get('tenor')?.invalid">
+            Tenor is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Payment Reference</mat-label>
+          <input matInput type="text" formControlName="paymentReference" placeholder="Enter payment reference" />
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+</div>

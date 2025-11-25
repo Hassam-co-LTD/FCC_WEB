@@ -235,6 +235,6 @@ export const routes: Routes = [
         ],
     },
 
-    // Wildcard redirect
-    { path: '**', redirectTo: 'login' },
+  // Wildcard redirect
+  { path: '**', redirectTo: 'login' },
 ];

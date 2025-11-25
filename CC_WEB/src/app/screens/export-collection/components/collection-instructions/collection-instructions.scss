@@ -1,0 +1,60 @@
+@use '../../../../../../src/styles/_theme.scss' as theme;
+
+.accordion-section {
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow: hidden;
+
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    background: theme.$primary;
+    color: theme.$text-light;
+    cursor: pointer;
+
+    &:hover {
+      background: theme.$primary-dark;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    h2 { font-size: 20px; font-weight: 600; margin: 0; }
+    mat-icon { font-size: 22px; transition: transform 0.3s ease; }
+  }
+
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+
+    &.open {
+      max-height: 2000px;
+      opacity: 1;
+      transform: translateY(0);
+      padding: 15px 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: theme.$gap-default;
+      margin-bottom: 1.5rem;
+
+      &.two-col > * { flex: 1 1 45%; }
+
+      .full { width: 100%; }
+    }
+  }
+}
+
+@media (max-width:768px) {
+  .form-group.two-col > * { flex: 1 1 100%; }
+  .accordion-header { padding: 12px 14px; }
+  h2 { font-size: 18px; }
+}

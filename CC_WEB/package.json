@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:ssr": "ng build && ng run cc-web:server",
+    "serve:ssr": "node dist/cc-web/server/server.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:CC_WEB": "node dist/CC_WEB/server/server.mjs"

@@ -6,15 +6,6 @@ import { MatIconModule } from "@angular/material/icon";
 import { TopbarComponent } from "../topbar/topbar";
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from "@angular/material/menu";
-import { filter } from 'rxjs/operators';
-
-interface MenuItem {
-  label: string;
-  icon?: string;
-  route?: string;
-  children?: MenuItem[];
-  open?: boolean;
-}
 
 @Component({
   selector: 'app-layout',
@@ -88,6 +79,8 @@ export class LayoutComponent implements OnInit {
       ]
     }
   ];
+  importLcOpen = false;
+shippingGuaranteeOpen = false;
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -336,4 +329,13 @@ export class LayoutComponent implements OnInit {
 //   toggleImportLcMenu() {
 //     this.importLcOpen = !this.importLcOpen;
 //   }
-// }
+// 
+  toggleImportLcMenu() {
+    this.importLcOpen = !this.importLcOpen;
+  }
+
+  toggleShippingGuaranteeMenu() {
+    this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
+  }
+}
+  
