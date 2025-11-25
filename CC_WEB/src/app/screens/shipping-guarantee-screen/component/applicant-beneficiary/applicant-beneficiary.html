@@ -1,0 +1,31 @@
+<div class="accordion-section" id="applicant">
+  <div class="accordion-header" (click)="toggleSection('applicant')">
+    <h2>Applicant & Beneficiary Details</h2>
+    <mat-icon>{{ activeSection === 'applicant' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="accordion-content" [class.open]="activeSection === 'applicant'">
+    <form [formGroup]="form" class="details-form">
+      
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Applicant Name *</mat-label>
+        <input matInput type="text" formControlName="applicantName" placeholder="Enter applicant name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Beneficiary Name *</mat-label>
+        <input matInput type="text" formControlName="beneficiaryName" placeholder="Enter beneficiary name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Beneficiary Country *</mat-label>
+        <input matInput type="text" formControlName="beneficiaryCountry" placeholder="Enter country" />
+      </mat-form-field>
+
+      <div class="actions">
+        <button type="button" mat-stroked-button (click)="toggleSection('applicant')">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

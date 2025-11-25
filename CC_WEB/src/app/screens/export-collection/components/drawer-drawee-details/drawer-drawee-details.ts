@@ -1,37 +1,51 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-drawer-drawee-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './drawer-drawee-details.html',
   styleUrls: ['./drawer-drawee-details.scss'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
+  ]
 })
 export class DrawerDraweeDetails {
 
-  /** Active Accordion Section */
   activeSection: string | null = 'drawer';
 
-  /** Form Group */
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
+
     this.form = this.fb.group({
-      // Drawer
+
+      // Drawer fields
       drawerName: ['', Validators.required],
       drawerAddress1: ['', Validators.required],
       drawerAddress2: [''],
 
-      // Drawee
+      // Drawee fields
       draweeName: ['', Validators.required],
       draweeAddress1: ['', Validators.required],
       draweeAddress2: ['']
     });
   }
 
-  /** Toggle Accordion Section */
   toggleSection(section: string) {
     this.activeSection = this.activeSection === section ? null : section;
   }

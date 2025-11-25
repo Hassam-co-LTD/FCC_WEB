@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, theme.$screen-bg 0%, $light-bg 100%);
+  background: linear-gradient(135deg, theme.$screen-bg 0%, theme.$light-bg 100%);
   font-family: 'Poppins', sans-serif;
   padding: 1.5rem;
 
@@ -44,6 +44,7 @@
       mat-form-field {
         width: 100%;
 
+        // MDC wrapper styling
         ::ng-deep .mat-mdc-text-field-wrapper {
           background-color: theme.$light-bg;
           border-radius: theme.$radius-default;
@@ -86,17 +87,17 @@
 
     p {
       margin-top: 1.25rem;
-      color: $text-medium;
+      color: theme.$text-medium;
       font-size: 0.9rem;
 
       a {
-        color: $primary;
+        color: theme.$primary;
         font-weight: 500;
         text-decoration: none;
         transition: color 0.3s;
 
         &:hover {
-          color: $primary-hover;
+          color: theme.$primary-hover;
           text-decoration: underline;
         }
       }

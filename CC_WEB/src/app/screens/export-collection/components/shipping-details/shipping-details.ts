@@ -1,27 +1,45 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-shipping-details', // change for each component
+  selector: 'app-shipping-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule
+  ],
   templateUrl: './shipping-details.html',
-  styleUrls: ['./shipping-details.scss'],
+  styleUrls: ['./shipping-details.scss']
 })
-export class ShippingDetails {
+export class ShippingDetailsComponent implements OnInit {
 
-  activeSection: string | null = null;
+  form!: FormGroup;
+  activeSection: string | null = 'shipmentDetails';
 
-  form: FormGroup;
+  shippingMethods = ['Air', 'Sea', 'Land'];
+  incotermsRules = ['FOB', 'CIF', 'EXW'];
+  incoterms = ['DAP', 'DDP', 'FCA'];
 
-  shippingMethods = ['Air', 'Sea', 'Road', 'Courier', 'Rail'];
+  constructor(private fb: FormBuilder) {}
 
-  constructor(private fb: FormBuilder) {
+  ngOnInit(): void {
     this.form = this.fb.group({
       shippingMethod: [''],
       shipmentReference: [''],
-      shipmentDate: ['']
+      shippingFrom: [''],
+      shippingTo: [''],
+      shipmentDate: [''],
+      incotermsRules: [''],
+      incoterms: ['']
     });
   }
 

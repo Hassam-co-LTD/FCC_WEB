@@ -1,33 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-payment-amount',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule
+  ],
   templateUrl: './payment-amount.html',
-  styleUrls: ['./payment-amount.scss'],
+  styleUrls: ['./payment-amount.scss']
 })
-export class PaymentAmount {
-  activeSection = 'payment';
+export class PaymentAmountComponent implements OnInit {
 
-  /** Reactive Form */
-  form: FormGroup;
+  form!: FormGroup;
+  activeSection: string | null = 'paymentAmount';
 
-  /** Currency Options */
-  currencies: string[] = ['USD', 'EUR', 'GBP', 'PKR'];
+  currencies = ['USD', 'EUR', 'GBP', 'PKR'];
+  
+  constructor(private fb: FormBuilder) {}
 
-  constructor(private fb: FormBuilder) {
+  ngOnInit(): void {
     this.form = this.fb.group({
       amount: ['', Validators.required],
       currency: ['', Validators.required],
       paymentType: ['', Validators.required],
+      tenor: ['', Validators.required],
+      paymentReference: ['']
     });
   }
 
-  /** Accordion Toggle */
-  toggleSection(key: string) {
-    this.activeSection = this.activeSection === key ? '' : key;
+  toggleSection(section: string) {
+    this.activeSection = this.activeSection === section ? null : section;
+  }
+
+  onSubmit() {
+    if (this.form.valid) {
+      console.log('Payment & Amount Submitted', this.form.value);
+    }
   }
 }

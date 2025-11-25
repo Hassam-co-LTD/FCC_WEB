@@ -1,33 +1,37 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-bank-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   templateUrl: './bank-details.html',
-  styleUrls: ['./bank-details.scss'],
+  styleUrls: ['./bank-details.scss']
 })
-export class BankDetailsComponent {
-  
-  activeSection: string = 'bankDetails';
+export class BankDetailsComponent implements OnInit {
+
+  form!: FormGroup;
+
+  activeSection: string | null = 'bankDetails';
   bankTab: string = 'remitting';
 
   bankList = [
-    'Bank of America',
+    'Standard Chartered Bank',
+    'Bank Al Habib',
     'Habib Bank Limited',
-    'Meezan Bank',
-    'Standard Chartered',
-    'Faysal Bank',
-    'United Bank Limited'
+    'United Bank Limited',
+    'Meezan Bank'
   ];
 
-  form: FormGroup;
+  constructor(private fb: FormBuilder) {}
 
-  constructor(private fb: FormBuilder) {
+  ngOnInit(): void {
     this.form = this.fb.group({
-
       // Remitting
       remittingBankName: [''],
       remittingIssuerRef: [''],
@@ -46,8 +50,8 @@ export class BankDetailsComponent {
     });
   }
 
-  toggleSection(key: string) {
-    this.activeSection = this.activeSection === key ? '' : key;
+  toggleSection(section: string) {
+    this.activeSection = this.activeSection === section ? null : section;
   }
 
   switchBankTab(tab: string) {

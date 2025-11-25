@@ -1,17 +1,43 @@
-<!-- Default welcome page -->
-<!-- <div class="welcome-container" *ngIf="!childActive"> -->
-  <div class="welcome-card">
-    <h1>Welcome</h1>
-    <p>
-      Start building your Shipping Guarantee or explore available export
-      collections. Everything you need is listed below.
-    </p>
+<aside class="sidebar">
+  <ul class="steps">
+    <li *ngFor="let step of steps; let i = index"
+        [class.active]="currentStep === i"
+        (click)="scrollToSection(i)">
+      <span class="step-number">{{ i + 1 }}</span>
+      <span class="step-label">{{ step.label }}</span>
+    </li>
+  </ul>
+</aside>
 
-    <button class="primary-btn" routerLink="/shipping-guarantee-screen/create-screen">
-      Create
-    </button>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <div class="scroll-area">
+
+      <!-- <section id="section-0"><create></create></section>
+      <hr class="section-divider" /> -->
+
+      <section id="section-1"><app-general-details></app-general-details></section>
+      <hr class="section-divider" />
+
+      <section id="section-2"><app-applicant-beneficiary></app-applicant-beneficiary></section>
+      <hr class="section-divider" />
+
+       <section id="section-3"><app-bank-details></app-bank-details></section>
+      <hr class="section-divider" /> 
+
+      <section id="section-4"><app-instructions></app-instructions></section>
+      <hr class="section-divider" />
+
+      <section id="section-5"><app-attachments-documents></app-attachments-documents></section>
+      <hr class="section-divider" />
+
+      <section id="section-6"><app-preview></app-preview></section>
+      <hr class="section-divider" /> 
+
+       <div class="actions-row">
+        <button type="submit" class="btn-primary">Submit</button>
+      </div>
+
+    </div>
   </div>
-<!-- </div> -->
-
-<!-- Here child components will load -->
-<router-outlet></router-outlet>

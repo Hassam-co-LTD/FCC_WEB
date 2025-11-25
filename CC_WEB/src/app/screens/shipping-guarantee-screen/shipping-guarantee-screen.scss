@@ -1,72 +1,115 @@
-.welcome-container {
+@use "../../../styles/theme" as *;
+
+/* ============================
+   SHIPPING GUARANTEE LAYOUT
+   ============================ */
+
+:host {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 120px);
-  background: linear-gradient(135deg, #0b2447, #19376d, #576cbc);
-  padding: 20px;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Inter", sans-serif;
 }
 
-.welcome-card {
-  max-width: 600px;
-  text-align: center;
+/* ---------------- SIDEBAR ---------------- */
+.sidebar {
+  width: 240px;
   background: #ffffff;
-  padding: 40px 35px;
-  border-radius: 22px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-  animation: fadeIn 0.7s ease-out;
+  border-right: 1px solid #e0e6f0;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.icon-circle {
-  background: #eaf1ff;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.steps li {
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 0 auto 15px;
-
-  mat-icon {
-    font-size: 40px;
-    color: #1b4cd3;
-  }
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s ease-in-out;
+  gap: 10px;
+  font-size: 14px;
+  color: #334155;
 }
 
-.title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #0b2447;
-  margin-bottom: 12px;
+.steps li:hover {
+  background: #eef5ff;
 }
 
-.subtitle {
-  font-size: 16px;
-  color: #4b5563;
-  margin-bottom: 30px;
-  line-height: 1.6;
+.steps li.active {
+  background: #0b4eb3;
+  color: #fff;
 }
 
-.actions {
+/* Step numbers circle */
+.step-number {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #dce8ff;
   display: flex;
-  flex-direction: row;
-  gap: 15px;
+  align-items: center;
   justify-content: center;
-
-  button {
-    padding: 10px 22px;
-    font-size: 15px;
-    border-radius: 10px;
-  }
+  font-weight: 600;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+.steps li.active .step-number {
+  background: #fff;
+  color: #0b4eb3;
+}
+
+/* ---------------- CONTENT AREA ---------------- */
+.content {
+  flex: 1;
+  padding: 1.5rem 2.5rem;
+  overflow: hidden;
+  background: #f8fbff;
+}
+
+.scroll-area {
+  height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding-right: 1rem;
+  scroll-behavior: smooth;
+}
+
+/* Vertical sections */
+section {
+  padding: 20px 0;
+}
+
+.section-divider {
+  margin: 10px 0 30px;
+  border: none;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+/* Submit button row */
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background: #0b4eb3;
+  border: none;
+  color: #fff;
+  padding: 10px 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
+
+  &:hover {
+    background: #1565d8;
   }
 }

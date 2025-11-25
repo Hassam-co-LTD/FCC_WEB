@@ -34,20 +34,65 @@ export const routes: Routes = [
             (m) => m.ExportScreen
           ),
       },
+           // Shipping Guarantee Section
       {
-        path: 'shipping-guarantee-screen',
+        path: 'shipping-guarantee',
         loadComponent: () =>
           import(
             './screens/shipping-guarantee-screen/shipping-guarantee-screen'
-          ).then((m) => m.shippingguaranteescreen),
+          ).then((m) => m.ShippingGuaranteeScreen),
         children: [
           {
-            path: 'create-screen',
+            path: 'shipping-guarantee/create',
             loadComponent: () =>
               import(
-                './screens/shipping-guarantee-screen/component/create/create'
-              ).then((m) => m.CreateComponent),
+                './screens/shipping-guarantee-screen/component/sub-menus/events/create/create'
+              ).then((m) => m.create),
           },
+          {
+            path: 'general-details',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/general-details/general-details'
+              ).then((m) => m.GeneralDetails),
+          },
+          {
+            path: 'applicant-beneficiary',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/applicant-beneficiary/applicant-beneficiary'
+              ).then((m) => m.ApplicantBeneficiary),
+          },
+          {
+            path: 'bank-details',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/bank-details/bank-details'
+              ).then((m) => m.BankDetailsComponent),
+          },
+          {
+            path: 'instructions',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/instructions/instructions'
+              ).then((m) => m.InstructionsComponent),
+          },
+          {
+            path: 'attachments',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/attachments/attachments'
+              ).then((m) => m.AttachmentsDocuments),
+          },
+          {
+            path: 'preview',
+            loadComponent: () =>
+              import(
+                './screens/shipping-guarantee-screen/component/preview/preview'
+              ).then((m) => m.Preview),
+          },
+          // // Default route
+          // { path: '', redirectTo: 'create', pathMatch: 'full' },
         ],
       },
       {
@@ -84,7 +129,7 @@ export const routes: Routes = [
             loadComponent: () =>
               import(
                 './screens/export-collection/components/shipping-details/shipping-details'
-              ).then((m) => m.ShippingDetails),
+              ).then((m) => m.ShippingDetailsComponent),
           },
           {
             path: 'license',
@@ -98,7 +143,7 @@ export const routes: Routes = [
             loadComponent: () =>
               import(
                 './screens/export-collection/components/payment-amount/payment-amount'
-              ).then((m) => m.PaymentAmount),
+              ).then((m) => m.PaymentAmountComponent),
           },
           {
             path: 'collection-instructions',

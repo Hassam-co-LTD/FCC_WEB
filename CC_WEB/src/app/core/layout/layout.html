@@ -44,7 +44,7 @@
                         <!-- Shipping Guarantee -->
                         <div class="submenu-item" [class.open]="shippingGuaranteeOpen">
                             <button type="button" (click)="toggleShippingGuaranteeMenu()"
-                                [routerLink]="['/shipping-guarantee-screen']" routerLinkActive="active-link">
+                                [routerLink]="['/shipping-guarantee ']" routerLinkActive="active-link">
                                 Shipping Guarantee
                                 <mat-icon class="arrow">
                                     {{ shippingGuaranteeOpen ? 'expand_less' : 'expand_more' }}
@@ -54,7 +54,7 @@
                             <!-- Nested Shipping Guarantee Dropdown -->
                             <div class="nested-submenu" *ngIf="shippingGuaranteeOpen">
 
-                                <button type="button" [routerLink]="['/shipping-guarantee-screen/create-screen']"
+                                <button type="button" [routerLink]="['shipping-guarantee/create']"
                                     routerLinkActive="active-sub">
                                     Create
                                 </button>

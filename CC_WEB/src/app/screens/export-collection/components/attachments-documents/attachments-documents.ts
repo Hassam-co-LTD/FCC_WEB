@@ -1,100 +1,105 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatIcon } from "@angular/material/icon";
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-attachments-documents',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIcon],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule
+  ],
   templateUrl: './attachments-documents.html',
-  styleUrls: ['./attachments-documents.scss'],
+  styleUrls: ['./attachments-documents.scss']
 })
-export class AttachmentsDocuments {
-files: any;
-onFileDropped($event: DragEvent) {
-throw new Error('Method not implemented.');
-}
-  // Active accordion section
-  activeSection = 'attachments';
+export class AttachmentsDocuments implements OnInit {
 
-  // Drag & drop / file upload
+  attachmentsForm!: FormGroup;
+  isOpen = true;
   uploadedFiles: File[] = [];
-  isDragging = false;
-  errorMessage: string | null = null;
 
-  // Document list
-  documents: Array<{ type: string; attachment: string; date: string }> = [
-    { type: '', attachment: '', date: '' }
-  ];
+  constructor(private fb: FormBuilder) {}
 
-  // Toggle accordion section
-  toggleSection(key: string) {
-    this.activeSection = this.activeSection === key ? '' : key;
+  ngOnInit(): void {
+    this.attachmentsForm = this.fb.group({
+      documents: this.fb.array([this.createDocumentGroup()])
+    });
   }
 
-  // ---------------- Drag & Drop File Upload ----------------
-  onFileSelect(event: Event) {
+  get documents(): FormArray {
+    return this.attachmentsForm.get('documents') as FormArray;
+  }
+
+  createDocumentGroup(): FormGroup {
+    return this.fb.group({
+      type: ['', Validators.required],
+      attachment: ['', Validators.required],
+      date: ['', Validators.required]
+    });
+  }
+
+  toggle() {
+    this.isOpen = !this.isOpen;
+  }
+
+  addDocument() {
+    this.documents.push(this.createDocumentGroup());
+  }
+
+  removeDocument(index: number) {
+    this.documents.removeAt(index);
+  }
+
+  selectAttachment(index: number) {
+    alert(`Select attachment for document #${index + 1}`);
+  }
+
+  onFileDropped(event: DragEvent) {
+    event.preventDefault();
+    if (event.dataTransfer?.files) {
+      this.addFiles(event.dataTransfer.files);
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+  }
+
+  onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files) {
       this.addFiles(input.files);
     }
   }
 
-  onDragOver(event: DragEvent) {
-    event.preventDefault();
-    this.isDragging = true;
-  }
-
-  onDragLeave(event: DragEvent) {
-    event.preventDefault();
-    this.isDragging = false;
-  }
-
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.isDragging = false;
-    if (event.dataTransfer?.files) {
-      this.addFiles(event.dataTransfer.files);
-    }
+  addFiles(files: FileList) {
+    Array.from(files).forEach(file => {
+      if (this.uploadedFiles.length < 5 && file.size <= 1024 * 1024) {
+        this.uploadedFiles.push(file);
+      } else {
+        alert('Max 5 files, each ≤ 1MB');
+      }
+    });
   }
 
   removeFile(index: number) {
     this.uploadedFiles.splice(index, 1);
   }
 
-  private addFiles(files: FileList) {
-    this.errorMessage = null;
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (this.uploadedFiles.length >= 5) {
-        this.errorMessage = 'Maximum 5 files allowed';
-        break;
-      }
-      if (file.size > 1_000_000) {
-        this.errorMessage = 'File size exceeds 1MB';
-        continue;
-      }
-      this.uploadedFiles.push(file);
-    }
-  }
-
-  // ---------------- Document List Functions ----------------
-  addDocument() {
-    this.documents.push({ type: '', attachment: '', date: '' });
-  }
-
-  removeDocument(index: number) {
-    this.documents.splice(index, 1);
-  }
-
-  selectAttachment(index: number) {
-    // Here you can open a modal or file selector
-    // For demo, we select first uploaded file if exists
-    if (this.uploadedFiles.length > 0) {
-      this.documents[index].attachment = this.uploadedFiles[0].name;
+  onSubmit() {
+    if (this.attachmentsForm.valid) {
+      console.log(this.attachmentsForm.value, this.uploadedFiles);
     } else {
-      console.log('No files uploaded to attach');
+      this.documents.controls.forEach(ctrl => ctrl.markAllAsTouched());
+      alert('Please fill all required fields');
     }
   }
 }

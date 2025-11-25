@@ -1,19 +1,77 @@
- <!-- Preview -->
-      <div class="accordion-section" id="preview">
-        <div class="accordion-header" (click)="toggleSection('preview')">
-          <h2>Preview</h2>
-          <span class="arrow" [class.rotate]="activeSection==='preview'">&#9660;</span>
-        </div>
-        <div class="accordion-content" *ngIf="activeSection==='preview'">
-          <pre>{{ ecForm.value | json }}</pre>
-          <div *ngIf="coverFileName">
-            <strong>Cover Letter:</strong> {{ coverFileName }}
-          </div>
-          <div *ngIf="uploadedFiles.length">
-            <strong>Attachments:</strong>
-            <ul>
-              <li *ngFor="let f of uploadedFiles">{{ f.name }}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+<div class="preview-section">
+  <h2>Preview</h2>
+
+  <!-- General Details -->
+  <div class="preview-block">
+    <h3>General Details</h3>
+    <p><strong>Collection Type:</strong> {{ form.get('general.collectionType')?.value }}</p>
+    <p><strong>Customer Reference:</strong> {{ form.get('general.customerReference')?.value }}</p>
+    <p><strong>Drawee Reference:</strong> {{ form.get('general.draweeReference')?.value }}</p>
+  </div>
+
+  <!-- Drawer & Drawee -->
+  <div class="preview-block">
+    <h3>Drawer / Drawee</h3>
+    <p><strong>Drawer Name:</strong> {{ form.get('drawer.drawerName')?.value }}</p>
+    <p><strong>Drawee Name:</strong> {{ form.get('drawee.draweeName')?.value }}</p>
+    <p><strong>Drawee Address:</strong> {{ form.get('drawee.draweeAddress')?.value }}</p>
+  </div>
+
+  <!-- Bank Details -->
+  <div class="preview-block">
+    <h3>Bank Details</h3>
+    <p><strong>Bank Name:</strong> {{ form.get('bank.bankName')?.value }}</p>
+    <p><strong>Bank Branch:</strong> {{ form.get('bank.bankBranch')?.value }}</p>
+    <p><strong>Account Number:</strong> {{ form.get('bank.accountNumber')?.value }}</p>
+  </div>
+
+  <!-- Payment & Amount -->
+  <div class="preview-block">
+    <h3>Payment & Amount</h3>
+    <p><strong>Amount:</strong> {{ form.get('payment.amount')?.value }}</p>
+    <p><strong>Currency:</strong> {{ form.get('payment.currency')?.value }}</p>
+    <p><strong>Payment Type:</strong> {{ form.get('payment.paymentType')?.value }}</p>
+    <p><strong>Tenor:</strong> {{ form.get('payment.tenor')?.value }}</p>
+    <p><strong>Payment Reference:</strong> {{ form.get('payment.paymentReference')?.value }}</p>
+  </div>
+
+  <!-- Shipping Details -->
+  <div class="preview-block">
+    <h3>Shipping Details</h3>
+    <p><strong>Shipping Marks:</strong> {{ form.get('shipping.shippingMarks')?.value }}</p>
+    <p><strong>Shipment Date:</strong> {{ form.get('shipping.shipmentDate')?.value | date:'mediumDate' }}</p>
+  </div>
+
+  <!-- License / Collection Instructions -->
+  <div class="preview-block">
+    <h3>Collection Instructions</h3>
+    <p><strong>Advice Payment By:</strong> {{ form.get('collection.advicePaymentBy')?.value }}</p>
+    <p><strong>Advice Acceptance Date:</strong> {{ form.get('collection.adviceAcceptanceDate')?.value | date:'mediumDate' }}</p>
+    <p><strong>Opening Charges:</strong> {{ form.get('collection.openingCharges')?.value }}</p>
+    <p><strong>Outside Country Charges:</strong> {{ form.get('collection.outsideCountryCharges')?.value }}</p>
+    <p><strong>Waive Charges:</strong> {{ formatCheckbox(form.get('collection.waiveCharges')?.value) }}</p>
+    <p><strong>Protest Non Payment:</strong> {{ formatCheckbox(form.get('collection.protestNonPayment')?.value) }}</p>
+    <p><strong>Protest Non Acceptance:</strong> {{ formatCheckbox(form.get('collection.protestNonAcceptance')?.value) }}</p>
+    <p><strong>Advice Reason of Refusal:</strong> {{ form.get('collection.adviceReasonRefusal')?.value }}</p>
+    <p><strong>Acceptance Deferred:</strong> {{ formatCheckbox(form.get('collection.acceptanceDeferred')?.value) }}</p>
+    <p><strong>Warehouse Insurance:</strong> {{ formatCheckbox(form.get('collection.warehouseInsurance')?.value) }}</p>
+    <p><strong>Refer To:</strong> {{ form.get('collection.referTo')?.value }}</p>
+  </div>
+
+  <!-- Attachments & Documents -->
+  <div class="preview-block">
+    <h3>Attachments & Documents</h3>
+
+    <p *ngIf="uploadedFiles.length > 0"><strong>Uploaded Files:</strong></p>
+    <ul>
+      <li *ngFor="let file of uploadedFiles">{{ file.name }}</li>
+    </ul>
+
+    <p *ngIf="documents.length > 0"><strong>Documents:</strong></p>
+    <ul>
+      <li *ngFor="let doc of documents">
+        {{ doc.type }}: {{ doc.attachment }} - {{ doc.date | date:'mediumDate' }}
+      </li>
+    </ul>
+  </div>
+</div>

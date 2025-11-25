@@ -6,8 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GeneralDetails } from "../export-collection/components/general-details/general-details";
 import { DrawerDraweeDetails } from "./components/drawer-drawee-details/drawer-drawee-details";
 import { BankDetailsComponent } from '../export-collection/components/bank-details/bank-details';
-import { ShippingDetails } from '../export-collection/components/shipping-details/shipping-details';
-import { PaymentAmount } from '../export-collection/components/payment-amount/payment-amount';
+import { ShippingDetailsComponent } from '../export-collection/components/shipping-details/shipping-details';
+import { PaymentAmountComponent } from '../export-collection/components/payment-amount/payment-amount';
 import { CollectionInstructionsComponent } from '../export-collection/components/collection-instructions/collection-instructions';
 import { Licenses } from "../import-screen/components/licenses/licenses";
 import { AttachmentsDocuments } from "./components/attachments-documents/attachments-documents";
@@ -22,8 +22,8 @@ import { PreviewSectionComponent } from "./components/preview/preview";
     GeneralDetails,
     DrawerDraweeDetails,
     BankDetailsComponent,
-    ShippingDetails,
-    PaymentAmount,
+    ShippingDetailsComponent,
+    PaymentAmountComponent,
     CollectionInstructionsComponent,
     Licenses,
     AttachmentsDocuments,
@@ -33,9 +33,14 @@ import { PreviewSectionComponent } from "./components/preview/preview";
   styleUrls: ['./export-collection.scss']
 })
 export class ExportCollectionComponent implements OnInit, AfterViewInit {
+scrollToSection(_t7: number) {
+throw new Error('Method not implemented.');
+}
 
-  currentStep = 0;
-  activeSection: string | null = null;
+  // -----------------------------
+  // All sections open by default
+  // -----------------------------
+  activeSections: string[] = [];
 
   steps = [
     { key: "general", label: "General Details" },
@@ -48,78 +53,82 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
     { key: "attachments", label: "Attachments and Documents" },
     { key: "preview", label: "Preview" }
   ];
+currentStep: any;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
-  // -------------------------------------
-  // FIXED: Load correct section on reload
-  // -------------------------------------
   ngOnInit() {
+    // Open all sections initially
+    this.activeSections = this.steps.map(s => s.key);
+
+    // If route has section param, scroll to it
     this.route.queryParams.subscribe(params => {
       const section = params['section'];
-
       if (section) {
-        this.activeSection = section;
-
-        // Scroll after DOM paint
-        setTimeout(() => this.scrollTo(section), 200);
+        setTimeout(() => this.scrollTo(section), 100);
       }
     });
   }
 
   ngAfterViewInit() {
-    const sections = document.querySelectorAll('section');
+    const sections = document.querySelectorAll('.scroll-area section');
 
     const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
-            const index = Array.from(sections).indexOf(entry.target as HTMLElement);
-            this.currentStep = index;
+            const id = entry.target.getAttribute('id');
+            if (id) {
+              // Update sidebar highlighting
+              if (!this.activeSections.includes(id)) {
+                this.activeSections.push(id);
+              }
+            }
           }
-        }
+        });
       },
-      {
-        threshold: 0.4,
-        root: document.querySelector('.scroll-area')
-      }
+      { root: document.querySelector('.scroll-area'), threshold: 0.5 }
     );
 
-    sections.forEach(section => observer.observe(section));
+    sections.forEach(sec => observer.observe(sec));
   }
 
   // -----------------------------
-  // FIXED: Sidebar route navigation
+  // Toggle sections individually
+  // -----------------------------
+  toggleSection(section: string) {
+    const index = this.activeSections.indexOf(section);
+    if (index > -1) {
+      this.activeSections.splice(index, 1); // close
+    } else {
+      this.activeSections.push(section); // open
+    }
+  }
+
+  // -----------------------------
+  // Sidebar navigation
   // -----------------------------
   goTo(section: string) {
+    // Scroll
+    this.scrollTo(section);
+
+    // Update query params
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { section },
       queryParamsHandling: 'merge'
     });
 
-    this.activeSection = section;
-
-    // Also scroll
-    setTimeout(() => this.scrollTo(section), 150);
+    // Make sure section is open
+    if (!this.activeSections.includes(section)) {
+      this.activeSections.push(section);
+    }
   }
 
-  // -------------------------------------
-  // FIXED: Smooth scroll by section ID
-  // -------------------------------------
   scrollTo(id: string) {
-    const target = document.getElementById(id);
-    if (!target) return;
-
-    target.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  }
-
-  // KEEP OLD NUMBER-BASED SCROLL IF NEEDED
-  scrollToSection(i: number) {
-    const el = document.getElementById(`section-${i}`);
-    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

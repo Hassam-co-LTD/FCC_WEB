@@ -1,23 +1,27 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'app-preview-section',
+  selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
-export class PreviewSectionComponent {
+export class PreviewSectionComponent implements OnInit {
 
-  @Input() ecForm: FormGroup = new FormGroup({});
-  @Input() coverFileName: string | null = null;
-  @Input() uploadedFiles: File[] = [];
+  @Input() form!: FormGroup; // receive the reactive form
+  @Input() uploadedFiles: any[] = []; // files
+  @Input() documents: any[] = []; // document list
 
-  activeSection: string = 'preview';
+  constructor() {}
 
-  toggleSection(key: string) {
-    this.activeSection = this.activeSection === key ? '' : key;
+  ngOnInit(): void {}
+
+  // helper to format checkbox yes/no
+  formatCheckbox(value: boolean) {
+    return value ? 'Yes' : 'No';
   }
+
 }

@@ -1,93 +1,72 @@
-/* ============================
-   GENERAL DETAILS
-============================ */
+@use '../../../../../styles/theme' as theme;
+
 .accordion-section {
-  background: #ffffff;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   overflow: hidden;
-  transition: all 0.3s ease;
 
   .accordion-header {
-    padding: 1rem 1.3rem;
-    background: linear-gradient(90deg, #0b4eb3, #0b4eb3);
-    color: #fff;
-    cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    margin-bottom: 10px;
+    color: theme.$text-light;
+    padding: 14px 18px;
+    cursor: pointer;
 
-    h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin: 0;
+    &:hover {
+      background: theme.$primary-dark;
+      box-shadow: theme.$shadow-primary;
     }
 
-    .arrow {
-      font-size: 1.2rem;
-      transition: transform 0.3s ease;
-
-      &.rotate {
-        transform: rotate(180deg);
-      }
-    }
+    h2 { font-size: 20px; font-weight: 600; margin: 0; }
+    mat-icon { font-size: 22px; transition: transform 0.3s ease; }
   }
 
   .accordion-content {
-    padding: 1.2rem 1.3rem;
-    background: #fff;
-    border-top: 1px solid #d9e4ff;
-    animation: fadeSlideIn 0.25s ease;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+
+    &.open {
+      max-height: 2000px;
+      opacity: 1;
+      transform: translateY(0);
+      padding: 15px 10px;
+      background: theme.$light-bg;
+      border-radius: theme.$radius-default;
+      border: 1px solid theme.$border-light;
+    }
 
     .form-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: theme.$gap-default;
+      margin-bottom: 22px;
 
-      &.two-col > .input-field {
-        flex: 1;
-        min-width: 45%;
+      &.two-col > mat-form-field {
+        flex: 1 1 45%;
       }
 
-      .input-field {
-        display: flex;
-        flex-direction: column;
-
-        label {
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 0.3rem;
-
-          .required {
-            color: red;
-            font-weight: 700;
-          }
-        }
-
-        input,
-        select {
-          border: 1px solid #c7d6f7;
-          border-radius: 8px;
-          padding: 0.6rem 0.8rem;
-          font-size: 0.95rem;
-          outline: none;
-          background: #f8fbff;
-          transition: border-color 0.2s ease;
-
-          &:focus {
-            border-color: #0b4eb3;
-            background: #ffffff;
-            box-shadow: 0 0 0 2px rgba(11, 78, 179, 0.1);
-          }
-        }
+      mat-form-field {
+        width: 100%;
       }
     }
   }
 }
 
-/* ---------- Reuse existing fadeSlideIn animation ---------- */
-@keyframes fadeSlideIn {
-  0% { opacity: 0; transform: translateY(-10px); }
-  100% { opacity: 1; transform: translateY(0); }
+/* Full width helper */
+.full { width: 100%; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .accordion-header { padding: 12px 14px; }
+  h2 { font-size: 18px; }
+  .accordion-content.open { padding: 12px 8px; }
+  .form-group.two-col > mat-form-field { flex: 1 1 100%; }
 }

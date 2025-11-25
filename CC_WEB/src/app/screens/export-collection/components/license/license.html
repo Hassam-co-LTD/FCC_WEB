@@ -1,17 +1,23 @@
 <form [formGroup]="form">
   <div class="accordion-section" id="license">
+    <!-- Accordion Header -->
     <div class="accordion-header" (click)="toggleSection('license')">
       <h2>License</h2>
       <span class="arrow" [class.rotate]="activeSection==='license'">&#9660;</span>
     </div>
+
+    <!-- Accordion Content -->
     <div class="accordion-content" *ngIf="activeSection==='license'">
       <div class="form-group two-col">
+        <!-- License Type -->
         <div class="input-field">
           <label>License Type</label>
           <select formControlName="licenseType">
-            <option *ngFor="let l of licenseTypes">{{l}}</option>
+            <option *ngFor="let l of licenseTypes">{{ l }}</option>
           </select>
         </div>
+
+        <!-- License Number -->
         <div class="input-field">
           <label>License Number</label>
           <input type="text" formControlName="licenseNumber" />

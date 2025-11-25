@@ -1,38 +1,53 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-collection-instructions',
-  standalone: true,   // <-- make sure this is set
-  imports: [CommonModule, ReactiveFormsModule],  // <-- import CommonModule for *ngFor
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatButtonModule
+  ],
   templateUrl: './collection-instructions.html',
   styleUrls: ['./collection-instructions.scss']
 })
-export class CollectionInstructionsComponent {
-  collectionForm: FormGroup;
-  activeSection: string = '';
+export class CollectionInstructionsComponent implements OnInit {
+
+  collectionForm!: FormGroup;
+  activeSection: string | null = 'adviceCharges';
 
   advicePaymentOptions = [
-    { value: 'drawer', viewValue: 'Drawer' },
-    { value: 'drawee', viewValue: 'Drawee' }
+    { value: 'bank', viewValue: 'Bank' },
+    { value: 'customer', viewValue: 'Customer' }
   ];
 
-  adviceRefusalReasons = [
-    { value: 'reason1', viewValue: 'Reason 1' },
-    { value: 'reason2', viewValue: 'Reason 2' }
-  ];
+  constructor(private fb: FormBuilder) {}
 
-  constructor(private fb: FormBuilder) {
+  ngOnInit(): void {
     this.collectionForm = this.fb.group({
-      advicePaymentBy: [''],
+      advicePaymentBy: ['', Validators.required],
       adviceAcceptanceDate: [''],
-      openingCharges: [''],
-      outsideCountryCharges: [''],
+      openingCharges: ['drawee', Validators.required],
+      outsideCountryCharges: ['drawee', Validators.required],
       waiveCharges: [false],
       protestNonPayment: [false],
       protestNonAcceptance: [false],
-      adviceReasonRefusal: [''],
+      adviceReasonRefusal: ['Swift', Validators.required],
       acceptanceDeferred: [false],
       warehouseInsurance: [false],
       referTo: ['']
@@ -40,10 +55,12 @@ export class CollectionInstructionsComponent {
   }
 
   toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? '' : section;
+    this.activeSection = this.activeSection === section ? null : section;
   }
 
   onSubmit() {
-    console.log('Collection Instructions Form Value:', this.collectionForm.value);
+    if (this.collectionForm.valid) {
+      console.log(this.collectionForm.value);
+    }
   }
 }
