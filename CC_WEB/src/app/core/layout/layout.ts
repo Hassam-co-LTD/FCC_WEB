@@ -7,7 +7,7 @@ import { TopbarComponent } from "../topbar/topbar";
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from "@angular/material/menu";
 import { filter } from 'rxjs/operators';
-
+ 
 interface MenuItem {
   label: string;
   icon?: string;
@@ -15,7 +15,7 @@ interface MenuItem {
   children?: MenuItem[];
   open?: boolean;
 }
-
+ 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
@@ -34,7 +34,7 @@ export class LayoutComponent implements OnInit {
   collapsed = false;
   shippingGuaranteeOpen = false;
   menuItems: MenuItem[] = [];
-
+ 
   systemOverviewMenu: MenuItem[] = [
     { label: 'Change Profile', route: '/system-overview/profile' },
     {
@@ -55,16 +55,16 @@ export class LayoutComponent implements OnInit {
         { label: 'User Accounts', route: '/system-overview/customer-maintenance/user-accounts' }
       ]
     },
-    { 
+    {
       label: 'User Maintenance',
       open: false,
       children: [
         { label: 'Profiles', route: '/system-overview/customer-maintenance/customer-profile' },
-        { label: 'Authentication', route: '/system-overview/customer-maintenance/authentication' },       
+        { label: 'Authentication', route: '/system-overview/customer-maintenance/authentication' },      
       ]
      },
   ];
-
+ 
   middleOfficeMenu: MenuItem[] = [
     {
       label: 'Pending Approvals',
@@ -88,19 +88,19 @@ export class LayoutComponent implements OnInit {
       ]
     }
   ];
-
+ 
   constructor(private router: Router, private authService: AuthService) { }
-
+ 
   ngOnInit() {
     const role = this.authService.getUserCategory();
     this.loadMenu(role);
-
+ 
     // 🔥 Detect route changes & automatically switch menu
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         const url = event.urlAfterRedirects;
-
+ 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
         } else if (url.includes('/middle-office')) {
@@ -110,19 +110,19 @@ export class LayoutComponent implements OnInit {
         }
       });
   }
-
+ 
   toggleSidebar() {
     this.collapsed = !this.collapsed;
   }
-
+ 
   isCollapsed(): boolean {
     return this.collapsed;
   }
-
+ 
   toggleMenu(item: MenuItem) {
     item.open = !item.open;
   }
-
+ 
   loadMenu(role: 'ADMIN' | 'USER' | null) {
     if (role === 'ADMIN') {
       this.menuItems = [
@@ -132,11 +132,16 @@ export class LayoutComponent implements OnInit {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+ 
         {
           label: 'Trade Services',
           icon: 'article',
           open: false,
           children: [
+ 
+            // -------------------------
+            // IMPORT LC
+            // -------------------------
             {
               label: 'Import LC',
               open: false,
@@ -145,25 +150,60 @@ export class LayoutComponent implements OnInit {
                 { label: 'Amend', route: '/import-screen/amend' },
               ]
             },
+ 
+            // -------------------------
+            // EXPORT LC
+            // -------------------------
             { label: 'Export LC', route: '/export-screen' },
+ 
+            // -------------------------
+            // SHIPPING GUARANTEE
+            // -------------------------
+            {
+              label: 'Shipping Guarantee',
+              open: false,
+              children: [
+                { label: 'Create', route: '/shipping-guarantee' },
+                { label: 'Amend', route: '/shipping-guarantee/amend' },
+              ]
+            },
+ 
+            // -------------------------
+            // EXPORT COLLECTION
+            // -------------------------
+            {
+              label: 'Export Collection',
+              open: false,
+              children: [
+                { label: 'Create', route: '/export-collection' },
+                // If you add amend later, uncomment this:
+                // { label: 'Amend', route: '/export-collection/amend' },
+              ]
+            },
+ 
+            // -------------------------
+            // UNDERTAKING ISSUANCE
+            // -------------------------
             {
               label: 'Undertaking Issuance',
               open: false,
               children: [
                 { label: 'Create', route: '/undertaking-issuance' },
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
-              ],
+              ]
             },
+ 
           ],
         },
+ 
         { label: 'Settings', icon: 'settings', route: '/settings' },
       ];
     }
   }
-
-
+ 
+ 
+ 
   toggleShippingGuaranteeMenu() {
     this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
   }
 }
-  
