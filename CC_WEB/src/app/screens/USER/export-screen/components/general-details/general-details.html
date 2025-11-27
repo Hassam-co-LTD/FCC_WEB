@@ -1,0 +1,23 @@
+<div class="section-header" (click)="toggle()">
+    <h2>General Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+    <h4>Customer Reference</h4>
+    <div class="form-row">
+        <input type="text" formControlName="customerRef" placeholder="Enter Customer Reference">
+    </div>
+
+    <h4>Advising Bank *</h4>
+    <div class="form-row">
+        <input type="text" formControlName="advisingBank" placeholder="Enter Advising Bank">
+    </div>
+
+    <h4>Issuer Reference *</h4>
+    <div class="form-row">
+        <input type="text" formControlName="issuerRef" placeholder="Enter Issuer Reference">
+    </div>
+
+</div>

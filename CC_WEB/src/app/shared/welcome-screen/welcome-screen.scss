@@ -1,0 +1,148 @@
+@use '../../../styles/theme' as theme;
+
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+    background: linear-gradient(135deg, theme.$light-bg, #f9fafc);
+    padding: 20px;
+
+    .welcome-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        padding: 40px 60px;
+        max-width: 600px;
+        width: 100%;
+        transition: all 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: theme.$primary;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 28px;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: theme.$primary-dark;
+            margin-bottom: 16px;
+            padding-left: 8px;
+            display: inline-block;
+        }
+
+        .btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+
+            button {
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-color: theme.$primary;
+                color: theme.$primary;
+                transition: all 0.25s ease;
+
+                &:hover {
+                    background: theme.$primary;
+                    color: theme.$text-light;
+                    box-shadow: theme.$button-shadow;
+                }
+            }
+        }
+    }
+
+    /* ==============================
+       Responsive Design
+       ============================== */
+    @media (max-width: 1024px) {
+        .welcome-card {
+            padding: 30px 40px;
+            max-width: 500px;
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+            }
+
+            .btn-row {
+                gap: 12px;
+
+                button {
+                    padding: 8px 20px;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        height: auto;
+        padding: 40px 20px;
+
+        .welcome-card {
+            padding: 30px;
+            max-width: 90%;
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+                margin-bottom: 24px;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .welcome-card {
+            padding: 25px 20px;
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            p {
+                font-size: 0.85rem;
+            }
+
+            h4 {
+                font-size: 1rem;
+                margin-bottom: 12px;
+            }
+
+            .btn-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+
+                button {
+                    width: 100%;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+}

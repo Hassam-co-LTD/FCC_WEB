@@ -1,0 +1,35 @@
+<div class="screen">
+    <!-- SIDEBAR -->
+    <app-sidebar [steps]="exportlcSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+    </app-sidebar>
+
+    <!-- MAIN CONTENT -->
+    <div class="content">
+    <div class="scroll-area">
+
+        <!-- SECTION 0 -->
+        <section id="section-0">
+            <app-general-details></app-general-details>
+        </section>
+        <hr class="section-divider" />
+
+        <!-- SECTION 1 -->
+        <section id="section-1">
+            <app-upload></app-upload>
+        </section>
+        <hr class="section-divider" />
+
+        <!-- SECTION 2 -->
+        <section id="section-2">
+            <app-attachments></app-attachments>
+        </section>
+        <hr class="section-divider" />
+
+        <!-- SECTION 3 -->
+        <section id="section-3">
+            <app-preview></app-preview>
+        </section>
+
+    </div>
+</div>
+</div>

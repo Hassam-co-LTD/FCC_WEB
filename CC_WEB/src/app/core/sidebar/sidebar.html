@@ -1,0 +1,15 @@
+<aside class="side-nav" [class.collapsed]="isCollapsed()">
+
+    <button class="toggle-btn" (click)="toggleSidebar()">
+        <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+
+    <ul>
+        <li #stepItem *ngFor="let s of steps; let i = index" [class.active]="i === currentStep" (click)="scrollTo(i)">
+
+            <span class="num">{{ i + 1 }}</span>
+            <span class="label">{{ s.label }}</span>
+        </li>
+    </ul>
+
+</aside>
