@@ -1,37 +1,43 @@
+@use '../../../../../styles/theme' as theme;
+
 .preview-section {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-width: 900px;
-  margin: 20px auto;
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  padding: 0; // we'll let preview-block handle spacing
+  margin: 20px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 
   h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #343a40;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    padding: 14px 18px;
+    background: theme.$primary;
+    color: theme.$text-light;
+    border-radius: theme.$radius-large theme.$radius-large 0 0;
   }
 
   .preview-block {
-    background: #fff;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    background: theme.$light-bg;
+    border-radius: theme.$radius-default;
+    padding: 15px 18px;
+    margin: 10px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 
     h3 {
       font-size: 18px;
+      font-weight: 500;
       margin-bottom: 10px;
-      color: #495057;
+      color: theme.$text-dark;
     }
 
     p {
-      margin: 4px 0;
       font-size: 14px;
-      color: #495057;
+      margin: 4px 0;
+      color: theme.$text-dark;
 
       strong {
-        color: #212529;
+        color: theme.$text-darker;
       }
     }
 
@@ -39,14 +45,41 @@
       margin: 5px 0 0 15px;
       li {
         font-size: 14px;
-        color: #495057;
+        color: theme.$text-dark;
       }
     }
 
-    .bank-tab h4 {
-      margin: 10px 0 5px 0;
-      font-size: 16px;
-      color: #343a40;
+    .bank-tab {
+      margin-top: 10px;
+
+      h4 {
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: theme.$text-darker;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .preview-section {
+    h2 {
+      font-size: 18px;
+      padding: 12px 14px;
+    }
+
+    .preview-block {
+      padding: 12px;
+
+      h3 {
+        font-size: 16px;
+      }
+
+      .bank-tab h4 {
+        font-size: 15px;
+      }
     }
   }
 }

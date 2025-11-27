@@ -5,7 +5,6 @@
   min-height: 100vh;
   color: #1a1a1a;
 
-  /* Header */
   .dashboard-header {
     margin-bottom: 2rem;
 
@@ -37,7 +36,6 @@
     100% { transform: rotate(360deg); }
   }
 
-  /* Stats Cards */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -59,10 +57,7 @@
         box-shadow: 0 12px 24px rgba(30,136,229,0.15);
       }
 
-      .icon {
-        font-size: 2rem;
-        margin-right: 1rem;
-      }
+      .icon { font-size: 2rem; margin-right: 1rem; }
 
       .details {
         h2 { margin: 0; font-weight: 700; }
@@ -71,32 +66,35 @@
     }
   }
 
-  /* Banking News / Analytics */
   .analytics {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
     margin-top: 2rem;
 
-    .analytics-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #0d47a1;
+    }
 
-      &:hover {
-        box-shadow: 0 10px 28px rgba(30,136,229,0.15);
-      }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
 
-      h3 { margin-bottom: 1rem; color: #0d47a1; font-weight: 600; }
-      .placeholder { 
-        background: #e3f2fd; 
-        border-radius: 10px; 
-        padding: 1rem; 
-        text-align: center; 
-        color: #90caf9;
-        font-size: 0.9rem;
+      .analytics-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+
+        &:hover {
+          box-shadow: 0 10px 28px rgba(30,136,229,0.15);
+        }
+
+        h3 { margin-bottom: 0.5rem; color: #0d47a1; font-weight: 600; }
+        .news-snippet { font-size: 0.9rem; color: #546e7a; margin-bottom: 0.5rem; }
+        .news-time { font-size: 0.75rem; color: #90caf9; }
       }
     }
   }
