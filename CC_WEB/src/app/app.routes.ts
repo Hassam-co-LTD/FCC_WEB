@@ -99,7 +99,7 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import(
                                 './screens/USER/shipping-guarantee-screen/components/bank-details/bank-details'
-                            ).then((m) => m.BankDetailsComponent),
+                            ).then((m) => m.BankDetails),
                     },
                     {
                         path: 'instructions',

@@ -22,12 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss'],
 })
-<<<<<<<< HEAD:CC_WEB/src/app/screens/USER/shipping-guarantee-screen/components/bank-details/bank-details.ts
-export class BankDetailsComponent {
-  isOpen = true;
-========
-export class bankdetails {
->>>>>>>> 4cd4ff48ba34e0c91524ce091fb5fa0525a6ebe9:CC_WEB/src/app/screens/USER/shipping-guarantee-screen/component/bank-details/bank-details.ts
+export class BankDetails {
+   isOpen = true;
   activeSection: string | null = 'bank';
   form: FormGroup;
 
@@ -48,12 +44,8 @@ export class bankdetails {
     });
   }
 
-<<<<<<<< HEAD:CC_WEB/src/app/screens/USER/shipping-guarantee-screen/components/bank-details/bank-details.ts
-toggle(){
-  this.isOpen = !this.isOpen;}
-========
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle() {
+    this.isOpen = !this.isOpen;
   }
 
   incrementAmount() {
@@ -67,5 +59,4 @@ toggle(){
       this.form.get('guaranteeAmount')?.setValue(current - 1);
     }
   }
->>>>>>>> 4cd4ff48ba34e0c91524ce091fb5fa0525a6ebe9:CC_WEB/src/app/screens/USER/shipping-guarantee-screen/component/bank-details/bank-details.ts
 }

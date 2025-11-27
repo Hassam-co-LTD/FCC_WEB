@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss'],
 })
-export class BankDetailsComponent {
+export class BankDetails {
   isOpen = true;
 
   activeSection: string | null = 'bank';

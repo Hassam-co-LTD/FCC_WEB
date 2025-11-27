@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 // Import your section components
 import { GeneralDetails } from '../../../general-details/general-details';
 import { ApplicantBeneficiary } from '../../../applicant-beneficiary/applicant-beneficiary';
-import { bankdetails } from '../../../bank-details/bank-details';
+import { BankDetails } from '../../../bank-details/bank-details';
 import { InstructionsComponent } from '../../../instructions/instructions';
 import { AttachmentsDocuments } from '../../../attachments/attachments';
 import { Preview } from '../../../preview/preview';

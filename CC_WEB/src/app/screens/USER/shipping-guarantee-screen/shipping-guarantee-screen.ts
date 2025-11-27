@@ -2,7 +2,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GeneralDetails } from "../../USER/shipping-guarantee-screen/components/general-details/general-details";
 import { ApplicantBeneficiary } from "../../USER/shipping-guarantee-screen/components/applicant-beneficiary/applicant-beneficiary";
-import { BankDetailsComponent } from "../../USER/shipping-guarantee-screen/components/bank-details/bank-details";
+import { BankDetails } from "../../USER/shipping-guarantee-screen/components/bank-details/bank-details";
 import { InstructionsComponent } from "../../USER/shipping-guarantee-screen/components/instructions/instructions";
 import { AttachmentsDocuments } from "../../USER/shipping-guarantee-screen/components/attachments/attachments";
 import { Preview } from "../shipping-guarantee-screen/components/preview/preview";
@@ -17,7 +17,7 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     CommonModule,
     GeneralDetails,
     ApplicantBeneficiary,
-    BankDetailsComponent,
+    BankDetails,
     InstructionsComponent,
     AttachmentsDocuments,
     Preview,
