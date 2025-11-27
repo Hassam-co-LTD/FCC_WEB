@@ -56,6 +56,7 @@ export class AmendScreen implements AfterViewInit {
     { label: "General Details" },
     { label: "Applicant Details" },
     { label: "Bank Details" },
+    {label:"undertaking details"},
     { label: "Amount & Charges" },
     { label: "Payment Details" },
     { label: "Shipment Details" },

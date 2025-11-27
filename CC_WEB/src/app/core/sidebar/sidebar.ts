@@ -30,6 +30,7 @@ export class Sidebar {
     { label: "Bank Details" },
     { label: "Amount & Charges" },
     { label: "Payment Details" },
+    {label: "Undertaking Details"},
     { label: "Shipment Details" },
     { label: "Narrative Details" },
     { label: "Licenses" },

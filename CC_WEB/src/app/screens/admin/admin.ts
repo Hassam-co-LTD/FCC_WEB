@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminHeader } from './admin-header/admin-header';
+import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule,RouterOutlet,MatIconModule,AdminHeader],
+  imports: [ReactiveFormsModule,CommonModule, MatCardModule, MatButtonModule,RouterOutlet,MatIconModule,AdminHeader],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss'],
 })

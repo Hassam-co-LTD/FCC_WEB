@@ -7,23 +7,40 @@ export const routes: Routes = [
     { path: '', redirectTo: 'signup', pathMatch: 'full' },
     // my working 
    {
-        path: 'admin',
-        loadComponent: () =>
-            import('./screens/admin/admin').then((m) => m.AdminComponent),
-    },
+  path: 'admin',
+  loadComponent: () =>
+      import('./screens/admin/admin').then((m) => m.AdminComponent),
+  children: [
+    {
+      path: 'customers/create',
+      loadComponent: () =>
+        import('./screens/admin/pages/customers/create-customer/create-customer')
+          .then(m => m.CreateCustomer)
+    }
+  ]
+}
 
+,
 
     // Auth routes
     {
-        path: 'login',
+        path: '',
         loadComponent: () =>
             import('./screens/login/login.component').then((m) => m.LoginComponent),
     },
     { 
-        path: 'signup',
+        path: 'login',
         loadComponent: () =>
             import('./screens/admin-login/admin-login').then((m) => 
              m.AdminLogin),
+    },
+
+    // import  undertaking details 
+    { 
+        path: 'undertakingDetails',
+        loadComponent: () =>
+            import('./screens/import-screen/undertaking-details/undertaking-details').then((m) => 
+             m.UndertakingDetails),
     },
 
     // Protected routes (with layout)

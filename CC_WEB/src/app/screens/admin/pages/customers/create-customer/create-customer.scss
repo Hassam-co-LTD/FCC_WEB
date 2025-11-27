@@ -1,0 +1,28 @@
+@use '../../../../../../styles/theme' as *;
+
+.form-wrapper {
+  background: $light-bg;
+  border: 1px solid $border-light;
+  border-radius: $radius-default;
+  padding: $gap-default;
+}
+
+h2 {
+  color: $text-dark;
+  margin-bottom: $gap-default;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-default;
+}
+
+button {
+  background: $primary-btn;
+  color: $text-light;
+}
+
+button:hover {
+  background: $primary-btn-hover;
+}

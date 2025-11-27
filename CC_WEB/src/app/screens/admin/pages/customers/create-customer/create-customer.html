@@ -1,0 +1,28 @@
+<div class="form-wrapper">
+  <h2>Create Customer</h2>
+
+  <form [formGroup]="customerForm" (ngSubmit)="submitForm()">
+
+    <!-- Name -->
+    <mat-form-field appearance="outline">
+      <mat-label>Full Name</mat-label>
+      <input matInput formControlName="fullName">
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email">
+    </mat-form-field>
+
+    <!-- Phone -->
+    <mat-form-field appearance="outline">
+      <mat-label>Phone Number</mat-label>
+      <input matInput formControlName="phone" type="tel">
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" [disabled]="!customerForm.valid">
+      Create Customer
+    </button>
+  </form>
+</div>

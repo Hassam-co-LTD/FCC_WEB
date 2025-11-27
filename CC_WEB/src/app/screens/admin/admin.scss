@@ -38,11 +38,7 @@
           border-radius: theme.$radius-default;
           transition: all 0.3s;
 
-          &:hover,
-          &.active {
-            background-color: theme.$sidebar-hover-bg;
-            color: theme.$primary-color;
-          }
+          
         }
 
         .submenu {
@@ -60,10 +56,6 @@
               display: block;
               border-radius: theme.$radius-default;
 
-              &:hover,
-              &.active {
-                background-color: theme.$submenu-hover-bg;
-              }
             }
           }
         }
