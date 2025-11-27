@@ -1,230 +1,153 @@
-@use '../../../../styles/_theme' as theme;
-/* ============================
-   Export Screen Styles (Blue Theme Integrated)
-============================ */
+@use "sass:color";
+@use "../../../../styles/theme" as theme;
 
-
-.container {
-    margin: 0 auto;
-    padding: theme.$gap-default;
-    background: theme.$white;
-    border-radius: theme.$radius-large;
-    box-shadow: theme.$shadow-primary;
-
-    h1 {
-        color: theme.$primary;
-        font-size: 1.6rem;
-        margin-bottom: 1rem;
-        font-weight: 600;
-        text-align: center;
-    }
-}
-
-.content {
+/* ------------------------------
+   Page Screen Layout
+--------------------------------*/
+.screen {
     display: flex;
-    gap: theme.$gap-default;
-    background: theme.$bg-content;
-    border-radius: theme.$radius-large;
-    overflow: hidden;
+    height: 100vh;
+    background: theme.$screen-bg;
+    overflow: visible; // ✅ allow hover shadows from sidebar
+    align-items: stretch;
+    position: relative;
+    z-index: 0;
 }
 
-/* Sidebar */
-.sidebar {
-    flex: 0 0 250px;
-    background: theme.$sidebar-bg;
-    border-right: 1px solid theme.$sidebar-border;
+/* ------------------------------
+   Main Content Area
+--------------------------------*/
+.content {
+    flex: 1;
+    background: theme.$screen-content-bg;
+    overflow: hidden; // ✅ prevent horizontal scrolls, allow sidebar visuals
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    position: relative;
+    z-index: 1; // content below sidebar hover effects
 
-    .section {
-        gap: 0.6rem;
-        padding: 0.8rem 1rem;
-        border: 1px solid transparent;
-        border-radius: theme.$radius-default;
-        color: theme.$sidebar-text;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.25s ease;
-
-        span {
-            display: inline-block;
-            background: theme.$step-badge-bg;
-            color: theme.$step-badge-text;
-            font-weight: 600;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            line-height: 26px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        &:hover {
-            background: theme.$sidebar-hover-bg;
-            border-color: theme.$sidebar-hover-border;
-            color: theme.$primary-hover;
-        }
-
-        &.active {
-            background: theme.$sidebar-active-bg;
-            border-color: theme.$sidebar-active-border;
-            color: theme.$primary-hover;
-
-            span {
-                background: theme.$step-badge-active-bg;
-                color: theme.$step-badge-active-text;
-            }
-        }
-
-        &.completed span {
-            background: theme.$primary;
-            color: theme.$white;
-        }
-    }
-}
-
-/* Form Area */
-.form-area {
-    flex: 1;
-    background: theme.$bg-content;
-    padding: 1.5rem;
-    border-radius: 0 theme.$radius-large theme.$radius-large 0;
-    box-shadow: inset 0 0 6px theme.$primary-shadow;
-
-    h2 {
-        color: theme.$primary;
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: theme.$gap-default;
-        margin-bottom: 1rem;
-    }
-
-    .form-group {
+    .scroll-area {
         flex: 1;
+        padding: 30px 50px;
+        height: 100%;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scroll-behavior: smooth;
+        scrollbar-color: theme.$step-border transparent;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(theme.$primary, 0.3);
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(theme.$primary, 0.5);
+        }
+    }
+
+    section {
+        scroll-margin-top: 20px;
+        transition: background 0.3s ease;
+
+        &:hover {
+            background: rgba(theme.$primary, 0.02);
+        }
+    }
+
+    .actions {
+        margin-top: 30px;
+        margin-bottom: 40px;
         display: flex;
-        flex-direction: column;
-
-        label {
-            font-weight: 500;
-            margin-bottom: 0.4rem;
-            color: theme.$text-medium;
-
-            .required {
-                color: theme.$primary;
-            }
-        }
-
-        input,
-        select {
-            padding: 0.6rem 0.8rem;
-            border: 1px solid theme.$border-light;
-            border-radius: theme.$radius-default;
-            background: theme.$white;
-            color: theme.$text-dark;
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-            &:focus {
-                border-color: theme.$primary;
-                box-shadow: 0 0 0 3px rgba(11, 78, 179, 0.15);
-                outline: none;
-            }
-
-            &.invalid {
-                border-color: #d9534f;
-            }
-        }
-
-        .hint {
-            font-size: 0.85rem;
-            color: theme.$text-medium;
-            margin-top: 0.3rem;
-        }
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 0 40px;
     }
 }
 
-/* Summary */
-.summary-section {
-    background: theme.$light-bg;
-    border: 1px solid theme.$border-light;
-    border-radius: theme.$radius-default;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: theme.$shadow-primary;
+/* ------------------------------
+   Divider
+--------------------------------*/
+.section-divider {
+    border: none;
+    border-top: 1px solid theme.$step-border;
+    margin: 24px 0;
+    opacity: 0.7;
+}
 
-    h4 {
-        color: theme.$primary;
-        margin-bottom: 0.6rem;
+/* ------------------------------
+   Buttons
+--------------------------------*/
+button[mat-flat-button] {
+    background: theme.$primary-btn-bg !important;
+    color: #fff !important;
+    font-weight: 500;
+    border-radius: 50px;
+    box-shadow: 0 2px 6px theme.$primary-btn-shadow;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background: theme.$primary-btn-hover-bg !important;
+        transform: translateY(-1px);
     }
 
-    p {
-        margin: 0.2rem 0;
-        color: theme.$text-medium;
+    &:active {
+        transform: translateY(0);
+        box-shadow: none;
     }
 }
 
-/* Buttons */
-.actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
+button[mat-stroked-button] {
+    border-color: theme.$secondary-btn-border;
+    color: theme.$secondary-btn-text;
+    font-weight: 500;
+    border-radius: 50px;
+    transition: all 0.2s ease-in-out;
 
-    button {
-        min-width: 100px;
-        padding: 0.6rem 1.2rem;
-        border-radius: theme.$radius-default;
-        font-weight: 500;
-        cursor: pointer;
-        border: 1px solid transparent;
-        transition: all 0.25s ease;
+    &:hover {
+        background: theme.$secondary-btn-hover-bg;
+        border-color: color.adjust(theme.$secondary-btn-border, $lightness: -10%);
     }
 
-    .exit-btn {
-        background: transparent;
-        color: theme.$secondary-btn-text;
-        border: 1px solid theme.$secondary-btn-border;
-
-        &:hover {
-            background: theme.$secondary-btn-hover-bg;
-        }
-    }
-
-    .next-btn {
-        background: theme.$primary-btn-bg;
-        color: theme.$white;
-        box-shadow: theme.$button-shadow;
-
-        &:hover {
-            background: theme.$primary-btn-hover-bg;
-        }
+    &:active {
+        transform: scale(0.98);
     }
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-    .content {
-        flex-direction: column;
+/* ------------------------------
+   Responsive Adjustments
+--------------------------------*/
+@media (max-width: 1200px) {
+    .content .scroll-area {
+        padding: 20px 30px;
+    }
+}
+
+@media (max-height: 800px) {
+    .side-nav ul li {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-height: 700px) {
+    .side-nav ul li {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-height: 600px) {
+    .side-nav {
+        justify-content: flex-start;
+        padding-top: 10px;
     }
 
-    .sidebar {
-        flex: 1 1 auto;
-        flex-direction: row;
-        overflow-x: auto;
-
-        .section {
-            flex: 1;
-            justify-content: center;
-        }
-    }
-
-    .form-area {
-        border-radius: theme.$radius-large;
+    .side-nav ul li {
+        padding: 5px 8px;
+        font-size: 0.7rem;
     }
 }

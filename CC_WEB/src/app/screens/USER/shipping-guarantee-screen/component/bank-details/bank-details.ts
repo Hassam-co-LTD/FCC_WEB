@@ -22,7 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss'],
 })
-export class bankdetails {
+export class BankDetails {
+   isOpen = true;
   activeSection: string | null = 'bank';
   form: FormGroup;
 
@@ -43,8 +44,8 @@ export class bankdetails {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle() {
+    this.isOpen = !this.isOpen;
   }
 
   incrementAmount() {

@@ -1,0 +1,139 @@
+@use '../../../../../../styles/_theme.scss' as theme;
+
+/* ===========================
+   Section Header (Collapsible Title)
+=========================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
+
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+    }
+}
+
+/* ===========================
+   Collapsible Container
+=========================== */
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+}
+
+.collapsible.open {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: theme.$radius-default;
+    border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Titles
+=========================== */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$white;
+}
+
+.instruction-form {
+    background: #fafaff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.header-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+
+    .save-btn {
+        color: #d63384;
+        font-weight: 500;
+    }
+}
+
+.hint,
+.extensions {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0.3rem 0;
+}
+
+.dropzone {
+    border: 2px dashed #c5cae9;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    color: #6c63ff;
+    background: #fff;
+    cursor: pointer;
+    margin: 1rem 0;
+
+    mat-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    &:hover {
+        background: #f4f5fb;
+    }
+
+    button {
+        margin-top: 0.8rem;
+    }
+}
+
+.file-list {
+    margin-top: 1rem;
+
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fff;
+        margin-bottom: 0.5rem;
+
+        span {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        button {
+            color: #e53935;
+        }
+    }
+}
+
+.reference {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 1rem;
+}

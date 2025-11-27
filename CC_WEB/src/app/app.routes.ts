@@ -40,8 +40,254 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
             },
+ 
+            // ==============================
+            // SHIPPING GUARANTEE
+            // ==============================
 
-            // Import LC Parent Route
+            {
+                path: 'shipping-guarantee',
+                loadComponent: () =>
+                    import('./screens/USER/shipping-guarantee-screen/shipping-guarantee-screen')
+                        .then((m) => m.ShippingGuaranteeScreen),
+                children: [
+                    {
+                        path: 'general-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/general-details/general-details'
+                            ).then((m) => m.GeneralDetails),
+                    },
+                    {
+                        path: 'applicant-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/applicant-beneficiary/applicant-beneficiary'
+                            ).then((m) => m.ApplicantBeneficiary),
+                    },
+                    {
+                        path: 'bank-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/bank-details/bank-details'
+                            ).then((m) => m.BankDetails),
+                    },
+                    {
+                        path: 'instructions',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/instructions/instructions'
+                            ).then((m) => m.InstructionsComponent),
+                    },
+                    {
+                        path: 'attachments',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/attachments/attachments'
+                            ).then((m) => m.AttachmentsDocuments),
+                    },
+                    {
+                        path: 'preview',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/shipping-guarantee-screen/components/preview/preview'
+                            ).then((m) => m.Preview),
+                    }
+
+                ],
+            },
+
+            {
+                path: 'shipping-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Shipping Guarantee',
+                    description: 'Manage all Shipping Guarantee activities here.',
+                },
+            },
+
+            {
+                path: 'shipping-guarantee/amend',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/shipping-guarantee-screen/components/sub-menus/events/amend/amend'
+                    ).then((m) => m.Amend),
+            },
+
+
+            // ==============================
+            // EXPORT COLLECTION
+            // ==============================
+
+            {
+                path: 'export-collection',
+                loadComponent: () =>
+                    import('./screens/USER/export-collection/export-collection')
+                        .then((m) => m.ExportCollectionComponent),
+                children: [
+                    {
+                        path: 'general-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/general-details/general-details'
+                            ).then((m) => m.GeneralDetails),
+                    },
+                    {
+                        path: 'drawer-drawee-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/drawer-drawee-details/drawer-drawee-details'
+                            ).then((m) => m.DrawerDraweeDetails),
+                    },
+                    {
+                        path: 'payment-amount',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/payment-amount/payment-amount'
+                            ).then((m) => m.PaymentAmountComponent),
+                    },
+                    {
+                        path: 'bank-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/bank-details/bank-details'
+                            ).then((m) => m.BankDetailsComponent),
+                    },
+                    {
+                        path: 'attachments-documents',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/attachments-documents/attachments-documents'
+                            ).then((m) => m.AttachmentsDocuments),
+                    },
+                    {
+                        path: 'collection-instructions',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/collection-instructions/collection-instructions'
+                            ).then((m) => m.CollectionInstructionsComponent),
+                    },
+                    {
+                        path: 'shipping-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/shipping-details/shipping-details'
+                            ).then((m) => m.ShippingDetailsComponent),
+                    },
+                    {
+                        path: 'license',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/license/license'
+                            ).then((m) => m.License),
+                    },
+                    {
+                        path: 'preview',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/export-collection/components/preview/preview'
+                            ).then((m) => m.PreviewSectionComponent),
+                    }
+                ],
+            },
+
+            {
+                path: 'export-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Export Collection',
+                    description: 'Manage all Export Collection related activities here.',
+                },
+            },
+
+            // ==============================
+            // UNDERTAKING ISSUANCE 
+            // ==============================
+ 
+            {
+                path: 'undertaking-issuance',
+                loadComponent: () =>
+                    import('./screens/USER/undertaking-issuance/undertaking-issuance')
+                        .then((m) => m.UndertakingIssuance),
+            },
+ 
+            {
+                path: 'undertaking-issuance/request-undertaking',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/undertaking-issuance/request-undertaking/request-undertaking'
+                    ).then((m) => m.RequestUndertaking),
+                children: [
+                    {
+                        path: 'general-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/undertaking-issuance/components/general-details/general-details'
+                            ).then((m) => m.GeneralDetails),
+                    },
+                    {
+                        path: 'beneficiary-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/undertaking-issuance/components/application-beneficiary/application-beneficiary'
+                            ).then((m) => m.ApplicationBeneficiary),
+                    },
+                    {
+                        path: 'bank-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/undertaking-issuance/components/bank-details/bank-details'
+                            ).then((m) => m.BankDetails),
+                    },
+                    {
+                        path: 'undertaking-details',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/undertaking-issuance/components/undertaking-details/undertaking-details'
+                            ).then((m) => m.UndertakingDetails),
+                    },
+                    {
+                        path: 'instruction-bank',
+                        loadComponent: () =>
+                            import(
+                                './screens/USER/undertaking-issuance/components/instructions-bank/instructions-bank'
+                            ).then((m) => m.InstructionsBank),
+                    },
+                ],
+            },
+ 
+            {
+                path: 'undertaking-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Undertaking Issuance',
+                    description:
+                        'Manage all Undertaking Issuance related activities here.',
+                },
+            },
+ 
+            {
+                path: 'undertaking-issuance/amend',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
+                    ).then((m) => m.AmendScreen),
+            },
+ 
+ 
+            // ==============================
+            // IMPORT LC
+            // ==============================
+ 
             {
                 path: 'import-screen',
                 loadComponent: () =>

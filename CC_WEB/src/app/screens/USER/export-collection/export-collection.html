@@ -1,19 +1,8 @@
-<div class="export-collection-screen">
+<div class="screen">
 
   <!-- SIDEBAR -->
-  <!-- <aside class="sidebar">
-    <ul class="steps">
-      <li 
-        *ngFor="let step of steps; let i = index"
-        [class.active]="currentStep === i"
-        (click)="scrollToSection(i)"
-      >
-        <span class="step-number">{{ i + 1 }}</span>
-        <span class="step-label">{{ step.label }}</span>
-      </li>
-    </ul>
-  </aside> -->
-
+    <app-sidebar [steps]="exportCollectionSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+    </app-sidebar>
   <!-- MAIN CONTENT -->
   <div class="content">
     <div class="scroll-area">
@@ -44,4 +33,5 @@
       </div> -->
     </div>
   </div>
+
 </div>

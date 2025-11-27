@@ -1,5 +1,5 @@
 @use '../../../../../../styles/_theme.scss' as theme;
- 
+
 /* ===========================
    Section Header (Collapsible Title)
 =========================== */
@@ -14,24 +14,24 @@
     margin-bottom: 10px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
- 
+
     &:hover {
         background: theme.$primary-dark;
         box-shadow: theme.$shadow-primary;
     }
- 
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
     }
- 
+
     h2 {
         font-size: 20px;
         font-weight: 600;
         margin: 0;
     }
 }
- 
+
 /* ===========================
    Collapsible Container
 =========================== */
@@ -41,7 +41,7 @@
     opacity: 0;
     transition: all 0.35s ease-in-out;
     transform: translateY(-5px);
- 
+
     &.open {
         max-height: 2000px;
         opacity: 1;
@@ -52,7 +52,7 @@
         border: 1px solid theme.$border-light;
     }
 }
- 
+
 /* ===========================
    Dropzone & File Upload
 =========================== */
@@ -62,7 +62,7 @@
     color: #555;
     margin: 0.3rem 0;
 }
- 
+
 .dropzone {
     border: 2px dashed #c5cae9;
     border-radius: 10px;
@@ -72,25 +72,25 @@
     background: #fff;
     cursor: pointer;
     margin: 1rem 0;
- 
+
     mat-icon {
         font-size: 3rem;
         margin-bottom: 0.5rem;
         display: block;
     }
- 
+
     &:hover {
         background: #f4f5fb;
     }
- 
+
     button {
         margin-top: 0.8rem;
     }
 }
- 
+
 .file-list {
     margin-top: 1rem;
- 
+
     .file-item {
         display: flex;
         justify-content: space-between;
@@ -100,18 +100,18 @@
         border-radius: 8px;
         background: #fff;
         margin-bottom: 0.5rem;
- 
+
         span {
             font-size: 0.9rem;
             color: #333;
         }
- 
+
         button {
             color: #e53935;
         }
     }
 }
- 
+
 /* ===========================
    Form Styling
 =========================== */
@@ -121,30 +121,30 @@
     padding: 1.5rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     margin-bottom: 1rem;
- 
+
     .form-group {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
- 
+
         &.two-col > .input-field {
             flex: 1 1 45%;
         }
- 
+
         .input-field {
             display: flex;
             flex-direction: column;
- 
+
             label {
                 font-weight: 500;
                 margin-bottom: 0.3rem;
- 
+
                 .required {
                     color: red;
                     margin-left: 2px;
                 }
             }
- 
+
             input,
             select {
                 padding: 0.4rem 0.6rem;
@@ -152,11 +152,11 @@
                 border-radius: 6px;
                 font-size: 0.95rem;
             }
- 
+
             .attachment-field {
                 display: flex;
                 gap: 0.5rem;
- 
+
                 input {
                     flex: 1;
                     cursor: not-allowed;
@@ -164,7 +164,7 @@
             }
         }
     }
- 
+
     .btn-remove {
         margin-top: 1rem;
         background: #e53935;
@@ -173,13 +173,13 @@
         padding: 0.4rem 0.8rem;
         border-radius: 6px;
         cursor: pointer;
- 
+
         &:hover {
             background: #c62828;
         }
     }
 }
- 
+
 .btn-add {
     margin-top: 1rem;
     background: #6c63ff;
@@ -188,12 +188,12 @@
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
- 
+
     &:hover {
         background: #5a54d1;
     }
 }
- 
+
 /* ===========================
    Reference Section
 =========================== */
@@ -203,7 +203,7 @@
     color: #555;
     margin-top: 1rem;
 }
- 
+
 /* Responsive */
 @media (max-width: 768px) {
     .instruction-form .form-group.two-col > .input-field {

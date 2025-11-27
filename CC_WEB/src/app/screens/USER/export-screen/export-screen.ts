@@ -1,90 +1,71 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
+import { Upload } from "./components/upload/upload";
+import { Attachments } from "./components/attachments/attachments";
+import { Preview } from "./components/preview/preview";
+import { Sidebar } from '../../../core/sidebar/sidebar';
 
 @Component({
   selector: 'app-export-screen',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GeneralDetails, Upload, Attachments, Preview,Sidebar],
   templateUrl: './export-screen.html',
   styleUrls: ['./export-screen.scss']
 })
 export class ExportScreen {
-  currentStep = 1;
-  formSubmitted = false;
-  files: File[] = [];
+  currentStep = 0;
 
-  generalDetails = {
-    customerRef: '',
-    advisingBank: '',
-    issuerRef: ''
-  };
+  exportlcSteps = [
+    { label: 'General Details' },
+    { label: 'Upload MT700/MT701' },
+    { label: 'Attachments' },
+    { label: 'Preview' }
+  ];
 
-  goToStep(step: number) {
-    this.currentStep = step;
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              const index = Array.from(sections)
+                .indexOf(entry.target as HTMLElement);
+              this.currentStep = index;
+            }
+          }
+        },
+        {
+          threshold: 0.4,
+          root: document.querySelector('.scroll-area')
+        }
+      );
+
+      sections.forEach(section => observer.observe(section));
+    }, 200);
   }
 
+  // Sidebar scroll
+  scrollToSection(i: number) {
+    this.currentStep = i;
+    const section = document.getElementById(`section-${i}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Next section
   next() {
-    this.formSubmitted = true;
-
-    // Step 1 validation
-    if (this.currentStep === 1) {
-      const { advisingBank, issuerRef } = this.generalDetails;
-      if (!advisingBank || !issuerRef) {
-        alert('Please fill in all required fields before proceeding.');
-        return;
-      }
-    }
-
-    if (this.currentStep < 4) {
-      this.currentStep++;
-      this.formSubmitted = false;
+    if (this.currentStep < this.exportlcSteps.length - 1) {
+      this.scrollToSection(this.currentStep + 1);
     }
   }
 
+  // Previous section
   previous() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
+    if (this.currentStep > 0) {
+      this.scrollToSection(this.currentStep - 1);
     }
-  }
-
-  onFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files || input.files.length === 0) return;
-
-    const file = input.files[0]; // only 1 file allowed
-    const allowedTypes = ['text/plain', 'application/pdf'];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert('Only .txt or .pdf files are allowed!');
-      input.value = '';
-      this.files = [];
-      return;
-    }
-
-    this.files = [file]; // store only one file
-  }
-
-  formatFileSize(size: number): string {
-    if (size < 1024) return size + ' B';
-    if (size < 1048576) return (size / 1024).toFixed(1) + ' KB';
-    return (size / 1048576).toFixed(1) + ' MB';
-  }
-
-  submit() {
-    console.log('Submitting Letter of Credit:', {
-      ...this.generalDetails,
-      files: this.files.map(f => f.name)
-    });
-    alert('Letter of Credit exported successfully!');
-    this.resetForm();
-  }
-
-  resetForm() {
-    this.currentStep = 1;
-    this.formSubmitted = false;
-    this.generalDetails = { customerRef: '', advisingBank: '', issuerRef: '' };
-    this.files = [];
   }
 }

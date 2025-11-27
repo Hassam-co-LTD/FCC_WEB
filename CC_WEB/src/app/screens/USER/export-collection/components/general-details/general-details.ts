@@ -21,9 +21,9 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./general-details.scss']
 })
 export class GeneralDetails implements OnInit {
-
+  isOpen = true;
   form!: FormGroup;
-  activeSection: string | null = 'general';
+  preview: any = {};
 
   constructor(private fb: FormBuilder) {}
 
@@ -35,7 +35,7 @@ export class GeneralDetails implements OnInit {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle() {
+    this.isOpen = !this.isOpen;
   }
 }

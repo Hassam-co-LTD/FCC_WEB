@@ -1,84 +1,85 @@
-import {
-  Component,
-  AfterViewInit,
-  OnInit,
-  Inject,
-  PLATFORM_ID
-} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { GeneralDetails } from "../../USER/shipping-guarantee-screen/components/general-details/general-details";
+import { ApplicantBeneficiary } from "../../USER/shipping-guarantee-screen/components/applicant-beneficiary/applicant-beneficiary";
+import { BankDetails } from "../../USER/shipping-guarantee-screen/components/bank-details/bank-details";
+import { InstructionsComponent } from "../../USER/shipping-guarantee-screen/components/instructions/instructions";
+import { AttachmentsDocuments } from "../../USER/shipping-guarantee-screen/components/attachments/attachments";
+import { Preview } from "../shipping-guarantee-screen/components/preview/preview";
+import { Sidebar } from "../../../core/sidebar/sidebar";
 
-import { create } from './component/sub-menus/events/create/create';
-import { GeneralDetails } from "./component/general-details/general-details";
-import { ApplicantBeneficiary } from "./component/applicant-beneficiary/applicant-beneficiary";
-import { bankdetails } from "./component/bank-details/bank-details";
-import { InstructionsComponent } from "./component/instructions/instructions";
-import { AttachmentsDocuments } from "./component/attachments/attachments";
-import { Preview } from "./component/preview/preview";
+
 
 @Component({
-  selector: 'app-shipping-guarantee-screen',
+  selector: 'app-shipping-guarantee',
   standalone: true,
   imports: [
     CommonModule,
     GeneralDetails,
     ApplicantBeneficiary,
-    bankdetails,
+    BankDetails,
     InstructionsComponent,
     AttachmentsDocuments,
     Preview,
-    bankdetails
-],
+    Sidebar
+  ],
   templateUrl: './shipping-guarantee-screen.html',
   styleUrls: ['./shipping-guarantee-screen.scss']
 })
-export class ShippingGuaranteeScreen implements AfterViewInit, OnInit {
+export class ShippingGuaranteeScreen implements AfterViewInit {
 
   currentStep = 0;
 
-  steps = [
-    { key: 'general', label: 'General Details' },
-    { key: 'applicant', label: 'Applicant & Beneficiary' },
-    { key: 'bank', label: 'Bank Details' },
-    { key: 'instructions', label: 'Instructions' },
-    { key: 'attachments', label: 'Attachments' },
-    { key: 'preview', label: 'Preview' }
+  shippingGuaranteeSteps = [
+    { label: 'General Details' },
+    { label: 'Applicant & Beneficiary' },
+    { label: 'Bank Details' },
+    { label: 'Instructions' },
+    { label: 'Attachments' },
+    { label: 'Preview' }
   ];
-
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
-
-  ngOnInit(): void {}
-
-  /** Smooth scroll to a section */
-  scrollToSection(index: number) {
-    if (isPlatformBrowser(this.platformId)) {
-      const section = document.getElementById(`section-${index}`);
-      if (section) {
-        section.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
-      }
-    }
-  }
-
-  /** Detect which section is on screen and update active sidebar item */
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const sections = document.querySelectorAll<HTMLElement>("section");
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
 
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+          for (const entry of entries) {
             if (entry.isIntersecting) {
-              const index = Array.from(sections).indexOf(entry.target as HTMLElement);
+              const index = Array.from(sections)
+                .indexOf(entry.target as HTMLElement);
               this.currentStep = index;
             }
-          });
+          }
         },
-        { threshold: 0.4 } // 40% section visibility required
+        {
+          threshold: 0.4,
+          root: document.querySelector('.scroll-area')
+        }
       );
 
       sections.forEach(section => observer.observe(section));
+    }, 200);
+  }
+
+  // Sidebar scroll
+  scrollToSection(i: number) {
+    this.currentStep = i;
+    const section = document.getElementById(`section-${i}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Next section
+  next() {
+    if (this.currentStep < this.shippingGuaranteeSteps.length - 1) {
+      this.scrollToSection(this.currentStep + 1);
+    }
+  }
+
+  // Previous section
+  previous() {
+    if (this.currentStep > 0) {
+      this.scrollToSection(this.currentStep - 1);
     }
   }
 }

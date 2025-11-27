@@ -1,0 +1,20 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Preview & Submit</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+
+    <h4>General Details</h4>
+    <pre>{{ generalDetails | json }}</pre>
+
+    <h4>Uploaded MT700/701 File</h4>
+    <p *ngIf="mtFile">{{ mtFile.name }} ({{ mtFile.size }} bytes)</p>
+
+    <h4>Attachments</h4>
+    <ul>
+        <li *ngFor="let f of attachments">{{ f.name }}</li>
+    </ul>
+
+    <button (click)="submit()">Submit LC</button>
+</div>
