@@ -1,0 +1,121 @@
+@use '../../../../../../styles/_theme.scss' as theme;
+
+/* Section Header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+}
+
+/* Collapsible content */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  transform: translateY(-5px);
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* Headings */
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$white;
+}
+
+h4 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* Form Grids */
+.details-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .full {
+    width: 100%;
+  }
+
+  .word-counter {
+    font-size: 12px;
+    color: theme.$text-light;
+    text-align: right;
+  }
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+
+  button[mat-flat-button] {
+    background: theme.$primary !important;
+    color: theme.$text-light !important;
+    box-shadow: theme.$button-shadow;
+    border-radius: 6px;
+
+    &:hover {
+      background: theme.$primary-dark !important;
+    }
+  }
+
+  button[mat-stroked-button] {
+    border-radius: 6px;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .collapsible.open {
+    padding: 10px 5px;
+  }
+
+  .details-form {
+    gap: 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

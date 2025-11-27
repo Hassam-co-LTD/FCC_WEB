@@ -132,34 +132,75 @@ export class LayoutComponent implements OnInit {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+
         {
           label: 'Trade Services',
           icon: 'article',
           open: false,
           children: [
+
+            // -------------------------
+            // IMPORT LC
+            // -------------------------
             {
-              label: 'Import LC',
+              label: 'Import LC', route: '/import-welcome',
               open: false,
               children: [
                 { label: 'Create', route: '/import-screen' },
                 { label: 'Amend', route: '/import-screen/amend' },
               ]
             },
+
+            // -------------------------
+            // EXPORT LC
+            // -------------------------
             { label: 'Export LC', route: '/export-screen' },
+
+            // -------------------------
+            // SHIPPING GUARANTEE
+            // -------------------------
+            {
+              label: 'Shipping Guarantee',
+              open: false,
+              children: [
+                { label: 'Create', route: '/shipping-guarantee' },
+                { label: 'Amend', route: '/shipping-guarantee/amend' },
+              ]
+            },
+
+            // -------------------------
+            // EXPORT COLLECTION
+            // -------------------------
+            {
+              label: 'Export Collection',
+              open: false,
+              children: [
+                { label: 'Create', route: '/export-collection' },
+                // If you add amend later, uncomment this:
+                // { label: 'Amend', route: '/export-collection/amend' },
+              ]
+            },
+
+            // -------------------------
+            // UNDERTAKING ISSUANCE
+            // -------------------------
             {
               label: 'Undertaking Issuance',
               open: false,
               children: [
                 { label: 'Create', route: '/undertaking-issuance' },
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
-              ],
+              ]
             },
+
           ],
         },
+
         { label: 'Settings', icon: 'settings', route: '/settings' },
       ];
     }
   }
+
 
 
   toggleShippingGuaranteeMenu() {
