@@ -3,9 +3,9 @@
 .preview-section {
   background: theme.$light-bg;
   border-radius: theme.$radius-large;
-  padding: 0; // we'll let preview-block handle spacing
+  padding: 0; // spacing handled by preview-block
   margin: 20px 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: theme.$shadow-primary;
 
   h2 {
     font-size: 20px;
@@ -18,7 +18,7 @@
   }
 
   .preview-block {
-    background: theme.$light-bg;
+    background: theme.$white;
     border-radius: theme.$radius-default;
     padding: 15px 18px;
     margin: 10px;
@@ -34,10 +34,10 @@
     p {
       font-size: 14px;
       margin: 4px 0;
-      color: theme.$text-dark;
+      color: theme.$text-medium;
 
       strong {
-        color: theme.$text-darker;
+        color: theme.$text-dark;
       }
     }
 
@@ -45,7 +45,7 @@
       margin: 5px 0 0 15px;
       li {
         font-size: 14px;
-        color: theme.$text-dark;
+        color: theme.$text-medium;
       }
     }
 
@@ -55,7 +55,7 @@
       h4 {
         font-size: 16px;
         margin-bottom: 5px;
-        color: theme.$text-darker;
+        color: theme.$text-dark;
         font-weight: 500;
       }
     }
