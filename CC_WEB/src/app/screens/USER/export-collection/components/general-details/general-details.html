@@ -1,0 +1,42 @@
+<div class="accordion-section" id="general">
+
+  <!-- Header -->
+  <div class="accordion-header" (click)="toggleSection('general')">
+    <h2>General Details</h2>
+    <mat-icon>{{ activeSection === 'general' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <!-- Content -->
+  <div class="accordion-content" [class.open]="activeSection === 'general'">
+    <form [formGroup]="form">
+
+      <div class="form-group two-col">
+
+        <!-- Collection Type -->
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Collection Type *</mat-label>
+          <mat-select formControlName="collectionType">
+            <mat-option value="regular">Regular</mat-option>
+            <mat-option value="DirectBank">Direct Bank</mat-option>
+            <mat-option value="DirectCustomer">Direct Customer</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Customer Reference -->
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Customer Reference</mat-label>
+          <input matInput type="text" formControlName="customerReference" placeholder="Enter customer reference" />
+        </mat-form-field>
+
+        <!-- Drawee Reference -->
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Drawee Reference</mat-label>
+          <input matInput type="text" formControlName="draweeReference" placeholder="Enter drawee reference" />
+        </mat-form-field>
+
+      </div>
+
+    </form>
+  </div>
+
+</div>

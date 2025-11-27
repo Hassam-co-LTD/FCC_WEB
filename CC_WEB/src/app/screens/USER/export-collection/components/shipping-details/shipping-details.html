@@ -1,0 +1,63 @@
+<div class="accordion-section">
+
+  <!-- Accordion Header -->
+  <div class="accordion-header" (click)="toggleSection('shipmentDetails')">
+    <h2>Shipment Details</h2>
+    <mat-icon>{{ activeSection === 'shipmentDetails' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <!-- Accordion Content -->
+  <div class="accordion-content" [class.open]="activeSection === 'shipmentDetails'">
+
+    <form [formGroup]="form">
+
+      <!-- Two-column fields -->
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Shipping Method</mat-label>
+          <mat-select formControlName="shippingMethod">
+            <mat-option *ngFor="let m of shippingMethods" [value]="m">{{ m }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Shipment Reference</mat-label>
+          <input matInput type="text" formControlName="shipmentReference" placeholder="Enter shipment reference" />
+        </mat-form-field>
+      </div>
+
+      <!-- Full-width fields -->
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Shipping From</mat-label>
+          <input matInput formControlName="shippingFrom" placeholder="Enter shipping from" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Shipping To</mat-label>
+          <input matInput formControlName="shippingTo" placeholder="Enter shipping to" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Shipment Date</mat-label>
+          <input matInput type="date" formControlName="shipmentDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Incoterms Rules</mat-label>
+          <mat-select formControlName="incotermsRules">
+            <mat-option *ngFor="let rule of incotermsRules" [value]="rule">{{ rule }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Incoterms</mat-label>
+          <mat-select formControlName="incoterms">
+            <mat-option *ngFor="let i of incoterms" [value]="i">{{ i }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -7,14 +7,36 @@
     padding: 0 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-between; // keep center & right aligned
     box-shadow: 0 2px 6px theme.$primary-shadow;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
 
-/* Left section */
+/* Left group — hamburger + title stay close */
+.left-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; // small space between icon & text
+}
+
+/* Hamburger icon */
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+        font-size: 24px;
+        color: theme.$primary-color;
+    }
+}
+
+/* App title */
 .app-title {
     font-size: 18px;
     font-weight: 600;
@@ -22,34 +44,37 @@
     letter-spacing: 0.3px;
 }
 
-/* Navigation area */
+/* ================================
+   NAVIGATION AREA
+================================ */
 .nav {
     display: flex;
     align-items: center;
     gap: 25px;
+
+    a {
+        text-decoration: none;
+        font-size: 14px;
+        color: theme.$text-dark;
+        font-weight: 500;
+        transition: color 0.2s ease, background 0.2s ease;
+        padding: 8px 10px;
+        border-radius: 6px;
+
+        &:hover {
+            color: theme.$primary-hover;
+            background: theme.$primary-light;
+        }
+    }
 }
 
-.nav a {
-    text-decoration: none;
-    font-size: 14px;
-    color: theme.$text-dark;
-    font-weight: 500;
-    transition: color 0.2s ease, background 0.2s ease;
-    padding: 8px 10px;
-    border-radius: 6px;
-}
-
-.nav a:hover {
-    color: theme.$primary-hover;
-    background: theme.$primary-light;
-}
-
-/* Dropdown container */
+/* ================================
+   DROPDOWN
+================================ */
 .dropdown {
     position: relative;
 }
 
-/* Dropdown toggle button */
 .menu-btn {
     background: transparent;
     border: none;
@@ -63,19 +88,19 @@
     border-radius: 6px;
     font-weight: 500;
     transition: background 0.2s ease, color 0.2s ease;
-}
 
-.menu-btn:hover {
-    color: theme.$primary-hover;
-    background: theme.$primary-light;
-}
+    &:hover {
+        color: theme.$primary-hover;
+        background: theme.$primary-light;
+    }
 
-.menu-btn mat-icon {
-    transition: transform 0.2s ease;
-}
+    mat-icon {
+        transition: transform 0.2s ease;
+    }
 
-.menu-btn.active mat-icon {
-    transform: rotate(180deg);
+    &.active mat-icon {
+        transform: rotate(180deg);
+    }
 }
 
 /* Dropdown menu */
@@ -92,37 +117,37 @@
     box-shadow: 0 4px 20px rgba(21, 101, 217, 0.15);
     animation: fadeIn 0.2s ease-in-out;
     z-index: 1200;
+
+    button {
+        width: 100%;
+        background: transparent;
+        border: none;
+        text-align: left;
+        font-size: 14px;
+        color: theme.$text-medium;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
+        font-weight: 400;
+
+        &:hover {
+            background: theme.$dropdown-hover-bg;
+            color: theme.$dropdown-hover-text;
+            border-left: 3px solid theme.$dropdown-hover-text;
+            padding-left: 18px;
+        }
+
+        &.active {
+            background: theme.$primary-light;
+            color: theme.$primary-hover;
+            font-weight: 500;
+        }
+    }
 }
 
-/* Dropdown buttons */
-.dropdown-menu button {
-    width: 100%;
-    background: transparent;
-    border: none;
-    text-align: left;
-    font-size: 14px;
-    color: theme.$text-medium;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
-    font-weight: 400;
-}
-
-.dropdown-menu button:hover {
-    background: theme.$dropdown-hover-bg;
-    color: theme.$dropdown-hover-text;
-    border-left: 3px solid theme.$dropdown-hover-text;
-    padding-left: 18px;
-}
-
-/* Active routerLink look */
-.dropdown-menu button.active {
-    background: theme.$primary-light;
-    color: theme.$primary-hover;
-    font-weight: 500;
-}
-
-/* Right-side section */
+/* ================================
+   RIGHT SECTION
+================================ */
 .right {
     display: flex;
     align-items: center;
@@ -137,14 +162,16 @@
     padding: 6px 8px;
     border-radius: 6px;
     transition: 0.2s;
+
+    &:hover {
+        background: theme.$dropdown-hover-bg;
+        color: theme.$primary-hover;
+    }
 }
 
-.profile-btn:hover {
-    background: theme.$dropdown-hover-bg;
-    color: theme.$primary-hover;
-}
-
-/* Animation */
+/* ================================
+   ANIMATION
+================================ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -154,5 +181,101 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* ================================
+   RESPONSIVE DESIGN
+================================ */
+
+/* 🟦 Tablets (<=1024px) */
+@media (max-width: 1024px) {
+    .nav {
+        gap: 16px;
+
+        a,
+        .menu-btn {
+            font-size: 13px;
+            padding: 6px 8px;
+        }
+    }
+
+    .app-title {
+        font-size: 16px;
+    }
+}
+
+/* 🟨 Mobile Navigation (<=768px) */
+@media (max-width: 768px) {
+    .topbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px 16px;
+    }
+
+    .nav {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        background: #fff;
+        border-top: 1px solid theme.$primary-border;
+        margin-top: 10px;
+        padding: 10px 0;
+        display: none; // hidden by default
+        animation: fadeIn 0.25s ease-in-out;
+
+        &.open {
+            display: flex;
+        }
+
+        a,
+        .menu-btn {
+            width: 100%;
+            text-align: left;
+            padding: 10px 16px;
+            border-radius: 0;
+        }
+    }
+
+    /* Add hamburger icon */
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        cursor: pointer;
+        color: theme.$primary-color;
+    }
+
+    .right {
+        margin-left: auto;
+    }
+}
+
+/* 🟥 Small Screens (<=480px) */
+@media (max-width: 480px) {
+    .app-title {
+        font-size: 15px;
+    }
+
+    .right {
+        gap: 4px;
+
+        button {
+            mat-icon {
+                font-size: 20px;
+            }
+        }
+
+        .profile-btn {
+            span.name {
+                display: none; // hide name on very small screens
+            }
+        }
+    }
+
+    .dropdown-menu {
+        width: 160px;
+        font-size: 13px;
     }
 }

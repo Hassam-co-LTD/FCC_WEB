@@ -4,117 +4,95 @@ import { LayoutComponent } from './core/layout/layout';
 export const routes: Routes = [
     
     // Default redirect to login
-    { path: '', redirectTo: 'signup', pathMatch: 'full' },
+    { path: '', redirectTo: 'login', 
+        loadChildren:()=> {
+            import("./screens/AUTH/login/login.component").then((m)=> {
+                m.LoginComponent
+            })
+        }
+    },
     // my working 
-   {
+  {
   path: 'admin',
   loadComponent: () =>
-      import('./screens/admin/admin').then((m) => m.AdminComponent),
+    import('./screens/admin/admin').then((m) => m.AdminComponent),
   children: [
-    {
-      path: 'customers/create',
-      loadComponent: () =>
-        import('./screens/admin/pages/customers/create-customer/create-customer')
-          .then(m => m.CreateCustomer)
-    }
-  ]
-}
-
+  {
+    path: 'create-customer',
+    loadComponent: () =>
+      import('./screens/admin/pages/customers/create-customer/create-customer')
+        .then((m) => m.CreateCustomer),
+  }
+  // no default redirect
+]
 ,
-
-    // Auth routes
-    {
-        path: '',
-        loadComponent: () =>
-            import('./screens/login/login.component').then((m) => m.LoginComponent),
-    },
-    { 
-        path: 'login',
-        loadComponent: () =>
-            import('./screens/admin-login/admin-login').then((m) => 
-             m.AdminLogin),
-    },
-
-    // import  undertaking details 
-    { 
-        path: 'undertakingDetails',
-        loadComponent: () =>
-            import('./screens/import-screen/undertaking-details/undertaking-details').then((m) => 
-             m.UndertakingDetails),
-    },
-
-    // Protected routes (with layout)
-    {
-        path: '',
-        component: LayoutComponent,
-        children: [
-            // Dashboard
-            {
-                path: 'dashboard',
+}
+,
+  {
+       path: "dashboard",
                 loadComponent: () =>
-                    import('./screens/dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Export Screen
             {
                 path: 'export-screen',
                 loadComponent: () =>
-                    import('./screens/export-screen/export-screen').then((m) => m.ExportScreen),
+                    import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
             },
 
             // Import LC Parent Route
             {
                 path: 'import-screen',
                 loadComponent: () =>
-                    import('./screens/import-screen/import-screen').then((m) => m.ImportScreen),
+                    import('./screens/USER/import-screen/import-screen').then((m) => m.ImportScreen),
                 children: [
                     {
                         path: 'general-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/general-details/general-details'
-                            ).then((m) => m.GeneralDetails),
+                                './screens/USER/import-screen/components/general-details/general-details').then((m) => m.GeneralDetails),
                     },
                     {
                         path: 'applicant-beneficiary',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/applicant-beneficiary/applicant-beneficiary'
+                                './screens/USER/import-screen/components/applicant-beneficiary/applicant-beneficiary'
                             ).then((m) => m.ApplicantBeneficiary),
                     },
                     {
                         path: 'bank-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/bank-details/bank-details'
+                                './screens/USER/import-screen/components/bank-details/bank-details'
                             ).then((m) => m.BankDetails),
                     },
                     {
                         path: 'amount-charge-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/amount-charge-details/amount-charge-details'
+                                './screens/USER/import-screen/components/amount-charge-details/amount-charge-details'
                             ).then((m) => m.AmountChargeDetails),
                     },
                     {
                         path: 'payment-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/payment-details/payment-details'
+                                './screens/USER/import-screen/components/payment-details/payment-details'
                             ).then((m) => m.PaymentDetails),
                     },
                     {
                         path: 'shipment-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/shipment-details/shipment-details'
+                                './screens/USER/import-screen/components/shipment-details/shipment-details'
                             ).then((m) => m.ShipmentDetails),
                     },
                     {
                         path: 'narrative-details',
                         loadComponent: () =>
                             import(
-                                './screens/import-screen/components/narrative-details/narrative-details'
+                                './screens/USER/import-screen/components/narrative-details/narrative-details'
                             ).then((m) => m.NarrativeDetails),
                     },
                 ],
@@ -142,13 +120,7 @@ export const routes: Routes = [
 
             // Default child route (dashboard)
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-        ],
-    },
-
-    // Wildcard redirect
-    { path: '**', redirectTo: 'login' },
-];
-
+        ]
 // import { Routes } from '@angular/router';
 // import { LayoutComponent } from './core/layout/layout';
 

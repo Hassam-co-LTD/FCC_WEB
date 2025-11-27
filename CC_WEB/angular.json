@@ -34,6 +34,10 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
+
+            "stylePreprocessorOptions": {
+            "includePaths": ["src/styles"]
+},
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {
@@ -101,5 +105,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "76d826a4-8cff-42e0-9eec-5f6ea864eab1"
   }
 }

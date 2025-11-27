@@ -1,0 +1,30 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Payment Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+<div class="preview-section" *ngIf="form">
+
+    <ng-container *ngIf="form.get('generalDetails') as gd">
+        <pre>{{ form.value | json }}</pre>
+
+        <h2>General Details</h2>
+
+        <p><strong>Product Type:</strong> {{ gd.value.productType }}</p>
+        <p><strong>Mode of Transmission:</strong> {{ gd.value.modeOfTransmission }}</p>
+
+        <p><strong>Expiry Date:</strong> {{ gd.value.expiryDate }}</p>
+        <p><strong>Place of Expiry:</strong> {{ gd.value.placeOfExpiry }}</p>
+
+        <p><strong>Irrevocable:</strong> {{ gd.value.featureIrrevocable ? 'Yes' : 'No' }}</p>
+        <p><strong>Revolving:</strong> {{ gd.value.featureRevolving ? 'Yes' : 'No' }}</p>
+        <p><strong>Transferable:</strong> {{ gd.value.featureTransferable ? 'Yes' : 'No' }}</p>
+
+        <p><strong>Applicable Rules:</strong> {{ gd.value.applicableRules }}</p>
+        <p><strong>Confirmation Instruction:</strong> {{ gd.value.confirmationInstruction }}</p>
+
+    </ng-container>
+
+</div>
+</div>

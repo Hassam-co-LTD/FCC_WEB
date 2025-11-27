@@ -1,0 +1,80 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Bank Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="formGroup">
+
+    <!-- ===================== Top Row ===================== -->
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Recipient Bank Name*</mat-label>
+            <input matInput formControlName="recipientBankName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Issuers Reference*</mat-label>
+            <input matInput formControlName="issuerReference" />
+        </mat-form-field>
+    </div>
+    <!-- ===================== Tabs ===================== -->
+    <div class="bank-tabs">
+        <div class="tab" [class.active]="selectedTab === 'issuing'" (click)="selectTab('issuing')">
+            Issuing Bank
+        </div>
+
+        <div class="tab" [class.active]="selectedTab === 'advising'" (click)="selectTab('advising')">
+            Advising Bank
+        </div>
+
+        <div class="tab" [class.active]="selectedTab === 'adviseThrough'" (click)="selectTab('adviseThrough')">
+            Advise Through Bank
+        </div>
+    </div>
+
+    <!-- ===================== Radio Row ===================== -->
+    <div class="radio-row" *ngIf="selectedTab === 'issuing'">
+        <mat-radio-group formControlName="issuanceType">
+            <mat-radio-button value="direct">Direct (Issued by selected Issuing Bank)</mat-radio-button>
+            <mat-radio-button value="indirect">Indirect</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- ===================== Bank Form Fields ===================== -->
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>SWIFT Code</mat-label>
+            <input matInput formControlName="swift" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Bank Name</mat-label>
+            <input matInput formControlName="bankName" />
+        </mat-form-field>
+    </div>
+
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Address 1</mat-label>
+            <input matInput formControlName="address1" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 2</mat-label>
+            <input matInput formControlName="address2" />
+        </mat-form-field>
+    </div>
+
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Address 3</mat-label>
+            <input matInput formControlName="address3" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
+            <input matInput formControlName="country" />
+        </mat-form-field>
+    </div>
+
+</div>

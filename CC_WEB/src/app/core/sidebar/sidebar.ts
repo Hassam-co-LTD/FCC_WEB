@@ -1,25 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Input, Output, EventEmitter, AfterViewInit, ElementRef, QueryList, ViewChildren, OnChanges, SimpleChanges, Inject, PLATFORM_ID } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatRadioModule,
-    MatSelectModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatSlideToggleModule,
-  ],
+  standalone: true,
+  imports: [CommonModule, MatIconModule],
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.scss',
+  styleUrls: ['./sidebar.scss']
 })
 export class Sidebar {
   currentStep = 0;
@@ -38,43 +26,48 @@ export class Sidebar {
     { label: "Attachments" },
     { label: "Preview" }
   ];
+  stepChange: any;
+  collapsed: any;
+  stepItems: any;
 
   ngAfterViewInit() {
-    const sections = document.querySelectorAll('section');
+    this.scrollActiveIntoView();
+  }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const index = Array.from(sections).indexOf(entry.target as HTMLElement);
-            this.currentStep = index;
-          }
-        }
-      },
-      {
-        threshold: 0.4, // Adjusts sensitivity (0.4 = when 40% of section visible)
-        root: document.querySelector('.scroll-area') // observe scrolling inside container
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['currentStep']) {
+      if (isPlatformBrowser(this.platformId)) {
+        setTimeout(() => this.scrollActiveIntoView(), 50);
       }
-    );
-
-    sections.forEach(section => observer.observe(section));
-  }
-
-  scrollToSection(i: number) {
-    this.currentStep = i;
-    const section = document.getElementById(`section-${i}`);
-    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  next() {
-    if (this.currentStep < this.steps.length - 1) {
-      this.scrollToSection(this.currentStep + 1);
     }
   }
+  platformId(platformId: any) {
+    throw new Error('Method not implemented.');
+  }
 
-  previous() {
-    if (this.currentStep > 0) {
-      this.scrollToSection(this.currentStep - 1);
+  scrollTo(i: number) {
+    this.stepChange.emit(i);
+  }
+
+  toggleSidebar() {
+    this.collapsed = !this.collapsed;
+  }
+
+  isCollapsed(): boolean {
+    return this.collapsed;
+  }
+
+  /** 🔥 AUTO SCROLL ACTIVE ITEM INTO VIEW (Browser only) */
+  private scrollActiveIntoView() {
+    if (!isPlatformBrowser(this.platformId)) return;
+    if (!this.stepItems) return;
+
+    const item = this.stepItems.toArray()[this.currentStep];
+    if (item?.nativeElement?.scrollIntoView) {
+      item.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     }
   }
 }

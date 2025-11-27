@@ -1,0 +1,58 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Payment Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+
+        <!-- Credit Available With -->
+        <div class="row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Credit Available With *</mat-label>
+                <mat-select formControlName="creditAvailableWith">
+                    <mat-option *ngFor="let option of creditAvailableWithOptions" [value]="option">
+                        {{ option }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="paymentForm.get('creditAvailableWith')?.hasError('required')">
+                    This field is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Bank Name</mat-label>
+                <input matInput formControlName="bankName" placeholder="Enter Bank Name" />
+                <button mat-icon-button matSuffix>
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
+        </div>
+
+        <!-- Credit Available By -->
+        <div class="row radio-section">
+            <label class="radio-label">Credit Available By:</label>
+            <mat-radio-group formControlName="creditAvailableBy" class="radio-group">
+                <mat-radio-button *ngFor="let option of creditAvailableByOptions" [value]="option">
+                    {{ option }}
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <!-- Payment/Draft At -->
+        <div class="row">
+            <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Payment/Draft At *</mat-label>
+                <mat-select formControlName="paymentDraftAt">
+                    <mat-option *ngFor="let option of paymentDraftOptions" [value]="option">
+                        {{ option }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="paymentForm.get('paymentDraftAt')?.hasError('required')">
+                    Please select a payment option
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+    </form>
+</div>

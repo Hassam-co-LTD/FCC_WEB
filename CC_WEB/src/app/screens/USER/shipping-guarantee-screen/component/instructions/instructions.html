@@ -1,0 +1,41 @@
+<div class="accordion-section" id="instructions">
+  <div class="accordion-header" (click)="toggleSection('instructions')">
+    <h2>Instructions</h2>
+    <mat-icon>{{ activeSection === 'instructions' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="accordion-content" [class.open]="activeSection === 'instructions'">
+    <form [formGroup]="form" class="details-form two-col">
+
+      <!-- Principal Account Dropdown -->
+      <mat-form-field appearance="outline">
+        <mat-label>Principal Account *</mat-label>
+        <mat-select formControlName="principalAccount">
+          <mat-option *ngFor="let acc of principalAccounts" [value]="acc">{{ acc }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Fax Account Dropdown -->
+      <mat-form-field appearance="outline">
+        <mat-label>Fax Account *</mat-label>
+        <mat-select formControlName="faxAccount">
+          <mat-option *ngFor="let fax of faxAccounts" [value]="fax">{{ fax }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Instruction Details -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Instruction Details *</mat-label>
+        <textarea matInput formControlName="details" rows="4" maxlength="300" placeholder="Enter detailed instructions"></textarea>
+        <div class="word-counter">{{ form.get('details')?.value?.length || 0 }}/300</div>
+      </mat-form-field>
+
+      <!-- Buttons -->
+      <div class="actions full-width">
+        <button type="button" mat-stroked-button (click)="toggleSection('instructions')">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Save</button>
+      </div>
+
+    </form>
+  </div>
+</div>

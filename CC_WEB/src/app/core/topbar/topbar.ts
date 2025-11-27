@@ -15,6 +15,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class TopbarComponent { 
   menuOpen = false;
+  menuVisible = false;
+
 
   constructor(private router: Router,
     // private auth: AuthService
@@ -27,6 +29,12 @@ export class TopbarComponent {
   closeMenu() {
     this.menuOpen = false;
   }
+
+
+  toggleNav() {
+    this.menuVisible = !this.menuVisible;
+  }
+
 
   goToImportLC() {
     this.router.navigate(['/import-screen']);

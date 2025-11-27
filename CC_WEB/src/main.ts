@@ -7,5 +7,3 @@ console.log('🗺️ Registered routes:', routes);
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));
-
-

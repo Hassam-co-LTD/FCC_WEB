@@ -1,0 +1,56 @@
+<div class="accordion-section" id="bank">
+  <div class="accordion-header" (click)="toggleSection('bank')">
+    <h2>Issuing Bank and Amount</h2>
+    <mat-icon>{{ activeSection === 'bank' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="accordion-content" [class.open]="activeSection === 'bank'">
+    <form [formGroup]="form" class="details-form two-col">
+
+      <!-- Bank Name Dropdown -->
+      <mat-form-field appearance="outline">
+        <mat-label>Bank Name *</mat-label>
+        <mat-select formControlName="bankName">
+          <mat-option *ngFor="let bank of bankList" [value]="bank">{{ bank }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Issuer Reference -->
+      <mat-form-field appearance="outline">
+        <mat-label>Issuer Reference *</mat-label>
+        <input matInput type="text" formControlName="IssuerReference" placeholder="Enter Issuer Reference" />
+      </mat-form-field>
+
+      <!-- Currency Dropdown -->
+      <mat-form-field appearance="outline">
+        <mat-label>Currency *</mat-label>
+        <mat-select formControlName="currency">
+          <mat-option *ngFor="let c of currencyList" [value]="c.code">
+            {{ c.name }} ({{ c.code }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Guarantee Amount with Increment/Decrement -->
+      <mat-form-field appearance="outline">
+        <mat-label>Guarantee Amount *</mat-label>
+        <div class="amount-input">
+          <button type="button" mat-icon-button (click)="decrementAmount()">
+            <mat-icon>remove</mat-icon>
+          </button>
+          <input matInput type="number" formControlName="guaranteeAmount" />
+          <button type="button" mat-icon-button (click)="incrementAmount()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </mat-form-field>
+
+      <!-- Buttons -->
+      <div class="actions full-width">
+        <button type="button" mat-stroked-button (click)="toggleSection('bank')">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Save</button>
+      </div>
+
+    </form>
+  </div>
+</div>

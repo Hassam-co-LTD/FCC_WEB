@@ -1,0 +1,230 @@
+@use '../../../../styles/_theme' as theme;
+/* ============================
+   Export Screen Styles (Blue Theme Integrated)
+============================ */
+
+
+.container {
+    margin: 0 auto;
+    padding: theme.$gap-default;
+    background: theme.$white;
+    border-radius: theme.$radius-large;
+    box-shadow: theme.$shadow-primary;
+
+    h1 {
+        color: theme.$primary;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        text-align: center;
+    }
+}
+
+.content {
+    display: flex;
+    gap: theme.$gap-default;
+    background: theme.$bg-content;
+    border-radius: theme.$radius-large;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    flex: 0 0 250px;
+    background: theme.$sidebar-bg;
+    border-right: 1px solid theme.$sidebar-border;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    .section {
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        border: 1px solid transparent;
+        border-radius: theme.$radius-default;
+        color: theme.$sidebar-text;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s ease;
+
+        span {
+            display: inline-block;
+            background: theme.$step-badge-bg;
+            color: theme.$step-badge-text;
+            font-weight: 600;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        &:hover {
+            background: theme.$sidebar-hover-bg;
+            border-color: theme.$sidebar-hover-border;
+            color: theme.$primary-hover;
+        }
+
+        &.active {
+            background: theme.$sidebar-active-bg;
+            border-color: theme.$sidebar-active-border;
+            color: theme.$primary-hover;
+
+            span {
+                background: theme.$step-badge-active-bg;
+                color: theme.$step-badge-active-text;
+            }
+        }
+
+        &.completed span {
+            background: theme.$primary;
+            color: theme.$white;
+        }
+    }
+}
+
+/* Form Area */
+.form-area {
+    flex: 1;
+    background: theme.$bg-content;
+    padding: 1.5rem;
+    border-radius: 0 theme.$radius-large theme.$radius-large 0;
+    box-shadow: inset 0 0 6px theme.$primary-shadow;
+
+    h2 {
+        color: theme.$primary;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: theme.$gap-default;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: theme.$text-medium;
+
+            .required {
+                color: theme.$primary;
+            }
+        }
+
+        input,
+        select {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid theme.$border-light;
+            border-radius: theme.$radius-default;
+            background: theme.$white;
+            color: theme.$text-dark;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+            &:focus {
+                border-color: theme.$primary;
+                box-shadow: 0 0 0 3px rgba(11, 78, 179, 0.15);
+                outline: none;
+            }
+
+            &.invalid {
+                border-color: #d9534f;
+            }
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: theme.$text-medium;
+            margin-top: 0.3rem;
+        }
+    }
+}
+
+/* Summary */
+.summary-section {
+    background: theme.$light-bg;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: theme.$shadow-primary;
+
+    h4 {
+        color: theme.$primary;
+        margin-bottom: 0.6rem;
+    }
+
+    p {
+        margin: 0.2rem 0;
+        color: theme.$text-medium;
+    }
+}
+
+/* Buttons */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    button {
+        min-width: 100px;
+        padding: 0.6rem 1.2rem;
+        border-radius: theme.$radius-default;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.25s ease;
+    }
+
+    .exit-btn {
+        background: transparent;
+        color: theme.$secondary-btn-text;
+        border: 1px solid theme.$secondary-btn-border;
+
+        &:hover {
+            background: theme.$secondary-btn-hover-bg;
+        }
+    }
+
+    .next-btn {
+        background: theme.$primary-btn-bg;
+        color: theme.$white;
+        box-shadow: theme.$button-shadow;
+
+        &:hover {
+            background: theme.$primary-btn-hover-bg;
+        }
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        flex: 1 1 auto;
+        flex-direction: row;
+        overflow-x: auto;
+
+        .section {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+
+    .form-area {
+        border-radius: theme.$radius-large;
+    }
+}
