@@ -4,14 +4,15 @@
   background: theme.$light-bg;
   border-radius: theme.$radius-default;
   margin-bottom: 1.8rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  // box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   overflow: hidden;
 
   .accordion-header {
     display: flex;
+    border-radius: 8px;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
     background: theme.$primary;
     color: theme.$text-light;
     padding: 14px 18px;

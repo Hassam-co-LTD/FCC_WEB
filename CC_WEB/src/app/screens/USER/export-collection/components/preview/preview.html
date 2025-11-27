@@ -1,6 +1,9 @@
-<div class="preview-section">
-  <h2>Preview</h2>
+<div class="section-header" (click)="toggle()">
+    <h2>Preview</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
 
+<div class="collapsible" [class.open]="isOpen">
   <!-- General Details -->
   <div class="preview-block">
     <h3>General Details</h3>

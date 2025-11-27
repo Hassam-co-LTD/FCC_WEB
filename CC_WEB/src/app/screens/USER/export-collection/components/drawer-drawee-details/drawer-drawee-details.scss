@@ -1,14 +1,15 @@
 @use '../../../../../../styles/theme' as theme;
 
 .accordion-section {
-  background: theme.$light-bg;
-  border-radius: theme.$radius-large;
+  background: none;
+  
   margin-bottom: 1.8rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  // box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   overflow: hidden;
 
   .accordion-header {
     display: flex;
+    border-radius: 8px;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0px;
@@ -38,6 +39,7 @@
     background: transparent;   // ⭐ no bg when closed
     border: none;              // ⭐ no border when closed
     padding: 0; 
+    margin-top: 10px;
 
     &.open {
       max-height: 2000px;

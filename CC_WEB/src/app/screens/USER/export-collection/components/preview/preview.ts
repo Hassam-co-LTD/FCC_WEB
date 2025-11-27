@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./preview.scss'],
 })
 export class PreviewSectionComponent {
+  isOpen = true;
   @Input() form!: FormGroup;              // Main form
   @Input() attachmentsForm!: FormGroup;   // Attachments form
   @Input() uploadedFiles: any[] = [];     // Uploaded files
@@ -21,5 +22,8 @@ export class PreviewSectionComponent {
 
   formatCheckbox(value: boolean) {
     return value ? 'Yes' : 'No';
+  }
+  toggle(){
+    this.isOpen = !this.isOpen;
   }
 }

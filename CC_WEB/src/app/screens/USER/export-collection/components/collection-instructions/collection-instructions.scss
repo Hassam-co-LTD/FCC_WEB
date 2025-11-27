@@ -4,7 +4,7 @@
   background: theme.$light-bg;
   border-radius: theme.$radius-large;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  // box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   overflow: hidden;
 
   .accordion-header {
@@ -12,10 +12,11 @@
     justify-content: space-between;
     align-items: center;
     padding: 14px 18px;
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
     background: theme.$primary;
     color: theme.$text-light;
     cursor: pointer;
+    border-radius: 8px;
 
     &:hover {
       background: theme.$primary-dark;
