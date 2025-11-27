@@ -10,7 +10,10 @@
           Customers
         </a>
         <ul class="submenu" *ngIf="usersMenuOpen">
-          <li><a href="customers/Create" routerLinkActive="active">Create New</a></li>
+        <li>
+          <a [routerLink]="['create-customer']" routerLinkActive="active">Create New</a>
+        </li>
+
         </ul>
       </li>
       <li>
@@ -54,10 +57,11 @@
       <button mat-raised-button color="primary">System Settings</button>
     </div>
 
-    <!-- Router Outlet -->
-    <router-outlet></router-outlet>
+    <!-- Router Outlet --><div class="main-content" *ngIf="usersMenuOpen">
+  <router-outlet></router-outlet>
+</div>
+
   </div>
 </div>
 
 
-<router-outlet></router-outlet>

@@ -13,7 +13,8 @@ import { Licenses } from "./components/licenses/licenses";
 import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
 import { Attachments } from "./components/attachments/attachments";
 import { Preview } from "./components/preview/preview";
-import { Sidebar } from "../../../core/sidebar/sidebar";
+import { Sidebar } from '../../../core/sidebar/sidebar';
+import { UndertakingDetails } from '../../import-screen/undertaking-details/undertaking-details';
 
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -33,7 +34,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     InstructionToBank,
     Attachments,
     Preview,
-    Sidebar
+    Sidebar,
+    UndertakingDetails
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']

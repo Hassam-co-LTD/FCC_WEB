@@ -1,5 +1,5 @@
 @use '../../../../../../styles/theme' as theme;
-
+@use "sass:math";
 /* ===================== Section Header ===================== */
 .section-header {
     display: flex;
@@ -34,9 +34,9 @@
 
 .collapsible.open {
     max-height: none;
-    /* Allow full expansion */
+    
     overflow: visible;
-    /* Ensure no content is hidden */
+    
     opacity: 1;
     transform: translateY(0);
     padding: 15px 10px;
