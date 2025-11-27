@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
-
+ 
 export const routes: Routes = [
     // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-
+ 
     // Auth routes
     {
         path: 'login',
@@ -17,7 +17,7 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
     },
-
+ 
     // Protected routes (with layout)
     {
         path: '',
@@ -32,8 +32,8 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/ADMIN/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
             },
-
-
+ 
+ 
             // ==============================
             // System overview
             // ==============================
@@ -42,18 +42,18 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/ADMIN/system-overview/system-overview').then((m) => m.SystemOverview),
             },
-
-
+ 
+ 
             // ==============================
-            // Middle-Office 
+            // Middle-Office
             // ==============================
             {
                 path: 'middle-office',
                 loadComponent: () =>
                     import('./screens/ADMIN/middle-office/middle-office').then((m) => m.MiddleOffice),
             },
-
-
+ 
+ 
             // Dashboard
             {
                 path: 'dashboard',
@@ -62,14 +62,14 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
-
+ 
             // Export Screen
             {
                 path: 'export-screen',
                 loadComponent: () =>
                     import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
             },
-
+ 
             // ==============================
             // SHIPPING GUARANTEE
             // ==============================
@@ -238,14 +238,14 @@ export const routes: Routes = [
             // ==============================
             // UNDERTAKING ISSUANCE 
             // ==============================
-
+ 
             {
                 path: 'undertaking-issuance',
                 loadComponent: () =>
                     import('./screens/USER/undertaking-issuance/undertaking-issuance')
                         .then((m) => m.UndertakingIssuance),
             },
-
+ 
             {
                 path: 'undertaking-issuance/request-undertaking',
                 loadComponent: () =>
@@ -290,7 +290,7 @@ export const routes: Routes = [
                     },
                 ],
             },
-
+ 
             {
                 path: 'undertaking-welcome',
                 loadComponent: () =>
@@ -303,7 +303,7 @@ export const routes: Routes = [
                         'Manage all Undertaking Issuance related activities here.',
                 },
             },
-
+ 
             {
                 path: 'undertaking-issuance/amend',
                 loadComponent: () =>
@@ -311,12 +311,12 @@ export const routes: Routes = [
                         './screens/USER/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
                     ).then((m) => m.AmendScreen),
             },
-
-
+ 
+ 
             // ==============================
             // IMPORT LC
             // ==============================
-
+ 
             {
                 path: 'import-screen',
                 loadComponent: () =>
@@ -373,7 +373,7 @@ export const routes: Routes = [
                     },
                 ],
             },
-
+ 
             {
                 path: 'import-welcome',
                 loadComponent: () =>
@@ -385,7 +385,7 @@ export const routes: Routes = [
                     description: 'Manage all Import LC related activities here.',
                 },
             },
-
+ 
             // Import Amend Route
             {
                 path: 'import-screen/amend',
@@ -394,12 +394,12 @@ export const routes: Routes = [
                         './screens/USER/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
             },
-
+ 
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
     },
-
+ 
   // Wildcard redirect
   { path: '**', redirectTo: 'login' },
 ];

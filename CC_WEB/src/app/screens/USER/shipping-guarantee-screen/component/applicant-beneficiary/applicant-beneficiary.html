@@ -1,0 +1,64 @@
+<div class="accordion-section" id="applicant">
+  <div class="accordion-header" (click)="toggleSection('applicant')">
+    <h2>Applicant & Beneficiary Details</h2>
+    <mat-icon>{{ activeSection === 'applicant' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="accordion-content" [class.open]="activeSection === 'applicant'">
+    <form [formGroup]="form" class="details-form two-col">
+
+      <!-- Applicant Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Name *</mat-label>
+        <input matInput type="text" formControlName="applicantName" />
+      </mat-form-field>
+
+      <!-- Applicant Address 1 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Address 1 *</mat-label>
+        <input matInput type="text" formControlName="applicantAddress1" />
+      </mat-form-field>
+
+      <!-- Applicant Address 2 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Address 2</mat-label>
+        <input matInput type="text" formControlName="applicantAddress2" />
+      </mat-form-field>
+
+      <!-- Beneficiary Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Name *</mat-label>
+        <input matInput type="text" formControlName="beneficiaryName" />
+      </mat-form-field>
+
+      <!-- Beneficiary Country -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Country *</mat-label>
+        <mat-select formControlName="beneficiaryCountry">
+          <mat-option *ngFor="let c of countryList" [value]="c.code">
+            {{ c.name }} ({{ c.code }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Beneficiary Address 1 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Address 1 *</mat-label>
+        <input matInput type="text" formControlName="beneficiaryAddress1" />
+      </mat-form-field>
+
+      <!-- Beneficiary Address 2 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Address 2</mat-label>
+        <input matInput type="text" formControlName="beneficiaryAddress2" />
+      </mat-form-field>
+
+      <!-- Buttons (Full width under columns) -->
+      <div class="actions full-width">
+        <button type="button" mat-stroked-button (click)="toggleSection('applicant')">Cancel</button>
+        <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">Save</button>
+      </div>
+
+    </form>
+  </div>
+</div>
