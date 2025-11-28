@@ -17,7 +17,7 @@
 .sidebar {
     width: 250px;
     background: linear-gradient(160deg, #3f51b5, #5c6bc0, #2196f3);
-    color: transparent;
+    color: #fff;
     display: flex;
     flex-direction: column;
     padding-top: 10px;
@@ -40,7 +40,7 @@
         transition: 0.2s;
 
         &:hover {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.15);
         }
     }
 
@@ -64,7 +64,7 @@
             transition: background 0.25s ease, transform 0.15s ease;
             font-size: 14px;
             width: 100%;
-            text-decoration: none; // remove underline
+            text-decoration: none;
 
             &:hover {
                 background: rgba(255, 255, 255, 0.15);
@@ -85,7 +85,7 @@
         }
     }
 
-    /* Submenu styling */
+    /* Submenu */
     .submenu {
         display: flex;
         flex-direction: column;
@@ -105,7 +105,6 @@
             border-radius: 6px;
             font-size: 13px;
             transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
-            text-decoration: none; // remove underline
 
             &:hover {
                 background: rgba(255, 255, 255, 0.2);
@@ -120,7 +119,6 @@
             }
         }
 
-
         .submenu-item {
             display: flex;
             flex-direction: column;
@@ -132,15 +130,9 @@
 
                 .arrow {
                     font-size: 18px;
-                    transition: transform 0.2s ease;
                 }
             }
 
-            &.open button .arrow {
-                transform: rotate(180deg);
-            }
-
-            /* Nested submenu (Import LC > Advice/Amend/Issue) */
             .nested-submenu {
                 display: flex;
                 flex-direction: column;
@@ -153,14 +145,12 @@
                 button {
                     background: transparent;
                     color: #dcdcdc;
-                    border: none;
                     padding: 7px 18px;
+                    border: none;
                     text-align: left;
                     cursor: pointer;
                     border-radius: 6px;
                     font-size: 13px;
-                    transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
-                    text-decoration: none;
 
                     &:hover {
                         background: rgba(255, 255, 255, 0.25);
@@ -179,8 +169,7 @@
     }
 }
 
-
-/* Main Content Area */
+/* Main Content */
 .content {
     flex: 1;
     padding: 18px;

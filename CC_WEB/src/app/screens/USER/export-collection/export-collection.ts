@@ -22,8 +22,8 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     GeneralDetails,
     DrawerDraweeDetails,
     BankDetailsComponent,
-    ShippingDetailsComponent,
     PaymentAmountComponent,
+    ShippingDetailsComponent,
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
@@ -42,8 +42,8 @@ export class ExportCollectionComponent implements AfterViewInit {
     {  label: "Bank Details" },
     {  label: "Payment and Account Details" },
     {  label: "Shipping Details" },
-    {  label: "Licenses" },
     {  label: "Collection Instructions" },
+    {  label: "Licenses" },
     {  label: "Attachments and Documents" },
     {  label: "Preview" }
   ];
@@ -62,8 +62,8 @@ export class ExportCollectionComponent implements AfterViewInit {
           }
         },
         {
-          threshold: 0.4,
-          root: document.querySelector('.scroll-area')
+          root: document.querySelector('.scroll-area'),
+          threshold: 0.4
         }
       );
 

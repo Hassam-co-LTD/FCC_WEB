@@ -25,7 +25,7 @@ import { MatInputModule } from '@angular/material/input';
   ]
 })
 export class DrawerDraweeDetails {
-
+  isOpen = true;
   activeSection: string | null = 'drawer';
 
   form: FormGroup;
@@ -46,7 +46,7 @@ export class DrawerDraweeDetails {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle(){
+    this.isOpen = !this.isOpen;
   }
 }

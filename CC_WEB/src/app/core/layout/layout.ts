@@ -119,10 +119,22 @@ export class LayoutComponent implements OnInit {
     return this.collapsed;
   }
 
-  toggleMenu(item: MenuItem) {
+  onParentClick(item: any) {
+    if (item.route) {
+      this.router.navigate([item.route]);
+    }
+  }
+
+  toggleMenu(item: any) {
     item.open = !item.open;
   }
 
+
+  goTo(item: MenuItem) {
+    if (item.route) {
+      this.router.navigate([item.route]);
+    }
+  }
   loadMenu(role: 'ADMIN' | 'USER' | null) {
     if (role === 'ADMIN') {
       this.menuItems = [
@@ -143,7 +155,8 @@ export class LayoutComponent implements OnInit {
             // IMPORT LC
             // -------------------------
             {
-              label: 'Import LC', route: '/import-welcome',
+              label: 'Import LC',
+              route: '/import-welcome',
               open: false,
               children: [
                 { label: 'Create', route: '/import-screen' },
@@ -154,13 +167,21 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             // EXPORT LC
             // -------------------------
-            { label: 'Export LC', route: '/export-screen' },
+            {
+              label: 'Export LC', 
+              route: '/exportlc-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/export-screen' },
+              ]
+            },
 
             // -------------------------
             // SHIPPING GUARANTEE
             // -------------------------
             {
               label: 'Shipping Guarantee',
+              route: '/shipping-welcome',
               open: false,
               children: [
                 { label: 'Create', route: '/shipping-guarantee' },
@@ -173,6 +194,7 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             {
               label: 'Export Collection',
+              route: '/export-collection-welcome',
               open: false,
               children: [
                 { label: 'Create', route: '/export-collection' },
@@ -186,6 +208,7 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             {
               label: 'Undertaking Issuance',
+              route: '/undertaking-welcome',
               open: false,
               children: [
                 { label: 'Create', route: '/undertaking-issuance' },

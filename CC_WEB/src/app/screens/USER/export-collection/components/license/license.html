@@ -1,28 +1,18 @@
-<form [formGroup]="form">
-  <div class="accordion-section" id="license">
-    <!-- Accordion Header -->
-    <div class="accordion-header" (click)="toggleSection('license')">
-      <h2>License</h2>
-      <span class="arrow" [class.rotate]="activeSection==='license'">&#9660;</span>
-    </div>
+<div class="section-header" (click)="toggle()">
+  <h2>License</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
 
-    <!-- Accordion Content -->
-    <div class="accordion-content" *ngIf="activeSection==='license'">
-      <div class="form-group two-col">
-        <!-- License Type -->
-        <div class="input-field">
-          <label>License Type</label>
-          <select formControlName="licenseType">
-            <option *ngFor="let l of licenseTypes">{{ l }}</option>
-          </select>
-        </div>
+<div class="collapsible" [class.open]="isOpen">
 
-        <!-- License Number -->
-        <div class="input-field">
-          <label>License Number</label>
-          <input type="text" formControlName="licenseNumber" />
-        </div>
-      </div>
-    </div>
+  <h4>Select File (*.txt / *.pdf)</h4>
+
+  <div class="form-row">
+    <input type="file" (change)="onFileChange($event)">
   </div>
-</form>
+
+  <div *ngIf="file">
+    <p><strong>Selected:</strong> {{ file.name }} ({{ formatFileSize(file.size) }})</p>
+  </div>
+
+</div>

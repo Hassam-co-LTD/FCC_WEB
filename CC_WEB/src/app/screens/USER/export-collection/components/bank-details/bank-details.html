@@ -1,96 +1,92 @@
-<div class="accordion-section">
+<!-- Bank Details Accordion -->
+<div class="section-header" (click)="toggle()">
+  <h2>Bank Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
 
-  <!-- Accordion Header -->
-  <div class="accordion-header" (click)="toggleSection('bankDetails')">
-    <h2>Bank Details</h2>
-    <mat-icon>{{ activeSection === 'bankDetails' ? 'expand_less' : 'expand_more' }}</mat-icon>
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab" [class.active]="bankTab === 'remitting'" (click)="switchBankTab('remitting')">Remitting</div>
+    <div class="tab" [class.active]="bankTab === 'presenting'" (click)="switchBankTab('presenting')">Presenting</div>
+    <div class="tab" [class.active]="bankTab === 'collecting'" (click)="switchBankTab('collecting')">Collecting</div>
   </div>
 
-  <!-- Accordion Content -->
-  <div class="accordion-content" [class.open]="activeSection === 'bankDetails'">
+  <!-- Form -->
+  <form class="form-grid-2">
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <div class="tab" [class.active]="bankTab === 'remitting'" (click)="switchBankTab('remitting')">Remitting</div>
-      <div class="tab" [class.active]="bankTab === 'presenting'" (click)="switchBankTab('presenting')">Presenting</div>
-      <div class="tab" [class.active]="bankTab === 'collecting'" (click)="switchBankTab('collecting')">Collecting</div>
-    </div>
+    <!-- REMITTING -->
+    <ng-container *ngIf="bankTab === 'remitting'">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Bank Name *</mat-label>
+        <mat-select formControlName="remittingBankName">
+          <mat-option value="">Select Bank</mat-option>
+          <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Form -->
-    <form [formGroup]="form" class="form-grid-2">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Issuer Reference *</mat-label>
+        <input matInput formControlName="remittingIssuerRef" placeholder="Enter issuer reference" />
+      </mat-form-field>
 
-      <!-- REMITTING -->
-      <ng-container *ngIf="bankTab === 'remitting'">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Bank Name *</mat-label>
-          <mat-select formControlName="remittingBankName">
-            <mat-option value="">Select Bank</mat-option>
-            <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Principal Account *</mat-label>
+        <mat-select formControlName="principalAccount">
+          <mat-option value="">Select Account</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Issuer Reference *</mat-label>
-          <input matInput formControlName="remittingIssuerRef" placeholder="Enter issuer reference" />
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Fee Account *</mat-label>
+        <mat-select formControlName="feeAccount">
+          <mat-option value="">Select Account</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Principal Account *</mat-label>
-          <mat-select formControlName="principalAccount">
-            <mat-option value="">Select Account</mat-option>
-          </mat-select>
-        </mat-form-field>
+    <!-- PRESENTING -->
+    <ng-container *ngIf="bankTab === 'presenting'">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Bank Name *</mat-label>
+        <mat-select formControlName="presentingBankName">
+          <mat-option value="">Select Bank</mat-option>
+          <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Fee Account *</mat-label>
-          <mat-select formControlName="feeAccount">
-            <mat-option value="">Select Account</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </ng-container>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 1</mat-label>
+        <input matInput formControlName="presentingAddress1" placeholder="Enter address 1" />
+      </mat-form-field>
 
-      <!-- PRESENTING -->
-      <ng-container *ngIf="bankTab === 'presenting'">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Bank Name *</mat-label>
-          <mat-select formControlName="presentingBankName">
-            <mat-option value="">Select Bank</mat-option>
-            <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 2</mat-label>
+        <input matInput formControlName="presentingAddress2" placeholder="Enter address 2" />
+      </mat-form-field>
+    </ng-container>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Address 1</mat-label>
-          <input matInput formControlName="presentingAddress1" placeholder="Enter address 1" />
-        </mat-form-field>
+    <!-- COLLECTING -->
+    <ng-container *ngIf="bankTab === 'collecting'">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Collecting Bank</mat-label>
+        <mat-select formControlName="collectingBankName">
+          <mat-option value="">Select Bank</mat-option>
+          <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Address 2</mat-label>
-          <input matInput formControlName="presentingAddress2" placeholder="Enter address 2" />
-        </mat-form-field>
-      </ng-container>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>SWIFT Code</mat-label>
+        <input matInput formControlName="collectingSwiftCode" placeholder="Enter SWIFT code" />
+      </mat-form-field>
 
-      <!-- COLLECTING -->
-      <ng-container *ngIf="bankTab === 'collecting'">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Collecting Bank</mat-label>
-          <mat-select formControlName="collectingBankName">
-            <mat-option value="">Select Bank</mat-option>
-            <mat-option *ngFor="let b of bankList" [value]="b">{{ b }}</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Reference</mat-label>
+        <input matInput formControlName="collectingReference" placeholder="Enter reference" />
+      </mat-form-field>
+    </ng-container>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>SWIFT Code</mat-label>
-          <input matInput formControlName="collectingSwiftCode" placeholder="Enter SWIFT code" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Reference</mat-label>
-          <input matInput formControlName="collectingReference" placeholder="Enter reference" />
-        </mat-form-field>
-      </ng-container>
-
-    </form>
-  </div>
+  </form>
 </div>
