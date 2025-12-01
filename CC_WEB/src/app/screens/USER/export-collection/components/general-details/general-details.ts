@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,20 +22,22 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class GeneralDetails implements OnInit {
   isOpen = true;
-  form!: FormGroup;
   preview: any = {};
+ @Input() form!: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      collectionType: ['regular'],
+      collectionType: [''],
       customerReference: [''],
       draweeReference: ['']
     });
   }
+  
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
+  
 }

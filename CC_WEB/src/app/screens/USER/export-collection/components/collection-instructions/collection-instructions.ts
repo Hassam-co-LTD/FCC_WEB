@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -29,6 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class CollectionInstructionsComponent implements OnInit {
 
   collectionForm!: FormGroup;
+  @Input() form!: FormGroup;
   activeSection: string | null = 'adviceCharges';
 
   advicePaymentOptions = [

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -28,7 +28,7 @@ export class DrawerDraweeDetails {
 
   activeSection: string | null = 'drawer';
 
-  form: FormGroup;
+  @Input() form!: FormGroup;
 
   constructor(private fb: FormBuilder) {
 

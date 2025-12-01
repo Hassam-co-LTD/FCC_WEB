@@ -1,85 +1,63 @@
-@use '../../../../../styles/theme' as theme;
+@use '../../../../../../styles/_theme.scss' as theme;
 
-.preview-section {
-  background: theme.$light-bg;
-  border-radius: theme.$radius-large;
-  padding: 0; // spacing handled by preview-block
-  margin: 20px 0;
-  box-shadow: theme.$shadow-primary;
-
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 10px 0;
-    padding: 14px 18px;
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
-    border-radius: theme.$radius-large theme.$radius-large 0 0;
-  }
 
-  .preview-block {
-    background: theme.$white;
-    border-radius: theme.$radius-default;
-    padding: 15px 18px;
-    margin: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-
-    h3 {
-      font-size: 18px;
-      font-weight: 500;
-      margin-bottom: 10px;
-      color: theme.$text-dark;
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
     }
 
-    p {
-      font-size: 14px;
-      margin: 4px 0;
-      color: theme.$text-medium;
-
-      strong {
-        color: theme.$text-dark;
-      }
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
     }
-
-    ul {
-      margin: 5px 0 0 15px;
-      li {
-        font-size: 14px;
-        color: theme.$text-medium;
-      }
-    }
-
-    .bank-tab {
-      margin-top: 10px;
-
-      h4 {
-        font-size: 16px;
-        margin-bottom: 5px;
-        color: theme.$text-dark;
-        font-weight: 500;
-      }
-    }
-  }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .preview-section {
-    h2 {
-      font-size: 18px;
-      padding: 12px 14px;
-    }
+/* Collapsible content */
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+}
 
-    .preview-block {
-      padding: 12px;
+.collapsible.open {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: 6px;
+    border: 1px solid theme.$border-light;
+}
 
-      h3 {
-        font-size: 16px;
-      }
+/* Headings */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$primary;
+}
 
-      .bank-tab h4 {
-        font-size: 15px;
-      }
-    }
-  }
+h4 {
+    font-size: 16px;
+    margin: 20px 0 10px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    border-left: 4px solid theme.$primary;
+    padding-left: 8px;
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 
@@ -13,8 +13,7 @@ export class License {
   activeSection = 'license';
 
   /** Form Group */
-  form: FormGroup;
-
+  @Input() form: FormGroup;
   /** License Types */
   licenseTypes: string[] = ['Type A', 'Type B', 'Type C'];
 

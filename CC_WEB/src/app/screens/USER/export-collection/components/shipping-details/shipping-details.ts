@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class ShippingDetailsComponent implements OnInit {
 
-  form!: FormGroup;
+  @Input()form!: FormGroup;
   activeSection: string | null = 'shipmentDetails';
 
   shippingMethods = ['Air', 'Sea', 'Land'];

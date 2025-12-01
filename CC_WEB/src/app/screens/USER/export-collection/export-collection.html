@@ -1,14 +1,14 @@
 <div class="screen">
 
   <!-- SIDEBAR -->
-    <app-sidebar [steps]="exportCollectionSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
-    </app-sidebar>
+  <app-sidebar [steps]="exportCollectionSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+  </app-sidebar>
   <!-- MAIN CONTENT -->
   <div class="content">
     <div class="scroll-area">
 
       <!-- SECTIONS -->
-      <section id="section-0"><app-general-details></app-general-details></section>
+       <section id="section-0"><app-general-details [form]="importForm">></app-general-details></section>
       <hr class="section-divider" />
       <section id="section-1"><app-drawer-drawee-details></app-drawer-drawee-details></section>
       <hr class="section-divider" />
@@ -24,23 +24,14 @@
       <hr class="section-divider" />
       <section id="section-7"><app-attachments-documents></app-attachments-documents></section>
       <hr class="section-divider" />
-      <section id="section-8"><app-preview></app-preview></section>
-      <hr class="section-divider" />
 
-      <!-- =========================
-     PREVIEW SECTION
-========================= -->
-<!-- <section id="preview" class="scroll-section">
-  <app-preview
-    [form]="yourFormGroup" 
-    [attachmentsForm]="yourAttachmentsFormGroup"
-    [uploadedFiles]="yourUploadedFilesArray">
-  </app-preview>
-</section> -->
-      <!-- SUBMIT BUTTON
+      <section id="section-8"><app-preview [form]="importForm">></app-preview></section>
+
+
+<!--   SUBMIT BUTTON -->
       <div class="actions-row">
         <button type="submit" class="btn-primary">Submit</button>
-      </div> -->
+      </div>
     </div>
   </div>
 
