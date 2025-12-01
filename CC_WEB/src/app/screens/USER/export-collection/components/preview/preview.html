@@ -1,26 +1,29 @@
-<div class="preview-section">
-  <h2>Preview</h2>
+<div class="section-header" (click)="toggle()">
+    <h2>Preview</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
 
+<div class="collapsible" [class.open]="isOpen">
   <!-- General Details -->
-  <div class="preview-block">
+  <!-- <div class="preview-block">
     <h3>General Details</h3>
-    <!-- <p><strong>Collection Type:</strong> {{ getField('collectionType') }}</p>
-    <p><strong>Customer Reference:</strong> {{ getField('customerReference') }}</p>
-    <p><strong>Drawee Reference:</strong> {{ getField('draweeReference') }}</p> -->
-  </div>
+    <p><strong>Collection Type:</strong> {{ form.get('collectionType')?.value }}</p>
+    <p><strong>Customer Reference:</strong> {{ form.get('customerReference')?.value }}</p>
+    <p><strong>Drawee Reference:</strong> {{ form.get('draweeReference')?.value }}</p>
+  </div> -->
 
-  <!-- Drawer & Drawee
-  <div class="preview-block">
+  <!-- Drawer & Drawee -->
+  <!-- <div class="preview-block">
     <h3>Drawer & Drawee Details</h3>
-    <p><strong>Drawer Name:</strong> {{ getField('drawerName') }}</p>
-    <p><strong>Drawer Address 1:</strong> {{ getField('drawerAddress1') }}</p>
-    <p><strong>Drawer Address 2:</strong> {{ getField('drawerAddress2') }}</p>
-    <p><strong>Drawee Name:</strong> {{ getField('draweeName') }}</p>
-    <p><strong>Drawee Address 1:</strong> {{ getField('draweeAddress1') }}</p>
-    <p><strong>Drawee Address 2:</strong> {{ getField('draweeAddress2') }}</p>
-  </div>
+    <p><strong>Drawer Name:</strong> {{ form.get('drawerName')?.value }}</p>
+    <p><strong>Drawer Address 1:</strong> {{ form.get('drawerAddress1')?.value }}</p>
+    <p><strong>Drawer Address 2:</strong> {{ form.get('drawerAddress2')?.value }}</p>
+    <p><strong>Drawee Name:</strong> {{ form.get('draweeName')?.value }}</p>
+    <p><strong>Drawee Address 1:</strong> {{ form.get('draweeAddress1')?.value }}</p>
+    <p><strong>Drawee Address 2:</strong> {{ form.get('draweeAddress2')?.value }}</p>
+  </div> -->
 
-   Bank Details -->
+  <!-- Bank Details -->
   <!-- <div class="preview-block">
     <h3>Bank Details</h3>
     <div class="bank-tab">
@@ -45,44 +48,42 @@
   <!-- Payment & Amount -->
   <!-- <div class="preview-block">
     <h3>Payment & Amount</h3>
-    <p><strong>Amount:</strong> {{ getField('amount') }}</p>
-    <p><strong>Currency:</strong> {{ getField('currency') }}</p>
-    <p><strong>Payment Type:</strong> {{ getField('paymentType') }}</p>
-    <p><strong>Tenor:</strong> {{ getField('tenor') }}</p>
-    <p><strong>Payment Reference:</strong> {{ getField('paymentReference') }}</p>
+    <p><strong>Amount:</strong> {{ form.get('amount')?.value }}</p>
+    <p><strong>Currency:</strong> {{ form.get('currency')?.value }}</p>
+    <p><strong>Payment Type:</strong> {{ form.get('paymentType')?.value }}</p>
+    <p><strong>Tenor:</strong> {{ form.get('tenor')?.value }}</p>
+    <p><strong>Payment Reference:</strong> {{ form.get('paymentReference')?.value }}</p>
   </div> -->
 
   <!-- Shipping Details -->
   <!-- <div class="preview-block">
     <h3>Shipping Details</h3>
-    <p><strong>Shipping Method:</strong> {{ getField('shippingMethod') }}</p>
-    <p><strong>Shipment Reference:</strong> {{ getField('shipmentReference') }}</p>
-    <p><strong>Shipping From:</strong> {{ getField('shippingFrom') }}</p>
-    <p><strong>Shipping To:</strong> {{ getField('shippingTo') }}</p>
-    <p><strong>Shipment Date:</strong> {{ getField('shipmentDate') | date:'mediumDate' }}</p>
-    <p><strong>Incoterms Rules:</strong> {{ getField('incotermsRules') }}</p>
-    <p><strong>Incoterms:</strong> {{ getField('incoterms') }}</p>
+    <p><strong>Shipping Method:</strong> {{ form.get('shippingMethod')?.value }}</p>
+    <p><strong>Shipment Reference:</strong> {{ form.get('shipmentReference')?.value }}</p>
+    <p><strong>Shipping From:</strong> {{ form.get('shippingFrom')?.value }}</p>
+    <p><strong>Shipping To:</strong> {{ form.get('shippingTo')?.value }}</p>
+    <p><strong>Shipment Date:</strong> {{ form.get('shipmentDate')?.value | date:'mediumDate' }}</p>
+    <p><strong>Incoterms Rules:</strong> {{ form.get('incotermsRules')?.value }}</p>
+    <p><strong>Incoterms:</strong> {{ form.get('incoterms')?.value }}</p>
   </div> -->
 
   <!-- Collection Instructions -->
   <!-- <div class="preview-block">
     <h3>Collection Instructions</h3>
-    <p><strong>Advice Payment By:</strong> {{ getField('advicePaymentBy') }}</p>
-    <p><strong>Advice Acceptance:</strong> {{ getField('adviceAcceptanceDate') | date:'mediumDate' }}</p>
-    <p><strong>Opening Charges:</strong> {{ getField('openingCharges') }}</p>
-    <p><strong>Outside Country Charges:</strong> {{ getField('outsideCountryCharges') }}</p>
-
-    <p><strong>Waive Charges:</strong> {{ formatCheckbox(getField('waiveCharges')) }}</p>
-    <p><strong>Protest Non Payment:</strong> {{ formatCheckbox(getField('protestNonPayment')) }}</p>
-    <p><strong>Protest Non Acceptance:</strong> {{ formatCheckbox(getField('protestNonAcceptance')) }}</p>
-
-    <p><strong>Advice Reason of Refusal:</strong> {{ getField('adviceReasonRefusal') }}</p>
-    <p><strong>Acceptance Deferred:</strong> {{ formatCheckbox(getField('acceptanceDeferred')) }}</p>
-    <p><strong>Warehouse Insurance:</strong> {{ formatCheckbox(getField('warehouseInsurance')) }}</p>
-    <p><strong>Refer To:</strong> {{ getField('referTo') }}</p>
+    <p><strong>Advice Payment By:</strong> {{ form.get('advicePaymentBy')?.value }}</p>
+    <p><strong>Advice Acceptance:</strong> {{ form.get('adviceAcceptanceDate')?.value | date:'mediumDate' }}</p>
+    <p><strong>Opening Charges:</strong> {{ form.get('openingCharges')?.value }}</p>
+    <p><strong>Outside Country Charges:</strong> {{ form.get('outsideCountryCharges')?.value }}</p>
+    <p><strong>Waive Charges:</strong> {{ formatCheckbox(form.get('waiveCharges')?.value) }}</p>
+    <p><strong>Protest Non Payment:</strong> {{ formatCheckbox(form.get('protestNonPayment')?.value) }}</p>
+    <p><strong>Protest Non Acceptance:</strong> {{ formatCheckbox(form.get('protestNonAcceptance')?.value) }}</p>
+    <p><strong>Advice Reason of Refusal:</strong> {{ form.get('adviceReasonRefusal')?.value }}</p>
+    <p><strong>Acceptance Deferred:</strong> {{ formatCheckbox(form.get('acceptanceDeferred')?.value) }}</p>
+    <p><strong>Warehouse Insurance:</strong> {{ formatCheckbox(form.get('warehouseInsurance')?.value) }}</p>
+    <p><strong>Refer To:</strong> {{ form.get('referTo')?.value }}</p>
   </div> -->
 
-  <!-- Attachments -->
+  <!-- Attachments & Documents -->
   <!-- <div class="preview-block">
     <h3>Attachments & Documents</h3>
 
@@ -95,15 +96,12 @@
   </li>
 </ul>
 
-<p *ngIf="documents && documents.length > 0">
-  <strong>Documents:</strong>
-</p>
-<ul>
-  <li *ngFor="let doc of documents.controls">
-    {{ doc.get('type')?.value }}:
-    {{ doc.get('attachment')?.value }} -
-    {{ doc.get('date')?.value | date:'mediumDate' }}
-  </li>
-</ul>
-  </div>
-</div> --> 
+    <p *ngIf="documents.length > 0"><strong>Documents:</strong></p>
+    <ul>
+      <li *ngFor="let doc of documents.controls">
+        {{ doc.get('type')?.value }}: {{ doc.get('attachment')?.value }} - {{ doc.get('date')?.value | date:'mediumDate' }}
+      </li>
+    </ul>
+  </div> -->
+</div>
+

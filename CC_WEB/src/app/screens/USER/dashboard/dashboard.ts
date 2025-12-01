@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  userName = 'LoveKumar';
+  userName = 'Hassam';
   lastUpdated = new Date();
 
   cards = [
@@ -21,7 +21,7 @@ export class Dashboard implements OnInit {
 
   newsCards = [
     { title: 'Market Update', snippet: 'Stocks are up by 2% today due to strong tech performance.', time: new Date() },
-    { title: 'FX Rates', snippet: 'USD/PKR exchange rate is stable around 282.', time: new Date() },
+    { title: 'FX Rates', snippet: 'USD/PKR exchange rate is stable around 280.', time: new Date() },
     { title: 'Banking News', snippet: 'New fintech regulations coming next quarter.', time: new Date() },
   ];
 
@@ -38,7 +38,7 @@ export class Dashboard implements OnInit {
     const card = this.cards[idx];
 
     if (card.title.includes('Transactions')) {
-      const rand = Math.floor(Math.random() * 10);
+      const rand = Math.floor(Math.random() * 1000);
       card.value = `₨ ${1_254_000 + rand}`;
     }
     if (card.title.includes('Pending')) {
@@ -46,7 +46,7 @@ export class Dashboard implements OnInit {
       card.value = `${12 + rand}`;
     }
     if (card.title.includes('Revenue')) {
-      const rand = (Math.random() * 0.1).toFixed(1);
+      const rand = (Math.random() * 0.5).toFixed(1);
       card.value = `₨ ${5.8 + parseFloat(rand)}M`;
     }
   }

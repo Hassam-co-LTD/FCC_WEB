@@ -13,8 +13,18 @@ import { MatIcon } from "@angular/material/icon";
 })
 export class PreviewSectionComponent {
   isOpen = true;
+  @Input() form!: FormGroup;              // Main form
+  @Input() attachmentsForm!: FormGroup;   // Attachments form
+  @Input() uploadedFiles: any[] = [];     // Uploaded files
+
+  get documents(): FormArray {
+    return this.attachmentsForm.get('documents') as FormArray;
+  }
+
+  formatCheckbox(value: boolean) {
+    return value ? 'Yes' : 'No';
+  }
   toggle() {
     this.isOpen = !this.isOpen;
   }
-  @Input() form!: FormGroup;
 }

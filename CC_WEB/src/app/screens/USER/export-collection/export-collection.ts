@@ -23,8 +23,8 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     GeneralDetails,
     DrawerDraweeDetails,
     BankDetailsComponent,
-    ShippingDetailsComponent,
     PaymentAmountComponent,
+    ShippingDetailsComponent,
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
@@ -42,14 +42,14 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
 
   exportCollectionSteps = [
     { label: "General Details" },
-    { label: "Drawer and Drawee Details" },
-    { label: "Bank Details" },
-    { label: "Payment and Account Details" },
-    { label: "Shipping Details" },
-    { label: "Licenses" },
-    { label: "Collection Instructions" },
-    { label: "Attachments and Documents" },
-    { label: "Preview" }
+    {  label: "Drawer and Drawee Details" },
+    {  label: "Bank Details" },
+    {  label: "Payment and Account Details" },
+    {  label: "Shipping Details" },
+    {  label: "Collection Instructions" },
+    {  label: "Licenses" },
+    {  label: "Attachments and Documents" },
+    {  label: "Preview" }
   ];
 
   constructor(private fb: FormBuilder) {}
@@ -146,8 +146,8 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          threshold: 0.4,
-          root: document.querySelector('.scroll-area')
+          root: document.querySelector('.scroll-area'),
+          threshold: 0.4
         }
       );
 

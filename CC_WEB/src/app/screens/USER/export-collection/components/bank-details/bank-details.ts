@@ -14,8 +14,8 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./bank-details.scss']
 })
 export class BankDetailsComponent implements OnInit {
-
-  @Input() form!: FormGroup;
+  isOpen = true;
+  form!: FormGroup;
 
   activeSection: string | null = 'bankDetails';
   bankTab: string = 'remitting';
@@ -50,8 +50,8 @@ export class BankDetailsComponent implements OnInit {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle(){
+    this.isOpen = !this.isOpen;
   }
 
   switchBankTab(tab: string) {

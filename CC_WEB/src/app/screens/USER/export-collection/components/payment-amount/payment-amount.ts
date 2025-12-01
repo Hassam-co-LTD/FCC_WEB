@@ -21,8 +21,8 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./payment-amount.scss']
 })
 export class PaymentAmountComponent implements OnInit {
-
-  @Input() form!: FormGroup;
+  isOpen = true;
+  form!: FormGroup;
   activeSection: string | null = 'paymentAmount';
 
   currencies = ['USD', 'EUR', 'GBP', 'PKR'];
@@ -39,8 +39,8 @@ export class PaymentAmountComponent implements OnInit {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle(){
+    this.isOpen = !this.isOpen;
   }
 
   onSubmit() {

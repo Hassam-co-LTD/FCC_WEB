@@ -1,86 +1,80 @@
 <form [formGroup]="collectionForm" (ngSubmit)="onSubmit()">
 
   <!-- =========================
-       Part 1: Advice & Charges
+       Collection Instruction P1
   ========================== -->
-  <div class="accordion-section">
-    <div class="accordion-header" (click)="toggleSection('adviceCharges')">
-      <h2>Collection Instruction P1</h2>
-      <mat-icon>{{ activeSection === 'adviceCharges' ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
+  <div class="section-header" (click)="toggleSection('adviceCharges')">
+    <h2>Collection Instruction P1</h2>
+    <mat-icon>{{ activeSection === 'adviceCharges' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
 
-    <div class="accordion-content" [class.open]="activeSection === 'adviceCharges'">
+  <div class="collapsible" [class.open]="activeSection === 'adviceCharges'">
+    <div class="form-grid-2">
 
-      <!-- Advice Payment -->
-      <div class="form-group two-col">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Advice Payment By *</mat-label>
-          <mat-select formControlName="advicePaymentBy">
-            <mat-option *ngFor="let option of advicePaymentOptions" [value]="option.value">
-              {{ option.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Advice Payment By *</mat-label>
+        <mat-select formControlName="advicePaymentBy">
+          <mat-option *ngFor="let option of advicePaymentOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Advice Acceptance and Due Date By</mat-label>
-          <input matInput type="text" formControlName="adviceAcceptanceDate" placeholder="Select option" />
-        </mat-form-field>
-      </div>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Advice Acceptance and Due Date By</mat-label>
+        <input matInput type="text" formControlName="adviceAcceptanceDate" placeholder="Select option" />
+      </mat-form-field>
 
-      <!-- Opening Charges -->
-      <div class="form-group two-col">
-        <mat-radio-group formControlName="openingCharges" class="full">
-          <mat-radio-button value="drawee">Drawee</mat-radio-button>
-          <mat-radio-button value="drawer">Drawer</mat-radio-button>
-        </mat-radio-group>
-
-        <mat-radio-group formControlName="outsideCountryCharges" class="full">
+      <div class="form-group full">
+        <mat-label>Opening Charges</mat-label>
+        <mat-radio-group formControlName="openingCharges">
           <mat-radio-button value="drawee">Drawee</mat-radio-button>
           <mat-radio-button value="drawer">Drawer</mat-radio-button>
         </mat-radio-group>
       </div>
 
-      <!-- Checkboxes -->
-      <div class="form-group two-col">
-        <mat-checkbox formControlName="waiveCharges">Waive all charges if refused by Drawee</mat-checkbox>
-        <mat-checkbox formControlName="protestNonPayment">Protest in case of non-payment</mat-checkbox>
-        <mat-checkbox formControlName="protestNonAcceptance">Protest in case of non-acceptance</mat-checkbox>
+      <div class="form-group full">
+        <mat-label>Outside Country Charges</mat-label>
+        <mat-radio-group formControlName="outsideCountryCharges">
+          <mat-radio-button value="drawee">Drawee</mat-radio-button>
+          <mat-radio-button value="drawer">Drawer</mat-radio-button>
+        </mat-radio-group>
       </div>
+
+      <mat-checkbox formControlName="waiveCharges">Waive all charges if refused by Drawee</mat-checkbox>
+      <mat-checkbox formControlName="protestNonPayment">Protest in case of non-payment</mat-checkbox>
+      <mat-checkbox formControlName="protestNonAcceptance">Protest in case of non-acceptance</mat-checkbox>
 
     </div>
   </div>
 
   <!-- =========================
-       Part 2: Refusal & Referral
+       Collection Instruction P2
   ========================== -->
-  <div class="accordion-section">
-    <div class="accordion-header" (click)="toggleSection('refusalReferral')">
-      <h2>Collection Instruction P2</h2>
-      <mat-icon>{{ activeSection === 'refusalReferral' ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
+  <div class="section-header" (click)="toggleSection('refusalReferral')">
+    <h2>Collection Instruction P2</h2>
+    <mat-icon>{{ activeSection === 'refusalReferral' ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
 
-    <div class="accordion-content" [class.open]="activeSection === 'refusalReferral'">
+  <div class="collapsible" [class.open]="activeSection === 'refusalReferral'">
+    <div class="form-grid-2">
 
-      <div class="form-group two-col">
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Advice Reason of Refusal By *</mat-label>
-          <mat-select formControlName="adviceReasonRefusal">
-            <mat-option value="Swift">Swift</mat-option>
-            <mat-option value="couriermail">Courier Mail</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Advice Reason of Refusal By *</mat-label>
+        <mat-select formControlName="adviceReasonRefusal">
+          <mat-option value="Swift">Swift</mat-option>
+          <mat-option value="couriermail">Courier Mail</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <mat-checkbox formControlName="acceptanceDeferred">
-          Acceptance may be deferred pending the arrival of goods
-        </mat-checkbox>
+      <mat-checkbox formControlName="acceptanceDeferred">
+        Acceptance may be deferred pending the arrival of goods
+      </mat-checkbox>
 
-        <mat-checkbox formControlName="warehouseInsurance">
-          If necessary, warehouse/insure the goods in case of delay
-        </mat-checkbox>
-      </div>
+      <mat-checkbox formControlName="warehouseInsurance">
+        If necessary, warehouse/insure the goods in case of delay
+      </mat-checkbox>
 
-      <!-- Referral -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>In case of Need Refer To</mat-label>
         <textarea matInput rows="4" formControlName="referTo"></textarea>
@@ -89,6 +83,7 @@
     </div>
   </div>
 
+  <!-- Submit button -->
   <!-- <div style="margin-top:1.5rem; text-align:right;">
     <button mat-raised-button color="primary">Submit</button>
   </div> -->

@@ -10,54 +10,99 @@
     background: theme.$primary;
     padding: 14px 18px;
     border-radius: 8px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+
+    p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #495057;
+
+      strong {
+        color: #212529;
+      }
+    }
+
+    ul {
+      margin: 5px 0 0 15px;
+      li {
+        font-size: 14px;
+        color: #495057;
+      }
+    }
+
+    .bank-tab h4 {
+      margin: 10px 0 5px 0;
+      font-size: 16px;
+      color: #343a40;
+    }
+  }
+}
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  mat-icon {
     color: theme.$text-light;
-
-    &:hover {
-        background: theme.$primary-dark;
-        box-shadow: theme.$shadow-primary;
-    }
-
-    mat-icon {
-        color: theme.$text-light;
-        font-size: 22px;
-    }
+    font-size: 22px;
+  }
 }
 
 /* Collapsible content */
 .collapsible {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.35s ease-in-out;
-    transform: translateY(-5px);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  transform: translateY(-5px);
 }
 
 .collapsible.open {
-    max-height: 2000px;
-    opacity: 1;
-    transform: translateY(0);
-    padding: 15px 10px;
-    background: theme.$light-bg;
-    border-radius: 6px;
-    border: 1px solid theme.$border-light;
+  max-height: none;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
 }
 
 /* Headings */
 h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: theme.$primary;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$white;
 }
 
 h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
 }
