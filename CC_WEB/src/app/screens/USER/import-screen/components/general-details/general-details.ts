@@ -8,6 +8,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIcon } from "@angular/material/icon";
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-general-details',
@@ -21,8 +23,10 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
     MatInputModule,
     MatCheckboxModule,
     MatSlideToggleModule,
-    MatIcon
-  ],
+    MatIcon,
+    MatDatepickerModule,
+    MatNativeDateModule,
+],
   templateUrl: './general-details.html',
   styleUrl: './general-details.scss',
 })

@@ -4,7 +4,7 @@
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-    <form class="instruction-form" [formGroup]="instructionForm" (ngSubmit)="onSubmit()">
+    <form class="instruction-form" [formGroup]="form" >
 
         <!-- Accounts Row -->
         <div class="form-row">
@@ -14,7 +14,7 @@
                     <mat-option value="account1">Account 1</mat-option>
                     <mat-option value="account2">Account 2</mat-option>
                 </mat-select>
-                <mat-error *ngIf="instructionForm.get('principalAccount')?.hasError('required')">
+                <mat-error *ngIf="form.get('principalAccount')?.hasError('required')">
                     Required
                 </mat-error>
             </mat-form-field>
@@ -25,7 +25,7 @@
                     <mat-option value="fee1">Fee Account 1</mat-option>
                     <mat-option value="fee2">Fee Account 2</mat-option>
                 </mat-select>
-                <mat-error *ngIf="instructionForm.get('feeAccount')?.hasError('required')">
+                <mat-error *ngIf="form.get('feeAccount')?.hasError('required')">
                     Required
                 </mat-error>
             </mat-form-field>
@@ -37,7 +37,7 @@
                 <mat-label>Other Instructions</mat-label>
                 <textarea matInput formControlName="otherInstructions" rows="4" maxlength="31525"></textarea>
                 <mat-hint align="end">
-                    {{ instructionForm.get('otherInstructions')?.value?.length || 0 }}/31525
+                    {{ form.get('otherInstructions')?.value?.length || 0 }}/31525
                 </mat-hint>
             </mat-form-field>
         </div>

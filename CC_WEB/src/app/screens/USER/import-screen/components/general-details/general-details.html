@@ -39,7 +39,7 @@
                 <mat-form-field appearance="outline" class="full">
                     <mat-label>Mode of Transmission</mat-label>
                     <mat-select formControlName="modeOfTransmission">
-                        <mat-option value="SWIFT">SWIFT ✅</mat-option>
+                        <mat-option value="SWIFT">SWIFT</mat-option>
                         <mat-option value="Courier/Mail">Courier/Mail</mat-option>
                         <mat-option value="Other">Other</mat-option>
                     </mat-select>
@@ -51,7 +51,9 @@
         <div class="form-grid-2">
             <mat-form-field appearance="outline">
                 <mat-label>Expiry Date *</mat-label>
-                <input matInput type="date" formControlName="expiryDate" />
+                        <input matInput [matDatepicker]="picker" formControlName="expiryDate" />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
 
             <mat-form-field appearance="outline">

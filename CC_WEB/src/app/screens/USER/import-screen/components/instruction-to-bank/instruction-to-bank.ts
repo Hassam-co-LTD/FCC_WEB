@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,26 +21,13 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./instruction-to-bank.scss']
 })
 export class InstructionToBank {
+  @Input() form!: FormGroup;
   isOpen = true;
-  instructionForm: FormGroup;
+  constructor() {
 
-  constructor(private fb: FormBuilder) {
-    this.instructionForm = this.fb.group({
-      principalAccount: ['', Validators.required],
-      feeAccount: ['', Validators.required],
-      otherInstructions: ['', [Validators.maxLength(31525)]]
-    });
   }
 
   toggle() {
     this.isOpen = !this.isOpen;
-  }
-
-  onSubmit() {
-    if (this.instructionForm.valid) {
-      console.log('Instructions to Bank:', this.instructionForm.value);
-    } else {
-      this.instructionForm.markAllAsTouched();
-    }
   }
 }
