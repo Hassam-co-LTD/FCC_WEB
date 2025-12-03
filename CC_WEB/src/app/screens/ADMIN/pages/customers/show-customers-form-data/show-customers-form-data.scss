@@ -1,0 +1,118 @@
+.customer-display-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+
+  .page-title {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+    color: #0b4eb3; // primary theme color
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin: 24px 0 12px;
+    color: #1565d8; // secondary theme shade
+  }
+
+  .display-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+&.full {
+  grid-template-columns: repeat(2, minmax(280px, 1fr)); // wider columns for addresses
+  gap: 20px 32px; // 20px vertical (row-gap), 32px horizontal (column-gap)
+}
+
+
+    .display-item {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #f9f9f9;
+      width: auto; // do not stretch by default
+
+      label {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #333;
+      }
+
+      span {
+        font-size: 1rem;
+        color: #555;
+        word-wrap: break-word;
+      }
+
+      &.full {
+        width: 100%; // full-width items like addresses
+      }
+
+      .status {
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-block;
+
+        &.Active {
+          background-color: #d4edda;
+          color: #155724;
+        }
+
+        &.Inactive {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+
+        &.Blocked {
+          background-color: #f8d7da;
+          color: #721c24;
+        }
+      }
+    }
+  }
+
+  .no-data {
+    padding: 24px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #777;
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .display-grid {
+      gap: 12px;
+    }
+
+    .display-item {
+      padding: 10px;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+
+    .display-grid {
+      grid-template-columns: 1fr; // stack all items
+    }
+
+    .display-item {
+      padding: 8px;
+    }
+  }
+}

@@ -29,28 +29,27 @@ export class RequestUndertaking implements AfterViewInit {
     { label: "Preview" }
   ];
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      const sections = document.querySelectorAll('section');
+ngAfterViewInit() {
+  const scrollEl = document.querySelector('.scroll-area') as HTMLElement;
+  const sections = scrollEl.querySelectorAll('section');
 
-      const observer = new IntersectionObserver(
-        entries => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              const index = Array.from(sections).indexOf(entry.target as HTMLElement);
-              this.currentStep = index;
-            }
-          }
-        },
-        {
-          threshold: 0.4,
-          root: document.querySelector('.scroll-area')
-        }
-      );
+  // Default highlight first step
+  this.currentStep = 0;
 
-      sections.forEach(section => observer.observe(section));
-    }, 200); // ← gives Angular time to render children
-  }
+  scrollEl.addEventListener('scroll', () => {
+    const scrollTop = scrollEl.scrollTop;
+    let activeIndex = 0;
+
+    sections.forEach((sec, index) => {
+      const secTop = (sec as HTMLElement).offsetTop;
+      if (scrollTop >= secTop - 50) { // 50px buffer from top
+        activeIndex = index;
+      }
+    });
+
+    this.currentStep = activeIndex;
+  });
+}
 
   scrollToSection(i: number) {
     this.currentStep = i;

@@ -10,4 +10,5 @@ import { MatIcon } from "@angular/material/icon";
   styleUrls: ['./undertaking-issuance.scss']
 })
 export class UndertakingIssuance { 
+  
 }

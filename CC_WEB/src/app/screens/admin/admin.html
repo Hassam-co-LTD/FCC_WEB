@@ -1,33 +1,46 @@
 <app-admin-header></app-admin-header>
+
 <div class="admin-container">
+
   <!-- Sidebar -->
   <aside class="sidebar">
     <h2 class="sidebar-title">Admin Panel</h2>
+
     <ul class="sidebar-menu">
+
       <li>
-        <a href="javascript:void(0)" (click)="toggleUsersMenu()" 
+        <a href="javascript:void(0)"
+           (click)="toggleUsersMenu()"
            [class.active]="usersMenuOpen">
           Customers
         </a>
-        <ul class="submenu" *ngIf="usersMenuOpen">
-        <li>
-          <a [routerLink]="['create-customer']" routerLinkActive="active">Create New</a>
-        </li>
 
+        <ul class="submenu" *ngIf="usersMenuOpen">
+          <li>
+            <a [routerLink]="['/admin/create-customer']"
+               routerLinkActive="active">
+              Create New
+            </a>
+          </li>
         </ul>
       </li>
+
       <li>
-        <a href="javascript:void(0)" (click)="toggleCustomersMenu()" 
+        <a routerLink="users"
+           (click)="toggleCustomersMenu()"
            [class.active]="customersMenuOpen">
           Users
         </a>
       </li>
+
     </ul>
   </aside>
 
-  <!-- Main Content -->
+
+  <!-- Main content -->
   <div class="main-content">
-    <!-- Stats Cards -->
+
+    <!-- Dashboard widgets -->
     <div class="stats-grid">
       <mat-card class="stat-card">
         <h3>Total Users</h3>
@@ -50,18 +63,15 @@
       </mat-card>
     </div>
 
-    <!-- Quick Action Buttons -->
+    <!-- Quick actions -->
     <div class="action-buttons">
       <button mat-raised-button color="primary">Manage Users</button>
       <button mat-raised-button color="primary">View Reports</button>
       <button mat-raised-button color="primary">System Settings</button>
     </div>
 
-    <!-- Router Outlet --><div class="main-content" *ngIf="usersMenuOpen">
-  <router-outlet></router-outlet>
-</div>
+    <!-- Router pages appear here -->
+    <router-outlet></router-outlet>
 
   </div>
 </div>
-
-

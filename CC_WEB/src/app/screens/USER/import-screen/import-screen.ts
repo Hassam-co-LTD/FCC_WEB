@@ -91,28 +91,26 @@ export class ImportScreen implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      const sections = document.querySelectorAll('section');
+  const scrollEl = document.querySelector('.scroll-area') as HTMLElement;
+  const sections = scrollEl.querySelectorAll('section');
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              const index = Array.from(sections)
-                .indexOf(entry.target as HTMLElement);
-              this.currentStep = index;
-            }
-          }
-        },
-        {
-          threshold: 0.4,
-          root: document.querySelector('.scroll-area')
-        }
-      );
+  // Default highlight first step
+  this.currentStep = 0;
 
-      sections.forEach(section => observer.observe(section));
-    }, 200);
-  }
+  scrollEl.addEventListener('scroll', () => {
+    const scrollTop = scrollEl.scrollTop;
+    let activeIndex = 0;
+
+    sections.forEach((sec, index) => {
+      const secTop = (sec as HTMLElement).offsetTop;
+      if (scrollTop >= secTop - 50) { // 50px buffer from top
+        activeIndex = index;
+      }
+    });
+
+    this.currentStep = activeIndex;
+  });
+}
 
   // Sidebar scroll
   scrollToSection(i: number) {
