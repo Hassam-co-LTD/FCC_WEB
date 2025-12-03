@@ -36,14 +36,17 @@
             <section id="section-9"><app-attachments (filesChange)="updateAttachments($event)"></app-attachments></section>
             <hr class="section-divider" />
 
-            <section id="section-10"><app-preview [form]="importForm"></app-preview></section>
-
+            <section id="section-10">
+                <router-outlet></router-outlet>
+                <!-- Footer Buttons -->
+                <!-- <app-preview [form]="importForm"></app-preview> -->
+            </section>
+            
             <!-- Footer Buttons -->
             <div class="actions">
-                <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
-                <button mat-flat-button color="primary" (click)="next()">Submit</button>
+                <button mat-stroked-button (click)="previous()"  [disabled]="currentStep==0">Back</button>
+                <button mat-flat-button color="primary" (click)="next()">Next</button>
             </div>
-
         </div>
     </div>
 </div>

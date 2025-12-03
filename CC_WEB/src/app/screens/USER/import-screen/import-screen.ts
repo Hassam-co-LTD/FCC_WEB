@@ -1,5 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterOutlet } from '@angular/router';
 
 // Child components
 import { GeneralDetails } from "./components/general-details/general-details";
@@ -12,10 +14,10 @@ import { NarrativeDetails } from './components/narrative-details/narrative-detai
 import { Licenses } from "./components/licenses/licenses";
 import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
 import { Attachments } from "./components/attachments/attachments";
-import { Preview } from "./components/preview/preview";
+// import { Preview } from "./components/preview/preview";
 import { Sidebar } from "../../../core/sidebar/sidebar";
+import { SharedService } from '../../../core/services/shared-service';
 
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-import-lc',
@@ -32,9 +34,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     Licenses,
     InstructionToBank,
     Attachments,
-    Preview,
-    Sidebar
-  ],
+    // Preview,
+    Sidebar,
+    RouterOutlet
+],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']
 })
@@ -53,13 +56,13 @@ export class ImportScreen implements AfterViewInit {
     { label: "Licenses" },
     { label: "Instructions to Bank" },
     { label: "Attachments" },
-    { label: "Preview" }
+    // { label: "Preview" }
   ];
 
   // MAIN MASTER FORM (fed to all steps)
   importForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService) {
 
     this.importForm = this.fb.group({
 
@@ -209,10 +212,15 @@ export class ImportScreen implements AfterViewInit {
   }
 
   // Next section
-  next() {
+  submit() {
     if (this.currentStep < this.importSteps.length - 1) {
       this.scrollToSection(this.currentStep + 1);
     }
+  }
+
+  next(){
+    this.dataService.setFormData(this.importForm.value);
+    this.router.navigate(['/import-screen/preview']);
   }
 
   // Previous section

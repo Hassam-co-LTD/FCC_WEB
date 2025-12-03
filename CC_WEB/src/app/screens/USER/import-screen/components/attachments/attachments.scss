@@ -1,7 +1,7 @@
 @use '../../../../../../styles/_theme.scss' as theme;
 
 /* ===========================
-   Section Header (Collapsible Title)
+   Section Header
 =========================== */
 .section-header {
     display: flex;
@@ -11,7 +11,7 @@
     padding: 14px 18px;
     border-radius: theme.$radius-large;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
 
@@ -20,108 +20,120 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: theme.$white;
+    }
+
     mat-icon {
-        color: theme.$text-light;
+        color: theme.$white;
         font-size: 22px;
     }
 }
 
 /* ===========================
-   Collapsible Container
+   Collapsible Wrapper
 =========================== */
 .collapsible {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.35s ease-in-out;
     transform: translateY(-5px);
+    transition: all 0.35s ease;
 }
 
 .collapsible.open {
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
-    padding: 15px 10px;
+    padding: 20px;
     background: theme.$light-bg;
     border-radius: theme.$radius-default;
     border: 1px solid theme.$border-light;
 }
 
 /* ===========================
-   Titles
+   Save Button (Right Corner)
 =========================== */
-h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: theme.$white;
-}
-.instruction-form {
-    background: #fafaff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.header-row {
+.header-right {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 1rem;
+    margin-bottom: 8px;
 
     .save-btn {
-        color: #d63384;
         font-weight: 500;
+        color: theme.$primary;
     }
 }
 
+/* ===========================
+   Text Hints
+=========================== */
 .hint,
 .extensions {
     font-size: 0.85rem;
-    color: #555;
-    margin: 0.3rem 0;
+    color: #4d4d4d;
+    margin: 2px 0 6px;
 }
 
+/* ===========================
+   Dropzone (Responsive)
+=========================== */
 .dropzone {
     border: 2px dashed #c5cae9;
-    border-radius: 10px;
-    padding: 2rem;
+    border-radius: 12px;
+    padding: 2rem 1rem;
     text-align: center;
-    color: #6c63ff;
     background: #fff;
     cursor: pointer;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
+    transition: 0.2s ease;
 
     mat-icon {
-        font-size: 3rem;
+        font-size: 3.2rem;
         margin-bottom: 0.5rem;
         display: block;
+        color: theme.$primary;
     }
 
     &:hover {
         background: #f4f5fb;
-    }
-
-    button {
-        margin-top: 0.8rem;
+        border-color: theme.$primary;
     }
 }
 
+/* ===========================
+   File List (Row-wise)
+=========================== */
 .file-list {
     margin-top: 1rem;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
 
     .file-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.6rem 1rem;
+        padding: 0.8rem 1rem;
         border: 1px solid #e0e0e0;
-        border-radius: 8px;
+        border-radius: 10px;
         background: #fff;
-        margin-bottom: 0.5rem;
+        transition: 0.2s ease;
+
+        &:hover {
+            border-color: theme.$primary-light;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
 
         span {
             font-size: 0.9rem;
+            font-weight: 500;
             color: #333;
+            word-break: break-all;
         }
 
         button {
@@ -130,9 +142,41 @@ h2 {
     }
 }
 
+/* ===========================
+   Reference Text
+=========================== */
 .reference {
     text-align: right;
     font-size: 0.9rem;
     color: #555;
     margin-top: 1rem;
+}
+
+/* ===========================
+   Responsive Breakpoints
+=========================== */
+@media (max-width: 768px) {
+    .dropzone {
+        padding: 1.5rem 1rem;
+    }
+
+    .file-list {
+        grid-template-columns: 1fr 1fr;
+        /* 2 columns */
+    }
+}
+
+@media (max-width: 480px) {
+    .file-list {
+        grid-template-columns: 1fr;
+        /* single column */
+    }
+
+    .file-item {
+        font-size: 0.85rem;
+    }
+
+    .section-header h2 {
+        font-size: 18px;
+    }
 }
