@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -14,13 +13,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrls: ['./topbar.scss'],
 })
 export class TopbarComponent { 
+  Name = 'Hassam';
   menuOpen = false;
   menuVisible = false;
 
 
-  constructor(private router: Router,
-    // private auth: AuthService
-  ) { }
+  constructor() { }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
@@ -34,15 +32,5 @@ export class TopbarComponent {
   toggleNav() {
     this.menuVisible = !this.menuVisible;
   }
-
-
-  goToImportLC() {
-    this.router.navigate(['/import-screen']);
-  }
-
-  goToexportLC() {
-    this.router.navigate(['/export-screen']);
-  }
-
 
 }

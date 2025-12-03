@@ -1,27 +1,24 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon } from '@angular/material/icon';
+import {  MatLabel } from "@angular/material/form-field";
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-general-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIcon, MatLabel, MatSelectModule, MatInputModule],
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss']
 })
 export class GeneralDetails {
   isOpen = true;
-  form: FormGroup;
+  @Input() form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      customerRef: [''],
-      advisingBank: ['', Validators.required],
-      issuerRef: ['', Validators.required]
-    });
-  }
+  constructor() {}
 
   toggle() {
     this.isOpen = !this.isOpen;

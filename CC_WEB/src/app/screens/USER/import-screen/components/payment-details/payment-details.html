@@ -4,7 +4,7 @@
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" >
 
         <!-- Credit Available With -->
         <div class="row">
@@ -15,7 +15,7 @@
                         {{ option }}
                     </mat-option>
                 </mat-select>
-                <mat-error *ngIf="paymentForm.get('creditAvailableWith')?.hasError('required')">
+                <mat-error *ngIf="form.get('creditAvailableWith')?.hasError('required')">
                     This field is required
                 </mat-error>
             </mat-form-field>
@@ -48,7 +48,7 @@
                         {{ option }}
                     </mat-option>
                 </mat-select>
-                <mat-error *ngIf="paymentForm.get('paymentDraftAt')?.hasError('required')">
+                <mat-error *ngIf="form.get('paymentDraftAt')?.hasError('required')">
                     Please select a payment option
                 </mat-error>
             </mat-form-field>

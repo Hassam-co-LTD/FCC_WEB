@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Upload {
   isOpen = true;
-  form: FormGroup;
+  @Input() form!: FormGroup;
   file: File | null = null;
 
   constructor(private fb: FormBuilder) {

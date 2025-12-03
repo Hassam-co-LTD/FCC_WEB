@@ -26,7 +26,9 @@
     }
 }
 
-/* Collapsible content */
+/* ===========================
+   Collapsible content
+=========================== */
 .collapsible {
     max-height: 0;
     overflow: hidden;
@@ -36,7 +38,7 @@
 }
 
 .collapsible.open {
-    max-height: 2000px;
+    max-height: none;
     opacity: 1;
     transform: translateY(0);
     padding: 15px 10px;
@@ -45,7 +47,9 @@
     border: 1px solid theme.$border-light;
 }
 
-/* Headings */
+/* ===========================
+   Headings
+=========================== */
 h2 {
     font-size: 20px;
     font-weight: 600;
@@ -54,10 +58,199 @@ h2 {
 }
 
 h4 {
-    font-size: 16px;
+    font-size: 18px;
     margin: 20px 0 10px;
     font-weight: 600;
     color: theme.$primary-dark;
     border-left: 4px solid theme.$primary;
     padding-left: 8px;
+}
+
+/* ===========================
+   Preview Section Styling
+=========================== */
+.preview-block {
+    background: theme.$white;
+    padding: 18px 22px;
+    border-radius: 10px;
+    border: 1px solid theme.$border-light;
+    box-shadow: theme.$shadow-primary;
+    margin-bottom: 20px;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 20px;
+}
+
+.preview-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-label {
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin-bottom: 3px;
+}
+
+.preview-value {
+    color: theme.$text-dark;
+}
+
+/* ===========================
+   Divider
+=========================== */
+hr {
+    border: 0;
+    border-top: 1px solid theme.$border-light;
+    margin: 25px 0;
+}
+
+/* ===========================
+   Attachments Table
+=========================== */
+.preview-row {
+    display: contents;
+
+    div {
+        padding: 8px 0;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+    }
+
+    &.header div {
+        font-weight: 600;
+        border-bottom: 2px solid #c0c0c0;
+    }
+
+    .pdf-icon {
+        font-size: 32px;
+        height: 32px;
+        width: 32px;
+        color: #d32f2f;
+    }
+
+    .image-icon {
+        font-size: 32px;
+        height: 32px;
+        width: 32px;
+        color: #1976d2;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-icon {
+        cursor: pointer;
+        font-size: 26px;
+        color: #1976d2;
+        transition: 0.2s;
+
+        &:hover {
+            color: #0d47a1;
+            transform: scale(1.15);
+        }
+    }
+}
+
+/* ===========================
+   POPUP VIEWER
+=========================== */
+body.popup-open {
+    overflow: hidden;
+
+    .collapsible,
+    app-sidebar,
+    app-topbar,
+    .preview-block {
+        filter: blur(5px) brightness(0.8);
+        pointer-events: none;
+        user-select: none;
+    }
+}
+
+.popup-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+
+    &.open {
+        opacity: 1;
+    }
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.7);
+    width: 100%;
+    max-width: 900px;
+    max-height: 80vh;
+    background: transparent;
+    z-index: 2001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-direction: column;
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    opacity: 0;
+
+    &.open {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        cursor: pointer;
+        font-size: 28px;
+        color: #333;
+        z-index: 10;
+        transition: color 0.2s;
+
+        &:hover {
+            color: #d32f2f;
+        }
+    }
+
+    .preview-image,
+    .preview-pdf {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 10px;
+    }
+}
+
+/* ===========================
+   Responsive adjustments
+=========================== */
+@media (max-width: 768px) {
+    .popup {
+        width: 95%;
+        height: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .popup {
+        width: 100%;
+        height: 70%;
+        border-radius: 0;
+    }
 }

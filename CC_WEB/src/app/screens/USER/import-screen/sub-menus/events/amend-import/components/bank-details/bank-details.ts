@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -32,7 +32,7 @@ export class BankDetails {
   selectedTab = 0;
   isOpen = true;
 
-  bankForm!: FormGroup;
+  @Input() form!: FormGroup;  
 
   bankList: string[] = [
     'Habib Bank Limited (HBL)',
@@ -42,29 +42,10 @@ export class BankDetails {
     'Bank Alfalah'
   ];
 
-  constructor(private fb: FormBuilder, private router: Router) {
-    this.bankForm = this.fb.group({
-      issuingBankName: ['', Validators.required],
-      issuerReference: ['', Validators.required],
-      advisingBankName: [''],
-      adviseThroughBankName: ['']
-    });
-  }
+  constructor() {}
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
 
-  goPrevious() {
-    this.router.navigate(['/letter-of-credit/applicant-beneficiary']);
-  }
-
-  goNext() {
-    if (this.bankForm.invalid) {
-      this.bankForm.markAllAsTouched();
-      return;
-    }
-
-    this.router.navigate(['/letter-of-credit/amount-details']);
-  }
 }

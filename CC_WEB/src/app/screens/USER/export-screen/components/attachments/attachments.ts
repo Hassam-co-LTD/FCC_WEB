@@ -1,20 +1,19 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-attachments',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './attachments.html',
   styleUrls: ['./attachments.scss']
 })
 export class Attachments {
   isOpen = true;
   files: File[] = [];
-
+  @Output() filesChange = new EventEmitter<File[]>(); 
   toggle() {
     this.isOpen = !this.isOpen;
   }

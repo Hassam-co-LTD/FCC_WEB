@@ -46,7 +46,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Expiry Date</mat-label>
             <input matInput [matDatepicker]="expDate" formControlName="expiryDate" />
-            <mat-datepicker-toggle matSuffix [for]="expDate"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="expDate" class="date-toggle"></mat-datepicker-toggle>
             <mat-datepicker #expDate></mat-datepicker>
         </mat-form-field>
     </div>
@@ -130,7 +130,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Date</mat-label>
             <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
-            <mat-datepicker-toggle matSuffix [for]="ctDate"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="ctDate" class="date-toggle"></mat-datepicker-toggle>
             <mat-datepicker #ctDate></mat-datepicker>
         </mat-form-field>
 

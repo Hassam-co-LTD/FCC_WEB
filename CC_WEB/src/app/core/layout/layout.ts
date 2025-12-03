@@ -95,7 +95,6 @@ export class LayoutComponent implements OnInit {
     const role = this.authService.getUserCategory();
     this.loadMenu(role);
 
-    // 🔥 Detect route changes & automatically switch menu
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -103,13 +102,20 @@ export class LayoutComponent implements OnInit {
 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
-        } else if (url.includes('/middle-office')) {
+          this.menuItems = this.systemOverviewMenu;   // 🔥 Load SYSTEM menu
+        }
+        else if (url.includes('/middle-office')) {
           this.currentMenu = 'MIDDLE';
-        } else {
+          this.menuItems = this.middleOfficeMenu;     // 🔥 Load MIDDLE-OFFICE menu
+        }
+        else {
           this.currentMenu = 'DEFAULT';
+          const role = this.authService.getUserCategory();
+          this.loadMenu(role);                        // 🔥 Load DEFAULT menu again
         }
       });
   }
+
 
   toggleSidebar() {
     this.collapsed = !this.collapsed;
