@@ -245,8 +245,23 @@ export const routes: Routes = [
                 data: {
                     title: 'Welcome to Export Collection',
                     description: 'Manage all Export Collection related activities here.',
+
+                
                 },
             },
+             // exportcollection Amend Route
+            {
+                path: 'export-collection/amend',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/export-collection/sub-menus/event/amend/amend'
+                    ).then((m) => m.Amend),
+            },
+ 
+            // Default child redirect
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            
+
 
             // ==============================
             // UNDERTAKING ISSUANCE 

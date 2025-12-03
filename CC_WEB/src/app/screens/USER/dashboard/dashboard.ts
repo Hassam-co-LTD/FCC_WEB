@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  userName = 'Hassam';
+  userName = 'Love kumar';
   lastUpdated = new Date();
 
   cards = [

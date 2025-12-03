@@ -3,19 +3,19 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
 // CHILD COMPONENTS
-import { GeneralDetails } from "../../USER/export-collection/components/general-details/general-details";
-import { DrawerDraweeDetails } from "../../USER/export-collection/components/drawer-drawee-details/drawer-drawee-details";
-import { BankDetailsComponent } from '../../USER/export-collection/components/bank-details/bank-details';
-import { ShippingDetailsComponent } from '../../USER/export-collection/components/shipping-details/shipping-details';
-import { PaymentAmountComponent } from '../../USER/export-collection/components/payment-amount/payment-amount';
-import { CollectionInstructionsComponent } from '../../USER/export-collection/components/collection-instructions/collection-instructions';
-import { License } from "../../USER/export-collection/components/license/license";
-import { AttachmentsDocuments } from "../../USER/export-collection/components/attachments-documents/attachments-documents";
-import { PreviewSectionComponent } from "../../USER/export-collection/components/preview/preview";
-import { Sidebar } from "../../../core/sidebar/sidebar";
+import { GeneralDetails } from "../../event/amend/components/general-details/general-details";
+import { DrawerDraweeDetails } from "../../event/amend/components/drawer-drawee-details/drawer-drawee-details";
+import { BankDetailsComponent } from "../amend/components/bank-details/bank-details";
+import { ShippingDetailsComponent } from "../amend/components/shipping-details/shipping-details";
+import { PaymentAmountComponent } from "../amend/components/payment-amount/payment-amount";
+import { CollectionInstructionsComponent } from "../amend/components/collection-instructions/collection-instructions";
+import { License } from "../amend/components/license/license";
+import { AttachmentsDocuments } from "../amend/components/attachments-documents/attachments-documents";
+import { PreviewSectionComponent } from "../amend/components/preview/preview";
+import { Sidebar } from "../../../../../../core/sidebar/sidebar";
 
 @Component({
-  selector: 'app-export-collection',
+  selector: 'app-amend',
   standalone: true,
   imports: [
     CommonModule,
@@ -31,10 +31,10 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     PreviewSectionComponent,
     Sidebar
   ],
-  templateUrl: './export-collection.html',
-  styleUrls: ['./export-collection.scss']
+  templateUrl: './amend.html',
+  styleUrls: ['./amend.scss']
 })
-export class ExportCollectionComponent implements OnInit, AfterViewInit {
+export class Amend implements OnInit, AfterViewInit {
 
   importForm!: FormGroup;
   currentStep = 0;

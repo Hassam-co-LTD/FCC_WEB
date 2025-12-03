@@ -1,4 +1,5 @@
-@use '../../../../../../styles/_theme.scss' as theme;
+@use "../../../../../../../../../styles/theme" as theme;
+
 
 /* ================================
    PREVIEW WRAPPER
@@ -30,16 +31,16 @@
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: white;
+    color: theme.$primary;
   }
 
   mat-icon {
     font-size: 22px;
-    color: white;
+    color: theme.$primary;
   }
 
   &:hover {
-    // background: theme.$hover-bg;
+    background: theme.$hover-bg;
     border-color: theme.$hover-border;
   }
 }

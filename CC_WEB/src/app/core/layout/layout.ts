@@ -199,7 +199,7 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/export-collection' },
                 // If you add amend later, uncomment this:
-                // { label: 'Amend', route: '/export-collection/amend' },
+                { label: 'Amend', route: '/export-collection/amend' },
               ]
             },
 
