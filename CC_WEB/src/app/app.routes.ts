@@ -71,6 +71,18 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
             },
+
+            {
+                path: 'exportlc-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Export LC',
+                    description: 'Manage all Export LC activities here.',
+                },
+            },
  
             // ==============================
             // SHIPPING GUARANTEE
@@ -123,8 +135,9 @@ export const routes: Routes = [
                             import(
                                 './screens/USER/shipping-guarantee-screen/components/preview/preview'
                             ).then((m) => m.Preview),
-                    }
- 
+                    },
+
+
                 ],
             },
  
@@ -221,12 +234,12 @@ export const routes: Routes = [
                             import(
                                 './screens/USER/export-collection/components/preview/preview'
                             ).then((m) => m.PreviewSectionComponent),
-                    }
+                    },
                 ],
             },
  
             {
-                path: 'export-welcome',
+                path: 'export-collection-welcome',
                 loadComponent: () =>
                     import('./shared/welcome-screen/welcome-screen').then(
                         (m) => m.WelcomeScreen
@@ -290,6 +303,7 @@ export const routes: Routes = [
                                 './screens/USER/undertaking-issuance/components/instructions-bank/instructions-bank'
                             ).then((m) => m.InstructionsBank),
                     },
+   
                 ],
             },
  
@@ -373,6 +387,7 @@ export const routes: Routes = [
                                 './screens/USER/import-screen/components/narrative-details/narrative-details'
                             ).then((m) => m.NarrativeDetails),
                     },
+
                 ],
             },
  

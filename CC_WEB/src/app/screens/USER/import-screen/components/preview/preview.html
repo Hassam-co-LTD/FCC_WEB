@@ -1,30 +1,164 @@
 <div class="section-header" (click)="toggle()">
-    <h2>Preview</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <h2>Preview</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-<div class="preview-section" *ngIf="form">
 
-    <ng-container *ngIf="form.get('generalDetails') as gd">
-        <pre>{{ form.value | json }}</pre>
+  <!-- GENERAL DETAILS -->
+  <div class="preview-block" *ngIf="form.get('generalDetails') as gd">
+    <h4>General Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['productType','modeOfTransmission','expiryDate','placeOfExpiry','featureIrrevocable','featureRevolving','featureTransferable','applicableRules','confirmationInstruction']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">
+          {{ gd.value[key] === true ? 'Yes' : gd.value[key] === false ? 'No' : gd.value[key] }}
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <h2>General Details</h2>
+  <hr />
 
-        <p><strong>Product Type:</strong> {{ gd.value.productType }}</p>
-        <p><strong>Mode of Transmission:</strong> {{ gd.value.modeOfTransmission }}</p>
+  <!-- APPLICANT DETAILS -->
+  <div class="preview-block" *ngIf="form.get('applicantForm') as ap">
+    <h4>Applicant Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['applicantName','applicantAddress1','applicantAddress2','applicantAddress3','beneficiaryName','beneficiaryAddress1','beneficiaryAddress2','beneficiaryAddress3','beneficiaryCountry']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ ap.value[key] }}</div>
+      </div>
+    </div>
+  </div>
 
-        <p><strong>Expiry Date:</strong> {{ gd.value.expiryDate }}</p>
-        <p><strong>Place of Expiry:</strong> {{ gd.value.placeOfExpiry }}</p>
+  <hr />
 
-        <p><strong>Irrevocable:</strong> {{ gd.value.featureIrrevocable ? 'Yes' : 'No' }}</p>
-        <p><strong>Revolving:</strong> {{ gd.value.featureRevolving ? 'Yes' : 'No' }}</p>
-        <p><strong>Transferable:</strong> {{ gd.value.featureTransferable ? 'Yes' : 'No' }}</p>
+  <!-- BANK DETAILS -->
+  <div class="preview-block" *ngIf="form.get('bankForm') as bf">
+    <h4>Bank Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['issuingBankName','issuerReference','advisingBankName','adviseThroughBankName']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ bf.value[key] }}</div>
+      </div>
+    </div>
+  </div>
 
-        <p><strong>Applicable Rules:</strong> {{ gd.value.applicableRules }}</p>
-        <p><strong>Confirmation Instruction:</strong> {{ gd.value.confirmationInstruction }}</p>
+  <hr />
 
-    </ng-container>
+  <!-- AMOUNT & CHARGES -->
+  <div class="preview-block" *ngIf="form.get('amountChargeForm') as ac">
+    <h4>Amount & Charges</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['currency','amount','variationType','variationPlus','variationMinus','issuingBankCharges','outsideCountryCharges','additionalAmountDetails']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ ac.value[key] }}</div>
+      </div>
+    </div>
+  </div>
 
+  <hr />
+
+  <!-- PAYMENT DETAILS -->
+  <div class="preview-block" *ngIf="form.get('paymentDetailsForm') as pd">
+    <h4>Payment Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['creditAvailableWith','bankName','creditAvailableBy','paymentDraftAt']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ pd.value[key] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- SHIPMENT DETAILS -->
+  <div class="preview-block" *ngIf="form.get('shipmentForm') as sd">
+    <h4>Shipment Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['shipmentFrom','shipmentTo','placeOfLoading','placeOfDischarge','lastShipmentDate','shipmentPeriodNarrative','partialShipment','transhipment']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ sd.value[key] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- NARRATIVE DETAILS -->
+  <div class="preview-block" *ngIf="form.get('narrativeForm') as nd">
+    <h4>Narrative Details</h4>
+    <div class="preview-grid">
+      <div class="preview-item"
+        *ngFor="let key of ['descriptionOfGoods','documentsRequired','additionalInstructions','otherDetails']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ nd.value[key] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- INSTRUCTION TO BANK -->
+  <div class="preview-block" *ngIf="form.get('instructionForm') as ib">
+    <h4>Instruction to Bank</h4>
+    <div class="preview-grid">
+      <div class="preview-item" *ngFor="let key of ['principalAccount','feeAccount']">
+        <div class="preview-label">{{ key | titlecase }}:</div>
+        <div class="preview-value">{{ ib.value[key] }}</div>
+      </div>
+      <div class="preview-item full-width">
+        <div class="preview-label">Other Instructions:</div>
+        <div class="preview-value">{{ ib.value['otherInstructions'] }}</div>
+      </div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ATTACHMENTS -->
+  <div class="preview-block" *ngIf="attachmentsArray.length >= 0">
+    <h4>Attachments</h4>
+
+    <div class="preview-grid" *ngIf="attachmentsArray.length > 0">
+      <div class="preview-row header">
+        <div>File Type</div>
+        <div>Title</div>
+        <div>File Name</div>
+        <div>File Size</div>
+        <div>Actions</div>
+      </div>
+
+      <div class="preview-row" *ngFor="let f of attachmentsArray.controls; let i = index">
+        <div>
+          <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+          <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
+        </div>
+        <div>{{ f.value.title }}</div>
+        <div>{{ f.value.fileName }}</div>
+        <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+        <div class="actions">
+          <!-- <mat-icon class="action-icon" (click)="viewFile(i)">visibility</mat-icon> -->
+          <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="attachmentsArray.controls.length === 0">No attachments uploaded.</p>
+  </div>
 </div>
-</div>
+
+<!-- POPUP VIEWER -->
+<!-- <div class="popup-backdrop" *ngIf="viewerOpen" [class.open]="viewerOpen" (click)="closeViewer()"></div>
+
+<div class="popup" *ngIf="viewerOpen" [ngClass]="popupClass">
+  <mat-icon class="close-btn" (click)="closeViewer()">close</mat-icon>
+  <img *ngIf="isImage" [src]="viewerContent" class="preview-image" />
+  <iframe *ngIf="isPdf" [src]="viewerContent" class="preview-pdf"></iframe>
+</div> -->

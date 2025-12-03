@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -27,33 +27,13 @@ import { MatRadioModule } from '@angular/material/radio';
   styleUrls: ['./applicant-beneficiary.scss']
 })
 export class ApplicantBeneficiary {
-  formGroup!: FormGroup;
-  isOpen: boolean = true; // default open
+
+  @Input() form!: FormGroup;
+
+  isOpen: boolean = true;
   showAlternate: boolean = false;
 
-  constructor(private fb: FormBuilder) {
-    this.createForm();
-  }
-
-  createForm() {
-    this.formGroup = this.fb.group({
-      applicantName: ['', Validators.required],
-      applicantAddress1: ['', Validators.required],
-      applicantAddress2: [''],
-      applicantAddress3: [''],
-
-      alternateName: [''],
-      alternateAddress1: [''],
-      alternateAddress2: [''],
-      alternateAddress3: [''],
-
-      beneficiaryName: ['', Validators.required],
-      beneficiaryAddress1: ['', Validators.required],
-      beneficiaryAddress2: [''],
-      beneficiaryAddress3: [''],
-      beneficiaryCountry: ['', Validators.required]
-    });
-  }
+  constructor() { }
 
   toggle() {
     this.isOpen = !this.isOpen;

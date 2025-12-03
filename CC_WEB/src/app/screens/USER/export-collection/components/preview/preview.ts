@@ -23,7 +23,7 @@ export class PreviewSectionComponent {
   formatCheckbox(value: boolean) {
     return value ? 'Yes' : 'No';
   }
-  toggle(){
+  toggle() {
     this.isOpen = !this.isOpen;
   }
 }

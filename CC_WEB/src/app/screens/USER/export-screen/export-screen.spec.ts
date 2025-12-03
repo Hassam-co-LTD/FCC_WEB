@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { } from '@angular/common';
-import { ExportScreenComponent } from './export-screen';
+import { ExportScreen } from './export-screen';
 import { } from '@angular/forms';
 import { } from '@angular/router';
 import { } from '@angular/platform-browser';
 import { } from '@angular/platform-browser/animations';
 describe('ExportScreen', () => {
-  let component: ExportScreenComponent;
-  let fixture: ComponentFixture<ExportScreenComponent>;
+  let component: ExportScreen;
+  let fixture: ComponentFixture<ExportScreen>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExportScreenComponent]
+      imports: [ExportScreen]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ExportScreenComponent);
+    fixture = TestBed.createComponent(ExportScreen);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

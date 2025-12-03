@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,31 +25,19 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./payment-details.scss']
 })
 export class PaymentDetails {
+  @Input() form!: FormGroup;
   isOpen = true;
 
-  paymentForm: FormGroup;
+
   creditAvailableWithOptions = ['Issuing Bank', 'Advising Bank', 'Any Bank in Country'];
   creditAvailableByOptions = ['Payment', 'Acceptance', 'Negotiation', 'Deferred Payment'];
   paymentDraftOptions = ['Sight', 'Usance', 'Deferred'];
 
-  constructor(private fb: FormBuilder) {
-    this.paymentForm = this.fb.group({
-      creditAvailableWith: ['', Validators.required],
-      bankName: [''],
-      creditAvailableBy: ['Payment', Validators.required],
-      paymentDraftAt: ['Sight', Validators.required]
-    });
+  constructor() {
+    
   }
 
   toggle() {
     this.isOpen = !this.isOpen;
-  }
-
-  onSubmit() {
-    if (this.paymentForm.valid) {
-      console.log('Payment Details:', this.paymentForm.value);
-    } else {
-      this.paymentForm.markAllAsTouched();
-    }
   }
 }

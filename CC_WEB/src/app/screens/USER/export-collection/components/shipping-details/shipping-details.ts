@@ -21,7 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrls: ['./shipping-details.scss']
 })
 export class ShippingDetailsComponent implements OnInit {
-
+isOpen = true;
   form!: FormGroup;
   activeSection: string | null = 'shipmentDetails';
 
@@ -43,7 +43,7 @@ export class ShippingDetailsComponent implements OnInit {
     });
   }
 
-  toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+  toggle(){
+    this.isOpen = !this.isOpen;
   }
 }

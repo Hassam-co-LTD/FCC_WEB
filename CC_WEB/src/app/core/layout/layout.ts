@@ -95,7 +95,6 @@ export class LayoutComponent implements OnInit {
     const role = this.authService.getUserCategory();
     this.loadMenu(role);
 
-    // 🔥 Detect route changes & automatically switch menu
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -103,13 +102,20 @@ export class LayoutComponent implements OnInit {
 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
-        } else if (url.includes('/middle-office')) {
+          this.menuItems = this.systemOverviewMenu;   // 🔥 Load SYSTEM menu
+        }
+        else if (url.includes('/middle-office')) {
           this.currentMenu = 'MIDDLE';
-        } else {
+          this.menuItems = this.middleOfficeMenu;     // 🔥 Load MIDDLE-OFFICE menu
+        }
+        else {
           this.currentMenu = 'DEFAULT';
+          const role = this.authService.getUserCategory();
+          this.loadMenu(role);                        // 🔥 Load DEFAULT menu again
         }
       });
   }
+
 
   toggleSidebar() {
     this.collapsed = !this.collapsed;
@@ -119,61 +125,105 @@ export class LayoutComponent implements OnInit {
     return this.collapsed;
   }
 
-  toggleMenu(item: MenuItem) {
+  onParentClick(item: any) {
+    if (item.route) {
+      this.router.navigate([item.route]);
+    }
+  }
+
+  toggleMenu(item: any) {
     item.open = !item.open;
   }
 
-loadMenu(role: 'ADMIN' | 'USER' | null) {
-  if (role === 'ADMIN') {
-    this.menuItems = [
-      { label: 'System Features', icon: 'insights', route: '/system-overview' },
-      { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
-      { label: 'Customers', icon: 'groups', route: '/customers' },  // NEW
-      { label: 'Users', icon: 'person', route: '/users' }           // NEW
-    ];
-  } else {
-    this.menuItems = [
-      { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
 
-      {
-        label: 'Trade Services',
-        icon: 'article',
-        open: false,
-        children: [
-          {
-            label: 'Import LC', route: '/import-welcome',
-            open: false,
-            children: [
-              { label: 'Create', route: '/import-screen' },
-              { label: 'Amend', route: '/import-screen/amend' },
-            ]
-          },
-          { label: 'Export LC', route: '/export-screen' },
-          {
-            label: 'Shipping Guarantee',
-            open: false,
-            children: [
-              { label: 'Create', route: '/shipping-guarantee' },
-              { label: 'Amend', route: '/shipping-guarantee/amend' },
-            ]
-          },
-          {
-            label: 'Export Collection',
-            open: false,
-            children: [
-              { label: 'Create', route: '/export-collection' },
-            ]
-          },
-          {
-            label: 'Undertaking Issuance',
-            open: false,
-            children: [
-              { label: 'Create', route: '/undertaking-issuance' },
-              { label: 'Amend', route: '/undertaking-issuance/amend' },
-            ]
-          },
-        ],
-      },
+  goTo(item: MenuItem) {
+    if (item.route) {
+      this.router.navigate([item.route]);
+    }
+  }
+  loadMenu(role: 'ADMIN' | 'USER' | null) {
+    if (role === 'ADMIN') {
+      this.menuItems = [
+        { label: 'System Features', icon: 'insights', route: '/system-overview' },
+        { label: 'Middle-Office', icon: 'group', route: '/middle-office' }
+      ];
+    } else {
+      this.menuItems = [
+        { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+
+        {
+          label: 'Trade Services',
+          icon: 'article',
+          open: false,
+          children: [
+
+            // -------------------------
+            // IMPORT LC
+            // -------------------------
+            {
+              label: 'Import LC',
+              route: '/import-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/import-screen' },
+                { label: 'Amend', route: '/import-screen/amend' },
+              ]
+            },
+
+            // -------------------------
+            // EXPORT LC
+            // -------------------------
+            {
+              label: 'Export LC', 
+              route: '/exportlc-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/export-screen' },
+              ]
+            },
+
+            // -------------------------
+            // SHIPPING GUARANTEE
+            // -------------------------
+            {
+              label: 'Shipping Guarantee',
+              route: '/shipping-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/shipping-guarantee' },
+                { label: 'Amend', route: '/shipping-guarantee/amend' },
+              ]
+            },
+
+            // -------------------------
+            // EXPORT COLLECTION
+            // -------------------------
+            {
+              label: 'Export Collection',
+              route: '/export-collection-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/export-collection' },
+                // If you add amend later, uncomment this:
+                // { label: 'Amend', route: '/export-collection/amend' },
+              ]
+            },
+
+            // -------------------------
+            // UNDERTAKING ISSUANCE
+            // -------------------------
+            {
+              label: 'Undertaking Issuance',
+              route: '/undertaking-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/undertaking-issuance' },
+                { label: 'Amend', route: '/undertaking-issuance/amend' },
+              ]
+            },
+
+          ],
+        },
 
       { label: 'Settings', icon: 'settings', route: '/settings' },
 

@@ -1,15 +1,33 @@
 <div class="dashboard-container">
+    <!-- Header -->
     <header class="dashboard-header">
-        <h1>Welcome back, {{userName}}</h1>
-        <p>Your latest financial overview (live sync)</p>
+        <h1>Welcome back, {{ userName }}</h1>
+        <p>
+            Your latest financial overview
+            <span class="live-sync">🔄 Sync</span>
+            <small>({{ lastUpdated | date:'shortTime' }})</small>
+        </p>
     </header>
- 
+
+    <!-- Interactive Stats Cards -->
     <section class="stats-grid">
-        <div class="stat-card" *ngFor="let card of cards">
+        <div class="stat-card" *ngFor="let card of cards" [style.border-left-color]="card.color">
             <div class="icon">{{ card.icon }}</div>
             <div class="details">
                 <h2>{{ card.value }}</h2>
                 <p>{{ card.title }}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banking News Feed -->
+    <section class="analytics">
+        <h2 class="section-title">Latest Banking News</h2>
+        <div class="news-grid">
+            <div class="analytics-card" *ngFor="let news of newsCards">
+                <h3>{{ news.title }}</h3>
+                <p class="news-snippet">{{ news.snippet }}</p>
+                <small class="news-time">{{ news.time | date:'shortTime' }}</small>
             </div>
         </div>
     </section>

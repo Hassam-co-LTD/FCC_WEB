@@ -29,7 +29,7 @@ export class GeneralDetails implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      collectionType: ['regular'],
+      collectionType: [''],
       customerReference: [''],
       draweeReference: ['']
     });

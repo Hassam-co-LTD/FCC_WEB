@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -27,39 +27,25 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./amount-charge-details.scss']
 })
 export class AmountChargeDetails {
-  amountChargeForm: FormGroup;
+  @Input() form!: FormGroup;
   isOpen = true;
   variationType: string = 'percent';
 
   currencies = ['USD', 'EUR', 'GBP', 'PKR', 'JPY'];
 
-  constructor(private fb: FormBuilder) {
-    this.amountChargeForm = this.fb.group({
-      currency: ['', Validators.required],
-      amount: ['', [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)]],
-      variationPlus: [''],
-      variationMinus: [''],
-      issuingBankCharges: ['Applicant', Validators.required],
-      outsideCountryCharges: ['Beneficiary', Validators.required],
-      additionalAmountDetails: ['', Validators.maxLength(140)]
-    });
+  constructor() {
   }
 
   onVariationTypeChange(value: string) {
     this.variationType = value;
     // Optionally clear fields when switching type:
-    this.amountChargeForm.patchValue({
+    this.form.patchValue({
       variationPlus: '',
       variationMinus: ''
     });
   }
 
-  toggle(){
+  toggle() {
     this.isOpen = !this.isOpen;
-  }
-  onSubmit() {
-    if (this.amountChargeForm.valid) {
-      console.log('Form Submitted:', this.amountChargeForm.value);
-    }
   }
 }

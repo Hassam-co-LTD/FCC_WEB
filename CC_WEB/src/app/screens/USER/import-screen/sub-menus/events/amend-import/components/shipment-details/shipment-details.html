@@ -4,22 +4,22 @@
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-  <form [formGroup]="shipmentForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form">
 
     <!-- Shipment From / To -->
     <div class="row">
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Shipment From *</mat-label>
         <input matInput formControlName="shipmentFrom" maxlength="140" />
-        <mat-hint align="end">{{ shipmentForm.get('shipmentFrom')?.value?.length || 0 }}/140</mat-hint>
-        <mat-error *ngIf="shipmentForm.get('shipmentFrom')?.hasError('required')">Required</mat-error>
+        <mat-hint align="end">{{ form.get('shipmentFrom')?.value?.length || 0 }}/140</mat-hint>
+        <mat-error *ngIf="form.get('shipmentFrom')?.hasError('required')">Required</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Shipment To *</mat-label>
         <input matInput formControlName="shipmentTo" maxlength="140" />
-        <mat-hint align="end">{{ shipmentForm.get('shipmentTo')?.value?.length || 0 }}/140</mat-hint>
-        <mat-error *ngIf="shipmentForm.get('shipmentTo')?.hasError('required')">Required</mat-error>
+        <mat-hint align="end">{{ form.get('shipmentTo')?.value?.length || 0 }}/140</mat-hint>
+        <mat-error *ngIf="form.get('shipmentTo')?.hasError('required')">Required</mat-error>
       </mat-form-field>
     </div>
 
@@ -28,15 +28,15 @@
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Place of Loading *</mat-label>
         <input matInput formControlName="placeOfLoading" maxlength="140" />
-        <mat-hint align="end">{{ shipmentForm.get('placeOfLoading')?.value?.length || 0 }}/140</mat-hint>
-        <mat-error *ngIf="shipmentForm.get('placeOfLoading')?.hasError('required')">Required</mat-error>
+        <mat-hint align="end">{{ form.get('placeOfLoading')?.value?.length || 0 }}/140</mat-hint>
+        <mat-error *ngIf="form.get('placeOfLoading')?.hasError('required')">Required</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Place of Discharge *</mat-label>
         <input matInput formControlName="placeOfDischarge" maxlength="140" />
-        <mat-hint align="end">{{ shipmentForm.get('placeOfDischarge')?.value?.length || 0 }}/140</mat-hint>
-        <mat-error *ngIf="shipmentForm.get('placeOfDischarge')?.hasError('required')">Required</mat-error>
+        <mat-hint align="end">{{ form.get('placeOfDischarge')?.value?.length || 0 }}/140</mat-hint>
+        <mat-error *ngIf="form.get('placeOfDischarge')?.hasError('required')">Required</mat-error>
       </mat-form-field>
     </div>
 
@@ -45,16 +45,16 @@
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Last Shipment Date *</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="lastShipmentDate" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matSuffix [for]="picker" class="date-toggle"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="shipmentForm.get('lastShipmentDate')?.hasError('required')">Required</mat-error>
+        <mat-error *ngIf="form.get('lastShipmentDate')?.hasError('required')">Required</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Shipment Period Narrative *</mat-label>
         <textarea matInput formControlName="shipmentPeriodNarrative" maxlength="390" rows="2"></textarea>
-        <mat-hint align="end">{{ shipmentForm.get('shipmentPeriodNarrative')?.value?.length || 0 }}/390</mat-hint>
-        <mat-error *ngIf="shipmentForm.get('shipmentPeriodNarrative')?.hasError('required')">Required</mat-error>
+        <mat-hint align="end">{{ form.get('shipmentPeriodNarrative')?.value?.length || 0 }}/390</mat-hint>
+        <mat-error *ngIf="form.get('shipmentPeriodNarrative')?.hasError('required')">Required</mat-error>
       </mat-form-field>
     </div>
 

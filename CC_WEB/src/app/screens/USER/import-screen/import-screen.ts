@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // Child components
 import { GeneralDetails } from "./components/general-details/general-details";
@@ -79,9 +79,74 @@ export class ImportScreen implements AfterViewInit {
         confirmationInstruction: ['confirm'],
       }),
 
-      // Add other steps here later
-      // applicantDetails: this.fb.group({...})
-      // ...
+      // Add other
+      applicantForm: this.fb.group({
+        applicantName: ['', Validators.required],
+        applicantAddress1: ['', Validators.required],
+        applicantAddress2: [''],
+        applicantAddress3: [''],
+
+        // alternateName: [''],
+        // alternateAddress1: [''],
+        // alternateAddress2: [''],
+        // alternateAddress3: [''],
+
+        beneficiaryName: ['', Validators.required],
+        beneficiaryAddress1: ['', Validators.required],
+        beneficiaryAddress2: [''],
+        beneficiaryAddress3: [''],
+        beneficiaryCountry: ['', Validators.required]
+
+      }),
+
+      bankForm: this.fb.group({
+        issuingBankName: ['', Validators.required],
+        issuerReference: ['', Validators.required],
+        advisingBankName: [''],
+        adviseThroughBankName: ['']
+      }),
+
+      // Step 3 — Amount & Charges
+      amountChargeForm: this.fb.group({
+        currency: ['', Validators.required],
+        amount: ['', [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)]],
+        variationType: ['percent'], 
+        variationPlus: [''],
+        variationMinus: [''],
+        issuingBankCharges: ['Applicant', Validators.required],
+        outsideCountryCharges: ['Beneficiary', Validators.required],
+        additionalAmountDetails: ['', Validators.maxLength(140)],
+      }),
+
+      paymentDetailsForm: this.fb.group({
+        creditAvailableWith: ['', Validators.required],
+        bankName: [''],
+        creditAvailableBy: ['Payment', Validators.required],
+        paymentDraftAt: ['Sight', Validators.required]
+      }),
+
+      shipmentForm: this.fb.group({
+        shipmentFrom: ['', Validators.required],
+        shipmentTo: ['', Validators.required],
+        placeOfLoading: ['', Validators.required],
+        placeOfDischarge: ['', Validators.required],
+        lastShipmentDate: ['', Validators.required],
+        shipmentPeriodNarrative: ['', [Validators.required, Validators.maxLength(390)]],
+        partialShipment: ['Allowed', Validators.required],
+        transhipment: ['Not Allowed', Validators.required]
+      }),
+      narrativeForm: this.fb.group({
+        descriptionOfGoods: ['', [Validators.required, Validators.maxLength(6500)]],
+        documentsRequired: ['', [Validators.required, Validators.maxLength(6500)]],
+        additionalInstructions: ['', [Validators.maxLength(2000)]],
+        otherDetails: ['']
+      }),
+      instructionForm: this.fb.group({
+        principalAccount: ['', Validators.required],
+        feeAccount: ['', Validators.required],
+        otherInstructions: ['', [Validators.maxLength(31525)]]
+      }),
+      attachments: this.fb.array([]),
     });
   }
 
@@ -89,6 +154,31 @@ export class ImportScreen implements AfterViewInit {
   get generalDetailsForm(): FormGroup {
     return this.importForm.get('generalDetails') as FormGroup;
   }
+
+  get applicantForm(): FormGroup {
+    return this.importForm.get('applicantForm') as FormGroup;
+  }
+
+  get bankForm(): FormGroup {
+    return this.importForm.get('bankForm') as FormGroup;
+  }
+  get amountChargeForm(): FormGroup {
+    return this.importForm.get('amountChargeForm') as FormGroup;
+  }
+  get paymentDetailsForm(): FormGroup {
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
+  }
+  get shipmentForm(): FormGroup {
+    return this.importForm.get('shipmentForm') as FormGroup;
+  }
+  get narrativeForm(): FormGroup {
+    return this.importForm.get('narrativeForm') as FormGroup;
+  }
+  get instructionForm(): FormGroup {
+    return this.importForm.get('instructionForm') as FormGroup;
+  }
+  
+  
 
   ngAfterViewInit() {
   const scrollEl = document.querySelector('.scroll-area') as HTMLElement;
@@ -131,5 +221,20 @@ export class ImportScreen implements AfterViewInit {
     if (this.currentStep > 0) {
       this.scrollToSection(this.currentStep - 1);
     }
+  }
+
+  updateAttachments(files: File[]) {
+    const arr = this.importForm.get('attachments') as FormArray;
+    arr.clear();
+
+    files.forEach(file => {
+      arr.push(this.fb.group({
+        title: file.name.replace(/\.[^/.]+$/, ""), // remove extension
+        fileName: file.name,
+        size: file.size,
+        type: file.type,
+        file: file
+      }));
+    });
   }
 }

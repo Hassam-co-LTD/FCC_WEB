@@ -6,7 +6,7 @@
 <div class="collapsible" [class.open]="isOpen">
 
     <!-- FULL FORM WRAPPER -->
-    <form [formGroup]="narrativeForm" class="form-wrapper">
+    <form [formGroup]="form" class="form-wrapper">
 
         <h3 class="sub-heading">Narrative Details</h3>
 
@@ -27,10 +27,10 @@
                                 </textarea>
 
                                 <mat-hint align="end">
-                                    {{ narrativeForm.get('descriptionOfGoods')?.value?.length || 0 }}/6500
+                                    {{ form.get('descriptionOfGoods')?.value?.length || 0 }}/6500
                                 </mat-hint>
 
-                                <mat-error *ngIf="narrativeForm.get('descriptionOfGoods')?.hasError('required')">
+                                <mat-error *ngIf="form.get('descriptionOfGoods')?.hasError('required')">
                                     You must enter Description of Goods
                                 </mat-error>
                             </mat-form-field>
@@ -48,10 +48,10 @@
                                 </textarea>
 
                                 <mat-hint align="end">
-                                    {{ narrativeForm.get('documentsRequired')?.value?.length || 0 }}/6500
+                                    {{ form.get('documentsRequired')?.value?.length || 0 }}/6500
                                 </mat-hint>
 
-                                <mat-error *ngIf="narrativeForm.get('documentsRequired')?.hasError('required')">
+                                <mat-error *ngIf="form.get('documentsRequired')?.hasError('required')">
                                     You must enter Documents Required
                                 </mat-error>
                             </mat-form-field>
@@ -69,7 +69,7 @@
                                 </textarea>
 
                                 <mat-hint align="end">
-                                    {{ narrativeForm.get('additionalInstructions')?.value?.length || 0 }}/2000
+                                    {{ form.get('additionalInstructions')?.value?.length || 0 }}/2000
                                 </mat-hint>
                             </mat-form-field>
 
@@ -90,7 +90,7 @@
                         </textarea>
 
                         <mat-hint align="end">
-                            {{ narrativeForm.get('otherDetails')?.value?.length || 0 }}/2000
+                            {{ form.get('otherDetails')?.value?.length || 0 }}/2000
                         </mat-hint>
                     </mat-form-field>
 

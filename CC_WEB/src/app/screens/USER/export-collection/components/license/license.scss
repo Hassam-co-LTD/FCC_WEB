@@ -1,3 +1,4 @@
+@use '../../../../../../styles/theme' as theme;
 /* ============================
    LICENSE SECTION
 ============================ */
@@ -84,7 +85,130 @@
     }
   }
 }
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
 
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+    transition: transform 0.3s ease;
+  }
+}
+
+/* ===========================
+   Headings
+=========================== */
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$white;
+}
+
+h4 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Collapsible Container
+=========================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  transform: translateY(-5px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // space between form fields
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    mat-form-field.full {
+      flex: 1 1 45%;
+      // background: white;
+
+      input,
+      .mat-select-trigger {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .mat-form-field-outline {
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+.collapsible.open {
+  max-height: 500px; // enough for form
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .collapsible.open {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  form mat-form-field.full {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  mat-form-field.full {
+    font-size: 13px;
+
+    input,
+    .mat-select-trigger {
+      padding: 8px;
+    }
+  }
+}
 /* Reuse fadeSlideIn for accordion content */
 @keyframes fadeSlideIn {
   0% { opacity: 0; transform: translateY(-10px); }

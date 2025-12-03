@@ -1,35 +1,40 @@
 <div class="screen">
-    <!-- SIDEBAR -->
+
     <app-sidebar [steps]="exportlcSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
     </app-sidebar>
 
-    <!-- MAIN CONTENT -->
     <div class="content">
-    <div class="scroll-area">
+        <div class="scroll-area">
 
-        <!-- SECTION 0 -->
-        <section id="section-0">
-            <app-general-details></app-general-details>
-        </section>
-        <hr class="section-divider" />
+            <!-- SECTION 0 -->
+            <section id="section-0">
+                <app-general-details [form]="generalDetailsForm"></app-general-details>
+            </section>
+            <hr class="section-divider" />
 
-        <!-- SECTION 1 -->
-        <section id="section-1">
-            <app-upload></app-upload>
-        </section>
-        <hr class="section-divider" />
+            <!-- SECTION 1 -->
+            <section id="section-1">
+                <app-upload [form]="uploadForm"></app-upload>
+            </section>
+            <hr class="section-divider" />
 
-        <!-- SECTION 2 -->
-        <section id="section-2">
-            <app-attachments></app-attachments>
-        </section>
-        <hr class="section-divider" />
+            <!-- SECTION 2 -->
+            <section id="section-2">
+                <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
+            </section>
+            <hr class="section-divider" />
 
-        <!-- SECTION 3 -->
-        <section id="section-3">
-            <app-preview></app-preview>
-        </section>
+            <!-- SECTION 3 -->
+            <section id="section-3">
+                <app-preview [form]="exportLCForm"></app-preview>
+            </section>
 
+            <div class="actions">
+                <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
+                <button mat-flat-button color="primary" (click)="next()">Submit</button>
+            </div>
+
+        </div>
     </div>
-</div>
+
 </div>

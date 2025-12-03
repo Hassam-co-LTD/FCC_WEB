@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,31 +28,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 })
 export class ShipmentDetails {
   isOpen = true;
+  @Input() form!: FormGroup;
 
-  shipmentForm: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.shipmentForm = this.fb.group({
-      shipmentFrom: ['', Validators.required],
-      shipmentTo: ['', Validators.required],
-      placeOfLoading: ['', Validators.required],
-      placeOfDischarge: ['', Validators.required],
-      lastShipmentDate: ['', Validators.required],
-      shipmentPeriodNarrative: ['', [Validators.required, Validators.maxLength(390)]],
-      partialShipment: ['Allowed', Validators.required],
-      transhipment: ['Not Allowed', Validators.required]
-    });
-  }
+  constructor() {  }
 
   toggle() {
     this.isOpen = !this.isOpen;
-  }
-
-  onSubmit() {
-    if (this.shipmentForm.valid) {
-      console.log('Shipment Details:', this.shipmentForm.value);
-    } else {
-      this.shipmentForm.markAllAsTouched();
-    }
   }
 }

@@ -27,14 +27,14 @@
 }
 
 /* ===========================
-   Collapsible Container
+   Collapsible
 =========================== */
 .collapsible {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.35s ease-in-out;
     transform: translateY(-5px);
+    transition: all 0.35s ease-in-out;
 }
 
 .collapsible.open {
@@ -67,53 +67,92 @@ h4 {
 }
 
 /* ===========================
-   Form Row
+   Form Layout
 =========================== */
-.form-row {
+.field-group {
     display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 18px;
+    flex-direction: column;
+    gap: 8px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: theme.$gap-default;
+    margin-bottom: 15px;
+}
 
-    input {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid theme.$border-light;
-        border-radius: 6px;
-        font-size: 14px;
-        background: white;
+/* Alternating Applicant & Beneficiary Box Indicator */
+.form-grid.alternate {
+    padding-left: 10px;
+    border-left: 2px dashed theme.$border-primary;
+    margin-left: 4px;
+}
 
-        &:focus {
-            outline: none;
-            border-color: theme.$primary;
-            box-shadow: 0 0 0 2px rgba(theme.$primary, 0.2);
-        }
+/* Fields */
+mat-form-field {
+    width: 100%;
+}
+
+/* Toggle */
+mat-slide-toggle {
+    margin: 12px 0;
+    font-weight: 500;
+}
+
+/* ===========================
+   Input field styling
+=========================== */
+
+input[matInput] {
+    font-size: 14px !important;
+    color: theme.$primary-dark;
+}
+
+/* Label styling */
+.mat-mdc-floating-label,
+.mat-mdc-form-field-label {
+    font-size: 14px !important;
+}
+
+/* Input placeholder color */
+::placeholder {
+    color: theme.$primary-dark;
+    opacity: 0.8;
+}
+
+/* Material input appearance */
+.mdc-text-field {
+    background-color: theme.$white;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+.actions {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+button[mat-flat-button] {
+    background: theme.$primary !important;
+    color: theme.$text-light !important;
+    box-shadow: theme.$button-shadow;
+    border-radius: 6px;
+
+    &:hover {
+        background: theme.$primary-dark !important;
     }
 }
 
 /* ===========================
    Responsive
 =========================== */
-
-/* Tablets (≤992px) */
 @media (max-width: 992px) {
-    h4 {
-        font-size: 15px;
-    }
-
     .collapsible.open {
-        padding: 12px 8px;
-    }
-}
-
-/* Small Tablets / Large Phones (≤768px) */
-@media (max-width: 768px) {
-    .section-header {
-        padding: 12px 14px;
-    }
-
-    h2 {
-        font-size: 18px;
+        padding: 14px 12px;
     }
 
     h4 {
@@ -121,18 +160,31 @@ h4 {
     }
 }
 
-/* Mobile Phones (≤480px) */
+@media (max-width: 768px) {
+    .section-header {
+        padding: 12px 14px;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+}
+
 @media (max-width: 480px) {
     .collapsible.open {
-        padding: 10px 5px;
+        padding: 12px 10px;
     }
 
     .form-row {
-        gap: 10px;
+        gap: 6px;
     }
 
     input {
         font-size: 13px;
-        padding: 8px 10px;
     }
 }

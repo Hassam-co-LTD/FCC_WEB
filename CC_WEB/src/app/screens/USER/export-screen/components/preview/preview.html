@@ -1,21 +1,73 @@
 
 <div class="section-header" (click)="toggle()">
-    <h2>Preview & Submit</h2>
+    <h2>Preview</h2>
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
 
-    <h4>General Details</h4>
-    <pre>{{ generalDetails | json }}</pre>
+    <!-- GENERAL DETAILS -->
+    <div class="preview-block" *ngIf="form.get('generalDetails') as gd">
+        <h4>General Details</h4>
+        <div class="preview-grid">
+            <div class="preview-item" *ngFor="let key of ['customerRef','advisingBank','issuerRef']">
+                <div class="preview-label">{{ key | titlecase }}:</div>
+                <div class="preview-value">{{ gd.value[key] }}</div>
+            </div>
+        </div>
+    </div>
 
-    <h4>Uploaded MT700/701 File</h4>
-    <p *ngIf="mtFile">{{ mtFile.name }} ({{ mtFile.size }} bytes)</p>
+    <hr />
 
-    <h4>Attachments</h4>
-    <ul>
-        <li *ngFor="let f of attachments">{{ f.name }}</li>
-    </ul>
+    <!-- UPLOAD MT700 / MT701 -->
+    <div class="preview-block" *ngIf="form.get('appUpload') as up">
+        <h4>Uploaded MT700 / MT701</h4>
 
-    <button (click)="submit()">Submit LC</button>
+        <div class="preview-grid">
+            <div class="preview-item">
+                <div class="preview-label">File Name:</div>
+                <div class="preview-value">{{ up.value?.file?.name || 'No file selected' }}</div>
+            </div>
+
+            <div class="preview-item">
+                <div class="preview-label">File Size:</div>
+                <div class="preview-value">
+                    {{ up.value?.file?.size ? (up.value.file.size / 1024 | number:'1.0-2') + ' KB' : '-' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <!-- ATTACHMENTS -->
+    <div class="preview-block" *ngIf="attachmentsArray.length >= 0">
+        <h4>Attachments</h4>
+
+        <div class="preview-grid" *ngIf="attachmentsArray.length > 0">
+            <div class="preview-row header">
+                <div>File Type</div>
+                <div>Title</div>
+                <div>File Name</div>
+                <div>File Size</div>
+                <div>Actions</div>
+            </div>
+
+            <div class="preview-row" *ngFor="let f of attachmentsArray.controls; let i = index">
+                <div>
+                    <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+                    <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
+                </div>
+                <div>{{ f.value.title }}</div>
+                <div>{{ f.value.fileName }}</div>
+                <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+                <div class="actions">
+                    <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+                </div>
+            </div>
+        </div>
+
+        <p *ngIf="attachmentsArray.length === 0">No attachments uploaded.</p>
+    </div>
+
 </div>
