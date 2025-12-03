@@ -6,18 +6,6 @@
 <!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-    <!-- SHOW READ-ONLY PREVIEW WHEN CLOSED -->
-    <ng-container *ngIf="!isOpen">
-        <div class="preview-block">
-            <div><strong>Product Type:</strong> {{ preview.productType }}</div>
-            <div><strong>Mode of Transmission:</strong> {{ preview.modeOfTransmission }}</div>
-            <div><strong>Expiry Date:</strong> {{ preview.expiryDate }}</div>
-            <div><strong>Expiry Date:</strong> {{ preview.expiryDate }}</div>
-            <div><strong>Expiry Date:</strong> {{ preview.expiryDate }}</div>
-            <div><strong>Irrevocable:</strong> {{ preview.featureIrrevocable ? 'Yes' : 'No' }}</div>
-        </div>
-    </ng-container>
-
     <!-- FORM (WHEN OPEN) -->
     <ng-container *ngIf="isOpen">
 
@@ -38,7 +26,7 @@
                 <h4>Mode of Transmission</h4>
                 <mat-form-field appearance="outline" class="full">
                     <mat-label>Mode of Transmission</mat-label>
-                    <mat-select formControlName="modeOfTransmission">
+                    <mat-select formControlName="modeOfTransmission">xx``sz  
                         <mat-option value="SWIFT">SWIFT</mat-option>
                         <mat-option value="Courier/Mail">Courier/Mail</mat-option>
                         <mat-option value="Other">Other</mat-option>
@@ -51,13 +39,18 @@
         <div class="form-grid-2">
             <mat-form-field appearance="outline">
                 <mat-label>Expiry Date *</mat-label>
-                        <input matInput [matDatepicker]="picker" formControlName="expiryDate" />
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
+
+                <input matInput [matDatepicker]="picker" formControlName="expiryDate"
+                    placeholder="Select expiry date" />
+
+                <mat-datepicker-toggle matSuffix [for]="picker" class="date-toggle"></mat-datepicker-toggle>
+
+                <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
 
+
             <mat-form-field appearance="outline">
-                <mat-label>Place of Expiry *</mat-label>                
+                <mat-label>Place of Expiry *</mat-label>
                 <mat-select formControlName="placeOfExpiry">
                     <mat-option value="beneficiary">In Beneficiary's Country</mat-option>
                     <mat-option value="issuing">In Issuing Country</mat-option>

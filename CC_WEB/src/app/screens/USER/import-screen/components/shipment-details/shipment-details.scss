@@ -86,6 +86,66 @@ h2 {
         gap: 25px;
     }
 }
+/* ===========================
+   Datepicker Customization
+=========================== */
+::ng-deep .mat-datepicker-content,
+::ng-deep .mat-calendar,
+::ng-deep .mat-calendar-content,
+::ng-deep .mat-calendar-body,
+::ng-deep .mat-calendar-header,
+::ng-deep .mat-calendar-table {
+    background: theme.$light-bg !important;
+    border-radius: 12px !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Month & year header */
+::ng-deep .mat-calendar-header {
+    // padding: 5px !important;
+    background: theme.$sidebar-hover-border !important;
+    font-weight: 600 !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+}
+
+/* Days row */
+::ng-deep .mat-calendar-table-header th {
+    font-weight: 600 !important;
+    opacity: 0.7 !important;
+    // padding-top: 50px !important;
+}
+
+/* Hover effect for date cells */
+::ng-deep .mat-calendar-body-cell:hover:not(.mat-calendar-body-disabled) {
+    background-color: theme.$sidebar-hover-border !important;
+    /* soft light grey */
+    border-radius: 8px !important;
+}
+
+/* Selected date */
+::ng-deep .mat-calendar-body-selected {
+    background-color: #1976d2 !important;
+    /* blue */
+    color: theme.$step-badge-text !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+
+/* Today highlight */
+::ng-deep .mat-calendar-body-today {
+    border: 2px solid black !important;
+    border-radius: 8px !important;
+}
+
+/* Disable gray overlay that material adds */
+::ng-deep .mat-calendar-body-cell-content {
+    background: transparent !important;
+}
+
+/* Animation smoothness */
+::ng-deep .mat-datepicker-content {
+    transition: all 0.25s ease-in-out !important;
+}
 
 /* Responsive Adjustments */
 

@@ -45,7 +45,7 @@
       <mat-form-field appearance="outline" class="half-width">
         <mat-label>Last Shipment Date *</mat-label>
         <input matInput [matDatepicker]="picker" formControlName="lastShipmentDate" />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matSuffix [for]="picker" class="date-toggle"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <mat-error *ngIf="form.get('lastShipmentDate')?.hasError('required')">Required</mat-error>
       </mat-form-field>
