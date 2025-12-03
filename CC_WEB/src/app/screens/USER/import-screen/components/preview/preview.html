@@ -122,43 +122,60 @@
 
   <hr />
 
-  <!-- ATTACHMENTS -->
-  <div class="preview-block" *ngIf="attachmentsArray.length >= 0">
-    <h4>Attachments</h4>
+<!-- ATTACHMENTS -->
+<div class="preview-block" *ngIf="attachmentsArray.length >= 0">
+  <h4>Attachments</h4>
 
-    <div class="preview-grid" *ngIf="attachmentsArray.length > 0">
-      <div class="preview-row header">
-        <div>File Type</div>
-        <div>Title</div>
-        <div>File Name</div>
-        <div>File Size</div>
-        <div>Actions</div>
-      </div>
+  <div *ngIf="attachmentsArray.length > 0" class="preview-attachments-container">
 
-      <div class="preview-row" *ngFor="let f of attachmentsArray.controls; let i = index">
-        <div>
-          <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
-          <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
-        </div>
-        <div>{{ f.value.title }}</div>
-        <div>{{ f.value.fileName }}</div>
-        <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
-        <div class="actions">
-          <!-- <mat-icon class="action-icon" (click)="viewFile(i)">visibility</mat-icon> -->
-          <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
-        </div>
-      </div>
+    <!-- Header -->
+    <div class="attachment-grid header">
+      <div class="attachment-header">Type</div>
+      <div class="attachment-header">Title</div>
+      <div class="attachment-header">File Name</div>
+      <div class="attachment-header">Size</div>
+      <div class="attachment-header">Actions</div>
     </div>
 
-    <p *ngIf="attachmentsArray.controls.length === 0">No attachments uploaded.</p>
+    <!-- Rows -->
+    <div class="attachment-grid" *ngFor="let f of attachmentsArray.controls; let i = index">
+
+      <!-- File Type -->
+      <div class="attachment-cell">
+        <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+        <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
+      </div>
+
+      <!-- Title -->
+      <div class="attachment-cell">{{ f.value.title }}</div>
+
+      <!-- File Name -->
+      <div class="attachment-cell">{{ f.value.fileName }}</div>
+
+      <!-- Size -->
+      <div class="attachment-cell">
+        {{ (f.value.size / 1024) | number:'1.0-2' }} KB
+      </div>
+
+      <!-- Actions -->
+      <div class="attachment-cell actions">
+        <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+      </div>
+
+    </div>
   </div>
+
+  <p *ngIf="attachmentsArray.length === 0">
+    No attachments uploaded.
+  </p>
 </div>
 
-<!-- POPUP VIEWER -->
-<!-- <div class="popup-backdrop" *ngIf="viewerOpen" [class.open]="viewerOpen" (click)="closeViewer()"></div>
 
-<div class="popup" *ngIf="viewerOpen" [ngClass]="popupClass">
-  <mat-icon class="close-btn" (click)="closeViewer()">close</mat-icon>
-  <img *ngIf="isImage" [src]="viewerContent" class="preview-image" />
-  <iframe *ngIf="isPdf" [src]="viewerContent" class="preview-pdf"></iframe>
-</div> -->
+</div>
+
+  <!-- Footer Buttons -->
+  <div class="actions">
+    <button mat-stroked-button (click)="previous()">Back</button>
+    <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+  </div>
+

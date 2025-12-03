@@ -403,6 +403,13 @@ export const routes: Routes = [
 
                 ],
             },
+            {
+                path: 'import-screen/preview',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/import-screen/components/preview/preview'
+                    ).then((m) => m.Preview),
+            },
  
             {
                 path: 'import-welcome',

@@ -1,8 +1,11 @@
-import { Component, Input } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { Component, Input, OnInit, Output } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { SharedService } from '../../../../../core/services/shared-service';
+import { Router } from '@angular/router';
+import { EventEmitter } from 'stream';
 
 @Component({
   selector: 'app-preview',
@@ -11,8 +14,8 @@ import { MatIcon } from '@angular/material/icon';
   imports: [CommonModule, MatIcon, DecimalPipe],
   standalone: true,
 })
-export class Preview {
-  @Input() form!: FormGroup;
+export class Preview implements OnInit{
+  form!: FormGroup;
 
   isOpen = true;
 
@@ -20,9 +23,24 @@ export class Preview {
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
+  constructor(private dataService: SharedService, private fb: FormBuilder, private router: Router) { }
 
-  constructor() { }
+  ngOnInit() {
+    const formData = this.dataService.getFormData();
 
+    // Recreate the form so your template can use form.get('step') like before
+    this.form = this.fb.group({
+      generalDetails: this.fb.group(formData.generalDetails),
+      applicantForm: this.fb.group(formData.applicantForm),
+      bankForm: this.fb.group(formData.bankForm),
+      amountChargeForm: this.fb.group(formData.amountChargeForm),
+      paymentDetailsForm: this.fb.group(formData.paymentDetailsForm),
+      shipmentForm: this.fb.group(formData.shipmentForm),
+      narrativeForm: this.fb.group(formData.narrativeForm),
+      instructionForm: this.fb.group(formData.instructionForm),
+      attachments: this.fb.array(formData.attachments || []),
+    });
+  }
   toggle() {
     this.isOpen = !this.isOpen;
   }
@@ -31,6 +49,12 @@ export class Preview {
     return (this.form.get('attachments') as FormArray)
   }
 
+  previous(){
+    this.router.navigate(['import-screen'])
+  }
+  submit(){
+    console.log("Submitted Data:", this.form.value);
+  }
 
   downloadFile(index: number) {
     const data = this.attachmentsArray.at(index)?.value;

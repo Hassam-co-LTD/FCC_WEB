@@ -1,17 +1,18 @@
+@use "sass:color";
 @use '../../../../../../styles/_theme.scss' as theme;
 
-/* ===========================
-   Section Header
-=========================== */
+/* -----------------------------------------------------
+   SECTION HEADER (Collapsible Title)
+----------------------------------------------------- */
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
     padding: 14px 18px;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
 
@@ -20,237 +21,233 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
     mat-icon {
-        color: theme.$text-light;
+        color: #fff;
         font-size: 22px;
     }
 }
 
-/* ===========================
-   Collapsible content
-=========================== */
+/* -----------------------------------------------------
+   COLLAPSIBLE BODY
+----------------------------------------------------- */
 .collapsible {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.35s ease-in-out;
-    transform: translateY(-5px);
+    transform: translateY(-6px);
+    transition: all 0.35s ease;
 }
 
 .collapsible.open {
-    max-height: none;
+    max-height: 5000px;
     opacity: 1;
     transform: translateY(0);
-    padding: 15px 10px;
+    padding: 15px;
     background: theme.$light-bg;
-    border-radius: 6px;
     border: 1px solid theme.$border-light;
+    border-radius: 12px;
 }
 
-/* ===========================
-   Headings
-=========================== */
-h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: theme.$white;
-}
-
+/* -----------------------------------------------------
+   SUB HEADING (H4)
+----------------------------------------------------- */
 h4 {
     font-size: 18px;
-    margin: 20px 0 10px;
+    margin: 5px 0 18px;
     font-weight: 600;
     color: theme.$primary-dark;
     border-left: 4px solid theme.$primary;
     padding-left: 8px;
 }
 
-/* ===========================
-   Preview Section Styling
-=========================== */
+/* -----------------------------------------------------
+   PREVIEW BLOCK CONTAINER
+----------------------------------------------------- */
 .preview-block {
     background: theme.$white;
-    padding: 18px 22px;
-    border-radius: 10px;
+    padding: 22px 26px;
+    border-radius: 14px;
     border: 1px solid theme.$border-light;
-    box-shadow: theme.$shadow-primary;
-    margin-bottom: 20px;
+    margin-bottom: 26px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
+/* -----------------------------------------------------
+   PREVIEW GRID ROWS
+----------------------------------------------------- */
 .preview-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px 20px;
+    gap: 18px 22px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
 .preview-item {
     display: flex;
     flex-direction: column;
+
+    &.full-width {
+        grid-column: 1 / -1;
+    }
 }
 
 .preview-label {
+    font-size: 0.9rem;
     font-weight: 600;
     color: theme.$text-dark;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 
 .preview-value {
+    font-size: 0.92rem;
     color: theme.$text-dark;
 }
 
-/* ===========================
-   Divider
-=========================== */
+/* -----------------------------------------------------
+   DIVIDER
+----------------------------------------------------- */
 hr {
     border: 0;
     border-top: 1px solid theme.$border-light;
-    margin: 25px 0;
+    margin: 28px 0;
 }
 
-/* ===========================
-   Attachments Table
-=========================== */
-.preview-row {
-    display: contents;
-
-    div {
-        padding: 8px 0;
-        border-bottom: 1px solid #e0e0e0;
-        display: flex;
-        align-items: center;
-    }
-
-    &.header div {
-        font-weight: 600;
-        border-bottom: 2px solid #c0c0c0;
-    }
-
-    .pdf-icon {
-        font-size: 32px;
-        height: 32px;
-        width: 32px;
-        color: #d32f2f;
-    }
-
-    .image-icon {
-        font-size: 32px;
-        height: 32px;
-        width: 32px;
-        color: #1976d2;
-    }
-
-    .actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .action-icon {
-        cursor: pointer;
-        font-size: 26px;
-        color: #1976d2;
-        transition: 0.2s;
-
-        &:hover {
-            color: #0d47a1;
-            transform: scale(1.15);
-        }
-    }
-}
-
-/* ===========================
-   POPUP VIEWER
-=========================== */
-body.popup-open {
-    overflow: hidden;
-
-    .collapsible,
-    app-sidebar,
-    app-topbar,
-    .preview-block {
-        filter: blur(5px) brightness(0.8);
-        pointer-events: none;
-        user-select: none;
-    }
-}
-
-.popup-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 2000;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-
-    &.open {
-        opacity: 1;
-    }
-}
-
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.7);
+/* -----------------------------------------------------
+   ATTACHMENT TABLE (FULLY RESPONSIVE)
+----------------------------------------------------- */
+.preview-attachments-container {
+    margin-top: 10px;
     width: 100%;
-    max-width: 900px;
-    max-height: 80vh;
-    background: transparent;
-    z-index: 2001;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 14px;
-    overflow: hidden;
-    flex-direction: column;
-    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.4);
-    transition: transform 0.35s ease, opacity 0.35s ease;
-    opacity: 0;
+    overflow-x: auto;
+}
 
-    &.open {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
+.attachment-grid {
+    display: grid;
+    grid-template-columns: 80px 2fr 2fr 1fr 100px;
+    gap: 12px;
+    padding: 12px 0;
+
+    @media (max-width: 900px) {
+        grid-template-columns: 60px 1.5fr 2fr 1fr 80px;
     }
 
-    .close-btn {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        cursor: pointer;
-        font-size: 28px;
-        color: #333;
-        z-index: 10;
-        transition: color 0.2s;
+    @media (max-width: 700px) {
+        /* stack vertically */
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "type title"
+            "file file"
+            "size actions";
 
-        &:hover {
-            color: #d32f2f;
+        &.header {
+            display: none;
         }
     }
+}
 
-    .preview-image,
-    .preview-pdf {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 10px;
+.attachment-header {
+    font-weight: 600;
+    border-bottom: 2px solid #c0c0c0;
+    padding-bottom: 8px;
+}
+
+.attachment-cell {
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    font-size: 0.92rem;
+
+    @media (max-width: 700px) {
+        border-bottom: none;
+        padding: 4px 0;
     }
 }
 
-/* ===========================
-   Responsive adjustments
-=========================== */
+/* File Type Icons */
+.pdf-icon {
+    font-size: 30px;
+    color: #d32f2f;
+}
+
+.image-icon {
+    font-size: 30px;
+    color: #1976d2;
+}
+
+/* Action Icons */
+.action-icon {
+    cursor: pointer;
+    font-size: 26px;
+    color: theme.$primary;
+    transition: 0.15s ease;
+
+    &:hover {
+        transform: scale(1.15);
+        color: theme.$primary-dark;
+    }
+}
+
+/* -----------------------------------------------------
+   FOOTER BUTTONS
+----------------------------------------------------- */
+.actions {
+    margin-top: 35px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+}
+
+/* Primary Button */
+button[mat-flat-button] {
+    background: theme.$primary-btn-bg !important;
+    color: #fff !important;
+    font-weight: 500;
+    border-radius: 50px;
+    padding: 8px 26px;
+    box-shadow: 0 2px 8px theme.$primary-btn-shadow;
+    transition: 0.2s;
+
+    &:hover {
+        background: theme.$primary-btn-hover-bg !important;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+}
+
+/* Secondary Button */
+button[mat-stroked-button] {
+    border-color: theme.$secondary-btn-border;
+    color: theme.$secondary-btn-text;
+    font-weight: 500;
+    border-radius: 50px;
+    padding: 8px 26px;
+    transition: 0.2s;
+
+    &:hover {
+        background: theme.$secondary-btn-hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
+/* -----------------------------------------------------
+   RESPONSIVE TWEAKS
+----------------------------------------------------- */
 @media (max-width: 768px) {
-    .popup {
-        width: 95%;
-        height: 80%;
-    }
-}
-
-@media (max-width: 480px) {
-    .popup {
-        width: 100%;
-        height: 70%;
-        border-radius: 0;
+    .preview-grid {
+        grid-template-columns: 1fr;
     }
 }
