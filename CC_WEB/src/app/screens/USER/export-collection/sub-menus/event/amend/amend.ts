@@ -11,7 +11,7 @@ import { PaymentAmountComponent } from "../amend/components/payment-amount/payme
 import { CollectionInstructionsComponent } from "../amend/components/collection-instructions/collection-instructions";
 import { License } from "../amend/components/license/license";
 import { AttachmentsDocuments } from "../amend/components/attachments-documents/attachments-documents";
-import { PreviewSectionComponent } from "../amend/components/preview/preview";
+import { PreviewSection } from "../amend/components/preview/preview";
 import { Sidebar } from "../../../../../../core/sidebar/sidebar";
 
 @Component({
@@ -28,7 +28,7 @@ import { Sidebar } from "../../../../../../core/sidebar/sidebar";
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
-    PreviewSectionComponent,
+    PreviewSection,
     Sidebar
   ],
   templateUrl: './amend.html',

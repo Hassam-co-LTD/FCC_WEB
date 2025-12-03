@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
-export class PreviewSectionComponent {
+export class PreviewSection {
   @Input() form!: FormGroup;
   isOpen = true;
 

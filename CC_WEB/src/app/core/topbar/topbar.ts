@@ -13,7 +13,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrls: ['./topbar.scss'],
 })
 export class TopbarComponent { 
-  Name = 'Hassam';
+  Name = 'Lovekumar';
   menuOpen = false;
   menuVisible = false;
 
