@@ -1,0 +1,105 @@
+<div class="customer-display-container" *ngIf="customerData; else noData">
+  <h2 class="page-title">Customer Profile</h2>
+
+  <!-- Personal & Contact Info -->
+  <div class="display-grid">
+    <div class="display-item">
+      <label>Name</label>
+      <span>{{ customerData.Name }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Email</label>
+      <span>{{ customerData.Email }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Contact</label>
+      <span>{{ customerData.Contact }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Status</label>
+      <span class="status">{{ customerData.Status }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Customer Type</label>
+      <span>{{ customerData.Customer_Type }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Branch Code</label>
+      <span>{{ customerData.Branch_Code }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Country / City</label>
+      <span>{{ customerData.Ctry_City }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Company ID</label>
+      <span>{{ customerData.Company_ID }}</span>
+    </div>
+  </div>
+
+  <!-- Address Section -->
+  <h3 class="section-title">Address</h3>
+<div class="display-grid full">
+  <div class="display-item full">
+    <label>Address Line 1</label>
+    <span>{{ customerData.Address1 }}</span>
+  </div>
+
+  <div class="display-item full">
+    <label>Address Line 2</label>
+    <span>{{ customerData.Address2 }}</span>
+  </div>
+
+  <div class="display-item full">
+    <label>Address Line 3</label>
+    <span>{{ customerData.Address3 }}</span>
+  </div>
+</div>
+
+  <!-- System Info -->
+  <h3 class="section-title">System Information</h3>
+  <div class="display-grid">
+    <div class="display-item">
+      <label>Created On</label>
+      <span>{{ customerData.createdOn }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Created By</label>
+      <span>{{ customerData.createdBy }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Updated On</label>
+      <span>{{ customerData.updatedOn }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Updated By</label>
+      <span>{{ customerData.updatedBy }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Inputer ID</label>
+      <span>{{ customerData.InputerID }}</span>
+    </div>
+
+    <div class="display-item">
+      <label>Authorized ID</label>
+      <span>{{ customerData.AuthorizedID }}</span>
+    </div>
+  </div>
+</div>
+
+<ng-template #noData>
+  <div class="no-data">
+    <p>No customer data available.</p>
+  </div>
+</ng-template>
