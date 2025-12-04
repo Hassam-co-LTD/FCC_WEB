@@ -63,6 +63,12 @@ export const routes: Routes = [
                     import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
  
+            // Search Transaction ID
+            {
+                path: 'Search-by-id',
+                loadComponent: () =>
+                    import('./screens/USER/search-transaction-id/search-transaction-id').then((m) => m.SearchTransactionID),
+            },
             // Export Screen
             {
                 path: 'export-screen',

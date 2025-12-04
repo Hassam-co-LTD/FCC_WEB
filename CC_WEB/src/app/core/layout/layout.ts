@@ -150,7 +150,7 @@ export class LayoutComponent implements OnInit {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        { label: 'Search', icon: 'search', route: '/Search' },
+        { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
           icon: 'article',
