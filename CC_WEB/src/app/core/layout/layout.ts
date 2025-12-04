@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
@@ -30,6 +30,7 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
+  
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
   collapsed = false;
   shippingGuaranteeOpen = false;
@@ -144,9 +145,21 @@ export class LayoutComponent implements OnInit {
   loadMenu(role: 'ADMIN' | 'USER' | null) {
     if (role === 'ADMIN') {
       this.menuItems = [
-        { label: 'System Features', icon: 'insights', route: '/system-overview' },
-        { label: 'Middle-Office', icon: 'group', route: '/middle-office' }
-      ];
+  { label: 'System Features', icon: 'insights', route: '/system-overview' },
+  { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
+  { 
+    label: 'Customers', 
+    icon: 'group', 
+    route: '/admin',              // <-- main Customers page
+    open: false,
+    children: [
+      { label: 'Create New', route: '/admin/create-customer' }
+    ]
+  },
+  { label: 'Users', icon: 'person', route: '/users' }
+];
+
+
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
@@ -236,4 +249,20 @@ export class LayoutComponent implements OnInit {
   toggleShippingGuaranteeMenu() {
     this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
   }
+
+  // Ameen function
+onCustomerClick(item: MenuItem) {
+  const currentUrl = this.router.url;
+
+  if (currentUrl.startsWith('/admin/create-customer')) {
+    // Force navigation back to /admin
+    this.router.navigateByUrl('/admin').then(() => {
+      item.open = false; // close submenu
+    });
+  } else {
+    // Normal toggle if not on "create customer"
+    item.open = !item.open;
+  }
+}
+
 }
