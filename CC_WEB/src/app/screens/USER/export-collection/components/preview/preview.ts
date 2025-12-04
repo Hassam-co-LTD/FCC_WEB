@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, Input } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { SharedService } from '../../../../../core/services/shared-service';
 
 @Component({
   selector: 'app-preview',
@@ -10,40 +12,73 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
-export class PreviewSectionComponent {
+export class PreviewSectionComponent implements OnInit {
   @Input() form!: FormGroup;
   isOpen = true;
 
-  toggle() {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dataService: SharedService
+  ) {}
+
+  ngOnInit(): void {
+    const formData = this.dataService.getFormData();
+
+    if (!formData) {
+      console.error('No form data found! Please navigate from Export Collection page.');
+      return;
+    }
+
+    // Recreate form with correct structure
+    this.form = this.fb.group({
+      generalDetails: this.fb.group(formData.generalDetails || {}),
+      DrawerDraweeDetails: this.fb.group(formData.DrawerDraweeDetails || {}),
+      bankDetails: this.fb.group(formData.bankDetails || {}),
+      paymentAmount: this.fb.group(formData.paymentAmount || {}),
+      shippingDetails: this.fb.group(formData.shippingDetails || {}),
+      collectionInstructions: this.fb.group(formData.collectionInstructions || {}),
+      license: this.fb.group(formData.license || {}),
+      attachments: this.fb.group({
+        documents: this.fb.array(formData.attachments?.documents || [])
+      })
+    });
+  }
+
+  toggle(): void {
     this.isOpen = !this.isOpen;
   }
 
   get attachmentsArray(): FormArray {
-    return (this.form.get('attachments')?.get('attachments') as FormArray) || new FormArray([]);
+    return this.form.get('attachments.documents') as FormArray || new FormArray([]);
   }
 
   get documentsArray(): FormArray {
-    return (this.form.get('attachments')?.get('documents') as FormArray) || new FormArray([]);
+    return this.attachmentsArray;
   }
 
-  downloadFile(file: any) {
+  previous(): void {
+    this.router.navigate(['export-collection']);
+  }
+
+  submit(): void {
+    console.log('Submitted Data:', this.form.value);
+  }
+
+  downloadFile(file: any): void {
     if (!file || !file.file) return;
     const url = URL.createObjectURL(file.file);
     const a = document.createElement('a');
     a.href = url;
-    a.download = file.fileName;
+    a.download = file.fileName || 'download';
     a.click();
     URL.revokeObjectURL(url);
   }
 
-  /** Format a field string like 'remittingBankName' => 'Remitting Bank Name' */
   formatLabel(field: string): string {
-    return field
-      .replace(/([A-Z])/g, ' $1')   // add space before capital letters
-      .replace(/^./, str => str.toUpperCase()); // capitalize first letter
+    return field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
   }
 
-  /** Format boolean values as Yes/No */
   formatValue(value: any): string {
     if (value === true) return 'Yes';
     if (value === false) return 'No';

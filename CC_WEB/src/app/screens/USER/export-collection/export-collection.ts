@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
@@ -11,8 +11,10 @@ import { PaymentAmountComponent } from '../../USER/export-collection/components/
 import { CollectionInstructionsComponent } from '../../USER/export-collection/components/collection-instructions/collection-instructions';
 import { License } from "../../USER/export-collection/components/license/license";
 import { AttachmentsDocuments } from "../../USER/export-collection/components/attachments-documents/attachments-documents";
-import { PreviewSectionComponent } from "../../USER/export-collection/components/preview/preview";
 import { Sidebar } from "../../../core/sidebar/sidebar";
+
+import { SharedService } from '../../../core/services/shared-service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-export-collection',
@@ -28,8 +30,8 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
-    PreviewSectionComponent,
-    Sidebar
+    Sidebar,
+    RouterModule
   ],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss']
@@ -38,7 +40,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
 
   importForm!: FormGroup;
   currentStep = 0;
-  uploadedFiles: any[] = [];
 
   exportCollectionSteps = [
     { label: "General Details" },
@@ -48,21 +49,22 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
     { label: "Shipping Details" },
     { label: "Collection Instructions" },
     { label: "Licenses" },
-    { label: "Attachments and Documents" },
-    { label: "Preview" }
+    { label: "Attachments and Documents" }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dataService: SharedService
+  ) {}
 
   ngOnInit() {
     this.importForm = this.fb.group({
-
       generaldetails: this.fb.group({
         collectionType: [''],
         customerReference: [''],
         draweeReference: ['']
       }),
-
       DrawerDraweeDetails: this.fb.group({
         drawerName: [''],
         drawerAddress1: [''],
@@ -71,7 +73,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         draweeAddress1: [''],
         draweeAddress2: ['']
       }),
-
       bankdetails: this.fb.group({
         remittingBankName: [''],
         remittingIssuerRef: [''],
@@ -84,7 +85,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         collectingSwiftCode: [''],
         collectingReference: ['']
       }),
-
       paymentamount: this.fb.group({
         amount: [''],
         currency: [''],
@@ -92,7 +92,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         tenor: [''],
         paymentReference: ['']
       }),
-
       shippingdetails: this.fb.group({
         shippingMethod: [''],
         shipmentReference: [''],
@@ -102,13 +101,11 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         incotermsRules: [''],
         incoterms: ['']
       }),
-
       license: this.fb.group({
         licenseNumber: [''],
         licenseDate: [''],
-        licenseFile: [null] // IMPORTANT
+        licenseFile: [null]
       }),
-
       collectioninstructions: this.fb.group({
         advicePaymentBy: [''],
         adviceAcceptanceDate: [''],
@@ -122,7 +119,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         warehouseInsurance: [false],
         referTo: ['']
       }),
-
       attachments: this.fb.group({
         documents: this.fb.array([])
       })
@@ -130,7 +126,7 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
   }
 
   // -----------------------------
-  // GETTERS
+  // FORM GETTERS
   // -----------------------------
 
   get generalDetailsForm(): FormGroup {
@@ -176,7 +172,6 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
-
       const observer = new IntersectionObserver(
         entries => {
           for (const entry of entries) {
@@ -202,10 +197,16 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  next() {
-    if (this.currentStep < this.exportCollectionSteps.length - 1) {
-      this.scrollToSection(this.currentStep + 1);
-    }
+  // -----------------------------
+  // NAVIGATION
+  // -----------------------------
+
+  submit() {
+    // Store form data in shared service
+    this.dataService.setFormData(this.importForm.value);
+
+    // Navigate to preview page
+    this.router.navigate(['/export-collection/preview']);
   }
 
   previous() {
