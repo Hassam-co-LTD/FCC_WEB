@@ -163,7 +163,7 @@ export class LayoutComponent implements OnInit {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-
+        { label: 'Search', icon: 'search', route: '/Search' },
         {
           label: 'Trade Services',
           icon: 'article',
@@ -239,6 +239,7 @@ export class LayoutComponent implements OnInit {
         },
 
         { label: 'Settings', icon: 'settings', route: '/settings' },
+        { label: 'Logout', icon: 'exit_to_app', route: '/login' }
       ];
     }
   }

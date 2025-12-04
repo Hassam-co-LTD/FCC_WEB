@@ -212,16 +212,21 @@ export class ImportScreen implements AfterViewInit {
   }
 
   // Next section
-  submit() {
-    if (this.currentStep < this.importSteps.length - 1) {
-      this.scrollToSection(this.currentStep + 1);
+  submitForm() {
+    // Validate form first
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before submitting.");
+      return;
     }
-  }
 
-  next(){
+    // Save data to shared service
     this.dataService.setFormData(this.importForm.value);
+
+    // Navigate to Preview screen
     this.router.navigate(['/import-screen/preview']);
   }
+
 
   // Previous section
   previous() {
