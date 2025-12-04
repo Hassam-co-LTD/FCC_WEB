@@ -1,0 +1,120 @@
+<div class="customer-container">
+
+  <h2 class="page-title">Create Customer Profile</h2>
+  <p class="page-subtitle">Enter the details below to register a new customer.</p>
+
+  <div class="card">
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-grid">
+
+        <!-- Name -->
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" formControlName="Name" placeholder="Full Name">
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" formControlName="Email" placeholder="example@email.com">
+        </div>
+
+        <!-- Contact -->
+        <div class="form-group">
+          <label>Contact</label>
+          <input type="tel" formControlName="Contact" placeholder="+1 (555) 000-0000">
+        </div>
+
+        <!-- Legal ID -->
+        <div class="form-group">
+          <label>Legal ID</label>
+          <input type="text" formControlName="LegalID" placeholder="Enter CNIC / NTN / ECIB">
+        </div>
+
+<div class="dropdown-row">
+  <div class="dropdown-half">
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="Status">
+        <mat-option value="Active">Active</mat-option>
+        <mat-option value="Inactive">Inactive</mat-option>
+        <mat-option value="Blocked">Blocked</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="dropdown-half">
+    <mat-form-field appearance="outline">
+      <mat-label>Branch Code</mat-label>
+      <mat-select formControlName="Branch_Code">
+        <mat-option value="">Select Branch</mat-option>
+        <mat-option value="BR-001">Branch 001</mat-option>
+        <mat-option value="BR-002">Branch 002</mat-option>
+        <mat-option value="BR-003">Branch 003</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="dropdown-row">
+  <div class="dropdown-half">
+    <mat-form-field appearance="outline">
+      <mat-label>Country / City</mat-label>
+      <mat-select formControlName="Ctry_City">
+        <mat-option value="">Select City</mat-option>
+        <mat-option value="Karachi">Karachi</mat-option>
+        <mat-option value="Lahore">Lahore</mat-option>
+        <mat-option value="Islamabad">Islamabad</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="dropdown-half">
+    <mat-form-field appearance="outline">
+      <mat-label>Customer Type</mat-label>
+      <mat-select formControlName="Customer_Type">
+        <mat-option value="Regular">Regular</mat-option>
+        <mat-option value="Premium">Premium</mat-option>
+        <mat-option value="VIP">VIP</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+        <!-- Address Lines (full width) -->
+        <div class="form-group full-width">
+          <label>Address Line 1</label>
+          <input type="text" formControlName="Address1" placeholder="Address Line 1">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Address Line 2</label>
+          <input type="text" formControlName="Address2" placeholder="Address Line 2">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Address Line 3</label>
+          <input type="text" formControlName="Address3" placeholder="Address Line 3">
+        </div>
+
+        <!-- Read-only labels row -->
+        <div class="readonly-row">
+          <div class="readonly-item"><label>Updated On</label></div>
+          <div class="readonly-item"><label>Created On</label></div>
+          <div class="readonly-item"><label>Created By</label></div>
+          <div class="readonly-item"><label>Inputer ID</label></div>
+          <div class="readonly-item"><label>Authorized ID</label></div>
+        </div>
+
+      </div>
+
+      <!-- Buttons -->
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button type="button" class="btn-save" [disabled]="!customerForm.dirty" (click)="onSave()">Save</button>
+        <button type="submit" class="btn-submit" [disabled]="customerForm.invalid">Submit</button>
+      </div>
+
+    </form>
+  </div>
+</div>

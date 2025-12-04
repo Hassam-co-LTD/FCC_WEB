@@ -25,13 +25,32 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             // Admin-Dashboard
-            {
-                path: 'admin',
-                canActivate: [authGuard],
-                data: { role: 'ADMIN' },
-                loadComponent: () =>
-                    import('./screens/ADMIN/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
-            },
+              // my routes 
+
+     {
+  path: "admin",
+  loadComponent: () =>
+    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
+  children: [
+    {
+      path: "create-customer",
+      loadComponent: () =>
+        import("./screens/ADMIN/pages/customers/create-customer/create-customer")
+          .then((m) => m.CreateCustomer),
+    },
+    {
+        path:"users",
+        loadComponent: () => 
+            import('./screens/ADMIN/pages/users/users').then((m)=> m.Users)
+    }
+    ,{
+        path:"showCustomerDetails",
+        loadComponent:()=>
+            import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
+    }
+  ]
+}
+,
  
  
             // ==============================
