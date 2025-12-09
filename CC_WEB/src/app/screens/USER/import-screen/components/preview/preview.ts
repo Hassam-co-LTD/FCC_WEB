@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { SharedService } from '../../../../../core/services/shared-service';
+import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
 import { MatCard } from "@angular/material/card";
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -54,18 +54,25 @@ export class Preview implements OnInit{
   previous(){
     this.router.navigate(['import-screen'])
   }
-    submit() {
-      console.log("Submitted Data:", this.form.value);
+    // submit() {
+    //   console.log("Submitted Data:", this.form.value);
 
-      // Show success toast
-      this.snackBar.open('Data successfully submitted!', 'Close', {
-        duration: 3000, // 3 seconds
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['success-snackbar']
-      });
-      console.log("Submitted Data:", this.form.value);
-    }
+    //   // Show success toast
+    //   this.snackBar.open('Data successfully submitted!', 'Close', {
+    //     duration: 3000, // 3 seconds
+    //     horizontalPosition: 'right',
+    //     verticalPosition: 'top',
+    //     panelClass: ['success-snackbar']
+    //   });
+    //   console.log("Submitted Data:", this.form.value);
+    // }
+  submit() {
+
+    this.router.navigate(['/import-screen/success']);
+    
+      };
+
+  
 
   downloadFile(index: number) {
     const data = this.attachmentsArray.at(index)?.value;

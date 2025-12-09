@@ -1,12 +1,12 @@
 @use "sass:color";
-@use "../../../../../../styles/theme" as theme;
- 
+@use "../../../../../../../styles/theme" as theme;
+
 /* ---------- Customer Container ---------- */
 .customer-container {
   max-width: 1150px;
   margin: 0 auto;
   padding: theme.$gap-default;
- 
+
   .page-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -34,7 +34,7 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: theme.$gap-default;
- 
+
       .form-group {
         display: flex;
         flex-direction: column;
@@ -81,7 +81,7 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: theme.$gap-default;
- 
+
       .readonly-item {
         display: flex;
         flex-direction: column;
@@ -99,7 +99,7 @@
       flex-wrap: wrap;
       gap: theme.$gap-default;
       margin-top: theme.$gap-default;
- 
+
       button {
         flex: 1 1 auto;
         padding: 12px 24px;
@@ -113,7 +113,7 @@
         &.btn-cancel {
           background: theme.$border-light;
           color: theme.$text-dark;
- 
+
           &:hover {
             background: theme.$hover-bg;
             color: theme.$primary-color;
@@ -125,7 +125,7 @@
           background: theme.$primary-btn;
           color: theme.$white;
           box-shadow: theme.$button-shadow;
- 
+
           &:hover:not(:disabled) {
             background: theme.$primary-btn-hover;
           }
@@ -159,7 +159,7 @@
     }
   }
 }
- 
+
 /* ---------- Dropdown Rows ---------- */
 .dropdown-parent {
   width: 100%;
@@ -211,7 +211,7 @@
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
 }
- 
+
 /* ---------- mat-option Styling ---------- */
 ::ng-deep .mat-mdc-option {
   background-color: #ffffff !important;
@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
- 
+
   &:hover {
     background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important;
     color: #fff !important;
@@ -242,7 +242,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
   }
 }
- 
+
 /* Remove ripple */
 ::ng-deep .mat-mdc-option .mat-ripple-element {
   display: none !important;
