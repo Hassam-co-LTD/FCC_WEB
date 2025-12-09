@@ -1,4 +1,6 @@
+@use "sass:color";
 @use "../../../../../../styles/theme" as *;
+
 
 /* ---------- Customer Container ---------- */
 .customer-container {
@@ -297,13 +299,13 @@
     box-shadow: 0 3px 6px rgba(0,0,0,0.12); // soft shadow on hover
   }
 
-  &.mat-selected {
-    background-color: $primary !important;
-    color: #fff !important;
-    border: 1px solid darken($primary, 5%) !important;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08); // slight shadow for selected
-  }
+&.mat-selected {
+  background-color: $primary !important;
+  color: #fff !important;
+  border: 1px solid color.adjust($primary, $lightness: -5%) !important;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
 }
 
 /* Remove ripple effect */

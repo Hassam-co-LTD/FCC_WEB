@@ -27,30 +27,37 @@ export const routes: Routes = [
             // Admin-Dashboard
               // my routes 
 
-     {
+ {
   path: "admin",
+  canActivate: [authGuard],   // MUST BE HERE
   loadComponent: () =>
-    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
+    import("./screens/ADMIN/admin-dashboard/admin-dashboard")
+      .then((m) => m.AdminComponent),
   children: [
     {
       path: "create-customer",
+      canActivate: [authGuard],
       loadComponent: () =>
         import("./screens/ADMIN/pages/customers/create-customer/create-customer")
           .then((m) => m.CreateCustomer),
     },
     {
-        path:"users",
-        loadComponent: () => 
-            import('./screens/ADMIN/pages/users/users').then((m)=> m.Users)
-    }
-    ,{
-        path:"showCustomerDetails",
-        loadComponent:()=>
-            import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
+      path: "users",
+      canActivate: [authGuard],
+      loadComponent: () => 
+        import('./screens/ADMIN/pages/users/users').then((m)=> m.Users)
+    },
+    {
+      path:"showCustomerDetails",
+      canActivate: [authGuard],
+      loadComponent:()=>
+        import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data")
+          .then((m)=> m.ShowCustomersFormData)
     }
   ]
-}
-,
+},
+
+
  
  
             // ==============================
