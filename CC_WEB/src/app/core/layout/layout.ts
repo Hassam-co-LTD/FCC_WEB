@@ -30,7 +30,7 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
-  
+
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
   collapsed = false;
   shippingGuaranteeOpen = false;
@@ -103,16 +103,16 @@ export class LayoutComponent implements OnInit {
 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
-          this.menuItems = this.systemOverviewMenu;   // 🔥 Load SYSTEM menu
+          this.menuItems = this.systemOverviewMenu;
         }
         else if (url.includes('/middle-office')) {
           this.currentMenu = 'MIDDLE';
-          this.menuItems = this.middleOfficeMenu;     // 🔥 Load MIDDLE-OFFICE menu
+          this.menuItems = this.middleOfficeMenu;
         }
         else {
           this.currentMenu = 'DEFAULT';
           const role = this.authService.getUserCategory();
-          this.loadMenu(role);                        // 🔥 Load DEFAULT menu again
+          this.loadMenu(role);
         }
       });
   }
@@ -145,19 +145,19 @@ export class LayoutComponent implements OnInit {
   loadMenu(role: 'ADMIN' | 'USER' | null) {
     if (role === 'ADMIN') {
       this.menuItems = [
-  { label: 'System Features', icon: 'insights', route: '/system-overview' },
-  { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
-  { 
-    label: 'Customers', 
-    icon: 'group', 
-    route: '/admin',              // <-- main Customers page
-    open: false,
-    children: [
-      { label: 'Create New', route: '/admin/create-customer' }
-    ]
-  },
-  { label: 'Users', icon: 'person', route: '/users' }
-];
+        { label: 'System Features', icon: 'insights', route: '/system-overview' },
+        { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
+        {
+          label: 'Customers',
+          icon: 'group',
+          route: '/admin',              // <-- main Customers page
+          open: false,
+          children: [
+            { label: 'Create New', route: '/admin/create-customer' }
+          ]
+        },
+        { label: 'Users', icon: 'person', route: '/users' }
+      ];
 
 
     } else {
@@ -187,7 +187,7 @@ export class LayoutComponent implements OnInit {
             // EXPORT LC
             // -------------------------
             {
-              label: 'Export LC', 
+              label: 'Export LC',
               route: '/exportlc-welcome',
               open: false,
               children: [
@@ -251,18 +251,18 @@ export class LayoutComponent implements OnInit {
   }
 
   // Ameen function
-onCustomerClick(item: MenuItem) {
-  const currentUrl = this.router.url;
+  onCustomerClick(item: MenuItem) {
+    const currentUrl = this.router.url;
 
-  if (currentUrl.startsWith('/admin/create-customer')) {
-    // Force navigation back to /admin
-    this.router.navigateByUrl('/admin').then(() => {
-      item.open = false; // close submenu
-    });
-  } else {
-    // Normal toggle if not on "create customer"
-    item.open = !item.open;
+    if (currentUrl.startsWith('/admin/create-customer')) {
+      // Force navigation back to /admin
+      this.router.navigateByUrl('/admin').then(() => {
+        item.open = false; // close submenu
+      });
+    } else {
+      // Normal toggle if not on "create customer"
+      item.open = !item.open;
+    }
   }
-}
 
 }

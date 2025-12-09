@@ -55,7 +55,7 @@
         <h3 class="section-title">Amount & Charges</h3>
         <div *ngIf="form.get('amountChargeForm') as ac" class="preview-grid">
           <div class="preview-item"
-            *ngFor="let key of ['currency','amount','variationType','variationPlus','variationMinus','issuingBankCharges','outsideCountryCharges','additionalAmountDetails']">
+            *ngFor="let key of ['currency','amount','variationType','variationPlus','variationMinus','issuingBankCharges','outsideCountryCharges','additionalAmount']">
             <div class="preview-label">{{ key | titlecase }}:</div>
             <div class="preview-value">{{ ac.value[key] }}</div>
           </div>

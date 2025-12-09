@@ -35,18 +35,18 @@ export const routes: Routes = [
     {
       path: "create-customer",
       loadComponent: () =>
-        import("./screens/ADMIN/pages/customers/create-customer/create-customer")
+        import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
           .then((m) => m.CreateCustomer),
     },
     {
         path:"users",
         loadComponent: () => 
-            import('./screens/ADMIN/pages/users/users').then((m)=> m.Users)
+            import('./screens/ADMIN/admin-dashboard/components/users/users').then((m)=> m.Users)
     }
     ,{
         path:"showCustomerDetails",
         loadComponent:()=>
-            import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
+            import("./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
     }
   ]
 }
@@ -419,6 +419,13 @@ export const routes: Routes = [
                     import(
                         './screens/USER/import-screen/components/preview/preview'
                     ).then((m) => m.Preview),
+            },
+            {
+                path: 'import-screen/success',
+                loadComponent: () =>
+                    import(
+                        './shared/success/success'
+                    ).then((m) => m.Success),
             },
  
             {

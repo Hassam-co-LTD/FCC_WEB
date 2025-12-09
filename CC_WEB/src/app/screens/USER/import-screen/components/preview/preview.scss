@@ -89,14 +89,16 @@
 }
 
 .preview-label {
-    font-weight: 600;
-    color: theme.$text-medium;
+    font-weight: 500;
+    font-size: medium;
+    color: theme.$text-dark;
     display: flex;
     align-items: center;
 }
 
 .preview-value {
     color: theme.$text-dark;
+    font-size: small;
     // padding: 8px 12px;
     // background: theme.$primary-light; // subtle fintech blue background
     border-radius: 6px;
@@ -114,6 +116,7 @@
 .image-icon {
     color: theme.$primary;
 }
+
 .actionss {
     display: flex;
     align-items: center;
@@ -129,6 +132,7 @@
         transform: scale(1.1);
     }
 }
+
 .attachment-grid {
     display: grid;
     grid-template-columns: 70px 1fr 1fr 100px 80px;
@@ -202,20 +206,67 @@ button[mat-stroked-button] {
     border-radius: 6px;
     box-shadow: 0 2px 6px rgba(13, 71, 161, 0.25);
 }
+
 /* ================================
    RESPONSIVENESS
 ================================ */
-@media (max-width: 900px) {
+
+
+/* ---------- DESKTOP (>1080px) ---------- */
+@media (min-width: 1081px) {
     .preview-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr; // 2 cards per row
+    }
+
+    .preview-grid {
+        grid-template-columns: 180px 1fr; // label + value layout
+    }
+}
+
+/* ---------- TABLET (768px – 1080px) ---------- */
+@media (max-width: 1080px) and (min-width: 768px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // 1 card per row
+        gap: 20px;
     }
 
     .preview-card.full-width {
         grid-column: 1 / 2;
     }
 
+    /* Keep label+value on same row */
+    .preview-grid {
+        grid-template-columns: 150px 1fr;
+        column-gap: 20px;
+    }
+}
+
+/* ---------- MOBILE (<768px) ---------- */
+@media (max-width: 767px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // stack cards
+        gap: 20px;
+    }
+
+    .preview-card.full-width {
+        grid-column: 1 / 2;
+    }
+
+    /* Change to vertical layout */
     .preview-grid {
         grid-template-columns: 1fr;
+        row-gap: 10px;
+    }
+
+    .preview-label {
+        font-size: 14px;
+    }
+
+    .preview-value {
+        font-size: 13px;
+        padding-top: 2px;
     }
 
     .preview-item.full-width {

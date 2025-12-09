@@ -1,0 +1,39 @@
+<div class="success-page">
+
+    <div class="success-icon">✔</div>
+
+    <h1>Success</h1>
+    <p>Your transaction is successfully released to the bank.</p>
+
+    <mat-card class="summary-card">
+        <div class="row">
+            <div>
+                <strong>Events:</strong> New
+            </div>
+            <div>
+                <strong>Channel Reference:</strong> {{ data.channelRef }}
+            </div>
+            <div>
+                <strong>Applicant:</strong> {{ data.applicant }}
+            </div>
+            <div>
+                <strong>Drawee:</strong> {{ data.drawee }}
+            </div>
+            <div>
+                <strong>Collection Amount:</strong> {{ data.amount }}
+            </div>
+            <div>
+                <strong>Status:</strong> Pending Bank Approval
+            </div>
+            <div>
+                <strong>Payment Type:</strong> {{ data.paymentType }}
+            </div>
+        </div>
+    </mat-card>
+
+    <div class="actions">
+        <button mat-flat-button color="primary">Import LC Listing</button>
+        <button mat-stroked-button color="primary" >New Import LC</button>
+    </div>
+
+</div>
