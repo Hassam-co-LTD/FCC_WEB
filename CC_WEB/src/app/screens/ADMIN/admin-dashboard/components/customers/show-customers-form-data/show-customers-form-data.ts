@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomerService } from '../customer-service';
+import { CustomerService } from '../../../../../../core/services/admin-service/customer-form-service/customer-service';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-show-customer-data',

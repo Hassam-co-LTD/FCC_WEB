@@ -16,7 +16,7 @@ import { InstructionToBank } from "./components/instruction-to-bank/instruction-
 import { Attachments } from "./components/attachments/attachments";
 // import { Preview } from "./components/preview/preview";
 import { Sidebar } from "../../../core/sidebar/sidebar";
-import { SharedService } from '../../../core/services/shared-service';
+import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
 
 
 @Component({
@@ -37,7 +37,7 @@ import { SharedService } from '../../../core/services/shared-service';
     // Preview,
     Sidebar,
     RouterOutlet
-],
+  ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']
 })
@@ -81,8 +81,8 @@ export class ImportScreen implements AfterViewInit {
 
       // Add other
       applicantForm: this.fb.group({
-        applicantName: ['', Validators.required],
-        applicantAddress1: ['', Validators.required],
+        applicantName: [''],
+        applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
 
@@ -91,59 +91,59 @@ export class ImportScreen implements AfterViewInit {
         // alternateAddress2: [''],
         // alternateAddress3: [''],
 
-        beneficiaryName: ['', Validators.required],
-        beneficiaryAddress1: ['', Validators.required],
+        beneficiaryName: [''],
+        beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
-        beneficiaryCountry: ['', Validators.required]
+        beneficiaryCountry: ['']
 
       }),
 
       bankForm: this.fb.group({
-        issuingBankName: ['', Validators.required],
-        issuerReference: ['', Validators.required],
+        issuingBankName: [''],
+        issuerReference: [''],
         advisingBankName: [''],
         adviseThroughBankName: ['']
       }),
 
       // Step 3 — Amount & Charges
       amountChargeForm: this.fb.group({
-        currency: ['', Validators.required],
-        amount: ['', [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)]],
-        variationType: ['percent'], 
+        currency: [''],
+        amount: ['', Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)],
+        variationType: ['percent'],
         variationPlus: [''],
         variationMinus: [''],
-        issuingBankCharges: ['Applicant', Validators.required],
-        outsideCountryCharges: ['Beneficiary', Validators.required],
+        issuingBankCharges: ['Applicant'],
+        outsideCountryCharges: ['Beneficiary'],
         additionalAmountDetails: ['', Validators.maxLength(140)],
       }),
 
       paymentDetailsForm: this.fb.group({
-        creditAvailableWith: ['', Validators.required],
+        creditAvailableWith: [''],
         bankName: [''],
-        creditAvailableBy: ['Payment', Validators.required],
-        paymentDraftAt: ['Sight', Validators.required]
+        creditAvailableBy: ['Payment'],
+        paymentDraftAt: ['Sight']
       }),
 
       shipmentForm: this.fb.group({
-        shipmentFrom: ['', Validators.required],
-        shipmentTo: ['', Validators.required],
-        placeOfLoading: ['', Validators.required],
-        placeOfDischarge: ['', Validators.required],
-        lastShipmentDate: ['', Validators.required],
-        shipmentPeriodNarrative: ['', [Validators.required, Validators.maxLength(390)]],
-        partialShipment: ['Allowed', Validators.required],
-        transhipment: ['Not Allowed', Validators.required]
+        shipmentFrom: [''],
+        shipmentTo: [''],
+        placeOfLoading: [''],
+        placeOfDischarge: [''],
+        lastShipmentDate: [''],
+        shipmentPeriodNarrative: ['', [ Validators.maxLength(390)]],
+        partialShipment: ['Allowed'],
+        transhipment: ['Not Allowed']
       }),
       narrativeForm: this.fb.group({
-        descriptionOfGoods: ['', [Validators.required, Validators.maxLength(6500)]],
-        documentsRequired: ['', [Validators.required, Validators.maxLength(6500)]],
+        descriptionOfGoods: ['', [ Validators.maxLength(6500)]],
+        documentsRequired: ['', [ Validators.maxLength(6500)]],
         additionalInstructions: ['', [Validators.maxLength(2000)]],
         otherDetails: ['']
       }),
       instructionForm: this.fb.group({
-        principalAccount: ['', Validators.required],
-        feeAccount: ['', Validators.required],
+        principalAccount: [''],
+        feeAccount: [''],
         otherInstructions: ['', [Validators.maxLength(31525)]]
       }),
       attachments: this.fb.array([]),
@@ -177,8 +177,8 @@ export class ImportScreen implements AfterViewInit {
   get instructionForm(): FormGroup {
     return this.importForm.get('instructionForm') as FormGroup;
   }
-  
-  
+
+
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -212,22 +212,25 @@ export class ImportScreen implements AfterViewInit {
   }
 
   // Next section
-  submit() {
-    if (this.currentStep < this.importSteps.length - 1) {
-      this.scrollToSection(this.currentStep + 1);
+  submitForm() {
+    // Validate form first
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before submitting.");
+      return;
     }
-  }
 
-  next(){
+    // Save data to shared service
     this.dataService.setFormData(this.importForm.value);
+
+    // Navigate to Preview screen
     this.router.navigate(['/import-screen/preview']);
   }
 
+
   // Previous section
   previous() {
-    if (this.currentStep > 0) {
-      this.scrollToSection(this.currentStep - 1);
-    }
+    this.router.navigate(['/dashboard'])
   }
 
   updateAttachments(files: File[]) {

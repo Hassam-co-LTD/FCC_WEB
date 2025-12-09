@@ -55,20 +55,6 @@
 }
 
 /* ===========================
-   Save Button (Right Corner)
-=========================== */
-.header-right {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 8px;
-
-    .save-btn {
-        font-weight: 500;
-        color: theme.$primary;
-    }
-}
-
-/* ===========================
    Text Hints
 =========================== */
 .hint,

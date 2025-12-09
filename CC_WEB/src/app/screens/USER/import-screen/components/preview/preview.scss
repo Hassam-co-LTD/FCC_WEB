@@ -1,196 +1,151 @@
-@use "sass:color";
-@use '../../../../../../styles/_theme.scss' as theme;
+@use '../../../../../../styles/theme' as theme;
 
-/* -----------------------------------------------------
-   SECTION HEADER (Collapsible Title)
------------------------------------------------------ */
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: theme.$primary;
-    padding: 14px 18px;
+/* ================================
+   PREVIEW PAGE (Blue Fintech Theme)
+================================ */
+.preview-page {
+    background: theme.$light-bg; // soft fintech light blue
+    padding: 32px;
     border-radius: 12px;
-    cursor: pointer;
-    margin-bottom: 14px;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    color: theme.$text-light;
-
-    &:hover {
-        background: theme.$primary-dark;
-        box-shadow: theme.$shadow-primary;
-    }
-
-    h2 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    mat-icon {
-        color: #fff;
-        font-size: 22px;
-    }
-}
-
-/* -----------------------------------------------------
-   COLLAPSIBLE BODY
------------------------------------------------------ */
-.collapsible {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-6px);
-    transition: all 0.35s ease;
-}
-
-.collapsible.open {
-    max-height: 5000px;
-    opacity: 1;
-    transform: translateY(0);
-    padding: 15px;
-    background: theme.$light-bg;
     border: 1px solid theme.$border-light;
-    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(13, 71, 161, 0.05);
 }
 
-/* -----------------------------------------------------
-   SUB HEADING (H4)
------------------------------------------------------ */
-h4 {
-    font-size: 18px;
-    margin: 5px 0 18px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
+/* ================================
+   PAGE TITLE
+================================ */
+.page-title {
+    font-size: 26px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: theme.$primary; // main blue
+    border-bottom: 2px solid theme.$border-light;
+    padding-bottom: 10px;
 }
 
-/* -----------------------------------------------------
-   PREVIEW BLOCK CONTAINER
------------------------------------------------------ */
-.preview-block {
-    background: theme.$white;
-    padding: 22px 26px;
-    border-radius: 14px;
-    border: 1px solid theme.$border-light;
-    margin-bottom: 26px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-/* -----------------------------------------------------
-   PREVIEW GRID ROWS
------------------------------------------------------ */
-.preview-grid {
-    display: grid;
-    gap: 18px 22px;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
-
-.preview-item {
+/* ================================
+   CONTAINER + ROWS
+================================ */
+.preview-container {
     display: flex;
     flex-direction: column;
+    gap: 30px;
+}
 
-    &.full-width {
-        grid-column: 1 / -1;
+.preview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ================================
+   CARD STYLING
+================================ */
+.preview-card {
+    padding: 22px;
+    border-radius: 12px;
+    background: theme.$white;
+    border: 1px solid theme.$border-light;
+    box-shadow: 0 2px 8px rgba(13, 71, 161, 0.08);
+    transition: 0.2s ease;
+
+    &:hover {
+        border-color: theme.$border-primary;
+        box-shadow: 0 3px 10px rgba(13, 71, 161, 0.12);
     }
+}
+
+.preview-card.full-width {
+    grid-column: 1 / 3;
+}
+
+/* ================================
+   SECTION TITLE (Card Header)
+================================ */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: theme.$primary-dark;
+    border-bottom: 1px solid theme.$border-light;
+    padding-bottom: 8px;
+}
+
+/* ================================
+   LABEL + VALUE GRID
+================================ */
+.preview-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    row-gap: 12px;
+    column-gap: 30px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.preview-item.full-width {
+    grid-column: 1 / 3;
 }
 
 .preview-label {
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: medium;
     color: theme.$text-dark;
-    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
 }
 
 .preview-value {
-    font-size: 0.92rem;
     color: theme.$text-dark;
+    font-size: small;
+    // padding: 8px 12px;
+    // background: theme.$primary-light; // subtle fintech blue background
+    border-radius: 6px;
+    // border: 1px solid theme.$border-light;
+    line-height: 1.5;
 }
 
-/* -----------------------------------------------------
-   DIVIDER
------------------------------------------------------ */
-hr {
-    border: 0;
-    border-top: 1px solid theme.$border-light;
-    margin: 28px 0;
+/* ================================
+   ATTACHMENTS TABLE
+================================ */
+.pdf-icon {
+    color: #c62828;
 }
 
-/* -----------------------------------------------------
-   ATTACHMENT TABLE (FULLY RESPONSIVE)
------------------------------------------------------ */
-.preview-attachments-container {
-    margin-top: 10px;
-    width: 100%;
-    overflow-x: auto;
+.image-icon {
+    color: theme.$primary;
+}
+
+.actionss {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-icon {
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:hover {
+        color: theme.$primary-hover;
+        transform: scale(1.1);
+    }
 }
 
 .attachment-grid {
     display: grid;
-    grid-template-columns: 80px 2fr 2fr 1fr 100px;
-    gap: 12px;
-    padding: 12px 0;
-
-    @media (max-width: 900px) {
-        grid-template-columns: 60px 1.5fr 2fr 1fr 80px;
-    }
-
-    @media (max-width: 700px) {
-        /* stack vertically */
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            "type title"
-            "file file"
-            "size actions";
-
-        &.header {
-            display: none;
-        }
-    }
-}
-
-.attachment-header {
-    font-weight: 600;
-    border-bottom: 2px solid #c0c0c0;
-    padding-bottom: 8px;
-}
-
-.attachment-cell {
-    padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
+    grid-template-columns: 70px 1fr 1fr 100px 80px;
+    padding: 8px 0;
+    border-bottom: 1px solid theme.$border-light;
     align-items: center;
-    font-size: 0.92rem;
-
-    @media (max-width: 700px) {
-        border-bottom: none;
-        padding: 4px 0;
-    }
+    font-size: 14px;
 }
 
-/* File Type Icons */
-.pdf-icon {
-    font-size: 30px;
-    color: #d32f2f;
-}
-
-.image-icon {
-    font-size: 30px;
-    color: #1976d2;
-}
-
-/* Action Icons */
-.action-icon {
-    cursor: pointer;
-    font-size: 26px;
-    color: theme.$primary;
-    transition: 0.15s ease;
-
-    &:hover {
-        transform: scale(1.15);
-        color: theme.$primary-dark;
-    }
+.attachment-grid.header {
+    font-weight: 700;
+    background: theme.$hover-bg;
+    border-bottom: 2px solid theme.$border-primary;
 }
 
 /* -----------------------------------------------------
@@ -243,11 +198,78 @@ button[mat-stroked-button] {
     }
 }
 
-/* -----------------------------------------------------
-   RESPONSIVE TWEAKS
------------------------------------------------------ */
-@media (max-width: 768px) {
+
+.success-snackbar {
+    background-color: theme.$primary; // your theme blue
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(13, 71, 161, 0.25);
+}
+
+/* ================================
+   RESPONSIVENESS
+================================ */
+
+
+/* ---------- DESKTOP (>1080px) ---------- */
+@media (min-width: 1081px) {
+    .preview-row {
+        grid-template-columns: 1fr 1fr; // 2 cards per row
+    }
+
+    .preview-grid {
+        grid-template-columns: 180px 1fr; // label + value layout
+    }
+}
+
+/* ---------- TABLET (768px – 1080px) ---------- */
+@media (max-width: 1080px) and (min-width: 768px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // 1 card per row
+        gap: 20px;
+    }
+
+    .preview-card.full-width {
+        grid-column: 1 / 2;
+    }
+
+    /* Keep label+value on same row */
+    .preview-grid {
+        grid-template-columns: 150px 1fr;
+        column-gap: 20px;
+    }
+}
+
+/* ---------- MOBILE (<768px) ---------- */
+@media (max-width: 767px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // stack cards
+        gap: 20px;
+    }
+
+    .preview-card.full-width {
+        grid-column: 1 / 2;
+    }
+
+    /* Change to vertical layout */
     .preview-grid {
         grid-template-columns: 1fr;
+        row-gap: 10px;
+    }
+
+    .preview-label {
+        font-size: 14px;
+    }
+
+    .preview-value {
+        font-size: 13px;
+        padding-top: 2px;
+    }
+
+    .preview-item.full-width {
+        grid-column: 1 / 2;
     }
 }
