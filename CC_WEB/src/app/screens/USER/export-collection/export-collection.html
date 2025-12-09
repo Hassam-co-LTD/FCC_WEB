@@ -39,7 +39,8 @@
       <!-- Footer Buttons -->
       <div class="actions">
         <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
-        <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+        <button mat-stroked-button color="primary" (click)="saveDraft()"> Save</button>
+        <button mat-flat-button color="primary" (click)="submit()">Preview</button>
       </div>
     </div>
   </div>

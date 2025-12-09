@@ -5,13 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatIcon } from '@angular/material/icon';
-import { LayoutComponent } from '../../../core/layout/layout';
+// import { MatIcon } from '@angular/material/icon';
+// import { LayoutComponent } from '../../../core/layout/layout';
 @Component({
   selector: 'app-admin',
   standalone: true,
   imports: [
-    LayoutComponent,
+    // LayoutComponent,
     ReactiveFormsModule,
     CommonModule,
     MatCardModule,
@@ -19,7 +19,7 @@ import { LayoutComponent } from '../../../core/layout/layout';
     RouterOutlet,
     MatIconModule,
     RouterModule,
-    MatIcon
+    // MatIcon
    
 ],
   templateUrl: './admin-dashboard.html',

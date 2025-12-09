@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
@@ -11,11 +11,9 @@ import { PaymentAmountComponent } from '../../USER/export-collection/components/
 import { CollectionInstructionsComponent } from '../../USER/export-collection/components/collection-instructions/collection-instructions';
 import { License } from "../../USER/export-collection/components/license/license";
 import { AttachmentsDocuments } from "../../USER/export-collection/components/attachments-documents/attachments-documents";
-// import { PreviewSectionComponent } from "../../USER/export-collection/components/preview/preview";
 import { Sidebar } from "../../../core/sidebar/sidebar";
 import { SharedService } from '../../../core/services/shared-service';
-import { Router } from '@angular/router';
-import { RouterModule , RouterOutlet} from "@angular/router";
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-export-collection',
@@ -31,14 +29,13 @@ import { RouterModule , RouterOutlet} from "@angular/router";
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
-    // PreviewSectionComponent,
     Sidebar,
     RouterModule
-],
+  ],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss']
 })
-export class ExportCollectionComponent implements OnInit { 
+export class ExportCollectionComponent implements OnInit, AfterViewInit {
 
   importForm!: FormGroup;
   currentStep = 0;
@@ -52,13 +49,20 @@ export class ExportCollectionComponent implements OnInit {
     { label: "Shipping Details" },
     { label: "Collection Instructions" },
     { label: "Licenses" },
-    { label: "Attachments and Documents" },
-    // { label: "Preview" }
+    { label: "Attachments and Documents" }
   ];
 
-  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dataService: SharedService
+  ) {}
 
   ngOnInit() {
+
+    // -----------------------------
+    // FORM CREATION
+    // -----------------------------
     this.importForm = this.fb.group({
 
       generaldetails: this.fb.group({
@@ -110,7 +114,7 @@ export class ExportCollectionComponent implements OnInit {
       license: this.fb.group({
         licenseNumber: [''],
         licenseDate: [''],
-        licenseFile: [null] // IMPORTANT
+        licenseFile: [null]
       }),
 
       collectioninstructions: this.fb.group({
@@ -130,7 +134,23 @@ export class ExportCollectionComponent implements OnInit {
       attachments: this.fb.group({
         documents: this.fb.array([])
       })
+
     });
+
+    // -----------------------------
+    // LOAD SAVED DRAFT
+    // -----------------------------
+    const savedDraft = localStorage.getItem('exportCollectionDraft');
+    if (savedDraft) {
+      const draftData = JSON.parse(savedDraft);
+      this.importForm.patchValue(draftData);
+
+      if (draftData.attachments?.documents?.length) {
+        draftData.attachments.documents.forEach((doc: any) => {
+          this.documentsArray.push(this.fb.group(doc));
+        });
+      }
+    }
   }
 
   // -----------------------------
@@ -174,9 +194,9 @@ export class ExportCollectionComponent implements OnInit {
   }
 
   // -----------------------------
-  // SCROLL + STEPS
+  // SCROLL + STEP TRACKING
   // -----------------------------
-  
+
   ngAfterViewInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
@@ -206,20 +226,31 @@ export class ExportCollectionComponent implements OnInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-submit() {
-  if (this.importForm.invalid) {
-    this.importForm.markAllAsTouched();
-    alert("Please complete all required fields before submitting.");
-    return;
+  // -----------------------------
+  // ACTION BUTTONS
+  // -----------------------------
+
+  saveDraft() {
+    const payload = this.importForm.value;
+    localStorage.setItem('exportCollectionDraft', JSON.stringify(payload));
+    console.log('Draft saved successfully');
   }
 
-  // Store form data in shared service
-  this.dataService.setFormData(this.importForm.value);
+  submit() {
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before submitting.");
+      return;
+    }
 
-  // Navigate to preview page
-  this.router.navigate(['/export-collection/preview']);
-}
+    this.dataService.setFormData(this.importForm.value);
 
+    // Clear draft after successful submit
+    // localStorage.removeItem('exportCollectionDraft');
+
+    // Navigate to preview
+    this.router.navigate(['/export-collection/preview']);
+  }
 
   previous() {
     if (this.currentStep > 0) {

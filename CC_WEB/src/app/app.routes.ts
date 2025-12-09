@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
- 
+
 export const routes: Routes = [
     // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
- 
+
     // Auth routes
     {
         path: 'login',
@@ -17,7 +17,7 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
     },
- 
+
     // Protected routes (with layout)
     {
         path: '',
@@ -25,34 +25,34 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             // Admin-Dashboard
-              // my routes 
+            // my routes 
 
-     {
-  path: "admin",
-  loadComponent: () =>
-    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
-  children: [
-    {
-      path: "create-customer",
-      loadComponent: () =>
-        import("./screens/ADMIN/pages/customers/create-customer/create-customer")
-          .then((m) => m.CreateCustomer),
-    },
-    {
-        path:"users",
-        loadComponent: () => 
-            import('./screens/ADMIN/pages/users/users').then((m)=> m.Users)
-    }
-    ,{
-        path:"showCustomerDetails",
-        loadComponent:()=>
-            import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
-    }
-  ]
-}
-,
- 
- 
+            {
+                path: "admin",
+                loadComponent: () =>
+                    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
+                children: [
+                    {
+                        path: "create-customer",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/pages/customers/create-customer/create-customer")
+                                .then((m) => m.CreateCustomer),
+                    },
+                    {
+                        path: "users",
+                        loadComponent: () =>
+                            import('./screens/ADMIN/pages/users/users').then((m) => m.Users)
+                    }
+                    , {
+                        path: "showCustomerDetails",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/pages/customers/show-customers-form-data/show-customers-form-data").then((m) => m.ShowCustomersFormData)
+                    }
+                ]
+            }
+            ,
+
+
             // ==============================
             // System overview
             // ==============================
@@ -61,8 +61,8 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/ADMIN/system-overview/system-overview').then((m) => m.SystemOverview),
             },
- 
- 
+
+
             // ==============================
             // Middle-Office
             // ==============================
@@ -71,8 +71,8 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/ADMIN/middle-office/middle-office').then((m) => m.MiddleOffice),
             },
- 
- 
+
+
             // Dashboard
             {
                 path: 'dashboard',
@@ -81,7 +81,7 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
- 
+
             // Export Screen
             {
                 path: 'export-screen',
@@ -100,7 +100,7 @@ export const routes: Routes = [
                     description: 'Manage all Export LC activities here.',
                 },
             },
- 
+
             // ==============================
             // SHIPPING GUARANTEE
             // ==============================
@@ -247,13 +247,21 @@ export const routes: Routes = [
                     },
                 ],
             },
-                    {
-                        path: 'export-collection/preview',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/export-collection/components/preview/preview'
-                            ).then((m) => m.PreviewSectionComponent),
-                    },
+            // {
+                // path: 'preview/app-success',
+                // loadComponent: () =>
+                    // import(
+                        // './screens/USER/export-collection/components/preview/pages/export-collection-success/export-collection-success'
+                    // ).then((m) => m.ExportCollectionSuccess),
+            // },
+
+            {
+                path: 'export-collection/preview',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/export-collection/components/preview/preview'
+                    ).then((m) => m.PreviewSectionComponent),
+            },
             {
                 path: 'export-collection-welcome',
                 loadComponent: () =>
@@ -264,10 +272,10 @@ export const routes: Routes = [
                     title: 'Welcome to Export Collection',
                     description: 'Manage all Export Collection related activities here.',
 
-                
+
                 },
             },
-             // exportcollection Amend Route
+            // exportcollection Amend Route
             {
                 path: 'export-collection/amend',
                 loadComponent: () =>
@@ -275,23 +283,23 @@ export const routes: Routes = [
                         './screens/USER/export-collection/sub-menus/event/amend/amend'
                     ).then((m) => m.Amend),
             },
- 
+
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-            
+
 
 
             // ==============================
             // UNDERTAKING ISSUANCE 
             // ==============================
- 
+
             {
                 path: 'undertaking-issuance',
                 loadComponent: () =>
                     import('./screens/USER/undertaking-issuance/undertaking-issuance')
                         .then((m) => m.UndertakingIssuance),
             },
- 
+
             {
                 path: 'undertaking-issuance/request-undertaking',
                 loadComponent: () =>
@@ -334,10 +342,10 @@ export const routes: Routes = [
                                 './screens/USER/undertaking-issuance/components/instructions-bank/instructions-bank'
                             ).then((m) => m.InstructionsBank),
                     },
-   
+
                 ],
             },
- 
+
             {
                 path: 'undertaking-welcome',
                 loadComponent: () =>
@@ -350,7 +358,7 @@ export const routes: Routes = [
                         'Manage all Undertaking Issuance related activities here.',
                 },
             },
- 
+
             {
                 path: 'undertaking-issuance/amend',
                 loadComponent: () =>
@@ -358,12 +366,12 @@ export const routes: Routes = [
                         './screens/USER/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
                     ).then((m) => m.AmendScreen),
             },
- 
- 
+
+
             // ==============================
             // IMPORT LC
             // ==============================
- 
+
             {
                 path: 'import-screen',
                 loadComponent: () =>
@@ -428,7 +436,7 @@ export const routes: Routes = [
                         './screens/USER/import-screen/components/preview/preview'
                     ).then((m) => m.Preview),
             },
- 
+
             {
                 path: 'import-welcome',
                 loadComponent: () =>
@@ -440,7 +448,7 @@ export const routes: Routes = [
                     description: 'Manage all Import LC related activities here.',
                 },
             },
- 
+
             // Import Amend Route
             {
                 path: 'import-screen/amend',
@@ -449,12 +457,12 @@ export const routes: Routes = [
                         './screens/USER/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
             },
- 
+
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
     },
- 
-  // Wildcard redirect
-  { path: '**', redirectTo: 'login' },
+
+    // Wildcard redirect
+    { path: '**', redirectTo: 'login' },
 ];

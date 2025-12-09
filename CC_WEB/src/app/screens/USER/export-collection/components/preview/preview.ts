@@ -13,12 +13,20 @@ import { Router } from '@angular/router';
   styleUrls: ['./preview.scss'],
 })
 export class PreviewSectionComponent {
+
   @Input() form!: FormGroup;
   isOpen = true;
-currentStep: any;
- constructor(private dataService: SharedService, private fb: FormBuilder, private router: Router){}
- ngOnInit() {
+  currentStep: any;
+
+  constructor(
+    private dataService: SharedService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
     const data = this.dataService.getFormData();
+
     if (data) {
       this.form = this.fb.group({
         generaldetails: this.fb.group(data.generaldetails || {}),
@@ -27,34 +35,47 @@ currentStep: any;
         paymentamount: this.fb.group(data.paymentamount || {}),
         shippingdetails: this.fb.group(data.shippingdetails || {}),
         collectioninstructions: this.fb.group(data.collectioninstructions || {}),
-        license: this.fb.group(data.license || {}),
+        license: this.fb.group({ attachments: this.fb.array(data.attachments?.attachments || []) }),
         attachments: this.fb.group({
+          attachments: this.fb.array(data.attachments?.attachments || []),
           documents: this.fb.array(data.attachments?.documents || [])
         })
       });
     }
   }
 
+  // Toggle Collapse
   toggle() {
     this.isOpen = !this.isOpen;
-
   }
 
+  // ✅ Correct Attachments Getter
   get attachmentsArray(): FormArray {
-    return (this.form.get('attachments')?.get('attachments') as FormArray) || new FormArray([]);
-  }
-  previous(){
-    this.router.navigate(['export-collection'])
-  }
-  submit(){
-    console.log("Submitted Data:", this.form.value);
-  }
-  get documentsArray(): FormArray {
-    return (this.form.get('attachments')?.get('documents') as FormArray) || new FormArray([]);
+    return (this.form.get('attachments.attachments') as FormArray) || new FormArray([]);
   }
 
+  // ✅ Correct Documents Getter
+  get documentsArray(): FormArray {
+    return (this.form.get('attachments.documents') as FormArray) || new FormArray([]);
+  }
+
+  // Back Button
+  previous() {
+    this.router.navigate(['export-collection']);
+  }
+
+  // Submit Button
+submit() {
+  console.log('Submitted Data:', this.form.value);
+
+  // Navigate to success page
+//  this.router.navigate(['/preview/app-success']);
+}
+
+  // File Download
   downloadFile(file: any) {
     if (!file || !file.file) return;
+
     const url = URL.createObjectURL(file.file);
     const a = document.createElement('a');
     a.href = url;
@@ -63,18 +84,18 @@ currentStep: any;
     URL.revokeObjectURL(url);
   }
 
-  /** Format a field string like 'remittingBankName' => 'Remitting Bank Name' */
+  // Helper: Format Labels
   formatLabel(field: string): string {
     return field
-      .replace(/([A-Z])/g, ' $1')   // add space before capital letters
-      .replace(/^./, str => str.toUpperCase()); // capitalize first letter
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase());
   }
 
-  /** Format boolean values as Yes/No */
+  // Helper: Format Values
   formatValue(value: any): string {
     if (value === true) return 'Yes';
     if (value === false) return 'No';
     return value ?? '—';
   }
-  
+
 }

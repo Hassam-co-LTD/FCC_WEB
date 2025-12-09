@@ -1,199 +1,405 @@
+// @use '../../../../../../styles/_theme.scss' as theme;
+
+// /* ================================
+//    PREVIEW WRAPPER
+// ================================ */
+// .preview-section {
+//   background: theme.$light-bg;
+//   border-radius: theme.$radius-large;
+//   padding: 20px;
+//   margin-top: 16px;
+//   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+// }
+
+// /* ================================
+//    SECTION HEADER COLLAPSIBLE
+// ================================ */
+// .section-header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   background: #0b4eb3;
+//   border-radius: theme.$radius-large;
+//   padding: 14px 18px;
+//   cursor: pointer;
+//   transition: background 0.3s ease;
+//   color: white;
+
+//   h2 {
+//     margin: 0;
+//     font-size: 18px;
+//     font-weight: 600;
+//   }
+
+//   mat-icon {
+//     font-size: 22px;
+//   }
+
+//   &:hover {
+//     background: (#0b4eb3, 5%);
+//   }
+// }
+
+// /* ================================
+//    COLLAPSIBLE BODY
+// ================================ */
+// .collapsible {
+//   max-height: 0;
+//   overflow: hidden;
+//   transition: max-height 0.35s ease-in-out;
+
+//   &.open {
+//     max-height: 7000px;
+//   }
+// }
+
+// /* ================================
+//    PREVIEW BLOCK / CARD
+// ================================ */
+// .preview-block {
+//   background: theme.$white;
+//   padding: 20px;
+//   border-radius: theme.$radius-large;
+//   border: 1px solid theme.$border-light;
+//   box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+//   margin-bottom: 20px;
+
+//   h2, h3, h4 {
+//     margin: 0 0 12px 0;
+//     font-weight: 600;
+//     color: theme.$text-dark;
+//   }
+
+//   h2 {
+//     font-size: 18px;
+//     color: theme.$primary;
+//   }
+
+//   h3 {
+//     font-size: 16px;
+//     margin-top: 20px;
+//     color: theme.$primary-dark;
+//   }
+
+//   h4 {
+//     font-size: 14px;
+//     color: theme.$text-medium;
+//   }
+
+//   &.full-width {
+//     grid-column: span 2;
+//   }
+// }
+
+// /* ================================
+//    DIVIDER
+// ================================ */
+// hr {
+//   border: 0;
+//   height: 1px;
+//   background: theme.$border-light;
+//   margin: 20px 0;
+// }
+
+// /* ================================
+//    PREVIEW ROW → TWO-COLUMN GRID
+// ================================ */
+// .preview-row {
+//   display: grid;
+//   grid-template-columns: repeat(2, 1fr);
+//   gap: 20px;
+//   padding: 10px 0;
+//   align-items: center;
+
+//   &:last-child {
+//     padding-bottom: 0;
+//   }
+
+//   .preview-label {
+//     font-weight: 600;
+//     color: theme.$text-medium;
+//   }
+
+//   .preview-value {
+//     color: theme.$text-dark;
+//   }
+// }
+
+// /* ================================
+//    ATTACHMENTS / DOCUMENTS GRID
+// ================================ */
+// .preview-grid {
+//   display: grid;
+//   grid-template-columns: repeat(4, 1fr);
+//   background: theme.$light-bg;
+//   border: 1px solid theme.$border-light;
+//   border-radius: theme.$radius-large;
+//   overflow: hidden;
+//   margin-top: 10px;
+
+//   .preview-row {
+//     display: contents;
+//   }
+
+//   .header {
+//     background: theme.$primary-light;
+//     color: theme.$primary;
+//     font-weight: 600;
+//     text-align: left;
+//     padding: 12px 10px;
+//     border-bottom: 1px solid theme.$border-light;
+
+//     div {
+//       padding: 10px;
+//     }
+//   }
+
+//   .preview-row div {
+//     padding: 10px;
+//     font-size: 14px;
+//     border-bottom: 1px solid rgba(0,0,0,0.04);
+//   }
+
+//   .preview-row:last-child div {
+//     border-bottom: none;
+//   }
+// }
+
+// /* ================================
+//    ICONS
+// ================================ */
+// .pdf-icon {
+//   color: #c62828;
+// }
+
+// .image-icon {
+//   color: theme.$primary;
+// }
+
+// .actions {
+//   display: flex;
+//   align-items: center;
+//   gap: 10px;
+// }
+
+// .action-icon {
+//   cursor: pointer;
+//   transition: 0.2s ease;
+
+//   &:hover {
+//     color: theme.$primary-hover;
+//     transform: scale(1.1);
+//   }
+// }
+
+// /* ================================
+//    EMPTY TEXT
+// ================================ */
+// p {
+//   margin: 10px 0 0;
+//   color: theme.$text-medium;
+//   font-size: 14px;
+// }
+
+
 @use '../../../../../../styles/_theme.scss' as theme;
 
-/* ================================
-   PREVIEW WRAPPER
-================================ */
 .preview-section {
-  background: theme.$light-bg;
+  background: theme.$screen-bg;
+  padding: 20px;
   border-radius: theme.$radius-large;
-  padding: 0;
-  margin-top: 16px;
-  box-shadow: 0 2px 8px theme.$shadow-primary;
+  font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-/* ================================
-   SECTION HEADER COLLAPSIBLE
-================================ */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0b4eb3;
+  background: theme.$primary-light;
   border: 1px solid theme.$border-light;
-  padding: 14px 18px;
+  padding: 12px 18px;
   border-radius: theme.$radius-large;
   cursor: pointer;
-  transition: background 0.25s ease, border-color 0.25s ease;
-  color: theme.$primary;
+  box-shadow: theme.$shadow-primary;
 
   h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: white;
-  }
-
-  mat-icon {
-    font-size: 22px;
-    color: white;
-  }
-
-  &:hover {
-    // background: theme.$hover-bg;
-    border-color: theme.$hover-border;
-  }
-}
-
-/* Collapsible Wrapper */
-.collapsible {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease-in-out;
-
-  &.open {
-    max-height: 7000px;
-  }
-}
-
-/* ================================
-   PREVIEW BLOCK
-================================ */
-.preview-block {
-  background: theme.$white;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: theme.$radius-large;
-  border: 1px solid theme.$border-light;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-
-  h2, h3, h4 {
-    margin: 0 0 16px 0;
-    font-weight: 600;
-    color: theme.$text-dark;
-  }
-
-  h2 {
-    font-size: 18px;
     color: theme.$primary;
   }
 
-  h3 {
+  mat-icon {
+    color: theme.$primary;
+  }
+}
+
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+
+  &.open {
+    max-height: 5000px;
+  }
+}
+
+.preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: theme.$gap-default;
+  margin-bottom: 18px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.preview-block {
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  padding: 18px 20px;
+  box-shadow: theme.$shadow-primary;
+
+  h2 {
+    margin-bottom: 14px;
     font-size: 16px;
-    margin-top: 25px;
-    color: theme.$primary-dark;
+    font-weight: 600;
+    color: theme.$primary;
+    border-bottom: 1px solid theme.$border-primary;
+    padding-bottom: 6px;
+  }
+
+  h3 {
+    margin: 12px 0 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: theme.$text-medium;
   }
 
   h4 {
+    margin-bottom: 12px;
     font-size: 15px;
-    color: theme.$text-medium;
+    color: theme.$primary;
   }
 }
 
-/* Divider */
-hr {
-  border: 0;
-  height: 1px;
-  background: theme.$border-light;
-  margin: 0 0 20px 0;
+.preview-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: theme.$text-medium;
 }
 
-/* ================================
-   EACH PREVIEW ROW
-================================ */
-.preview-row {
+.preview-value {
+  font-size: 13px;
+  color: theme.$text-dark;
+  text-align: right;
+  word-break: break-word;
+}
+
+.preview-block .preview-row {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  padding: 10px 0;
-  align-items: center;
-  font-size: 14px;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
+  grid-template-columns: 1fr 1fr;
+  padding: 6px 0;
+  border-bottom: 1px solid theme.$border-light;
 
   &:last-child {
     border-bottom: none;
   }
 }
 
-.preview-label {
-  font-weight: 600;
-  color: theme.$text-medium;
+hr {
+  border: none;
+  border-top: 1px solid theme.$border-light;
+  margin: 20px 0;
 }
 
-.preview-value {
-  color: theme.$text-dark;
-}
-
-/* ================================
-   GRID TABLES (Attachments / Docs)
-================================ */
 .preview-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: theme.$light-bg;
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
   overflow: hidden;
-  margin-top: 10px;
-
-  .preview-row {
-    display: contents;
-  }
+  background: theme.$white;
 
   .header {
     background: theme.$primary-light;
-    color: theme.$primary;
     font-weight: 600;
-    text-align: left;
-    padding: 12px 10px;
+    color: theme.$primary;
+  }
+
+  .preview-row {
+    grid-template-columns: 40px 1fr 1fr 60px;
+    align-items: center;
+    padding: 10px 14px;
     border-bottom: 1px solid theme.$border-light;
 
-    div {
-      padding: 10px;
+    &:last-child {
+      border-bottom: none;
     }
-  }
-
-  .preview-row div {
-    padding: 10px;
-    font-size: 14px;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
-  }
-
-  .preview-row:last-child div {
-    border-bottom: none;
   }
 }
 
-/* ================================
-   ICONS
-================================ */
 .pdf-icon {
-  color: #c62828;
+  color: theme.$primary;
 }
 
 .image-icon {
-  color: theme.$primary;
+  color: theme.$primary-dark;
 }
 
 .actions {
   display: flex;
   align-items: center;
   gap: 10px;
-}
 
-.action-icon {
-  cursor: pointer;
-  transition: 0.2s ease;
+  .action-icon {
+    font-size: 20px;
+    color: theme.$primary;
+    cursor: pointer;
+    transition: 0.2s ease;
 
-  &:hover {
-    color: theme.$primary-hover;
-    transform: scale(1.1);
+    &:hover {
+      color: theme.$primary-dark;
+      transform: scale(1.05);
+    }
   }
 }
 
-/* ================================
-   EMPTY TEXT
-================================ */
-p {
-  margin: 10px 0 0;
-  color: theme.$text-medium;
-  font-size: 14px;
+.preview-block.full-width {
+  margin-top: 20px;
+  text-align: right;
+
+  button {
+    min-width: 120px;
+    border-radius: theme.$radius-default;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+
+  button[mat-flat-button] {
+    background: theme.$primary-btn;
+    color: theme.$text-light;
+    box-shadow: theme.$button-shadow;
+
+    &:hover {
+      background: theme.$primary-btn-hover;
+    }
+  }
+
+  button[mat-stroked-button] {
+    color: theme.$primary;
+    border: 1px solid theme.$primary;
+    background: transparent;
+
+    &:hover {
+      background: theme.$hover-bg;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .preview-value {
+    text-align: left;
+    margin-top: 2px;
+  }
 }

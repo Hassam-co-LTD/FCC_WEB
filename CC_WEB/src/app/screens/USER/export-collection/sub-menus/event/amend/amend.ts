@@ -11,8 +11,11 @@ import { PaymentAmountComponent } from "../amend/components/payment-amount/payme
 import { CollectionInstructionsComponent } from "../amend/components/collection-instructions/collection-instructions";
 import { License } from "../amend/components/license/license";
 import { AttachmentsDocuments } from "../amend/components/attachments-documents/attachments-documents";
-import { PreviewSection } from "../amend/components/preview/preview";
+// import { PreviewSection } from "../amend/components/preview/preview";
 import { Sidebar } from "../../../../../../core/sidebar/sidebar";
+import { Router } from '@angular/router';
+import { SharedService } from '../../../../../../core/services/shared-service';
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-amend',
@@ -28,15 +31,16 @@ import { Sidebar } from "../../../../../../core/sidebar/sidebar";
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
-    PreviewSection,
-    Sidebar
-  ],
+    // PreviewSection,
+    Sidebar,
+    RouterModule
+],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss']
 })
 export class Amend implements OnInit, AfterViewInit {
 
-  importForm!: FormGroup;
+   importForm!: FormGroup;
   currentStep = 0;
   uploadedFiles: any[] = [];
 
@@ -48,13 +52,20 @@ export class Amend implements OnInit, AfterViewInit {
     { label: "Shipping Details" },
     { label: "Collection Instructions" },
     { label: "Licenses" },
-    { label: "Attachments and Documents" },
-    { label: "Preview" }
+    { label: "Attachments and Documents" }
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dataService: SharedService
+  ) {}
 
   ngOnInit() {
+
+    // -----------------------------
+    // FORM CREATION
+    // -----------------------------
     this.importForm = this.fb.group({
 
       generaldetails: this.fb.group({
@@ -106,7 +117,7 @@ export class Amend implements OnInit, AfterViewInit {
       license: this.fb.group({
         licenseNumber: [''],
         licenseDate: [''],
-        licenseFile: [null] // IMPORTANT
+        licenseFile: [null]
       }),
 
       collectioninstructions: this.fb.group({
@@ -126,7 +137,23 @@ export class Amend implements OnInit, AfterViewInit {
       attachments: this.fb.group({
         documents: this.fb.array([])
       })
+
     });
+
+    // -----------------------------
+    // LOAD SAVED DRAFT
+    // -----------------------------
+    const savedDraft = localStorage.getItem('exportCollectionDraft');
+    if (savedDraft) {
+      const draftData = JSON.parse(savedDraft);
+      this.importForm.patchValue(draftData);
+
+      if (draftData.attachments?.documents?.length) {
+        draftData.attachments.documents.forEach((doc: any) => {
+          this.documentsArray.push(this.fb.group(doc));
+        });
+      }
+    }
   }
 
   // -----------------------------
@@ -170,9 +197,9 @@ export class Amend implements OnInit, AfterViewInit {
   }
 
   // -----------------------------
-  // SCROLL + STEPS
+  // SCROLL + STEP TRACKING
   // -----------------------------
-  
+
   ngAfterViewInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
@@ -202,10 +229,30 @@ export class Amend implements OnInit, AfterViewInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  next() {
-    if (this.currentStep < this.exportCollectionSteps.length - 1) {
-      this.scrollToSection(this.currentStep + 1);
+  // -----------------------------
+  // ACTION BUTTONS
+  // -----------------------------
+
+  saveDraft() {
+    const payload = this.importForm.value;
+    localStorage.setItem('exportCollectionDraft', JSON.stringify(payload));
+    console.log('Draft saved successfully');
+  }
+
+  submit() {
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before submitting.");
+      return;
     }
+
+    this.dataService.setFormData(this.importForm.value);
+
+    // Clear draft after successful submit
+    // localStorage.removeItem('exportCollectionDraft');
+
+    // Navigate to preview
+    this.router.navigate(['/export-collection/amend/preview']);
   }
 
   previous() {

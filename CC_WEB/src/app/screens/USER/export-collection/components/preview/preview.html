@@ -7,166 +7,106 @@
 
   <div class="preview-section" *ngIf="form">
 
-    <!-- ========================= -->
-    <!-- GENERAL DETAILS PREVIEW -->
-    <!-- ========================= -->
-    <div class="preview-block" *ngIf="form.get('generaldetails') as gd">
-      <h2>General Details</h2>
-
-      <div class="preview-row">
-        <div class="preview-label">Collection Type:</div>
-        <div class="preview-value">{{ gd.value.collectionType }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Customer Reference:</div>
-        <div class="preview-value">{{ gd.value.customerReference }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Drawee Reference:</div>
-        <div class="preview-value">{{ gd.value.draweeReference }}</div>
-      </div>
+<!-- ============================== -->
+<!-- ROW 1 → GENERAL DETAILS & DRAWER/DRAWEE -->
+<!-- ============================== -->
+<div class="preview-row">
+  <!-- GENERAL DETAILS -->
+  <div class="preview-block" *ngIf="form.get('generaldetails') as gd">
+    <h2>General Details</h2>
+    <div class="preview-row">
+      <div class="preview-label">Collection Type:</div>
+      <div class="preview-value">{{ gd.value.collectionType }}</div>
     </div>
+    <div class="preview-row">
+      <div class="preview-label">Customer Reference:</div>
+      <div class="preview-value">{{ gd.value.customerReference }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Drawee Reference:</div>
+      <div class="preview-value">{{ gd.value.draweeReference }}</div>
+    </div>
+  </div>
 
+  <!-- DRAWER & DRAWEE -->
+  <div class="preview-block" *ngIf="form.get('DrawerDraweeDetails') as dd">
+    <h2>Drawer & Drawee</h2>
+    <h3>Drawer</h3>
+    <div class="preview-row">
+      <div class="preview-label">Drawer Name:</div>
+      <div class="preview-value">{{ dd.value.drawerName }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Address 1:</div>
+      <div class="preview-value">{{ dd.value.drawerAddress1 }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Address 2:</div>
+      <div class="preview-value">{{ dd.value.drawerAddress2 }}</div>
+    </div>
+    <h3>Drawee</h3>
+    <div class="preview-row">
+      <div class="preview-label">Drawee Name:</div>
+      <div class="preview-value">{{ dd.value.draweeName }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Address 1:</div>
+      <div class="preview-value">{{ dd.value.draweeAddress1 }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Address 2:</div>
+      <div class="preview-value">{{ dd.value.draweeAddress2 }}</div>
+    </div>
+  </div>
+</div>
     <hr />
 
-    <!-- ========================= -->
-    <!-- DRAWER & DRAWEE PREVIEW -->
-    <!-- ========================= -->
-    <div class="preview-block" *ngIf="form.get('DrawerDraweeDetails') as dd">
-      <h2>Drawer & Drawee</h2>
-
-      <!-- Drawer -->
-      <h3>Drawer</h3>
-
-      <div class="preview-row">
-        <div class="preview-label">Drawer Name:</div>
-        <div class="preview-value">{{ dd.value.drawerName }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Address 1:</div>
-        <div class="preview-value">{{ dd.value.drawerAddress1 }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Address 2:</div>
-        <div class="preview-value">{{ dd.value.drawerAddress2 }}</div>
-      </div>
-
-      <!-- Drawee -->
-      <h3>Drawee</h3>
-
-      <div class="preview-row">
-        <div class="preview-label">Drawee Name:</div>
-        <div class="preview-value">{{ dd.value.draweeName }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Address 1:</div>
-        <div class="preview-value">{{ dd.value.draweeAddress1 }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Address 2:</div>
-        <div class="preview-value">{{ dd.value.draweeAddress2 }}</div>
-      </div>
-
+   <!-- ============================== -->
+<!-- ROW 2 → BANK DETAILS & PAYMENT/AMOUNT -->
+<!-- ============================== -->
+<div class="preview-row">
+  <!-- BANK DETAILS -->
+  <div class="preview-block" *ngIf="form.get('bankdetails') as bd">
+    <h2>Bank Details</h2>
+    <div class="preview-row">
+      <div class="preview-label">Remitting Bank Name:</div>
+      <div class="preview-value">{{ bd.value.remittingBankName }}</div>
     </div>
-
-    <hr />
-
-    <!-- ========================= -->
-    <!-- BANK DETAILS PREVIEW -->
-    <!-- ========================= -->
-    <div class="preview-block" *ngIf="form.get('bankdetails') as bd">
-      <h2>Bank Details</h2>
-
-      <div class="preview-row">
-        <div class="preview-label">Remitting Bank Name:</div>
-        <div class="preview-value">{{ bd.value.remittingBankName }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Remitting Issuer Ref:</div>
-        <div class="preview-value">{{ bd.value.remittingIssuerRef }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Principal Account:</div>
-        <div class="preview-value">{{ bd.value.principalAccount }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Fee Account:</div>
-        <div class="preview-value">{{ bd.value.feeAccount }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Presenting Bank Name:</div>
-        <div class="preview-value">{{ bd.value.presentingBankName }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Presenting Address 1:</div>
-        <div class="preview-value">{{ bd.value.presentingAddress1 }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Presenting Address 2:</div>
-        <div class="preview-value">{{ bd.value.presentingAddress2 }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Collecting Bank Name:</div>
-        <div class="preview-value">{{ bd.value.collectingBankName }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Collecting Swift Code:</div>
-        <div class="preview-value">{{ bd.value.collectingSwiftCode }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Collecting Reference:</div>
-        <div class="preview-value">{{ bd.value.collectingReference }}</div>
-      </div>
+    <div class="preview-row">
+      <div class="preview-label">Remitting Issuer Ref:</div>
+      <div class="preview-value">{{ bd.value.remittingIssuerRef }}</div>
     </div>
-
-    <hr />
-
-    <!-- ========================= -->
-    <!-- PAYMENT & AMOUNT PREVIEW -->
-    <!-- ========================= -->
-    <div class="preview-block" *ngIf="form.get('paymentamount') as pa">
-      <h2>Payment & Amount</h2>
-
-      <div class="preview-row">
-        <div class="preview-label">Amount:</div>
-        <div class="preview-value">{{ pa.value.amount }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Currency:</div>
-        <div class="preview-value">{{ pa.value.currency }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Payment Type:</div>
-        <div class="preview-value">{{ pa.value.paymentType }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Tenor:</div>
-        <div class="preview-value">{{ pa.value.tenor }}</div>
-      </div>
-
-      <div class="preview-row">
-        <div class="preview-label">Payment Reference:</div>
-        <div class="preview-value">{{ pa.value.paymentReference }}</div>
-      </div>
+    <div class="preview-row">
+      <div class="preview-label">Principal Account:</div>
+      <div class="preview-value">{{ bd.value.principalAccount }}</div>
     </div>
+    <div class="preview-row">
+      <div class="preview-label">Fee Account:</div>
+      <div class="preview-value">{{ bd.value.feeAccount }}</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT & AMOUNT -->
+  <div class="preview-block" *ngIf="form.get('paymentamount') as pa">
+    <h2>Payment & Amount</h2>
+    <div class="preview-row">
+      <div class="preview-label">Amount:</div>
+      <div class="preview-value">{{ pa.value.amount }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Currency:</div>
+      <div class="preview-value">{{ pa.value.currency }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Payment Type:</div>
+      <div class="preview-value">{{ pa.value.paymentType }}</div>
+    </div>
+    <div class="preview-row">
+      <div class="preview-label">Tenor:</div>
+      <div class="preview-value">{{ pa.value.tenor }}</div>
+    </div>
+  </div>
+</div>
 
     <hr />
 
@@ -281,20 +221,34 @@
     <!-- ========================= -->
     <!-- LICENSE PREVIEW -->
     <!-- ========================= -->
-    <div class="preview-block" *ngIf="form.get('license') as lc">
-      <h2>Licenses</h2>
+    <div class="preview-block" *ngIf="attachmentsArray.length >= 0">
+      <h4>LICENSE</h4>
 
-      <div class="preview-row">
-        <div class="preview-label">License Number:</div>
-        <div class="preview-value">{{ lc.value.licenseNumber }}</div>
+      <div class="preview-grid" *ngIf="attachmentsArray.length > 0">
+        <div class="preview-row header">
+          <div>File Type</div>
+          <div>Title</div>
+          <div>File Name</div>
+          <!-- <div>File Size</div> -->
+          <!-- <div>Actions</div> -->
+        </div>
+
+        <div class="preview-row" *ngFor="let f of attachmentsArray.controls; let i = index">
+          <div>
+            <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+            <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
+          </div>
+          <div>{{ f.value.title }}</div>
+          <div>{{ f.value.fileName }}</div>
+          <!-- <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div> -->
+          <div class="actions">
+            <!-- <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon> -->
+          </div>
+        </div>
       </div>
 
-      <div class="preview-row">
-        <div class="preview-label">License Date:</div>
-        <div class="preview-value">{{ lc.value.licenseDate }}</div>
-      </div>
+      <p *ngIf="attachmentsArray.controls.length === 0">No attachments uploaded.</p>
     </div>
-
     <hr />
 
     <!-- ========================= -->
@@ -352,6 +306,7 @@
 
       <p *ngIf="documentsArray.controls.length === 0">No documents uploaded.</p>
     </div>
+<div class="preview-block full-width">
 
      <div class="actions">
         <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
