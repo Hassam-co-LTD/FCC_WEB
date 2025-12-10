@@ -14,7 +14,7 @@ import { AttachmentsDocuments } from "../amend/components/attachments-documents/
 // import { PreviewSection } from "../amend/components/preview/preview";
 import { Sidebar } from "../../../../../../core/sidebar/sidebar";
 import { Router } from '@angular/router';
-import { SharedService } from '../../../../../../core/services/shared-service';
+import { SharedService } from '../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { RouterModule } from "@angular/router";
 
 @Component({

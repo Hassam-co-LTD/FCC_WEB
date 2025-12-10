@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -30,7 +30,7 @@ import { MatNativeDateModule } from '@angular/material/core';
   styleUrls: ['./undertaking-details.scss']
 })
 export class UndertakingDetails {
-
+@Input() form!: FormGroup;
   isOpen: boolean = true;
 
   undertakingdetails!: FormGroup;

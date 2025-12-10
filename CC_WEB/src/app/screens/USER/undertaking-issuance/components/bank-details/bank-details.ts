@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,6 +22,7 @@ import { CommonModule } from '@angular/common';
 })
 export class BankDetails {
 
+  @Input() form!: FormGroup;
   isOpen = true;
   selectedTab = 'issuing';
 

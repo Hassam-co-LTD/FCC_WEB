@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormField, MatFormFieldModule, MatLabel } from "@angular/material/form-field";
 import { MatSelect, MatOption, MatSelectModule } from "@angular/material/select";
@@ -23,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
   ]
 })
 export class InstructionsBank implements OnInit {
+  @Input() form!: FormGroup;
   isOpen = true;
 
   // FormGroup for reactive form

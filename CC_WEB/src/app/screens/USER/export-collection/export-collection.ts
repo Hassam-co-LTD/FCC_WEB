@@ -12,7 +12,7 @@ import { CollectionInstructionsComponent } from '../../USER/export-collection/co
 import { License } from "../../USER/export-collection/components/license/license";
 import { AttachmentsDocuments } from "../../USER/export-collection/components/attachments-documents/attachments-documents";
 import { Sidebar } from "../../../core/sidebar/sidebar";
-import { SharedService } from '../../../core/services/shared-service';
+import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({

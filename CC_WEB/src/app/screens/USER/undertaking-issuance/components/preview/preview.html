@@ -1,1 +1,298 @@
-<p>preview works!</p>
+<div class="preview-page">
+  <h2 class="page-title">Preview</h2>
+
+  <div class="preview-container">
+    <!-- ============================== -->
+    <!-- ROW 1 → GENERAL + APPLICANT   -->
+    <!-- ============================== -->
+    <div class="preview-row">
+      <mat-card class="preview-card">
+        <h3 class="section-title">General Details</h3>
+        <div *ngIf="form.get('generalDetails') as gd" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Product Type:</div>
+            <div class="preview-value">
+              {{ formatValue(gd.value['productType']) }}
+            </div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Mode of Transmission:</div>
+            <div class="preview-value">
+              {{ formatValue(gd.value['modeOfTransmission']) }}
+            </div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Form of Undertaking:</div>
+            <div class="preview-value">
+              {{ formatValue(gd.value['formOfUndertaking']) }}
+            </div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Purpose:</div>
+            <div class="preview-value">
+              {{ formatValue(gd.value['purpose']) }}
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Applicant and Beneficiary Details</h3>
+        <div *ngIf="form.get('applicantBeneficiaryForm') as ab" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Applicant Name:</div>
+            <div class="preview-value">{{ ab.value['applicantName'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Applicant Address 1:</div>
+            <div class="preview-value">{{ ab.value['applicantAddress1'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Applicant Address 2:</div>
+            <div class="preview-value">{{ ab.value['applicantAddress2'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Applicant Address 3:</div>
+            <div class="preview-value">{{ ab.value['applicantAddress3'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Name:</div>
+            <div class="preview-value">{{ ab.value['beneficiaryName'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Address 1:</div>
+            <div class="preview-value">{{ ab.value['beneficiaryAddress1'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Address 2:</div>
+            <div class="preview-value">{{ ab.value['beneficiaryAddress2'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Address 3:</div>
+            <div class="preview-value">{{ ab.value['beneficiaryAddress3'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Country:</div>
+            <div class="preview-value">{{ ab.value['beneficiaryCountry'] }}</div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 2 → BANK + UNDERTAKING    -->
+    <!-- ============================== -->
+    <div class="preview-row">
+      <mat-card class="preview-card">
+        <h3 class="section-title">Bank Details</h3>
+        <div *ngIf="form.get('bankForm') as bf" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Recipient Bank Name:</div>
+            <div class="preview-value">{{ bf.value['recipientBankName'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Issuer's Reference:</div>
+            <div class="preview-value">{{ bf.value['issuerReference'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Selected Tab:</div>
+            <div class="preview-value">{{ getSelectedTabLabel() }}</div>
+          </div>
+          <div *ngIf="bf.value['issuanceType']" class="preview-item">
+            <div class="preview-label">Issuance Type:</div>
+            <div class="preview-value">
+              {{ bf.value['issuanceType'] === 'direct' ? 'Direct' : 'Indirect' }}
+            </div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">SWIFT Code:</div>
+            <div class="preview-value">{{ bf.value['swift'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Bank Name:</div>
+            <div class="preview-value">{{ bf.value['bankName'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Bank Address:</div>
+            <div class="preview-value">
+              {{ formatAddress(bf.value['address1'], bf.value['address2'], bf.value['address3']) }}
+            </div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Bank Country:</div>
+            <div class="preview-value">{{ bf.value['country'] }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Undertaking Details</h3>
+        <div *ngIf="form.get('undertakingDetailsForm') as ud" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Type of Undertaking:</div>
+            <div class="preview-value">{{ ud.value['typeOfUndertaking'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Effective Date Option:</div>
+            <div class="preview-value">{{ formatEffectiveOption(ud.value['effectiveOption']) }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Expiry Type:</div>
+            <div class="preview-value">{{ ud.value['expiryType'] }}</div>
+          </div>
+          <div *ngIf="ud.value['expiryDate']" class="preview-item">
+            <div class="preview-label">Expiry Date:</div>
+            <div class="preview-value">{{ formatDate(ud.value['expiryDate']) }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Currency:</div>
+            <div class="preview-value">{{ ud.value['currency'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Undertaking Amount:</div>
+            <div class="preview-value">{{ ud.value['undertakingAmount'] | number }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Variation Plus:</div>
+            <div class="preview-value">{{ ud.value['variationPlus'] }}%</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Variation Minus:</div>
+            <div class="preview-value">{{ ud.value['variationMinus'] }}%</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Issuance Charges:</div>
+            <div class="preview-value">{{ ud.value['issuanceCharges'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Correspondent Charges:</div>
+            <div class="preview-value">{{ ud.value['correspondentCharges'] }}</div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 3 → CONTRACT + RULES      -->
+    <!-- ============================== -->
+    <div class="preview-row">
+      <mat-card class="preview-card">
+        <h3 class="section-title">Contract & Rules</h3>
+        <div *ngIf="form.get('undertakingDetailsForm') as ud" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Contract Type:</div>
+            <div class="preview-value">{{ ud.value['contractType'] }}</div>
+          </div>
+          <div *ngIf="ud.value['contractDate']" class="preview-item">
+            <div class="preview-label">Contract Date:</div>
+            <div class="preview-value">{{ formatDate(ud.value['contractDate']) }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Contract Currency:</div>
+            <div class="preview-value">{{ ud.value['contractCurrency'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Contract Amount:</div>
+            <div class="preview-value">{{ ud.value['contractAmount'] | number }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Percentage Covered:</div>
+            <div class="preview-value">{{ ud.value['percentageCovered'] }}%</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Contract Narrative:</div>
+            <div class="preview-value">{{ ud.value['contractReference'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Applicable Rules:</div>
+            <div class="preview-value">{{ ud.value['applicableRules'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Governing Laws:</div>
+            <div class="preview-value">{{ formatGoverningLaws(ud.value['governinglawsType']) }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Demand Option:</div>
+            <div class="preview-value">{{ formatDemandOption(ud.value['DemandOption']) }}</div>
+          </div>
+          <div class="preview-item full-width">
+            <div class="preview-label">Underlying Transaction:</div>
+            <div class="preview-value">{{ ud.value['underlyingtransactionInfo'] }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Instructions to Bank</h3>
+        <div *ngIf="form.get('instructionsForm') as ib" class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Delivery Type:</div>
+            <div class="preview-value">{{ ib.value['deliveryType'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Delivery Mode:</div>
+            <div class="preview-value">{{ ib.value['deliveryMode'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Delivery To:</div>
+            <div class="preview-value">{{ ib.value['deliveryTo'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Principal Account:</div>
+            <div class="preview-value">{{ ib.value['principalAccount'] }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Fee Account:</div>
+            <div class="preview-value">{{ ib.value['feeAccount'] }}</div>
+          </div>
+          <div class="preview-item full-width">
+            <div class="preview-label">Other Instructions:</div>
+            <div class="preview-value">{{ ib.value['otherInstructions'] }}</div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 4 → ATTACHMENTS           -->
+    <!-- ============================== -->
+    <mat-card class="preview-card full-width">
+      <h3 class="section-title">Attachments</h3>
+
+      <div *ngIf="attachmentsArray.length > 0" class="preview-attachments-container">
+        <div class="attachment-grid header">
+          <div>File Name</div>
+          <div>Type</div>
+          <div>Size</div>
+          <div>Actions</div>
+        </div>
+
+        <div class="attachment-grid" *ngFor="let file of attachmentsArray.value; let i = index">
+          <div>{{ file.name }}</div>
+          <div>
+            <span class="file-type">{{ getFileType(file.name) }}</span>
+          </div>
+          <div>{{ formatFileSize(file.size) }}</div>
+          <div class="actions">
+            <button mat-icon-button (click)="downloadFile(i)" matTooltip="Download">
+              <mat-icon>download</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeFile(i)" matTooltip="Remove">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="attachmentsArray.length === 0" class="no-attachments">
+        <mat-icon>attach_file</mat-icon>
+        <p>No attachments uploaded</p>
+      </div>
+    </mat-card>
+  </div>
+</div>
+
+<div class="actions">
+  <button mat-stroked-button (click)="previous()">Back</button>
+  <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+</div>

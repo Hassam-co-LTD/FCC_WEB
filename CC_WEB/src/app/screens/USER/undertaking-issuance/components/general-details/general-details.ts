@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
@@ -25,6 +26,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   styleUrl: './general-details.scss',
 })
 export class GeneralDetails {
+@Input() form!: FormGroup;
+
   isOpen = true;
   currentStep = 0;
   steps = [

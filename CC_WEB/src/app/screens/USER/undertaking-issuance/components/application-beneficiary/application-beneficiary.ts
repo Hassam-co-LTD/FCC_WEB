@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,6 +27,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   styleUrl: './application-beneficiary.scss',
 })
 export class ApplicationBeneficiary {
+  @Input() form!: FormGroup;
   formGroup!: FormGroup;
   isOpen: boolean = true; // default open
   showAlternate: boolean = false;

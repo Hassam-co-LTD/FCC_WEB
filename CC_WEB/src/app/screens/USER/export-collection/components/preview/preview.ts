@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { SharedService } from '../../../../../core/services/shared-service';
+import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
 
 @Component({

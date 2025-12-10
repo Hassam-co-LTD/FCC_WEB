@@ -202,204 +202,372 @@
 // }
 
 
+// @use '../../../../../../styles/_theme.scss' as theme;
+
+// .preview-section {
+//   background: theme.$screen-bg;
+//   padding: 20px;
+//   border-radius: theme.$radius-large;
+//   font-family: 'Inter', 'Roboto', sans-serif;
+// }
+
+// .section-header {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   background: theme.$primary-light;
+//   border: 1px solid theme.$border-light;
+//   padding: 12px 18px;
+//   border-radius: theme.$radius-large;
+//   cursor: pointer;
+//   box-shadow: theme.$shadow-primary;
+
+//   h2 {
+//     margin: 0;
+//     font-size: 18px;
+//     font-weight: 600;
+//     color: theme.$primary;
+//   }
+
+//   mat-icon {
+//     color: theme.$primary;
+//   }
+// }
+
+// .collapsible {
+//   max-height: 0;
+//   overflow: hidden;
+//   transition: max-height 0.4s ease;
+
+//   &.open {
+//     max-height: 5000px;
+//   }
+// }
+
+// .preview-row {
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   gap: theme.$gap-default;
+//   margin-bottom: 18px;
+
+//   @media (max-width: 900px) {
+//     grid-template-columns: 1fr;
+//   }
+// }
+
+// .preview-block {
+//   background: theme.$white;
+//   border: 1px solid theme.$border-light;
+//   border-radius: theme.$radius-large;
+//   padding: 18px 20px;
+//   box-shadow: theme.$shadow-primary;
+
+//   h2 {
+//     margin-bottom: 14px;
+//     font-size: 16px;
+//     font-weight: 600;
+//     color: theme.$primary;
+//     border-bottom: 1px solid theme.$border-primary;
+//     padding-bottom: 6px;
+//   }
+
+//   h3 {
+//     margin: 12px 0 6px;
+//     font-size: 14px;
+//     font-weight: 600;
+//     color: theme.$text-medium;
+//   }
+
+//   h4 {
+//     margin-bottom: 12px;
+//     font-size: 15px;
+//     color: theme.$primary;
+//   }
+// }
+
+// .preview-label {
+//   font-size: 13px;
+//   font-weight: 600;
+//   color: theme.$text-medium;
+// }
+
+// .preview-value {
+//   font-size: 13px;
+//   color: theme.$text-dark;
+//   text-align: right;
+//   word-break: break-word;
+// }
+
+// .preview-block .preview-row {
+//   display: grid;
+//   grid-template-columns: 1fr 1fr;
+//   padding: 6px 0;
+//   border-bottom: 1px solid theme.$border-light;
+
+//   &:last-child {
+//     border-bottom: none;
+//   }
+// }
+
+// hr {
+//   border: none;
+//   border-top: 1px solid theme.$border-light;
+//   margin: 20px 0;
+// }
+
+// .preview-grid {
+//   border: 1px solid theme.$border-light;
+//   border-radius: theme.$radius-large;
+//   overflow: hidden;
+//   background: theme.$white;
+
+//   .header {
+//     background: theme.$primary-light;
+//     font-weight: 600;
+//     color: theme.$primary;
+//   }
+
+//   .preview-row {
+//     grid-template-columns: 40px 1fr 1fr 60px;
+//     align-items: center;
+//     padding: 10px 14px;
+//     border-bottom: 1px solid theme.$border-light;
+
+//     &:last-child {
+//       border-bottom: none;
+//     }
+//   }
+// }
+
+// .pdf-icon {
+//   color: theme.$primary;
+// }
+
+// .image-icon {
+//   color: theme.$primary-dark;
+// }
+
+// .actions {
+//   display: flex;
+//   align-items: center;
+//   gap: 10px;
+
+//   .action-icon {
+//     font-size: 20px;
+//     color: theme.$primary;
+//     cursor: pointer;
+//     transition: 0.2s ease;
+
+//     &:hover {
+//       color: theme.$primary-dark;
+//       transform: scale(1.05);
+//     }
+//   }
+// }
+
+// .preview-block.full-width {
+//   margin-top: 20px;
+//   text-align: right;
+
+//   button {
+//     min-width: 120px;
+//     border-radius: theme.$radius-default;
+//     font-weight: 600;
+//     letter-spacing: 0.4px;
+//   }
+
+//   button[mat-flat-button] {
+//     background: theme.$primary-btn;
+//     color: theme.$text-light;
+//     box-shadow: theme.$button-shadow;
+
+//     &:hover {
+//       background: theme.$primary-btn-hover;
+//     }
+//   }
+
+//   button[mat-stroked-button] {
+//     color: theme.$primary;
+//     border: 1px solid theme.$primary;
+//     background: transparent;
+
+//     &:hover {
+//       background: theme.$hover-bg;
+//     }
+//   }
+// }
+
+// @media (max-width: 768px) {
+//   .preview-value {
+//     text-align: left;
+//     margin-top: 2px;
+//   }
+// }
 @use '../../../../../../styles/_theme.scss' as theme;
 
+/* Main card wrapper */
 .preview-section {
-  background: theme.$screen-bg;
-  padding: 20px;
+  background: theme.$white;
+  padding: 12px 14px;
   border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
   font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: theme.$primary-light;
-  border: 1px solid theme.$border-light;
-  padding: 12px 18px;
-  border-radius: theme.$radius-large;
-  cursor: pointer;
-  box-shadow: theme.$shadow-primary;
-
-  h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: theme.$primary;
-  }
-
-  mat-icon {
-    color: theme.$primary;
-  }
-}
-
-.collapsible {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-
-  &.open {
-    max-height: 5000px;
-  }
-}
-
+/* Remove outer gaps between blocks */
 .preview-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: theme.$gap-default;
-  margin-bottom: 18px;
+  gap: 8px;               /* reduced */
+  margin: 0;              /* removed bottom gap */
+}
 
-  @media (max-width: 900px) {
+@media (max-width: 900px) {
+  .preview-row {
     grid-template-columns: 1fr;
   }
 }
 
+/* Make all blocks invisible (single card feel) */
 .preview-block {
-  background: theme.$white;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-large;
-  padding: 18px 20px;
-  box-shadow: theme.$shadow-primary;
-
-  h2 {
-    margin-bottom: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    color: theme.$primary;
-    border-bottom: 1px solid theme.$border-primary;
-    padding-bottom: 6px;
-  }
-
-  h3 {
-    margin: 12px 0 6px;
-    font-size: 14px;
-    font-weight: 600;
-    color: theme.$text-medium;
-  }
-
-  h4 {
-    margin-bottom: 12px;
-    font-size: 15px;
-    color: theme.$primary;
-  }
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
 }
 
-.preview-label {
+/* Compact section titles */
+.preview-block h2,
+.preview-block h4 {
   font-size: 13px;
+  font-weight: 700;
+  color: theme.$primary;
+  margin: 6px 0 2px 0;
+  padding-bottom: 2px;
+  border-bottom: 1px solid theme.$border-light;
+}
+
+.preview-block h3 {
+  font-size: 12px;
   font-weight: 600;
   color: theme.$text-medium;
+  margin: 4px 0 2px 0;
 }
 
+/* Tight field rows */
+.preview-block .preview-row {
+  grid-template-columns: 170px 1fr;
+  gap: 4px 10px;
+  padding: 2px 0;              /* reduced height */
+  border-bottom: 1px solid theme.$border-light;
+}
+
+.preview-block .preview-row:last-child {
+  border-bottom: none;
+}
+
+/* Labels */
+.preview-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: theme.$text-medium;
+  margin: 0;
+}
+
+/* Values */
 .preview-value {
-  font-size: 13px;
+  font-size: 12px;
   color: theme.$text-dark;
-  text-align: right;
+  text-align: left;
+  line-height: 1.2;
+  margin: 0;
   word-break: break-word;
 }
 
-.preview-block .preview-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 6px 0;
-  border-bottom: 1px solid theme.$border-light;
-
-  &:last-child {
-    border-bottom: none;
-  }
-}
-
+/* HR ultra compact */
 hr {
   border: none;
   border-top: 1px solid theme.$border-light;
-  margin: 20px 0;
+  margin: 4px 0;
 }
 
+/* Table compact mode */
 .preview-grid {
+  margin-top: 4px;
   border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-large;
+  border-radius: theme.$radius-default;
   overflow: hidden;
-  background: theme.$white;
-
-  .header {
-    background: theme.$primary-light;
-    font-weight: 600;
-    color: theme.$primary;
-  }
-
-  .preview-row {
-    grid-template-columns: 40px 1fr 1fr 60px;
-    align-items: center;
-    padding: 10px 14px;
-    border-bottom: 1px solid theme.$border-light;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
 }
 
-.pdf-icon {
+.preview-grid .preview-row {
+  grid-template-columns: 30px 1fr 1fr 60px;
+  padding: 4px 6px;
+  border-bottom: 1px solid theme.$border-light;
+}
+
+.preview-grid .header {
+  background: theme.$primary-light;
+  font-weight: 700;
   color: theme.$primary;
 }
 
-.image-icon {
-  color: theme.$primary-dark;
+.pdf-icon {
+    color: #c62828;
 }
 
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  .action-icon {
-    font-size: 20px;
+.image-icon {
     color: theme.$primary;
+}
+
+.actionss {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-icon {
     cursor: pointer;
     transition: 0.2s ease;
 
     &:hover {
-      color: theme.$primary-dark;
-      transform: scale(1.05);
+        color: theme.$primary-hover;
+        transform: scale(1.1);
     }
-  }
 }
 
+.attachment-grid {
+    display: grid;
+    grid-template-columns: 70px 1fr 1fr 100px 80px;
+    padding: 8px 0;
+    border-bottom: 1px solid theme.$border-light;
+    align-items: center;
+    font-size: 14px;
+}
+
+.attachment-grid.header {
+    font-weight: 700;
+    background: theme.$hover-bg;
+    border-bottom: 2px solid theme.$border-primary;
+}
+
+
+/* Button area */
 .preview-block.full-width {
-  margin-top: 20px;
+  margin-top: 8px;
+  padding-top: 6px;
   text-align: right;
-
-  button {
-    min-width: 120px;
-    border-radius: theme.$radius-default;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-  }
-
-  button[mat-flat-button] {
-    background: theme.$primary-btn;
-    color: theme.$text-light;
-    box-shadow: theme.$button-shadow;
-
-    &:hover {
-      background: theme.$primary-btn-hover;
-    }
-  }
-
-  button[mat-stroked-button] {
-    color: theme.$primary;
-    border: 1px solid theme.$primary;
-    background: transparent;
-
-    &:hover {
-      background: theme.$hover-bg;
-    }
-  }
 }
 
+.preview-block.full-width button {
+  height: 32px;
+  min-width: 90px;
+  font-size: 12px;
+}
+
+/* Mobile adjustments */
 @media (max-width: 768px) {
-  .preview-value {
-    text-align: left;
-    margin-top: 2px;
+  .preview-block .preview-row {
+    grid-template-columns: 1fr;
   }
 }
