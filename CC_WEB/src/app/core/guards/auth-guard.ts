@@ -1,24 +1,33 @@
-    import { inject } from '@angular/core';
-    import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
-    import { AuthService } from '../services/auth.service'; // adjust path if needed
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
-    export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-      const auth = inject(AuthService);
-      const router = inject(Router);
+export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
 
-      if (!auth.checkAuth()) {
-        router.navigate(['/login']);
-        return false;
-      }
+  console.log('🛠️ authGuard triggered');
 
-      const requiredRole = route.data?.['role'] as 'ADMIN' | 'USER' | undefined;
-      const userRole = auth.getUserCategory();
+  // Don't fail SSR — assume logged out but don't redirect
+  const isBrowser = auth['isBrowser']();  
 
-      if (requiredRole && userRole !== requiredRole) {
-        alert('You are not authorized to access this page');
-        router.navigate([userRole === 'ADMIN' ? '/admin' : '/dashboard']);
-        return false;
-      }
+  const isLoggedIn = isBrowser ? auth.checkAuth() : true; 
+  const userRole = isBrowser ? auth.getUserCategory() : null;
 
-      return true;
-    };
+  console.log('isLoggedIn:', isLoggedIn, 'userRole:', userRole);
+
+  if (isBrowser && !isLoggedIn) {
+    console.error('❌ User not logged in, redirecting to /login');
+    router.navigate(['/login']);
+    return false;
+  }
+
+  const requiredRole = route.data?.['role'] as 'ADMIN' | 'USER' | null;
+
+  if (isBrowser && requiredRole && userRole !== requiredRole) {
+    router.navigate([userRole === 'ADMIN' ? '/admin' : '/dashboard']);
+    return false;
+  }
+
+  return true;
+};

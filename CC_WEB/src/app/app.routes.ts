@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
- 
+ import {NgModule} from '@angular/core';
+ import { RouterModule } from '@angular/router';
 export const routes: Routes = [
     // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,34 +27,19 @@ export const routes: Routes = [
         children: [
             // Admin-Dashboard
               // my routes 
-
- {
-  path: "admin",
-  canActivate: [authGuard],   // MUST BE HERE
+{
+  path: 'admin',
+  canActivate: [authGuard],
+  canActivateChild: [authGuard],
   loadComponent: () =>
-    import("./screens/ADMIN/admin-dashboard/admin-dashboard")
-      .then((m) => m.AdminComponent),
+    import('./screens/ADMIN/admin-dashboard/admin-dashboard').then(m => m.AdminComponent),
   children: [
-    {
-      path: "create-customer",
-      canActivate: [authGuard],
-      loadComponent: () =>
-        import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
-          .then((m) => m.CreateCustomer),
-    },
-    {
-        path:"users",
-        loadComponent: () => 
-            import('./screens/ADMIN/admin-dashboard/components/users/users').then((m)=> m.Users)
-    }
-    ,{
-        path:"showCustomerDetails",
-        loadComponent:()=>
-            import("./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
-    }
+    { path: 'create-customer', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer').then(m => m.CreateCustomer) },
+    { path: 'users', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/users/users').then(m => m.Users) },
+    { path: 'showCustomerDetails', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data').then(m => m.ShowCustomersFormData) },
   ]
-},
-
+}
+,
 
  
  
@@ -459,5 +445,6 @@ export const routes: Routes = [
     },
  
   // Wildcard redirect
-  { path: '**', redirectTo: 'login' },
+  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
+
 ];
