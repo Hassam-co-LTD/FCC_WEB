@@ -1,0 +1,105 @@
+@use '../../../../../../styles/theme' as theme;
+
+.submit-page {
+  padding: 40px;
+  background: theme.$light-bg;
+  border-radius: 16px;
+  border: 1px solid theme.$border-light;
+  box-shadow: 0 4px 12px rgba(13, 71, 161, 0.05);
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 36px;
+  color: theme.$primary;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid theme.$border-light;
+  padding-bottom: 12px;
+}
+
+.submit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* space between cards */
+}
+
+.submit-card {
+  padding: 24px;
+  border-radius: 12px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  box-shadow: 0 2px 10px rgba(13, 71, 161, 0.08);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: theme.$primary-hover;
+    box-shadow: 0 4px 14px rgba(13, 71, 161, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+}
+
+.actions {
+  margin-top: 40px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+button[mat-flat-button] {
+  background: theme.$primary-btn-bg !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 50px;
+  padding: 10px 28px;
+  box-shadow: 0 2px 8px theme.$primary-btn-shadow;
+  transition: 0.2s;
+
+  &:hover {
+    background: theme.$primary-btn-hover-bg !important;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+/* RESPONSIVENESS */
+
+/* Desktop */
+@media (min-width: 1080px) {
+  .submit-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .submit-card {
+    flex: 1 1 calc(33.333% - 20px); /* 3 cards per row */
+  }
+}
+
+/* Tablet */
+@media (max-width: 1080px) and (min-width: 768px) {
+  .submit-card {
+    flex: 1 1 calc(50% - 20px); /* 2 cards per row */
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .submit-container {
+    flex-direction: column;
+  }
+
+  .submit-card {
+    flex: 1 1 100%;
+  }
+}

@@ -92,7 +92,7 @@ export const routes: Routes = [
 {
   path: 'export-screen/submit',
   loadComponent: () =>
-    import('./screens/USER/export-screen/components/submit-preview/submit-preview').then(m => m.SubmitPage)
+    import('./screens/USER/export-screen/components/submit-preview/submit-preview').then(m => m.ShippingSubmit)
 }
 
 ,
