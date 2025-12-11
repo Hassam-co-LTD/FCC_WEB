@@ -1,4 +1,5 @@
-<div class="screen">
+<!-- Only show export screen form if NOT on preview route -->
+<div class="screen" *ngIf="!isPreviewRoute">
 
     <app-sidebar [steps]="exportlcSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
     </app-sidebar>
@@ -24,17 +25,15 @@
             </section>
             <hr class="section-divider" />
 
-            <!-- SECTION 3 -->
-            <section id="section-3">
-                <app-preview [form]="exportLCForm"></app-preview>
-            </section>
-
             <div class="actions">
-                <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
-                <button mat-flat-button color="primary" (click)="next()">Submit</button>
+                <button mat-stroked-button (click)="previous()">Back</button>
+                <button mat-flat-button color="primary">Save</button>
+                <button mat-flat-button color="primary" (click)="preview()">Preview</button>
             </div>
-
         </div>
     </div>
 
 </div>
+
+<!-- Render preview component here -->
+<router-outlet></router-outlet>

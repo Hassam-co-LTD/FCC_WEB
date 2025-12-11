@@ -79,11 +79,23 @@ export const routes: Routes = [
                     import('./screens/USER/search-transaction-id/search-transaction-id').then((m) => m.SearchTransactionID),
             },
             // Export Screen
-            {
-                path: 'export-screen',
-                loadComponent: () =>
-                    import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
-            },
+ {
+  path: 'export-screen',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/export-screen').then(m => m.ExportScreen)
+},
+{
+  path: 'export-screen/preview',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/components/preview/preview').then(m => m.Preview)
+},
+{
+  path: 'export-screen/submit',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/components/submit-preview/submit-preview').then(m => m.SubmitPage)
+}
+
+,
 
             {
                 path: 'exportlc-welcome',

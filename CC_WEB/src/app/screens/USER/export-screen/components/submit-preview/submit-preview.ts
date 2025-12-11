@@ -4,19 +4,18 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-preview',
+  selector: 'app-submit-page',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, ReactiveFormsModule],
-  templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  imports: [CommonModule, MatCardModule, MatIconModule],
+  templateUrl: './submit-preview.html',
+  styleUrls: ['./submit-preview.scss']
 })
-export class Preview implements OnInit {
+export class SubmitPage implements OnInit {
 
   form: any = null;
-  attachmentsArray: any[] = []; // keep as plain array
+  attachmentsArray: any[] = [];
 
   constructor(private dataService: SharedService, private router: Router) {}
 
@@ -24,23 +23,13 @@ export class Preview implements OnInit {
     const data = this.dataService.getFormData();
 
     if (!data) {
-      alert("No data found! Please fill the form again.");
+      alert("No data found! Please fill the form first.");
       this.router.navigate(['/export-screen']);
       return;
     }
 
     this.form = data;
-
-    // Make sure attachmentsArray is an array
     this.attachmentsArray = data.attachments || [];
-  }
-
-  previous() {
-    this.router.navigate(['/export-screen']);
-  }
-
-  submit() {
-    this.router.navigate(['/export-screen/submit']);
   }
 
   downloadFile(i: number) {
