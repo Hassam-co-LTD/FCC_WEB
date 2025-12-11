@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
 import { Upload } from "./components/upload/upload";
 import { Attachments } from "./components/attachments/attachments";
-import { Preview } from "./components/preview/preview";
 import { Sidebar } from '../../../core/sidebar/sidebar';
+import { Router, NavigationEnd } from '@angular/router';
+import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
+import { RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-export-screen',
@@ -16,26 +19,26 @@ import { Sidebar } from '../../../core/sidebar/sidebar';
     GeneralDetails,
     Upload,
     Attachments,
-    Preview,
-    Sidebar
+    Sidebar,
+    RouterOutlet
   ],
   templateUrl: './export-screen.html',
   styleUrls: ['./export-screen.scss']
 })
-export class ExportScreen {
+export class ExportScreen implements AfterViewInit {
 
   currentStep = 0;
+  isPreviewRoute = false; // <-- Track if preview is active
 
   exportlcSteps = [
     { label: 'General Details' },
     { label: 'Upload MT700/MT701' },
-    { label: 'Attachments' },
-    { label: 'Preview' }
+    { label: 'Attachments' }
   ];
 
   exportLCForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
         customerRef: [''],
@@ -47,11 +50,14 @@ export class ExportScreen {
       }),
       attachments: this.fb.array([])
     });
-  }
 
-  // ============================
-  // GETTERS
-  // ============================
+    // Listen to route changes to detect preview
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.isPreviewRoute = event.urlAfterRedirects.includes('export-screen/preview');
+    });
+  }
 
   get generalDetailsForm(): FormGroup {
     return this.exportLCForm.get('generalDetails') as FormGroup;
@@ -65,10 +71,6 @@ export class ExportScreen {
     return this.exportLCForm.get('attachments') as FormArray;
   }
 
-  // ============================
-  // ATTACHMENTS HANDLER
-  // ============================
-
   updateAttachments(files: File[]) {
     this.attachmentsArray.clear();
     files.forEach(file => {
@@ -81,10 +83,6 @@ export class ExportScreen {
       }));
     });
   }
-
-  // ============================
-  // SIDEBAR SCROLL SPY
-  // ============================
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -109,13 +107,27 @@ export class ExportScreen {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  next() {
-    if (this.currentStep < this.exportlcSteps.length - 1)
-      this.scrollToSection(this.currentStep + 1);
-  }
-
   previous() {
     if (this.currentStep > 0)
       this.scrollToSection(this.currentStep - 1);
   }
+
+  save() {
+    alert("Form saved successfully!");
+  }
+
+  preview() {
+  if (this.exportLCForm.invalid) {
+    this.exportLCForm.markAllAsTouched();
+    alert("Please fill all required fields before preview.");
+    return;
+  }
+
+  // Save form data to shared service
+  this.dataService.setFormData(this.exportLCForm.value);
+
+  // Navigate to preview page
+  this.router.navigate(['/export-screen/preview']);
+}
+
 }

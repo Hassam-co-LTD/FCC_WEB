@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
-
+ import {NgModule} from '@angular/core';
+ import { RouterModule } from '@angular/router';
 export const routes: Routes = [
     // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -25,32 +26,21 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             // Admin-Dashboard
-            // my routes 
-
-     {
-  path: "admin",
+              // my routes 
+{
+  path: 'admin',
+  canActivate: [authGuard],
+  canActivateChild: [authGuard],
   loadComponent: () =>
-    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
+    import('./screens/ADMIN/admin-dashboard/admin-dashboard').then(m => m.AdminComponent),
   children: [
-    {
-      path: "create-customer",
-      loadComponent: () =>
-        import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
-          .then((m) => m.CreateCustomer),
-    },
-    {
-        path:"users",
-        loadComponent: () => 
-            import('./screens/ADMIN/admin-dashboard/components/users/users').then((m)=> m.Users)
-    }
-    ,{
-        path:"showCustomerDetails",
-        loadComponent:()=>
-            import("./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data").then((m)=> m.ShowCustomersFormData)
-    }
+    { path: 'create-customer', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer').then(m => m.CreateCustomer) },
+    { path: 'users', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/users/users').then(m => m.Users) },
+    { path: 'showCustomerDetails', loadComponent: () => import('./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data').then(m => m.ShowCustomersFormData) },
   ]
 }
 ,
+
  
  
             // ==============================
@@ -89,11 +79,23 @@ export const routes: Routes = [
                     import('./screens/USER/search-transaction-id/search-transaction-id').then((m) => m.SearchTransactionID),
             },
             // Export Screen
-            {
-                path: 'export-screen',
-                loadComponent: () =>
-                    import('./screens/USER/export-screen/export-screen').then((m) => m.ExportScreen),
-            },
+ {
+  path: 'export-screen',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/export-screen').then(m => m.ExportScreen)
+},
+{
+  path: 'export-screen/preview',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/components/preview/preview').then(m => m.Preview)
+},
+{
+  path: 'export-screen/submit',
+  loadComponent: () =>
+    import('./screens/USER/export-screen/components/submit-preview/submit-preview').then(m => m.SubmitPage)
+}
+
+,
 
             {
                 path: 'exportlc-welcome',
@@ -476,7 +478,8 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
     },
+ 
+  // Wildcard redirect
+  { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 
-    // Wildcard redirect
-    { path: '**', redirectTo: 'login' },
 ];

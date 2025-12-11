@@ -9,6 +9,7 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes), provideClientHydration(withEventReplay())
+    provideRouter(routes),
+    provideClientHydration(withEventReplay()),
   ]
 };
