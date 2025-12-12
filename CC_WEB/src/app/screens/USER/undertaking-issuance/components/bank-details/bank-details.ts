@@ -4,18 +4,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-bank-details',
   standalone: true,
   imports: [
-    CommonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatRadioModule
-  ],
+],
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss']
 })

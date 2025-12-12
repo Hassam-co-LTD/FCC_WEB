@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -14,7 +14,6 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-undertaking-details',
   standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatRadioModule,
@@ -23,7 +22,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule,
     MatIconModule,
     MatButtonModule
-  ],
+],
   templateUrl: './undertaking-details.html',
   styleUrls: ['./undertaking-details.scss']
 })

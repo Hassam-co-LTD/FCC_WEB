@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,13 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
   selector: 'app-shipping-details',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule
-  ],
+],
   templateUrl: './shipping-details.html',
   styleUrls: ['./shipping-details.scss']
 })

@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-attachments-documents',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, MatButtonModule],
+  imports: [ReactiveFormsModule, MatIconModule, MatButtonModule],
   templateUrl: './attachments-documents.html',
   styleUrls: ['./attachments-documents.scss']
 })

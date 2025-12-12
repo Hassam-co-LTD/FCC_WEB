@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
 // CHILD COMPONENTS
@@ -19,7 +19,6 @@ import { Router, RouterModule } from '@angular/router';
   selector: 'app-export-collection',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     GeneralDetails,
     DrawerDraweeDetails,
@@ -31,7 +30,7 @@ import { Router, RouterModule } from '@angular/router';
     AttachmentsDocuments,
     Sidebar,
     RouterModule
-  ],
+],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss']
 })

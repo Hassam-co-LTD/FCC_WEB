@@ -6,21 +6,18 @@
 <!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-   <!-- COLLAPSED PREVIEW -->
-  <ng-container *ngIf="!isOpen">
+  <!-- COLLAPSED PREVIEW -->
+  @if (!isOpen) {
     <div class="preview-block">
       <div><strong>Collection Type:</strong> {{ form.value.collectionType }}</div>
       <div><strong>Customer Reference:</strong> {{ form.value.customerReference }}</div>
       <div><strong>Drawee Reference:</strong> {{ form.value.draweeReference }}</div>
     </div>
-
-  </ng-container>
+  }
 
   <!-- FORM MODE (show when open) -->
-  <ng-container *ngIf="isOpen">
-
+  @if (isOpen) {
     <div class="form-grid-2">
-
       <!-- Collection Type -->
       <div class="field-group">
         <h4>Collection Type</h4>
@@ -33,7 +30,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-
       <!-- Customer Reference -->
       <div class="field-group">
         <h4>Customer Reference</h4>
@@ -42,11 +38,8 @@
           <input matInput type="text" formControlName="customerReference" placeholder="Enter customer reference" />
         </mat-form-field>
       </div>
-
     </div>
-
     <div class="form-grid-2">
-
       <!-- Drawee Reference -->
       <div class="field-group">
         <h4>Drawee Reference</h4>
@@ -55,9 +48,7 @@
           <input matInput type="text" formControlName="draweeReference" placeholder="Enter drawee reference" />
         </mat-form-field>
       </div>
-
     </div>
-
-  </ng-container>
+  }
 
 </div>

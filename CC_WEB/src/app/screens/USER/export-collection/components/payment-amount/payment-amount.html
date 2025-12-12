@@ -5,7 +5,7 @@
 </div>
 
 <!-- Collapsed Preview -->
-<ng-container *ngIf="!isOpen && form">
+@if (!isOpen && form) {
   <div class="preview-block">
     <div class="preview-row">
       <div class="preview-label">Amount:</div>
@@ -28,7 +28,7 @@
       <div class="preview-value">{{ form.get('paymentReference')?.value || '—' }}</div>
     </div>
   </div>
-</ng-container>
+}
 
 <!-- Full Form -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
@@ -42,7 +42,9 @@
     <mat-form-field appearance="outline" class="full">
       <mat-label>Currency *</mat-label>
       <mat-select formControlName="currency">
-        <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+        @for (c of currencies; track c) {
+          <mat-option [value]="c">{{ c }}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
 

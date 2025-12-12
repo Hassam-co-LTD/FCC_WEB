@@ -1,5 +1,5 @@
 
-import { CommonModule } from '@angular/common';
+
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   selector: 'app-application-beneficiary',
   standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -22,7 +21,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatButtonModule,
     MatIconModule,
     MatRadioModule
-  ],
+],
   templateUrl: './application-beneficiary.html',
   styleUrl: './application-beneficiary.scss',
 })

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,13 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-instruction-to-bank',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatIconModule
-  ],
+],
   templateUrl: './instruction-to-bank.html',
   styleUrls: ['./instruction-to-bank.scss']
 })

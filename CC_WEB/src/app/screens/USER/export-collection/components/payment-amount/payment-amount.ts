@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,13 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
   selector: 'app-payment-amount',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule
-  ],
+],
   templateUrl: './payment-amount.html',
   styleUrls: ['./payment-amount.scss']
 })

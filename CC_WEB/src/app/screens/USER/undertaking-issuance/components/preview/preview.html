@@ -1,33 +1,31 @@
-<div class="preview-page" *ngIf="form">
-  <h2 class="page-title">Preview</h2>
-
-  <div class="preview-container">
-    <mat-card>
-      <h3>General Details</h3>
-      <div class="grid">
-        <div><b>Product Type:</b> {{ format(form.get('generalDetails.productType')?.value) }}</div>
-        <div><b>Mode Of Transmission:</b> {{ format(form.get('generalDetails.modeOfTransmission')?.value) }}</div>
-        <div><b>Form Of Undertaking:</b> {{ format(form.get('generalDetails.formOfUndertaking')?.value) }}</div>
-        <div><b>Purpose:</b> {{ format(form.get('generalDetails.purpose')?.value) }}</div>
-      </div>
-    </mat-card>
-
-    <mat-card>
-      <h3>Applicant & Beneficiary</h3>
-      <div class="grid">
-        <div><b>Applicant Name:</b> {{ format(form.get('applicantBeneficiary.applicantName')?.value) }}</div>
-        <div><b>Applicant Address:</b>
+@if (form) {
+  <div class="preview-page">
+    <h2 class="page-title">Preview</h2>
+    <div class="preview-container">
+      <mat-card>
+        <h3>General Details</h3>
+        <div class="grid">
+          <div><b>Product Type:</b> {{ format(form.get('generalDetails.productType')?.value) }}</div>
+          <div><b>Mode Of Transmission:</b> {{ format(form.get('generalDetails.modeOfTransmission')?.value) }}</div>
+          <div><b>Form Of Undertaking:</b> {{ format(form.get('generalDetails.formOfUndertaking')?.value) }}</div>
+          <div><b>Purpose:</b> {{ format(form.get('generalDetails.purpose')?.value) }}</div>
+        </div>
+      </mat-card>
+      <mat-card>
+        <h3>Applicant & Beneficiary</h3>
+        <div class="grid">
+          <div><b>Applicant Name:</b> {{ format(form.get('applicantBeneficiary.applicantName')?.value) }}</div>
+          <div><b>Applicant Address:</b>
           {{ address(
-            form.get('applicantBeneficiaryForm.applicantAddress1')?.value,
-            form.get('applicantBeneficiaryForm.applicantAddress2')?.value,
-            form.get('applicantBeneficiaryForm.applicantAddress3')?.value
+          form.get('applicantBeneficiaryForm.applicantAddress1')?.value,
+          form.get('applicantBeneficiaryForm.applicantAddress2')?.value,
+          form.get('applicantBeneficiaryForm.applicantAddress3')?.value
           ) }}
         </div>
         <div><b>Beneficiary Name:</b> {{ format(form.get('applicantBeneficiaryForm.beneficiaryName')?.value) }}</div>
         <div><b>Beneficiary Country:</b> {{ format(form.get('applicantBeneficiaryForm.beneficiaryCountry')?.value) }}</div>
       </div>
     </mat-card>
-
     <mat-card>
       <h3>Bank Details</h3>
       <div class="grid">
@@ -39,7 +37,6 @@
         <div><b>Selected Bank:</b> {{ getSelectedTabLabel() }}</div>
       </div>
     </mat-card>
-
     <mat-card>
       <h3>Undertaking Details</h3>
       <div class="grid">
@@ -51,7 +48,6 @@
         <div><b>Amount:</b> {{ format(form.get('undertakingDetailsForm.undertakingAmount')?.value) }}</div>
       </div>
     </mat-card>
-
     <mat-card>
       <h3>Instructions to Bank</h3>
       <div class="grid">
@@ -62,31 +58,34 @@
         <div><b>Other Instructions:</b> {{ format(form.get('instructionsForm.otherInstructions')?.value) }}</div>
       </div>
     </mat-card>
-
     <mat-card>
       <h3>Attachments</h3>
-
-      <div *ngIf="attachmentsArray.length > 0" class="file-list">
-        <div class="file-row header">
-          <div>File</div><div>Type</div><div>Size</div><div>Actions</div>
-        </div>
-        <div class="file-row" *ngFor="let f of attachmentsArray.controls; let i = index">
-          <div>{{ f.value.name }}</div>
-          <div>{{ getFileType(f.value.name) }}</div>
-          <div>{{ formatSize(f.value.size) }}</div>
-          <div class="actions">
-            <button mat-icon-button (click)="downloadFile(i)" matTooltip="Download"><mat-icon>download</mat-icon></button>
-            <button mat-icon-button color="warn" (click)="removeFile(i)" matTooltip="Remove"><mat-icon>delete</mat-icon></button>
+      @if (attachmentsArray.length > 0) {
+        <div class="file-list">
+          <div class="file-row header">
+            <div>File</div><div>Type</div><div>Size</div><div>Actions</div>
           </div>
+          @for (f of attachmentsArray.controls; track f; let i = $index) {
+            <div class="file-row">
+              <div>{{ f.value.name }}</div>
+              <div>{{ getFileType(f.value.name) }}</div>
+              <div>{{ formatSize(f.value.size) }}</div>
+              <div class="actions">
+                <button mat-icon-button (click)="downloadFile(i)" matTooltip="Download"><mat-icon>download</mat-icon></button>
+                <button mat-icon-button color="warn" (click)="removeFile(i)" matTooltip="Remove"><mat-icon>delete</mat-icon></button>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-
-      <p *ngIf="attachmentsArray.length === 0" class="no-files">No attachments</p>
+      }
+      @if (attachmentsArray.length === 0) {
+        <p class="no-files">No attachments</p>
+      }
     </mat-card>
-
     <div class="actions">
       <button mat-stroked-button (click)="back()">Back</button>
       <button mat-flat-button color="primary" (click)="submit()">Submit</button>
     </div>
   </div>
 </div>
+}

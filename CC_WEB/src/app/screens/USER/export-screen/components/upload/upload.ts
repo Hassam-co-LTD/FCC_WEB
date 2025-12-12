@@ -1,13 +1,13 @@
 import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatIconModule],
   templateUrl: './upload.html',
   styleUrls: ['./upload.scss']
 })

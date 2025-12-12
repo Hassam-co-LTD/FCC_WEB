@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,7 +13,6 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-amount-charge-details',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
@@ -22,7 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule
-  ],
+],
   templateUrl: './amount-charge-details.html',
   styleUrls: ['./amount-charge-details.scss']
 })

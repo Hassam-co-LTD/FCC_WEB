@@ -1,70 +1,80 @@
 <div class="section-header" (click)="toggle()">
-    <h2>Bank Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <h2>Bank Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
 
-    <form [formGroup]="bankForm">
+  <form [formGroup]="bankForm">
 
-        <!-- ========== Issuing Bank ========== -->
-        <h4>Issuing Bank</h4>
-        <div class="form-grid">
-            <!-- Bank Name -->
-            <mat-form-field appearance="outline">
-                <mat-label>Bank Name*</mat-label>
-                <mat-select formControlName="issuingBankName">
-                    <mat-option *ngFor="let bank of bankList" [value]="bank">
-                        {{ bank }}
-                    </mat-option>
-                </mat-select>
-                <mat-error *ngIf="bankForm.get('issuingBankName')?.touched && bankForm.get('issuingBankName')?.invalid">
-                    Error: You must select Bank Name
-                </mat-error>
-            </mat-form-field>
+    <!-- ========== Issuing Bank ========== -->
+    <h4>Issuing Bank</h4>
+    <div class="form-grid">
+      <!-- Bank Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Bank Name*</mat-label>
+        <mat-select formControlName="issuingBankName">
+          @for (bank of bankList; track bank) {
+            <mat-option [value]="bank">
+              {{ bank }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (bankForm.get('issuingBankName')?.touched && bankForm.get('issuingBankName')?.invalid) {
+          <mat-error>
+            Error: You must select Bank Name
+          </mat-error>
+        }
+      </mat-form-field>
 
-            <!-- Issuer's Reference -->
-            <mat-form-field appearance="outline">
-                <mat-label>Issuer's Reference*</mat-label>
-                <mat-select formControlName="issuerReference">
-                    <mat-option value="Ref-001">Ref-001</mat-option>
-                    <mat-option value="Ref-002">Ref-002</mat-option>
-                </mat-select>
-                <mat-error *ngIf="bankForm.get('issuerReference')?.touched && bankForm.get('issuerReference')?.invalid">
-                    Error: You must select Issuer's Reference
-                </mat-error>
-            </mat-form-field>
-        </div>
-        <!-- ========== Advising Bank ========== -->
-        <h4>Advising Bank</h4>
-        <div class="form-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Advising Bank Name</mat-label>
-                <mat-select formControlName="advisingBankName">
-                    <mat-option *ngFor="let bank of bankList" [value]="bank">
-                        {{ bank }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+      <!-- Issuer's Reference -->
+      <mat-form-field appearance="outline">
+        <mat-label>Issuer's Reference*</mat-label>
+        <mat-select formControlName="issuerReference">
+          <mat-option value="Ref-001">Ref-001</mat-option>
+          <mat-option value="Ref-002">Ref-002</mat-option>
+        </mat-select>
+        @if (bankForm.get('issuerReference')?.touched && bankForm.get('issuerReference')?.invalid) {
+          <mat-error>
+            Error: You must select Issuer's Reference
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <!-- ========== Advising Bank ========== -->
+    <h4>Advising Bank</h4>
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Advising Bank Name</mat-label>
+        <mat-select formControlName="advisingBankName">
+          @for (bank of bankList; track bank) {
+            <mat-option [value]="bank">
+              {{ bank }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-        <!-- ========== Advise Through Bank ========== -->
-        <h4>Advise Through Bank</h4>
-        <div class="form-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Advise Through Bank</mat-label>
-                <mat-select formControlName="adviseThroughBankName">
-                    <mat-option *ngFor="let bank of bankList" [value]="bank">
-                        {{ bank }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
+    <!-- ========== Advise Through Bank ========== -->
+    <h4>Advise Through Bank</h4>
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Advise Through Bank</mat-label>
+        <mat-select formControlName="adviseThroughBankName">
+          @for (bank of bankList; track bank) {
+            <mat-option [value]="bank">
+              {{ bank }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-    </form>
+  </form>
 
-    <!-- Optional buttons -->
-    <!--
+  <!-- Optional buttons -->
+  <!--
   <div class="btn-row-bottom">
     <button mat-stroked-button color="warn">Exit</button>
     <button mat-stroked-button (click)="goPrevious()">Previous</button>
@@ -74,83 +84,83 @@
 </div>
 
 <!-- <mat-tab-group [(selectedIndex)]="selectedTab"> -->
-    <!-- ========== Issuing Bank ========== -->
-    <!-- <mat-tab label="Issuing Bank">
-        <form [formGroup]="bankForm">
-            <div class="form-grid"> -->
+<!-- ========== Issuing Bank ========== -->
+<!-- <mat-tab label="Issuing Bank">
+<form [formGroup]="bankForm">
+  <div class="form-grid"> -->
 
-                <!-- Bank Name -->
-                <!-- <mat-form-field appearance="outline">
-                    <mat-label>Bank Name*</mat-label>
-                    <mat-select formControlName="issuingBankName">
-                        <mat-option *ngFor="let bank of bankList" [value]="bank">
-                            {{ bank }}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error
-                        *ngIf="bankForm.get('issuingBankName')?.touched && bankForm.get('issuingBankName')?.invalid">
-                        Error: You must select Bank Name
-                    </mat-error>
-                </mat-form-field> -->
-
-                <!-- Issuer's Reference -->
-<!-- <mat-form-field appearance="outline">
-    <mat-label>Issuer's Reference*</mat-label>
-    <mat-select formControlName="issuerReference">
-        <mat-option value="Ref-001">Ref-001</mat-option>
-        <mat-option value="Ref-002">Ref-002</mat-option>
+    <!-- Bank Name -->
+    <!-- <mat-form-field appearance="outline">
+    <mat-label>Bank Name*</mat-label>
+    <mat-select formControlName="issuingBankName">
+      <mat-option *ngFor="let bank of bankList" [value]="bank">
+        {{ bank }}
+      </mat-option>
     </mat-select>
-    <mat-error *ngIf="bankForm.get('issuerReference')?.touched && bankForm.get('issuerReference')?.invalid">
-        Error: You must select Issuer's Reference
+    <mat-error
+      *ngIf="bankForm.get('issuingBankName')?.touched && bankForm.get('issuingBankName')?.invalid">
+      Error: You must select Bank Name
     </mat-error>
+  </mat-form-field> -->
+
+  <!-- Issuer's Reference -->
+  <!-- <mat-form-field appearance="outline">
+  <mat-label>Issuer's Reference*</mat-label>
+  <mat-select formControlName="issuerReference">
+    <mat-option value="Ref-001">Ref-001</mat-option>
+    <mat-option value="Ref-002">Ref-002</mat-option>
+  </mat-select>
+  <mat-error *ngIf="bankForm.get('issuerReference')?.touched && bankForm.get('issuerReference')?.invalid">
+    Error: You must select Issuer's Reference
+  </mat-error>
 </mat-form-field>
 
 
-            </div>
-            <p class="note-text">
-                Note: Transaction will be processed as per selected Bank Date and Timezone.
-            </p>
-        </form>
-    </mat-tab> -->
+</div>
+<p class="note-text">
+  Note: Transaction will be processed as per selected Bank Date and Timezone.
+</p>
+</form>
+</mat-tab> -->
 
-    <!-- ========== Advising Bank ========== -->
-    <!-- <mat-tab label="Advising Bank">
-        <form [formGroup]="bankForm">
-            <div class="form-grid">
-                <mat-form-field appearance="outline">
-                    <mat-label>Advising Bank Name</mat-label>
-                    <mat-select formControlName="advisingBankName">
-                        <mat-option *ngFor="let bank of bankList" [value]="bank">
-                            {{ bank }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </form>
-    </mat-tab> -->
+<!-- ========== Advising Bank ========== -->
+<!-- <mat-tab label="Advising Bank">
+<form [formGroup]="bankForm">
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Advising Bank Name</mat-label>
+      <mat-select formControlName="advisingBankName">
+        <mat-option *ngFor="let bank of bankList" [value]="bank">
+          {{ bank }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>
+</mat-tab> -->
 
-    <!-- ========== Advise Through Bank ========== -->
-    <!-- <mat-tab label="Advise Through Bank">
-        <form [formGroup]="bankForm">
-            <div class="form-grid">
-                <mat-form-field appearance="outline">
-                    <mat-label>Advise Through Bank</mat-label>
-                    <mat-select formControlName="adviseThroughBankName">
-                        <mat-option *ngFor="let bank of bankList" [value]="bank">
-                            {{ bank }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </form>
-    </mat-tab>
+<!-- ========== Advise Through Bank ========== -->
+<!-- <mat-tab label="Advise Through Bank">
+<form [formGroup]="bankForm">
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Advise Through Bank</mat-label>
+      <mat-select formControlName="adviseThroughBankName">
+        <mat-option *ngFor="let bank of bankList" [value]="bank">
+          {{ bank }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</form>
+</mat-tab>
 </mat-tab-group> -->
 
 <!-- Buttons -->
 <!-- <div class="btn-row-bottom">
-    <button mat-stroked-button color="warn">Exit</button>
-    <button mat-stroked-button (click)="goPrevious()">Previous</button>
-    <button mat-raised-button color="primary" (click)="goNext()">Next</button>
+<button mat-stroked-button color="warn">Exit</button>
+<button mat-stroked-button (click)="goPrevious()">Previous</button>
+<button mat-raised-button color="primary" (click)="goNext()">Next</button>
 </div> -->
 
 <!-- </div> -->

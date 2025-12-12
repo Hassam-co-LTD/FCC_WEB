@@ -1,11 +1,11 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { Component, Input, Output, EventEmitter, AfterViewInit, ElementRef, QueryList, ViewChildren, OnChanges, SimpleChanges, Inject, PLATFORM_ID } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [MatIconModule],
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.scss']
 })

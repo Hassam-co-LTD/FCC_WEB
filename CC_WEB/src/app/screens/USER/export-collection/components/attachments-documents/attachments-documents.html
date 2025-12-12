@@ -14,47 +14,50 @@
     <button mat-stroked-button color="primary" (click)="fileInput.click()">Browse</button>
   </div>
 
-  <div class="file-list" *ngIf="uploadedFiles.length > 0">
-    <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
-      <span>{{ file.name }}</span>
-      <button mat-icon-button color="warn" (click)="removeFile(i)">
-        <mat-icon>delete</mat-icon>
-      </button>
+  @if (uploadedFiles.length > 0) {
+    <div class="file-list">
+      @for (file of uploadedFiles; track file; let i = $index) {
+        <div class="file-item">
+          <span>{{ file.name }}</span>
+          <button mat-icon-button color="warn" (click)="removeFile(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
     </div>
-  </div>
+  }
 
   <form [formGroup]="attachmentsForm">
     <div formArrayName="documents">
-      <div *ngFor="let doc of documents.controls; let i=index" [formGroupName]="i" class="instruction-form">
-        <div class="form-group two-col">
-          <div class="input-field">
-            <label>Document Name & Type<span class="required">*</span></label>
-            <select formControlName="type">
-              <option value="">Select Type</option>
-              <option value="airwayBill">Airway Bill</option>
-              <option value="billOfLading">Bill of Lading</option>
-            </select>
-          </div>
-
-          <div class="input-field">
-            <label>Attachment <span class="required">*</span></label>
-
-            <div class="attachment-field">
-              <input type="text" [value]="doc.get('attachment')?.value?.fileName || ''"
-                placeholder="Search or select file" readonly />
-              <button type="button" (click)="selectAttachment(i)">🔍</button>
+      @for (doc of documents.controls; track doc; let i = $index) {
+        <div [formGroupName]="i" class="instruction-form">
+          <div class="form-group two-col">
+            <div class="input-field">
+              <label>Document Name & Type<span class="required">*</span></label>
+              <select formControlName="type">
+                <option value="">Select Type</option>
+                <option value="airwayBill">Airway Bill</option>
+                <option value="billOfLading">Bill of Lading</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label>Attachment <span class="required">*</span></label>
+              <div class="attachment-field">
+                <input type="text" [value]="doc.get('attachment')?.value?.fileName || ''"
+                  placeholder="Search or select file" readonly />
+                  <button type="button" (click)="selectAttachment(i)">🔍</button>
+                </div>
+              </div>
+              <div class="input-field">
+                <label>Document Date<span class="required">*</span></label>
+                <input type="date" formControlName="date" />
+              </div>
+              <button type="button" class="btn-remove" (click)="removeDocument(i)">Remove</button>
             </div>
           </div>
-          <div class="input-field">
-            <label>Document Date<span class="required">*</span></label>
-            <input type="date" formControlName="date" />
-          </div>
-
-          <button type="button" class="btn-remove" (click)="removeDocument(i)">Remove</button>
-        </div>
+        }
       </div>
-    </div>
 
-    <button type="button" class="btn-add" (click)="addDocument()">+ Add Document</button>
-  </form>
-</div>
+      <button type="button" class="btn-add" (click)="addDocument()">+ Add Document</button>
+    </form>
+  </div>

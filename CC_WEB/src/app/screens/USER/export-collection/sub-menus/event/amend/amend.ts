@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
 // CHILD COMPONENTS
@@ -21,7 +21,6 @@ import { RouterModule } from "@angular/router";
   selector: 'app-amend',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     GeneralDetails,
     DrawerDraweeDetails,
@@ -31,7 +30,6 @@ import { RouterModule } from "@angular/router";
     CollectionInstructionsComponent,
     License,
     AttachmentsDocuments,
-    // PreviewSection,
     Sidebar,
     RouterModule
 ],

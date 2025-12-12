@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,14 +12,13 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-instructions-bank',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
     MatRadioModule,
     MatInputModule
-  ],
+],
   templateUrl: './instructions-bank.html',
   styleUrls: ['./instructions-bank.scss']
 })

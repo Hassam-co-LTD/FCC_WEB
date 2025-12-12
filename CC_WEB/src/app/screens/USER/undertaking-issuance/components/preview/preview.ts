@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,12 +12,11 @@ import { SharedService } from '../../../../../core/services/user-service/shared-
   selector: 'app-preview',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
     MatCardModule
-  ],
+],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss']
 })

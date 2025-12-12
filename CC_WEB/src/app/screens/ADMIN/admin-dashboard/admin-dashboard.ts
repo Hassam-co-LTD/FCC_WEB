@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterOutlet, RouterModule, Router } from '@angular/router';
@@ -10,17 +10,13 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'app-admin',
   standalone: true,
   imports: [
-
     ReactiveFormsModule,
-    CommonModule,
     MatCardModule,
     MatButtonModule,
     RouterOutlet,
     MatIconModule,
-    RouterModule,
-
-
-  ],
+    RouterModule
+],
   templateUrl: './admin-dashboard.html',
   styleUrls: ['./admin-dashboard.scss'],
 })

@@ -18,15 +18,21 @@
     </div>
     <input type="file" #fileInput (change)="onFileSelect($event)" multiple
       accept=".pdf,.txt,.docx,.gif,.doc,.png,.csv,.xls,.xlsx,.jpg,.jpeg" hidden />
-  </div>
-
-  <div *ngIf="uploadedFiles.length > 0" class="file-list">
-    <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
-      <span class="file-name">{{ file.name }}</span>
-      <span class="file-size">{{ file.size / 1024 | number:'1.0-0' }} KB</span>
-      <button type="button" (click)="removeFile(i)" class="remove-button">Remove</button>
     </div>
-  </div>
 
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-</div>
+    @if (uploadedFiles.length > 0) {
+      <div class="file-list">
+        @for (file of uploadedFiles; track file; let i = $index) {
+          <div class="file-item">
+            <span class="file-name">{{ file.name }}</span>
+            <span class="file-size">{{ file.size / 1024 | number:'1.0-0' }} KB</span>
+            <button type="button" (click)="removeFile(i)" class="remove-button">Remove</button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="error">{{ errorMessage }}</div>
+    }
+  </div>

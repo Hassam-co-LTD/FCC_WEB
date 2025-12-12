@@ -1,5 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { GeneralDetails } from "../../USER/shipping-guarantee-screen/components/general-details/general-details";
 import { ApplicantBeneficiary } from "../../USER/shipping-guarantee-screen/components/applicant-beneficiary/applicant-beneficiary";
 import { BankDetails } from "../../USER/shipping-guarantee-screen/components/bank-details/bank-details";
@@ -14,7 +14,6 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
   selector: 'app-shipping-guarantee',
   standalone: true,
   imports: [
-    CommonModule,
     GeneralDetails,
     ApplicantBeneficiary,
     BankDetails,
@@ -22,7 +21,7 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
     AttachmentsDocuments,
     Preview,
     Sidebar
-  ],
+],
   templateUrl: './shipping-guarantee-screen.html',
   styleUrls: ['./shipping-guarantee-screen.scss']
 })

@@ -2,7 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Child components
@@ -21,7 +21,6 @@ import { SharedService } from '../../../../core/services/user-service/shared-for
   selector: 'app-request-undertaking',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     Sidebar,
     generalDetails,

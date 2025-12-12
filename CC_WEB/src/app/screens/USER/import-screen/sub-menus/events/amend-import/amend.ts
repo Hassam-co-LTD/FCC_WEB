@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,7 +26,6 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   selector: 'app-amend-screen',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     MatRadioModule,
     MatSelectModule,
@@ -45,7 +44,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
     InstructionToBank,
     Attachments,
     Preview
-  ],
+],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss']
 })

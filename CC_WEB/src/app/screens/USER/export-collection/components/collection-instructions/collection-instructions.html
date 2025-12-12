@@ -1,7 +1,7 @@
 <form [formGroup]="form">
 
   <!-- =========================
-       Collection Instruction P1
+  Collection Instruction P1
   ========================== -->
   <div class="section-header" (click)="toggleSection('adviceCharges')">
     <h2>Collection Instruction P1</h2>
@@ -11,21 +11,23 @@
   <div class="collapsible" [class.open]="activeSection === 'adviceCharges'">
 
     <!-- COLLAPSED PREVIEW -->
-    <ng-container *ngIf="activeSection !== 'adviceCharges'">
+    @if (activeSection !== 'adviceCharges') {
       <div class="preview-block">
         <div><strong>Advice Payment By:</strong> {{ form.value.advicePaymentBy || '—' }}</div>
         <div><strong>Opening Charges:</strong> {{ form.value.openingCharges | titlecase }}</div>
         <div><strong>Outside Country Charges:</strong> {{ form.value.outsideCountryCharges | titlecase }}</div>
       </div>
-    </ng-container>
+    }
 
     <div class="form-grid-2">
       <mat-form-field appearance="outline" class="full">
         <mat-label>Advice Payment By *</mat-label>
         <mat-select formControlName="advicePaymentBy">
-          <mat-option *ngFor="let option of advicePaymentOptions" [value]="option.value">
-            {{ option.viewValue }}
-          </mat-option>
+          @for (option of advicePaymentOptions; track option) {
+            <mat-option [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
 
@@ -57,7 +59,7 @@
   </div>
 
   <!-- =========================
-       Collection Instruction P2
+  Collection Instruction P2
   ========================== -->
   <div class="section-header" (click)="toggleSection('refusalReferral')">
     <h2>Collection Instruction P2</h2>
@@ -67,13 +69,13 @@
   <div class="collapsible" [class.open]="activeSection === 'refusalReferral'">
 
     <!-- COLLAPSED PREVIEW -->
-    <ng-container *ngIf="activeSection !== 'refusalReferral'">
+    @if (activeSection !== 'refusalReferral') {
       <div class="preview-block">
         <div><strong>Advice Reason of Refusal:</strong> {{ form.value.adviceReasonRefusal || '—' }}</div>
         <div><strong>Acceptance Deferred:</strong> {{ form.value.acceptanceDeferred ? 'Yes' : 'No' }}</div>
         <div><strong>Warehouse/Insurance:</strong> {{ form.value.warehouseInsurance ? 'Yes' : 'No' }}</div>
       </div>
-    </ng-container>
+    }
 
     <div class="form-grid-2">
       <mat-form-field appearance="outline" class="full">

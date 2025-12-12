@@ -1,34 +1,38 @@
 <div class="dashboard-container">
-    <!-- Header -->
-    <header class="dashboard-header">
-        <h1>Welcome back, {{ userName }}</h1>
-        <p>
-            Your latest financial overview
-            <span class="live-sync">🔄 Sync</span>
-            <small>({{ lastUpdated | date:'shortTime' }})</small>
-        </p>
-    </header>
+  <!-- Header -->
+  <header class="dashboard-header">
+    <h1>Welcome back, {{ userName }}</h1>
+    <p>
+      Your latest financial overview
+      <span class="live-sync">🔄 Sync</span>
+      <small>({{ lastUpdated | date:'shortTime' }})</small>
+    </p>
+  </header>
 
-    <!-- Interactive Stats Cards -->
-    <section class="stats-grid">
-        <div class="stat-card" *ngFor="let card of cards" [style.border-left-color]="card.color">
-            <div class="icon">{{ card.icon }}</div>
-            <div class="details">
-                <h2>{{ card.value }}</h2>
-                <p>{{ card.title }}</p>
-            </div>
+  <!-- Interactive Stats Cards -->
+  <section class="stats-grid">
+    @for (card of cards; track card) {
+      <div class="stat-card" [style.border-left-color]="card.color">
+        <div class="icon">{{ card.icon }}</div>
+        <div class="details">
+          <h2>{{ card.value }}</h2>
+          <p>{{ card.title }}</p>
         </div>
-    </section>
+      </div>
+    }
+  </section>
 
-    <!-- Banking News Feed -->
-    <section class="analytics">
-        <h2 class="section-title">Latest Banking News</h2>
-        <div class="news-grid">
-            <div class="analytics-card" *ngFor="let news of newsCards">
-                <h3>{{ news.title }}</h3>
-                <p class="news-snippet">{{ news.snippet }}</p>
-                <small class="news-time">{{ news.time | date:'shortTime' }}</small>
-            </div>
+  <!-- Banking News Feed -->
+  <section class="analytics">
+    <h2 class="section-title">Latest Banking News</h2>
+    <div class="news-grid">
+      @for (news of newsCards; track news) {
+        <div class="analytics-card">
+          <h3>{{ news.title }}</h3>
+          <p class="news-snippet">{{ news.snippet }}</p>
+          <small class="news-time">{{ news.time | date:'shortTime' }}</small>
         </div>
-    </section>
+      }
+    </div>
+  </section>
 </div>

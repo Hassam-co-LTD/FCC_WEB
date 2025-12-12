@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
 import { Upload } from "./components/upload/upload";
 import { Attachments } from "./components/attachments/attachments";
@@ -14,14 +14,13 @@ import { filter } from 'rxjs/operators';
   selector: 'app-export-screen',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     GeneralDetails,
     Upload,
     Attachments,
     Sidebar,
     RouterOutlet
-  ],
+],
   templateUrl: './export-screen.html',
   styleUrls: ['./export-screen.scss']
 })

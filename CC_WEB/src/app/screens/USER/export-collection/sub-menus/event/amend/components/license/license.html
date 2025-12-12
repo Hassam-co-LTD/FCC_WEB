@@ -3,16 +3,20 @@
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 <!-- Collapsed Preview -->
-<ng-container *ngIf="!isOpen">
+@if (!isOpen) {
   <div class="preview-block">
-    <div *ngIf="file">
-      <strong>Selected File:</strong> {{ file.name }} ({{ formatFileSize(file.size) }})
-    </div>
-    <div *ngIf="!file">
-      No file uploaded
-    </div>
+    @if (file) {
+      <div>
+        <strong>Selected File:</strong> {{ file.name }} ({{ formatFileSize(file.size) }})
+      </div>
+    }
+    @if (!file) {
+      <div>
+        No file uploaded
+      </div>
+    }
   </div>
-</ng-container>
+}
 
 
 <div class="collapsible" [class.open]="isOpen">
@@ -23,8 +27,10 @@
     <input type="file" (change)="onFileChange($event)">
   </div>
 
-  <div *ngIf="file">
-    <p><strong>Selected:</strong> {{ file.name }} ({{ formatFileSize(file.size) }})</p>
-  </div>
+  @if (file) {
+    <div>
+      <p><strong>Selected:</strong> {{ file.name }} ({{ formatFileSize(file.size) }})</p>
+    </div>
+  }
 
 </div>

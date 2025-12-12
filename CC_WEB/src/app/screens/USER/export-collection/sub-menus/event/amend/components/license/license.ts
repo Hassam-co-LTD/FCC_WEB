@@ -1,12 +1,12 @@
 import { Component, Input, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-license',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIcon],
+  imports: [ReactiveFormsModule, MatIcon],
   templateUrl: './license.html',
   styleUrls: ['./license.scss'],
 })
