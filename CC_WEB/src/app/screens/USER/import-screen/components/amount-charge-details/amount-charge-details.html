@@ -78,10 +78,10 @@
         <div class="row">
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Additional Amount Details</mat-label>
-                <textarea matInput formControlName="additionalAmountDetails" placeholder="Additional Amount Covered"
+                <textarea matInput formControlName="additionalAmount" placeholder="Additional Amount Covered"
                     maxlength="140"></textarea>
                 <mat-hint align="end">
-                    {{ form.get('additionalAmountDetails')?.value?.length || 0 }}/140
+                    {{ form.get('additionalAmount')?.value?.length || 0 }}/140
                 </mat-hint>
             </mat-form-field>
         </div>

@@ -115,7 +115,7 @@ export class ImportScreen implements AfterViewInit {
         variationMinus: [''],
         issuingBankCharges: ['Applicant'],
         outsideCountryCharges: ['Beneficiary'],
-        additionalAmountDetails: ['', Validators.maxLength(140)],
+        additionalAmount: ['', Validators.maxLength(140)],
       }),
 
       paymentDetailsForm: this.fb.group({
@@ -239,7 +239,7 @@ export class ImportScreen implements AfterViewInit {
 
     files.forEach(file => {
       arr.push(this.fb.group({
-        title: file.name.replace(/\.[^/.]+$/, ""), // remove extension
+        title: file.name.replace(/\.[^/.]+$/, ""), 
         fileName: file.name,
         size: file.size,
         type: file.type,

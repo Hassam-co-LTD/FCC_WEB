@@ -7,13 +7,15 @@ import { SharedService } from '../../../../../core/services/user-service/shared-
 import { Router } from '@angular/router';
 import { MatCard } from "@angular/material/card";
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpClientModule } from '@angular/common/http';
+import { ApiService } from '../../../../../core/services/api.service';
 
 
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
-  imports: [CommonModule, MatIcon, DecimalPipe, MatCard],
+  imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule],
   standalone: true,
 })
 export class Preview implements OnInit{
@@ -25,7 +27,7 @@ export class Preview implements OnInit{
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-  constructor(private dataService: SharedService, private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private dataService: SharedService, private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private imporLcService: ApiService) { }
 
   ngOnInit() {
     const formData = this.dataService.getFormData();
@@ -67,10 +69,28 @@ export class Preview implements OnInit{
     //   console.log("Submitted Data:", this.form.value);
     // }
   submit() {
-
-    this.router.navigate(['/import-screen/success']);
-    
+    // Prepare payload dynamically
+    const payload = {
+      ...this.form.get('generalDetails')?.value,
+      ...this.form.get('applicantForm')?.value,
+      ...this.form.get('bankForm')?.value,
+      ...this.form.get('amountChargeForm')?.value,
+      ...this.form.get('paymentDetailsForm')?.value,
+      ...this.form.get('shipmentForm')?.value,
+      ...this.form.get('narrativeForm')?.value,
+      ...this.form.get('instructionForm')?.value,
+      attachments: this.attachmentsArray?.value || [],    
       };
+      this.imporLcService.submitPreview(payload).subscribe((res)=>{
+        console.log("Submitted Data:", res);
+        this.snackBar.open(res, 'Close', { duration: 3000 });
+        this.router.navigate(['/import-screen/success']);
+      },
+    (err)=>{
+      console.error(err);
+      this.snackBar.open('Error submitting data', 'Close', { duration: 3000 });
+    })
+    }
 
   
 
