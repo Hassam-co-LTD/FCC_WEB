@@ -2,8 +2,7 @@
     <h2>General Details</h2>
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
-
-<div class="collapsible" [class.open]="isOpen">
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
     <div class="form-grid-2">
         <!-- Product Type -->
         <div class="field-group">

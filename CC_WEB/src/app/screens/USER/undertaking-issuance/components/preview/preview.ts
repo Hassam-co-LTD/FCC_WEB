@@ -1,30 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
 
 @Component({
   selector: 'app-preview',
-  templateUrl: './preview.html',
-  styleUrls: ['./preview.scss'],
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
+    ReactiveFormsModule,
     MatIconModule,
-    MatTooltipModule
-  ]
+    MatButtonModule,
+    MatCardModule
+  ],
+  templateUrl: './preview.html',
+  styleUrls: ['./preview.scss']
 })
 export class preview implements OnInit {
+previous() {
+throw new Error('Method not implemented.');
+}
   form!: FormGroup;
-  selectedTab: string = 'issuing';
+  selectedTab = 'issuing';
 
   constructor(
     private fb: FormBuilder,
@@ -34,165 +36,176 @@ export class preview implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.buildPreviewForm();
   }
 
-  private initializeForm(): void {
-    // Get data from shared service
-    const formData = this.sharedService.getFormData() || {};
-    
-    // Initialize form with all sections
+  private buildPreviewForm(): void {
+    const data = this.sharedService.getFormData();
+
+    if (!data) {
+      this.snackBar.open('No data found to preview', 'Close', { duration: 3000 });
+      this.router.navigate(['/undertaking-issuance/request-undertaking']);
+      return;
+    }
+
+    console.log('Preview Data:', data); // Debug log
+
+    // Build the form structure matching RequestUndertaking
     this.form = this.fb.group({
-      generalDetails: this.fb.group(formData.generalDetails || {}),
-      applicantBeneficiaryForm: this.fb.group(formData.applicantBeneficiaryForm || {}),
-      bankForm: this.fb.group({
-        ...formData.bankForm,
-        selectedTab: formData.bankForm?.selectedTab || 'issuing'
+      // FIXED: Changed from 'generalDetails' to 'generalDetailsform' to match RequestUndertaking
+      generalDetails: this.fb.group({
+        productType: [data.generalDetailsform?.productType ?? ''],
+        modeOfTransmission: [data.generalDetailsform?.modeOfTransmission ?? ''],
+        formOfUndertaking: [data.generalDetailsform?.formOfUndertaking ?? ''],
+        purpose: [data.generalDetailsform?.purpose ?? '']
       }),
-      undertakingDetailsForm: this.fb.group(formData.undertakingDetailsForm || {}),
-      instructionsForm: this.fb.group(formData.instructionsForm || {}),
-      attachments: this.fb.array(formData.attachments || [])
+
+      // FIXED: Changed from 'applicantBeneficiaryForm' to 'applicantBeneficiary'
+      applicantBeneficiaryForm: this.fb.group({
+        applicantName: [data.applicantBeneficiary?.applicantName ?? ''],
+        beneficiaryName: [data.applicantBeneficiary?.beneficiaryName ?? ''],
+        applicantAddress1: [data.applicantBeneficiary?.applicantAddress1 ?? ''],
+        applicantAddress2: [data.applicantBeneficiary?.applicantAddress2 ?? ''],
+        applicantAddress3: [data.applicantBeneficiary?.applicantAddress3 ?? '']
+      }),
+
+      // FIXED: Already matches 'bankForm'
+      bankForm: this.fb.group({
+        recipientBankName: [data.bankForm?.recipientBankName ?? ''],
+        issuerReference: [data.bankForm?.issuerReference ?? ''],
+        swift: [data.bankForm?.swift ?? ''],
+        bankName: [data.bankForm?.bankName ?? ''],
+        country: [data.bankForm?.country ?? ''],
+        selectedTab: [data.bankForm?.selectedTab ?? 'issuing']
+      }),
+
+      // FIXED: Changed from 'undertakingDetailsForm' to 'undertakingDetails'
+      undertakingDetailsForm: this.fb.group({
+        typeOfUndertaking: [data.undertakingDetails?.typeOfUndertaking ?? ''],
+        effectiveOption: [data.undertakingDetails?.effectiveOption ?? ''],
+        expiryType: [data.undertakingDetails?.expiryType ?? ''],
+        expiryDate: [data.undertakingDetails?.expiryDate ?? ''],
+        currency: [data.undertakingDetails?.currency ?? ''],
+        undertakingAmount: [data.undertakingDetails?.undertakingAmount ?? '']
+      }),
+
+      // FIXED: Changed from 'instructionsForm' to 'instructions'
+      instructionsForm: this.fb.group({
+        deliveryType: [data.instructions?.deliveryType ?? ''],
+        deliveryMode: [data.instructions?.deliveryMode ?? ''],
+        deliveryTo: [data.instructions?.deliveryTo ?? ''],
+        principalAccount: [data.instructions?.principalAccount ?? '']
+      }),
+
+      // FIXED: Changed to match the structure from RequestUndertaking
+      attachments: this.fb.array([])
     });
 
-    // Set selected tab from bank form
+    // Add attachments if they exist
+    if (data.attachments && data.attachments.length > 0) {
+      console.log('Processing attachments:', data.attachments); // Debug log
+      data.attachments.forEach((file: any) => {
+        this.attachmentsArray.push(this.fb.group({
+          name: [file.name || ''],
+          size: [file.size || 0],
+          type: [file.type || this.getFileType(file.name)],
+          file: [file.file || null]
+        }));
+      });
+    }
+
     this.selectedTab = this.form.get('bankForm.selectedTab')?.value || 'issuing';
+    console.log('Preview Form Built:', this.form.value); // Debug log
   }
 
-  // Helper methods for formatting
-  formatValue(value: any): string {
-    if (value === null || value === undefined || value === '') {
-      return 'N/A';
-    }
-    if (typeof value === 'boolean') {
-      return value ? 'Yes' : 'No';
-    }
-    return value.toString();
-  }
-
-  formatDate(date: any): string {
-    if (!date) return 'N/A';
-    if (typeof date === 'string') return date;
-    if (date instanceof Date) return date.toLocaleDateString();
-    return date.toString();
-  }
-
-  formatAddress(addr1?: string, addr2?: string, addr3?: string): string {
-    const parts = [addr1, addr2, addr3].filter(part => part && part.trim());
-    return parts.length > 0 ? parts.join(', ') : 'N/A';
-  }
-
-  formatEffectiveOption(option: string): string {
-    const optionsMap: {[key: string]: string} = {
-      'openIssuance': 'Upon Issuance',
-      'whenSigned': 'When contract is signed',
-      'advancedOccur': 'When advance payment occurs',
-      'other': 'Other'
-    };
-    return optionsMap[option] || option || 'N/A';
-  }
-
-  formatDemandOption(option: string): string {
-    const optionsMap: {[key: string]: string} = {
-      'multipleDemandnot': 'Multiple demand not permitted',
-      'multiplepartialDemandnot': 'Multiple & partial demands not permitted',
-      'partialDemand': 'Partial demands permitted',
-      'multiplepartialDemand': 'Multiple & partial demands permitted'
-    };
-    return optionsMap[option] || option || 'N/A';
-  }
-
-  formatGoverningLaws(countryCode: string): string {
-    const lawsMap: {[key: string]: string} = {
-      'pk': 'Pakistan',
-      'in': 'India',
-      'ae': 'UAE',
-      'pl': 'Poland'
-    };
-    return lawsMap[countryCode] || countryCode || 'N/A';
-  }
-
-  getSelectedTabLabel(): string {
-    const labels: {[key: string]: string} = {
-      'issuing': 'Issuing Bank',
-      'advising': 'Advising Bank',
-      'adviseThrough': 'Advise Through Bank'
-    };
-    return labels[this.selectedTab] || 'N/A';
-  }
-
+  // Helper getters
   get attachmentsArray(): FormArray {
     return this.form.get('attachments') as FormArray;
   }
 
-  getFileType(filename: string): string {
-    const extension = filename.split('.').pop()?.toLowerCase();
-    const typeMap: {[key: string]: string} = {
-      'pdf': 'PDF',
-      'jpg': 'Image',
-      'jpeg': 'Image',
-      'png': 'Image',
-      'gif': 'Image',
-      'doc': 'Document',
-      'docx': 'Document',
-      'xls': 'Spreadsheet',
-      'xlsx': 'Spreadsheet',
-      'txt': 'Text',
-      'rtf': 'Rich Text'
-    };
-    return typeMap[extension || ''] || 'File';
+  // Format helpers
+  format(value: any): string {
+    return value || value === 0 ? String(value) : '—';
   }
 
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+  formatDate(value: any): string {
+    if (!value) return '—';
+    try {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? value : date.toLocaleDateString();
+    } catch {
+      return value;
+    }
+  }
+
+  address(a?: string, b?: string, c?: string): string {
+    const parts = [a, b, c].filter(part => part && part.trim() !== '');
+    return parts.length > 0 ? parts.join(', ') : '—';
+  }
+
+  getSelectedTabLabel(): string {
+    const map: { [key: string]: string } = {
+      issuing: 'Issuing Bank',
+      advising: 'Advising Bank',
+      adviseThrough: 'Advise Through Bank'
+    };
+    return map[this.selectedTab] || '—';
+  }
+
+  getFileType(filename: string): string {
+    if (!filename) return 'FILE';
+    const ext = filename.split('.').pop()?.toLowerCase() || '';
+    return ext.toUpperCase();
+  }
+
+  formatSize(bytes: number): string {
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  // Actions
   downloadFile(index: number): void {
-    const file = this.attachmentsArray.at(index).value;
-    if (file && file.file) {
-      const blob = new Blob([file.file], { type: file.type });
-      const url = window.URL.createObjectURL(blob);
+    const fileGroup = this.attachmentsArray.at(index);
+    const file = fileGroup.value;
+    
+    if (file.file instanceof File) {
+      const url = URL.createObjectURL(file.file);
       const a = document.createElement('a');
       a.href = url;
       a.download = file.name;
+      document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
-      
-      this.snackBar.open('File download started', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (file.base64) {
+      const link = document.createElement('a');
+      link.href = file.base64;
+      link.download = file.name;
+      link.click();
+    } else {
+      this.snackBar.open('File not available for download', 'Close', { duration: 3000 });
     }
   }
 
   removeFile(index: number): void {
     this.attachmentsArray.removeAt(index);
-    this.snackBar.open('File removed', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
   }
 
-  previous(): void {
-    this.router.navigate(['/import-screen']);
+  back(): void {
+    this.router.navigate(['/undertaking-issuance/request-undertaking']);
   }
 
   submit(): void {
-    console.log('Form submitted:', this.form.value);
+    const payload = this.form.getRawValue();
+    console.log('Final Submit Payload:', payload);
     
-    this.snackBar.open('Undertaking successfully submitted!', 'Close', {
-      duration: 5000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
-    });
-
-    // Navigate to success page
-    this.router.navigate(['/import-screen/success']);
+    // Here you would typically send the data to your backend
+    this.snackBar.open('Undertaking request submitted successfully!', 'Close', { duration: 5000 });
+    
+    // Navigate to success page or dashboard
+    // this.router.navigate(['/success']);
   }
 }

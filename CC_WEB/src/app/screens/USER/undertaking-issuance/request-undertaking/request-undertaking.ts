@@ -7,13 +7,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Child components
 import { Sidebar } from "../../../../core/sidebar/sidebar";
-import { GeneralDetails } from "../components/general-details/general-details";
+import { generalDetails } from "../components/general-details/general-details";
 import { ApplicationBeneficiary } from "../components/application-beneficiary/application-beneficiary";
 import { BankDetails } from "../components/bank-details/bank-details";
 import { UndertakingDetails } from "../components/undertaking-details/undertaking-details";
 import { InstructionsBank } from "../components/instructions-bank/instructions-bank";
 import { Attachments } from "../components/attachments/attachments";
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
+// import { preview } from "../components/preview/preview";
 
 
 @Component({
@@ -23,12 +24,13 @@ import { SharedService } from '../../../../core/services/user-service/shared-for
     CommonModule,
     ReactiveFormsModule,
     Sidebar,
-    GeneralDetails,
+    generalDetails,
     ApplicationBeneficiary,
     BankDetails,
     UndertakingDetails,
-    InstructionsBank,
     Attachments,
+    generalDetails,
+    InstructionsBank
 ],
   templateUrl: './request-undertaking.html',
   styleUrls: ['./request-undertaking.scss'],
@@ -49,6 +51,9 @@ export class RequestUndertaking implements AfterViewInit {
   // MAIN MASTER FORM
   importForm!: FormGroup;
 
+  // Store files separately for easier access
+  uploadedFiles: File[] = [];
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -61,15 +66,15 @@ export class RequestUndertaking implements AfterViewInit {
   private initializeForm(): void {
     this.importForm = this.fb.group({
       // General Details
-      generalDetails: this.fb.group({
-        productType: ['bidbond'],
-        modeOfTransmission: ['SWIFT'],
-        formOfUndertaking: ['demandguarantee',],
-        purpose: ['issuanceofundertaking']
+      generalDetailsform: this.fb.group({
+        productType: [''],
+        modeOfTransmission: [''],
+        formOfUndertaking: [''],
+        purpose: ['']
       }),
 
       // Applicant & Beneficiary Details
-      applicantBeneficiaryForm: this.fb.group({
+      applicantBeneficiary: this.fb.group({
         applicantName: [''],
         applicantAddress1: [''],
         applicantAddress2: [''],
@@ -83,10 +88,10 @@ export class RequestUndertaking implements AfterViewInit {
 
       // Bank Details
       bankForm: this.fb.group({
-        recipientBankName: ['' ],
-        issuerReference: ['' ],
-        selectedTab: ['issuing'],
-        issuanceType: ['direct'],
+        recipientBankName: [''],
+        issuerReference: [''],
+        selectedTab: [''],
+        issuanceType: [''],
         swift: [''],
         bankName: [''],
         address1: [''],
@@ -96,52 +101,49 @@ export class RequestUndertaking implements AfterViewInit {
       }),
 
       // Undertaking Details
-      undertakingDetailsForm: this.fb.group({
-        typeOfUndertaking: ['bid' ],
-        effectiveOption: ['openIssuance'],
-        expiryType: ['open'],
+      undertakingDetails: this.fb.group({
+        typeOfUndertaking: [''],
+        effectiveOption: [''],
+        expiryType: [''],
         expiryDate: [''],
-        currency: ['USD' ],
+        currency: [''],
         undertakingAmount: [0, [Validators.required, Validators.min(0)]],
         variationPlus: [0],
         variationMinus: [0],
-        issuanceCharges: ['applicant'],
-        correspondentCharges: ['applicant'],
+        issuanceCharges: [''],
+        correspondentCharges: [''],
         supplementaryInfo: [''],
-        basicextensionType: ['regular'],
-        increaseDecreaseType: ['regular'],
-        contractType: ['sale'],
+        basicextensionType: [''],
+        increaseDecreaseType: [''],
+        contractType: [''],
         contractDate: [''],
-        contractCurrency: ['USD'],
+        contractCurrency: [''],
         contractAmount: [0],
         percentageCovered: [0],
         contractReference: [''],
-        applicableRules: ['urdg'],
-        governinglawsType: ['pk'],
+        applicableRules: [''],
+        governinglawsType: [''],
         subdivision: [''],
         jurisdiction: [''],
-        DemandOption: ['multipleDemandnot'],
-        tsOption: ['bkstandard'],
-        languageType: ['en'],
+        DemandOption: [''],
+        tsOption: [''],
+        languageType: [''],
         textofundertakingInfo: [''],
-        underlyingtransactionInfo: ['' ],
+        underlyingtransactionInfo: [''],
         presentationInfo: ['']
       }),
 
       // Instructions to Bank
-      instructionsForm: this.fb.group({
-        deliveryType: ['original'],
-        deliveryMode: ['courier'],
-        deliveryTo: ['ourselves'],
+      instructions: this.fb.group({
+        deliveryType: [''],
+        deliveryMode: [''],
+        deliveryTo: [''],
         principalAccount: [''],
         feeAccount: [''],
         otherInstructions: ['', [Validators.maxLength(210)]]
-      }),
-
-      // Attachments Form
-      attachmentsForm: this.fb.group({
-        files: this.fb.array([])
       })
+
+      // REMOVED attachmentsForm - we'll handle attachments differently
     });
   }
 
@@ -150,8 +152,8 @@ export class RequestUndertaking implements AfterViewInit {
     return this.importForm.get('generalDetails') as FormGroup;
   }
 
-  get applicationbeneficary(): FormGroup {
-    return this.importForm.get('applicantBeneficiaryForm') as FormGroup;
+  get applicationBeneficary(): FormGroup {
+    return this.importForm.get('applicantBeneficiary') as FormGroup;
   }
 
   get bankForm(): FormGroup {
@@ -159,19 +161,11 @@ export class RequestUndertaking implements AfterViewInit {
   }
 
   get undertakingdetail(): FormGroup {
-    return this.importForm.get('undertakingDetailsForm') as FormGroup;
+    return this.importForm.get('undertakingDetails') as FormGroup;
   }
 
   get instructionsbank(): FormGroup {
-    return this.importForm.get('instructionsForm') as FormGroup;
-  }
-
-  get attachmentsForm(): FormGroup {
-    return this.importForm.get('attachmentsForm') as FormGroup;
-  }
-
-  get attachmentsArray(): FormArray {
-    return this.attachmentsForm.get('files') as FormArray;
+    return this.importForm.get('instructions') as FormGroup;
   }
 
   ngAfterViewInit() {
@@ -204,7 +198,7 @@ export class RequestUndertaking implements AfterViewInit {
     
     // Handle navigation to preview section
     if (i === 6) {
-      this.submitForm();
+      this.submit();
       return;
     }
     
@@ -244,22 +238,41 @@ export class RequestUndertaking implements AfterViewInit {
     });
   }
 
-  submitForm() {
-    // Validate form before preview
+  submit() {
+    console.log('Submitting form...');
+    console.log('Form value:', this.importForm.value);
+    console.log('Uploaded files:', this.uploadedFiles);
+
     if (this.importForm.invalid) {
-      this.markAllFieldsAsTouched();
-      this.showValidationError();
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before submitting.");
       return;
     }
 
-    // Prepare complete form data
-    const formData = this.prepareFormData();
-    
-    // Save data to shared service
+    // Prepare complete data for shared service
+    const formData = {
+      ...this.importForm.value,
+      attachments: this.prepareAttachmentsForPreview()
+    };
+
+    console.log('Data being saved to shared service:', formData);
+
+    // Save to shared service
     this.dataService.setFormData(formData);
 
-    // Navigate to Preview screen
-    this.router.navigate(['/RequestUndertaking/preview']);
+    // Navigate to preview
+    this.router.navigate(['/undertaking-issuance/preview']);
+  }
+
+  private prepareAttachmentsForPreview() {
+    // Create the attachments array that preview expects
+    return this.uploadedFiles.map(file => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+      file: file  // Keep the file object for download
+    }));
   }
 
   private markAllFieldsAsTouched() {
@@ -268,11 +281,10 @@ export class RequestUndertaking implements AfterViewInit {
     // Also mark all child forms
     [
       this.generalDetailsForm,
-      this.applicationbeneficary,
+      this.applicationBeneficary,
       this.bankForm,
       this.undertakingdetail,
-      this.instructionsbank,
-      this.attachmentsForm
+      this.instructionsbank
     ].forEach(form => form?.markAllAsTouched());
   }
 
@@ -290,18 +302,11 @@ export class RequestUndertaking implements AfterViewInit {
   private getInvalidFields(): string[] {
     const invalidFields: string[] = [];
     
-    // Check each form group
     const checkGroup = (group: FormGroup, prefix: string = '') => {
       Object.keys(group.controls).forEach(key => {
         const control = group.get(key);
         if (control instanceof FormGroup) {
           checkGroup(control, `${prefix}${key}.`);
-        } else if (control instanceof FormArray) {
-          control.controls.forEach((ctrl, index) => {
-            if (ctrl instanceof FormGroup) {
-              checkGroup(ctrl, `${prefix}${key}[${index}].`);
-            }
-          });
         } else if (control?.invalid && control?.errors?.['required']) {
           invalidFields.push(`${prefix}${key}`);
         }
@@ -313,14 +318,12 @@ export class RequestUndertaking implements AfterViewInit {
   }
 
   private scrollToFirstInvalidSection() {
-    // Determine which section has invalid fields
     const sections = [
       { group: this.generalDetailsForm, index: 0 },
-      { group: this.applicationbeneficary, index: 1 },
+      { group: this.applicationBeneficary, index: 1 },
       { group: this.bankForm, index: 2 },
       { group: this.undertakingdetail, index: 3 },
-      { group: this.instructionsbank, index: 4 },
-      { group: this.attachmentsForm, index: 5 }
+      { group: this.instructionsbank, index: 4 }
     ];
 
     for (const section of sections) {
@@ -332,32 +335,17 @@ export class RequestUndertaking implements AfterViewInit {
   }
 
   private prepareFormData() {
-    // Create a clean copy of form data
     const formData = {
       ...this.importForm.value,
-      attachments: this.prepareAttachmentsData()
+      attachments: this.prepareAttachmentsForPreview()
     };
 
-    // Convert dates to ISO string format if needed
     this.formatDates(formData);
     
     return formData;
   }
 
-  private prepareAttachmentsData() {
-    const filesArray = this.attachmentsArray.value;
-    return filesArray.map((file: any) => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      // For base64 encoding if needed:
-      // content: file.content
-    }));
-  }
-
   private formatDates(formData: any) {
-    // Format expiry date
     if (formData.undertakingDetailsForm?.expiryDate) {
       const expiryDate = formData.undertakingDetailsForm.expiryDate;
       if (expiryDate instanceof Date) {
@@ -365,7 +353,6 @@ export class RequestUndertaking implements AfterViewInit {
       }
     }
 
-    // Format contract date
     if (formData.undertakingDetailsForm?.contractDate) {
       const contractDate = formData.undertakingDetailsForm.contractDate;
       if (contractDate instanceof Date) {
@@ -376,22 +363,7 @@ export class RequestUndertaking implements AfterViewInit {
 
   // Method to handle file uploads from child component
   updateAttachments(files: File[]) {
-    const filesArray = this.attachmentsForm.get('files') as FormArray;
-    filesArray.clear();
-
-    files.forEach(file => {
-      filesArray.push(this.fb.group({
-        name: [file.name],
-        size: [file.size],
-        type: [file.type],
-        lastModified: [file.lastModified],
-        file: [file]
-      }));
-    });
-
-    // Update the main form
-    this.importForm.get('attachmentsForm')?.setValue({
-      files: filesArray.value
-    });
+    console.log('Files received from attachments component:', files);
+    this.uploadedFiles = files;
   }
 }

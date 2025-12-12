@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatMenuModule } from "@angular/material/menu";
 import { filter } from 'rxjs/operators';
 
+
 interface MenuItem {
   label: string;
   icon?: string;
@@ -15,6 +16,7 @@ interface MenuItem {
   children?: MenuItem[];
   open?: boolean;
 }
+
 
 @Component({
   selector: 'app-layout',
@@ -31,10 +33,12 @@ interface MenuItem {
 })
 export class LayoutComponent implements OnInit {
 
+
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
   collapsed = false;
   shippingGuaranteeOpen = false;
   menuItems: MenuItem[] = [];
+
 
   systemOverviewMenu: MenuItem[] = [
     { label: 'Change Profile', route: '/system-overview/profile' },
@@ -66,6 +70,7 @@ export class LayoutComponent implements OnInit {
     },
   ];
 
+
   middleOfficeMenu: MenuItem[] = [
     {
       label: 'Pending Approvals',
@@ -90,16 +95,20 @@ export class LayoutComponent implements OnInit {
     }
   ];
 
+
   constructor(private router: Router, private authService: AuthService) { }
+
 
   ngOnInit() {
     const role = this.authService.getUserCategory();
     this.loadMenu(role);
 
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         const url = event.urlAfterRedirects;
+
 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
@@ -122,15 +131,18 @@ export class LayoutComponent implements OnInit {
     this.collapsed = !this.collapsed;
   }
 
+
   isCollapsed(): boolean {
     return this.collapsed;
   }
+
 
   onParentClick(item: any) {
     if (item.route) {
       this.router.navigate([item.route]);
     }
   }
+
 
   toggleMenu(item: any) {
     item.open = !item.open;
@@ -170,6 +182,7 @@ export class LayoutComponent implements OnInit {
           open: false,
           children: [
 
+
             // -------------------------
             // IMPORT LC
             // -------------------------
@@ -183,6 +196,7 @@ export class LayoutComponent implements OnInit {
               ]
             },
 
+
             // -------------------------
             // EXPORT LC
             // -------------------------
@@ -194,6 +208,7 @@ export class LayoutComponent implements OnInit {
                 { label: 'Create', route: '/export-screen' },
               ]
             },
+
 
             // -------------------------
             // SHIPPING GUARANTEE
@@ -208,6 +223,7 @@ export class LayoutComponent implements OnInit {
               ]
             },
 
+
             // -------------------------
             // EXPORT COLLECTION
             // -------------------------
@@ -218,9 +234,10 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/export-collection' },
                 // If you add amend later, uncomment this:
-                { label: 'Amend', route: '/export-collection/amend' },
+                // { label: 'Amend', route: '/export-collection/amend' },
               ]
             },
+
 
             // -------------------------
             // UNDERTAKING ISSUANCE
@@ -235,8 +252,10 @@ export class LayoutComponent implements OnInit {
               ]
             },
 
+
           ],
         },
+
 
         { label: 'Settings', icon: 'settings', route: '/settings' },
         { label: 'Logout', icon: 'exit_to_app', route: '/login' }
@@ -250,9 +269,11 @@ export class LayoutComponent implements OnInit {
     this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
   }
 
+
   // Ameen function
   onCustomerClick(item: MenuItem) {
     const currentUrl = this.router.url;
+
 
     if (currentUrl.startsWith('/admin/create-customer')) {
       // Force navigation back to /admin
@@ -264,5 +285,6 @@ export class LayoutComponent implements OnInit {
       item.open = !item.open;
     }
   }
+
 
 }

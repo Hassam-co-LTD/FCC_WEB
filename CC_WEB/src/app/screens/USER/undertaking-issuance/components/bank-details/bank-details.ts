@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +11,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
@@ -21,26 +20,9 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./bank-details.scss']
 })
 export class BankDetails {
-
   @Input() form!: FormGroup;
   isOpen = true;
   selectedTab = 'issuing';
-
-  formGroup: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.formGroup = this.fb.group({
-      recipientBankName: [''],
-      issuerReference: [''],
-      issuanceType: ['direct'],
-      swift: [''],
-      bankName: [''],
-      address1: [''],
-      address2: [''],
-      address3: [''],
-      country: ['']
-    });
-  }
 
   toggle() {
     this.isOpen = !this.isOpen;
@@ -48,5 +30,7 @@ export class BankDetails {
 
   selectTab(tab: string) {
     this.selectedTab = tab;
+    // Update the form value
+    this.form.get('selectedTab')?.setValue(tab);
   }
 }

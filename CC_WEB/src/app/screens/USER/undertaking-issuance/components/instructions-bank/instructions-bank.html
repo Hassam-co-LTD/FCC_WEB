@@ -4,75 +4,113 @@
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- Collapsible Content -->
-<div class="collapsible" [class.open]="isOpen" [formGroup]="instructionsForm">
-
-    <!-- Delivery Type & Mode -->
-
-    <!-- Delivery of Original Undertaking -->
-
-    <h4>Delivery of Original Undertaking & Mode of Delivery</h4>
-    <div class="form-grid-2">
-        <mat-form-field appearance="outline">
-            <mat-label>Delivery Type</mat-label>
-            <mat-select formControlName="deliveryType">
-                <mat-option value="">Select</mat-option>
-                <mat-option value="original">Delivery of Original Undertaking</mat-option>
-                <mat-option value="copy">Copy</mat-option>
-            </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field appearance="outline">
-            <mat-label>Delivery Mode</mat-label>
-            <mat-select formControlName="deliveryMode">
-                <mat-option value="">Select Mode</mat-option>
-                <mat-option value="courier">Courier</mat-option>
-                <mat-option value="pickup">Pick Up</mat-option>
-            </mat-select>
-        </mat-form-field>
+<!-- Collapsed Preview -->
+<div *ngIf="!isOpen" class="collapsed-preview">
+    <div class="preview-grid">
+        <div class="preview-item">
+            <span class="preview-label">Delivery Type</span>
+            <span class="preview-value">{{ getDisplayValue('deliveryType') }}</span>
+        </div>
+        <div class="preview-item">
+            <span class="preview-label">Delivery Mode</span>
+            <span class="preview-value">{{ getDisplayValue('deliveryMode') }}</span>
+        </div>
+        <div class="preview-item">
+            <span class="preview-label">Delivery To</span>
+            <span class="preview-value">{{ getDisplayValue('deliveryTo') }}</span>
+        </div>
+        <div class="preview-item">
+            <span class="preview-label">Principal Account</span>
+            <span class="preview-value">{{ getDisplayValue('principalAccount') }}</span>
+        </div>
     </div>
-
-
-    <!-- Delivery To -->
-    <h4>Delivery To</h4>
-    <mat-radio-group formControlName="deliveryTo" class="radio-group">
-        <mat-radio-button value="ourselves">Ourselves</mat-radio-button>
-        <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
-        <mat-radio-button value="representative">Representative</mat-radio-button>
-        <mat-radio-button value="agent">Agent</mat-radio-button>
-        <mat-radio-button value="other">Other</mat-radio-button>
-    </mat-radio-group>
-
-    <!-- Accounts -->
-    <!-- <div class="form-grid-2"> -->
-    <!-- Principal Account -->
-<h4>Accounts</h4>
-<div class="form-grid-2">
-    <mat-form-field appearance="outline">
-        <mat-label>Principal Account</mat-label>
-        <mat-select formControlName="principalAccount">
-            <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
-        </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-        <mat-label>Fee Account</mat-label>
-        <mat-select formControlName="feeAccount">
-            <mat-option *ngFor="let account of accounts" [value]="account">{{ account }}</mat-option>
-        </mat-select>
-    </mat-form-field>
 </div>
 
-    <!-- Other Instructions -->
+<!-- Collapsible Content -->
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-    <h4>Other Instructions</h4>
-    <mat-form-field appearance="outline" class="full">
-        <textarea matInput formControlName="otherInstructions" maxlength="210"
-            placeholder="Type your instructions..."></textarea>
-    </mat-form-field>
-    <div class="char-count">
-        {{ instructionsForm.get('otherInstructions')?.value?.length || 0 }}/210
+    <!-- Form Content -->
+    <div class="form-content">
+        <!-- Delivery of Original Undertaking -->
+        <h4>Delivery of Original Undertaking & Mode of Delivery</h4>
+        <div class="form-grid-2">
+            <mat-form-field appearance="outline">
+                <mat-label>Delivery Type</mat-label>
+                <mat-select formControlName="deliveryType">
+                    <mat-option value="">Select</mat-option>
+                    <mat-option *ngFor="let type of deliveryTypeOptions" [value]="type.value">
+                        {{ type.label }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="deliveryTypeControl?.invalid && deliveryTypeControl?.touched">
+                    Delivery type is required
+                </mat-error>
+            </mat-form-field>
+        
+            <mat-form-field appearance="outline">
+                <mat-label>Delivery Mode</mat-label>
+                <mat-select formControlName="deliveryMode">
+                    <mat-option value="">Select Mode</mat-option>
+                    <mat-option *ngFor="let mode of deliveryModeOptions" [value]="mode.value">
+                        {{ mode.label }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="deliveryModeControl?.invalid && deliveryModeControl?.touched">
+                    Delivery mode is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Delivery To -->
+        <h4>Delivery To</h4>
+        <mat-radio-group formControlName="deliveryTo" class="radio-group">
+            <mat-radio-button *ngFor="let option of deliveryToOptions" 
+                           [value]="option.value"
+                           class="radio-button">
+                {{ option.label }}
+            </mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="deliveryToControl?.invalid && deliveryToControl?.touched" class="radio-error">
+            Please select where to deliver
+        </mat-error>
+
+        <!-- Accounts -->
+        <h4>Accounts</h4>
+        <div class="form-grid-2">
+            <mat-form-field appearance="outline">
+                <mat-label>Principal Account</mat-label>
+                <mat-select formControlName="principalAccount">
+                    <mat-option value="">Select Account</mat-option>
+                    <mat-option *ngFor="let account of accounts" [value]="account">
+                        {{ account }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="principalAccountControl?.invalid && principalAccountControl?.touched">
+                    Principal account is required
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fee Account</mat-label>
+                <mat-select formControlName="feeAccount">
+                    <mat-option value="">Same as Principal Account</mat-option>
+                    <mat-option *ngFor="let account of accounts" [value]="account">
+                        {{ account }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Other Instructions -->
+        <h4>Other Instructions</h4>
+        <div class="instructions-container">
+            <mat-form-field appearance="outline" class="full">
+                <textarea matInput 
+                         formControlName="otherInstructions" 
+                         [maxlength]="MAX_CHARS"
+                         placeholder="Type your instructions..."></textarea>
+                <mat-hint align="end">{{ charCount }}/{{ MAX_CHARS }}</mat-hint>
+            </mat-form-field>
+        </div>
     </div>
-
-
 </div>

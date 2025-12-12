@@ -5,6 +5,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class SharedService {
+  clear() {
+    throw new Error('Method not implemented.');
+  }
   private formData = new BehaviorSubject<any>(null);
   currentData$ = this.formData.asObservable();
 
