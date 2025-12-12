@@ -5,6 +5,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class SharedService {
+  clearFormData() {
+    throw new Error('Method not implemented.');
+  }
   clear() {
     throw new Error('Method not implemented.');
   }

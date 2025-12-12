@@ -3,31 +3,6 @@
   <h2>Instructions for the Bank Only</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
-
-<!-- Collapsed Preview -->
-@if (!isOpen) {
-  <div class="collapsed-preview">
-    <div class="preview-grid">
-      <div class="preview-item">
-        <span class="preview-label">Delivery Type</span>
-        <span class="preview-value">{{ getDisplayValue('deliveryType') }}</span>
-      </div>
-      <div class="preview-item">
-        <span class="preview-label">Delivery Mode</span>
-        <span class="preview-value">{{ getDisplayValue('deliveryMode') }}</span>
-      </div>
-      <div class="preview-item">
-        <span class="preview-label">Delivery To</span>
-        <span class="preview-value">{{ getDisplayValue('deliveryTo') }}</span>
-      </div>
-      <div class="preview-item">
-        <span class="preview-label">Principal Account</span>
-        <span class="preview-value">{{ getDisplayValue('principalAccount') }}</span>
-      </div>
-    </div>
-  </div>
-}
-
 <!-- Collapsible Content -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 

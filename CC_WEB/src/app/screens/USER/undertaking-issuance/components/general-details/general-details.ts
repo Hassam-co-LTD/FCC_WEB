@@ -24,7 +24,7 @@ import { MatRadioModule } from "@angular/material/radio";
 export class generalDetails implements OnInit {
   
   @Input() form!: FormGroup;
-  @Output() filesChange = new EventEmitter<File[]>();
+  // @Output() filesChange = new EventEmitter<File[]>();
   isOpen = true;
 
   ngOnInit(): void {

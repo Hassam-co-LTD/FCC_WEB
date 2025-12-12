@@ -1,7 +1,5 @@
-
-
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms'; // ADD ReactiveFormsModule
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   selector: 'app-application-beneficiary',
   standalone: true,
   imports: [
+    ReactiveFormsModule, // ADD THIS
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -21,7 +20,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatButtonModule,
     MatIconModule,
     MatRadioModule
-],
+  ],
   templateUrl: './application-beneficiary.html',
   styleUrl: './application-beneficiary.scss',
 })

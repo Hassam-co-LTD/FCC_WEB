@@ -1,210 +1,363 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
+import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatCardModule
-],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatCardModule],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
+  providers: [DatePipe]
 })
 export class preview implements OnInit {
-previous() {
-throw new Error('Method not implemented.');
-}
   form!: FormGroup;
-  selectedTab = 'issuing';
+  lastUpdated: Date = new Date();
 
   constructor(
+    private dataService: SharedService,
     private fb: FormBuilder,
-    private sharedService: SharedService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private datePipe: DatePipe
   ) {}
 
-  ngOnInit(): void {
-    this.buildPreviewForm();
+  ngOnInit() {
+    this.loadFormData();
   }
 
-  private buildPreviewForm(): void {
-    const data = this.sharedService.getFormData();
+  private loadFormData() {
+    const savedData = this.dataService.getFormData();
 
-    if (!data) {
-      this.snackBar.open('No data found to preview', 'Close', { duration: 3000 });
-      this.router.navigate(['/undertaking-issuance/request-undertaking']);
+    if (!savedData || !savedData.form) {
+      this.snackBar.open('No form data found. Please complete the form first.', 'Close', { 
+        duration: 3000 
+      });
+      this.router.navigate(['/undertaking-issuance/request']);
       return;
     }
 
-    console.log('Preview Data:', data); // Debug log
+    this.form = savedData.form;
+    this.lastUpdated = new Date();
+    
+    console.log('Form loaded for preview:', this.form.value);
+  }
 
-    // Build the form structure matching RequestUndertaking
-    this.form = this.fb.group({
-      // FIXED: Changed from 'generalDetails' to 'generalDetailsform' to match RequestUndertaking
-      generalDetails: this.fb.group({
-        productType: [data.generalDetailsform?.productType ?? ''],
-        modeOfTransmission: [data.generalDetailsform?.modeOfTransmission ?? ''],
-        formOfUndertaking: [data.generalDetailsform?.formOfUndertaking ?? ''],
-        purpose: [data.generalDetailsform?.purpose ?? '']
-      }),
+  get generalDetails(): FormGroup {
+  return this.form.get('generalDetails') as FormGroup;
+}
 
-      // FIXED: Changed from 'applicantBeneficiaryForm' to 'applicantBeneficiary'
-      applicantBeneficiaryForm: this.fb.group({
-        applicantName: [data.applicantBeneficiary?.applicantName ?? ''],
-        beneficiaryName: [data.applicantBeneficiary?.beneficiaryName ?? ''],
-        applicantAddress1: [data.applicantBeneficiary?.applicantAddress1 ?? ''],
-        applicantAddress2: [data.applicantBeneficiary?.applicantAddress2 ?? ''],
-        applicantAddress3: [data.applicantBeneficiary?.applicantAddress3 ?? '']
-      }),
+get applicantBeneficiary(): FormGroup {
+  return this.form.get('applicantBeneficiary') as FormGroup;
+}
 
-      // FIXED: Already matches 'bankForm'
-      bankForm: this.fb.group({
-        recipientBankName: [data.bankForm?.recipientBankName ?? ''],
-        issuerReference: [data.bankForm?.issuerReference ?? ''],
-        swift: [data.bankForm?.swift ?? ''],
-        bankName: [data.bankForm?.bankName ?? ''],
-        country: [data.bankForm?.country ?? ''],
-        selectedTab: [data.bankForm?.selectedTab ?? 'issuing']
-      }),
+get bankForm(): FormGroup {
+  return this.form.get('bankForm') as FormGroup;
+}
 
-      // FIXED: Changed from 'undertakingDetailsForm' to 'undertakingDetails'
-      undertakingDetailsForm: this.fb.group({
-        typeOfUndertaking: [data.undertakingDetails?.typeOfUndertaking ?? ''],
-        effectiveOption: [data.undertakingDetails?.effectiveOption ?? ''],
-        expiryType: [data.undertakingDetails?.expiryType ?? ''],
-        expiryDate: [data.undertakingDetails?.expiryDate ?? ''],
-        currency: [data.undertakingDetails?.currency ?? ''],
-        undertakingAmount: [data.undertakingDetails?.undertakingAmount ?? '']
-      }),
+get undertakingDetails(): FormGroup {
+  return this.form.get('undertakingDetails') as FormGroup;
+}
 
-      // FIXED: Changed from 'instructionsForm' to 'instructions'
-      instructionsForm: this.fb.group({
-        deliveryType: [data.instructions?.deliveryType ?? ''],
-        deliveryMode: [data.instructions?.deliveryMode ?? ''],
-        deliveryTo: [data.instructions?.deliveryTo ?? ''],
-        principalAccount: [data.instructions?.principalAccount ?? '']
-      }),
+get instructions(): FormGroup {
+  return this.form.get('instructions') as FormGroup;
+}
 
-      // FIXED: Changed to match the structure from RequestUndertaking
-      attachments: this.fb.array([])
+  // ================== FORM STATUS ==================
+
+  getFormCompletion(): number {
+    if (!this.form) return 0;
+    
+    const sections = [
+      'generalDetails',
+      'applicantBeneficiary',
+      'bankForm',
+      'undertakingDetails',
+      'instructions'
+    ];
+    
+    let totalFields = 0;
+    let filledFields = 0;
+    
+    sections.forEach(section => {
+      const sectionGroup = this.form.get(section) as FormGroup;
+      if (sectionGroup) {
+        Object.keys(sectionGroup.controls).forEach(key => {
+          totalFields++;
+          const value = sectionGroup.get(key)?.value;
+          if (value !== null && value !== undefined && value !== '') {
+            filledFields++;
+          }
+        });
+      }
     });
+    
+    return totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+  }
 
-    // Add attachments if they exist
-    if (data.attachments && data.attachments.length > 0) {
-      console.log('Processing attachments:', data.attachments); // Debug log
-      data.attachments.forEach((file: any) => {
-        this.attachmentsArray.push(this.fb.group({
-          name: [file.name || ''],
-          size: [file.size || 0],
-          type: [file.type || this.getFileType(file.name)],
-          file: [file.file || null]
-        }));
-      });
+  getFormStatus(): string {
+    const completion = this.getFormCompletion();
+    if (completion >= 100) return 'Complete';
+    if (completion >= 80) return 'Ready to Submit';
+    if (completion >= 50) return 'Partially Complete';
+    return 'In Progress';
+  }
+
+  isFormComplete(): boolean {
+    return this.getFormCompletion() >= 80;
+  }
+
+  // ================== FORMATTING HELPERS ==================
+
+  formatValue(value: any): string {
+    if (value === null || value === undefined || value === '') {
+      return 'Not specified';
     }
-
-    this.selectedTab = this.form.get('bankForm.selectedTab')?.value || 'issuing';
-    console.log('Preview Form Built:', this.form.value); // Debug log
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0 ? value.join(', ') : 'None';
+    }
+    return String(value);
   }
 
-  // Helper getters
-  get attachmentsArray(): FormArray {
-    return this.form.get('attachments') as FormArray;
-  }
-
-  // Format helpers
-  format(value: any): string {
-    return value || value === 0 ? String(value) : '—';
-  }
-
-  formatDate(value: any): string {
-    if (!value) return '—';
+  formatDate(dateValue: any): string {
+    if (!dateValue) return 'Not specified';
+    
     try {
-      const date = new Date(value);
-      return isNaN(date.getTime()) ? value : date.toLocaleDateString();
+      const date = new Date(dateValue);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      
+      return this.datePipe.transform(date, 'MMMM d, yyyy') || 'Invalid date';
     } catch {
-      return value;
+      return String(dateValue);
     }
   }
 
-  address(a?: string, b?: string, c?: string): string {
-    const parts = [a, b, c].filter(part => part && part.trim() !== '');
-    return parts.length > 0 ? parts.join(', ') : '—';
+  formatCurrency(amount: any, currency: string = ''): string {
+    if (amount === null || amount === undefined || amount === '') return 'Not specified';
+    
+    const numAmount = Number(amount);
+    if (isNaN(numAmount)) return String(amount);
+    
+    const formatted = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(numAmount);
+    
+    return currency ? `${formatted} ${currency}` : formatted;
   }
 
-  getSelectedTabLabel(): string {
-    const map: { [key: string]: string } = {
-      issuing: 'Issuing Bank',
-      advising: 'Advising Bank',
-      adviseThrough: 'Advise Through Bank'
+  formatBankTab(tab: string): string {
+    const tabMap: {[key: string]: string} = {
+      'issuing': 'Issuing Bank',
+      'advising': 'Advising Bank',
+      'adviseThrough': 'Advise Through Bank'
     };
-    return map[this.selectedTab] || '—';
+    return tabMap[tab] || tab || 'Not specified';
   }
 
-  getFileType(filename: string): string {
-    if (!filename) return 'FILE';
-    const ext = filename.split('.').pop()?.toLowerCase() || '';
-    return ext.toUpperCase();
+  formatDeliveryType(type: string): string {
+    const options = [
+      { value: 'original', label: 'Delivery of Original Undertaking' },
+      { value: 'copy', label: 'Copy' }
+    ];
+    return options.find(opt => opt.value === type)?.label || type || 'Not specified';
+  }
+
+  formatDeliveryMode(mode: string): string {
+    const options = [
+      { value: 'courier', label: 'Courier' },
+      { value: 'pickup', label: 'Pick Up' },
+      { value: 'email', label: 'Email' },
+      { value: 'swift', label: 'SWIFT' }
+    ];
+    return options.find(opt => opt.value === mode)?.label || mode || 'Not specified';
+  }
+
+  formatDeliveryTo(to: string): string {
+    const options = [
+      { value: 'ourselves', label: 'Ourselves' },
+      { value: 'beneficiary', label: 'Beneficiary' },
+      { value: 'representative', label: 'Representative' },
+      { value: 'agent', label: 'Agent' },
+      { value: 'other', label: 'Other' }
+    ];
+    return options.find(opt => opt.value === to)?.label || to || 'Not specified';
+  }
+
+  // ================== FILE HANDLING ==================
+
+  getAttachments(): any[] {
+    if (!this.form) return [];
+    
+    // Try different attachment paths
+    const paths = ['attachments.files', 'attachments.attachments', 'files'];
+    
+    for (const path of paths) {
+      const control = this.form.get(path);
+      if (control instanceof FormArray) {
+        return control.value || [];
+      }
+    }
+    
+    return [];
+  }
+
+  getAttachmentsCount(): number {
+    return this.getAttachments().length;
+  }
+
+  getFileIcon(file: any): string {
+    if (!file) return 'insert_drive_file';
+    
+    const fileName = (file.name || file.fileName || '').toLowerCase();
+    const fileType = (file.type || '').toLowerCase();
+    
+    if (fileName.includes('.pdf') || fileType.includes('pdf')) return 'picture_as_pdf';
+    if (fileName.includes('.jpg') || fileName.includes('.jpeg') || fileName.includes('.png') || 
+        fileName.includes('.gif') || fileType.includes('image')) return 'image';
+    if (fileName.includes('.doc') || fileName.includes('.docx') || fileType.includes('word')) return 'description';
+    if (fileName.includes('.xls') || fileName.includes('.xlsx') || fileType.includes('excel')) return 'table_chart';
+    if (fileName.includes('.txt') || fileType.includes('text')) return 'text_snippet';
+    
+    return 'insert_drive_file';
+  }
+
+  getFileType(file: any): string {
+    if (!file) return 'Unknown';
+    
+    const fileName = (file.name || file.fileName || '').toLowerCase();
+    const extension = fileName.split('.').pop();
+    
+    const types: {[key: string]: string} = {
+      'pdf': 'PDF',
+      'jpg': 'Image',
+      'jpeg': 'Image',
+      'png': 'Image',
+      'gif': 'Image',
+      'doc': 'Word',
+      'docx': 'Word',
+      'xls': 'Excel',
+      'xlsx': 'Excel',
+      'txt': 'Text',
+      'rtf': 'Rich Text',
+      'csv': 'CSV'
+    };
+    
+    return extension ? (types[extension] || extension.toUpperCase()) : 'Unknown';
   }
 
   formatSize(bytes: number): string {
     if (!bytes || bytes === 0) return '0 Bytes';
+    
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // Actions
-  downloadFile(index: number): void {
-    const fileGroup = this.attachmentsArray.at(index);
-    const file = fileGroup.value;
+  getTotalFileSize(): string {
+    const attachments = this.getAttachments();
+    const totalBytes = attachments.reduce((sum, file) => sum + (file.size || 0), 0);
+    return this.formatSize(totalBytes);
+  }
+
+  downloadFile(file: any, index: number) {
+    if (!file) return;
     
-    if (file.file instanceof File) {
-      const url = URL.createObjectURL(file.file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    } else if (file.base64) {
-      const link = document.createElement('a');
-      link.href = file.base64;
-      link.download = file.name;
-      link.click();
-    } else {
-      this.snackBar.open('File not available for download', 'Close', { duration: 3000 });
+    try {
+      // Handle different file types
+      if (file.content && typeof file.content === 'string' && file.content.startsWith('data:')) {
+        // Base64 data URL
+        const a = document.createElement('a');
+        a.href = file.content;
+        a.download = file.name || file.fileName || 'file';
+        a.click();
+      } else if (file.file instanceof File) {
+        // File object
+        const url = window.URL.createObjectURL(file.file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.file.name;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+      
+      this.snackBar.open('File downloaded successfully', 'Close', { duration: 2000 });
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      this.snackBar.open('Error downloading file', 'Close', { duration: 3000 });
     }
   }
 
-  removeFile(index: number): void {
-    this.attachmentsArray.removeAt(index);
+  removeFile(index: number) {
+    if (confirm('Are you sure you want to remove this file?')) {
+      // Find and remove from form array
+      const paths = ['attachments.files', 'attachments.attachments', 'files'];
+      
+      for (const path of paths) {
+        const control = this.form.get(path);
+        if (control instanceof FormArray) {
+          control.removeAt(index);
+          break;
+        }
+      }
+      
+      this.snackBar.open('File removed successfully', 'Close', { duration: 2000 });
+    }
   }
 
-  back(): void {
-    this.router.navigate(['/undertaking-issuance/request-undertaking']);
+  // ================== ACTIONS ==================
+
+  printPreview() {
+    window.print();
   }
 
-  submit(): void {
-    const payload = this.form.getRawValue();
-    console.log('Final Submit Payload:', payload);
+  backToForm() {
+    this.router.navigate(['/undertaking-issuance/request']);
+  }
+
+  submitRequest() {
+    if (!this.isFormComplete()) {
+      this.snackBar.open('Please complete all required fields before submitting', 'Close', {
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    // Prepare submission data
+    const submissionData = {
+      ...this.form.value,
+      submittedAt: new Date().toISOString(),
+      status: 'Submitted'
+    };
+
+    console.log('Submitting undertaking request:', submissionData);
+
+    // Show success message
+    this.snackBar.open('Undertaking request submitted successfully!', 'Close', {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
+
+    // Clear data and navigate
+    this.dataService.clearFormData();
     
-    // Here you would typically send the data to your backend
-    this.snackBar.open('Undertaking request submitted successfully!', 'Close', { duration: 5000 });
-    
-    // Navigate to success page or dashboard
-    // this.router.navigate(['/success']);
+    // Navigate to dashboard
+    setTimeout(() => {
+      this.router.navigate(['/dashboard']);
+    }, 2000);
   }
 }

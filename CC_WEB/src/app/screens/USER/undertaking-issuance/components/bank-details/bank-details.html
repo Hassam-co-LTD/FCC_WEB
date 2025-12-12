@@ -3,7 +3,7 @@
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen">
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form"> 
 
   <!-- ===================== Top Row ===================== -->
   <div class="form-grid">
@@ -17,6 +17,7 @@
       <input matInput formControlName="issuerReference" />
     </mat-form-field>
   </div>
+  
   <!-- ===================== Tabs ===================== -->
   <div class="bank-tabs">
     <div class="tab" [class.active]="selectedTab === 'issuing'" (click)="selectTab('issuing')">
