@@ -16,7 +16,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   styleUrls: ['./preview.scss'],
   providers: [DatePipe]
 })
-export class preview implements OnInit {
+export class Preview implements OnInit {
   form!: FormGroup;
   lastUpdated: Date = new Date();
 

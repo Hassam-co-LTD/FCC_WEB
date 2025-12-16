@@ -314,7 +314,7 @@ export const routes: Routes = [
                 path: 'undertaking-issuance/preview',
                 loadComponent: () =>
                     import('./screens/USER/undertaking-issuance/components/preview/preview').then(
-                        (m) => m.preview
+                        (m) => m.Preview
                     ),
 
             },
