@@ -41,7 +41,7 @@ interface DashboardCard {
 export class Dashboard implements OnInit, AfterViewInit {
 
   /* ================= HEADER ================= */
-  userName = 'Love';
+  userName = 'User';
   isSyncing = false;
   lastUpdated = new Date();
 
