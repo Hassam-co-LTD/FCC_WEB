@@ -12,8 +12,6 @@ import { UndertakingDetails } from "../components/undertaking-details/undertakin
 import { InstructionsBank } from "../components/instructions-bank/instructions-bank";
 import { Attachments } from "../components/attachments/attachments";
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
-import { BankDetails_1 as BankDetails } from "../undertaking-issuance/components/bank-details/bank-details";
-import { Attachments_1 as Attachments } from "../undertaking-issuance/components/attachments/attachments";
 
 
 @Component({
@@ -27,9 +25,8 @@ import { Attachments_1 as Attachments } from "../undertaking-issuance/components
     UndertakingDetails,
     Attachments,
     InstructionsBank,
-    BankDetails_1,
-    Attachments_1
-],
+
+  ],
   templateUrl: './request-undertaking.html',
   styleUrls: ['./request-undertaking.scss'],
 })

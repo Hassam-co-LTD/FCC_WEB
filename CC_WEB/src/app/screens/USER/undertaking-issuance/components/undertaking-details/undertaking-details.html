@@ -1,0 +1,242 @@
+<!-- SECTION HEADER -->
+<div class="section-header" (click)="toggle()">
+    <h2>Undertaking Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<!-- COLLAPSIBLE FORM -->
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+    <!-- TYPE & CATEGORY -->
+    <h4>Type and Category</h4>
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Type of Undertaking</mat-label>
+            <mat-select formControlName="typeOfUndertaking">
+                <mat-option value="bid">Bid</mat-option>
+                <mat-option value="performance">Performance</mat-option>
+                <mat-option value="advance">Advance</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- EFFECTIVE DATE OPTIONS -->
+    <h4>Effective Date</h4>
+    <div class="options-row">
+        <mat-radio-group formControlName="effectiveOption">
+            <mat-radio-button value="openIssuance">Upon Issuance</mat-radio-button>
+            <mat-radio-button value="whenSigned">When contract is signed</mat-radio-button>
+            <mat-radio-button value="advancedOccur">When advance payment occurs</mat-radio-button>
+            <mat-radio-button value="other">Other</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- EXPIRY TYPE -->
+    <h4>Expiry Type</h4>
+    <div class="options-row">
+        <mat-radio-group formControlName="expiryType">
+            <mat-radio-button value="open">Open</mat-radio-button>
+            <mat-radio-button value="fixed">Fixed</mat-radio-button>
+            <mat-radio-button value="conditional">Conditional</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- EXPIRY DETAILS -->
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Expiry Date</mat-label>
+            <input matInput [matDatepicker]="expDate" formControlName="expiryDate" />
+            <mat-datepicker-toggle matSuffix [for]="expDate" class="date-toggle"></mat-datepicker-toggle>
+            <mat-datepicker #expDate></mat-datepicker>
+        </mat-form-field>
+    </div>
+
+    <!-- AMOUNT & CURRENCY -->
+    <h4>Amount and Charges</h4>
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <mat-select formControlName="currency">
+                <mat-option value="USD">USD</mat-option>
+                <mat-option value="EUR">EUR</mat-option>
+                <mat-option value="PKR">PKR</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Undertaking Amount</mat-label>
+            <input matInput type="number" formControlName="undertakingAmount" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Percentage (+)</mat-label>
+            <input matInput type="number" formControlName="variationPlus" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Percentage (-)</mat-label>
+            <input matInput type="number" formControlName="variationMinus" />
+        </mat-form-field>
+    </div>
+
+    <!-- CHARGES -->
+    <div class="options-row">
+        <h4>Issuance Charges</h4>
+        <mat-radio-group formControlName="issuanceCharges">
+            <mat-radio-button value="applicant">Applicant</mat-radio-button>
+            <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <div class="options-row">
+        <h4>Correspondent Charges</h4>
+        <mat-radio-group formControlName="correspondentCharges">
+            <mat-radio-button value="applicant">Applicant</mat-radio-button>
+            <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- SUPPLEMENTARY INFO -->
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Supplementary Information About Amount</mat-label>
+        <textarea matInput rows="3" formControlName="supplementaryInfo"></textarea>
+    </mat-form-field>
+
+    <!-- EXTENSION TYPE -->
+    <h4>Extension Date</h4>
+    <mat-radio-group formControlName="basicextensionType">
+        <mat-radio-button value="regular">Regular</mat-radio-button>
+        <mat-radio-button value="rolling">Rolling</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- INCREASE / DECREASE -->
+    <h4>Increase / Decrease Amount</h4>
+    <mat-radio-group formControlName="increaseDecreaseType">
+        <mat-radio-button value="regular">Regular</mat-radio-button>
+        <mat-radio-button value="irregular">Irregular</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- CONTRACT INFO -->
+    <h4>Contract Information</h4>
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Contract Type</mat-label>
+            <mat-select formControlName="contractType">
+                <mat-option value="sale">Sale</mat-option>
+                <mat-option value="service">Service</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
+            <mat-datepicker-toggle matSuffix [for]="ctDate" class="date-toggle"></mat-datepicker-toggle>
+            <mat-datepicker #ctDate></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Contract Currency</mat-label>
+            <mat-select formControlName="contractCurrency">
+                <mat-option value="USD">USD</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Contract Amount</mat-label>
+            <input matInput type="number" formControlName="contractAmount" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Percentage Covered</mat-label>
+            <input matInput type="number" formControlName="percentageCovered" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Contract Narrative</mat-label>
+            <input matInput formControlName="contractReference" />
+        </mat-form-field>
+    </div>
+
+    <!-- APPLICABLE RULES -->
+    <h4>Applicable Rules</h4>
+    <div class="options-row">
+        <mat-radio-group formControlName="applicableRules">
+            <mat-radio-button value="urdg">URDG</mat-radio-button>
+            <mat-radio-button value="none">NONE</mat-radio-button>
+            <mat-radio-button value="eir">EIR</mat-radio-button>
+            <mat-radio-button value="usr">USR</mat-radio-button>
+            <mat-radio-button value="other">OTHER</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- GOVERNING LAWS -->
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Governing Laws</mat-label>
+            <mat-select formControlName="governinglawsType">
+                <mat-option value="pk">Pakistan</mat-option>
+                <mat-option value="in">India</mat-option>
+                <mat-option value="ae">UAE</mat-option>
+                <mat-option value="pl">Poland</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Country Subdivision</mat-label>
+            <input matInput formControlName="subdivision" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Place of Jurisdiction</mat-label>
+            <input matInput formControlName="jurisdiction" />
+        </mat-form-field>
+    </div>
+
+    <!-- DEMAND INDICATOR -->
+    <mat-radio-group formControlName="DemandOption">
+        <mat-radio-button value="multipleDemandnot">Multiple demand not permitted</mat-radio-button>
+        <mat-radio-button value="multiplepartialDemandnot">Multiple & partial demands not permitted</mat-radio-button>
+        <mat-radio-button value="partialDemand">Partial demands permitted</mat-radio-button>
+        <mat-radio-button value="multiplepartialDemand">Multiple & partial demands permitted</mat-radio-button>
+    </mat-radio-group>
+
+    <!-- TEXT STANDARD -->
+    <h4>Text Standard</h4>
+    <div class="options-row">
+        <mat-radio-group formControlName="tsOption">
+            <mat-radio-button value="bkstandard">Bank Standard</mat-radio-button>
+            <mat-radio-button value="beneficiary">Beneficiary's wording</mat-radio-button>
+            <mat-radio-button value="partialDemand">Our wording</mat-radio-button>
+            <mat-radio-button value="multiplepartialDemand">Same as (Specify)</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <!-- LANGUAGE -->
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Language</mat-label>
+            <mat-select formControlName="languageType">
+                <mat-option value="en">English</mat-option>
+                <mat-option value="ur">Urdu</mat-option>
+                <mat-option value="ar">Arabic</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- TEXT FIELDS -->
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Text of Undertaking</mat-label>
+        <textarea matInput rows="1" formControlName="textofundertakingInfo"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Underlying Transaction Details*</mat-label>
+        <textarea matInput rows="2" formControlName="underlyingtransactionInfo"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Presentation Instruction</mat-label>
+        <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
+    </mat-form-field>
+
+</div>

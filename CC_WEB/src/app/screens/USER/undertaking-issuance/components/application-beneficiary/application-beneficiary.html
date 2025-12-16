@@ -1,0 +1,69 @@
+<div class="section-header" (click)="toggle()">
+    <h2>Applicant and Beneficiary Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form"> <!-- ADD THIS -->
+
+    <!-- ========================= Applicant ========================= -->
+    <h4>Applicant</h4>
+
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Name *</mat-label>
+            <input matInput formControlName="applicantName">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 1 *</mat-label>
+            <input matInput formControlName="applicantAddress1">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 2</mat-label>
+            <input matInput formControlName="applicantAddress2">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 3</mat-label>
+            <input matInput formControlName="applicantAddress3">
+        </mat-form-field>
+    </div>
+
+    <!-- ========================= Beneficiary ========================= -->
+    <h4>Beneficiary</h4>
+
+    <div class="form-grid">
+        <mat-form-field appearance="outline">
+            <mat-label>Name *</mat-label>
+            <input matInput formControlName="beneficiaryName">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 1 *</mat-label>
+            <input matInput formControlName="beneficiaryAddress1">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 2</mat-label>
+            <input matInput formControlName="beneficiaryAddress2">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Address 3</mat-label>
+            <input matInput formControlName="beneficiaryAddress3">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Country *</mat-label>
+            <mat-select formControlName="beneficiaryCountry">
+                <mat-option value="">Select Country</mat-option> <!-- ADD default option -->
+                <mat-option value="Pakistan">Pakistan</mat-option>
+                <mat-option value="UAE">UAE</mat-option>
+                <mat-option value="USA">USA</mat-option>
+                <mat-option value="UK">UK</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+</div>
