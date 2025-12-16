@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
  
+ 
 export const routes: Routes = [
     // Default redirect
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -26,6 +27,7 @@ export const routes: Routes = [
         children: [
             // Admin-Dashboard
               // my routes 
+
 
      {
   path: "admin",
@@ -233,25 +235,7 @@ export const routes: Routes = [
                     },
                 ],
             },
-                    {
-                        path: 'export-collection/preview',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/export-collection/components/preview/preview'
-                            ).then((m) => m.PreviewSectionComponent),
-                    },
-            {
-                path: 'export-collection-welcome',
-                loadComponent: () =>
-                    import('./shared/welcome-screen/welcome-screen').then(
-                        (m) => m.WelcomeScreen
-                    ),
-                data: {
-                    title: 'Welcome to Export Collection',
-                    description: 'Manage all Export Collection related activities here.',
-                },
-            },
-
+            
             // ==============================
             // UNDERTAKING ISSUANCE 
             // ==============================
@@ -274,7 +258,7 @@ export const routes: Routes = [
                         path: 'general-details',
                         loadComponent: () =>
                             import(
-                                './screens/USER/undertaking-issuance/undertaking-issuance/components/general-details/general-details'
+                                './screens/USER/undertaking-issuance/components/general-details/general-details'
                             ).then((m) => m.generalDetails),
                     },
                     {
@@ -310,14 +294,6 @@ export const routes: Routes = [
             },
  
             {
-                path: 'undertaking-issuance/preview',
-                loadComponent: () =>
-                    import('./screens/USER/undertaking-issuance/undertaking-issuance/components/preview/preview').then(
-                        (m) => m.preview
-                    ),
-              
-            },
-             {
                 path: 'undertaking-welcome',
                 loadComponent: () =>
                     import('./shared/welcome-screen/welcome-screen').then(
@@ -441,5 +417,6 @@ export const routes: Routes = [
     },
  
   // Wildcard redirect
+  { path: '**', redirectTo: 'login' },
   { path: '**', redirectTo: 'login' },
 ];

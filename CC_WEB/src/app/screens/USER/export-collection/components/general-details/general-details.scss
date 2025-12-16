@@ -9,6 +9,7 @@
   align-items: center;
   background: theme.$primary;
   padding: 14px 18px;
+  margin-bottom: 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -80,7 +81,7 @@ h4 {
   margin: 20px 0 10px;
   font-weight: 600;
   color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
+  // border-left: 4px solid theme.$primary;
   padding-left: 8px;
 }
 

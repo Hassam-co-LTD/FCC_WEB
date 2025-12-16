@@ -26,7 +26,7 @@ import { SharedService } from '../../../../../core/services/user-service/shared-
     MatSelectModule,
     MatOption,
     MatButtonModule
-  ],
+],
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss'],
 })

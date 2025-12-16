@@ -1,71 +1,272 @@
 <div class="ui-container">
+  <!-- DEBUG INFO (add this at the top) -->
+  <div class="debug-info" style="background: #f0f8ff; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px;">
+    <button (click)="debugTransactions()" style="padding: 5px 10px; background: #1976d2; color: white; border: none; border-radius: 3px; cursor: pointer;">
+      <mat-icon style="vertical-align: middle; font-size: 16px;">bug_report</mat-icon>
+      Debug Transactions
+    </button>
+    <div *ngIf="debugVisible" style="margin-top: 10px; font-size: 12px;">
+      <p><strong>Debug Info:</strong></p>
+      <p>Total Transactions: {{allTransactions.length}}</p>
+      <p>Filtered Transactions: {{filteredTransactions.length}}</p>
+      <p>Showing: {{pagedTransactions.length}} on page {{currentPage}} of {{totalPages}}</p>
+      <p>Active Tab: {{activeTab}} | Search: "{{searchQuery}}"</p>
+    </div>
+  </div>
 
-    <!-- HEADER + ACTION BUTTONS -->
-    <div class="ui-header">
-        <h1>Search By ID</h1>
-<!-- 
-        <div class="ui-actions">
-            <button class="btn-outline">Templates</button>
-            <button class="btn-primary" [routerLink]="['/undertaking-issuance/request-undertaking/general-details']"
-                routerLinkActive="active-link">
-                Request Undertaking
-            </button>
-        </div> -->
+  <!-- HEADER + ACTION BUTTONS -->
+  <div class="ui-header">
+    <h1>Search By ID</h1>
+  </div>
+
+  <!-- SEARCH SYSTEM -->
+  <div class="search-system">
+    <div class="search-container">
+      <div class="search-input-group">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input 
+          type="text" 
+          class="search-input" 
+          id="searchInput"
+          placeholder="Search by Channel Reference, Customer Reference, Bank Reference, Beneficiary..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()"
+        >
+        <button class="btn-clear-search" *ngIf="searchQuery" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="search-actions">
+        <button class="btn-search" (click)="onSearch()">
+          <mat-icon>search</mat-icon> Search
+        </button>
+        <button class="btn-advanced" (click)="toggleAdvancedSearch()">
+          <mat-icon>filter_list</mat-icon> Advanced Filter
+        </button>
+      </div>
     </div>
 
-    <!-- TAB SECTION -->
-    <div class="ui-tabs">
-        <div class="tab active">Live (0)</div>
-        <div class="tab">Draft (1)</div>
-        <div class="tab">Actions (0)</div>
-        <div class="tab">Pending Approval (0)</div>
-        <div class="tab">Pending at Bank (1)</div>
-        <div class="tab">Rejected (0)</div>
-        <div class="tab">Closed (0)</div>
-    </div>
-
-    <!-- FILTER ROW -->
-    <div class="filter-row">
+    <!-- ADVANCED SEARCH PANEL -->
+    <div class="advanced-search-panel" *ngIf="showAdvancedSearch">
+      <div class="advanced-search-grid">
         <div class="form-group">
-            <label>Select Preference</label>
-            <select>
-                <option>Standard</option>
-            </select>
+          <label>Channel Reference</label>
+          <input type="text" [(ngModel)]="filters.channelReference">
         </div>
-    </div>
-
-    <!-- ADVANCED FILTER COLLAPSIBLE -->
-    <div class="advanced-filter">
-        <div class="toggle">
-            <mat-icon>keyboard_arrow_down</mat-icon>
-            Advanced Filter
+        <div class="form-group">
+          <label>Customer Reference</label>
+          <input type="text" [(ngModel)]="filters.customerReference">
         </div>
+        <div class="form-group">
+          <label>Bank Reference</label>
+          <input type="text" [(ngModel)]="filters.bankReference">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="filters.status">
+            <option value="">All Status</option>
+            <option value="Live">Live</option>
+            <option value="Draft">Draft</option>
+            <option value="Pending">Pending Approval</option>
+            <option value="Bank">Pending at Bank</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>From Date</label>
+          <input type="date" [(ngModel)]="filters.fromDate">
+        </div>
+        <div class="form-group">
+          <label>To Date</label>
+          <input type="date" [(ngModel)]="filters.toDate">
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select [(ngModel)]="filters.currency">
+            <option value="">All Currencies</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="INR">INR</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Min Amount</label>
+          <input type="number" [(ngModel)]="filters.minAmount" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label>Max Amount</label>
+          <input type="number" [(ngModel)]="filters.maxAmount" placeholder="0.00">
+        </div>
+      </div>
+      <div class="advanced-search-actions">
+        <button class="btn-outline" (click)="resetFilters()">Reset</button>
+        <button class="btn-primary" (click)="applyAdvancedFilters()">Apply Filters</button>
+      </div>
     </div>
+  </div>
 
-    <!-- TABLE SECTION -->
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>Channel Reference</th>
-                    <th>Customer Reference</th>
-                    <th>Bank Reference</th>
-                    <th>Issue Date</th>
-                    <th>Status</th>
-                    <th>Beneficiary</th>
-                    <th>Currency</th>
-                    <th>Amount</th>
-                    <th>Outstanding Amount</th>
-                    <th>Expiry Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td colspan="11" class="no-records">No Records Found</td>
-                </tr>
-            </tbody>
-        </table>
+  <!-- TAB SECTION -->
+  <div class="ui-tabs">
+    <div class="tab" [class.active]="activeTab === 'live'" (click)="setActiveTab('live')">
+      Live ({{getTabCount('live')}})
     </div>
+    <div class="tab" [class.active]="activeTab === 'draft'" (click)="setActiveTab('draft')">
+      Draft ({{getTabCount('draft')}})
+    </div>
+    <div class="tab" [class.active]="activeTab === 'actions'" (click)="setActiveTab('actions')">
+      Actions ({{getTabCount('actions')}})
+    </div>
+    <div class="tab" [class.active]="activeTab === 'pendingApproval'" (click)="setActiveTab('pendingApproval')">
+      Pending Approval ({{getTabCount('pendingApproval')}})
+    </div>
+    <div class="tab" [class.active]="activeTab === 'pendingBank'" (click)="setActiveTab('pendingBank')">
+      Pending at Bank ({{getTabCount('pendingBank')}})
+    </div>
+    <div class="tab" [class.active]="activeTab === 'rejected'" (click)="setActiveTab('rejected')">
+      Rejected ({{getTabCount('rejected')}})
+    </div>
+    <div class="tab" [class.active]="activeTab === 'closed'" (click)="setActiveTab('closed')">
+      Closed ({{getTabCount('closed')}})
+    </div>
+  </div>
+
+  <!-- FILTER ROW -->
+  <div class="filter-row">
+    <div class="form-group">
+      <label>Select Preference</label>
+      <select>
+        <option>Standard</option>
+      </select>
+    </div>
+    
+    <!-- RESULTS SUMMARY - FIXED -->
+    <div class="results-summary" *ngIf="pagedTransactions.length > 0">
+      Showing {{pagedTransactions.length}} of {{filteredTransactions.length}} transactions 
+      (Page {{currentPage}} of {{totalPages}})
+    </div>
+  </div>
+
+  <!-- TABLE SECTION - FIXED: Use pagedTransactions instead of filteredTransactions -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th (click)="sortBy('channelReference')">
+            Channel Reference
+            <mat-icon *ngIf="sortColumn === 'channelReference'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('customerReference')">
+            Customer Reference
+            <mat-icon *ngIf="sortColumn === 'customerReference'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('bankReference')">
+            Bank Reference
+            <mat-icon *ngIf="sortColumn === 'bankReference'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('issueDate')">
+            Issue Date
+            <mat-icon *ngIf="sortColumn === 'issueDate'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('status')">
+            Status
+            <mat-icon *ngIf="sortColumn === 'status'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('beneficiary')">
+            Beneficiary
+            <mat-icon *ngIf="sortColumn === 'beneficiary'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('currency')">
+            Currency
+            <mat-icon *ngIf="sortColumn === 'currency'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('amount')">
+            Amount
+            <mat-icon *ngIf="sortColumn === 'amount'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('outstandingAmount')">
+            Outstanding Amount
+            <mat-icon *ngIf="sortColumn === 'outstandingAmount'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th (click)="sortBy('expiryDate')">
+            Expiry Date
+            <mat-icon *ngIf="sortColumn === 'expiryDate'">
+              {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+            </mat-icon>
+          </th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- CHANGED: Use pagedTransactions instead of filteredTransactions -->
+        <tr *ngFor="let transaction of pagedTransactions">
+          <td>{{transaction.channelReference}}</td>
+          <td>{{transaction.customerReference}}</td>
+          <td>{{transaction.bankReference}}</td>
+          <td>{{transaction.issueDate | date:'dd/MM/yyyy'}}</td>
+          <td>
+            <span class="status-badge" [class]="'status-' + transaction.status.toLowerCase()">
+              {{transaction.status}}
+            </span>
+          </td>
+          <td>{{transaction.beneficiary}}</td>
+          <td>{{transaction.currency}}</td>
+          <td class="amount">{{transaction.amount | currency:transaction.currency:'symbol':'1.2-2'}}</td>
+          <td class="amount">{{transaction.outstandingAmount | currency:transaction.currency:'symbol':'1.2-2'}}</td>
+          <td>{{transaction.expiryDate | date:'dd/MM/yyyy'}}</td>
+          <td>
+            <button class="btn-action" (click)="viewTransaction(transaction)">
+              <mat-icon>visibility</mat-icon> View
+            </button>
+          </td>
+        </tr>
+        
+        <!-- CHANGED: Use pagedTransactions instead of filteredTransactions -->
+        <tr *ngIf="pagedTransactions.length === 0">
+          <td colspan="11" class="no-records">
+            <mat-icon>search_off</mat-icon>
+            <p>No transactions found</p>
+            <button class="btn-outline" (click)="clearSearch()" *ngIf="hasActiveFilters">
+              Clear filters to show all transactions
+            </button>
+            <div *ngIf="allTransactions.length === 0" style="margin-top: 10px;">
+              <p style="color: #666; font-size: 12px;">No transactions in database. Submit an undertaking first.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- PAGINATION - FIXED: Use filteredTransactions for pagination control -->
+    <div class="pagination" *ngIf="filteredTransactions.length > itemsPerPage">
+      <button class="btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span>Page {{currentPage}} of {{totalPages}}</span>
+      <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
 </div>

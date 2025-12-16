@@ -14,14 +14,13 @@ import { SharedService } from '../../../core/services/user-service/shared-form-s
   selector: 'app-export-screen',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     GeneralDetails,
     Upload,
     Attachments,
     Sidebar,
     RouterOutlet
-  ],
+],
   templateUrl: './export-screen.html',
   styleUrls: ['./export-screen.scss']
 })

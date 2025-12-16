@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import {  MatLabel } from "@angular/material/form-field";
@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 @Component({
   selector: 'app-general-details',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIcon, MatLabel, MatSelectModule, MatInputModule],
+  imports: [ReactiveFormsModule, MatIcon, MatLabel, MatSelectModule, MatInputModule],
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss']
 })

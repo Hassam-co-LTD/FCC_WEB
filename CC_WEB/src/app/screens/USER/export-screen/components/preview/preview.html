@@ -74,7 +74,9 @@
 
       </div>
 
-      <p *ngIf="attachmentsArray.length === 0">No attachments uploaded.</p>
+      @if (attachmentsArray.length === 0) {
+        <p>No attachments uploaded.</p>
+      }
     </mat-card>
 
   </div>

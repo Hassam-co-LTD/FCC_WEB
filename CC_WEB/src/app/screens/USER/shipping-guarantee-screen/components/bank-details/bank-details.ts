@@ -12,14 +12,13 @@ import { SharedService } from '../../../../../core/services/user-service/shared-
   selector: 'app-bank-details',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule
-  ],
+],
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss'],
 })

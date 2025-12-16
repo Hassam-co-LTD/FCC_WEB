@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,7 +13,6 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-shipment-details',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -22,7 +21,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule
-  ],
+],
   templateUrl: './shipment-details.html',
   styleUrls: ['./shipment-details.scss']
 })

@@ -12,14 +12,13 @@ import { SharedService } from '../../../../../core/services/user-service/shared-
   selector: 'app-instructions',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule
-  ],
+],
   templateUrl: './instructions.html',
   styleUrls: ['./instructions.scss'],
 })

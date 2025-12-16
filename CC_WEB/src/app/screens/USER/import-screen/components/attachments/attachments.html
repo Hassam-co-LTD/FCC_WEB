@@ -1,27 +1,31 @@
 <div class="section-header" (click)="toggle()">
-    <h2>Attachments</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <h2>Attachments</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-    <p class="hint">Maximum 5 Files of 1 MB each</p>
-    <p class="extensions">
-        Valid extensions: PNG, JPEG, JPG, RTF, CSV, XLS, XLSX, DOCX, TXT, DOC, PDF, GIF.
-    </p>
+  <p class="hint">Maximum 5 Files of 1 MB each</p>
+  <p class="extensions">
+    Valid extensions: PNG, JPEG, JPG, RTF, CSV, XLS, XLSX, DOCX, TXT, DOC, PDF, GIF.
+  </p>
 
-    <div class="dropzone" (dragover)="onDragOver($event)" (drop)="onFileDropped($event)">
-        <mat-icon>cloud_upload</mat-icon>
-        <p>Drag and Drop File</p>
-        <input type="file" multiple hidden #fileInput (change)="onFileSelected($event)" />
-        <button mat-stroked-button color="primary" (click)="fileInput.click()">Browse</button>
-    </div>
+  <div class="dropzone" (dragover)="onDragOver($event)" (drop)="onFileDropped($event)">
+    <mat-icon>cloud_upload</mat-icon>
+    <p>Drag and Drop File</p>
+    <input type="file" multiple hidden #fileInput (change)="onFileSelected($event)" />
+    <button mat-stroked-button color="primary" (click)="fileInput.click()">Browse</button>
+  </div>
 
-    <div class="file-list" *ngIf="files.length > 0">
-        <div *ngFor="let file of files; let i = index" class="file-item">
-            <span>{{ file.name }}</span>
-            <button mat-icon-button color="warn" (click)="removeFile(i)">
-                <mat-icon>delete</mat-icon>
-            </button>
+  @if (files.length > 0) {
+    <div class="file-list">
+      @for (file of files; track file; let i = $index) {
+        <div class="file-item">
+          <span>{{ file.name }}</span>
+          <button mat-icon-button color="warn" (click)="removeFile(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
+      }
     </div>
+  }
 </div>

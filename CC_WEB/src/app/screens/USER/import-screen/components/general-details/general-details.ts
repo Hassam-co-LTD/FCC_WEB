@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { formatDate } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,7 +15,6 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-general-details',
   standalone: true,
   imports: [
-    CommonModule,
     MatButtonModule,
     ReactiveFormsModule,
     MatRadioModule,
@@ -25,7 +24,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSlideToggleModule,
     MatIcon,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatNativeDateModule
 ],
   templateUrl: './general-details.html',
   styleUrl: './general-details.scss',

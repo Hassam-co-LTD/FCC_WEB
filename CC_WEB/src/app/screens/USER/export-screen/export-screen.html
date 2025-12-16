@@ -1,9 +1,8 @@
 <!-- Only show export screen form if NOT on preview route -->
-<div class="screen" *ngIf="!isPreviewRoute">
-
+@if (!isPreviewRoute) {
+  <div class="screen">
     <app-sidebar [steps]="exportlcSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
     </app-sidebar>
-
     <div class="content">
         <div class="scroll-area">
 
@@ -36,8 +35,8 @@
             </div>
         </div>
     </div>
-
-</div>
+  </div>
+}
 
 <!-- Render preview component here -->
 <router-outlet></router-outlet>

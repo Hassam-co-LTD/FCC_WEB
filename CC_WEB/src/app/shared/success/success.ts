@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatCard } from "@angular/material/card";
 import { CommonModule } from '@angular/common';
 
+
 @Component({
   selector: 'app-success',
   templateUrl: './success.html',

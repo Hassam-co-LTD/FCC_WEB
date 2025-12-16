@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../../../../../../core/services/admin-service/customer-form-service/customer-service';
-import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-show-customer-data',
-  imports:[CommonModule],
+  imports: [],
   templateUrl: './show-customers-form-data.html',
   styleUrls: ['./show-customers-form-data.scss']
 })

@@ -14,7 +14,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   selector: 'app-shipping-guarantee',
   standalone: true,
   imports: [
-    CommonModule,
     GeneralDetails,
     ApplicantBeneficiary,
     BankDetails,
