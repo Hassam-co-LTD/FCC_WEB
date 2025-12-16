@@ -251,16 +251,15 @@ export const routes: Routes = [
                                 './screens/USER/export-collection/components/license/license'
                             ).then((m) => m.License),
                     },
+                ],
+            },
                     {
-                        path: 'preview',
+                        path: 'export-collection/preview',
                         loadComponent: () =>
                             import(
                                 './screens/USER/export-collection/components/preview/preview'
                             ).then((m) => m.PreviewSectionComponent),
                     },
-                ],
-            },
-
             {
                 path: 'export-collection-welcome',
                 loadComponent: () =>

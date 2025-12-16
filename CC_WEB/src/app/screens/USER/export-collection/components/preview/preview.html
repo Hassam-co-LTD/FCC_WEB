@@ -1,323 +1,414 @@
-<!-- <div class="section-header" (click)="toggle()">
-<h2>Preview</h2>
-<mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-</div>
+<div class="preview-page">
+  <div class="preview-header">
+    <h1>Export Collection Preview</h1>
+  </div>
 
-<div class="collapsible" [class.open]="isOpen"> -->
-
-  <h2 class="page-title">Preview</h2>
   @if (form) {
-    <div class="preview-section">
-      <!-- ============================== -->
-      <!-- ROW 1 → GENERAL DETAILS & DRAWER/DRAWEE -->
-      <!-- ============================== -->
-      <div class="preview-row">
-        <!-- GENERAL DETAILS -->
-        @if (form.get('generaldetails'); as gd) {
-          <div class="preview-block">
-            <h2>General Details</h2>
-            <div class="preview-row">
-              <div class="preview-label">Collection Type:</div>
-              <div class="preview-value">{{ gd.value.collectionType }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Customer Reference:</div>
-              <div class="preview-value">{{ gd.value.customerReference }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Drawee Reference:</div>
-              <div class="preview-value">{{ gd.value.draweeReference }}</div>
-            </div>
+    <div class="preview-content">
+      
+      <!-- Summary Card -->
+      <div class="summary-card">
+        <div class="summary-item">
+          <mat-icon class="summary-icon">receipt</mat-icon>
+          <div class="summary-text">
+            <div class="summary-label">Collection Type</div>
+            <div class="summary-value">{{ getCollectionType() }}</div>
           </div>
-        }
-        <!-- DRAWER & DRAWEE -->
-        @if (form.get('DrawerDraweeDetails'); as dd) {
-          <div class="preview-block">
-            <h2>Drawer & Drawee</h2>
-            <h3>Drawer</h3>
-            <div class="preview-row">
-              <div class="preview-label">Drawer Name:</div>
-              <div class="preview-value">{{ dd.value.drawerName }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Address 1:</div>
-              <div class="preview-value">{{ dd.value.drawerAddress1 }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Address 2:</div>
-              <div class="preview-value">{{ dd.value.drawerAddress2 }}</div>
-            </div>
-            <h3>Drawee</h3>
-            <div class="preview-row">
-              <div class="preview-label">Drawee Name:</div>
-              <div class="preview-value">{{ dd.value.draweeName }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Address 1:</div>
-              <div class="preview-value">{{ dd.value.draweeAddress1 }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Address 2:</div>
-              <div class="preview-value">{{ dd.value.draweeAddress2 }}</div>
-            </div>
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">monetization_on</mat-icon>
+          <div class="summary-text">
+            <div class="summary-label">Total Amount</div>
+            <div class="summary-value">{{ getTotalAmount() }}</div>
           </div>
-        }
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">attach_file</mat-icon>
+          <div class="summary-text">
+            <div class="summary-label">Attachments</div>
+            <div class="summary-value">{{ getAttachmentsCount() }}</div>
+          </div>
+        </div>
+        <div class="summary-item">
+          <mat-icon class="summary-icon">update</mat-icon>
+          <div class="summary-text">
+            <div class="summary-label">Last Updated</div>
+            <div class="summary-value">{{ lastUpdated | date:'short' }}</div>
+          </div>
+        </div>
       </div>
-      <hr />
-      <!-- ============================== -->
-      <!-- ROW 2 → BANK DETAILS & PAYMENT/AMOUNT -->
-      <!-- ============================== -->
-      <div class="preview-row">
-        <!-- BANK DETAILS -->
-        @if (form.get('bankdetails'); as bd) {
-          <div class="preview-block">
-            <h2>Bank Details</h2>
-            <div class="preview-row">
-              <div class="preview-label">Remitting Bank Name:</div>
-              <div class="preview-value">{{ bd.value.remittingBankName }}</div>
+
+      <!-- General Details -->
+      <mat-card class="preview-card">
+        <div class="card-header">
+          <h3>General Details</h3>
+        </div>
+        <div class="card-content">
+          <div class="grid">
+            <div class="field-group">
+              <span class="field-label">Collection Type</span>
+              <span class="field-value highlight">{{ formatValue(form.get('generaldetails.collectionType')?.value) }}</span>
             </div>
-            <div class="preview-row">
-              <div class="preview-label">Remitting Issuer Ref:</div>
-              <div class="preview-value">{{ bd.value.remittingIssuerRef }}</div>
+            <div class="field-group">
+              <span class="field-label">Customer Reference</span>
+              <span class="field-value">{{ formatValue(form.get('generaldetails.customerReference')?.value) }}</span>
             </div>
-            <div class="preview-row">
-              <div class="preview-label">Principal Account:</div>
-              <div class="preview-value">{{ bd.value.principalAccount }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Fee Account:</div>
-              <div class="preview-value">{{ bd.value.feeAccount }}</div>
+            <div class="field-group">
+              <span class="field-label">Drawee Reference</span>
+              <span class="field-value">{{ formatValue(form.get('generaldetails.draweeReference')?.value) }}</span>
             </div>
           </div>
-        }
-        <!-- PAYMENT & AMOUNT -->
-        @if (form.get('paymentamount'); as pa) {
-          <div class="preview-block">
-            <h2>Payment & Amount</h2>
-            <div class="preview-row">
-              <div class="preview-label">Amount:</div>
-              <div class="preview-value">{{ pa.value.amount }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Currency:</div>
-              <div class="preview-value">{{ pa.value.currency }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Payment Type:</div>
-              <div class="preview-value">{{ pa.value.paymentType }}</div>
-            </div>
-            <div class="preview-row">
-              <div class="preview-label">Tenor:</div>
-              <div class="preview-value">{{ pa.value.tenor }}</div>
+        </div>
+      </mat-card>
+
+      <!-- Drawer & Drawee -->
+      <div class="row-cards">
+        <!-- Drawer Details -->
+        <mat-card class="preview-card half-width">
+          <div class="card-header drawer-header">
+            <mat-icon>person_outline</mat-icon>
+            <h3>Drawer Details</h3>
+          </div>
+          <div class="card-content">
+            <div class="grid">
+              <div class="field-group">
+                <span class="field-label">Name</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerName')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 1</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerAddress1')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 2</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerAddress2')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 3</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerAddress3')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">City</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerCity')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Country</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.drawerCountry')?.value) }}</span>
+              </div>
             </div>
           </div>
-        }
+        </mat-card>
+
+        <!-- Drawee Details -->
+        <mat-card class="preview-card half-width">
+          <div class="card-header drawee-header">
+            <mat-icon>business</mat-icon>
+            <h3>Drawee Details</h3>
+          </div>
+          <div class="card-content">
+            <div class="grid">
+              <div class="field-group">
+                <span class="field-label">Name</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeName')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 1</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeAddress1')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 2</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeAddress2')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Address Line 3</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeAddress3')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">City</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeCity')?.value) }}</span>
+              </div>
+              <div class="field-group">
+                <span class="field-label">Country</span>
+                <span class="field-value">{{ formatValue(form.get('DrawerDraweeDetails.draweeCountry')?.value) }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card>
       </div>
-      <hr />
-      <!-- ========================= -->
-      <!-- SHIPPING DETAILS PREVIEW -->
-      <!-- ========================= -->
-      @if (form.get('shippingdetails'); as sd) {
-        <div class="preview-block">
-          <h2>Shipping Details</h2>
-          <div class="preview-row">
-            <div class="preview-label">Shipping Method:</div>
-            <div class="preview-value">{{ sd.value.shippingMethod }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Shipment Reference:</div>
-            <div class="preview-value">{{ sd.value.shipmentReference }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Shipping From:</div>
-            <div class="preview-value">{{ sd.value.shippingFrom }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Shipping To:</div>
-            <div class="preview-value">{{ sd.value.shippingTo }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Shipment Date:</div>
-            <div class="preview-value">{{ sd.value.shipmentDate }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Incoterms Rules:</div>
-            <div class="preview-value">{{ sd.value.incotermsRules }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Incoterms:</div>
-            <div class="preview-value">{{ sd.value.incoterms }}</div>
-          </div>
+
+      <!-- Bank Details -->
+      <mat-card class="preview-card">
+        <div class="card-header bank-header">
+          <mat-icon>account_balance</mat-icon>
+          <h3>Bank Details</h3>
         </div>
-      }
-      <hr />
-      <!-- ========================= -->
-      <!-- COLLECTION INSTRUCTIONS PREVIEW -->
-      <!-- ========================= -->
-      @if (form.get('collectioninstructions'); as ci) {
-        <div class="preview-block">
-          <h2>Collection Instructions</h2>
-          <div class="preview-row">
-            <div class="preview-label">Advice Payment By:</div>
-            <div class="preview-value">{{ ci.value.advicePaymentBy }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Advice Acceptance Date:</div>
-            <div class="preview-value">{{ ci.value.adviceAcceptanceDate }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Opening Charges:</div>
-            <div class="preview-value">{{ ci.value.openingCharges }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Outside Country Charges:</div>
-            <div class="preview-value">{{ ci.value.outsideCountryCharges }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Waive Charges:</div>
-            <div class="preview-value">{{ ci.value.waiveCharges ? 'Yes' : 'No' }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Protest Non Payment:</div>
-            <div class="preview-value">{{ ci.value.protestNonPayment ? 'Yes' : 'No' }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Protest Non Acceptance:</div>
-            <div class="preview-value">{{ ci.value.protestNonAcceptance ? 'Yes' : 'No' }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Reason of Refusal:</div>
-            <div class="preview-value">{{ ci.value.adviceReasonRefusal }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Acceptance Deferred:</div>
-            <div class="preview-value">{{ ci.value.acceptanceDeferred ? 'Yes' : 'No' }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Warehouse Insurance:</div>
-            <div class="preview-value">{{ ci.value.warehouseInsurance ? 'Yes' : 'No' }}</div>
-          </div>
-          <div class="preview-row">
-            <div class="preview-label">Refer To:</div>
-            <div class="preview-value">{{ ci.value.referTo }}</div>
-          </div>
-        </div>
-      }
-      <hr />
-      <!-- ========================= -->
-      <!-- LICENSE PREVIEW -->
-      <!-- ========================= -->
-      @if (attachmentsArray.length >= 0) {
-        <div class="preview-block">
-          <h4>LICENSE</h4>
-          @if (attachmentsArray.length > 0) {
-            <div class="preview-grid">
-              <div class="preview-row header">
-                <div>File Type</div>
-                <div>Title</div>
-                <div>File Name</div>
-                <!-- <div>File Size</div> -->
-                <!-- <div>Actions</div> -->
-              </div>
-              @for (f of attachmentsArray.controls; track f; let i = $index) {
-                <div class="preview-row">
-                  <div>
-                    @if (f.value.type?.includes('pdf')) {
-                      <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
-                    }
-                    @if (f.value.type?.includes('image')) {
-                      <mat-icon class="image-icon">image</mat-icon>
-                    }
-                  </div>
-                  <div>{{ f.value.title }}</div>
-                  <div>{{ f.value.fileName }}</div>
-                  <!-- <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div> -->
-                  <div class="actions">
-                    <!-- <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon> -->
-                  </div>
-                </div>
-              }
+        <div class="card-content">
+          <div class="grid">
+            <div class="field-group">
+              <span class="field-label">Remitting Bank Name</span>
+              <span class="field-value">{{ formatValue(form.get('bankdetails.remittingBankName')?.value) }}</span>
             </div>
-          }
-          @if (attachmentsArray.controls.length === 0) {
-            <p>No attachments uploaded.</p>
-          }
-        </div>
-      }
-      <hr />
-      <!-- ========================= -->
-      <!-- ATTACHMENTS & DOCUMENTS PREVIEW -->
-      <!-- ========================= -->
-      @if (attachmentsArray.length >= 0) {
-        <div class="preview-block">
-          <h4>Attachments</h4>
-          @if (attachmentsArray.length > 0) {
-            <div class="preview-grid">
-              <div class="preview-row header">
-                <div>File Type</div>
-                <div>Title</div>
-                <div>File Name</div>
-                <!-- <div>File Size</div> -->
-                <div>Actions</div>
-              </div>
-              @for (f of attachmentsArray.controls; track f; let i = $index) {
-                <div class="preview-row">
-                  <div>
-                    @if (f.value.type?.includes('pdf')) {
-                      <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
-                    }
-                    @if (f.value.type?.includes('image')) {
-                      <mat-icon class="image-icon">image</mat-icon>
-                    }
-                  </div>
-                  <div>{{ f.value.title }}</div>
-                  <div>{{ f.value.fileName }}</div>
-                  <!-- <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div> -->
-                  <div class="actions">
-                    <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
-                  </div>
-                </div>
-              }
+            <div class="field-group">
+              <span class="field-label">Remitting Issuer Reference</span>
+              <span class="field-value">{{ formatValue(form.get('bankdetails.remittingIssuerRef')?.value) }}</span>
             </div>
-          }
-          @if (attachmentsArray.controls.length === 0) {
-            <p>No attachments uploaded.</p>
-          }
-        </div>
-      }
-      @if (documentsArray.length >= 0) {
-        <div class="preview-block">
-          <h4>Documents</h4>
-          @if (documentsArray.length > 0) {
-            <div class="preview-grid">
-              <div class="preview-row header">
-                <div>Document Type</div>
-                <div>Attachment</div>
-                <div>Date</div>
-                <div>Actions</div>
-              </div>
-              @for (d of documentsArray.controls; track d; let i = $index) {
-                <div class="preview-row">
-                  <div>{{ d.value.type | titlecase }}</div>
-                  <div>{{ d.value.attachment?.fileName || '—' }}</div>
-                  <div>{{ d.value.date }}</div>
-                  <div class="actions">
-                    <mat-icon class="action-icon" (click)="downloadFile(d.value.attachment)">download</mat-icon>
-                  </div>
-                </div>
-              }
+            <div class="field-group">
+              <span class="field-label">Principal Account</span>
+              <span class="field-value highlight">{{ formatValue(form.get('bankdetails.principalAccount')?.value) }}</span>
             </div>
-          }
-          @if (documentsArray.controls.length === 0) {
-            <p>No documents uploaded.</p>
-          }
+            <div class="field-group">
+              <span class="field-label">Fee Account</span>
+              <span class="field-value">{{ formatValue(form.get('bankdetails.feeAccount')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Swift Code</span>
+              <span class="field-value">{{ formatValue(form.get('bankdetails.swiftCode')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Bank Address</span>
+              <span class="field-value">{{ formatValue(form.get('bankdetails.bankAddress')?.value) }}</span>
+            </div>
+          </div>
         </div>
-      }
-      <div class="preview-block full-width">
-        <div class="actions">
-          <button mat-stroked-button (click)="previous()" [disabled]="currentStep==0">Back</button>
-          <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+      </mat-card>
+
+      <!-- Payment & Amount -->
+      <mat-card class="preview-card">
+        <div class="card-header payment-header">
+          <mat-icon>payments</mat-icon>
+          <h3>Payment & Amount Details</h3>
         </div>
+        <div class="card-content">
+          <div class="grid">
+            <div class="field-group">
+              <span class="field-label">Amount</span>
+              <span class="field-value highlight amount-value">{{ formatCurrency(form.get('paymentamount.amount')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Currency</span>
+              <span class="field-value currency-value">{{ formatValue(form.get('paymentamount.currency')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Payment Type</span>
+              <span class="field-value">{{ formatValue(form.get('paymentamount.paymentType')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Tenor</span>
+              <span class="field-value">{{ formatValue(form.get('paymentamount.tenor')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Interest Rate</span>
+              <span class="field-value">{{ formatPercentage(form.get('paymentamount.interestRate')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Due Date</span>
+              <span class="field-value">{{ formatDate(form.get('paymentamount.dueDate')?.value) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Shipping Details -->
+      <mat-card class="preview-card">
+        <div class="card-header shipping-header">
+          <mat-icon>local_shipping</mat-icon>
+          <h3>Shipping Details</h3>
+        </div>
+        <div class="card-content">
+          <div class="grid">
+            <div class="field-group">
+              <span class="field-label">Shipping Method</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.shippingMethod')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Shipment Reference</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.shipmentReference')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Shipping From</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.shippingFrom')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Shipping To</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.shippingTo')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Shipment Date</span>
+              <span class="field-value">{{ formatDate(form.get('shippingdetails.shipmentDate')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Incoterms Rules</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.incotermsRules')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Incoterms</span>
+              <span class="field-value">{{ formatValue(form.get('shippingdetails.incoterms')?.value) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Collection Instructions -->
+      <mat-card class="preview-card">
+        <div class="card-header instructions-header">
+          <mat-icon>rule</mat-icon>
+          <h3>Collection Instructions</h3>
+        </div>
+        <div class="card-content">
+          <div class="grid">
+            <div class="field-group">
+              <span class="field-label">Advice Payment By</span>
+              <span class="field-value">{{ formatValue(form.get('collectioninstructions.advicePaymentBy')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Advice Acceptance Date</span>
+              <span class="field-value">{{ formatDate(form.get('collectioninstructions.adviceAcceptanceDate')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Opening Charges</span>
+              <span class="field-value">{{ formatCurrency(form.get('collectioninstructions.openingCharges')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Outside Country Charges</span>
+              <span class="field-value">{{ formatCurrency(form.get('collectioninstructions.outsideCountryCharges')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Waive Charges</span>
+              <span class="field-value status-badge" [class]="getStatusClass(form.get('collectioninstructions.waiveCharges')?.value)">
+                {{ formatBoolean(form.get('collectioninstructions.waiveCharges')?.value) }}
+              </span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Protest Non-Payment</span>
+              <span class="field-value status-badge" [class]="getStatusClass(form.get('collectioninstructions.protestNonPayment')?.value)">
+                {{ formatBoolean(form.get('collectioninstructions.protestNonPayment')?.value) }}
+              </span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Protest Non-Acceptance</span>
+              <span class="field-value status-badge" [class]="getStatusClass(form.get('collectioninstructions.protestNonAcceptance')?.value)">
+                {{ formatBoolean(form.get('collectioninstructions.protestNonAcceptance')?.value) }}
+              </span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Reason of Refusal</span>
+              <span class="field-value">{{ formatValue(form.get('collectioninstructions.adviceReasonRefusal')?.value) }}</span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Acceptance Deferred</span>
+              <span class="field-value status-badge" [class]="getStatusClass(form.get('collectioninstructions.acceptanceDeferred')?.value)">
+                {{ formatBoolean(form.get('collectioninstructions.acceptanceDeferred')?.value) }}
+              </span>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Warehouse Insurance</span>
+              <span class="field-value status-badge" [class]="getStatusClass(form.get('collectioninstructions.warehouseInsurance')?.value)">
+                {{ formatBoolean(form.get('collectioninstructions.warehouseInsurance')?.value) }}
+              </span>
+            </div>
+            <div class="field-group full-width">
+              <span class="field-label">Refer To</span>
+              <span class="field-value">{{ formatValue(form.get('collectioninstructions.referTo')?.value) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Attachments & Documents -->
+      <div class="row-cards">
+        <!-- Attachments -->
+        <mat-card class="preview-card half-width">
+          <div class="card-header attachments-header">
+            <mat-icon>attach_file</mat-icon>
+            <h3>Attachments</h3>
+            <span class="badge">{{ getAttachmentsCount() }}</span>
+          </div>
+          <div class="card-content">
+            @if (getAttachmentsCount() > 0) {
+              <div class="attachments-list">
+                @for (file of getAttachments(); track file; let i = $index) {
+                  <div class="attachment-item">
+                    <div class="file-info">
+                      <mat-icon class="file-icon">{{ getFileIcon(file) }}</mat-icon>
+                      <div class="file-details">
+                        <span class="file-name">{{ file.name || file.fileName }}</span>
+                        <span class="file-size">{{ formatSize(file.size) }}</span>
+                      </div>
+                    </div>
+                    <div class="file-actions">
+                      <button mat-icon-button (click)="downloadFile(file, i)" matTooltip="Download">
+                        <mat-icon>download</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-attachments">
+                <mat-icon>folder_open</mat-icon>
+                <p>No attachments uploaded</p>
+              </div>
+            }
+          </div>
+        </mat-card>
+
+        <!-- Documents -->
+        <mat-card class="preview-card half-width">
+          <div class="card-header documents-header">
+            <mat-icon>description</mat-icon>
+            <h3>Documents</h3>
+            <span class="badge">{{ getDocumentsCount() }}</span>
+          </div>
+          <div class="card-content">
+            @if (getDocumentsCount() > 0) {
+              <div class="documents-list">
+                @for (doc of getDocuments(); track doc; let i = $index) {
+                  <div class="document-item">
+                    <div class="doc-info">
+                      <mat-icon class="doc-icon">description</mat-icon>
+                      <div class="doc-details">
+                        <span class="doc-type">{{ formatDocumentType(doc.type) }}</span>
+                        <span class="doc-date">{{ formatDate(doc.date) }}</span>
+                      </div>
+                    </div>
+                    <div class="doc-actions">
+                      @if (doc.attachment) {
+                        <button mat-icon-button (click)="downloadFile(doc.attachment, i)" matTooltip="Download">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-documents">
+                <mat-icon>folder_open</mat-icon>
+                <p>No documents uploaded</p>
+              </div>
+            }
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Actions -->
+      <div class="preview-actions">
+        <button mat-stroked-button (click)="backToForm()">
+          <mat-icon>arrow_back</mat-icon> Back to Edit
+        </button>
+        <button mat-flat-button color="primary" (click)="submit()">
+          <mat-icon>check_circle</mat-icon> Submit Collection
+        </button>
       </div>
     </div>
+  } @else {
+    <div class="no-data">
+      <mat-icon>receipt_long</mat-icon>
+      <h3>No Export Collection Data Available</h3>
+      <p>Please complete the export collection form first</p>
+      <button mat-raised-button color="primary" (click)="backToForm()">
+        <mat-icon>arrow_back</mat-icon> Go to Form
+      </button>
+    </div>
   }
+</div>

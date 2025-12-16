@@ -1,15 +1,15 @@
 <div class="preview-page">
   <div class="preview-header">
-    <div class="header-content">
+    <!-- <div class="header-content"> -->
       <h1>Undertaking Request Preview</h1>
       <!-- <p class="subtitle">Review all details before submission</p> -->
     </div>
-    <div class="header-actions">
+    <!-- <div class="header-actions">
       <button mat-stroked-button (click)="printPreview()">
-        <!-- <mat-icon>print</mat-icon> Print -->
+        <mat-icon>print</mat-icon> Print
       </button>
     </div>
-  </div>
+  </div> -->
 
   @if (form) {
     <div class="preview-content">
@@ -308,9 +308,7 @@
         <button mat-stroked-button (click)="backToForm()">
           <mat-icon>arrow_back</mat-icon> Back to Edit
         </button>
-        <button mat-raised-button color="primary" (click)="submitRequest()" [disabled]="!isFormComplete()">
-          <mat-icon>send</mat-icon> Submit Undertaking Request
-        </button>
+<button mat-flat-button color="primary" (click)="submit()">Submit</button>
       </div>
     </div>
   } @else {
@@ -323,4 +321,4 @@
       </button>
     </div>
   }
-</div>
+<!-- </div> -->
