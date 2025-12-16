@@ -18,7 +18,7 @@ import { ApiService } from '../../../../../core/services/api.service';
   imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule],
   standalone: true,
 })
-export class Preview implements OnInit{
+export class Preview implements OnInit {
   form!: FormGroup;
 
   isOpen = true;
@@ -53,21 +53,21 @@ export class Preview implements OnInit{
     return (this.form.get('attachments') as FormArray)
   }
 
-  previous(){
+  previous() {
     this.router.navigate(['import-screen'])
   }
-    // submit() {
-    //   console.log("Submitted Data:", this.form.value);
+  // submit() {
+  //   console.log("Submitted Data:", this.form.value);
 
-    //   // Show success toast
-    //   this.snackBar.open('Data successfully submitted!', 'Close', {
-    //     duration: 3000, // 3 seconds
-    //     horizontalPosition: 'right',
-    //     verticalPosition: 'top',
-    //     panelClass: ['success-snackbar']
-    //   });
-    //   console.log("Submitted Data:", this.form.value);
-    // }
+  //   // Show success toast
+  //   this.snackBar.open('Data successfully submitted!', 'Close', {
+  //     duration: 3000, // 3 seconds
+  //     horizontalPosition: 'right',
+  //     verticalPosition: 'top',
+  //     panelClass: ['success-snackbar']
+  //   });
+  //   console.log("Submitted Data:", this.form.value);
+  // }
   submit() {
     // Prepare payload dynamically
     const payload = {
@@ -79,20 +79,28 @@ export class Preview implements OnInit{
       ...this.form.get('shipmentForm')?.value,
       ...this.form.get('narrativeForm')?.value,
       ...this.form.get('instructionForm')?.value,
-      attachments: this.attachmentsArray?.value || [],    
-      };
-      this.imporLcService.submitPreview(payload).subscribe((res)=>{
-        console.log("Submitted Data:", res);
-        this.snackBar.open(res, 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/success']);
-      },
-    (err)=>{
-      console.error(err);
-      this.snackBar.open('Error submitting data', 'Close', { duration: 3000 });
-    })
-    }
+      attachments: this.attachmentsArray?.value || [],
+    };
+    this.imporLcService.submitPreview(payload).subscribe((res) => {
+      console.log("Backend Response:", res);
+      this.snackBar.open('Data successfully submitted!', 'Close', {
+        duration: 3000, horizontalPosition: 'right',
+        verticalPosition: 'top',
+        panelClass: ['success-snackbar']
+      });
+      this.router.navigate(['/import-screen/success'], { state: res });
+    },
+      (err) => {
+        console.error("Submit Error:", err);
+        this.snackBar.open('Error submitting data', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+        });
+      })
+  }
 
-  
+
 
   downloadFile(index: number) {
     const data = this.attachmentsArray.at(index)?.value;

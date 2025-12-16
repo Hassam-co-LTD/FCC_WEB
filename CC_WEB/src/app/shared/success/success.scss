@@ -1,5 +1,6 @@
 @use "sass:color";
 @use "../../../styles/theme" as theme;
+
 .success-page {
     display: flex;
     flex-direction: column;
@@ -7,6 +8,7 @@
     padding: 40px 20px;
     text-align: center;
     animation: fadeIn 0.6s ease;
+    background: theme.$screen-bg;
 
     .success-icon {
         width: 70px;
@@ -26,104 +28,155 @@
     h1 {
         font-size: 32px;
         margin: 0;
-        color: #333;
+        color: theme.$text-dark;
         font-weight: 600;
     }
 
     p {
         margin-top: 8px;
         margin-bottom: 30px;
-        font-size: 16px;
-        color: #666;
+        font-size: 15px;
+        color: theme.$text-medium;
     }
 
-    /* NEW STYLING – GLASS CARD WITH TILES */
-    .summary-card {
-        width: 85%;
-        max-width: 900px;
-        padding: 25px 35px;
-        margin-top: 10px;
-        border-radius: 20px;
+    /* =========================
+       TABLE CONTAINER
+    ========================= */
+    .summary-table-container {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 12px;
+        border-radius: 14px;
+        scrollbar-width: thin;
+        scroll-behavior: smooth;
+        scrollbar-color: theme.$step-border transparent;
 
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
 
-        .row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            margin-top: 10px;
+        &::-webkit-scrollbar-thumb {
+            background-color: rgba(theme.$primary, 0.3);
+            border-radius: 4px;
+        }
 
-            div {
-                padding: 12px 0;
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(theme.$primary, 0.5);
+        }
+
+        table.summary-table {
+            width: max-content;
+            min-width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+            border-radius: 14px;
+            background: theme.$white;
+            box-shadow: theme.$shadow-primary;
+            overflow: hidden;
+
+            /* =========================
+               HEADER
+            ========================= */
+            th.mat-header-cell {
+                padding: 12px 16px;
                 text-align: left;
-                border-bottom: 1px dashed #eee;
+                font-weight: 600;
+                font-size: 12.5px;
+                letter-spacing: 0.3px;
+                text-transform: uppercase;
+                color: theme.$primary;
+                background: linear-gradient(180deg,
+                        theme.$primary-light,
+                        theme.$light-bg );
+                border-bottom: 1px solid theme.$border-light;
+                white-space: nowrap;
+            }
 
-                strong {
-                    display: block;
-                    font-size: 13px;
-                    color: #777;
-                    margin-bottom: 3px;
+            /* =========================
+               BODY CELLS
+            ========================= */
+            td.mat-cell {
+                padding: 12px 16px;
+                color: theme.$text-dark;
+                border-bottom: 1px solid theme.$border-light;
+                background: theme.$white;
+                white-space: nowrap;
+            }
+
+            /* =========================
+               ROW STATES
+            ========================= */
+            tr.mat-row {
+                transition: background 0.2s ease;
+
+                &:hover {
+                    background: theme.$hover-bg;
                 }
 
-                &:last-child {
+                &:last-child td {
                     border-bottom: none;
                 }
             }
+
+            tr.mat-header-row {
+                height: 48px;
+            }
         }
     }
 
-    /* BUTTONS */
-        .actions {
-            margin-top: 35px;
-            padding: 0 8px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 14px;
+    /* =========================
+       ACTION BUTTONS
+    ========================= */
+    .actions {
+        margin-top: 35px;
+        padding: 0 8px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 14px;
+    }
+
+    button[mat-flat-button] {
+        background: theme.$primary-btn-bg !important;
+        color: theme.$text-light !important;
+        font-weight: 500;
+        border-radius: 50px;
+        padding: 8px 28px;
+        box-shadow: theme.$button-shadow;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: theme.$primary-btn-hover-bg !important;
+            transform: translateY(-1px);
         }
-    
-        /* Primary Button */
-        button[mat-flat-button] {
-            background: theme.$primary-btn-bg !important;
-            color: #fff !important;
-            font-weight: 500;
-            border-radius: 50px;
-            padding: 8px 26px;
-            box-shadow: 0 2px 8px theme.$primary-btn-shadow;
-            transition: 0.2s;
-    
-            &:hover {
-                background: theme.$primary-btn-hover-bg !important;
-                transform: translateY(-1px);
-            }
-    
-            &:active {
-                transform: translateY(0);
-                box-shadow: none;
-            }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: none;
         }
-    
-        /* Secondary Button */
-        button[mat-stroked-button] {
-            border-color: theme.$secondary-btn-border;
-            color: theme.$secondary-btn-text;
-            font-weight: 500;
-            border-radius: 50px;
-            padding: 8px 26px;
-            transition: 0.2s;
-    
-            &:hover {
-                background: theme.$secondary-btn-hover-bg;
-            }
-    
-            &:active {
-                transform: scale(0.97);
-            }
+    }
+
+    button[mat-stroked-button] {
+        border-color: theme.$secondary-btn-border;
+        color: theme.$secondary-btn-text;
+        font-weight: 500;
+        border-radius: 50px;
+        padding: 8px 28px;
+        transition: 0.2s;
+
+        &:hover {
+            background: theme.$secondary-btn-hover-bg;
         }
+
+        &:active {
+            transform: scale(0.97);
+        }
+    }
 }
 
-/* SMOOTH FADE-IN ANIMATION */
+/* =========================
+   ANIMATION
+========================= */
 @keyframes fadeIn {
     from {
         opacity: 0;

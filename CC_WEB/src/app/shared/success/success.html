@@ -5,35 +5,23 @@
     <h1>Success</h1>
     <p>Your transaction is successfully released to the bank.</p>
 
-    <mat-card class="summary-card">
-        <div class="row">
-            <div>
-                <strong>Events:</strong> New
-            </div>
-            <div>
-                <strong>Channel Reference:</strong> {{ data.channelRef }}
-            </div>
-            <div>
-                <strong>Applicant:</strong> {{ data.applicant }}
-            </div>
-            <div>
-                <strong>Drawee:</strong> {{ data.drawee }}
-            </div>
-            <div>
-                <strong>Collection Amount:</strong> {{ data.amount }}
-            </div>
-            <div>
-                <strong>Status:</strong> Pending Bank Approval
-            </div>
-            <div>
-                <strong>Payment Type:</strong> {{ data.paymentType }}
-            </div>
-        </div>
-    </mat-card>
+    <div *ngIf="data" class="summary-table-container">
+        <table mat-table [dataSource]="[data]" class="summary-table mat-elevation-z1">
+
+            <!-- Dynamic columns -->
+            <ng-container *ngFor="let key of displayedColumns" [matColumnDef]="key">
+                <th mat-header-cell *matHeaderCellDef>{{ key | titlecase }}</th>
+                <td mat-cell *matCellDef="let element">{{ displayValue(element[key]) }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
 
     <div class="actions">
-        <button mat-flat-button color="primary">Import LC Listing</button>
-        <button mat-stroked-button color="primary" >New Import LC</button>
+        <button mat-flat-button color="primary" (click)="goToListing()">Import LC Listing</button>
+        <button mat-stroked-button color="primary" (click)="createNew()">New Import LC</button>
     </div>
 
 </div>
