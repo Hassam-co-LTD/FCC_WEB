@@ -1,62 +1,214 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+/* ================= CARD TYPES ================= */
+type CardFormat = 'number' | 'currency';
+
+interface DashboardCard {
+  id: number;
+  type: string;
+  icon: string;
+  title: string;
+  value: number;
+  format: CardFormat;
+  trend: number;
+  link: string;
+}
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
-export class Dashboard implements OnInit {
-  userName = 'Love kumar';
+export class Dashboard implements OnInit, AfterViewInit {
+
+  /* ================= HEADER ================= */
+  userName = 'Love';
+  isSyncing = false;
   lastUpdated = new Date();
 
-  cards = [
-    { title: 'Total Transactions', value: '₨ 1,254,000', icon: '💳', color: '#3B82F6' },
-    { title: 'Pending Approvals', value: '12', icon: '🕒', color: '#F59E0B' },
-    { title: 'Active LCs', value: '48', icon: '📄', color: '#10B981' },
-    { title: 'Revenue (YTD)', value: '₨ 5.8M', icon: '📈', color: '#8B5CF6' },
+  /* ================= FILTER ================= */
+  timeFilter: 'today' | 'week' | 'month' | 'quarter' = 'today';
+
+  /* ================= METRICS ================= */
+  cards: DashboardCard[] = [
+    {
+      id: 1,
+      type: 'primary',
+      icon: 'account_balance',
+      title: 'Total Transactions',
+      value: 1245,
+      format: 'number',
+      trend: 8,
+      link: '/transactions'
+    },
+    {
+      id: 2,
+      type: 'success',
+      icon: 'check_circle',
+      title: 'Completed',
+      value: 980,
+      format: 'number',
+      trend: 5,
+      link: '/transactions/completed'
+    },
+    {
+      id: 3,
+      type: 'warning',
+      icon: 'hourglass_empty',
+      title: 'Pending',
+      value: 265,
+      format: 'number',
+      trend: -3,
+      link: '/transactions/pending'
+    },
+    {
+      id: 4,
+      type: 'info',
+      icon: 'payments',
+      title: 'Total Value',
+      value: 25,
+      format: 'currency',
+      trend: 12,
+      link: '/transactions/value'
+    }
   ];
 
-  newsCards = [
-    { title: 'Market Update', snippet: 'Stocks are up by 2% today due to strong tech performance.', time: new Date() },
-    { title: 'FX Rates', snippet: 'USD/PKR exchange rate is stable around 280.', time: new Date() },
-    { title: 'Banking News', snippet: 'New fintech regulations coming next quarter.', time: new Date() },
+  /* ================= QUICK ACCESS STATS ================= */
+  importStats = { pending: 4, completed: 18 };
+  exportStats = { pending: 2, completed: 11 };
+  undertakingStats = { pending: 3, completed: 9 };
+  shippingStats = { pending: 1, completed: 6 };
+
+  /* ================= ACTIVITY ================= */
+  recentActivities = [
+    {
+      id: 1,
+      type: 'undertaking',
+      title: 'Undertaking Issued',
+      status: 'Completed',
+      reference: 'UND-2025-0098',
+      time: new Date(),
+      amount: 150000,
+      currency: 'USD',
+      link: '/undertaking-details/UND-2025-0098'
+    },
+    {
+      id: 2,
+      type: 'import',
+      title: 'Import LC Created',
+      status: 'Pending',
+      reference: 'ILC-2025-0041',
+      time: new Date(),
+      amount: 82000,
+      currency: 'EUR',
+      link: '/import-details/ILC-2025-0041'
+    }
   ];
 
-  ngOnInit() {
-    setInterval(() => {
+  /* ================= CHART ================= */
+  @ViewChild('volumeChart') volumeChart!: ElementRef<HTMLCanvasElement>;
+  chartLoaded = false;
+
+  /* ================= NEWS ================= */
+  newsItems = [
+    {
+      id: 1,
+      category: 'Trade Finance',
+      title: 'Global Trade Growth Forecast Updated',
+      excerpt: 'International trade volumes are expected to grow steadily...',
+      time: new Date(),
+      link: 'https://example.com'
+    }
+  ];
+
+  /* ================= SYSTEM ================= */
+  systemStatus: 'online' | 'degraded' | 'offline' = 'online';
+
+  /* ================= LIFECYCLE ================= */
+  ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.loadChart();
+    }, 800);
+  }
+
+  /* ================= ACTIONS ================= */
+  refreshDashboard(): void {
+    this.isSyncing = true;
+
+    setTimeout(() => {
       this.lastUpdated = new Date();
-      this.updateRandomCard();
-      this.updateNewsFeed();
-    }, 5000);
+      this.isSyncing = false;
+    }, 1200);
   }
 
-  updateRandomCard() {
-    const idx = Math.floor(Math.random() * this.cards.length);
-    const card = this.cards[idx];
-
-    if (card.title.includes('Transactions')) {
-      const rand = Math.floor(Math.random() * 1000);
-      card.value = `₨ ${1_254_000 + rand}`;
-    }
-    if (card.title.includes('Pending')) {
-      const rand = Math.floor(Math.random() * 5);
-      card.value = `${12 + rand}`;
-    }
-    if (card.title.includes('Revenue')) {
-      const rand = (Math.random() * 0.5).toFixed(1);
-      card.value = `₨ ${5.8 + parseFloat(rand)}M`;
-    }
+  quickAction(): void {
+    console.log('New transaction triggered');
   }
 
-  updateNewsFeed() {
-    // rotate news items to simulate live updates
-    const firstNews = this.newsCards.shift();
-    if (firstNews) {
-      firstNews.time = new Date();
-      this.newsCards.push(firstNews);
+  setTimeFilter(filter: 'today' | 'week' | 'month' | 'quarter'): void {
+    this.timeFilter = filter;
+  }
+
+  refreshNews(): void {
+    this.lastUpdated = new Date();
+  }
+
+  /* ================= HELPERS ================= */
+  formatValue(value: number, format: CardFormat): string {
+    if (format === 'currency') {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 2
+      }).format(value);
     }
+    return value.toLocaleString();
+  }
+
+  getActivityIcon(type: string): string {
+    const map: Record<string, string> = {
+      undertaking: 'description',
+      import: 'import_export',
+      export: 'upload_file',
+      shipping: 'local_shipping'
+    };
+    return map[type] || 'info';
+  }
+
+  /* ================= PRIVATE ================= */
+  private loadDashboard(): void {
+    this.lastUpdated = new Date();
+  }
+
+  private loadChart(): void {
+    if (!this.volumeChart) return;
+
+    const ctx = this.volumeChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+
+    this.chartLoaded = true;
   }
 }

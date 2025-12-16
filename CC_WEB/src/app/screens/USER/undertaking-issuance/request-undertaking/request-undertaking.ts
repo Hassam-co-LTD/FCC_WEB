@@ -40,7 +40,7 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
     { label: "Undertaking Details" },
     { label: "Instructions For The Bank Only" },
     { label: "Attachments" },
-    { label: "Preview" }
+    // { label: "Preview" }
   ];
 
   // MAIN MASTER FORM

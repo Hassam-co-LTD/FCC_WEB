@@ -207,7 +207,8 @@
   background: theme.$white;
   border-radius: theme.$radius-large;
   border: 1px solid theme.$border-light;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 table {
@@ -332,4 +333,10 @@ tbody {
     align-items: flex-start;
     gap: 10px;
   }
+}   
+
+@media (max-width: 1768px) {
+    .advanced-search-grid {
+        grid-template-columns: 1fr;
+    }
 }   

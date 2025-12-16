@@ -5,6 +5,9 @@ import { isPlatformBrowser } from '@angular/common';
   providedIn: 'root'
 })
 export class AuthService {
+  getCurrentUser() {
+    throw new Error('Method not implemented.');
+  }
   private platformId = inject(PLATFORM_ID);
 
   private isBrowser(): boolean {
