@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -8,21 +8,13 @@ import { GeneralDetails } from '../../../general-details/general-details';
 import { ApplicantBeneficiary } from '../../../applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from '../../../bank-details/bank-details';
 import { InstructionsComponent } from '../../../instructions/instructions';
-import { AttachmentsDocuments } from '../../../attachments/attachments';
+import { Attachments } from '../../../attachments/attachments';
 import { Preview } from '../../../preview/preview';
 @Component({
   selector: 'create',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    // GeneralDetails,
-    // ApplicantBeneficiary,
-    // BankDetailsComponent,
-    // InstructionsComponent,
-    // AttachmentsDocuments,
-    // Preview,
-    // ApplicantBeneficiary
+    ReactiveFormsModule
 ],
   templateUrl: './create.html',
   styleUrls: ['./create.scss']

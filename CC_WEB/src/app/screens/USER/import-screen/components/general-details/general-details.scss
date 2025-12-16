@@ -140,54 +140,43 @@ button[mat-flat-button] {
 ::ng-deep .mat-calendar-body,
 ::ng-deep .mat-calendar-header,
 ::ng-deep .mat-calendar-table {
-  background: theme.$light-bg !important;
+  background: white !important;
   border-radius: 12px !important;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
 }
 
-/* Month & year header */
 ::ng-deep .mat-calendar-header {
-  // padding: 5px !important;
   background: theme.$sidebar-hover-border !important;
   font-weight: 600 !important;
   border-bottom: 1px solid #e5e5e5 !important;
 }
 
-/* Days row */
 ::ng-deep .mat-calendar-table-header th {
   font-weight: 600 !important;
   opacity: 0.7 !important;
-  // padding-top: 50px !important;
 }
 
-/* Hover effect for date cells */
 ::ng-deep .mat-calendar-body-cell:hover:not(.mat-calendar-body-disabled) {
   background-color: theme.$sidebar-hover-border !important;
-  /* soft light grey */
   border-radius: 8px !important;
 }
 
-/* Selected date */
 ::ng-deep .mat-calendar-body-selected {
   background-color: #1976d2 !important;
-  /* blue */
   color: theme.$step-badge-text !important;
   border-radius: 8px !important;
   font-weight: 600 !important;
 }
 
-/* Today highlight */
 ::ng-deep .mat-calendar-body-today {
   border: 2px solid black !important;
   border-radius: 8px !important;
 }
 
-/* Disable gray overlay that material adds */
 ::ng-deep .mat-calendar-body-cell-content {
   background: transparent !important;
 }
 
-/* Animation smoothness */
 ::ng-deep .mat-datepicker-content {
   transition: all 0.25s ease-in-out !important;
 }
@@ -195,11 +184,9 @@ button[mat-flat-button] {
 /* ===========================
    Responsive Adjustments
 =========================== */
-
-/* Tablets (≤992px) */
 @media (max-width: 992px) {
   .form-grid-2 {
-    grid-template-columns: 1fr; // stack columns
+    grid-template-columns: 1fr;
     gap: 15px;
   }
 
@@ -217,7 +204,6 @@ button[mat-flat-button] {
   }
 }
 
-/* Small Tablets / Large Phones (≤768px) */
 @media (max-width: 768px) {
   .section-header {
     padding: 12px 14px;
@@ -243,7 +229,6 @@ button[mat-flat-button] {
   }
 }
 
-/* Mobile Phones (≤480px) */
 @media (max-width: 480px) {
   .collapsible.open {
     padding: 10px 5px;
@@ -263,5 +248,83 @@ button[mat-flat-button] {
 
   button[mat-flat-button] {
     width: 100%;
+  }
+}
+
+/* ===========================
+   MDC Select Panel White Background
+=========================== */
+.white-dropdown {
+  .mat-mdc-option {
+    background-color: white !important;
+    color: black !important;
+
+    &.mat-mdc-active,
+    &:hover {
+      background-color: white !important;
+      color: black !important;
+    }
+  }
+}
+
+
+// my scss code for the angular material dropdown to have white background
+
+/* ---------- Angular Material Dropdown Fix ---------- */
+::ng-deep .cdk-overlay-pane,
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mdc-menu-surface {
+  padding: 0 !important;
+  margin: 0 !important; 
+  border: 1px solid #e0e0e0; // subtle professional border
+ 
+  background-color: #ffffff !important;
+  border-radius: 5px !important; /* smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* soft shadow */
+}
+
+/* mat-option: base styling */
+::ng-deep .mat-mdc-option {
+  background-color: #ffffff !important; /* always white */
+  color: #000 !important; /* black text */
+  border-radius: 4px !important;
+  padding-left: 10px !important;
+  min-height: 38px !important;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: none !important;
+}
+
+/* mat-option hover */
+::ng-deep .mat-mdc-option:hover {
+  background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important; // smooth gradient
+ 
+  color: #000 !important;
+}
+
+/* mat-option selected */
+::ng-deep .mat-mdc-option.mat-selected {
+  background-color: #ffffff !important; /* keep white even when selected */
+  color: #000 !important;
+  box-shadow: none !important;
+  
+  border: none !important;
+}
+
+/* remove ripple */
+::ng-deep .mat-mdc-option .mat-ripple-element {
+  display: none !important;
+}
+
+/* stack dropdowns on small screens */
+@media (max-width: 768px) {
+  .dropdown-row {
+    flex-direction: column;
+
+    .dropdown-half {
+      width: 100%;
+    }
   }
 }

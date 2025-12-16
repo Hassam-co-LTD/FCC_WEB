@@ -8,16 +8,21 @@ import { MatButtonModule } from '@angular/material/button';
   selector: 'app-success',
   templateUrl: './success.html',
   styleUrls: ['./success.scss'],
-  standalone: true,
+  standalone:  true,
   imports: [CommonModule, MatTableModule, MatButtonModule]
 })
 export class Success {
   data: any = {};
+  pageName1: string = 'Button 1';
+  pageName2: string = 'Button 2';
   displayedColumns: string[] = [];
 
   constructor(private router: Router) {
     const nav = this.router.getCurrentNavigation();
-    this.data = nav?.extras?.state || {};
+    const state = nav?.extras?.state || {};
+this.data = state['data'] || {};
+this.pageName1 = state['pageName1'] || 'import LC Listing';
+this.pageName2 = state['pageName2'] || 'new import LC';
     this.displayedColumns = this.objectKeys(this.data).sort((a, b) => a.localeCompare(b));
   }
 

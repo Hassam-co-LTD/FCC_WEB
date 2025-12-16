@@ -1,58 +1,73 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
 import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
-import { Upload } from "./components/upload/upload";
-import { Attachments } from "./components/attachments/attachments";
-import { Preview } from "./components/preview/preview";
+import { Upload } from './components/upload/upload';
+import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../core/sidebar/sidebar';
+import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
 
 @Component({
   selector: 'app-export-screen',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     GeneralDetails,
     Upload,
     Attachments,
-    Preview,
-    Sidebar
-  ],
+    Sidebar,
+    RouterOutlet
+],
   templateUrl: './export-screen.html',
   styleUrls: ['./export-screen.scss']
 })
-export class ExportScreen {
+export class ExportScreen implements AfterViewInit {
 
   currentStep = 0;
+  isPreviewRoute = false;
 
   exportlcSteps = [
     { label: 'General Details' },
     { label: 'Upload MT700/MT701' },
-    { label: 'Attachments' },
-    { label: 'Preview' }
+    { label: 'Attachments' }
   ];
 
   exportLCForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  @ViewChild(Attachments) attachmentsComponent!: Attachments;
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private sharedService: SharedService
+  ) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
         customerRef: [''],
         advisingBank: ['', Validators.required],
         issuerRef: ['', Validators.required]
       }),
+
       appUpload: this.fb.group({
         file: [null]
       }),
+
       attachments: this.fb.array([])
     });
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.isPreviewRoute = event.urlAfterRedirects.includes('/export-screen/preview');
+      });
   }
 
-  // ============================
-  // GETTERS
-  // ============================
-
+  // =======================
+  // Getters
+  // =======================
   get generalDetailsForm(): FormGroup {
     return this.exportLCForm.get('generalDetails') as FormGroup;
   }
@@ -65,37 +80,80 @@ export class ExportScreen {
     return this.exportLCForm.get('attachments') as FormArray;
   }
 
-  // ============================
-  // ATTACHMENTS HANDLER
-  // ============================
-
-  updateAttachments(files: File[]) {
+  // =======================
+  // Attachments handler
+  // =======================
+  onAttachmentsChange(files: File[]) {
     this.attachmentsArray.clear();
+    const previewFiles: any[] = [];
+
     files.forEach(file => {
-      this.attachmentsArray.push(this.fb.group({
-        title: file.name.replace(/\.[^/.]+$/, ""),
+      const fg = this.fb.group({
+        title: file.name.replace(/\.[^/.]+$/, ''),
         fileName: file.name,
         size: file.size,
         type: file.type,
-        file: file
-      }));
+        file
+      });
+      this.attachmentsArray.push(fg);
+      previewFiles.push(fg.value);
+    });
+
+    const data = this.sharedService.getFormData() || {};
+    this.sharedService.setFormData({
+      ...data,
+      attachments: {
+        preview: previewFiles,
+        files // actual File[] for download
+      }
     });
   }
 
-  // ============================
-  // SIDEBAR SCROLL SPY
-  // ============================
+  // =======================
+  // Preview
+  // =======================
+  preview() {
+    if (this.exportLCForm.invalid) {
+      this.exportLCForm.markAllAsTouched();
+      alert('Please fill all required fields before preview.');
+      return;
+    }
 
+    const attachmentFiles = this.attachmentsComponent?.files || [];
+    const attachmentsPreview = attachmentFiles.map(file => ({
+      title: file.name.replace(/\.[^/.]+$/, ''),
+      fileName: file.name,
+      size: file.size,
+      type: file.type,
+      file
+    }));
+
+    const fullFormData = {
+      ...this.exportLCForm.value,
+      attachments: {
+        preview: attachmentsPreview,
+        files: attachmentFiles
+      }
+    };
+
+    this.sharedService.setFormData(fullFormData);
+
+    this.router.navigate(['/export-screen/preview']);
+  }
+
+  // =======================
+  // Step scroll tracking
+  // =======================
   ngAfterViewInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
         entries => {
-          for (const entry of entries) {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
             }
-          }
+          });
         },
         { threshold: 0.4, root: document.querySelector('.scroll-area') }
       );
@@ -103,19 +161,17 @@ export class ExportScreen {
     }, 200);
   }
 
-  scrollToSection(i: number) {
-    this.currentStep = i;
-    const section = document.getElementById(`section-${i}`);
+  scrollToSection(index: number) {
+    this.currentStep = index;
+    const section = document.getElementById(`section-${index}`);
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  next() {
-    if (this.currentStep < this.exportlcSteps.length - 1)
-      this.scrollToSection(this.currentStep + 1);
+  back() {
+    this.router.navigate(['/exportlc-welcome']);
   }
 
-  previous() {
-    if (this.currentStep > 0)
-      this.scrollToSection(this.currentStep - 1);
+  save() {
+    alert('Form saved successfully!');
   }
 }

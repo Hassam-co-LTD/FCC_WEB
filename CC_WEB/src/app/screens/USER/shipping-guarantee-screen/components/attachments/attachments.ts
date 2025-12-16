@@ -1,87 +1,58 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-attachments-documents',
+  selector: 'app-attachments',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './attachments.html',
-  styleUrls: ['./attachments.scss'],
+  styleUrls: ['./attachments.scss']
 })
-export class AttachmentsDocuments {
+export class Attachments {
   isOpen = true;
-  activeSection: string | null = 'attachments';
-  isDragging = false;
-  uploadedFiles: File[] = [];
-  errorMessage: string = '';
+  files: File[] = [];
+  @Output() filesChange = new EventEmitter<File[]>(); 
 
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-
-toggle(){
-  this.isOpen = !this.isOpen;
-}
+  toggle() {
+    this.isOpen = !this.isOpen;
+  }
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
-    this.isDragging = true;
   }
 
-  onDragLeave(event: DragEvent) {
+  onFileDropped(event: DragEvent) {
     event.preventDefault();
-    this.isDragging = false;
+    const droppedFiles: File[] = Array.from(event.dataTransfer?.files || []);
+    this.handleFiles(droppedFiles);
   }
 
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    this.isDragging = false;
-    if (!event.dataTransfer) return;
-
-    const files = Array.from(event.dataTransfer.files);
-    this.handleFiles(files);
-  }
-
-  onFileSelect(event: Event) {
+  onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
-
-    const files = Array.from(input.files);
-    this.handleFiles(files);
+    const selectedFiles: File[] = Array.from(input.files);
+    this.handleFiles(selectedFiles);
   }
-
-  handleFiles(files: File[]) {
-    const allowedTypes = [
-      'application/pdf',
-      'text/plain',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'image/png',
-      'image/jpeg',
-      'image/gif',
-      'text/csv',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ];
-
-    for (let file of files) {
-      if (!allowedTypes.includes(file.type)) {
-        this.errorMessage = `File type not allowed: ${file.name}`;
-        continue;
-      }
-      if (file.size > 1024 * 1024) {
-        this.errorMessage = `File exceeds 1MB: ${file.name}`;
-        continue;
-      }
-      if (this.uploadedFiles.length >= 5) {
-        this.errorMessage = `Maximum 5 files allowed`;
+  handleFiles(newFiles: File[]) {
+    for (let file of newFiles) {
+      if (this.files.length >= 5) {
+        alert('Maximum 5 files allowed.');
         break;
       }
-      this.uploadedFiles.push(file);
-      this.errorMessage = '';
+      if (file.size > 1 * 1024 * 1024) {
+        alert(`${file.name} exceeds 1 MB limit.`);
+        continue;
+      }
+      this.files.push(file);
     }
+
+    this.filesChange.emit(this.files);  
   }
 
   removeFile(index: number) {
-    this.uploadedFiles.splice(index, 1);
+    this.files.splice(index, 1);
+    this.filesChange.emit(this.files);  
   }
 }

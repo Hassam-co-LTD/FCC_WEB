@@ -99,23 +99,53 @@ button[mat-flat-button] {
         box-shadow: none;
     }
 }
+.actions {
+    margin-top: 35px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+}
 
+/* Primary Button */
+button[mat-flat-button] {
+    background: theme.$primary-btn-bg !important;
+    color: #fff !important;
+    font-weight: 500;
+    border-radius: 50px;
+    padding: 8px 26px;
+    box-shadow: 0 2px 8px theme.$primary-btn-shadow;
+    transition: 0.2s;
+
+    &:hover {
+        background: theme.$primary-btn-hover-bg !important;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+}
+
+/* Secondary Button */
 button[mat-stroked-button] {
     border-color: theme.$secondary-btn-border;
     color: theme.$secondary-btn-text;
     font-weight: 500;
     border-radius: 50px;
-    transition: all 0.2s ease-in-out;
+    padding: 8px 26px;
+    transition: 0.2s;
 
     &:hover {
         background: theme.$secondary-btn-hover-bg;
-        border-color: color.adjust(theme.$secondary-btn-border, $lightness: -10%);
     }
 
     &:active {
-        transform: scale(0.98);
+        transform: scale(0.97);
     }
 }
+
 
 /* ------------------------------
    Responsive Adjustments

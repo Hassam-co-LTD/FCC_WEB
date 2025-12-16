@@ -1,77 +1,85 @@
 <div class="section-header" (click)="toggle()">
-    <h2>Amount and Charge Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <h2>Amount and Charge Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-    <form [formGroup]="form">
+  <form [formGroup]="form">
 
-        <!-- Currency and Amount in one line -->
-        <h4>Currency and Amount</h4>
-        <div class="form-grid-2 unequal">
-            <mat-form-field appearance="outline" class="currency-field">
-                <mat-label>Currency *</mat-label>
-                <mat-select formControlName="currency">
-                    <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
-                </mat-select>
-                <mat-error *ngIf="form.get('currency')?.hasError('required')">
-                    Currency is required
-                </mat-error>
-            </mat-form-field>
+    <!-- Currency and Amount in one line -->
+    <h4>Currency and Amount</h4>
+    <div class="form-grid-2 unequal">
+      <mat-form-field appearance="outline" class="currency-field">
+        <mat-label>Currency *</mat-label>
+        <mat-select formControlName="currency">
+          @for (c of currencies; track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get('currency')?.hasError('required')) {
+          <mat-error>
+            Currency is required
+          </mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline" class="amount-field">
-                <mat-label>Amount *</mat-label>
-                <input matInput formControlName="amount" placeholder="Enter amount" />
-                <mat-error *ngIf="form.get('amount')?.hasError('required')">
-                    Amount is required
-                </mat-error>
-                <mat-error *ngIf="form.get('amount')?.hasError('pattern')">
-                    Enter a valid number
-                </mat-error>
-            </mat-form-field>
-        </div>
+      <mat-form-field appearance="outline" class="amount-field">
+        <mat-label>Amount *</mat-label>
+        <input matInput formControlName="amount" placeholder="Enter amount" />
+        @if (form.get('amount')?.hasError('required')) {
+          <mat-error>
+            Amount is required
+          </mat-error>
+        }
+        @if (form.get('amount')?.hasError('pattern')) {
+          <mat-error>
+            Enter a valid number
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
 
-        <!-- Variation with type selector -->
-        <div class="form-grid-3">
-            <mat-form-field appearance="outline">
-                <mat-label>Variation Type</mat-label>
-                <mat-select formControlName="variationType" (selectionChange)="onVariationTypeChange($event.value)">
-                    <mat-option value="percent">Percentage (%)</mat-option>
-                    <mat-option value="amount">Amount</mat-option>
-                </mat-select>
-            </mat-form-field>
+    <!-- Variation with type selector -->
+    <div class="form-grid-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Variation Type</mat-label>
+        <mat-select formControlName="variationType" (selectionChange)="onVariationTypeChange($event.value)">
+          <mat-option value="percent">Percentage (%)</mat-option>
+          <mat-option value="amount">Amount</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Variation (+)</mat-label>
-                <input matInput
-                    [placeholder]="variationType === 'percent' ? 'Enter percentage (+)' : 'Enter amount (+)'"
-                    formControlName="variationPlus" />
-            </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Variation (+)</mat-label>
+        <input matInput
+          [placeholder]="variationType === 'percent' ? 'Enter percentage (+)' : 'Enter amount (+)'"
+          formControlName="variationPlus" />
+        </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Variation (-)</mat-label>
-                <input matInput
-                    [placeholder]="variationType === 'percent' ? 'Enter percentage (-)' : 'Enter amount (-)'"
-                    formControlName="variationMinus" />
-            </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Variation (-)</mat-label>
+          <input matInput
+            [placeholder]="variationType === 'percent' ? 'Enter percentage (-)' : 'Enter amount (-)'"
+            formControlName="variationMinus" />
+          </mat-form-field>
         </div>
 
         <!-- Issuing Bank Charges -->
         <div class="row radio-section">
-            <label class="radio-label">Issuing Bank Charges:</label>
-            <mat-radio-group formControlName="issuingBankCharges">
-                <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-                <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-            </mat-radio-group>
+          <label class="radio-label">Issuing Bank Charges:</label>
+          <mat-radio-group formControlName="issuingBankCharges">
+            <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+            <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+          </mat-radio-group>
         </div>
 
         <!-- Outside Country Charges -->
         <div class="row radio-section">
-            <label class="radio-label">Outside Country Charges:</label>
-            <mat-radio-group formControlName="outsideCountryCharges">
-                <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-                <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-            </mat-radio-group>
+          <label class="radio-label">Outside Country Charges:</label>
+          <mat-radio-group formControlName="outsideCountryCharges">
+            <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+            <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+          </mat-radio-group>
         </div>
 
         <!-- Additional Details -->
@@ -85,5 +93,5 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-    </form>
-</div>
+      </form>
+    </div>

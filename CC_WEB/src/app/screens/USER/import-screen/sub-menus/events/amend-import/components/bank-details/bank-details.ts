@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,7 +15,6 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-bank-details',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatTabsModule,
     MatFormFieldModule,
@@ -23,7 +22,7 @@ import { MatIcon } from '@angular/material/icon';
     MatInputModule,
     MatOptionModule,
     MatIcon
-  ],
+],
   templateUrl: './bank-details.html',
   styleUrl: './bank-details.scss',
 })

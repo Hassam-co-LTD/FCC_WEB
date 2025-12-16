@@ -204,3 +204,66 @@ button[mat-flat-button] {
         width: 100%;
     }
 }
+
+
+
+// my scss code for the angular material dropdown to have white background
+
+/* ---------- Angular Material Dropdown Fix ---------- */
+::ng-deep .cdk-overlay-pane,
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mdc-menu-surface {
+  padding: 0 !important;
+  margin: 0 !important; 
+  border: 1px solid #e0e0e0; // subtle professional border
+ 
+  background-color: #ffffff !important;
+  border-radius: 5px !important; /* smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* soft shadow */
+}
+
+/* mat-option: base styling */
+::ng-deep .mat-mdc-option {
+  background-color: #ffffff !important; /* always white */
+  color: #000 !important; /* black text */
+  border-radius: 4px !important;
+  padding-left: 10px !important;
+  min-height: 38px !important;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: none !important;
+}
+
+/* mat-option hover */
+::ng-deep .mat-mdc-option:hover {
+  background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important; // smooth gradient
+ 
+  color: #000 !important;
+}
+
+/* mat-option selected */
+::ng-deep .mat-mdc-option.mat-selected {
+  background-color: #ffffff !important; /* keep white even when selected */
+  color: #000 !important;
+  box-shadow: none !important;
+  
+  border: none !important;
+}
+
+/* remove ripple */
+::ng-deep .mat-mdc-option .mat-ripple-element {
+  display: none !important;
+}
+
+/* stack dropdowns on small screens */
+@media (max-width: 768px) {
+  .dropdown-row {
+    flex-direction: column;
+
+    .dropdown-half {
+      width: 100%;
+    }
+  }
+}

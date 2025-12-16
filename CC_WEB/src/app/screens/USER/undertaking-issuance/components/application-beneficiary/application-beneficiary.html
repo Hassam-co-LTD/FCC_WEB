@@ -3,7 +3,7 @@
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen" [formGroup]="formGroup">
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form"> <!-- ADD THIS -->
 
     <!-- ========================= Applicant ========================= -->
     <h4>Applicant</h4>
@@ -29,33 +29,6 @@
             <input matInput formControlName="applicantAddress3">
         </mat-form-field>
     </div>
-
-    <!-- ========================= Alternate Applicant ========================= -->
-    <!-- <mat-slide-toggle (change)="toggleAlternate()">
-        Alternate Applicant
-    </mat-slide-toggle>
-
-    <div *ngIf="showAlternate" class="form-grid alternate">
-        <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="alternateName">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Address 1</mat-label>
-            <input matInput formControlName="alternateAddress1">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Address 2</mat-label>
-            <input matInput formControlName="alternateAddress2">
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Address 3</mat-label>
-            <input matInput formControlName="alternateAddress3">
-        </mat-form-field>
-    </div> -->
 
     <!-- ========================= Beneficiary ========================= -->
     <h4>Beneficiary</h4>
@@ -84,6 +57,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Country *</mat-label>
             <mat-select formControlName="beneficiaryCountry">
+                <mat-option value="">Select Country</mat-option> <!-- ADD default option -->
                 <mat-option value="Pakistan">Pakistan</mat-option>
                 <mat-option value="UAE">UAE</mat-option>
                 <mat-option value="USA">USA</mat-option>

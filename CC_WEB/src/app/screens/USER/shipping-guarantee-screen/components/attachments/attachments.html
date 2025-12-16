@@ -1,32 +1,27 @@
 <div class="section-header" (click)="toggle()">
-  <h2>Attachments</h2>
-  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    <h2>Attachments</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen">
-  <div class="drop-zone" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
-    [class.dragover]="isDragging">
-    <div class="drop-zone-content">
-      <i class="fa fa-cloud-upload cloud-icon"></i>
-      <p>Drag & drop or
-        <span class="browse-text" (click)="fileInput.click()">browse</span>
-      </p>
-      <p class="hint">
-        Allowed: pdf, txt, docx, gif, doc, png, csv, xls, xlsx, jpg, jpeg | Max: 5 files, 1MB each
-      </p>
-    </div>
-    <input type="file" #fileInput (change)="onFileSelect($event)" multiple
-      accept=".pdf,.txt,.docx,.gif,.doc,.png,.csv,.xls,.xlsx,.jpg,.jpeg" hidden />
-  </div>
+    <p class="hint">Maximum 5 Files of 1 MB each</p>
+    <p class="extensions">
+        Valid extensions: PNG, JPEG, JPG, RTF, CSV, XLS, XLSX, DOCX, TXT, DOC, PDF, GIF.
+    </p>
 
-  <div *ngIf="uploadedFiles.length > 0" class="file-list">
-    <div *ngFor="let file of uploadedFiles; let i = index" class="file-item">
-      <span class="file-name">{{ file.name }}</span>
-      <span class="file-size">{{ file.size / 1024 | number:'1.0-0' }} KB</span>
-      <button type="button" (click)="removeFile(i)" class="remove-button">Remove</button>
+    <div class="dropzone" (dragover)="onDragOver($event)" (drop)="onFileDropped($event)">
+        <mat-icon>cloud_upload</mat-icon>
+        <p>Drag and Drop File</p>
+        <input type="file" multiple hidden #fileInput (change)="onFileSelected($event)" />
+        <button mat-stroked-button color="primary" (click)="fileInput.click()">Browse</button>
     </div>
-  </div>
 
-  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+    <div class="file-list" *ngIf="files.length > 0">
+        <div *ngFor="let file of files; let i = index" class="file-item">
+            <span>{{ file.name }}</span>
+            <button mat-icon-button color="warn" (click)="removeFile(i)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+    </div>
 </div>

@@ -13,23 +13,23 @@
     color: theme.$primary-color;
     margin-bottom: 8px;
   }
-
+ 
   .page-subtitle {
     font-size: 1rem;
     color: theme.$text-medium;
     margin-bottom: theme.$gap-default;
   }
-
+ 
   .card {
     background: theme.$white;
     padding: theme.$gap-default;
     border-radius: theme.$radius-large;
     box-shadow: theme.$shadow-primary;
   }
-
+ 
   form {
     width: 100%;
-
+ 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -38,13 +38,13 @@
       .form-group {
         display: flex;
         flex-direction: column;
-
+ 
         label {
           margin-bottom: 6px;
           font-weight: 500;
           color: #1a1a1a;
         }
-
+ 
         input {
           width: 100%;
           min-height: 44px;
@@ -57,25 +57,25 @@
           color: black;
           font-weight: 500;
           transition: all 0.25s ease-in-out;
-
+ 
           &:focus {
             border-color: theme.$primary-color;
             outline: none;
             box-shadow: 0 0 4px rgba(theme.$primary-color, 0.35);
           }
-
+ 
           &::placeholder {
             color: theme.$text-medium;
           }
         }
-
+ 
         mat-form-field {
           width: 100%;
           border: 1px solid black !important;
         }
       }
     }
-
+ 
     .readonly-row {
       grid-column: 1 / -1;
       display: grid;
@@ -85,7 +85,7 @@
       .readonly-item {
         display: flex;
         flex-direction: column;
-
+ 
         label {
           font-weight: 500;
           margin-bottom: 4px;
@@ -93,7 +93,7 @@
         }
       }
     }
-
+ 
     .form-buttons {
       display: flex;
       flex-wrap: wrap;
@@ -109,7 +109,7 @@
         border: none;
         font-weight: 600;
         transition: all 0.3s ease-in-out;
-
+ 
         &.btn-cancel {
           background: theme.$border-light;
           color: theme.$text-dark;
@@ -119,7 +119,7 @@
             color: theme.$primary-color;
           }
         }
-
+ 
         &.btn-save,
         &.btn-submit {
           background: theme.$primary-btn;
@@ -129,7 +129,7 @@
           &:hover:not(:disabled) {
             background: theme.$primary-btn-hover;
           }
-
+ 
           &:disabled {
             background: theme.$hover-bg;
             color: theme.$text-medium;
@@ -140,20 +140,20 @@
       }
     }
   }
-
+ 
   @media (max-width: 1024px) {
     .form-grid {
       grid-template-columns: 1fr;
     }
-
+ 
     .form-buttons {
       flex-direction: column;
-
+ 
       button {
         width: 100%;
       }
     }
-
+ 
     .readonly-row {
       grid-template-columns: 1fr;
     }
@@ -164,43 +164,43 @@
 .dropdown-parent {
   width: 100%;
 }
-
+ 
 .dropdown-row {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
-
+ 
   .dropdown-half {
     flex: 1;
     min-width: 200px;
-
+ 
     mat-form-field {
       width: 100%;
     }
   }
 }
-
+ 
 /* ---------- Full Width Address Fields ---------- */
 .full-width {
   width: 100%;
   margin-bottom: 16px;
 }
-
+ 
 /* ---------- Responsive: stack dropdowns ---------- */
 @media (max-width: 768px) {
   .dropdown-row {
     flex-direction: column;
-
+ 
     .dropdown-half {
       width: 100%;
     }
   }
-
+ 
   .full-width {
     width: 100%;
   }
 }
-
+ 
 /* ---------- Angular Material Dropdown Fix ---------- */
 ::ng-deep .cdk-overlay-pane,
 ::ng-deep .mat-mdc-select-panel,
@@ -233,7 +233,7 @@
     transform: scale(1.01);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
   }
-
+ 
   &.mat-selected {
     background-color: theme.$primary !important;
     color: #fff !important;

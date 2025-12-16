@@ -1,0 +1,635 @@
+@use "sass:color";
+@use "../../../../../../styles/theme" as theme;
+
+/* ==============================
+   Preview Page
+================================*/
+.preview-page {
+  background: theme.$screen-bg;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* ==============================
+   Preview Header
+================================*/
+.preview-header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &::before {
+      content: "";
+      display: block;
+      width: 4px;
+      height: 24px;
+      background: theme.$primary;
+      border-radius: 2px;
+    }
+  }
+
+  .subtitle {
+    color: theme.$text-medium;
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  .header-actions {
+    margin-left: auto;
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: theme.$radius-default;
+      border: 1px solid theme.$border-light;
+      background: transparent;
+      color: theme.$text-medium;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: theme.$hover-bg;
+        border-color: theme.$hover-border;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+/* ==============================
+   Summary Card
+================================*/
+.summary-card {
+  background: theme.$white;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: theme.$radius-default;
+  transition: background 0.2s;
+
+  &:hover {
+    background: theme.$hover-bg;
+  }
+}
+
+.summary-icon {
+  color: theme.$primary;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.summary-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: theme.$text-medium;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: theme.$text-dark;
+
+  &::after {
+    content: attr(data-suffix);
+    font-size: 0.9rem;
+    color: theme.$text-medium;
+    margin-left: 2px;
+  }
+}
+
+/* ==============================
+   Preview Cards
+================================*/
+.preview-card {
+  background: theme.$white !important;
+  border-radius: theme.$radius-large !important;
+  border: 1px solid theme.$border-light !important;
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: theme.$shadow-primary;
+  }
+}
+
+/* ==============================
+   Card Headers
+================================*/
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid theme.$border-light;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: theme.$light-bg;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin: 0;
+  }
+
+  mat-icon {
+    color: theme.$primary;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .badge {
+    background: theme.$primary;
+    color: theme.$text-light;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-left: auto;
+  }
+}
+
+/* ==============================
+   Card Content
+================================*/
+.card-content {
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid theme.$border-light;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      background: theme.$primary-border;
+      margin-right: 8px;
+      border-radius: 2px;
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.field-label {
+  font-size: 0.8rem;
+  color: theme.$text-medium;
+  font-weight: 500;
+}
+
+.field-value {
+  font-size: 0.9rem;
+  color: theme.$text-dark;
+  padding: 6px 0;
+  border-bottom: 1px dashed theme.$border-light;
+
+  &.highlight {
+    font-weight: 600;
+    color: theme.$primary;
+  }
+
+  &.amount-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: theme.$primary-dark;
+  }
+
+  &.currency-value {
+    font-weight: 600;
+    color: theme.$primary-hover;
+  }
+
+  &.instruction-text {
+    white-space: pre-line;
+    line-height: 1.5;
+    padding: 8px;
+    background: theme.$light-bg;
+    border-radius: theme.$radius-default;
+    border: 1px solid theme.$border-light;
+  }
+}
+
+/* ==============================
+   Attachments Container
+================================*/
+.attachments-container {
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+  overflow: hidden;
+}
+
+.attachments-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+  background: theme.$light-bg;
+  border-bottom: 1px solid theme.$border-light;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: theme.$text-medium;
+
+  .col-file,
+  .col-type,
+  .col-size,
+  .col-actions {
+    padding: 0 4px;
+  }
+}
+
+.attachments-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.attachment-item {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid theme.$border-light;
+  align-items: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: theme.$hover-bg;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.col-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+
+  .file-icon {
+    color: theme.$primary;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .file-name {
+    font-size: 0.9rem;
+    color: theme.$text-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.col-type,
+.col-size {
+  font-size: 0.85rem;
+  color: theme.$text-medium;
+}
+
+.col-actions {
+  display: flex;
+  gap: 8px;
+  
+  button {
+    color: theme.$primary;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(theme.$primary, 0.1);
+    }
+
+    &[color="warn"] {
+      color: #dc3545;
+
+      &:hover {
+        background: rgba(#dc3545, 0.1);
+      }
+    }
+  }
+}
+
+.attachments-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: theme.$light-bg;
+  border-top: 1px solid theme.$border-light;
+  font-size: 0.85rem;
+  color: theme.$text-medium;
+}
+
+/* ==============================
+   No Data States
+================================*/
+.no-attachments {
+  text-align: center;
+  padding: 40px 20px;
+  color: theme.$text-medium;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    color: theme.$border-light;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 80px 20px;
+  background: theme.$white;
+  border-radius: theme.$radius-large;
+  border: 2px dashed theme.$border-light;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    color: theme.$border-light;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    color: theme.$text-dark;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: theme.$text-medium;
+    margin-bottom: 24px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  button {
+    padding: 10px 24px;
+    border-radius: theme.$radius-default;
+    background: theme.$primary;
+    color: theme.$text-light;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: theme.$primary-hover;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      color: theme.$text-light;
+    }
+  }
+}
+
+/* ==============================
+   Preview Actions
+================================*/
+.preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 24px 0;
+  margin-top: 32px;
+  border-top: 1px solid theme.$border-light;
+
+  button {
+    min-width: 160px;
+    padding: 10px 24px;
+    border-radius: theme.$radius-default;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  button[mat-stroked-button] {
+    border: 1px solid theme.$border-light;
+    color: theme.$text-medium;
+    background: transparent;
+
+    &:hover {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
+  }
+
+  button[mat-flat-button] {
+    background: theme.$primary;
+    color: theme.$text-light;
+    border: none;
+    box-shadow: theme.$button-shadow;
+
+    &:hover {
+      background: theme.$primary-hover;
+      box-shadow: theme.$primary-shadow;
+    }
+  }
+}
+
+/* ==============================
+   Responsive Design
+================================*/
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .attachments-header,
+  .attachment-item {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .preview-page {
+    padding: 16px;
+  }
+
+  .preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    .header-actions {
+      margin-left: 0;
+      width: 100%;
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  .summary-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attachments-header,
+  .attachment-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+
+    .col-file,
+    .col-type,
+    .col-size,
+    .col-actions {
+      padding: 4px 0;
+    }
+  }
+
+  .attachments-header {
+    display: none;
+  }
+
+  .attachment-item {
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .preview-actions {
+    flex-direction: column;
+    gap: 12px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .preview-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .card-header {
+    padding: 12px 16px;
+    
+    h3 {
+      font-size: 1rem;
+    }
+  }
+
+  .field-value.instruction-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* ==============================
+   Animation
+================================*/
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.preview-card {
+  animation: fadeIn 0.3s ease-out;
+}

@@ -1,6 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms'; // ADD ReactiveFormsModule
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,8 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   selector: 'app-application-beneficiary',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule, // ADD THIS
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -26,33 +24,21 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   templateUrl: './application-beneficiary.html',
   styleUrl: './application-beneficiary.scss',
 })
-export class ApplicationBeneficiary {
-  formGroup!: FormGroup;
-  isOpen: boolean = true; // default open
+export class ApplicationBeneficiary implements OnInit {
+  @Input() form!: FormGroup;
+  isOpen: boolean = true;
   showAlternate: boolean = false;
 
-  constructor(private fb: FormBuilder) {
-    this.createForm();
-  }
-
-  createForm() {
-    this.formGroup = this.fb.group({
-      applicantName: ['', Validators.required],
-      applicantAddress1: ['', Validators.required],
-      applicantAddress2: [''],
-      applicantAddress3: [''],
-
-      alternateName: [''],
-      alternateAddress1: [''],
-      alternateAddress2: [''],
-      alternateAddress3: [''],
-
-      beneficiaryName: ['', Validators.required],
-      beneficiaryAddress1: ['', Validators.required],
-      beneficiaryAddress2: [''],
-      beneficiaryAddress3: [''],
-      beneficiaryCountry: ['', Validators.required]
-    });
+  ngOnInit() {
+    // Initialize form with default values if empty
+    if (!this.form.get('applicantName')?.value) {
+      this.form.patchValue({
+        applicantName: '',
+        applicantAddress1: '',
+        beneficiaryName: '',
+        beneficiaryCountry: ''
+      });
+    }
   }
 
   toggle() {

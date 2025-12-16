@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { CustomerService } from '../../../../../../core/services/admin-service/customer-form-service/customer-service';
 import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatButtonModule, MatInputModule, MatIconModule, MatFormFieldModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatInputModule, MatIconModule, MatFormFieldModule, MatSelectModule],
   templateUrl: './create-customer.html',
   styleUrls: ['./create-customer.scss']
 })
