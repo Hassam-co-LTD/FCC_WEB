@@ -8,7 +8,7 @@ import { GeneralDetails } from '../../../general-details/general-details';
 import { ApplicantBeneficiary } from '../../../applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from '../../../bank-details/bank-details';
 import { InstructionsComponent } from '../../../instructions/instructions';
-import { AttachmentsDocuments } from '../../../attachments/attachments';
+import { Attachments } from '../../../attachments/attachments';
 import { Preview } from '../../../preview/preview';
 @Component({
   selector: 'create',

@@ -15,18 +15,22 @@
 
             <!-- SECTION 1 -->
             <section id="section-1">
-                <app-upload [form]="uploadForm"></app-upload>
+                <app-upload
+  [form]="uploadForm">
+</app-upload>
+
             </section>
             <hr class="section-divider" />
 
             <!-- SECTION 2 -->
-            <section id="section-2">
-                <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
-            </section>
+           <section id="section-2">
+  <h3>Attachments</h3>
+  <app-attachments (filesChange)="onAttachmentsChange($event)"></app-attachments>
+</section>
             <hr class="section-divider" />
 
             <div class="actions">
-                <button mat-stroked-button (click)="previous()">Back</button>
+                <button mat-stroked-button (click)="back()">Back</button>
                 <button mat-flat-button color="primary">Save</button>
                 <button mat-flat-button color="primary" (click)="preview()">Preview</button>
             </div>

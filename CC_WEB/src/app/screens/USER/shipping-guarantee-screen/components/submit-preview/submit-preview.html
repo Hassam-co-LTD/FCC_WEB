@@ -1,0 +1,93 @@
+<div class="submit-page">
+
+  <h2 class="page-title">Submitted Data</h2>
+
+  <div class="submit-container">
+
+    <!-- ROW 1 → General + Applicant -->
+    <div class="submit-row">
+
+      <!-- General Details -->
+      <mat-card class="submit-card">
+        <h3 class="section-title">General Details</h3>
+        <div *ngIf="submittedData?.generalDetails as gd" class="submit-grid">
+          <div class="submit-item" *ngFor="let key of ['expiryDate','beneficiaryReference','customerReference','billNumber','modeOfShipment','shippingDetails','descriptionOfGoods']">
+            <div class="submit-label">{{ key | titlecase }}:</div>
+            <div class="submit-value">{{ gd[key] }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Applicant & Beneficiary -->
+      <mat-card class="submit-card">
+        <h3 class="section-title">Applicant & Beneficiary</h3>
+        <div *ngIf="submittedData?.applicantBeneficiary as ap" class="submit-grid">
+          <div class="submit-item" *ngFor="let key of ['applicantName','beneficiaryName','beneficiaryCountry']">
+            <div class="submit-label">{{ key | titlecase }}:</div>
+            <div class="submit-value">{{ ap[key] }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ROW 2 → Bank Details -->
+    <div class="submit-row">
+
+      <mat-card class="submit-card">
+        <h3 class="section-title">Bank Details</h3>
+        <div *ngIf="submittedData?.bankDetails as bf" class="submit-grid">
+          <div class="submit-item" *ngFor="let key of ['swiftCode','bankName','issuerReference','currency','guaranteeAmount']">
+            <div class="submit-label">{{ key | titlecase }}:</div>
+            <div class="submit-value">{{ bf[key] }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ROW 3 → Instructions -->
+    <mat-card class="submit-card full-width">
+      <h3 class="section-title">Instructions</h3>
+      <div *ngIf="submittedData?.instructions as ins" class="submit-grid">
+        <div class="submit-item" *ngFor="let key of ['instructionType','details']">
+          <div class="submit-label">{{ key | titlecase }}:</div>
+          <div class="submit-value">{{ ins[key] }}</div>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- ROW 4 → Attachments -->
+    <mat-card class="submit-card full-width">
+      <h3 class="section-title">Attachments</h3>
+      <div *ngIf="attachmentsArray.length > 0" class="submit-attachments-container">
+        <div class="attachment-grid header">
+          <div>Type</div>
+          <div>Title</div>
+          <div>File Name</div>
+          <div>Size</div>
+          <div>Actions</div>
+        </div>
+        <div class="attachment-grid" *ngFor="let f of attachmentsArray; let i = index">
+          <div>
+            <mat-icon *ngIf="f.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+            <mat-icon *ngIf="f.type?.includes('image')" class="image-icon">image</mat-icon>
+          </div>
+          <div>{{ f.title }}</div>
+          <div>{{ f.fileName }}</div>
+          <div>{{ (f.size / 1024) | number:'1.0-2' }} KB</div>
+          <div class="actionss">
+            <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="attachmentsArray.length === 0">No attachments uploaded.</p>
+    </mat-card>
+
+  </div>
+
+  <div class="actions">
+    <button mat-flat-button color="primary" routerLink="/shipping-guarantee">Back to Form</button>
+  </div>
+
+</div>

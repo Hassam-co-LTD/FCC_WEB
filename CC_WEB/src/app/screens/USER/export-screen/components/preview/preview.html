@@ -14,7 +14,7 @@
         <div *ngIf="form?.generalDetails as gd" class="preview-grid">
           <div class="preview-item" *ngFor="let key of ['customerRef','advisingBank','issuerRef']">
             <div class="preview-label">{{ key | titlecase }}:</div>
-            <div class="preview-value">{{ gd[key] }}</div>
+            <div class="preview-value">{{ gd[key] || '-' }}</div>
           </div>
         </div>
       </mat-card>
@@ -29,7 +29,6 @@
             <div class="preview-value">{{ up?.file?.name || 'No file uploaded' }}</div>
           </div>
         </div>
-
       </mat-card>
 
     </div>
@@ -40,6 +39,7 @@
 
       <div *ngIf="attachmentsArray.length > 0" class="preview-attachments-container">
 
+        <!-- Header row -->
         <div class="attachment-grid header">
           <div>Type</div>
           <div>Title</div>
@@ -48,16 +48,25 @@
           <div>Actions</div>
         </div>
 
+        <!-- Attachment items -->
         <div class="attachment-grid" *ngFor="let f of attachmentsArray; let i = index">
+          <!-- Type Icon -->
           <div>
             <mat-icon *ngIf="f.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
             <mat-icon *ngIf="f.type?.includes('image')" class="image-icon">image</mat-icon>
+            <mat-icon *ngIf="!f.type?.includes('pdf') && !f.type?.includes('image')">insert_drive_file</mat-icon>
           </div>
 
+          <!-- Title -->
           <div>{{ f.title }}</div>
+
+          <!-- File Name -->
           <div>{{ f.fileName }}</div>
+
+          <!-- Size -->
           <div>{{ (f.size / 1024) | number:'1.0-2' }} KB</div>
 
+          <!-- Actions -->
           <div class="actionss">
             <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
           </div>
@@ -70,9 +79,10 @@
 
   </div>
 
-</div>
+  <!-- Bottom Actions -->
+  <div class="actions">
+    <button mat-stroked-button color="primary" (click)="previous()">Back</button>
+    <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+  </div>
 
-<div class="actions">
-  <button mat-stroked-button (click)="previous()">Back</button>
-  <button mat-flat-button color="primary" (click)="submit()">Submit</button>
 </div>

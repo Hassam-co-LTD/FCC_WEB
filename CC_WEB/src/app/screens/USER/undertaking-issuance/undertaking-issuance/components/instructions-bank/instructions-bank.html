@@ -1,0 +1,111 @@
+<!-- Section Header -->
+<div class="section-header" (click)="toggle()">
+  <h2>Instructions for the Bank Only</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+<!-- Collapsible Content -->
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  <!-- Form Content -->
+  <div class="form-content">
+    <!-- Delivery of Original Undertaking -->
+    <h4>Delivery of Original Undertaking & Mode of Delivery</h4>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery Type</mat-label>
+        <mat-select formControlName="deliveryType">
+          <mat-option value="">Select</mat-option>
+          @for (type of deliveryTypeOptions; track type) {
+            <mat-option [value]="type.value">
+              {{ type.label }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (deliveryTypeControl?.invalid && deliveryTypeControl?.touched) {
+          <mat-error>
+            Delivery type is required
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery Mode</mat-label>
+        <mat-select formControlName="deliveryMode">
+          <mat-option value="">Select Mode</mat-option>
+          @for (mode of deliveryModeOptions; track mode) {
+            <mat-option [value]="mode.value">
+              {{ mode.label }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (deliveryModeControl?.invalid && deliveryModeControl?.touched) {
+          <mat-error>
+            Delivery mode is required
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <!-- Delivery To -->
+    <h4>Delivery To</h4>
+    <mat-radio-group formControlName="deliveryTo" class="radio-group">
+      @for (option of deliveryToOptions; track option) {
+        <mat-radio-button
+          [value]="option.value"
+          class="radio-button">
+          {{ option.label }}
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+    @if (deliveryToControl?.invalid && deliveryToControl?.touched) {
+      <mat-error class="radio-error">
+        Please select where to deliver
+      </mat-error>
+    }
+
+    <!-- Accounts -->
+    <h4>Accounts</h4>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Principal Account</mat-label>
+        <mat-select formControlName="principalAccount">
+          <mat-option value="">Select Account</mat-option>
+          @for (account of accounts; track account) {
+            <mat-option [value]="account">
+              {{ account }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (principalAccountControl?.invalid && principalAccountControl?.touched) {
+          <mat-error>
+            Principal account is required
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fee Account</mat-label>
+        <mat-select formControlName="feeAccount">
+          <mat-option value="">Same as Principal Account</mat-option>
+          @for (account of accounts; track account) {
+            <mat-option [value]="account">
+              {{ account }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Other Instructions -->
+    <h4>Other Instructions</h4>
+    <div class="instructions-container">
+      <mat-form-field appearance="outline" class="full">
+        <textarea matInput
+          formControlName="otherInstructions"
+          [maxlength]="MAX_CHARS"
+        placeholder="Type your instructions..."></textarea>
+        <mat-hint align="end">{{ charCount }}/{{ MAX_CHARS }}</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
+</div>

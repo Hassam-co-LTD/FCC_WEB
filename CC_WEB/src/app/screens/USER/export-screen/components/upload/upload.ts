@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,13 +11,19 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './upload.html',
   styleUrls: ['./upload.scss']
 })
-export class Upload {
+export class Upload implements OnInit {
   isOpen = true;
   @Input() form!: FormGroup;
+
   file: File | null = null;
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({});
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit() {
+    // Make sure the form has a control to store the file
+    if (!this.form.get('file')) {
+      this.form.addControl('file', new FormControl(null));
+    }
   }
 
   toggle() {
@@ -26,7 +32,6 @@ export class Upload {
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-
     if (!input.files?.length) return;
 
     const file = input.files[0];
@@ -36,10 +41,13 @@ export class Upload {
       alert('Only .txt or .pdf files are allowed!');
       input.value = '';
       this.file = null;
+      this.form.get('file')?.setValue(null);
       return;
     }
 
     this.file = file;
+    // Save the file in the form
+    this.form.get('file')?.setValue(file);
   }
 
   formatFileSize(n: number) {

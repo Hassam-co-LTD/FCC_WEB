@@ -9,12 +9,16 @@
 
     <div class="form-grid-2">
 
-      <!-- Expiry Date -->
-      <mat-form-field appearance="outline">
-        <mat-label>Expiry Date *</mat-label>
-        <input matInput type="date" formControlName="expiryDate" />
-      </mat-form-field>
+ <mat-form-field appearance="outline">
+                <mat-label>Expiry Date *</mat-label>
 
+                <input matInput [matDatepicker]="picker" formControlName="expiryDate"
+                    placeholder="Select expiry date" />
+
+                <mat-datepicker-toggle matSuffix [for]="picker" class="date-toggle"></mat-datepicker-toggle>
+
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
       <!-- Beneficiary Reference -->
       <mat-form-field appearance="outline">
         <mat-label>Beneficiary Reference</mat-label>

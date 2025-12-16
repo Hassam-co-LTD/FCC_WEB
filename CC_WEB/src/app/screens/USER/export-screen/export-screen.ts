@@ -1,14 +1,14 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
-import { Upload } from "./components/upload/upload";
-import { Attachments } from "./components/attachments/attachments";
-import { Sidebar } from '../../../core/sidebar/sidebar';
-import { Router, NavigationEnd } from '@angular/router';
-import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
-import { RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+
+import { GeneralDetails } from '../../USER/export-screen/components/general-details/general-details';
+import { Upload } from './components/upload/upload';
+import { Attachments } from './components/attachments/attachments';
+import { Sidebar } from '../../../core/sidebar/sidebar';
+import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
 
 @Component({
   selector: 'app-export-screen',
@@ -28,7 +28,7 @@ import { filter } from 'rxjs/operators';
 export class ExportScreen implements AfterViewInit {
 
   currentStep = 0;
-  isPreviewRoute = false; // <-- Track if preview is active
+  isPreviewRoute = false;
 
   exportlcSteps = [
     { label: 'General Details' },
@@ -38,27 +38,37 @@ export class ExportScreen implements AfterViewInit {
 
   exportLCForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService) {
+  @ViewChild(Attachments) attachmentsComponent!: Attachments;
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private sharedService: SharedService
+  ) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
         customerRef: [''],
         advisingBank: ['', Validators.required],
         issuerRef: ['', Validators.required]
       }),
+
       appUpload: this.fb.group({
         file: [null]
       }),
+
       attachments: this.fb.array([])
     });
 
-    // Listen to route changes to detect preview
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.isPreviewRoute = event.urlAfterRedirects.includes('export-screen/preview');
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        this.isPreviewRoute = event.urlAfterRedirects.includes('/export-screen/preview');
+      });
   }
 
+  // =======================
+  // Getters
+  // =======================
   get generalDetailsForm(): FormGroup {
     return this.exportLCForm.get('generalDetails') as FormGroup;
   }
@@ -71,29 +81,80 @@ export class ExportScreen implements AfterViewInit {
     return this.exportLCForm.get('attachments') as FormArray;
   }
 
-  updateAttachments(files: File[]) {
+  // =======================
+  // Attachments handler
+  // =======================
+  onAttachmentsChange(files: File[]) {
     this.attachmentsArray.clear();
+    const previewFiles: any[] = [];
+
     files.forEach(file => {
-      this.attachmentsArray.push(this.fb.group({
-        title: file.name.replace(/\.[^/.]+$/, ""),
+      const fg = this.fb.group({
+        title: file.name.replace(/\.[^/.]+$/, ''),
         fileName: file.name,
         size: file.size,
         type: file.type,
-        file: file
-      }));
+        file
+      });
+      this.attachmentsArray.push(fg);
+      previewFiles.push(fg.value);
+    });
+
+    const data = this.sharedService.getFormData() || {};
+    this.sharedService.setFormData({
+      ...data,
+      attachments: {
+        preview: previewFiles,
+        files // actual File[] for download
+      }
     });
   }
 
+  // =======================
+  // Preview
+  // =======================
+  preview() {
+    if (this.exportLCForm.invalid) {
+      this.exportLCForm.markAllAsTouched();
+      alert('Please fill all required fields before preview.');
+      return;
+    }
+
+    const attachmentFiles = this.attachmentsComponent?.files || [];
+    const attachmentsPreview = attachmentFiles.map(file => ({
+      title: file.name.replace(/\.[^/.]+$/, ''),
+      fileName: file.name,
+      size: file.size,
+      type: file.type,
+      file
+    }));
+
+    const fullFormData = {
+      ...this.exportLCForm.value,
+      attachments: {
+        preview: attachmentsPreview,
+        files: attachmentFiles
+      }
+    };
+
+    this.sharedService.setFormData(fullFormData);
+
+    this.router.navigate(['/export-screen/preview']);
+  }
+
+  // =======================
+  // Step scroll tracking
+  // =======================
   ngAfterViewInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
         entries => {
-          for (const entry of entries) {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
             }
-          }
+          });
         },
         { threshold: 0.4, root: document.querySelector('.scroll-area') }
       );
@@ -101,33 +162,17 @@ export class ExportScreen implements AfterViewInit {
     }, 200);
   }
 
-  scrollToSection(i: number) {
-    this.currentStep = i;
-    const section = document.getElementById(`section-${i}`);
+  scrollToSection(index: number) {
+    this.currentStep = index;
+    const section = document.getElementById(`section-${index}`);
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  previous() {
-    if (this.currentStep > 0)
-      this.scrollToSection(this.currentStep - 1);
+  back() {
+    this.router.navigate(['/exportlc-welcome']);
   }
 
   save() {
-    alert("Form saved successfully!");
+    alert('Form saved successfully!');
   }
-
-  preview() {
-  if (this.exportLCForm.invalid) {
-    this.exportLCForm.markAllAsTouched();
-    alert("Please fill all required fields before preview.");
-    return;
-  }
-
-  // Save form data to shared service
-  this.dataService.setFormData(this.exportLCForm.value);
-
-  // Navigate to preview page
-  this.router.navigate(['/export-screen/preview']);
-}
-
 }
