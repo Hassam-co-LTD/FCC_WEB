@@ -1,0 +1,138 @@
+<!-- FILTER ROW -->
+<div class="filter-row">
+    <div class="form-group">
+        <label>Select Preference</label>
+        <select>
+            <option>Standard</option>
+        </select>
+    </div>
+
+    <!-- RESULTS SUMMARY - FIXED -->
+    <div class="results-summary" *ngIf="pagedTransactions.length > 0">
+        Showing {{pagedTransactions.length}} of {{filteredTransactions.length}} transactions
+        (Page {{currentPage}} of {{totalPages}})
+    </div>
+</div>
+
+<!-- TABLE SECTION - FIXED: Use pagedTransactions instead of filteredTransactions -->
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th (click)="sortBy('channelReference')">
+                    Channel Reference
+                    <mat-icon *ngIf="sortColumn === 'channelReference'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('customerReference')">
+                    Customer Reference
+                    <mat-icon *ngIf="sortColumn === 'customerReference'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('bankReference')">
+                    Bank Reference
+                    <mat-icon *ngIf="sortColumn === 'bankReference'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('issueDate')">
+                    Issue Date
+                    <mat-icon *ngIf="sortColumn === 'issueDate'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('status')">
+                    Status
+                    <mat-icon *ngIf="sortColumn === 'status'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('beneficiary')">
+                    Beneficiary
+                    <mat-icon *ngIf="sortColumn === 'beneficiary'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('currency')">
+                    Currency
+                    <mat-icon *ngIf="sortColumn === 'currency'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('amount')">
+                    Amount
+                    <mat-icon *ngIf="sortColumn === 'amount'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('outstandingAmount')">
+                    Outstanding Amount
+                    <mat-icon *ngIf="sortColumn === 'outstandingAmount'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th (click)="sortBy('expiryDate')">
+                    Expiry Date
+                    <mat-icon *ngIf="sortColumn === 'expiryDate'">
+                        {{sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward'}}
+                    </mat-icon>
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <!-- CHANGED: Use pagedTransactions instead of filteredTransactions -->
+            <tr *ngFor="let transaction of pagedTransactions">
+                <td>{{transaction.channelReference}}</td>
+                <td>{{transaction.customerReference}}</td>
+                <td>{{transaction.bankReference}}</td>
+                <td>{{transaction.issueDate | date:'dd/MM/yyyy'}}</td>
+                <td>
+                    <span class="status-badge" [class]="'status-' + transaction.status.toLowerCase()">
+                        {{transaction.status}}
+                    </span>
+                </td>
+                <td>{{transaction.beneficiary}}</td>
+                <td>{{transaction.currency}}</td>
+                <td class="amount">{{transaction.amount | currency:transaction.currency:'symbol':'1.2-2'}}</td>
+                <td class="amount">{{transaction.outstandingAmount | currency:transaction.currency:'symbol':'1.2-2'}}
+                </td>
+                <td>{{transaction.expiryDate | date:'dd/MM/yyyy'}}</td>
+                <td>
+                    <button class="btn-action" (click)="viewTransaction(transaction)">
+                        <mat-icon>visibility</mat-icon> View
+                    </button>
+                </td>
+            </tr>
+
+            <!-- CHANGED: Use pagedTransactions instead of filteredTransactions -->
+            <tr *ngIf="pagedTransactions.length === 0">
+                <td colspan="11" class="no-records">
+                    <mat-icon>search_off</mat-icon>
+                    <p>No transactions found</p>
+                    <button class="btn-outline" (click)="clearSearch()" *ngIf="hasActiveFilters">
+                        Clear filters to show all transactions
+                    </button>
+                    <div *ngIf="allTransactions.length === 0" style="margin-top: 10px;">
+                        <p style="color: #666; font-size: 12px;">No transactions in database. Submit an undertaking
+                            first.</p>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- PAGINATION - FIXED: Use filteredTransactions for pagination control -->
+    <div class="pagination" *ngIf="filteredTransactions.length > itemsPerPage">
+        <button class="btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span>Page {{currentPage}} of {{totalPages}}</span>
+        <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
+</div>

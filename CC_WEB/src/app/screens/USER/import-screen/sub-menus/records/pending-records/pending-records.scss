@@ -1,0 +1,208 @@
+@use "sass:color";
+@use "../../../../../../../styles/theme" as theme;
+
+/* ==============================
+   Filter Row
+================================*/
+.filter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .form-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        label {
+            font-size: 0.8rem;
+            color: theme.$text-medium;
+        }
+
+        select {
+            padding: 6px 10px;
+            border-radius: theme.$radius-default;
+            border: 1px solid theme.$border-light;
+            font-size: 0.8rem;
+            background: theme.$white;
+        }
+    }
+
+    .results-summary {
+        font-size: 0.8rem;
+        color: theme.$text-medium;
+    }
+}
+
+/* ==============================
+   Table Wrapper
+================================*/
+.table-wrapper {
+    background: theme.$white;
+    border-radius: theme.$radius-large;
+    border: 1px solid theme.$border-light;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ==============================
+   Table
+================================*/
+table {
+    width: 100%;
+    min-width: 1400px;
+    border-collapse: collapse;
+}
+
+thead {
+    background: theme.$primary-light;
+
+    th {
+        padding: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: theme.$text-dark;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+
+        &:hover {
+            background: color.scale(theme.$primary-light, $lightness: -4%);
+        }
+    }
+}
+
+tbody {
+    tr {
+        border-top: 1px solid theme.$border-light;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: theme.$hover-bg;
+        }
+    }
+
+    td {
+        padding: 10px;
+        font-size: 0.8rem;
+        color: theme.$text-medium;
+        white-space: nowrap;
+    }
+}
+
+/* ==============================
+   Status Badge
+================================*/
+// .status {
+//     padding: 3px 10px;
+//     border-radius: 12px;
+//     font-size: 0.7rem;
+//     font-weight: 500;
+//     display: inline-block;
+    
+
+//     &.status-draft {
+//         background: theme.$hover-bg;
+//         color: theme.$text-medium;
+//     }
+
+//     &.status-live {
+//         background: theme.$primary-light;
+//         color: theme.$primary;
+//     }
+// }
+.status {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status.draft {
+    background: #fef3c7;
+    color: #92400e;
+}
+/* ==============================
+   Amount
+================================*/
+.amount {
+    font-weight: 600;
+    color: theme.$primary;
+}
+
+/* ==============================
+   Actions
+================================*/
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    color: theme.$primary;
+    cursor: pointer;
+
+    mat-icon {
+        font-size: 18px;
+    }
+
+    &:hover {
+        color: color.scale(theme.$primary, $lightness: -15%);
+    }
+}
+
+/* ==============================
+   No Records
+================================*/
+.no-records {
+    text-align: center;
+    padding: 30px;
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+}
+
+/* ==============================
+   Pagination
+================================*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+
+    span {
+        font-size: 0.8rem;
+        color: theme.$text-medium;
+    }
+
+    .btn-pagination {
+        background: theme.$primary-light;
+        border: 1px solid theme.$border-light;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+
+
+
+/* ==============================
+   Responsive
+================================*/
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
