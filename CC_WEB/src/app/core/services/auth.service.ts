@@ -33,6 +33,9 @@ export class AuthService {
     if (this.isBrowser()) {
       localStorage.clear();
     }
+    else{
+      console.log("you are on the serve")
+    }
   }
 
   checkAuth(): boolean {

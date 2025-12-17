@@ -99,7 +99,7 @@
 
         <!-- SIMPLE LINK (NO CHILDREN) -->
         @if (!item.children) {
-          <a [routerLink]="item.route" routerLinkActive="active-link">
+          <a [routerLink]="item.route" routerLinkActive="active-link" (click)="Logout()">
             @if (item.icon) {
               <mat-icon>{{ item.icon }}</mat-icon>
             }
