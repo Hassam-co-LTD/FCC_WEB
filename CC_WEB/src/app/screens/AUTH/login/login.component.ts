@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { AuthService } from '../../../core/services/auth.service';
+import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from '@angular/material/tooltip';
 // import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -20,7 +22,9 @@ import { AuthService } from '../../../core/services/auth.service';
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    MatIconModule,
+    MatTooltipModule
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -29,6 +33,7 @@ export class LoginComponent {
   userId = '';
   companyId = '';
   password = '';
+  hidePassword = true;
 
   constructor(private auth: AuthService, private router: Router) { }
 
@@ -46,5 +51,9 @@ export class LoginComponent {
     } else {
       this.router.navigate(['/dashboard']);
     }
+  }
+
+  togglePassword(){
+    this.hidePassword = !this.hidePassword;
   }
 }

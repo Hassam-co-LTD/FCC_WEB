@@ -1,23 +1,29 @@
 <div class="auth-container">
   <mat-card>
     <h2>Login</h2>
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>User ID</mat-label>
-    <input placeholder="Enter User ID" type="text" matInput [(ngModel)]="userId">
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>User ID</mat-label>
+      <input placeholder="Enter User ID" type="text" matInput [(ngModel)]="userId">
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Company ID</mat-label>
-        <input placeholder="Enter Company ID" matInput [(ngModel)]="companyId" type="text" required />
-      </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Company ID</mat-label>
+      <input placeholder="Enter Company ID" matInput [(ngModel)]="companyId" type="text" required />
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input placeholder="Enter Password" matInput [(ngModel)]="password" type="password" required />
-      </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input placeholder="Enter Password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="password"
+        type="password" required />
+      <button mat-icon-button matSuffix matTooltip="Show / Hide Password" type="button" (click)="togglePassword()"
+        [attr.aria-label]="'Toggle password visibility'">
+        <mat-icon>
+          {{ hidePassword ? 'visibility_off' : 'visibility' }}
+        </mat-icon></button>
+    </mat-form-field>
 
-      <button mat-flat-button color="primary" class="full-width" type="submit" (click)="login()">Login</button>
-    
+    <button mat-flat-button color="primary" class="full-width" type="submit" (click)="login()">Login</button>
+
     <p>
       Don’t have an account?
       <a routerLink="/signup">Sign up</a>
