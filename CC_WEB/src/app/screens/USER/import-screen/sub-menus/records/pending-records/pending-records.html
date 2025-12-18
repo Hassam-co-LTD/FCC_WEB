@@ -1,3 +1,52 @@
+<!-- ================= HEADER ================= -->
+<div class="page-header">
+    <div class="title">
+        <h2>Pending Import LC Records</h2>
+        <p>Manage and track all Import LC drafts and transactions</p>
+    </div>
+</div>
+
+<!-- ================= SEARCH SYSTEM ================= -->
+<div class="search-system">
+    <div class="search-input-group">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
+            (input)="applyFilters()" />
+        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+        <mat-icon>tune</mat-icon>
+        Advanced
+    </button>
+</div>
+
+<!-- ================= ADVANCED SEARCH ================= -->
+<div class="advanced-search" *ngIf="showAdvanced">
+    <div class="field">
+        <label>Status</label>
+        <select [(ngModel)]="activeTab" (change)="applyFilters()">
+            <option *ngFor="let tab of tabs" [value]="tab.key">
+                {{ tab.label }}
+            </option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Currency</label>
+        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+    </div>
+</div>
+
+<!-- ================= TABS ================= -->
+<div class="ui-tabs">
+    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
+        {{ tab.label }} ({{ getTabCount(tab.key) }})
+    </div>
+</div>
+
 <div class="filter-row">
     <div class="form-group">
         <label>Preference</label>

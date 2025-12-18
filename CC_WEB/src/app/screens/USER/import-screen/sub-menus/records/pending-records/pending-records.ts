@@ -7,11 +7,12 @@ import {
   ImportLcTransaction
 } from
   '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pending-records',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, FormsModule],
   templateUrl: './pending-records.html',
   styleUrls: ['./pending-records.scss']
 })
@@ -19,6 +20,21 @@ export class PendingRecords implements OnInit {
 
   allTransactions: ImportLcTransaction[] = [];
   filteredTransactions: ImportLcTransaction[] = [];
+  searchQuery = '';
+  currencyFilter = '';
+  activeTab = 'Pending';
+  showAdvanced = false;
+
+  tabs = [
+    { key: 'live', label: 'Live' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'draft', label: 'Draft' },
+    { key: 'actions', label: 'Actions' },
+    { key: 'pendingApproval', label: 'Pending Approval' },
+    { key: 'pendingBank', label: 'Pending at Bank' },
+    { key: 'rejected', label: 'Rejected' },
+    { key: 'closed', label: 'Closed' }
+  ];
 
   currentPage = 1;
   itemsPerPage = 10;
@@ -45,14 +61,61 @@ export class PendingRecords implements OnInit {
     // live updates from service
     this.importLcService.transactionsStream$.subscribe(tx => {
       this.allTransactions = tx;
-      this.applySorting();
+      this.applyFilters();
     });
   }
+
+  /* ===================== FILTERS ===================== */
+  applyFilters(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+    const currency = this.currencyFilter.toLowerCase().trim();
+
+    const filtered = this.allTransactions.filter(tx => {
+      const matchesTab = this.mapStatusToTab(tx.status) === this.activeTab;
+
+      const matchesSearch =
+        !query ||
+        tx.tnxId?.toLowerCase().includes(query) ||
+        tx.applicantForm?.beneficiaryName?.toLowerCase().includes(query) ||
+        tx.bankForm?.issuingBankName?.toLowerCase().includes(query) ||
+        tx.amountChargeForm?.currency?.toLowerCase().includes(query);
+
+      const matchesCurrency =
+        !currency ||
+        tx.amountChargeForm?.currency?.toLowerCase() === currency;
+
+      return matchesTab && matchesSearch && matchesCurrency;
+    });
+
+    this.applySorting(filtered);
+  }
+
+  setActiveTab(tab: string): void {
+    this.activeTab = tab;
+    this.applyFilters();
+  }
+
+  getTabCount(tabKey: string): number {
+    return this.allTransactions.filter(tx => this.mapStatusToTab(tx.status) === tabKey).length;
+  }
+
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.applyFilters();
+  }
+
+  clearCurrency(): void {
+    this.currencyFilter = '';
+    this.applyFilters();
+  }
+
+
 
   /* ===================== LOAD ===================== */
   private loadTransactions(): void {
     this.allTransactions = this.importLcService.getAllTransactions();
-    this.applySorting();
+    this.applyFilters();
   }
 
   /* ===================== SORT ===================== */
@@ -63,11 +126,12 @@ export class PendingRecords implements OnInit {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
-    this.applySorting();
+
+    this.applyFilters();
   }
 
-  private applySorting(): void {
-    const sorted = [...this.allTransactions].sort((a, b) => {
+  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
+    const sorted = [...source].sort((a, b) => {
       const aVal = this.resolveColumn(a, this.sortColumn);
       const bVal = this.resolveColumn(b, this.sortColumn);
 
@@ -88,6 +152,7 @@ export class PendingRecords implements OnInit {
     this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
+
 
   private resolveColumn(tx: ImportLcTransaction, column: string): any {
     switch (column) {
@@ -136,4 +201,28 @@ export class PendingRecords implements OnInit {
       `Status: ${tx.status}`
     );
   }
+
+  private mapStatusToTab(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'pending';
+      case 'draft':
+        return 'draft';
+      case 'live':
+        return 'live';
+      case 'actions':
+        return 'actions';
+      case 'pending approval':
+        return 'pendingApproval';
+      case 'pending at bank':
+        return 'pendingBank';
+      case 'rejected':
+        return 'rejected';
+      case 'closed':
+        return 'closed';
+      default:
+        return '';
+    }
+  }
+
 }
