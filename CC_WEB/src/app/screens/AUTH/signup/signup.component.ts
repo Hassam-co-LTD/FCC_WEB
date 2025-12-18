@@ -6,6 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +18,9 @@ import { MatCardModule } from '@angular/material/card';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule,
+    MatTooltipModule
 ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
@@ -25,6 +29,7 @@ export class SignupComponent {
   name = '';
   email = '';
   password = '';
+  hidePassword = true
 
   constructor(private router: Router) {}
 
@@ -38,5 +43,8 @@ export class SignupComponent {
     } else {
       alert('Please fill all fields');
     }
+  }
+  togglePassword() {
+    this.hidePassword = !this.hidePassword;
   }
 }

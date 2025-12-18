@@ -14,8 +14,17 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Password</mat-label>
-        <input placeholder="Password" matInput [(ngModel)]=" password" name="password" type="password" required />
+        <input placeholder="Enter Password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="password"
+          name="password" required />
+
+        <button mat-icon-button matSuffix matTooltip="Show / Hide Password" type="button" (click)="togglePassword()"
+          [attr.aria-label]="'Toggle password visibility'">
+          <mat-icon>
+            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </button>
       </mat-form-field>
+
 
       <button mat-raised-button color="accent" class="full-width" type="submit">
         Sign Up
