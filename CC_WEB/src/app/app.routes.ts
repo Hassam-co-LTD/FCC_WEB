@@ -355,48 +355,48 @@ export const routes: Routes = [
                                 './screens/USER/import-screen/components/general-details/general-details'
                             ).then((m) => m.GeneralDetails),
                     },
-                    {
-                        path: 'applicant-beneficiary',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/applicant-beneficiary/applicant-beneficiary'
-                            ).then((m) => m.ApplicantBeneficiary),
-                    },
-                    {
-                        path: 'bank-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/bank-details/bank-details'
-                            ).then((m) => m.BankDetails),
-                    },
-                    {
-                        path: 'amount-charge-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/amount-charge-details/amount-charge-details'
-                            ).then((m) => m.AmountChargeDetails),
-                    },
-                    {
-                        path: 'payment-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/payment-details/payment-details'
-                            ).then((m) => m.PaymentDetails),
-                    },
-                    {
-                        path: 'shipment-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/shipment-details/shipment-details'
-                            ).then((m) => m.ShipmentDetails),
-                    },
-                    {
-                        path: 'narrative-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/narrative-details/narrative-details'
-                            ).then((m) => m.NarrativeDetails),
-                    },
+                    // {
+                    //     path: 'applicant-beneficiary',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/applicant-beneficiary/applicant-beneficiary'
+                    //         ).then((m) => m.ApplicantBeneficiary),
+                    // },
+                    // {
+                    //     path: 'bank-details',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/bank-details/bank-details'
+                    //         ).then((m) => m.BankDetails),
+                    // },
+                    // {
+                    //     path: 'amount-charge-details',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/amount-charge-details/amount-charge-details'
+                    //         ).then((m) => m.AmountChargeDetails),
+                    // },
+                    // {
+                    //     path: 'payment-details',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/payment-details/payment-details'
+                    //         ).then((m) => m.PaymentDetails),
+                    // },
+                    // {
+                    //     path: 'shipment-details',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/shipment-details/shipment-details'
+                    //         ).then((m) => m.ShipmentDetails),
+                    // },
+                    // {
+                    //     path: 'narrative-details',
+                    //     loadComponent: () =>
+                    //         import(
+                    //             './screens/USER/import-screen/components/narrative-details/narrative-details'
+                    //         ).then((m) => m.NarrativeDetails),
+                    // },
 
                 ],
             },
@@ -434,6 +434,32 @@ export const routes: Routes = [
                     import(
                         './screens/USER/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
+            },
+
+            // Import Pending-Records Route
+            {
+                path: 'import-screen/pending-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/import-screen/sub-menus/records/pending-records/pending-records'
+                    ).then((m) => m.PendingRecords),
+            },
+
+            // Import submitted-Records Route
+            {
+                path: 'import-screen/submitted-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/import-screen/sub-menus/records/submitted-records/submitted-records'
+                    ).then((m) => m.SubmittedRecords),
+            },
+            // Import approved-Records Route
+            {
+                path: 'import-screen/approved-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
+                    ).then((m) => m.ApprovedRecords),
             },
 
             // Default child redirect
