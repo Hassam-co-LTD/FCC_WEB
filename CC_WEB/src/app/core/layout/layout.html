@@ -99,8 +99,8 @@
 
         <!-- SIMPLE LINK (NO CHILDREN) -->
         @if (!item.children) {
-          <a [routerLink]="item.route" routerLinkActive="active-link" (click)="Logout()">
-            @if (item.icon) {
+          <a [routerLink]="item.route" routerLinkActive="active-link" (click)="item.label === 'Logout'? Logout() : []  ">
+             @if (item.icon) {
               <mat-icon>{{ item.icon }}</mat-icon>
             }
             @if (!isCollapsed()) {

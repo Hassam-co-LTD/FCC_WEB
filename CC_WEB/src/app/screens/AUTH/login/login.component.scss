@@ -1,4 +1,17 @@
 @use '../../../../styles/theme' as theme;
+// eye css 
+/* In your component SCSS or global styles.scss */
+/* Hide Chrome/Edge built-in password reveal */
+input::-webkit-password-toggle-button,
+input::-webkit-inner-spin-button,
+input::-webkit-clear-button {
+    display: none !important;
+}
+
+/* Hide IE/Edge old reveal button */
+input::-ms-reveal, input::-ms-clear {
+    display: none !important;
+}
 
 .auth-container {
   display: flex;

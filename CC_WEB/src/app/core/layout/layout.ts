@@ -168,7 +168,8 @@ export class LayoutComponent implements OnInit {
             { label: 'Create New', route: '/admin/create-customer' }
           ]
         },
-        { label: 'Users', icon: 'person', route: '/users' }
+        { label: 'Users', icon: 'person', route: '/users' },
+        {label:"Logout",icon:"logout",route:"/login"}
       ];
 
 
