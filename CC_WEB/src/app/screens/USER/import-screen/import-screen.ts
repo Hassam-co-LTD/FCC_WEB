@@ -14,9 +14,9 @@ import { NarrativeDetails } from './components/narrative-details/narrative-detai
 import { Licenses } from "./components/licenses/licenses";
 import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
 import { Attachments } from "./components/attachments/attachments";
-// import { Preview } from "./components/preview/preview";
 import { Sidebar } from "../../../core/sidebar/sidebar";
 import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
+import { ImportlcFormTransactionService } from '../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 
 
 @Component({
@@ -34,7 +34,6 @@ import { SharedService } from '../../../core/services/user-service/shared-form-s
     Licenses,
     InstructionToBank,
     Attachments,
-    // Preview,
     Sidebar,
     RouterOutlet
   ],
@@ -56,13 +55,12 @@ export class ImportScreen implements AfterViewInit {
     { label: "Licenses" },
     { label: "Instructions to Bank" },
     { label: "Attachments" },
-    // { label: "Preview" }
   ];
 
   // MAIN MASTER FORM (fed to all steps)
   importForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService) {
+  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService, private tnxidService: ImportlcFormTransactionService) {
 
     this.importForm = this.fb.group({
 
@@ -227,6 +225,26 @@ export class ImportScreen implements AfterViewInit {
     this.router.navigate(['/import-screen/preview']);
   }
 
+  saveForm() {
+    // Validate form
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      alert("Please complete all required fields before saving.");
+      return;
+    }
+
+    // Save form data in SharedService
+    this.tnxidService.setFormData(this.importForm.value);
+
+    // Create a transaction (with generated ID) and add it to transactions
+    const transaction = this.tnxidService.saveImportLc(this.importForm);
+
+    console.log('Form saved. Transaction added:', transaction);
+
+    alert(`Saved successfully\nTransaction ID: ${transaction.tnxId}`);
+  }
+
+  
 
   // Previous section
   previous() {

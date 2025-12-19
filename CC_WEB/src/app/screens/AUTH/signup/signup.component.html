@@ -1,7 +1,6 @@
 <div class="auth-container">
   <mat-card>
     <h2>Sign Up</h2>
-    <form (ngSubmit)="onSignup()">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Full Name</mat-label>
         <input placeholder="Name" matInput [(ngModel)]="name" name="name" type="text" required />
@@ -26,10 +25,8 @@
       </mat-form-field>
 
 
-      <button mat-raised-button color="accent" class="full-width" type="submit">
-        Sign Up
-      </button>
-    </form>
+      <button mat-flat-button color="primary" class="full-width" type="submit" (click)="onSignup()">Sign up</button>
+    
     <p>
       Already have an account?
       <a routerLink="/login">Login</a>
