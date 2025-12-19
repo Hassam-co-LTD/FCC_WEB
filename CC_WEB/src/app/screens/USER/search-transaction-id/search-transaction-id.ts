@@ -1,31 +1,33 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { MatIconModule } from "@angular/material/icon";
-import { SharedService, Transaction } from '../../../core/services/user-service/shared-form-service/shared-service';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedService, TransactionBase } from '../../../core/services/user-service/shared-form-service/shared-service';
 
 @Component({
-  selector: 'app-search-transaction-id',
+  selector: 'app-search-transaction',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './search-transaction-id.html',
-  styleUrls: ['./search-transaction-id.scss'],
-  imports: [MatIconModule, FormsModule, CommonModule]
+  styleUrls: ['./search-transaction-id.scss']
 })
 export class SearchTransactionID implements OnInit {
-  searchQuery: string = '';
-  showAdvancedSearch: boolean = false;
-  activeTab: string = 'live';
-  sortColumn: string = '';
-  sortDirection: 'asc' | 'desc' = 'asc';
-  currentPage: number = 1;
-  itemsPerPage: number = 10;
-  debugVisible: boolean = false;
-  private isBrowser: boolean;
+  // Data
+  allTransactions: TransactionBase[] = [];
+  filteredTransactions: TransactionBase[] = [];
+  pagedTransactions: TransactionBase[] = [];
+
+  // Search & Filter
+  searchQuery = '';
+  showAdvancedSearch = false;
+  hasActiveFilters = false;
   
   filters = {
     channelReference: '',
     customerReference: '',
     bankReference: '',
     status: '',
+    type: '',
     fromDate: '',
     toDate: '',
     currency: '',
@@ -33,340 +35,296 @@ export class SearchTransactionID implements OnInit {
     maxAmount: null as number | null
   };
 
-  allTransactions: Transaction[] = [];
-  filteredTransactions: Transaction[] = [];
+  // Tabs
+  activeTab: string = 'all';
+  tabs = [
+    { id: 'all', name: 'All Transactions' },
+    { id: 'undertaking', name: 'Undertaking' },
+    { id: 'export-collection', name: 'Export Collection' },
+    { id: 'shipping-guarantee', name: 'Shipping Guarantee' },
+    { id: 'draft', name: 'Drafts' },
+    { id: 'pending', name: 'Pending Approval' },
+    { id: 'live', name: 'Live' },
+    { id: 'closed', name: 'Closed' }
+  ];
 
-  constructor(
-    private sharedService: SharedService,
-    @Inject(PLATFORM_ID) platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-    console.log('SearchTransactionID initialized - isBrowser:', this.isBrowser);
-    console.log('SharedService instance:', sharedService);
-    console.log('Initial transactions from service:', sharedService.getAllTransactions().length);
+  // Sort
+  sortColumn: keyof TransactionBase | '' = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
+  // Pagination
+  itemsPerPage = 10;
+  currentPage = 1;
+  totalPages = 1;
+
+  // Status colors mapping
+  statusColors: { [key: string]: string } = {
+    'Draft': 'draft',
+    'Pending Approval': 'pending',
+    'Pending at Bank': 'warning',
+    'Live': 'success',
+    'Rejected': 'error',
+    'Closed': 'closed',
+    'Submitted': 'info'
+  };
+
+  constructor(private sharedService: SharedService) {}
+
+  ngOnInit(): void {
+    this.loadTransactions();
+    this.sharedService.transactions$.subscribe(transactions => {
+      this.allTransactions = transactions;
+      this.applyAll();
+    });
   }
 
-  ngOnInit() {
-    console.log('SearchTransactionID ngOnInit');
-    
-    // Only run in browser
-    if (this.isBrowser) {
-      this.loadTransactions();
-      
-      // Subscribe to transaction updates
-      this.sharedService.transactions$.subscribe(transactions => {
-        console.log('Transactions subscription updated:', transactions.length);
-        this.allTransactions = transactions;
-        this.applyFilters();
-      });
-    } else {
-      console.log('Running in SSR mode - skipping data loading');
-    }
-  }
-
-  // ==================== DATA LOADING ====================
-
-  loadTransactions() {
-    console.log('Loading transactions...');
-    
-    // Get all transactions from shared service
+  loadTransactions(): void {
     this.allTransactions = this.sharedService.getAllTransactions();
-    console.log('Loaded transactions from service:', this.allTransactions.length);
-    console.log('Transactions:', this.allTransactions);
-    
-    // If no transactions and in browser, load some mock data
-    if (this.allTransactions.length === 0 && this.isBrowser) {
-      console.log('No transactions found, loading mock data');
-      this.loadMockTransactions();
-    }
-    
-    this.applyFilters();
+    this.applyAll();
   }
 
-  loadMockTransactions() {
-    console.log('Loading mock transactions...');
-    
-    // Add some mock transactions to shared service
-    const mockTransactions: Transaction[] = [
-      {
-        id: 1,
-        channelReference: 'CH001234',
-        customerReference: 'CUST001',
-        bankReference: 'BNK001',
-        issueDate: new Date('2024-01-15'),
-        status: 'Live',
-        beneficiary: 'ABC Corporation',
-        currency: 'USD',
-        amount: 50000,
-        outstandingAmount: 25000,
-        expiryDate: new Date('2024-12-31')
-      },
-      {
-        id: 2,
-        channelReference: 'CH001235',
-        customerReference: 'CUST002',
-        bankReference: 'BNK002',
-        issueDate: new Date('2024-01-10'),
-        status: 'Draft',
-        beneficiary: 'XYZ Ltd',
-        currency: 'EUR',
-        amount: 75000,
-        outstandingAmount: 75000,
-        expiryDate: new Date('2024-11-30')
-      },
-      {
-        id: 3,
-        channelReference: 'CH001236',
-        customerReference: 'CUST003',
-        bankReference: 'BNK003',
-        issueDate: new Date('2024-01-20'),
-        status: 'Pending Approval',
-        beneficiary: 'Global Industries',
-        currency: 'USD',
-        amount: 100000,
-        outstandingAmount: 100000,
-        expiryDate: new Date('2024-10-31')
-      }
-    ];
-
-    console.log('Mock transactions to add:', mockTransactions);
-
-    // Add mock transactions directly to shared service
-    const current = this.sharedService.getAllTransactions();
-    const updated = [...current, ...mockTransactions];
-    
-    // Update shared service
-    if (this.sharedService['transactions']) {
-      this.sharedService['transactions'].next(updated);
-    }
-    
-    // Save to localStorage (will be skipped if not in browser)
-    if (typeof this.sharedService['saveTransactions'] === 'function') {
-      this.sharedService['saveTransactions'](updated);
-    }
-    
-    console.log('Mock transactions added, total:', updated.length);
+  // Search and Filter Methods
+  onSearch(): void {
+    this.applyAll();
   }
 
-  // ==================== SEARCH & FILTER METHODS ====================
-
-  onSearch() {
-    console.log('Search triggered:', this.searchQuery);
-    this.currentPage = 1;
-    this.applyFilters();
-  }
-
-  clearSearch() {
-    console.log('Clearing search');
+  clearSearch(): void {
     this.searchQuery = '';
+    this.resetFilters();
+    this.applyAll();
+  }
+
+  toggleAdvancedSearch(): void {
+    this.showAdvancedSearch = !this.showAdvancedSearch;
+  }
+
+  applyAdvancedFilters(): void {
+    this.hasActiveFilters = true;
+    this.applyAll();
+  }
+
+  resetFilters(): void {
     this.filters = {
       channelReference: '',
       customerReference: '',
       bankReference: '',
       status: '',
+      type: '',
       fromDate: '',
       toDate: '',
       currency: '',
       minAmount: null,
       maxAmount: null
     };
-    this.onSearch();
+    this.hasActiveFilters = false;
   }
 
-  toggleAdvancedSearch() {
-    this.showAdvancedSearch = !this.showAdvancedSearch;
-    console.log('Advanced search toggled:', this.showAdvancedSearch);
-  }
+  // Main filtering pipeline
+  applyAll(): void {
+    let data = [...this.allTransactions];
 
-  applyAdvancedFilters() {
-    console.log('Applying advanced filters:', this.filters);
-    this.currentPage = 1;
-    this.applyFilters();
-    this.showAdvancedSearch = false;
-  }
-
-  resetFilters() {
-    console.log('Resetting all filters');
-    this.clearSearch();
-  }
-
-  applyFilters() {
-    console.log('Applying filters...');
-    console.log('Search query:', this.searchQuery);
-    console.log('Active filters:', this.filters);
-    
-    // Use shared service to search
-    this.filteredTransactions = this.sharedService.searchTransactions(
-      this.searchQuery,
-      this.filters
-    );
-    
-    console.log('Filtered transactions before tab filter:', this.filteredTransactions.length);
-    
-    // Apply tab filter
-    this.filteredTransactions = this.filterByTab(this.filteredTransactions);
-    
-    console.log('Filtered transactions after tab filter:', this.filteredTransactions.length);
-    
-    // Apply sorting
-    this.applySorting();
-    
-    console.log('Final filtered transactions:', this.filteredTransactions.length);
-  }
-
-  filterByTab(transactions: Transaction[]): Transaction[] {
-    console.log('Filtering by tab:', this.activeTab);
-    
-    switch(this.activeTab) {
-      case 'live':
-        return transactions.filter(t => t.status === 'Live');
-      case 'draft':
-        return transactions.filter(t => t.status === 'Draft');
-      case 'pendingApproval':
-        return transactions.filter(t => t.status === 'Pending Approval');
-      case 'pendingBank':
-        return transactions.filter(t => t.status === 'Pending at Bank');
-      case 'rejected':
-        return transactions.filter(t => t.status === 'Rejected');
-      case 'closed':
-        return transactions.filter(t => t.status === 'Closed');
-      case 'actions':
-        return transactions.filter(t => ['Pending Approval', 'Draft'].includes(t.status));
-      default:
-        return transactions;
+    // Tab filtering
+    if (this.activeTab !== 'all') {
+      data = data.filter(t => this.matchTab(t, this.activeTab));
     }
-  }
 
-  applySorting() {
+    // Text search
+    if (this.searchQuery.trim()) {
+      const term = this.searchQuery.toLowerCase();
+      data = data.filter(t =>
+        t.channelReference?.toLowerCase().includes(term) ||
+        t.customerReference?.toLowerCase().includes(term) ||
+        t.bankReference?.toLowerCase().includes(term) ||
+        t.beneficiary?.toLowerCase().includes(term) ||
+        t.id?.toLowerCase().includes(term)
+      );
+    }
+
+    // Advanced filters
+    data = data.filter(t => {
+      if (this.filters.channelReference && !t.channelReference?.includes(this.filters.channelReference)) return false;
+      if (this.filters.customerReference && !t.customerReference?.includes(this.filters.customerReference)) return false;
+      if (this.filters.bankReference && !t.bankReference?.includes(this.filters.bankReference)) return false;
+      if (this.filters.status && t.status !== this.filters.status) return false;
+      if (this.filters.type && t.type !== this.filters.type) return false;
+      if (this.filters.currency && t.currency !== this.filters.currency) return false;
+
+      if (this.filters.fromDate) {
+        const fromDate = new Date(this.filters.fromDate);
+        const issueDate = new Date(t.issueDate);
+        if (issueDate < fromDate) return false;
+      }
+
+      if (this.filters.toDate) {
+        const toDate = new Date(this.filters.toDate);
+        const issueDate = new Date(t.issueDate);
+        if (issueDate > toDate) return false;
+      }
+
+      if (this.filters.minAmount !== null && t.amount < this.filters.minAmount) return false;
+      if (this.filters.maxAmount !== null && t.amount > this.filters.maxAmount) return false;
+
+      return true;
+    });
+
+    // Sorting
     if (this.sortColumn) {
-      console.log('Applying sorting by:', this.sortColumn, 'direction:', this.sortDirection);
-      
-      this.filteredTransactions.sort((a, b) => {
-        const aValue = (a as any)[this.sortColumn];
-        const bValue = (b as any)[this.sortColumn];
+      data.sort((a, b) => {
+        const aVal = a[this.sortColumn as keyof TransactionBase];
+        const bVal = b[this.sortColumn as keyof TransactionBase];
         
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return this.sortDirection === 'asc' 
-            ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
-        } else {
-          return this.sortDirection === 'asc' 
-            ? (aValue > bValue ? 1 : -1)
-            : (bValue > aValue ? 1 : -1);
-        }
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return this.sortDirection === 'asc' ? -1 : 1;
+        if (bVal == null) return this.sortDirection === 'asc' ? 1 : -1;
+        
+        if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
+        return 0;
       });
     }
+
+    this.filteredTransactions = data;
+    this.applyPagination();
   }
 
-  // ==================== TAB METHODS ====================
-
-  getTabCount(tabName: string): number {
-    const tabTransactions = this.filterByTab(this.allTransactions);
-    const count = tabTransactions.length;
-    console.log(`Tab count for ${tabName}:`, count);
-    return count;
+  // Tab matching logic
+  matchTab(transaction: TransactionBase, tab: string): boolean {
+    switch (tab) {
+      case 'undertaking':
+        return transaction.type === 'undertaking';
+      case 'export-collection':
+        return transaction.type === 'export-collection';
+      case 'shipping-guarantee':
+        return transaction.type === 'shipping-guarantee';
+      case 'draft':
+        return transaction.status === 'Draft';
+      case 'pending':
+        return transaction.status === 'Pending Approval' || transaction.status === 'Pending at Bank';
+      case 'live':
+        return transaction.status === 'Live';
+      case 'closed':
+        return transaction.status === 'Closed' || transaction.status === 'Rejected';
+      default:
+        return true;
+    }
   }
 
-  setActiveTab(tab: string) {
-    console.log('Setting active tab:', tab);
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.applyFilters();
+  // Tab count
+  getTabCount(tabId: string): number {
+    if (tabId === 'all') return this.allTransactions.length;
+    return this.allTransactions.filter(t => this.matchTab(t, tabId)).length;
   }
 
-  // ==================== SORTING METHODS ====================
-
-  sortBy(column: string) {
-    console.log('Sorting by column:', column);
-    
+  // Sorting
+  sortBy(column: keyof TransactionBase): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
+    this.applyAll();
+  }
+
+  // Pagination
+  applyPagination(): void {
+    this.totalPages = Math.max(1, Math.ceil(this.filteredTransactions.length / this.itemsPerPage));
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
     
-    console.log('Sort column:', this.sortColumn, 'Direction:', this.sortDirection);
-    this.applyFilters();
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    
+    this.pagedTransactions = this.filteredTransactions.slice(start, end);
   }
 
-  // ==================== PAGINATION METHODS ====================
-
-  get totalPages(): number {
-    const pages = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-    console.log('Total pages:', pages);
-    return pages;
-  }
-
-  get pagedTransactions(): Transaction[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    const paged = this.filteredTransactions.slice(startIndex, endIndex);
-    console.log(`Paged transactions (${startIndex} to ${endIndex}):`, paged.length);
-    return paged;
-  }
-
-  previousPage() {
-    console.log('Previous page clicked');
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      console.log('New page:', this.currentPage);
-    }
-  }
-
-  nextPage() {
-    console.log('Next page clicked');
+  nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      console.log('New page:', this.currentPage);
+      this.applyPagination();
     }
   }
 
-  // ==================== VIEW & HELPER METHODS ====================
-
-  viewTransaction(transaction: Transaction) {
-    console.log('View transaction:', transaction);
-    
-    alert(`Transaction Details:
-      Reference: ${transaction.channelReference}
-      Status: ${transaction.status}
-      Beneficiary: ${transaction.beneficiary}
-      Amount: ${transaction.currency} ${transaction.amount.toLocaleString()}
-      Expiry: ${transaction.expiryDate.toLocaleDateString()}
-    `);
-  }
-
-  get hasActiveFilters(): boolean {
-    const hasFilters = !!this.searchQuery || 
-           Object.values(this.filters).some(value => 
-             value !== '' && value !== null && value !== undefined
-           );
-    
-    console.log('Has active filters:', hasFilters);
-    return hasFilters;
-  }
-
-  // ==================== DEBUG METHODS ====================
-
-  // ADD THIS MISSING METHOD:
-  debugTransactions() {
-    this.debugVisible = !this.debugVisible;
-    console.log('=== DEBUG INFO ===');
-    console.log('All transactions:', this.allTransactions);
-    console.log('Filtered transactions:', this.filteredTransactions);
-    console.log('Paged transactions:', this.pagedTransactions);
-    console.log('Current page:', this.currentPage);
-    console.log('Total pages:', this.totalPages);
-    console.log('Active tab:', this.activeTab);
-    console.log('Search query:', this.searchQuery);
-    
-    // Check localStorage if in browser
-    if (this.isBrowser) {
-      const saved = localStorage.getItem('lc_transactions');
-      console.log('LocalStorage data:', saved ? JSON.parse(saved) : 'No data');
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.applyPagination();
     }
-    
-    // Check shared service
-    console.log('Shared service getAllTransactions():', this.sharedService.getAllTransactions());
+  }
+
+  // Status helpers
+  getStatusClass(status: string): string {
+    return this.statusColors[status] || 'default';
+  }
+
+  getTransactionTypeIcon(type: string): string {
+    const icons: { [key: string]: string } = {
+      'undertaking': 'description',
+      'export-collection': 'import_export',
+      'shipping-guarantee': 'local_shipping'
+    };
+    return icons[type] || 'receipt';
+  }
+
+  // Action methods
+  canOpenTransaction(t: TransactionBase): boolean {
+    return !!(t.canEdit || t.canView);
+  }
+
+  getTransactionButtonText(t: TransactionBase): string {
+    return t.canEdit ? 'Edit' : 'View';
+  }
+
+  canAcceptTransaction(t: TransactionBase): boolean {
+    return t.status === 'Pending Approval' || t.status === 'Pending at Bank';
+  }
+
+  canRejectTransaction(t: TransactionBase): boolean {
+    return this.canAcceptTransaction(t);
+  }
+
+  viewTransaction(t: TransactionBase): void {
+    console.log('Opening transaction:', t);
+    // Navigate to appropriate view/edit page based on type
+    // Example: this.router.navigate([`/${t.type}`, t.id]);
+  }
+
+  acceptTransaction(t: TransactionBase): void {
+    if (confirm(`Accept transaction ${t.channelReference}?`)) {
+      this.sharedService.updateTransaction(t.id, { 
+        status: 'Live',
+        canEdit: false,
+        canView: true 
+      });
+    }
+  }
+
+  rejectTransaction(t: TransactionBase): void {
+    if (confirm(`Reject transaction ${t.channelReference}?`)) {
+      this.sharedService.updateTransaction(t.id, { 
+        status: 'Rejected',
+        canEdit: false,
+        canView: true 
+      });
+    }
+  }
+
+  deleteTransaction(t: TransactionBase): void {
+    if (confirm(`Delete transaction ${t.channelReference}?`)) {
+      this.sharedService.deleteTransaction(t.id);
+    }
+  }
+
+  // Utility methods
+  formatDate(date: Date): string {
+    return date ? new Date(date).toLocaleDateString('en-GB') : 'N/A';
+  }
+
+  formatCurrency(amount: number, currency: string): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount || 0);
   }
 }

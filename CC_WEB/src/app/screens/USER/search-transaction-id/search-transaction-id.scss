@@ -14,10 +14,19 @@
    Header
 ================================*/
 .ui-header {
+  margin-bottom: 20px;
+
   h1 {
     font-size: 1.4rem;
     font-weight: 600;
     color: theme.$text-dark;
+    margin: 0 0 4px 0;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+    margin: 0;
   }
 }
 
@@ -50,6 +59,9 @@
   .search-icon {
     color: theme.$primary;
     margin-right: 6px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 
   .search-input {
@@ -58,14 +70,36 @@
     background: transparent;
     outline: none;
     font-size: 0.9rem;
-    color: theme.$text-medium;
+    color: theme.$text-dark;
+
+    &::placeholder {
+      color: theme.$text-medium;
+    }
   }
 
   .btn-clear-search {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: theme.$primary;
+    color: theme.$text-medium;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(theme.$primary, 0.1);
+      color: theme.$primary;
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
@@ -80,16 +114,40 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    border-radius: 50px;
+    border-radius: theme.$radius-large;
     font-weight: 500;
     cursor: pointer;
     border: none;
-    background: theme.$primary-btn-bg;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .btn-search {
+    background: theme.$primary;
     color: theme.$text-light;
     box-shadow: theme.$button-shadow;
 
     &:hover {
-      background: theme.$primary-btn-hover-bg;
+      background: theme.$primary-hover;
+      transform: translateY(-1px);
+      box-shadow: theme.$primary-shadow;
+    }
+  }
+
+  .btn-advanced {
+    background: transparent;
+    color: theme.$primary;
+    border: 1px solid theme.$primary;
+
+    &:hover {
+      background: rgba(theme.$primary, 0.1);
+      transform: translateY(-1px);
     }
   }
 }
@@ -118,6 +176,7 @@
     label {
       font-size: 0.8rem;
       color: theme.$text-medium;
+      font-weight: 500;
     }
 
     input,
@@ -127,6 +186,37 @@
       border: 1px solid theme.$border-light;
       background: theme.$white;
       font-size: 0.85rem;
+      color: theme.$text-dark;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: theme.$primary;
+      }
+
+      &::placeholder {
+        color: theme.$text-medium;
+      }
+    }
+
+    input[type="date"] {
+      &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    input[type="number"] {
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        opacity: 0.6;
+        cursor: pointer;
+      }
     }
   }
 }
@@ -137,19 +227,37 @@
   justify-content: flex-end;
   gap: 10px;
 
+  .btn-outline,
+  .btn-primary {
+    padding: 6px 14px;
+    border-radius: theme.$radius-default;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-size: 0.85rem;
+  }
+
   .btn-outline {
     background: transparent;
-    border: 1px solid theme.$secondary-btn-border;
-    color: theme.$secondary-btn-text;
-    border-radius: 50px;
-    padding: 6px 14px;
+    border: 1px solid theme.$border-light;
+    color: theme.$text-medium;
+
+    &:hover {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
   }
 
   .btn-primary {
-    background: theme.$primary-btn-bg;
+    background: theme.$primary;
     color: theme.$text-light;
-    border-radius: 50px;
-    padding: 6px 16px;
+    box-shadow: theme.$button-shadow;
+
+    &:hover {
+      background: theme.$primary-hover;
+      box-shadow: theme.$primary-shadow;
+    }
   }
 }
 
@@ -165,38 +273,40 @@
 .tab {
   padding: 6px 14px;
   border-radius: 20px;
-  background: theme.$hover-bg;
-  color: theme.$primary;
+  background: theme.$light-bg;
+  color: theme.$text-medium;
   cursor: pointer;
   font-size: 0.85rem;
-  border: 1px solid theme.$hover-border;
+  font-weight: 500;
+  border: 1px solid theme.$border-light;
+  transition: all 0.2s;
+
+  &:hover {
+    background: theme.$hover-bg;
+    border-color: theme.$hover-border;
+  }
 
   &.active {
     background: theme.$primary;
     color: theme.$text-light;
     border-color: theme.$primary;
+    box-shadow: theme.$button-shadow;
   }
 }
 
 /* ==============================
-   Filter Row
+   Results Summary
 ================================*/
-.filter-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.results-summary {
+  font-size: 0.8rem;
+  color: theme.$text-medium;
+  font-weight: 500;
+  padding: 8px 0;
+  margin: 8px 0;
 
-  .form-group {
-    select {
-      padding: 6px 10px;
-      border-radius: theme.$radius-default;
-      border: 1px solid theme.$border-light;
-    }
-  }
-
-  .results-summary {
-    font-size: 0.8rem;
-    color: theme.$text-medium;
+  .page-info {
+    color: theme.$primary;
+    font-weight: 600;
   }
 }
 
@@ -208,7 +318,7 @@
   border-radius: theme.$radius-large;
   border: 1px solid theme.$border-light;
   overflow-x: auto;
-  -webkit-overflow-scrolling:touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -220,28 +330,87 @@ thead {
   background: theme.$primary-light;
 
   th {
-    padding: 10px;
+    padding: 12px;
     font-size: 0.8rem;
     font-weight: 600;
     color: theme.$text-dark;
     cursor: pointer;
     white-space: nowrap;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(theme.$primary, 0.2);
+    }
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      margin-left: 4px;
+      vertical-align: middle;
+      color: theme.$primary;
+    }
   }
 }
 
 tbody {
   tr {
     border-top: 1px solid theme.$border-light;
+    transition: all 0.2s;
 
     &:hover {
       background: theme.$hover-bg;
     }
+
+    &:nth-child(even) {
+      background: theme.$light-bg;
+    }
   }
 
   td {
-    padding: 10px;
+    padding: 12px;
     font-size: 0.85rem;
-    color: theme.$text-medium;
+    color: theme.$text-dark;
+    vertical-align: middle;
+  }
+}
+
+/* ==============================
+   Type Cell
+================================*/
+.type-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .type-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: theme.$radius-default;
+    font-size: 14px;
+
+    &.undertaking {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+    }
+
+    &.export-collection {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+
+    &.shipping-guarantee {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+  }
+
+  .type-label {
+    font-weight: 500;
+    font-size: 0.85rem;
   }
 }
 
@@ -249,19 +418,61 @@ tbody {
    Status Badges
 ================================*/
 .status-badge {
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  min-width: 100px;
 
-  &.status-live {
-    background: theme.$primary-light;
-    color: theme.$primary;
+  &.status-draft,
+  &.status-Draft {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
   }
 
-  &.status-draft {
-    background: theme.$hover-bg;
-    color: theme.$text-medium;
+  &.status-pending-approval,
+  &.status-Pending\ Approval {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  &.status-pending-at-bank,
+  &.status-Pending\ at\ Bank {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  &.status-live,
+  &.status-Live {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &.status-rejected,
+  &.status-Rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  &.status-closed,
+  &.status-Closed {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+  }
+
+  &.status-submitted,
+  &.status-Submitted {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
   }
 }
 
@@ -271,16 +482,80 @@ tbody {
 .amount {
   font-weight: 600;
   color: theme.$primary;
+  font-size: 0.85rem;
 }
 
-.btn-action {
+.action-buttons {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  background: transparent;
-  border: none;
-  color: theme.$primary;
-  cursor: pointer;
+  gap: 6px;
+  flex-wrap: wrap;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px;
+    border-radius: theme.$radius-default;
+    font-size: 0;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .btn-action {
+    background: rgba(theme.$primary, 0.1);
+    color: theme.$primary;
+
+    &:hover:not(:disabled) {
+      background: rgba(theme.$primary, 0.2);
+    }
+  }
+
+  .btn-accept {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+
+    &:hover:not(:disabled) {
+      background: rgba(16, 185, 129, 0.2);
+    }
+  }
+
+  .btn-reject {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+
+    &:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  }
+
+  .btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+
+    &:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  }
 }
 
 /* ==============================
@@ -288,8 +563,50 @@ tbody {
 ================================*/
 .no-records {
   text-align: center;
-  padding: 30px;
+  padding: 40px;
   color: theme.$text-medium;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    color: theme.$border-light;
+  }
+
+  p {
+    margin: 0 0 16px 0;
+    font-size: 0.9rem;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid theme.$border-light;
+    color: theme.$text-medium;
+    padding: 8px 16px;
+    border-radius: theme.$radius-default;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+
+    &:hover {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
+  }
+
+  .empty-state {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+
+    .hint {
+      font-size: 0.8rem;
+      color: theme.$text-medium;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+  }
 }
 
 /* ==============================
@@ -299,22 +616,75 @@ tbody {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid theme.$border-light;
 
   .btn-pagination {
     background: theme.$primary-light;
     border: 1px solid theme.$border-light;
-    border-radius: 50%;
-    padding: 4px;
+    border-radius: theme.$radius-default;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: theme.$text-dark;
+    }
+  }
+
+  .page-info {
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+    font-weight: 500;
+  }
+
+  .items-per-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+
+    label {
+      font-size: 0.85rem;
+      color: theme.$text-medium;
+      font-weight: 500;
+    }
+
+    select {
+      padding: 6px 8px;
+      border-radius: theme.$radius-default;
+      border: 1px solid theme.$border-light;
+      background: theme.$white;
+      color: theme.$text-dark;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: theme.$primary;
+      }
+    }
   }
 }
+
 /* ==============================
    Responsive   
 ================================*/
@@ -326,17 +696,130 @@ tbody {
 
   .search-actions {
     justify-content: center;
-  }
 
-  .filter-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-}   
-
-@media (max-width: 1768px) {
-    .advanced-search-grid {
-        grid-template-columns: 1fr;
+    .btn-search,
+    .btn-advanced {
+      flex: 1;
+      justify-content: center;
     }
-}   
+  }
+
+  .ui-tabs {
+    justify-content: center;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+
+    .items-per-page {
+      margin-left: 0;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .advanced-search-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .ui-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem !important;
+  }
+
+  .search-input {
+    font-size: 0.85rem !important;
+  }
+
+  .btn-search,
+  .btn-advanced {
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+  }
+
+  .ui-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    padding: 4px;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    padding: 16px;
+
+    td {
+      display: block;
+      padding: 8px 0;
+      border-bottom: 1px dashed theme.$border-light;
+      text-align: left;
+
+      &:last-child {
+        border-bottom: none;
+        padding-top: 16px;
+      }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: theme.$text-medium;
+        display: block;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+      }
+
+      &.type-cell {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+  }
+
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+
+    button {
+      width: auto;
+    }
+  }
+}

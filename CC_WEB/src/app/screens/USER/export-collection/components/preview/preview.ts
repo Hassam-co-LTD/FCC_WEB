@@ -241,19 +241,42 @@ export class PreviewSectionComponent implements OnInit {
     }
 
     // Generate transaction reference
-    const transactionRef = 'EXP' + new Date().getTime() + Math.floor(Math.random() * 1000);
+    const timestamp = Date.now();
+    const randomSuffix = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const transactionRef = `EXP${timestamp.toString().slice(-6)}${randomSuffix}`;
     
     // Prepare submission data
     const submissionData = {
       ...this.form.value,
       submittedAt: new Date().toISOString(),
       status: 'Submitted',
-      transactionReference: transactionRef,
-      id: Date.now()
+      channelReference: transactionRef,
+      customerReference: `CUST${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
+      bankReference: `BNK${timestamp.toString().slice(-6)}`,
+      id: timestamp,
+      issueDate: new Date(),
+      beneficiary: this.form.get('DrawerDraweeDetails.draweeName')?.value || 'Unknown',
+      currency: this.form.get('paymentamount.currency')?.value || 'USD',
+      amount: parseFloat(this.form.get('paymentamount.amount')?.value) || 0,
+      outstandingAmount: parseFloat(this.form.get('paymentamount.amount')?.value) || 0,
+      expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
     };
 
-    // Save to service
-    this.sharedService.addTransaction(submissionData);
+    // IMPORTANT: Since SharedService doesn't have addTransaction method,
+    // we need to handle this differently
+    
+    // Option 1: Save to localStorage directly (temporary solution)
+    this.saveToLocalStorage(submissionData);
+    
+    // Option 2: Create a transaction object and use service if available
+    // Check if addTransaction method exists (type safety workaround)
+    const service = this.sharedService as any;
+    if (service.addTransaction) {
+      service.addTransaction(submissionData);
+    } else {
+      // Fallback: Save to localStorage
+      this.saveToLocalStorage(submissionData);
+    }
     
     // Show success message
     this.snackBar.open(
@@ -266,9 +289,61 @@ export class PreviewSectionComponent implements OnInit {
       }
     );
 
+    // Clear form data
+    this.sharedService.clearFormData();
+    
     // Navigate to dashboard
     setTimeout(() => {
       this.router.navigate(['/dashboard']);
     }, 2000);
+  }
+
+  // Helper method to save transaction to localStorage
+  private saveToLocalStorage(transactionData: any) {
+    try {
+      // Get existing transactions
+      const existing = localStorage.getItem('export_collection_transactions');
+      const transactions = existing ? JSON.parse(existing) : [];
+      
+      // Add new transaction
+      transactions.unshift(transactionData);
+      
+      // Save back to localStorage
+      localStorage.setItem('export_collection_transactions', JSON.stringify(transactions));
+      
+      console.log('Transaction saved to localStorage:', transactionData);
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  }
+
+  // Alternative: Save as Draft
+  saveAsDraft() {
+    if (!this.form) {
+      this.snackBar.open('No form data available', 'Close', { 
+        duration: 3000,
+        panelClass: ['error-snackbar']
+      });
+      return;
+    }
+
+    // Save current form data as draft
+    const draftData = {
+      ...this.form.value,
+      savedAt: new Date().toISOString(),
+      status: 'Draft'
+    };
+
+    this.sharedService.setFormData(draftData);
+    
+    this.snackBar.open('Export collection saved as draft successfully!', 'Close', { 
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
+    
+    // Navigate back
+    setTimeout(() => {
+      this.router.navigate(['/export-collection']);
+    }, 1500);
   }
 }
