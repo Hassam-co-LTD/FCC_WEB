@@ -8,6 +8,7 @@ import {
 } from
   '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pending-records',
@@ -45,8 +46,9 @@ export class PendingRecords implements OnInit {
   private isBrowser: boolean;
 
   constructor(
-    private importLcService: ImportlcFormTransactionService,
-    @Inject(PLATFORM_ID) platformId: Object
+    private transactionService: ImportlcFormTransactionService,
+    @Inject(PLATFORM_ID) platformId: Object,
+    private router: Router
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
@@ -59,7 +61,7 @@ export class PendingRecords implements OnInit {
     this.loadTransactions();
 
     // live updates from service
-    this.importLcService.transactionsStream$.subscribe(tx => {
+    this.transactionService.transactionsStream$.subscribe(tx => {
       this.allTransactions = tx;
       this.applyFilters();
     });
@@ -114,7 +116,7 @@ export class PendingRecords implements OnInit {
 
   /* ===================== LOAD ===================== */
   private loadTransactions(): void {
-    this.allTransactions = this.importLcService.getAllTransactions();
+    this.allTransactions = this.transactionService.getAllTransactions();
     this.applyFilters();
   }
 
@@ -190,17 +192,11 @@ export class PendingRecords implements OnInit {
   }
 
   /* ===================== VIEW ===================== */
-  viewTransaction(tx: ImportLcTransaction): void {
-    alert(
-      `Import LC Draft\n\n` +
-      `TNX ID: ${tx.tnxId}\n` +
-      `Beneficiary: ${tx.applicantForm?.beneficiaryName || '-'}\n` +
-      `Issuing Bank: ${tx.bankForm?.issuingBankName || '-'}\n` +
-      `Currency: ${tx.amountChargeForm?.currency || '-'}\n` +
-      `Amount: ${tx.amountChargeForm?.amount || 0}\n` +
-      `Status: ${tx.status}`
-    );
+  viewTransaction(tx: ImportLcTransaction) {
+    this.transactionService.setFormData(tx); 
+    this.router.navigate(['/import-screen/preview'], { state: { data: tx, isPending: true } });
   }
+
 
   private mapStatusToTab(status: string): string {
     switch (status.toLowerCase()) {

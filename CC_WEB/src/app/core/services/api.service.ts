@@ -14,7 +14,7 @@ export class ApiService {
   // POST preview
   submitPreview(data: any): Observable<any> {
     console.log('Fetching from:', data);
-    return this.http.post(`${this.baseUrl}/preview`, data, {
+    return this.http.post(`${this.baseUrl}importlc/preview`, data, {
       headers: { 'Content-Type': 'application/json' }
     });
   }

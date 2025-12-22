@@ -9,6 +9,7 @@ import { MatCard } from "@angular/material/card";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../../../../core/services/api.service';
+import { ImportlcFormTransactionService, ImportLcTransaction } from '../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 
 
 @Component({
@@ -22,40 +23,75 @@ export class Preview implements OnInit {
   form!: FormGroup;
 
   isOpen = true;
-
   viewerOpen = false;
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-  constructor(private dataService: SharedService, private fb: FormBuilder, private router: Router, private snackBar: MatSnackBar, private imporLcService: ApiService) { }
+  isPending = false;          // To show Update / Submit buttons
+  
+  data!: ImportLcTransaction;  // Full transaction object
+
+  pageName1 = 'Update';
+  pageName2 = 'Submit';
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private dataService: SharedService,
+    private importLcService: ApiService,
+    private transactionService: ImportlcFormTransactionService
+  ) { }
 
   ngOnInit() {
-    const formData = this.dataService.getFormData();
+    const navState = this.router.getCurrentNavigation()?.extras?.state;
 
-    // Recreate the form so your template can use form.get('step') like before
+    // Get transaction from service
+    this.data = this.transactionService.getFormData()!;
+
+    if (!this.data) {
+      console.error('No transaction data found');
+      this.router.navigate(['/import-screen']); // redirect to listing
+      return;
+    }
+
+    this.isPending = navState?.['isPending'] ?? true;
+    this.pageName1 = navState?.['pageName1'] || 'Update';
+    this.pageName2 = navState?.['pageName2'] || 'Submit';
+
+    // Initialize form with transaction data
     this.form = this.fb.group({
-      generalDetails: this.fb.group(formData.generalDetails),
-      applicantForm: this.fb.group(formData.applicantForm),
-      bankForm: this.fb.group(formData.bankForm),
-      amountChargeForm: this.fb.group(formData.amountChargeForm),
-      paymentDetailsForm: this.fb.group(formData.paymentDetailsForm),
-      shipmentForm: this.fb.group(formData.shipmentForm),
-      narrativeForm: this.fb.group(formData.narrativeForm),
-      instructionForm: this.fb.group(formData.instructionForm),
-      attachments: this.fb.array(formData.attachments || []),
+      generalDetails: this.fb.group(this.data.generalDetails || {}),
+      applicantForm: this.fb.group(this.data.applicantForm || {}),
+      bankForm: this.fb.group(this.data.bankForm || {}),
+      amountChargeForm: this.fb.group(this.data.amountChargeForm || {}),
+      paymentDetailsForm: this.fb.group(this.data.paymentDetailsForm || {}),
+      shipmentForm: this.fb.group(this.data.shipmentForm || {}),
+      narrativeForm: this.fb.group(this.data.narrativeForm || {}),
+      instructionForm: this.fb.group(this.data.instructionForm || {}),
+      attachments: this.fb.array(this.data.attachments || []),
     });
   }
+
+
+
   toggle() {
     this.isOpen = !this.isOpen;
+  }
+
+  trackByIndex(index: number, item: any): any {
+    return item?.id || index;
   }
 
   get attachmentsArray(): FormArray {
     return (this.form.get('attachments') as FormArray)
   }
 
-  previous() {
-    this.router.navigate(['import-screen'])
-  }
+  // previous() {
+  //   this.router.navigate(['import-screen'])
+  // }
+
+
   // submit() {
   //   console.log("Submitted Data:", this.form.value);
 
@@ -68,6 +104,12 @@ export class Preview implements OnInit {
   //   });
   //   console.log("Submitted Data:", this.form.value);
   // }
+
+  // Update draft: navigate to form page prefilled
+  updateDraft() {
+    this.transactionService.setFormData(this.data);
+    this.router.navigate(['/import-screen'], { state: { data: this.data } });
+  }
   submit() {
     // Prepare payload dynamically
     const payload = {
@@ -81,25 +123,30 @@ export class Preview implements OnInit {
       ...this.form.get('instructionForm')?.value,
       attachments: this.attachmentsArray?.value || [],
     };
-    this.imporLcService.submitPreview(payload).subscribe((res) => {
-      console.log("Backend Response:", res);
-      this.snackBar.open('Data successfully submitted!', 'Close', {
-        duration: 3000, horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['success-snackbar']
-      });
-      this.router.navigate(['/import-screen/success'], { state: res });
-    },
-      (err) => {
+    this.importLcService.submitPreview(payload).subscribe({
+      next: (res) => {
+        // Add the transaction to submitted list
+        this.transactionService.addSubmitted(this.data.tnxId);
+
+        this.snackBar.open(`Data successfully submitted! (TNX ID: ${this.data.tnxId})`, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['success-snackbar']
+        });
+        this.router.navigate(['/import-screen/success'], { state: { data: this.data } });
+        this.transactionService.clearFormData();
+      },
+      error: (err) => {
         console.error("Submit Error:", err);
         this.snackBar.open('Error submitting data', 'Close', {
           duration: 3000,
           horizontalPosition: 'right',
-          verticalPosition: 'top',
+          verticalPosition: 'top'
         });
-      })
+      }
+    });
   }
-
 
 
   downloadFile(index: number) {

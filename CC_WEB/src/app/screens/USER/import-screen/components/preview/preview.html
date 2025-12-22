@@ -1,4 +1,4 @@
-<div class="preview-page">
+<div class="preview-page" *ngIf="form">
 
   <h2 class="page-title">Preview</h2>
 
@@ -9,36 +9,28 @@
     <!-- ============================== -->
     <div class="preview-row">
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('generalDetails') as gd">
         <h3 class="section-title">General Details</h3>
-        @if (form.get('generalDetails'); as gd) {
-          <div class="preview-grid">
-            @for (key of ['productType','modeOfTransmission','expiryDate','placeOfExpiry','featureIrrevocable','featureRevolving','featureTransferable','applicableRules','confirmationInstruction']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">
-                  {{ gd.value[key] === true ? 'Yes' : gd.value[key] === false ? 'No' : gd.value[key] }}
-                </div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['productType','modeOfTransmission','expiryDate','placeOfExpiry','featureIrrevocable','featureRevolving','featureTransferable','applicableRules','confirmationInstruction']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">
+              {{ gd.value[key] === true ? 'Yes' : gd.value[key] === false ? 'No' : gd.value[key] }}
+            </div>
           </div>
-        }
+        </div>
       </mat-card>
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('applicantForm') as ap">
         <h3 class="section-title">Applicant Details</h3>
-        @if (form.get('applicantForm'); as ap) {
-          <div class="preview-grid">
-            @for (key of ['applicantName','applicantAddress1','applicantAddress2','applicantAddress3','beneficiaryName','beneficiaryAddress1','beneficiaryAddress2','beneficiaryAddress3','beneficiaryCountry']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ ap.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['applicantName','applicantAddress1','applicantAddress2','applicantAddress3','beneficiaryName','beneficiaryAddress1','beneficiaryAddress2','beneficiaryAddress3','beneficiaryCountry']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ ap.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
     </div>
@@ -48,34 +40,26 @@
     <!-- ============================== -->
     <div class="preview-row">
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('bankForm') as bf">
         <h3 class="section-title">Bank Details</h3>
-        @if (form.get('bankForm'); as bf) {
-          <div class="preview-grid">
-            @for (key of ['issuingBankName','issuerReference','advisingBankName','adviseThroughBankName']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ bf.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['issuingBankName','issuerReference','advisingBankName','adviseThroughBankName']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ bf.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('amountChargeForm') as ac">
         <h3 class="section-title">Amount & Charges</h3>
-        @if (form.get('amountChargeForm'); as ac) {
-          <div class="preview-grid">
-            @for (key of ['currency','amount','variationType','variationPlus','variationMinus','issuingBankCharges','outsideCountryCharges','additionalAmount']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ ac.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['currency','amount','variationType','variationPlus','variationMinus','issuingBankCharges','outsideCountryCharges','additionalAmount']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ ac.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
     </div>
@@ -85,34 +69,26 @@
     <!-- ============================== -->
     <div class="preview-row">
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('paymentDetailsForm') as pd">
         <h3 class="section-title">Payment Details</h3>
-        @if (form.get('paymentDetailsForm'); as pd) {
-          <div class="preview-grid">
-            @for (key of ['creditAvailableWith','bankName','creditAvailableBy','paymentDraftAt']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ pd.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['creditAvailableWith','bankName','creditAvailableBy','paymentDraftAt']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ pd.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('shipmentForm') as sd">
         <h3 class="section-title">Shipment Details</h3>
-        @if (form.get('shipmentForm'); as sd) {
-          <div class="preview-grid">
-            @for (key of ['shipmentFrom','shipmentTo','placeOfLoading','placeOfDischarge','lastShipmentDate','shipmentPeriodNarrative','partialShipment','transhipment']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ sd.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['shipmentFrom','shipmentTo','placeOfLoading','placeOfDischarge','lastShipmentDate','shipmentPeriodNarrative','partialShipment','transhipment']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ sd.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
     </div>
@@ -122,37 +98,29 @@
     <!-- ============================== -->
     <div class="preview-row">
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('narrativeForm') as nd">
         <h3 class="section-title">Narrative Details</h3>
-        @if (form.get('narrativeForm'); as nd) {
-          <div class="preview-grid">
-            @for (key of ['descriptionOfGoods','documentsRequired','additionalInstructions','otherDetails']; track key) {
-              <div class="preview-item"
-                >
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ nd.value[key] }}</div>
-              </div>
-            }
+        <div class="preview-grid">
+          <div class="preview-item"
+            *ngFor="let key of ['descriptionOfGoods','documentsRequired','additionalInstructions','otherDetails']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ nd.value[key] }}</div>
           </div>
-        }
+        </div>
       </mat-card>
 
-      <mat-card class="preview-card">
+      <mat-card class="preview-card" *ngIf="form.get('instructionForm') as ib">
         <h3 class="section-title">Instructions to Bank</h3>
-        @if (form.get('instructionForm'); as ib) {
-          <div class="preview-grid">
-            @for (key of ['principalAccount','feeAccount']; track key) {
-              <div class="preview-item">
-                <div class="preview-label">{{ key | titlecase }}:</div>
-                <div class="preview-value">{{ ib.value[key] }}</div>
-              </div>
-            }
-            <div class="preview-item full-width">
-              <div class="preview-label">Other Instructions:</div>
-              <div class="preview-value">{{ ib.value['otherInstructions'] }}</div>
-            </div>
+        <div class="preview-grid">
+          <div class="preview-item" *ngFor="let key of ['principalAccount','feeAccount']">
+            <div class="preview-label">{{ key | titlecase }}:</div>
+            <div class="preview-value">{{ ib.value[key] }}</div>
           </div>
-        }
+          <div class="preview-item full-width">
+            <div class="preview-label">Other Instructions:</div>
+            <div class="preview-value">{{ ib.value['otherInstructions'] }}</div>
+          </div>
+        </div>
       </mat-card>
 
     </div>
@@ -163,7 +131,7 @@
     <mat-card class="preview-card full-width">
       <h3 class="section-title">Attachments</h3>
 
-      @if (attachmentsArray.length > 0) {
+      <div *ngIf="attachmentsArray.length > 0; else noAttachments">
         <div class="preview-attachments-container">
           <div class="attachment-grid header">
             <div>Type</div>
@@ -172,38 +140,30 @@
             <div>Size</div>
             <div>Actions</div>
           </div>
-          @for (f of attachmentsArray.controls; track f; let i = $index) {
-            <div class="attachment-grid">
-              <div>
-                @if (f.value.type?.includes('pdf')) {
-                  <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
-                }
-                @if (f.value.type?.includes('image')) {
-                  <mat-icon class="image-icon">image</mat-icon>
-                }
-              </div>
-              <div>{{ f.value.title }}</div>
-              <div>{{ f.value.fileName }}</div>
-              <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
-              <div class="actionss">
-                <mat-icon  class="action-icon" (click)="downloadFile(i)">download</mat-icon>
-              </div>
+          <div class="attachment-grid" *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex">
+            <div>
+              <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
+              <mat-icon *ngIf="f.value.type?.includes('image')" class="image-icon">image</mat-icon>
             </div>
-          }
+            <div>{{ f.value.title }}</div>
+            <div>{{ f.value.fileName }}</div>
+            <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+            <div class="actionss">
+              <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+            </div>
+          </div>
         </div>
-      }
-
-      @if (attachmentsArray.length === 0) {
+      </div>
+      <ng-template #noAttachments>
         <p>No attachments uploaded.</p>
-      }
+      </ng-template>
     </mat-card>
 
   </div>
 
 </div>
 
-<div class="actions">
-  <button mat-stroked-button (click)="previous()">Back</button>
-  <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+<div class="actions" *ngIf="isPending">
+  <button mat-stroked-button (click)="updateDraft()">{{ pageName1 }}</button>
+  <button mat-flat-button color="primary" (click)="submit()">{{ pageName2 }}</button>
 </div>
-

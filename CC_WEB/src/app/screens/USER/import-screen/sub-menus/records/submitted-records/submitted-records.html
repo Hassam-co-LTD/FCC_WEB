@@ -1,1 +1,250 @@
-<p>submitted-records works!</p>
+<!-- ================= HEADER ================= -->
+<div class="page-header">
+    <div class="title">
+        <h2>Pending Import LC Records</h2>
+        <p>Manage and track all Import LC drafts and transactions</p>
+    </div>
+</div>
+
+<!-- ================= SEARCH SYSTEM ================= -->
+<div class="search-system">
+    <div class="search-input-group">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
+            (input)="applyFilters()" />
+        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+        <mat-icon>tune</mat-icon>
+        Advanced
+    </button>
+</div>
+
+<!-- ================= ADVANCED SEARCH ================= -->
+<div class="advanced-search" *ngIf="showAdvanced">
+    <div class="field">
+        <label>Status</label>
+        <select [(ngModel)]="activeTab" (change)="applyFilters()">
+            <option *ngFor="let tab of tabs" [value]="tab.key">
+                {{ tab.label }}
+            </option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label>Currency</label>
+        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+    </div>
+</div>
+
+<!-- ================= TABS ================= -->
+<div class="ui-tabs">
+    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
+        {{ tab.label }} ({{ getTabCount(tab.key) }})
+    </div>
+</div>
+
+<div class="filter-row">
+    <div class="form-group">
+        <label>Preference</label>
+        <select>
+            <option>Standard</option>
+        </select>
+    </div>
+
+    <div class="results-summary">
+        Showing {{ pagedTransactions.length }} of {{ filteredTransactions.length }} drafts
+    </div>
+</div>
+
+<div class="table-wrapper">
+
+    <table>
+        <thead>
+            <tr>
+                <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th (click)="sortBy('createdAt')">Created</th>
+                <th>Status</th>
+
+                <!-- General Details -->
+                <th>Product</th>
+                <th>Transmission</th>
+                <th>Expiry Date</th>
+                <th>Place of Expiry</th>
+                <th>Irrevocable</th>
+                <th>Revolving</th>
+                <th>Transferable</th>
+                <th>Rules</th>
+                <th>Confirmation</th>
+
+                <!-- Applicant / Beneficiary -->
+                <th>Applicant</th>
+                <th>Applicant Address</th>
+                <th>Beneficiary</th>
+                <th>Beneficiary Address</th>
+                <th>Country</th>
+
+                <!-- Bank -->
+                <th>Issuing Bank</th>
+                <th>Issuer Ref</th>
+                <th>Advising Bank</th>
+                <th>Advise Through</th>
+
+                <!-- Amount -->
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Variation Type</th>
+                <th>+ Variation</th>
+                <th>- Variation</th>
+                <th>Issuing Charges</th>
+                <th>Outside Charges</th>
+                <th>Additional Amount</th>
+
+                <!-- Payment -->
+                <th>Credit With</th>
+                <th>Payment Bank</th>
+                <th>Available By</th>
+                <th>Draft At</th>
+
+                <!-- Shipment -->
+                <th>Shipment From</th>
+                <th>Shipment To</th>
+                <th>Loading</th>
+                <th>Discharge</th>
+                <th>Last Shipment</th>
+                <th>Shipment Period</th>
+                <th>Partial</th>
+                <th>Transhipment</th>
+
+                <!-- Narrative -->
+                <th>Goods</th>
+                <th>Documents</th>
+                <th>Additional Instructions</th>
+                <th>Other Details</th>
+
+                <!-- Instruction -->
+                <th>Principal Account</th>
+                <th>Fee Account</th>
+                <th>Other Instructions</th>
+
+                <!-- Attachments -->
+                <th>Attachments</th>
+
+                <!-- Action -->
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let tx of pagedTransactions">
+                <td>{{ tx.tnxId }}</td>
+                <td>{{ tx.createdAt | date:'short' }}</td>
+
+                <td>
+                    <span class="status submitted">{{ tx.status }}</span>
+                </td>
+
+                <!-- General -->
+                <td>{{ tx.generalDetails?.productType }}</td>
+                <td>{{ tx.generalDetails?.modeOfTransmission }}</td>
+                <td>{{ tx.generalDetails?.expiryDate }}</td>
+                <td>{{ tx.generalDetails?.placeOfExpiry }}</td>
+                <td>{{ tx.generalDetails?.featureIrrevocable ? 'Yes' : 'No' }}</td>
+                <td>{{ tx.generalDetails?.featureRevolving ? 'Yes' : 'No' }}</td>
+                <td>{{ tx.generalDetails?.featureTransferable ? 'Yes' : 'No' }}</td>
+                <td>{{ tx.generalDetails?.applicableRules }}</td>
+                <td>{{ tx.generalDetails?.confirmationInstruction }}</td>
+
+                <!-- Applicant -->
+                <td>{{ tx.applicantForm?.applicantName }}</td>
+                <td>
+                    {{ tx.applicantForm?.applicantAddress1 }}
+                    {{ tx.applicantForm?.applicantAddress2 }}
+                    {{ tx.applicantForm?.applicantAddress3 }}
+                </td>
+                <td>{{ tx.applicantForm?.beneficiaryName }}</td>
+                <td>
+                    {{ tx.applicantForm?.beneficiaryAddress1 }}
+                    {{ tx.applicantForm?.beneficiaryAddress2 }}
+                    {{ tx.applicantForm?.beneficiaryAddress3 }}
+                </td>
+                <td>{{ tx.applicantForm?.beneficiaryCountry }}</td>
+
+                <!-- Bank -->
+                <td>{{ tx.bankForm?.issuingBankName }}</td>
+                <td>{{ tx.bankForm?.issuerReference }}</td>
+                <td>{{ tx.bankForm?.advisingBankName }}</td>
+                <td>{{ tx.bankForm?.adviseThroughBankName }}</td>
+
+                <!-- Amount -->
+                <td>{{ tx.amountChargeForm?.currency }}</td>
+                <td>{{ tx.amountChargeForm?.amount }}</td>
+                <td>{{ tx.amountChargeForm?.variationType }}</td>
+                <td>{{ tx.amountChargeForm?.variationPlus }}</td>
+                <td>{{ tx.amountChargeForm?.variationMinus }}</td>
+                <td>{{ tx.amountChargeForm?.issuingBankCharges }}</td>
+                <td>{{ tx.amountChargeForm?.outsideCountryCharges }}</td>
+                <td>{{ tx.amountChargeForm?.additionalAmount }}</td>
+
+                <!-- Payment -->
+                <td>{{ tx.paymentDetailsForm?.creditAvailableWith }}</td>
+                <td>{{ tx.paymentDetailsForm?.bankName }}</td>
+                <td>{{ tx.paymentDetailsForm?.creditAvailableBy }}</td>
+                <td>{{ tx.paymentDetailsForm?.paymentDraftAt }}</td>
+
+                <!-- Shipment -->
+                <td>{{ tx.shipmentForm?.shipmentFrom }}</td>
+                <td>{{ tx.shipmentForm?.shipmentTo }}</td>
+                <td>{{ tx.shipmentForm?.placeOfLoading }}</td>
+                <td>{{ tx.shipmentForm?.placeOfDischarge }}</td>
+                <td>{{ tx.shipmentForm?.lastShipmentDate }}</td>
+                <td>{{ tx.shipmentForm?.shipmentPeriodNarrative }}</td>
+                <td>{{ tx.shipmentForm?.partialShipment }}</td>
+                <td>{{ tx.shipmentForm?.transhipment }}</td>
+
+                <!-- Narrative -->
+                <td>{{ tx.narrativeForm?.descriptionOfGoods }}</td>
+                <td>{{ tx.narrativeForm?.documentsRequired }}</td>
+                <td>{{ tx.narrativeForm?.additionalInstructions }}</td>
+                <td>{{ tx.narrativeForm?.otherDetails }}</td>
+
+                <!-- Instruction -->
+                <td>{{ tx.instructionForm?.principalAccount }}</td>
+                <td>{{ tx.instructionForm?.feeAccount }}</td>
+                <td>{{ tx.instructionForm?.otherInstructions }}</td>
+
+                <!-- Attachments -->
+                <td>{{ tx.attachments?.length || 0 }}</td>
+
+                <!-- Action -->
+                <td>
+                    <button class="btn-action" (click)="viewTransaction(tx)">
+                        <mat-icon>visibility</mat-icon> View
+                    </button>
+                </td>
+            </tr>
+
+            <tr *ngIf="pagedTransactions.length === 0">
+                <td colspan="14" class="no-records">
+                    No pending Import LC drafts found
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">
+            ‹
+        </button>
+
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
+        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            ›
+        </button>
+    </div>
+
+</div>

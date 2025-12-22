@@ -60,7 +60,12 @@ export class ImportScreen implements AfterViewInit {
   // MAIN MASTER FORM (fed to all steps)
   importForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private dataService: SharedService, private tnxidService: ImportlcFormTransactionService) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private dataService: SharedService,
+    private transactionService: ImportlcFormTransactionService
+  ) {
 
     this.importForm = this.fb.group({
 
@@ -129,13 +134,13 @@ export class ImportScreen implements AfterViewInit {
         placeOfLoading: [''],
         placeOfDischarge: [''],
         lastShipmentDate: [''],
-        shipmentPeriodNarrative: ['', [ Validators.maxLength(390)]],
+        shipmentPeriodNarrative: ['', [Validators.maxLength(390)]],
         partialShipment: ['Allowed'],
         transhipment: ['Not Allowed']
       }),
       narrativeForm: this.fb.group({
-        descriptionOfGoods: ['', [ Validators.maxLength(6500)]],
-        documentsRequired: ['', [ Validators.maxLength(6500)]],
+        descriptionOfGoods: ['', [Validators.maxLength(6500)]],
+        documentsRequired: ['', [Validators.maxLength(6500)]],
         additionalInstructions: ['', [Validators.maxLength(2000)]],
         otherDetails: ['']
       }),
@@ -200,6 +205,22 @@ export class ImportScreen implements AfterViewInit {
 
       sections.forEach(section => observer.observe(section));
     }, 200);
+
+    const draft = this.transactionService.getFormData();
+    if (draft) {
+      // Populate the form with saved data
+      this.importForm.patchValue({
+        generalDetails: draft.generalDetails || {},
+        applicantForm: draft.applicantForm || {},
+        bankForm: draft.bankForm || {},
+        amountChargeForm: draft.amountChargeForm || {},
+        paymentDetailsForm: draft.paymentDetailsForm || {},
+        shipmentForm: draft.shipmentForm || {},
+        narrativeForm: draft.narrativeForm || {},
+        instructionForm: draft.instructionForm || {},
+        attachments: draft.attachments || []
+      });
+    }
   }
 
   // Sidebar scroll
@@ -209,22 +230,6 @@ export class ImportScreen implements AfterViewInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // Next section
-  submitForm() {
-    // Validate form first
-    if (this.importForm.invalid) {
-      this.importForm.markAllAsTouched();
-      alert("Please complete all required fields before submitting.");
-      return;
-    }
-
-    // Save data to shared service
-    this.dataService.setFormData(this.importForm.value);
-
-    // Navigate to Preview screen
-    this.router.navigate(['/import-screen/preview']);
-  }
-
   saveForm() {
     // Validate form
     if (this.importForm.invalid) {
@@ -232,22 +237,17 @@ export class ImportScreen implements AfterViewInit {
       alert("Please complete all required fields before saving.");
       return;
     }
-
     // Save form data in SharedService
-    this.tnxidService.setFormData(this.importForm.value);
-
     // Create a transaction (with generated ID) and add it to transactions
-    const transaction = this.tnxidService.saveImportLc(this.importForm);
+    const transaction = this.transactionService.saveImportLc(this.importForm);
 
     console.log('Form saved. Transaction added:', transaction);
 
     alert(`Saved successfully\nTransaction ID: ${transaction.tnxId}`);
   }
 
-  
-
   // Previous section
-  previous() {
+  back() {
     this.router.navigate(['/dashboard'])
   }
 
@@ -257,7 +257,7 @@ export class ImportScreen implements AfterViewInit {
 
     files.forEach(file => {
       arr.push(this.fb.group({
-        title: file.name.replace(/\.[^/.]+$/, ""), 
+        title: file.name.replace(/\.[^/.]+$/, ""),
         fileName: file.name,
         size: file.size,
         type: file.type,
