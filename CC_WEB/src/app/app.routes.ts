@@ -454,13 +454,13 @@ export const routes: Routes = [
                     ).then((m) => m.SubmittedRecords),
             },
             // Import approved-Records Route
-            {
-                path: 'import-screen/approved-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
-                    ).then((m) => m.ApprovedRecords),
-            },
+            // {
+            //     path: 'import-screen/approved-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
+            //         ).then((m) => m.ApprovedRecords),
+            // },
 
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
