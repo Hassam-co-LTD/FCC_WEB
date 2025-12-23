@@ -16,7 +16,7 @@ import { InstructionToBank } from "./components/instruction-to-bank/instruction-
 import { Attachments } from "./components/attachments/attachments";
 import { Sidebar } from "../../../core/sidebar/sidebar";
 import { SharedService } from '../../../core/services/user-service/shared-form-service/shared-service';
-import { ImportlcFormTransactionService } from '../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { ImportlcFormTransactionService, ImportLcTransaction } from '../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 
 
 @Component({
@@ -59,6 +59,8 @@ export class ImportScreen implements AfterViewInit {
 
   // MAIN MASTER FORM (fed to all steps)
   importForm!: FormGroup;
+  mode: 'CREATE' | 'UPDATE' = 'CREATE';
+  currentTx: ImportLcTransaction | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -184,6 +186,14 @@ export class ImportScreen implements AfterViewInit {
 
 
   ngAfterViewInit() {
+    this.currentTx = this.transactionService.getCurrentTransaction();
+
+    if (this.currentTx) {
+      this.mode = 'UPDATE';
+      this.importForm.patchValue(this.currentTx);
+    }
+
+
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
 
@@ -206,7 +216,7 @@ export class ImportScreen implements AfterViewInit {
       sections.forEach(section => observer.observe(section));
     }, 200);
 
-    const draft = this.transactionService.getFormData();
+    const draft = this.transactionService.getCurrentTransaction();
     if (draft) {
       // Populate the form with saved data
       this.importForm.patchValue({
@@ -239,11 +249,19 @@ export class ImportScreen implements AfterViewInit {
     }
     // Save form data in SharedService
     // Create a transaction (with generated ID) and add it to transactions
-    const transaction = this.transactionService.saveImportLc(this.importForm);
+    // const transaction = this.transactionService.createTransaction(this.importForm);
 
-    console.log('Form saved. Transaction added:', transaction);
 
-    alert(`Saved successfully\nTransaction ID: ${transaction.tnxId}`);
+    let tx: ImportLcTransaction;
+
+    if (this.mode === 'CREATE') {
+      tx = this.transactionService.createTransaction(this.importForm);
+    } else {
+      tx = this.transactionService.updateTransaction(this.importForm);
+    }
+
+    console.log('Form saved. Transaction added:', tx);
+    alert(`Saved successfully\nTransaction ID: ${tx.tnxId}`);
   }
 
   // Previous section

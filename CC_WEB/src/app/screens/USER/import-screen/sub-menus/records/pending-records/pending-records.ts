@@ -193,8 +193,13 @@ export class PendingRecords implements OnInit {
 
   /* ===================== VIEW ===================== */
   viewTransaction(tx: ImportLcTransaction) {
-    this.transactionService.setFormData(tx); 
-    this.router.navigate(['/import-screen/preview'], { state: { data: tx, isPending: true } });
+    // this.transactionService.setCurrentTransaction(tx); 
+    // this.router.navigate(['/import-screen/preview'], { state: { data: tx, isPending: true } });
+
+    this.transactionService.setCurrentTransaction(tx);
+    this.router.navigate(['/import-screen/preview'], {
+      state: { isPending: true }
+    });
   }
 
 

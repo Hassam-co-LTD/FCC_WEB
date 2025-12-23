@@ -25,7 +25,7 @@ export class ImportlcFormTransactionService {
   private readonly STORAGE_KEY = 'IMPORT_LC_TRANSACTIONS';
 
   /* ================= STATE ================= */
-  private formData: ImportLcTransaction | null = null;
+  private currentTransaction: ImportLcTransaction | null = null;
   private savetransactions$ = new BehaviorSubject<ImportLcTransaction[]>([]);
   transactionsStream$ = this.savetransactions$.asObservable();
 
@@ -39,9 +39,34 @@ export class ImportlcFormTransactionService {
     }
   }
 
+  /* ================= TNX ID ================= */
+
+  private generateTnxId(): string {
+    const now = new Date();
+
+    const datePart =
+      now.getFullYear().toString().slice(-2) +
+      (now.getMonth() + 1).toString().padStart(2, '0') +
+      now.getDate().toString().padStart(2, '0');
+
+    const todayTx = this.savetransactions$.value
+      .filter(t => t.tnxId.startsWith(`TNX${datePart}`))
+      .sort(
+        (a, b) =>
+          parseInt(a.tnxId.slice(-6), 10) -
+          parseInt(b.tnxId.slice(-6), 10)
+      );
+
+    const lastId = todayTx.length
+      ? parseInt(todayTx[todayTx.length - 1].tnxId.slice(-6), 10)
+      : 0;
+
+    return `TNX${datePart}${(lastId + 1).toString().padStart(6, '0')}`;
+  }
+
   /* ================= SAVE ================= */
 
-  saveImportLc(form: FormGroup): ImportLcTransaction {
+  createTransaction(form: FormGroup): ImportLcTransaction {
     const value = form.value;
 
     const transaction: ImportLcTransaction = {
@@ -64,6 +89,7 @@ export class ImportlcFormTransactionService {
     this.savetransactions$.next(updated);
     this.persist(updated);
 
+    this.currentTransaction = transaction;
     return transaction;
   }
 
@@ -92,6 +118,30 @@ export class ImportlcFormTransactionService {
     return transactions[index];
   }
 
+
+  /* ================= UPDATE ================= */
+
+  updateTransaction(form: FormGroup): ImportLcTransaction {
+    if (!this.currentTransaction) {
+      throw new Error('No transaction selected for update');
+    }
+
+    const updatedTx: ImportLcTransaction = {
+      ...this.currentTransaction,
+      ...form.value,
+    };
+
+    const updatedList = this.savetransactions$.value.map(tx =>
+      tx.tnxId === updatedTx.tnxId ? updatedTx : tx
+    );
+
+    this.savetransactions$.next(updatedList);
+    this.persist(updatedList);
+
+    this.currentTransaction = updatedTx;
+    return updatedTx;
+  }
+
   /* ================= GETTERS ================= */
 
   getAllTransactions(): ImportLcTransaction[] {
@@ -101,17 +151,17 @@ export class ImportlcFormTransactionService {
   getTransactionByTnxId(tnxId: string): ImportLcTransaction | undefined {
     return this.savetransactions$.value.find(t => t.tnxId === tnxId);
   }
-  getFormData(): ImportLcTransaction | null {
-    return this.formData;
+  getCurrentTransaction(): ImportLcTransaction | null {
+    return this.currentTransaction;
   }
 
   /* ================= SETTERS ================= */
-  setFormData(tx: ImportLcTransaction) {
-    this.formData = tx;
+  setCurrentTransaction(tx: ImportLcTransaction) {
+    this.currentTransaction = tx;
   }
 
-  clearFormData() {
-    this.formData = null;
+  clearCurrentTransaction() {
+    this.currentTransaction = null;
   }
   /* ================= STORAGE ================= */
 
@@ -137,30 +187,5 @@ export class ImportlcFormTransactionService {
     if (this.isBrowser) {
       localStorage.removeItem(this.STORAGE_KEY);
     }
-  }
-
-  /* ================= TNX ID ================= */
-
-  private generateTnxId(): string {
-    const now = new Date();
-
-    const datePart =
-      now.getFullYear().toString().slice(-2) +
-      (now.getMonth() + 1).toString().padStart(2, '0') +
-      now.getDate().toString().padStart(2, '0');
-
-    const todayTx = this.savetransactions$.value
-      .filter(t => t.tnxId.startsWith(`TNX${datePart}`))
-      .sort(
-        (a, b) =>
-          parseInt(a.tnxId.slice(-6), 10) -
-          parseInt(b.tnxId.slice(-6), 10)
-      );
-
-    const lastId = todayTx.length
-      ? parseInt(todayTx[todayTx.length - 1].tnxId.slice(-6), 10)
-      : 0;
-
-    return `TNX${datePart}${(lastId + 1).toString().padStart(6, '0')}`;
   }
 }

@@ -3,19 +3,20 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { ImportlcFormTransactionService } from
+import { ImportlcFormTransactionService, ImportLcTransaction } from
   '../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { Preview } from "../../screens/USER/import-screen/components/preview/preview";
 
 @Component({
   selector: 'app-success',
   templateUrl: './success.html',
   styleUrls: ['./success.scss'],
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, Preview],
 })
 export class Success implements OnInit {
 
-  data: any = null;
+  transaction!: ImportLcTransaction;
   displayedColumns: string[] = [];
 
   pageName1 = 'Import LC Listing';
@@ -29,37 +30,24 @@ export class Success implements OnInit {
   ngOnInit(): void {
     /** 1️⃣ Try router state first */
     const navigation = this.router.getCurrentNavigation();
-    const stateData = navigation?.extras?.state;
+    const stateData = navigation?.extras?.state as {transaction?: ImportLcTransaction};
 
-    if (stateData && Object.keys(stateData).length) {
-      this.data = stateData;
+    if (stateData?.transaction) {
+      this.transaction = stateData.transaction;
+      return;
     }
-    /** 2️⃣ Fallback (page refresh / deep link) */
-    else {
-      const lastSubmitted = this.transactionService
-        .getAllTransactions()
-        .find(tx => tx.status === 'submitted');
+    /** 2️⃣ Fallback (refresh / deep link) */
+    const lastSubmitted = this.transactionService
+      .getAllTransactions()
+      .filter(tx => tx.status === 'submitted')
+      .pop();
 
-      if (!lastSubmitted) {
-        this.router.navigate(['/import-screen']);
-        return;
-      }
-
-      this.data = lastSubmitted;
+    if (!lastSubmitted) {
+      this.router.navigate(['/import-screen']);
+      return;
     }
 
-    /** 3️⃣ Build table columns */
-    this.displayedColumns = Object.keys(this.data).sort((a, b) =>
-      a.localeCompare(b)
-    );
-  }
-
-  displayValue(value: any): string {
-    if (value === null || value === undefined || value === '') return '-';
-    if (value instanceof Date) return value.toLocaleDateString();
-    if (typeof value === 'object') return JSON.stringify(value);
-    if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-    return String(value);
+    this.transaction = lastSubmitted;
   }
 
   goToListing(): void {

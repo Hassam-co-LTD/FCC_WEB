@@ -163,7 +163,7 @@
 
 </div>
 
-<div class="actions" *ngIf="isPending">
+<div class="actions" *ngIf="!hideActions && isPending">
   <button mat-stroked-button (click)="updateDraft()">{{ pageName1 }}</button>
   <button mat-flat-button color="primary" (click)="submit()">{{ pageName2 }}</button>
 </div>
