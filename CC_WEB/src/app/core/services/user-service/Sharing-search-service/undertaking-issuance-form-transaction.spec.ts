@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UndertakingIssuanceFormTransaction } from './undertaking-issuance-form-transaction';
+import { UndertakingIssuanceService } from '../../user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 describe('UndertakingIssuanceFormTransaction', () => {
-  let service: UndertakingIssuanceFormTransaction;
+  let service: UndertakingIssuanceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UndertakingIssuanceFormTransaction);
+    service = TestBed.inject(UndertakingIssuanceService);
   });
 
   it('should be created', () => {

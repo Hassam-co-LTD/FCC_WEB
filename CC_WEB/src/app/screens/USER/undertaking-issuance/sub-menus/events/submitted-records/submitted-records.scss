@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "../../../../styles/theme" as theme;
+@use "../../../../../../../styles/theme" as theme;
 
 /* ==============================
    Root Container
@@ -65,17 +65,6 @@
       &:hover {
         background: theme.$hover-bg;
         border-color: theme.$hover-border;
-      }
-    }
-
-    .btn-primary {
-      background: theme.$primary;
-      color: theme.$text-light;
-      box-shadow: theme.$button-shadow;
-
-      &:hover {
-        background: theme.$primary-hover;
-        box-shadow: theme.$primary-shadow;
       }
     }
   }
@@ -313,35 +302,109 @@
 }
 
 /* ==============================
-   Tabs
+   Summary Stats
 ================================*/
-.ui-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+
+  .stat-card {
+    background: theme.$white;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-large;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: theme.$shadow-primary;
+      border-color: theme.$border-primary;
+    }
+
+    .stat-icon {
+      color: theme.$primary;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .stat-content {
+      .stat-value {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: theme.$text-dark;
+        margin-bottom: 2px;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: theme.$text-medium;
+      }
+    }
+  }
 }
 
-.tab {
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: theme.$light-bg;
-  color: theme.$text-medium;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
+/* ==============================
+   Status Summary
+================================*/
+.status-summary {
+  margin-top: 16px;
+}
+
+.status-tabs {
+  display: flex;
+  gap: 16px;
+  background: theme.$white;
+  border-radius: theme.$radius-large;
   border: 1px solid theme.$border-light;
+  padding: 16px;
+}
+
+.status-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-radius: theme.$radius-large;
+  border: 2px solid transparent;
+  cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
     background: theme.$hover-bg;
-    border-color: theme.$hover-border;
   }
 
   &.active {
-    background: theme.$primary;
-    color: theme.$text-light;
     border-color: theme.$primary;
-    box-shadow: theme.$button-shadow;
+    background: rgba(theme.$primary, 0.05);
+
+    .status-count {
+      color: theme.$primary;
+    }
+
+    .status-label {
+      color: theme.$primary;
+    }
+  }
+
+  .status-count {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: theme.$text-dark;
+    margin-bottom: 4px;
+  }
+
+  .status-label {
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+    font-weight: 500;
   }
 }
 
@@ -349,40 +412,8 @@
    Filter Row
 ================================*/
 .filter-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px;
-  background: theme.$white;
-  border-radius: theme.$radius-default;
-  border: 1px solid theme.$border-light;
-
-  .form-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    label {
-      font-size: 0.85rem;
-      color: theme.$text-medium;
-      font-weight: 500;
-    }
-
-    select {
-      padding: 6px 10px;
-      border-radius: theme.$radius-default;
-      border: 1px solid theme.$border-light;
-      background: theme.$white;
-      color: theme.$text-dark;
-      font-size: 0.85rem;
-      transition: all 0.2s;
-
-      &:focus {
-        outline: none;
-        border-color: theme.$primary;
-      }
-    }
-  }
+  padding: 12px 0;
+  margin-top: 8px;
 
   .results-summary {
     font-size: 0.8rem;
@@ -446,6 +477,11 @@ tbody {
     &:nth-child(even) {
       background: theme.$light-bg;
     }
+
+    &.delayed {
+      background: rgba(245, 158, 11, 0.05);
+      border-left: 3px solid #f59e0b;
+    }
   }
 
   td {
@@ -457,6 +493,11 @@ tbody {
     &.highlight {
       font-weight: 600;
       color: theme.$primary;
+    }
+
+    &.warning {
+      color: #ef4444;
+      font-weight: 600;
     }
   }
 }
@@ -473,53 +514,34 @@ tbody {
   text-align: center;
   min-width: 100px;
 
-  &.status-draft,
-  &.status-Draft {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
-    border: 1px solid rgba(245, 158, 11, 0.3);
-  }
-
-  &.status-pending-approval,
-  &.status-Pending\ Approval {
+  &.status-pending {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
     border: 1px solid rgba(59, 130, 246, 0.3);
   }
 
-  &.status-pending-at-bank,
-  &.status-Pending\ at\ Bank {
+  &.status-in-review {
     background: rgba(139, 92, 246, 0.1);
     color: #8b5cf6;
     border: 1px solid rgba(139, 92, 246, 0.3);
   }
 
-  &.status-submitted,
-  &.status-Submitted {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+  &.status-processing {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
   }
 
-  &.status-live,
-  &.status-Live {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-
-  &.status-rejected,
-  &.status-Rejected {
+  &.status-delayed {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
   }
 
-  &.status-closed,
-  &.status-Closed {
-    background: rgba(107, 114, 128, 0.1);
-    color: #6b7280;
-    border: 1px solid rgba(107, 114, 128, 0.3);
+  &.status-overdue {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.3);
   }
 }
 
@@ -549,11 +571,6 @@ tbody {
     transition: all 0.2s;
     white-space: nowrap;
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     mat-icon {
       font-size: 14px;
       width: 14px;
@@ -565,35 +582,40 @@ tbody {
     background: rgba(theme.$primary, 0.1);
     color: theme.$primary;
 
-    &:hover:not(:disabled) {
+    &:hover {
       background: rgba(theme.$primary, 0.2);
     }
   }
 
-  .btn-accept {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+  .btn-primary {
+    background: theme.$primary;
+    color: theme.$text-light;
+    box-shadow: theme.$button-shadow;
 
-    &:hover:not(:disabled) {
-      background: rgba(16, 185, 129, 0.2);
+    &:hover {
+      background: theme.$primary-hover;
+      box-shadow: theme.$primary-shadow;
     }
   }
 
-  .btn-reject {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+  .btn-outline {
+    background: transparent;
+    border: 1px solid theme.$border-light;
+    color: theme.$text-medium;
 
-    &:hover:not(:disabled) {
-      background: rgba(239, 68, 68, 0.2);
+    &:hover {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
     }
-  }
 
-  .btn-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    &.btn-danger {
+      color: #ef4444;
+      border-color: #ef4444;
 
-    &:hover:not(:disabled) {
-      background: rgba(239, 68, 68, 0.2);
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+      }
     }
   }
 }
@@ -627,19 +649,44 @@ tbody {
     margin-top: 16px;
   }
 
+  .btn-outline,
+  .btn-primary {
+    margin: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: theme.$radius-default;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
   .btn-outline {
     background: transparent;
     border: 1px solid theme.$border-light;
     color: theme.$text-medium;
-    padding: 8px 16px;
-    border-radius: theme.$radius-default;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s;
 
     &:hover {
       background: theme.$hover-bg;
       border-color: theme.$hover-border;
+    }
+  }
+
+  .btn-primary {
+    background: theme.$primary;
+    color: theme.$text-light;
+
+    &:hover {
+      background: theme.$primary-hover;
     }
   }
 
@@ -648,30 +695,6 @@ tbody {
       font-size: 0.85rem;
       color: theme.$text-medium;
       margin-bottom: 12px;
-    }
-
-    .btn-primary {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      border-radius: theme.$radius-default;
-      background: theme.$primary;
-      color: theme.$text-light;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: theme.$primary-hover;
-      }
-
-      mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-      }
     }
   }
 }
@@ -752,48 +775,92 @@ tbody {
 }
 
 /* ==============================
-   Summary Stats
+   Warning Banner
 ================================*/
-.summary-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+.warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: theme.$radius-large;
   margin-top: 20px;
 
-  .stat-card {
-    background: theme.$white;
-    border: 1px solid theme.$border-light;
-    border-radius: theme.$radius-large;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.2s;
+  mat-icon {
+    color: #f59e0b;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: theme.$shadow-primary;
-      border-color: theme.$border-primary;
+  .warning-content {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #f59e0b;
+
+    strong {
+      font-weight: 600;
     }
 
-    .stat-icon {
-      color: theme.$primary;
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
+    .btn-outline {
+      margin-left: 12px;
+      background: transparent;
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+      padding: 4px 12px;
+      border-radius: theme.$radius-default;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
 
-    .stat-content {
-      .stat-value {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: theme.$text-dark;
-        margin-bottom: 2px;
+      &:hover {
+        background: rgba(245, 158, 11, 0.1);
       }
+    }
+  }
+}
 
-      .stat-label {
+/* ==============================
+   Info Banner
+================================*/
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: theme.$radius-large;
+  margin-top: 16px;
+
+  mat-icon {
+    color: #3b82f6;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .info-content {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #3b82f6;
+
+    strong {
+      font-weight: 600;
+    }
+
+    ul {
+      margin: 8px 0 0 0;
+      padding-left: 20px;
+      list-style-type: disc;
+
+      li {
+        margin-bottom: 4px;
         font-size: 0.85rem;
-        color: theme.$text-medium;
       }
     }
   }
@@ -833,20 +900,13 @@ tbody {
     }
   }
 
-  .filter-row {
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .status-tabs {
     flex-direction: column;
-    align-items: flex-start;
     gap: 12px;
-  }
-
-  .ui-tabs {
-    justify-content: center;
-  }
-
-  .tab {
-    flex: 1;
-    justify-content: center;
-    text-align: center;
   }
 
   .pagination {
@@ -859,8 +919,19 @@ tbody {
     }
   }
 
-  .summary-stats {
-    grid-template-columns: repeat(2, 1fr);
+  .warning-banner,
+  .info-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    .warning-content,
+    .info-content {
+      .btn-outline {
+        margin-left: 0;
+        margin-top: 8px;
+      }
+    }
   }
 }
 
@@ -899,18 +970,17 @@ tbody {
     padding: 6px 10px !important;
   }
 
-  .ui-tabs {
-    overflow-x: auto;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    padding: 4px;
+  .summary-stats {
+    grid-template-columns: 1fr;
   }
 
-  .tab {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    font-size: 0.8rem;
-    padding: 4px 10px;
+  .no-records {
+    .btn-outline,
+    .btn-primary {
+      margin: 8px 0;
+      width: 100%;
+      justify-content: center;
+    }
   }
 
   thead {
@@ -954,9 +1024,5 @@ tbody {
     button {
       width: auto;
     }
-  }
-
-  .summary-stats {
-    grid-template-columns: 1fr;
   }
 }

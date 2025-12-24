@@ -1,0 +1,369 @@
+@use "sass:color";
+@use "../../../../../../../styles/theme" as theme;
+
+
+/* ==============================
+   Root Container
+================================*/
+.ui-container {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$gap-default;
+}
+
+/* ==============================
+   Header
+================================*/
+.ui-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin: 0 0 4px 0;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+    margin: 0;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: theme.$radius-default;
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid theme.$border-light;
+    color: theme.$text-medium;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
+  }
+}
+
+/* ==============================
+   Search Container
+================================*/
+.search-container {
+  margin-bottom: 20px;
+
+  input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: theme.$radius-large;
+    border: 1px solid theme.$border-light;
+    background: theme.$primary-light;
+    font-size: 0.9rem;
+    color: theme.$text-dark;
+    outline: none;
+    transition: all 0.2s;
+
+    &:focus {
+      border-color: theme.$primary;
+      box-shadow: 0 0 0 2px rgba(theme.$primary, 0.1);
+    }
+
+    &::placeholder {
+      color: theme.$text-medium;
+    }
+  }
+}
+
+/* ==============================
+   Table
+================================*/
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: theme.$white;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  overflow: hidden;
+}
+
+thead {
+  background: theme.$primary-light;
+
+  tr {
+    border-bottom: 2px solid theme.$border-light;
+  }
+
+  th {
+    padding: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    text-align: left;
+    white-space: nowrap;
+  }
+}
+
+tbody {
+  tr {
+    border-top: 1px solid theme.$border-light;
+    transition: all 0.2s;
+
+    &:hover {
+      background: theme.$hover-bg;
+    }
+
+    &:nth-child(even) {
+      background: theme.$light-bg;
+    }
+  }
+
+  td {
+    padding: 12px;
+    font-size: 0.85rem;
+    color: theme.$text-dark;
+    vertical-align: middle;
+  }
+}
+
+/* ==============================
+   Status Badges
+================================*/
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-width: 80px;
+  text-align: center;
+
+  &.status-pending-approval,
+  &.status-Pending\ Approval {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  &.status-pending-at-bank,
+  &.status-Pending\ at\ Bank {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+
+  &.status-submitted,
+  &.status-Submitted {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* ==============================
+   Actions
+================================*/
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: theme.$radius-default;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .btn-view {
+    background: rgba(theme.$primary, 0.1);
+    color: theme.$primary;
+
+    &:hover {
+      background: rgba(theme.$primary, 0.2);
+    }
+  }
+
+  .btn-reject {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+/* ==============================
+   No Records
+================================*/
+.no-records {
+  text-align: center;
+  padding: 40px;
+  color: theme.$text-medium;
+  font-size: 0.9rem;
+}
+
+/* ==============================
+   Pagination
+================================*/
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid theme.$border-light;
+
+  button {
+    background: theme.$primary-light;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: theme.$hover-bg;
+      border-color: theme.$hover-border;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: theme.$text-dark;
+    }
+  }
+
+  span {
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+    font-weight: 500;
+  }
+}
+
+/* ==============================
+   Responsive   
+================================*/
+@media (max-width: 768px) {
+  .ui-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 4px;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ui-header h1 {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem !important;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    padding: 16px;
+
+    td {
+      display: block;
+      padding: 8px 0;
+      border-bottom: 1px dashed theme.$border-light;
+      text-align: left;
+
+      &:last-child {
+        border-bottom: none;
+        padding-top: 16px;
+      }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: theme.$text-medium;
+        display: block;
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+
+    button {
+      width: auto;
+    }
+  }
+}

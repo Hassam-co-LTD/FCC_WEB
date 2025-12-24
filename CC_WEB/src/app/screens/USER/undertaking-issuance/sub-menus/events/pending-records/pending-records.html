@@ -1,0 +1,93 @@
+<div class="ui-container">
+
+  <!-- HEADER -->
+  <div class="ui-header">
+    <div>
+      <h1>Pending Undertakings</h1>
+      <p class="subtitle">Review and submit pending undertakings</p>
+    </div>
+
+    <button class="btn-outline" routerLink="/undertaking-issuance">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search pending undertakings..."
+      [(ngModel)]="searchQuery"
+      (input)="applyFilters()"
+    />
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <thead>
+      <tr>
+        <th>Channel Ref</th>
+        <th>Customer Ref</th>
+        <th>Status</th>
+        <th>Issue Date</th>
+        <th>Beneficiary</th>
+        <th>Currency</th>
+        <th>Amount</th>
+        <th>Pending Days</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let t of pagedUndertakings">
+        <td>{{ t.channelReference }}</td>
+        <td>{{ t.customerReference }}</td>
+        <td>
+          <span class="status-badge">
+            {{ t.status }}
+          </span>
+        </td>
+        <td>{{ formatDate(t.issueDate) }}</td>
+        <td>{{ t.beneficiary || 'N/A' }}</td>
+        <td>{{ t.currency }}</td>
+        <td>{{ formatCurrency(t.amount, t.currency) }}</td>
+        <td>{{ getPendingDays(t.issueDate) }}</td>
+
+        <td class="actions">
+          <!-- VIEW -->
+          <button class="btn-view" (click)="viewTransaction(t)">
+            <mat-icon>visibility</mat-icon>
+            View
+          </button>
+
+          <!-- REJECT -->
+          <button class="btn-reject" (click)="rejectTransaction(t)">
+            <mat-icon>cancel</mat-icon>
+            Reject
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="pagedUndertakings.length === 0">
+        <td colspan="9" class="no-records">
+          No pending undertakings found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGINATION -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="previousPage()" [disabled]="currentPage === 1">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+</div>

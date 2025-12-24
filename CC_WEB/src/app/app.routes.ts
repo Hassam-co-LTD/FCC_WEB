@@ -318,6 +318,30 @@ export const routes: Routes = [
                     ),
 
             },
+        
+            {
+                path: 'undertaking-issuance/pending-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/undertaking-issuance/sub-menus/events/pending-records/pending-records'
+                    ).then((m) => m.PendingRecordsComponent),
+            },
+            // Submitted-Records Route
+            {
+                path: 'undertaking-issuance/submitted-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/undertaking-issuance/sub-menus/events/submitted-records/submitted-records'
+                    ).then((m) => m.SubmittedRecordsComponent),
+            },
+            // Approved-Records Route
+            //             {
+            //     path: 'undertaking-issuance/approved-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/undertaking-issuance/sub-menus/events/appoved-records/appoved-records'
+            //         ).then((m) => m.AppovedRecords),
+            // },
             {
                 path: 'undertaking-welcome',
                 loadComponent: () =>
