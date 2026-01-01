@@ -4,7 +4,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
-
+// import { provideSweetAlert2 } from '@sweetalert2/ngx-sweetalert2';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideNativeDateAdapter(),
@@ -12,6 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes), provideClientHydration(withEventReplay()),
     // importProvidersFrom(HttpClientModule)
-    provideHttpClient(withFetch()) 
+    provideHttpClient(withFetch()) ,
+      //  provideSweetAlert2(), 
   ]
 };

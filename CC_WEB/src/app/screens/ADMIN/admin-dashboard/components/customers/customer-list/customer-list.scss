@@ -1,0 +1,229 @@
+@use "sass:color";
+@use "../../../../../../../styles/theme" as theme;
+
+/* ---------- Container & Typography ---------- */
+.customer-status-container {
+  padding: clamp(1rem, 3vw, 2rem); // Fluid padding
+  background-color: #f8fafc;
+  min-height: 100vh;
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #111827; // Stronger primary text
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ---------- Search Section ---------- */
+.search-bar {
+  display: flex;
+  justify-content: center;   // center horizontally
+  margin: 24px 0 20px;       // top | left-right | bottom
+
+  input {
+    width: 100%;
+    max-width: 380px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    color: #1f2937;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #0b4eb3;
+      box-shadow: 0 0 0 3px rgba(11, 78, 179, 0.1);
+    }
+  }
+}
+
+/* ---------- Tab Container & Content ---------- */
+.tab-content {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 0; // Padding handled by table and search
+  overflow: hidden;
+}
+
+/* ---------- Banking Data Table ---------- */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 0 0 12px 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background-color: #ffffff;
+
+  thead {
+    background: #f8fafc;
+    border-bottom: 2px solid #e5e7eb;
+
+    th {
+      text-align: left;
+      padding: 14px 16px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.1s ease;
+
+      &:hover {
+        background-color: #f1f6ff;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 12px 16px;
+      color: #4b5563;
+      white-space: nowrap;
+      vertical-align: middle;
+
+      // Clickable Record Links
+      &.cid, &.legalId {
+        color: #0b4eb3;
+        font-weight: 600;
+        cursor: pointer;
+        
+        &:hover {
+          text-decoration: underline;
+          background: rgba(11, 78, 179, 0.05);
+        }
+      }
+    }
+  }
+}
+
+/* ---------- Action Buttons ---------- */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  
+  .btn {
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+
+    &.btn-edit {
+      background-color: #ffffff;
+      border-color: #d1d5db;
+      color: #374151;
+
+      &:hover {
+        background-color: #f9fafb;
+        border-color: #0b4eb3;
+        color: #0b4eb3;
+      }
+    }
+
+    &.btn-submit {
+      background-color: #059669; // Banking Green
+      color: #ffffff;
+
+      &:hover {
+        background-color: #047857;
+        box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
+      }
+    }
+  }
+}
+
+/* ---------- Empty State ---------- */
+.no-records {
+  text-align: center;
+  padding: 48px 24px;
+  font-size: 0.95rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ---------- Material Tab UI Overrides ---------- */
+::ng-deep .customer-status-container {
+  .mat-mdc-tab-group {
+    border-radius: 12px;
+  }
+
+  .mat-mdc-tab-header {
+    margin-bottom: 0;
+    background: #ffffff;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid #e5e7eb;
+    border-bottom: none;
+  }
+
+  .mat-mdc-tab .mdc-tab__text-label {
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: #0b4eb3 !important;
+  }
+
+  .mat-mdc-tab-indicator .mdc-tab-indicator__content--underline {
+    border-color: #0b4eb3 !important;
+    border-width: 3px;
+  }
+}
+
+/* ---------- RESPONSIVENESS ---------- */
+
+@media (max-width: 992px) {
+  .search-bar input {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .customer-status-container {
+    padding: 12px;
+  }
+
+  .customer-table {
+    font-size: 0.8rem;
+    
+    td, th {
+      padding: 10px 12px;
+    }
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+    
+    .btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

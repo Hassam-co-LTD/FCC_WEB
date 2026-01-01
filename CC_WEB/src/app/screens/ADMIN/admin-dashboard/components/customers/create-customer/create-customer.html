@@ -1,120 +1,134 @@
 <div class="customer-container">
-
-  <h2 class="page-title">Create Customer Profile</h2>
-  <p class="page-subtitle">Enter the details below to register a new customer.</p>
-
   <div class="card">
-    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="customerForm">
+      <header class="form-header">
+        <h2 class="page-title">Create Customer Profile</h2>
+        <p class="page-subtitle">Enter the details below to register a new customer.</p>
+      </header>
 
       <div class="form-grid">
+        <!-- Customer Id -->
+        <div class="form-group">
+          <label>Customer Id</label>
+          <input type="text" formControlName="cId" placeholder="Customer Id" [readonly]="isReadOnly()">
+        </div>
 
         <!-- Name -->
         <div class="form-group">
           <label>Name</label>
-          <input type="text" formControlName="Name" placeholder="Full Name">
+          <input type="text" formControlName="name" placeholder="Full Name" [readonly]="isReadOnly()">
         </div>
 
         <!-- Email -->
         <div class="form-group">
           <label>Email</label>
-          <input type="email" formControlName="Email" placeholder="example@email.com">
+          <input type="email" formControlName="email" placeholder="example@email.com" [readonly]="isReadOnly()">
         </div>
 
         <!-- Contact -->
         <div class="form-group">
           <label>Contact</label>
-          <input type="tel" formControlName="Contact" placeholder="+1 (555) 000-0000">
+          <input type="tel" formControlName="contact" placeholder="+1 (555) 000-0000" [readonly]="isReadOnly()">
         </div>
 
         <!-- Legal ID -->
         <div class="form-group">
           <label>Legal ID</label>
-          <input type="text" formControlName="LegalID" placeholder="Enter CNIC / NTN / ECIB">
+          <input type="text" formControlName="legalId" placeholder="Enter CNIC / NTN / ECIB" [readonly]="isReadOnly()">
         </div>
 
-<div class="dropdown-row">
-  <div class="dropdown-half">
-    <mat-form-field appearance="outline">
-      <mat-label>Status</mat-label>
-      <mat-select formControlName="Status">
-        <mat-option value="Active">Active</mat-option>
-        <mat-option value="Inactive">Inactive</mat-option>
-        <mat-option value="Blocked">Blocked</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+        <!-- Status / Branch -->
+        <div class="dropdown-row">
+          <div class="dropdown-half">
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="customerStatus" [disabled]="isReadOnly()">
+                <mat-option value="Active">Active</mat-option>
+                <mat-option value="Inactive">Inactive</mat-option>
+                <mat-option value="Blocked">Blocked</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-  <div class="dropdown-half">
-    <mat-form-field appearance="outline">
-      <mat-label>Branch Code</mat-label>
-      <mat-select formControlName="Branch_Code">
-        <mat-option value="">Select Branch</mat-option>
-        <mat-option value="BR-001">Branch 001</mat-option>
-        <mat-option value="BR-002">Branch 002</mat-option>
-        <mat-option value="BR-003">Branch 003</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-</div>
+          <div class="dropdown-half">
+            <mat-form-field appearance="outline">
+              <mat-label>Branch Code</mat-label>
+              <mat-select formControlName="branchCode" [disabled]="isReadOnly()">
+                <mat-option value="">Select Branch</mat-option>
+                <mat-option value="BR-001">Branch 001</mat-option>
+                <mat-option value="BR-002">Branch 002</mat-option>
+                <mat-option value="BR-003">Branch 003</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
 
-<div class="dropdown-row">
-  <div class="dropdown-half">
-    <mat-form-field appearance="outline">
-      <mat-label>Country / City</mat-label>
-      <mat-select formControlName="Ctry_City">
-        <mat-option value="">Select City</mat-option>
-        <mat-option value="Karachi">Karachi</mat-option>
-        <mat-option value="Lahore">Lahore</mat-option>
-        <mat-option value="Islamabad">Islamabad</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+        <!-- Country / Customer Type -->
+        <div class="dropdown-row">
+          <div class="dropdown-half">
+            <mat-form-field appearance="outline">
+              <mat-label>Country / City</mat-label>
+              <mat-select formControlName="countryCity" [disabled]="isReadOnly()">
+                <mat-option value="">Select City</mat-option>
+                <mat-option value="Karachi">Karachi</mat-option>
+                <mat-option value="Lahore">Lahore</mat-option>
+                <mat-option value="Islamabad">Islamabad</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
 
-  <div class="dropdown-half">
-    <mat-form-field appearance="outline">
-      <mat-label>Customer Type</mat-label>
-      <mat-select formControlName="Customer_Type">
-        <mat-option value="Regular">Regular</mat-option>
-        <mat-option value="Premium">Premium</mat-option>
-        <mat-option value="VIP">VIP</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-</div>
-        <!-- Address Lines (full width) -->
+          <div class="dropdown-half">
+            <mat-form-field appearance="outline">
+              <mat-label>Customer Type</mat-label>
+              <mat-select formControlName="customerType" [disabled]="isReadOnly()">
+                <mat-option value="Regular">Regular</mat-option>
+                <mat-option value="Premium">Premium</mat-option>
+                <mat-option value="VIP">VIP</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Addresses -->
         <div class="form-group full-width">
           <label>Address Line 1</label>
-          <input type="text" formControlName="Address1" placeholder="Address Line 1">
+          <input type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()">
         </div>
-
         <div class="form-group full-width">
           <label>Address Line 2</label>
-          <input type="text" formControlName="Address2" placeholder="Address Line 2">
+          <input type="text" formControlName="address2" placeholder="Address Line 2" [readonly]="isReadOnly()">
         </div>
-
         <div class="form-group full-width">
           <label>Address Line 3</label>
-          <input type="text" formControlName="Address3" placeholder="Address Line 3">
+          <input type="text" formControlName="address3" placeholder="Address Line 3" [readonly]="isReadOnly()">
         </div>
-
-        <!-- Read-only labels row -->
-        <div class="readonly-row">
-          <div class="readonly-item"><label>Updated On</label></div>
-          <div class="readonly-item"><label>Created On</label></div>
-          <div class="readonly-item"><label>Created By</label></div>
-          <div class="readonly-item"><label>Inputer ID</label></div>
-          <div class="readonly-item"><label>Authorized ID</label></div>
-        </div>
-
       </div>
 
-      <!-- Buttons -->
-      <div class="form-buttons">
-        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button type="button" class="btn-save" [disabled]="!customerForm.dirty" (click)="onSave()">Save</button>
-        <button type="submit" class="btn-submit" [disabled]="customerForm.invalid">Submit</button>
-      </div>
+      <!-- Footer Buttons -->
+      <footer class="form-actions-container">
+        <div class="form-buttons" *ngIf="getCustomerById?.status === 'D' || getCustomerById?.status === 'S'">
+          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
+          <button type="button" class="btn-update" 
+                  (click)="update()"  
+                  [disabled]="!customerForm.dirty || !customerForm.valid || isReadOnly()">
+            Update
+          </button>
+          <button type="button" class="btn-save" 
+                  [disabled]="!customerForm.valid || isReadOnly()" 
+                  (click)="submitStatus(customerForm.getRawValue().id)">
+            Submit
+          </button>
+        </div>
 
+        <div class="form-buttons" *ngIf="getCustomerById?.status === 'A'">
+          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
+        </div>
+
+        <div class="form-buttons" *ngIf="!['D','S','A'].includes(getCustomerById?.status)">
+          <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+          <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save Customer</button>
+        </div>
+      </footer>
     </form>
   </div>
 </div>

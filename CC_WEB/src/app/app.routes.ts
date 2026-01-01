@@ -27,7 +27,7 @@ export const routes: Routes = [
             // Admin-Dashboard
             // my routes 
 
-            {
+           {
                 path: "admin",
                 loadComponent: () =>
                     import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
@@ -43,10 +43,17 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import('./screens/ADMIN/admin-dashboard/components/users/users').then((m) => m.Users)
                     }
-                    , {
-                        path: "showCustomerDetails",
+                    ,
+                    {
+                        path: "customer-list",
                         loadComponent: () =>
-                            import("./screens/ADMIN/admin-dashboard/components/customers/show-customers-form-data/show-customers-form-data").then((m) => m.ShowCustomersFormData)
+                            import("./screens/ADMIN/admin-dashboard/components/customers/customer-list/customer-list").then((m) => m.CustomerList)
+                    },
+                    {
+                        path: "create-customer/:id",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
+                                .then((m) => m.CreateCustomer),
                     }
                 ]
             }

@@ -3,28 +3,58 @@
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen">
-  <form [formGroup]="form" class="details-form">
+  <form *ngIf="formGroup" [formGroup]="form" (ngSubmit)="onSubmit()" class="details-form">
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Applicant Name *</mat-label>
-      <input matInput type="text" formControlName="applicantName" placeholder="Enter applicant name" />
-    </mat-form-field>
+    <div class="form-grid-2">
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Beneficiary Name *</mat-label>
-      <input matInput type="text" formControlName="beneficiaryName" placeholder="Enter beneficiary name" />
-    </mat-form-field>
+      <!-- Applicant Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Name *</mat-label>
+        <input matInput formControlName="applicantName" placeholder="Enter applicant name" />
+      </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Beneficiary Country *</mat-label>
-      <input matInput type="text" formControlName="beneficiaryCountry" placeholder="Enter country" />
-    </mat-form-field>
+      <!-- Beneficiary Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Name *</mat-label>
+        <input matInput formControlName="beneficiaryName" placeholder="Enter beneficiary name" />
+      </mat-form-field>
+
+      <!-- Beneficiary Country -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Country *</mat-label>
+        <input matInput formControlName="beneficiaryCountry" placeholder="Enter country" />
+      </mat-form-field>
+
+      <!-- Applicant Address 1 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Address 1 *</mat-label>
+        <input matInput formControlName="applicantAddress1" placeholder="Enter applicant address" />
+      </mat-form-field>
+
+      <!-- Applicant Address 2 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Applicant Address 2</mat-label>
+        <input matInput formControlName="applicantAddress2" placeholder="Enter applicant address" />
+      </mat-form-field>
+
+      <!-- Beneficiary Address 1 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Address 1 *</mat-label>
+        <input matInput formControlName="beneficiaryAddress1" placeholder="Enter beneficiary address" />
+      </mat-form-field>
+
+      <!-- Beneficiary Address 2 -->
+      <mat-form-field appearance="outline">
+        <mat-label>Beneficiary Address 2</mat-label>
+        <input matInput formControlName="beneficiaryAddress2" placeholder="Enter beneficiary address" />
+      </mat-form-field>
+
+    </div>
 
     <!-- <div class="actions">
       <button type="button" mat-stroked-button (click)="toggle()">Cancel</button>
-      <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">
+      <button type="submit" mat-flat-button color="primary" [disabled]="formGroup.invalid">
         Save
       </button>
     </div> -->

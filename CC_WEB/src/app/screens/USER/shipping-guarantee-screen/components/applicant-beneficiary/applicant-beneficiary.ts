@@ -71,4 +71,8 @@ export class ApplicantBeneficiary implements OnInit {
   toggle() {
     this.isOpen = !this.isOpen;
   }
+
+  onSubmit(){
+    
+  }
 }

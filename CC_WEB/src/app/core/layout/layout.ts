@@ -165,7 +165,8 @@ export class LayoutComponent implements OnInit {
           route: '/admin',              // <-- main Customers page
           open: false,
           children: [
-            { label: 'Create New', route: '/admin/create-customer' }
+            { label: 'Create New', route: '/admin/create-customer' },
+             {label:'Inquiry', route:"/admin/customer-list"},
           ]
         },
         { label: 'Users', icon: 'person', route: '/users' },
