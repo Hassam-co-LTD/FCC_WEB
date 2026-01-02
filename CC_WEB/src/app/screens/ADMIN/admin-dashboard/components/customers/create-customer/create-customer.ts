@@ -249,12 +249,30 @@ isReadOnly(): boolean {
 }
 
 // set approved 
+editApprovedCustomer(id: number) {
+  this.api.editApprovedCustomer(id).subscribe({
+    next: res => {
+      Swal.fire({
+        title: 'Success!',
+        text: 'Approved customer moved to Draft',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      }).then(() => {
+  this.router.navigateByUrl('/dummy', { skipLocationChange: true }).then(() => {
+    this.router.navigate(['/admin/customer-list']);
+  });
+});
 
-editApprovedCustomer() {
-  this.router.navigate(['/admin/create-customer/', this.getCustomerById.id]);
+    },
+    error: () => {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to move Approved to Draft',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  });
 }
 
 }
-
-
-

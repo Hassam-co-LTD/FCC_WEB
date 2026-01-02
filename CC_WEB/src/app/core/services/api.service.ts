@@ -79,5 +79,14 @@ export class ApiService {
   rejectCustomer(id:number) {
     return this.http.put<any>(`${this.baseUrl}/customers/reject/${id}`,{});
   }
+
+  // set approved status to draft 
+  editApprovedCustomer(id:number){
+     return this.http.put<any>(`${this.baseUrl}/customers/approvedToDraft/${id}`,{}); 
+  }
+
 }
  
+
+
+
