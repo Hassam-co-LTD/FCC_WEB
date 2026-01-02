@@ -1,4 +1,4 @@
-<div class="customer-container">
+<div class="customer-container" [ngClass]="{'hidden': getCustomerById?.status === 'A'}" >
   <div class="card">
     <form [formGroup]="customerForm">
       <header class="form-header">
@@ -106,7 +106,8 @@
 
       <!-- Footer Buttons -->
       <footer class="form-actions-container">
-        <div class="form-buttons" *ngIf="getCustomerById?.status === 'D' || getCustomerById?.status === 'S'">
+         @if(getCustomerById.status === "D"){
+               <div class="form-buttons">
           <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
           <button type="button" class="btn-update" 
                   (click)="update()"  
@@ -120,15 +121,118 @@
           </button>
         </div>
 
-        <div class="form-buttons" *ngIf="getCustomerById?.status === 'A'">
-          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
+         }
+         @else if (getCustomerById.status === "S") {
+                <div class="form-buttons">
+          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="rejected(this.getCustomerById.id)">Reject</button>
+          <button type="button" class="btn-save" 
+                  (click)="setApprove(this.customerForm.getRawValue().id)"  
+                  >
+            Approve
+          </button>
+          
         </div>
 
+         }
+         <!-- @else if (getCustomerById.status === "A"){
+                  <div class="form-buttons">
+          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
+        </div>
+         } -->
+        
+        @else {
+          
         <div class="form-buttons" *ngIf="!['D','S','A'].includes(getCustomerById?.status)">
           <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
           <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save Customer</button>
         </div>
+        }
       </footer>
     </form>
   </div>
+</div>
+
+<!--  show  approved result  -->
+
+<div *ngIf="getCustomerById?.status === 'A'" class="approved-container">
+
+  <div class="approved-header">
+    <span class="approved-badge">✔ Approved</span>
+    <h2>Customer Approved Details</h2>
+  </div>
+
+  <div class="details-grid">
+
+    <!-- Row 1 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Customer ID</span>
+        <span class="value">{{ getCustomerById.cId }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Name</span>
+        <span class="value">{{ getCustomerById.name }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Email</span>
+        <span class="value">{{ getCustomerById.email }}</span>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Contact</span>
+        <span class="value">{{ getCustomerById.contact }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Customer Status</span>
+        <span class="value">{{ getCustomerById.customerStatus }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Legal ID</span>
+        <span class="value">{{ getCustomerById.legalId }}</span>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Branch Code</span>
+        <span class="value">{{ getCustomerById.branchCode || '-' }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Country / City</span>
+        <span class="value">{{ getCustomerById.countryCity }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Customer Type</span>
+        <span class="value">{{ getCustomerById.customerType }}</span>
+      </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Address 1</span>
+        <span class="value">{{ getCustomerById.address1 }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Address 2</span>
+        <span class="value">{{ getCustomerById.address2 }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Address 3</span>
+        <span class="value">{{ getCustomerById.address3 }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Action Footer -->
+  <div class="approved-actions">
+    <button class="btn-back" (click)="onBack()">← Back</button>
+    <button class="btn-edit" (click)="editApprovedCustomer()">✎ Edit Customer</button>
+  </div>
+
 </div>

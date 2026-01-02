@@ -57,3 +57,33 @@ mat-icon {
     font-size: 22px;
     color: #e3f2fd;
 }
+
+
+
+
+// sccs for popup
+
+/* styles.scss */
+.swal2-small-top-right {
+  width: 200px !important;
+  padding: 0.5em 0.8em !important;
+  font-size: 0.8rem !important;
+  top: 10px !important;
+  right: 10px !important;
+  left: auto !important;
+  margin: 0 !important;
+  transform: none !important;
+  position: fixed !important; /* important for top-right positioning */
+  z-index: 9999 !important;  /* above other content */
+}
+
+.swal2-small-top-right .swal2-icon {
+  width: 30px !important;
+  height: 30px !important;
+  font-size: 1.2em !important;
+}
+
+.swal2-small-top-right .swal2-confirm {
+  padding: 0.2em 0.5em !important;
+  font-size: 0.7rem !important;
+}

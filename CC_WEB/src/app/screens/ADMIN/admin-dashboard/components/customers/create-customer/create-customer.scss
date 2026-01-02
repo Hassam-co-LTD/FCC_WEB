@@ -223,7 +223,154 @@
 
 
 
+// logic to hide the create new customer page 
 
 
-// sccss for the popup 
+.hidden {
+  display: none;
+}
 
+
+/* ================================
+   Approved Result Container
+================================ */
+.approved-container {
+  max-width: 900px;
+  margin: 24px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* ================================
+   Header
+================================ */
+.approved-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #111827;
+  }
+}
+
+.approved-badge {
+  background: #e6f7ee;
+  color: #1f9254;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ================================
+   Details Layout
+================================ */
+.details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-row {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+/* Two key-value pairs per row */
+/* Three key-value pairs per row */
+.three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.value {
+  font-size: 14px;
+  color: #111827;
+  word-break: break-word;
+}
+
+/* ================================
+   Actions (Back + Edit)
+================================ */
+.approved-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+}
+
+/* Back Button */
+.btn-back {
+  background: transparent;
+  border: 1px solid #cfd8e3;
+  color: #4b5563;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #f1f5f9;
+}
+
+/* Edit Button */
+.btn-edit {
+  background: #0b4eb3;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-edit:hover {
+  background: #1565d8;
+}
+
+/* ================================
+   Responsive (Mobile)
+================================ */
+@media (max-width: 768px) {
+  .two-col {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .approved-actions {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .btn-back,
+  .btn-edit {
+    width: 100%;
+  }
+}

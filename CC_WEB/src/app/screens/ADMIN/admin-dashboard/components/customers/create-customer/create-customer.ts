@@ -244,7 +244,17 @@ rejected(id:number){
 }
 
 isReadOnly(): boolean {
-  return !(this.getCustomerById?.status === 'S' || this.getCustomerById?.status === 'D');
+  // return !(this.getCustomerById?.status === "A");
+    return false;
+}
+
+// set approved 
+
+editApprovedCustomer() {
+  this.router.navigate(['/admin/create-customer/', this.getCustomerById.id]);
 }
 
 }
+
+
+

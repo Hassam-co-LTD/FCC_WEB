@@ -1,180 +1,91 @@
-@use '../../../../styles/theme' as theme;
+// Banking Design Tokens
+$primary-blue: #0b4eb3;
+$white: #ffffff;
+$text-dark: #1e293b;
+$text-light: #64748b;
+$success-green: #10b981;
+$header-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+$font-family: 'Poppins', sans-serif;
 
-/* Admin Container */
-.admin-container {
+.banking-header {
+  font-family: $font-family;
+  background-color: $white;
+  height: 80px;
+  padding: 0 40px;
   display: flex;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: $header-shadow;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 
-  /* Sidebar */
-  .sidebar {
-    min-width: 220px;
-    background: theme.$primary-color;
-    border-right: 1px solid theme.$sidebar-border;
-    padding: 1.5rem 1rem;
-    display: flex;
-    flex-direction: column;
-
-    .sidebar-title {
-      font-size: 1.5rem;
+  .header-left {
+    .header-title {
+      font-size: 1.25rem;
       font-weight: 600;
-      color: theme.$white;
-      margin-bottom: theme.$gap-default;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
+      color: $text-dark;
       margin: 0;
+      letter-spacing: -0.01em;
+    }
+  }
 
-      li {
-        margin-bottom: 0.6rem; /* Small but equal spacing */
+  .header-right {
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 6px 6px 6px 16px;
+      border-radius: 50px;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
 
-        a {
-          text-decoration: none;
-          color: theme.$white;
+      &:hover {
+        background-color: #f8fafc;
+      }
+
+      .admin-details {
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+
+        .admin-name {
+          font-size: 0.9rem;
           font-weight: 500;
-          padding: 0.5rem 0.75rem;
-          border-radius: theme.$radius-default;
-
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 0.5rem;
-          transition: all 0.3s;
+          color: $text-dark;
         }
 
-        /* Submenu container */
-        .submenu {
-          list-style: none;
-          padding-left: 1.8rem; /* Controlled indentation */
-          margin: 0.35rem 0;
+        .admin-status {
+          font-size: 0.75rem;
+          color: $text-light;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 6px;
 
-          li {
-            margin-bottom: 0.25rem;
-
-            a {
-              font-size: 0.9rem;
-              padding: 0.35rem 0.5rem;
-              gap: 0.45rem;
-              display: flex;
-              align-items: center;
-              border-radius: theme.$radius-default;
-            }
+          .status-indicator {
+            width: 6px;
+            height: 6px;
+            background-color: $success-green;
+            border-radius: 50%;
           }
         }
+      }
 
-        /* ⚠️ FIX TO REMOVE EXTRA WHITE GAP BETWEEN ITEMS  
-           → If next sibling is another li with no submenu, remove margin */
-        &:has(a) + li:has(a) {
-          margin-top: 0.1rem;
-        }
-
-        /* ⚠️ IF submenu exists -> do not create big gap before next item */
-        &:has(.submenu) {
-          margin-bottom: 0.2rem;
+      .avatar-wrapper {
+        position: relative;
+        
+        .admin-avatar {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid $white;
+          box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
         }
       }
     }
   }
 
-  /* Main Content */
-  .main-content {
-    flex: 1;
-    padding: theme.$gap-default;
-    background: theme.$screen-bg;
-    display: flex;
-    flex-direction: column;
-
-    /* Stats Cards Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: theme.$gap-default;
-      margin: theme.$gap-default 0;
-
-      .stat-card {
-        padding: 1rem 1.25rem;
-        background: theme.$white;
-        border-radius: theme.$radius-large;
-        box-shadow: 0 4px 10px theme.$primary-shadow;
-        text-align: center;
-        transition: transform 0.3s, box-shadow 0.3s;
-
-        &:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 18px theme.$primary-shadow;
-        }
-
-        h3 {
-          font-size: 1rem;
-          color: theme.$primary-color;
-          margin-bottom: 0.5rem;
-        }
-
-        p {
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: theme.$primary-color;
-        }
-      }
-    }
-
-    .action-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: theme.$gap-default;
-      margin-bottom: theme.$gap-default;
-
-      button {
-        background-color: theme.$primary-btn-bg;
-        color: theme.$white;
-        font-weight: 600;
-        border-radius: theme.$radius-default;
-        padding: 0.65rem 1.2rem;
-        box-shadow: 0 4px 10px theme.$primary-btn-shadow;
-        transition: background 0.3s ease, transform 0.2s ease;
-
-        &:hover {
-          background-color: theme.$primary-btn-hover-bg;
-          transform: translateY(-2px);
-        }
-
-        &:active {
-          transform: translateY(0);
-        }
-      }
-    }
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .admin-container {
-    flex-direction: column;
-
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      padding: 1rem;
-
-      .sidebar-menu {
-        display: flex;
-        gap: theme.$gap-default;
-
-        li {
-          margin-bottom: 0;
-        }
-      }
-    }
-
-    .main-content {
-      padding: 1.5rem;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-  }
 }

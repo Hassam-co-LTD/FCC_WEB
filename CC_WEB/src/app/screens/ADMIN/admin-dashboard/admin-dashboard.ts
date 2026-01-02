@@ -10,7 +10,6 @@ import { ReactiveFormsModule } from '@angular/forms';
   selector: 'app-admin',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     RouterOutlet,

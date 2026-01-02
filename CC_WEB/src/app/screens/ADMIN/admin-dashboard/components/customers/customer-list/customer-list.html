@@ -31,143 +31,26 @@
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
-                
               </tr>
             </thead>
             <tbody>
-  <tr *ngFor="let c of storeFilteredDraftCustomers; let i = index">
-
-    <!-- Name -->
-     <!-- <td>
-      <ng-container *ngIf="c.legalId === editingMode; else cId">
-        <input type="text" [(ngModel)]="c.cId" />
-      </ng-container>
-      <ng-template #cId>{{ c.CustomerId }}</ng-template>
-    </td>
-    <td> --> 
-      <td (click)="updateRouter(c)" class="cid" >
-      
-           <ng-container *ngIf="c.legalId === editingMode; else cId" >
-       
-           <input type="text" [(ngModel)]="c.cid"  />
-       
-      </ng-container>
-         
-      
-      <ng-template #cId>{{ c.cId }}</ng-template>
-       
-    </td>
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showName">
-        <input type="text" [(ngModel)]="c.name" />
-      </ng-container>
-      <ng-template #showName>{{ c.name }}</ng-template>
-    </td>
-
-    <!-- Email -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showEmail">
-        <input type="email" [(ngModel)]="c.email" />
-      </ng-container>
-      <ng-template #showEmail>{{ c.email }}</ng-template>
-    </td>
-
-    <!-- Contact -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showContact">
-        <input type="text" [(ngModel)]="c.contact" />
-      </ng-container>
-      <ng-template #showContact>{{ c.contact }}</ng-template>
-    </td>
-
-    <!-- CustomerStatus Status -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showStatus">
-        <input type="text" [(ngModel)]="c.customerStatus">
-      </ng-container>
-      <ng-template #showStatus>{{ c.customerStatus }}</ng-template>
-    </td>
-
-    <!-- Legal ID -->
-    <td class="legalId" (click)="clickOnLegalId(c.legalId)">
-  <ng-container *ngIf="c.legalId === editingMode; else showLegalId">
-    <input type="text" [(ngModel)]="c.legalId" />
-  </ng-container>
-  <ng-template #showLegalId>{{ c.legalId }}</ng-template>
-</td>
-
-    <!-- Branch Code -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showBranchCode">
-        <input type="text" [(ngModel)]="c.branchCode" />
-      </ng-container>
-      <ng-template #showBranchCode>{{ c.branchCode }}</ng-template>
-    </td>
-
-    <!-- Country/City -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showCountryCity">
-        <input type="text" [(ngModel)]="c.countryCity" />
-      </ng-container>
-      <ng-template #showCountryCity>{{ c.countryCity }}</ng-template>
-    </td>
-
-    <!-- Customer Type -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showCustomerType">
-        <input type="text" [(ngModel)]="c.customerType" />
-      </ng-container>
-      <ng-template #showCustomerType>{{ c.customerType }}</ng-template>
-    </td>
-
-    <!-- Address 1 -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showAddress1">
-        <input type="text" [(ngModel)]="c.address1" />
-      </ng-container>
-      <ng-template #showAddress1>{{ c.address1 }}</ng-template>
-    </td>
-
-    <!-- Address 2 -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showAddress2">
-        <input type="text" [(ngModel)]="c.address2" />
-      </ng-container>
-      <ng-template #showAddress2>{{ c.address2 }}</ng-template>
-    </td>
-
-    <!-- Address 3 -->
-    <td>
-      <ng-container *ngIf="c.legalId === editingMode; else showAddress3">
-        <input type="text" [(ngModel)]="c.address3" />
-      </ng-container>
-      <ng-template #showAddress3>{{ c.address3 }}</ng-template>
-    </td>
-
-    <!-- Action buttons -->
-   
-     <!-- <td class="action-buttons">
-       @if(c.legalId === savingCustomer){
-          <button (click)="updateCustomer(c)">update</button>
-          <button (click)="onCancel(c)">submit</button>
-       }
-       @else if(c.legalId === this.selectedId){
-          <button (click)="editCustomer(c)">edit</button>
-          <button (click)="onCancel(c)">cancel</button>
-
-    }
-    </td> -->
-
-    
-     
-
-  </tr>
-</tbody>
-
+              <tr *ngFor="let c of storeFilteredDraftCustomers; let i = index">
+                <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.contact }}</td>
+                <td>{{ c.customerStatus }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
+                <td>{{ c.countryCity }}</td>
+                <td>{{ c.customerType }}</td>
+                <td>{{ c.address1 }}</td>
+                <td>{{ c.address2 }}</td>
+                <td>{{ c.address3 }}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
-
-        
 
         <ng-template #noDrafts (click)="onTabChange(0)">
           <p class="no-records">No draft records found.</p>
@@ -176,140 +59,114 @@
     </mat-tab>
 
     <!-- Approved Tab -->
-<mat-tab label="Approved">
-  <div class="tab-content">
-    
-      <div class="search-bar">
-        <input
-          type="text"
-          placeholder="Search customer By CustomerId.."
-          [(ngModel)]="searchText"
-          (input)="filterApprovedCustomers(searchText)"
-        />
-      </div>
+    <mat-tab label="Approved">
+      <div class="tab-content">
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search customer By CustomerId.."
+            [(ngModel)]="searchText"
+            (input)="filterApprovedCustomers(searchText)"
+          />
+        </div>
 
-    <div class="table-wrapper"
-         *ngIf="storeFilteredApprovedCustomers && storeFilteredApprovedCustomers.length > 0; else noApproved">
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedCustomers && storeFilteredApprovedCustomers.length > 0; else noApproved">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>CustomerId</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>CustomerStatus</th>
+                <th>Legal ID</th>
+                <th>Branch Code</th>
+                <th>Country/City</th>
+                <th>Customer Type</th>
+                <th>Address 1</th>
+                <th>Address 2</th>
+                <th>Address 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredApprovedCustomers">
+                <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.contact }}</td>
+                <td>{{ c.customerStatus }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
+                <td>{{ c.countryCity }}</td>
+                <td>{{ c.customerType }}</td>
+                <td>{{ c.address1 }}</td>
+                <td>{{ c.address2 }}</td>
+                <td>{{ c.address3 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <table class="customer-table">
-        <thead>
-          <tr>
-            <th>CustomerId</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Contact</th>
-            <th>CustomerStatus</th>
-            <th>Legal ID</th>
-            <th>Branch Code</th>
-            <th>Country/City</th>
-            <th>Customer Type</th>
-            <th>Address 1</th>
-            <th>Address 2</th>
-            <th>Address 3</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let c of storeFilteredApprovedCustomers">
-
-          <td (click)="updateRouter(c)" class="cid" >
-      
-           <ng-container *ngIf="c.legalId === editingMode; else cId" >
-       
-           <input type="text" [(ngModel)]="c.cid"  />
-       
-      </ng-container>
-         
-      
-      <ng-template #cId>{{ c.cId }}</ng-template>
-       
-    </td>
-            <td>{{ c.name }}</td>
-            <td>{{ c.email }}</td>
-            <td>{{ c.contact }}</td>
-            <td>{{ c.customerStatus }}</td>
-            <td>{{ c.legalId }}</td>
-            <td>{{ c.branchCode }}</td>
-            <td>{{ c.countryCity }}</td>
-            <td>{{ c.customerType }}</td>
-            <td>{{ c.address1 }}</td>
-            <td>{{ c.address2 }}</td>
-            <td>{{ c.address3 }}</td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <ng-template #noApproved (click)="onTabChange(1)">
-          <p class="no-records">No Approved  records found.</p>
+        <ng-template #noApproved (click)="onTabChange(1)">
+          <p class="no-records">No Approved records found.</p>
         </ng-template>
-
-  </div>
-</mat-tab>
-
-    <!-- Submitted Tab -->
-    <!-- Submitted Tab -->
-<mat-tab label="Submitted">
-  <div class="tab-content">
-          
-      <div class="search-bar">
-        <input
-          type="text"
-          placeholder="Search customer By Customer Id.."
-          [(ngModel)]="searchText"
-          (input)="filterSubmittedCustomers(searchText)"
-        />
       </div>
-    <div class="table-wrapper"
-         *ngIf="storeFilteredSubmittedCustomer && storeFilteredSubmittedCustomer.length > 0; else noSubmitted">
+    </mat-tab>
 
-      <table class="customer-table">
-        <thead>
-          <tr>
-            <th>CustomerId</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Contact</th>
-            <th>CustomerStatus</th>
-            <th>Legal ID</th>
-            <th>Branch Code</th>
-            <th>Country/City</th>
-            <th>Customer Type</th>
-            <th>Address 1</th>
-            <th>Address 2</th>
-            <th>Address 3</th>
-          </tr>
-        </thead>
+    <!-- Submitted Tab -->
+    <mat-tab label="Submitted">
+      <div class="tab-content">
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="Search customer By Customer Id.."
+            [(ngModel)]="searchText"
+            (input)="filterSubmittedCustomers(searchText)"
+          />
+        </div>
 
-        <tbody>
-          <tr *ngFor="let c of storeFilteredSubmittedCustomer">
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomer && storeFilteredSubmittedCustomer.length > 0; else noSubmitted">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>CustomerId</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>CustomerStatus</th>
+                <th>Legal ID</th>
+                <th>Branch Code</th>
+                <th>Country/City</th>
+                <th>Customer Type</th>
+                <th>Address 1</th>
+                <th>Address 2</th>
+                <th>Address 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredSubmittedCustomer">
+                <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
+                <td>{{ c.name }}</td>
+                <td>{{ c.email }}</td>
+                <td>{{ c.contact }}</td>
+                <td>{{ c.customerStatus }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
+                <td>{{ c.countryCity }}</td>
+                <td>{{ c.customerType }}</td>
+                <td>{{ c.address1 }}</td>
+                <td>{{ c.address2 }}</td>
+                <td>{{ c.address3 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-            <td (click)="updateRouter(c)" class="cid" >{{ c.cId }}</td>
-            <td>{{ c.name }}</td>
-            <td>{{ c.email }}</td>
-            <td>{{ c.contact }}</td>
-            <td>{{ c.customerStatus }}</td>
-            <td>{{ c.legalId }}</td>
-            <td>{{ c.branchCode }}</td>
-            <td>{{ c.countryCity }}</td>
-            <td>{{ c.customerType }}</td>
-            <td>{{ c.address1 }}</td>
-            <td>{{ c.address2 }}</td>
-            <td>{{ c.address3 }}</td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <ng-template #noSubmitted (click)="onTabChange(2)">
+        <ng-template #noSubmitted (click)="onTabChange(2)">
           <p class="no-records">No Submitted records found.</p>
         </ng-template>
-
-  </div>
-</mat-tab>
-
+      </div>
+    </mat-tab>
 
   </mat-tab-group>
 </div>

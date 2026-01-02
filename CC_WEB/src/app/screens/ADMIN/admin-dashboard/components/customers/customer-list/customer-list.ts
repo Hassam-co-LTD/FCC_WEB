@@ -27,10 +27,10 @@ export class CustomerList implements OnInit {
   searchText: String = "";
   storeFilteredDraftCustomers : any [] = [];
   storeFilteredSubmittedCustomer: any[] = [];
-  storeFilteredApprovedCustomers: any[]= [];
+  storeFilteredApprovedCustomers: any[]= [];  
   selectedId = null;
   checkActionId = null;
-  editingMode = null
+ editingMode: number | null = null; 
   editingCustomer = null
   savingCustomer = null;
   constructor(private api: ApiService,private router:Router,private route:ActivatedRoute) {}
