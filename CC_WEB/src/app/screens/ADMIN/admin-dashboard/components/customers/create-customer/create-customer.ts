@@ -192,7 +192,7 @@ submitStatus(id:number){
         confirmButtonText: 'OK'
       });
            
-      }
+      } 
     })
 } 
 

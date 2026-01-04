@@ -1,0 +1,127 @@
+@use "../../../../../../../styles/theme" as theme;
+
+.branch-container {
+  padding: theme.$gap-default;
+  background: theme.$screen-bg;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.branch-card {
+  width: 100%;
+  max-width: 900px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
+  padding: calc(theme.$gap-default * 1.5);
+}
+
+.form-header {
+  margin-bottom: theme.$gap-default;
+
+  h2 {
+    margin: 0;
+    color: theme.$text-dark;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-top: 4px;
+    color: theme.$text-medium;
+    font-size: 13px;
+  }
+}
+
+.branch-form {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: theme.$gap-default;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+/* =========================
+   Angular Material Input Fix
+   ========================= */
+::ng-deep mat-form-field {
+  border-radius: theme.$radius-default;
+  background: theme.$white !important; /* Full white background */
+  overflow: hidden;                     /* Contain background within border */
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background: theme.$white !important; /* Inner wrapper white */
+  border-radius: theme.$radius-default;
+  overflow: hidden;
+}
+
+::ng-deep .mat-mdc-form-field-outline {
+  color: theme.$border-light;
+}
+
+::ng-deep .mat-mdc-form-field:hover .mat-mdc-form-field-outline {
+  color: theme.$border-primary;
+}
+
+/* =========================
+   Form Buttons
+   ========================= */
+.form-actions {
+  margin-top: calc(theme.$gap-default * 1.5);
+  display: flex;
+  justify-content: flex-end;
+  gap: theme.$gap-default;
+
+  button {
+    border-radius: theme.$radius-default;
+    box-shadow: theme.$button-shadow;
+  }
+}
+
+/* =============================
+   City Master Dropdown Options - Full Blue
+   ============================= */
+/* Panel wrapper fix */
+/* =============================
+   City Master Dropdown – FINAL FIX
+   ============================= */
+
+::ng-deep .cdk-overlay-pane .mat-mdc-select-panel {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: theme.$radius-default;
+  box-shadow: theme.$shadow-primary;
+}
+
+/* Each option full blue */
+::ng-deep .cdk-overlay-pane .mat-mdc-option {
+  background-color: theme.$primary !important;
+  color: theme.$text-light !important;
+}
+
+/* Kill ALL inner white layers */
+::ng-deep .mat-mdc-option-content,
+::ng-deep .mdc-list-item__primary-text {
+  background: transparent !important;
+  color: theme.$text-light !important;
+}
+
+/* Hover */
+::ng-deep .cdk-overlay-pane .mat-mdc-option:hover {
+  background-color: theme.$primary-dark !important;
+}
+
+/* Selected */
+::ng-deep .cdk-overlay-pane .mat-mdc-option.mat-mdc-selected {
+  background-color: theme.$primary-dark !important;
+}
+

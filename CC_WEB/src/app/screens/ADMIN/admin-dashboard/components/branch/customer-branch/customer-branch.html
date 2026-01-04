@@ -1,0 +1,99 @@
+<div class="branch-container">
+  <mat-card class="branch-card">
+
+    <div class="form-header">
+      <h2>Create Branch</h2>
+      <p>Enter branch details. City is selected from master setup.</p>
+    </div>
+
+    <!-- IMPORTANT FIX -->
+    <form
+      
+      class="branch-form"
+      [formGroup]="branchForm">
+
+      <div class="form-grid">
+
+        <!-- Branch ID -->
+<mat-form-field appearance="outline">
+  <mat-label>Branch ID</mat-label>
+  <input
+    matInput
+    formControlName="branchId"
+    placeholder="Enter Branch ID (e.g., BR001)" />
+</mat-form-field>
+
+        <!-- Branch Name -->
+        <mat-form-field appearance="outline">
+          <mat-label>Branch Name</mat-label>
+          <input
+            matInput
+            formControlName="branchName"
+            placeholder="Enter Branch Name" />
+        </mat-form-field>
+
+        <!-- Contact Person -->
+        <mat-form-field appearance="outline">
+          <mat-label>Contact Person</mat-label>
+          <input
+            matInput
+            formControlName="contactPerson"
+            placeholder="Enter Contact Person" />
+        </mat-form-field>
+
+        <!-- City -->
+     <mat-form-field appearance="outline">
+  <mat-label>City</mat-label>
+  <mat-select formControlName="cityId">
+    <mat-option *ngFor="let item of getAllCities; let i = index" [value]="item.id">
+      {{ item.cityName }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+
+        <!-- Contact Number -->
+        <mat-form-field appearance="outline">
+          <mat-label>Contact Number</mat-label>
+          <input
+            matInput
+            formControlName="contactNo"
+            placeholder="Enter Contact Number" />
+        </mat-form-field>
+
+        <!-- Branch Address -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Branch Address</mat-label>
+          <textarea
+            matInput
+            formControlName="branchAddress"
+            rows="3"
+            placeholder="Enter Branch Address">
+          </textarea>
+        </mat-form-field>
+
+        <!-- Record Status -->
+        <mat-form-field appearance="outline">
+          <mat-label>Record Status</mat-label>
+          <mat-select formControlName="recordStatus">
+            <mat-option value="A">Active</mat-option>
+            <mat-option value="I">Inactive</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="form-actions">
+        <button mat-stroked-button type="button">
+          Cancel
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" (click)="save()">
+          Save
+        </button>
+      </div>
+
+    </form>
+
+  </mat-card>
+</div>

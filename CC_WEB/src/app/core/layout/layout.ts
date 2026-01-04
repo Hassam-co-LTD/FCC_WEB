@@ -169,6 +169,18 @@ export class LayoutComponent implements OnInit {
              {label:'Inquiry', route:"/admin/customer-list"},
           ]
         },
+      {
+  label: 'Branch',
+  icon: 'location_city',          // updated icon for branch
+  route: '/admin/branches',       // main Branch page
+  open: false,
+  children: [
+    { label: 'Create New', route: '/admin/create-branch' },   // child for creating a branch
+    { label: 'Branch List', route: '/admin/branch-list' }     // child for viewing branch list
+  ]
+}
+
+,
         { label: 'Users', icon: 'person', route: '/users' },
         {label:"Logout",icon:"logout",route:"/login"}
       ];

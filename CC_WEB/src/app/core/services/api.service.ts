@@ -85,8 +85,25 @@ export class ApiService {
      return this.http.put<any>(`${this.baseUrl}/customers/approvedToDraft/${id}`,{}); 
   }
 
+
+  
+
+// api services for branch
+
+getAllCities(){
+   return this.http.get<any>(`${this.baseUrl}/branch/cities`);
+}
+
+// save Branch and set status to draft
+saveBranch(data:any){
+     return this.http.post( `${this.baseUrl}/branch`,data);   
+}
+
+// get All Draft List
+
+getDraftList(){
+  return this.http.get<any>(`${this.baseUrl}/branch/draft`);
+}
+
 }
  
-
-
-

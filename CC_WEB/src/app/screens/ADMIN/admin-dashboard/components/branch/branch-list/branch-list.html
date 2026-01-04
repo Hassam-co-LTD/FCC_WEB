@@ -1,0 +1,123 @@
+<div class="branch-status-container">
+  <h2 class="page-title">Branch Records</h2>
+
+  <mat-tab-group>
+
+    <!-- Draft Tab -->
+    <mat-tab label="Draft">
+      <div class="search-bar">
+        <input type="text" placeholder="Search Branch By Branch Id" />
+      </div>
+
+      <div class="tab-content">
+        <div class="table-wrapper">
+          <table class="branch-table">
+            <thead>
+              <tr>
+                <th>BranchId</th>
+                <th>Branch Name</th>
+                <th>Branch Address</th>
+                <th>City</th>
+                <th>Contact Person</th>
+                <th>Contact No</th>
+                <th>Record Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of getDraftList; let i = index">
+  <td>{{ item.branchId }}</td>
+  <td>{{ item.branchname }}</td>
+  <td>{{ item.branchaddress }}</td>
+  <td>{{ item.citymaster?.cityName }}</td>
+  <td>{{ item.contactperson }}</td>
+  <td>{{ item.contactno }}</td>
+  <td>{{ item.recordstatus }}</td>
+</tr>
+
+              <!-- More rows can be added dynamically later -->
+            </tbody>
+          </table>
+        </div>
+
+        <p class="no-records">No draft records found.</p>
+      </div>
+    </mat-tab>
+
+    <!-- Approved Tab -->
+    <mat-tab label="Approved">
+      <div class="search-bar">
+        <input type="text" placeholder="Search Branch By Branch Id" />
+      </div>
+
+      <div class="tab-content">
+        <div class="table-wrapper">
+          <table class="branch-table">
+            <thead>
+              <tr>
+                <th>BranchId</th>
+                <th>Branch Name</th>
+                <th>Branch Address</th>
+                <th>City</th>
+                <th>Contact Person</th>
+                <th>Contact No</th>
+                <th>Record Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>BR002</td>
+                <td>City Branch</td>
+                <td>456 City Rd</td>
+                <td>Lahore</td>
+                <td>Sara Ali</td>
+                <td>03101234567</td>
+                <td>A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="no-records">No approved records found.</p>
+      </div>
+    </mat-tab>
+
+    <!-- Submitted Tab -->
+    <mat-tab label="Submitted">
+      <div class="search-bar">
+        <input type="text" placeholder="Search Branch By Branch Id" />
+      </div>
+
+      <div class="tab-content">
+        <div class="table-wrapper">
+          <table class="branch-table">
+            <thead>
+              <tr>
+                <th>BranchId</th>
+                <th>Branch Name</th>
+                <th>Branch Address</th>
+                <th>City</th>
+                <th>Contact Person</th>
+                <th>Contact No</th>
+                <th>Record Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>BR003</td>
+                <td>Suburb Branch</td>
+                <td>789 Suburb Ln</td>
+                <td>Islamabad</td>
+                <td>Ahmed Raza</td>
+                <td>03201234567</td>
+                <td>P</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="no-records">No submitted records found.</p>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

@@ -54,8 +54,24 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
                                 .then((m) => m.CreateCustomer),
+                    },
+                    
+                {
+                    path:'create-branch',
+                    loadComponent : ()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
+                        .then((m)=> m.CustomerBranch)
+                    },
+                    {
+                    path:'branch-list',
+                    loadComponent : ()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
+                        .then((m)=> m.BranchList)
                     }
-                ]
+                
+                ],
+    
+                
             }
             ,
 
