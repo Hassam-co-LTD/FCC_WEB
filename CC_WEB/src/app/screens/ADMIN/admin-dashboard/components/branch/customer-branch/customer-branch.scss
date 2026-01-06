@@ -1,127 +1,285 @@
-@use "../../../../../../../styles/theme" as theme;
+@use '../../../../../../../styles/theme' as theme;
 
-.branch-container {
-  padding: theme.$gap-default;
-  background: theme.$screen-bg;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-}
-
+/* ------------------------------
+   Branch Card Container
+------------------------------- */
 .branch-card {
-  width: 100%;
-  max-width: 900px;
-  background: theme.$white;
-  border: 1px solid theme.$border-light;
+  padding: 20px;
   border-radius: theme.$radius-large;
+  background: theme.$light-bg;
   box-shadow: theme.$shadow-primary;
-  padding: calc(theme.$gap-default * 1.5);
+  margin-bottom: 20px;
 }
 
-.form-header {
-  margin-bottom: theme.$gap-default;
+/* ------------------------------
+   Section Header (Collapsible)
+------------------------------- */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  color: theme.$text-light;
+  padding: 14px 18px;
+  border-radius: theme.$radius-large;
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 
-  h2 {
-    margin: 0;
-    color: theme.$text-dark;
-    font-size: 20px;
-    font-weight: 600;
+  mat-icon {
+    font-size: 22px;
   }
 
-  p {
-    margin-top: 4px;
-    color: theme.$text-medium;
-    font-size: 13px;
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
   }
 }
 
-.branch-form {
-  width: 100%;
+/* ------------------------------
+   Collapsible Container
+------------------------------- */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+  transform: translateY(-5px);
+}
+
+.collapsible.open {
+  max-height: 3000px; /* enough for large forms */
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px;
+  background: theme.$light-bg;
+  border-radius: theme.$radius-default;
+  border: 1px solid theme.$border-light;
+}
+
+/* ------------------------------
+   Field Group & Form Grids
+------------------------------- */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: theme.$gap-default;
+  margin-bottom: 20px;
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: theme.$gap-default;
-}
-
-.full-width {
-  grid-column: span 2;
-}
-
-/* =========================
-   Angular Material Input Fix
-   ========================= */
-::ng-deep mat-form-field {
-  border-radius: theme.$radius-default;
-  background: theme.$white !important; /* Full white background */
-  overflow: hidden;                     /* Contain background within border */
-}
-
-::ng-deep .mat-mdc-text-field-wrapper {
-  background: theme.$white !important; /* Inner wrapper white */
-  border-radius: theme.$radius-default;
-  overflow: hidden;
-}
-
-::ng-deep .mat-mdc-form-field-outline {
-  color: theme.$border-light;
-}
-
-::ng-deep .mat-mdc-form-field:hover .mat-mdc-form-field-outline {
-  color: theme.$border-primary;
-}
-
-/* =========================
-   Form Buttons
-   ========================= */
-.form-actions {
-  margin-top: calc(theme.$gap-default * 1.5);
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: theme.$gap-default;
+  margin-bottom: 20px;
+}
 
-  button {
-    border-radius: theme.$radius-default;
-    box-shadow: theme.$button-shadow;
+.field-group {
+  display: flex;
+  flex-direction: column;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: theme.$primary-dark;
   }
 }
 
-/* =============================
-   City Master Dropdown Options - Full Blue
-   ============================= */
-/* Panel wrapper fix */
-/* =============================
-   City Master Dropdown – FINAL FIX
-   ============================= */
+/* ------------------------------
+   Mat Form Field Styling
+------------------------------- */
+mat-form-field {
+  width: 100%;
 
-::ng-deep .cdk-overlay-pane .mat-mdc-select-panel {
-  background: transparent !important;
-  padding: 0 !important;
-  border-radius: theme.$radius-default;
-  box-shadow: theme.$shadow-primary;
+  .mat-mdc-form-field-wrapper {
+    padding-top: 14px; // increase input height
+    padding-bottom: 14px;
+  }
+
+  &.mat-mdc-select {
+    .mat-mdc-select-value {
+      padding-top: 10px; // smaller dropdown height
+      padding-bottom: 10px;
+    }
+  }
+
+  textarea.mat-input-element {
+    min-height: 80px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
 }
 
-/* Each option full blue */
-::ng-deep .cdk-overlay-pane .mat-mdc-option {
-  background-color: theme.$primary !important;
-  color: theme.$text-light !important;
+/* White dropdown for select panel */
+.white-dropdown .mat-mdc-option {
+  background: #fff !important;
+  color: #000 !important;
 }
 
-/* Kill ALL inner white layers */
-::ng-deep .mat-mdc-option-content,
-::ng-deep .mdc-list-item__primary-text {
-  background: transparent !important;
-  color: theme.$text-light !important;
+/* ------------------------------
+   Buttons
+------------------------------- */
+.actions,
+.approved-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+
+  button {
+    min-width: 120px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: theme.$shadow-primary;
+    }
+  }
+
+  button[color="primary"] {
+    background: theme.$primary;
+    color: theme.$text-light;
+
+    &:hover {
+      background: theme.$primary-hover;
+    }
+  }
+
+  button.mat-stroked-button {
+    border: 1px solid theme.$primary;
+    color: theme.$primary;
+    background: transparent;
+
+    &:hover {
+      background: theme.$primary-light;
+    }
+  }
+
+  button[color="warn"] {
+    background: theme.$white;
+    color: #fff;
+
+    &:hover {
+      background: darken(theme.$white, 10%);
+    }
+  }
 }
 
-/* Hover */
-::ng-deep .cdk-overlay-pane .mat-mdc-option:hover {
-  background-color: theme.$primary-dark !important;
+/* ------------------------------
+   Approved Section
+------------------------------- */
+.approved-container {
+  .approved-card {
+    padding: 20px;
+    border-radius: theme.$radius-large;
+    background: theme.$light-bg;
+    box-shadow: theme.$shadow-primary;
+    margin-bottom: 20px;
+  }
+
+  .approved-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .approved-badge {
+      background: #4caf50;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: theme.$primary-dark;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    gap: 12px;
+
+    .detail-row {
+      display: flex;
+      gap: 12px;
+
+      .detail-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        .label {
+          font-weight: 600;
+          color: theme.$primary-dark;
+        }
+
+        .value {
+          font-weight: 500;
+          color: theme.$text-dark;
+        }
+
+        &.full-width {
+          flex: 1 1 100%;
+        }
+      }
+    }
+  }
 }
 
-/* Selected */
-::ng-deep .cdk-overlay-pane .mat-mdc-option.mat-mdc-selected {
-  background-color: theme.$primary-dark !important;
+/* ------------------------------
+   Responsive
+------------------------------- */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
+@media (max-width: 768px) {
+  .form-grid-2,
+  .form-grid {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .actions,
+  .approved-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .branch-card,
+  .approved-card {
+    padding: 15px;
+  }
+
+  .section-header {
+    padding: 12px 14px;
+    h2 {
+      font-size: 16px;
+    }
+  }
+
+  mat-form-field .mat-mdc-form-field-wrapper {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+
+.hidden {
+  display: none !important;
+}

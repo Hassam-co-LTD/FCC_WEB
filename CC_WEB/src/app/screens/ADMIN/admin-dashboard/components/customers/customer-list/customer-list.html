@@ -1,20 +1,30 @@
 <div class="customer-status-container">
   <h2 class="page-title">Customer Records</h2>
 
-  <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
 
-    <!-- Draft Tab -->
-    <mat-tab label="Draft">
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
         <input
           type="text"
           placeholder="Search customer By Customer Id"
           [(ngModel)]="searchText"
-          (input)="filterDraftCustomer(searchText)"
+          (input)="filterDraftCustomers(searchText)"
         />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCustomers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
 
       <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
         <div class="table-wrapper" *ngIf="storeFilteredDraftCustomers && storeFilteredDraftCustomers.length > 0; else noDrafts">
           <table class="customer-table">
             <thead>
@@ -34,12 +44,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredDraftCustomers; let i = index">
+              <tr *ngFor="let c of storeFilteredDraftCustomers; trackBy: trackById">
                 <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.customerStatus }}</td>
+                <td>
+                  <span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span>
+                </td>
                 <td>{{ c.legalId }}</td>
                 <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
@@ -52,22 +64,29 @@
           </table>
         </div>
 
-        <ng-template #noDrafts (click)="onTabChange(0)">
+        <ng-template #noDrafts>
           <p class="no-records">No draft records found.</p>
         </ng-template>
       </div>
     </mat-tab>
 
-    <!-- Approved Tab -->
-    <mat-tab label="Approved">
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search customer By Customer Id"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedCustomers(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCustomers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
       <div class="tab-content">
-        <div class="search-bar">
-          <input
-            type="text"
-            placeholder="Search customer By CustomerId.."
-            [(ngModel)]="searchText"
-            (input)="filterApprovedCustomers(searchText)"
-          />
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
         </div>
 
         <div class="table-wrapper" *ngIf="storeFilteredApprovedCustomers && storeFilteredApprovedCustomers.length > 0; else noApproved">
@@ -89,12 +108,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedCustomers">
+              <tr *ngFor="let c of storeFilteredApprovedCustomers; trackBy: trackById">
                 <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.customerStatus }}</td>
+                <td>
+                  <span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span>
+                </td>
                 <td>{{ c.legalId }}</td>
                 <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
@@ -107,25 +128,32 @@
           </table>
         </div>
 
-        <ng-template #noApproved (click)="onTabChange(1)">
-          <p class="no-records">No Approved records found.</p>
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
         </ng-template>
       </div>
     </mat-tab>
 
-    <!-- Submitted Tab -->
-    <mat-tab label="Submitted">
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search customer By Customer Id"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedCustomers(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCustomers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
       <div class="tab-content">
-        <div class="search-bar">
-          <input
-            type="text"
-            placeholder="Search customer By Customer Id.."
-            [(ngModel)]="searchText"
-            (input)="filterSubmittedCustomers(searchText)"
-          />
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomer && storeFilteredSubmittedCustomer.length > 0; else noSubmitted">
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomers && storeFilteredSubmittedCustomers.length > 0; else noSubmitted">
           <table class="customer-table">
             <thead>
               <tr>
@@ -144,12 +172,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedCustomer">
+              <tr *ngFor="let c of storeFilteredSubmittedCustomers; trackBy: trackById">
                 <td (click)="updateRouter(c)" class="cid">{{ c.cId }}</td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.customerStatus }}</td>
+                <td>
+                  <span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span>
+                </td>
                 <td>{{ c.legalId }}</td>
                 <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
@@ -162,8 +192,8 @@
           </table>
         </div>
 
-        <ng-template #noSubmitted (click)="onTabChange(2)">
-          <p class="no-records">No Submitted records found.</p>
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
         </ng-template>
       </div>
     </mat-tab>

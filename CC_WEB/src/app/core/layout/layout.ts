@@ -176,7 +176,7 @@ export class LayoutComponent implements OnInit {
   open: false,
   children: [
     { label: 'Create New', route: '/admin/create-branch' },   // child for creating a branch
-    { label: 'Branch List', route: '/admin/branch-list' }     // child for viewing branch list
+    { label: 'Inquiry', route: '/admin/branch-inquiry' }     // child for viewing branch list
   ]
 }
 

@@ -1,4 +1,5 @@
-<div class="branch-container">
+<div class="branch-container" [ngClass]="{'hidden': getBranchById?.branchstatus === 'A'}" >
+  <div class="card">
   <mat-card class="branch-card">
 
     <div class="form-header">
@@ -61,6 +62,35 @@
             placeholder="Enter Contact Number" />
         </mat-form-field>
 
+        <!-- Swift Address -->
+<mat-form-field appearance="outline">
+  <mat-label>Swift Address</mat-label>
+  <input
+    matInput
+    formControlName="swiftAddress"
+    placeholder="Enter Swift Address" />
+</mat-form-field>
+
+<!-- Email Address -->
+<mat-form-field appearance="outline">
+  <mat-label>Email Address</mat-label>
+  <input
+    matInput
+    type="email"
+    formControlName="emailAddress"
+    placeholder="Enter Email Address" />
+</mat-form-field>
+
+<!-- Local Currency -->
+<mat-form-field appearance="outline">
+  <mat-label>Local Currency</mat-label>
+  <input
+    matInput
+    formControlName="localCurrency"
+    placeholder="Enter Local Currency" />
+</mat-form-field>
+
+
         <!-- Branch Address -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Branch Address</mat-label>
@@ -72,28 +102,127 @@
           </textarea>
         </mat-form-field>
 
-        <!-- Record Status -->
-        <mat-form-field appearance="outline">
-          <mat-label>Record Status</mat-label>
-          <mat-select formControlName="recordStatus">
-            <mat-option value="A">Active</mat-option>
-            <mat-option value="I">Inactive</mat-option>
-          </mat-select>
-        </mat-form-field>
 
       </div>
 
       <div class="form-actions">
-        <button mat-stroked-button type="button">
+        @if (getBranchById?.branchstatus === 'D'){
+           <button mat-stroked-button type="button" (click)="back()">
+           back
+        </button>
+              <button mat-stroked-button type="button" (click)="update(getBranchById.id)">
+          update
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" (click)="submit()">
+          submit
+        </button>
+        }
+        @else if(getBranchById?.branchstatus === "S"){
+           
+         <button mat-stroked-button type="button" (click)="reject(getBranchById.id)">
+          reject
+        </button>
+
+        <button mat-raised-button color="primary" type="submit" (click)="approved(getBranchById.id)">
+          Approved
+        </button>
+        }
+        @else {
+           <button mat-stroked-button type="button">
           Cancel
         </button>
 
         <button mat-raised-button color="primary" type="submit" (click)="save()">
           Save
         </button>
+        }
       </div>
 
     </form>
 
   </mat-card>
+</div>
+
+<!-- approved result -->
+
+<div *ngIf="getBranchById?.recordstatus === 'A'" class="approved-container">
+
+  <div class="approved-header">
+    <span class="approved-badge">✔ Approved</span>
+    <h2>Branch Approved Details</h2>
+  </div>
+
+  <div class="details-grid">
+
+    <!-- Row 1 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Branch ID</span>
+        <span class="value">{{ getBranchById.branchId }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Branch Name</span>
+        <span class="value">{{ getBranchById.branchname }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Email Address</span>
+        <span class="value">{{ getBranchById.emailaddress }}</span>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Contact Person</span>
+        <span class="value">{{ getBranchById.contactperson }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Contact No</span>
+        <span class="value">{{ getBranchById.contactno }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Record Status</span>
+        <span class="value">{{ getBranchById.recordstatus }}</span>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Swift Address</span>
+        <span class="value">{{ getBranchById.swiftaddress }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">Local Currency</span>
+        <span class="value">{{ getBranchById.localcurrency }}</span>
+      </div>
+
+      <div class="detail-item">
+        <span class="label">City</span>
+        <span class="value">{{ getBranchById.citymaster?.cityName }}</span>
+      </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="detail-row three-col">
+      <div class="detail-item full-width">
+        <span class="label">Branch Address</span>
+        <span class="value">{{ getBranchById.branchaddress }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Action Footer -->
+  <div class="approved-actions">
+    <button class="btn-back" (click)="back()">← Back</button>
+    <button class="btn-edit" (click)="(getBranchById.id)">Amend</button>
+  </div>
+
 </div>

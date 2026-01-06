@@ -32,7 +32,8 @@ export class CreateCustomer implements OnInit {
     private getSharedService:SharedService,
     private activateRoute:ActivatedRoute,
     private  location:Location
-  ) {}
+  ) {
+  }
  getCustomerById : any = ""
   ngOnInit(): void {
   this.customerForm = this.fb.group({
@@ -118,7 +119,7 @@ if (typeof id === 'number' && !isNaN(id)) {
 
     error: (error) => {
       console.error('Error while saving customer:', error);
-      alert('Error while saving customer');
+      // alert('Error while saving customer');
     }
   });
 }
@@ -156,53 +157,38 @@ update(){
     })
     }
 }
-
-submitStatus(id:number){
-  console.log("submit id"+id);
-    this.api.submitCustomer(id).subscribe({
-      next:res=> {
-           console.log(res);
-           Swal.fire({
+submitStatus(id: number) {
+  this.api.submitCustomer(id).subscribe({
+    next: () => {
+      Swal.fire({
         title: 'Success!',
-        text: `your form was submitted!`,
+        text: 'Your form was submitted!',
         icon: 'success',
-        confirmButtonText: 'OK',
-        customClass: {
-          popup: 'swal2-top-left', // use our custom top-left class
-        },
-        showClass: {
-          popup: 'swal2-show'
-        },
-        hideClass: {
-          popup: 'swal2-hide'
-        }
-      });
-           this.router.navigate(['/admin/customer-list'], {
-  queryParams: { tabName: 'submitted' }
-});
-
-      }
-      ,
-      error:error=> {
-           console.log("error while submitting ",error); 
-        Swal.fire({
-        title: 'Error!',
-        text: 'Please enter your name.',
-        icon: 'error',
         confirmButtonText: 'OK'
+      }).then(() => {
+        this.router.navigate(
+          ['/admin/customer-list'],
+          { queryParams: { tabName: 'submitted' } }
+        );
       });
-           
-      } 
-    })
-} 
+    },
+    error: () => {
+      Swal.fire('Error', 'Submission failed', 'error');
+    }
+  });
+}
 
 
 setApprove(id:number){
      this.api.setApprovedStatus(id).subscribe({
        next:res=> {
-           
+            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'approved' } });
+});
            console.log("status updated ",res.status);
             console.log("Approved Customers", res);  
+           
+
               Swal.fire({
         title: 'Success!',
         text: `your form was approved!`,
@@ -217,8 +203,14 @@ setApprove(id:number){
         hideClass: {
           popup: 'swal2-hide'
         }
+        
       });
-            this.router.navigate(["/admin/customer-list"],{queryParams:{tabName:"approved"}})
+    
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'approved' } });
+});
+      
+          
        }
        ,
        error:error=> {
@@ -244,8 +236,7 @@ rejected(id:number){
 }
 
 isReadOnly(): boolean {
-  // return !(this.getCustomerById?.status === "A");
-    return false;
+  return (this.getCustomerById?.status === "A");
 }
 
 // set approved 

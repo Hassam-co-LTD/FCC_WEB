@@ -105,5 +105,44 @@ getDraftList(){
   return this.http.get<any>(`${this.baseUrl}/branch/draft`);
 }
 
+// get Draft ById 
+
+getDraftById(id:Number){
+   return this.http.get<any>(`${this.baseUrl}/branch/${id}`);
+}
+
+// update the Draft 
+
+updateDraftBranch(id:number,updateBranch:any){
+   
+  return this.http.put<any>(`${this.baseUrl}/branch/update/${id}`,updateBranch);
+}
+
+// submit the form
+
+submitDraftBranch(id:number){
+   console.log("submitted id",typeof(id) , id)
+  return this.http.get<any>(`${this.baseUrl}/branch/submit/${id}`);
+}
+
+// get all the submitted
+getAllSubmitted(){
+    return   this.http.get<any>(`${this.baseUrl}/branch`) ;
+}
+
+// reject and set status to D
+rejectSubmitted(id:number){
+  return this.http.get<any>( `${this.baseUrl}/branch/reject/${id}`);
+}
+
+approved(id:number){
+  return this.http.get<any>(`${this.baseUrl}/branch/approved/${id}`);
+}
+
+// get All Approved
+
+getAllAproved(){
+  return this.http.get<any>(`${this.baseUrl}/branch/approved`);
+}
 }
  

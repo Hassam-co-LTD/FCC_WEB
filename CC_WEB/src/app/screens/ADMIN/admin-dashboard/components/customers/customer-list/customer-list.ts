@@ -2,20 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { MatTabsModule } from '@angular/material/tabs';
-import { FormsModule } from '@angular/forms';
-import { filter } from 'rxjs';
-import { Router } from '@angular/router'; 
-import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { error } from 'node:console';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
-
-
   selector: 'app-customer-status',
   standalone: true,
   templateUrl: './customer-list.html',
   styleUrls: ['./customer-list.scss'],
-  imports: [CommonModule, MatTabsModule,FormsModule,ReactiveFormsModule]
+  imports: [CommonModule, MatTabsModule, FormsModule, ReactiveFormsModule, MatIconModule]
 })
 export class CustomerList implements OnInit {
 
@@ -24,157 +20,166 @@ export class CustomerList implements OnInit {
   draftCustomers: any[] = [];
   approvedCustomers: any[] = [];
   submittedCustomers: any[] = [];
-  searchText: String = "";
-  storeFilteredDraftCustomers : any [] = [];
-  storeFilteredSubmittedCustomer: any[] = [];
-  storeFilteredApprovedCustomers: any[]= [];  
-  selectedId = null;
-  checkActionId = null;
- editingMode: number | null = null; 
-  editingCustomer = null
-  savingCustomer = null;
-  constructor(private api: ApiService,private router:Router,private route:ActivatedRoute) {}
+
+  searchText: string = '';
+
+  storeFilteredDraftCustomers: any[] = [];
+  storeFilteredApprovedCustomers: any[] = [];
+  storeFilteredSubmittedCustomers: any[] = [];
+
+  selectedId: any = null;
+  checkActionId: any = null;
+
+  editingMode: number | null = null;
+  editingCustomer: any = null;
+  savingCustomer: any = null;
+
+  constructor(
+    private api: ApiService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
-    this.loadDraftCustomers();
-    this.loadApprovedCustomers();
-    this.loadSubmittedCustomers();
+    this.route.queryParams.subscribe(params => {
+      const tab = params['tabName'];
 
-
-    
-       this.route.queryParams.subscribe(params=> {
-            const tab = params["tabName"];
-            if(tab==="submitted"){
-               this.selectedTabIndex = 2
-            }
-            else if (tab === "approved"){
-               this.selectedTabIndex = 1;
-            }
-            else {
-               this.selectedTabIndex = 0;
-            }
-    })
-  
+      if (tab === 'submitted') {
+        this.selectedTabIndex = 2;
+        this.loadSubmittedCustomers();
+      } else if (tab === 'approved') {
+        this.selectedTabIndex = 1;
+        this.loadApprovedCustomers();
+      } else {
+        this.selectedTabIndex = 0;
+        this.loadDraftCustomers();
+      }
+    });
   }
 
+  /** ================== Tab Change ================== */
   onTabChange(index: number) {
     this.selectedTabIndex = index;
 
     if (index === 0) this.loadDraftCustomers();
-    if (index === 1) this.loadApprovedCustomers();
-    if (index === 2) this.loadSubmittedCustomers();
+    else if (index === 1) this.loadApprovedCustomers();
+    else if (index === 2) this.loadSubmittedCustomers();
+
+    this.searchText = ''; // clear search on tab change
   }
 
+  /** ================== Load Customers ================== */
   loadDraftCustomers() {
-   this.api.getCustomersByStatus('D').subscribe({
-  next: res => {
-     this.draftCustomers = res
-     this.storeFilteredDraftCustomers = [...this.draftCustomers];
-  },
-
-  error: err => console.log('Error fetching draft customers', err)
-});
-
+    this.api.getCustomersByStatus('D').subscribe({
+      next: res => {
+        this.draftCustomers = res;
+        this.storeFilteredDraftCustomers = [...res];
+      },
+      error: err => console.log('Error fetching draft customers', err)
+    });
   }
 
-filterDraftCustomer(getSearchedId:String){
-       if(!getSearchedId) {
-          this.storeFilteredDraftCustomers = [...this.draftCustomers]
-          return;
-       }
+  loadApprovedCustomers() {
+    this.api.getApprovedCustomers().subscribe({
+      next: res => {
+        this.approvedCustomers = res;
+        this.storeFilteredApprovedCustomers = [...res];
+      },
+      error: err => console.log('Error fetching approved customers', err)
+    });
+  }
 
-       const value = getSearchedId.toLowerCase();
-       this.storeFilteredDraftCustomers = this.draftCustomers.filter((c:any)=> {
-            return  c.cid.toLowerCase().includes(value)
-       })
-
-}
-
-clickOnLegalId(id:any){
-  this.selectedId = id;
-  console.log(typeof this.selectedId);
-  this.checkActionId = id;
-
-}
-
-editCustomer(customer:any){
-     this.editingMode  = customer.legalId;
-     this.editingCustomer = {...customer};
-     console.log("edit customer",this.editingCustomer)
-     this.savingCustomer = customer.legalId;
-     console.log(this.savingCustomer)
-}
-
-submitCustomer(id:any){
-
-}
-onCancel(c: any) {
-  Object.assign(c, this.editingCustomer); // restore old values
-  this.selectedId = null;                // exit edit mode
-  this.savingCustomer = null;
-}
-
-
-updateRouter(customer:any){
-  this.router.navigate(["/admin/create-customer/"+customer.id])
-  
-}
-
-
-loadSubmittedCustomers(){
+  loadSubmittedCustomers() {
     this.api.getSubmittedCustomers().subscribe({
-      next:res=> {
-           this.submittedCustomers= res;
-           this.storeFilteredSubmittedCustomer = [...this.submittedCustomers];
-           console.log("All submitted customers ", res);
-      }
-      ,
-      error: error=> {
-            console.log("err while fetching submitted customers", error);
-      }
-    })
-}
+      next: res => {
+        this.submittedCustomers = res;
+        this.storeFilteredSubmittedCustomers = [...res];
+      },
+      error: err => console.log('Error fetching submitted customers', err)
+    });
+  }
 
-filterSubmittedCustomers(cid:String){
-     if(!cid){
-        this.storeFilteredSubmittedCustomer = [...this.submittedCustomers];
-        return;
-     }      
-
-   const  value= cid.toLowerCase();
-   this.storeFilteredSubmittedCustomer = this.submittedCustomers.filter((obj:any)=> {
-              return obj.cid.toLowerCase().includes(value);
-   })
-
-}
-
-loadApprovedCustomers(){
-     this.api.getApprovedCustomers().subscribe({
-      next:res=> {
-          this.approvedCustomers = res;
-          this.storeFilteredApprovedCustomers = [...this.approvedCustomers]
-          console.log("got approved customers", this.approvedCustomers);
-      }
-      ,
-      error:error=> {
-          console.log("error while fetching all the customers",error);
-      }
-
-     })
-}
- 
-filterApprovedCustomers(cid:String){
-    if(!cid){
-       this.storeFilteredApprovedCustomers  = [...this.approvedCustomers];
-       return;
+  /** ================== Filter Customers ================== */
+  filterDraftCustomers(search: string) {
+    if (!search) {
+      this.storeFilteredDraftCustomers = [...this.draftCustomers];
+      return;
     }
-    const value = cid.toLowerCase();
-    this.storeFilteredApprovedCustomers = this.approvedCustomers.filter((obj)=> {
-        return obj.cid.toLowerCase().includes(value);
-    })
-}
-  trackById(index: number, item: any) {
-  return item.id;
-}
+    const value = search.toLowerCase();
+    this.storeFilteredDraftCustomers = this.draftCustomers.filter(c => c.cId.toLowerCase().includes(value));
+  }
 
+  filterApprovedCustomers(search: string) {
+    if (!search) {
+      this.storeFilteredApprovedCustomers = [...this.approvedCustomers];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredApprovedCustomers = this.approvedCustomers.filter(c => c.cId.toLowerCase().includes(value));
+  }
+
+  filterSubmittedCustomers(search: string) {
+    if (!search) {
+      this.storeFilteredSubmittedCustomers = [...this.submittedCustomers];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredSubmittedCustomers = this.submittedCustomers.filter(c => c.cId.toLowerCase().includes(value));
+  }
+
+  /** ================== Actions ================== */
+  clickOnLegalId(id: any) {
+    this.selectedId = id;
+    this.checkActionId = id;
+  }
+
+  editCustomer(customer: any) {
+    this.editingMode = customer.legalId;
+    this.editingCustomer = { ...customer };
+    this.savingCustomer = customer.legalId;
+  }
+
+  submitCustomer(id: any) {
+    // implement submit logic
+  }
+
+  onCancel(customer: any) {
+    Object.assign(customer, this.editingCustomer); // restore old values
+    this.selectedId = null;                          // exit edit mode
+    this.savingCustomer = null;
+  }
+
+  updateRouter(customer: any) {
+    this.router.navigate(['/admin/create-customer/' + customer.id]);
+  }
+
+  /** ================== Track By ================== */
+  trackById(index: number, item: any) {
+    return item.id;
+  }
+
+  /** ================== Counts ================== */
+  get draftCount(): number {
+    return this.draftCustomers.length;
+  }
+
+  get approvedCount(): number {
+    return this.approvedCustomers.length;
+  }
+
+  get submittedCount(): number {
+    return this.submittedCustomers.length;
+  }
+
+  get filteredDraftCount(): number {
+    return this.storeFilteredDraftCustomers.length;
+  }
+
+  get filteredApprovedCount(): number {
+    return this.storeFilteredApprovedCustomers.length;
+  }
+
+  get filteredSubmittedCount(): number {
+    return this.storeFilteredSubmittedCustomers.length;
+  }
 }

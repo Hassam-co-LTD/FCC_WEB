@@ -1,22 +1,39 @@
 <div class="branch-status-container">
   <h2 class="page-title">Branch Records</h2>
 
-  <mat-tab-group>
-
-    <!-- Draft Tab -->
-    <mat-tab label="Draft">
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
-        <input type="text" placeholder="Search Branch By Branch Id" />
+        <input
+          type="text"
+          placeholder="Search Branch By Branch Id"
+          [(ngModel)]="searchText"
+          (input)="filterDraftBranches(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftBranches('')">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
 
       <div class="tab-content">
-        <div class="table-wrapper">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredDraftBranches && storeFilteredDraftBranches.length > 0; else noDrafts">
           <table class="branch-table">
             <thead>
               <tr>
                 <th>BranchId</th>
                 <th>Branch Name</th>
                 <th>Branch Address</th>
+                <th>Swift Address</th>
+                <th>Email Address</th>
+                <th>Local Currency</th>
                 <th>City</th>
                 <th>Contact Person</th>
                 <th>Contact No</th>
@@ -24,39 +41,57 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of getDraftList; let i = index">
-  <td>{{ item.branchId }}</td>
-  <td>{{ item.branchname }}</td>
-  <td>{{ item.branchaddress }}</td>
-  <td>{{ item.citymaster?.cityName }}</td>
-  <td>{{ item.contactperson }}</td>
-  <td>{{ item.contactno }}</td>
-  <td>{{ item.recordstatus }}</td>
-</tr>
-
-              <!-- More rows can be added dynamically later -->
+              <tr *ngFor="let b of storeFilteredDraftBranches; trackBy: trackById">
+                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchId }}</td>
+                <td>{{ b.branchname }}</td>
+                <td>{{ b.branchaddress }}</td>
+                <td>{{ b.swiftaddress }}</td>
+                <td>{{ b.emailaddress }}</td>
+                <td>{{ b.localcurrency }}</td>
+                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.contactperson }}</td>
+                <td>{{ b.contactno }}</td>
+                <td>{{ b.recordstatus }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
 
-        <p class="no-records">No draft records found.</p>
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
       </div>
     </mat-tab>
 
-    <!-- Approved Tab -->
-    <mat-tab label="Approved">
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
       <div class="search-bar">
-        <input type="text" placeholder="Search Branch By Branch Id" />
+        <input
+          type="text"
+          placeholder="Search Branch By Branch Id"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedBranches(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedBranches('')">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
 
       <div class="tab-content">
-        <div class="table-wrapper">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedBranches && storeFilteredApprovedBranches.length > 0; else noApproved">
           <table class="branch-table">
             <thead>
               <tr>
                 <th>BranchId</th>
                 <th>Branch Name</th>
                 <th>Branch Address</th>
+                <th>Swift Address</th>
+                <th>Email Address</th>
+                <th>Local Currency</th>
                 <th>City</th>
                 <th>Contact Person</th>
                 <th>Contact No</th>
@@ -64,37 +99,57 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>BR002</td>
-                <td>City Branch</td>
-                <td>456 City Rd</td>
-                <td>Lahore</td>
-                <td>Sara Ali</td>
-                <td>03101234567</td>
-                <td>A</td>
+              <tr *ngFor="let b of storeFilteredApprovedBranches; trackBy: trackById">
+                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchId }}</td>
+                <td>{{ b.branchname }}</td>
+                <td>{{ b.branchaddress }}</td>
+                <td>{{ b.swiftaddress }}</td>
+                <td>{{ b.emailaddress }}</td>
+                <td>{{ b.localcurrency }}</td>
+                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.contactperson }}</td>
+                <td>{{ b.contactno }}</td>
+                <td>{{ b.recordstatus }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p class="no-records">No approved records found.</p>
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
       </div>
     </mat-tab>
 
-    <!-- Submitted Tab -->
-    <mat-tab label="Submitted">
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
       <div class="search-bar">
-        <input type="text" placeholder="Search Branch By Branch Id" />
+        <input
+          type="text"
+          placeholder="Search Branch By Branch Id"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedBranches(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedBranches('')">
+          <mat-icon>clear</mat-icon>
+        </button>
       </div>
 
       <div class="tab-content">
-        <div class="table-wrapper">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedBranches && storeFilteredSubmittedBranches.length > 0; else noSubmitted">
           <table class="branch-table">
             <thead>
               <tr>
                 <th>BranchId</th>
                 <th>Branch Name</th>
                 <th>Branch Address</th>
+                <th>Swift Address</th>
+                <th>Email Address</th>
+                <th>Local Currency</th>
                 <th>City</th>
                 <th>Contact Person</th>
                 <th>Contact No</th>
@@ -102,22 +157,26 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>BR003</td>
-                <td>Suburb Branch</td>
-                <td>789 Suburb Ln</td>
-                <td>Islamabad</td>
-                <td>Ahmed Raza</td>
-                <td>03201234567</td>
-                <td>P</td>
+              <tr *ngFor="let b of storeFilteredSubmittedBranches; trackBy: trackById">
+                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchId }}</td>
+                <td>{{ b.branchname }}</td>
+                <td>{{ b.branchaddress }}</td>
+                <td>{{ b.swiftaddress }}</td>
+                <td>{{ b.emailaddress }}</td>
+                <td>{{ b.localcurrency }}</td>
+                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.contactperson }}</td>
+                <td>{{ b.contactno }}</td>
+                <td>{{ b.recordstatus }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p class="no-records">No submitted records found.</p>
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
       </div>
     </mat-tab>
-
   </mat-tab-group>
 </div>
