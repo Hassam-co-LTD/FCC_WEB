@@ -9,13 +9,15 @@
             <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
             <hr class="section-divider" />
 
-            <section id="section-1"><app-applicant-beneficiary [form]="applicantForm"></app-applicant-beneficiary></section>
+            <section id="section-1"><app-applicant-beneficiary [form]="applicantForm"></app-applicant-beneficiary>
+            </section>
             <hr class="section-divider" />
 
             <section id="section-2"><app-bank-details [form]="bankForm"></app-bank-details></section>
             <hr class="section-divider" />
 
-            <section id="section-3"><app-amount-charge-details [form]="amountChargeForm"></app-amount-charge-details></section>
+            <section id="section-3"><app-amount-charge-details [form]="amountChargeForm"></app-amount-charge-details>
+            </section>
             <hr class="section-divider" />
 
             <section id="section-4"><app-payment-details [form]="paymentDetailsForm"></app-payment-details></section>
@@ -30,10 +32,12 @@
             <section id="section-7"><app-licenses></app-licenses></section>
             <hr class="section-divider" />
 
-            <section id="section-8"><app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank></section>
+            <section id="section-8"><app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank>
+            </section>
             <hr class="section-divider" />
 
-            <section id="section-9"><app-attachments (filesChange)="updateAttachments($event)"></app-attachments></section>
+            <section id="section-9"><app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
+            </section>
             <hr class="section-divider" />
 
             <section id="section-10">
@@ -41,13 +45,22 @@
                 <!-- Footer Buttons -->
                 <!-- <app-preview [form]="importForm"></app-preview> -->
             </section>
-            
+
             <!-- Footer Buttons -->
-                <div class="actions">
+            <div class="actions">
+                <!-- Back & Save: only for CREATE/new form -->
+                <ng-container *ngIf="!showUpdateSubmit">
                     <button mat-stroked-button (click)="back()">Back</button>
                     <button mat-flat-button color="primary" (click)="saveForm()">Save</button>
-                    <!-- <button mat-flat-button color="primary" (click)="submitForm()">Preview</button> -->
-                </div>
+                </ng-container>
+
+                <!-- Update & Submit: only for UPDATE/edit form -->
+                <ng-container *ngIf="showUpdateSubmit">
+                    <button mat-stroked-button color="primary" (click)="update()">Update</button>
+                    <button mat-flat-button color="accent" (click)="submitLc()">Submit</button>
+                </ng-container>
+            </div>
+
         </div>
     </div>
 </div>

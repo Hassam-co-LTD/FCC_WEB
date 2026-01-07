@@ -3,14 +3,17 @@
   <div class="success-icon">✔</div>
 
   <h1>Success</h1>
-  <p>Your transaction is successfully released to the bank.</p>
+  <p *ngIf="transaction">
+    Your transaction is successfully released to the bank.
+    {{ transaction.tnxId }}
+  </p>
+
 
   <!-- 🔒 Read-only Preview -->
-  <app-preview
+  <!-- <app-preview
     [transaction]="transaction"
-    [readonly]="true"
-    [hideActions]="true">
-  </app-preview>
+    [readonly]="true">
+  </app-preview> -->
 
   <div class="actions">
     <button mat-flat-button color="primary" (click)="goToListing()">

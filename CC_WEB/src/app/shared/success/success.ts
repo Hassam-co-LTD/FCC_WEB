@@ -3,16 +3,17 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { ImportlcFormTransactionService, ImportLcTransaction } from
+import { ImportlcFormTransactionService } from
   '../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { Preview } from "../../screens/USER/import-screen/components/preview/preview";
+// import { Preview } from "../../screens/USER/import-screen/components/preview/preview";
+import { ImportLcTransaction } from "../../core/models/import-lc";
 
 @Component({
   selector: 'app-success',
   templateUrl: './success.html',
   styleUrls: ['./success.scss'],
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, Preview],
+  imports: [CommonModule, MatTableModule, MatButtonModule],
 })
 export class Success implements OnInit {
 
@@ -39,11 +40,11 @@ export class Success implements OnInit {
     /** 2️⃣ Fallback (refresh / deep link) */
     const lastSubmitted = this.transactionService
       .getAllTransactions()
-      .filter(tx => tx.status === 'submitted')
+      .filter(tx => tx.status === 'S')
       .pop();
 
     if (!lastSubmitted) {
-      this.router.navigate(['/import-screen']);
+      this.router.navigate(['/import-screen/success']);
       return;
     }
 
@@ -51,10 +52,10 @@ export class Success implements OnInit {
   }
 
   goToListing(): void {
-    this.router.navigate(['/import-screen/listing']);
+    this.router.navigate(['/import-screen/enquiries']);
   }
 
   createNew(): void {
-    this.router.navigate(['/import-screen/new']);
+    this.router.navigate(['/import-screen']);
   }
 }
