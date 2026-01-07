@@ -118,12 +118,13 @@
         }
     }
 }
+
 /* ==============================
    Filter Row
 ================================*/
 .filter-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: right;
     align-items: center;
     margin-bottom: 12px;
 
@@ -205,6 +206,19 @@ tbody {
         font-size: 0.8rem;
         color: theme.$text-medium;
         white-space: nowrap;
+        text-align: center; 
+        vertical-align: middle;
+    }
+}
+
+.tnx-link {
+    color: #0b4eb3;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+
+    &:hover {
+        text-decoration: none;
     }
 }
 
@@ -217,7 +231,7 @@ tbody {
 //     font-size: 0.7rem;
 //     font-weight: 500;
 //     display: inline-block;
-    
+
 
 //     &.status-draft {
 //         background: theme.$hover-bg;
@@ -241,6 +255,7 @@ tbody {
     background: #fef3c7;
     color: #92400e;
 }
+
 /* ==============================
    Amount
 ================================*/

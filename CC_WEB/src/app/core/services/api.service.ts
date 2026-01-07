@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { ImportLcTransaction } from '../models/import-lc';
 
 @Injectable({
   providedIn: 'root',
@@ -15,49 +16,65 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  // =================================================================
-  // GENERIC METHODS (GET, POST, PUT, DELETE)
-  // =================================================================
 
-  get<T>(endpoint: string, params?: any): Observable<T> {
-    const options = {
-      headers: this.getHeaders(),
-      params: this.createHttpParams(params)
-    };
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, options).pipe(
-      catchError(this.handleError)
+  /**
+   * Save draft (pending record) - status "I"
+   */
+  savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
+    console.log('Saving draft:', data);
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  
+  //  Get Status wise recordss
+  getTransactionsByStatus(status: string) {
+    return this.http.get<ImportLcTransaction[]>(
+      `${this.baseUrl}importlc/status/${status}`
     );
   }
 
-  post<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { 
-      headers: this.getHeaders() 
-    }).pipe(
-      catchError(this.handleError)
+
+  //  Get draft (pending record) 
+
+  getPendingTransactions() {
+    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/pending`);
+  }
+
+  //  Get draft (pending record) by TNX ID
+
+  getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
+    return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`);
+  }
+
+  //  Update draft (pending record) by Tnx ID
+
+  updatePendingByTnxId(payload: ImportLcTransaction) {
+    console.log('Payload before update:', payload);
+    return this.http.put<ImportLcTransaction>(
+      `${this.baseUrl}importlc/${payload.tnxId}`,
+      payload
     );
   }
 
-  put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, { 
-      headers: this.getHeaders() 
-    }).pipe(
-      catchError(this.handleError)
-    );
+  /**
+   * Submit transaction (status "S") with full data
+   */
+  submitTransaction(tnxId: string, data: ImportLcTransaction) {
+    console.log('Submitting transaction:', tnxId, data);
+    return this.http.post<ImportLcTransaction>(
+      `${this.baseUrl}importlc/submit/${tnxId}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
-  delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, { 
-      headers: this.getHeaders() 
-    }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  // =================================================================
-  // PREVIEW SPECIFIC
-  // =================================================================
-  submitPreview(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/preview`, data, {
+  /**
+   * Approve transaction by TNX ID (status "A")
+   */
+  approveTransaction(tnxId: string): Observable<ImportLcTransaction> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/approve/${tnxId}`, {}, {
       headers: { 'Content-Type': 'application/json' }
     });
   }
