@@ -327,13 +327,13 @@ export const routes: Routes = [
                     ).then((m) => m.PendingRecordsComponent),
             },
             // Submitted-Records Route
-            {
-                path: 'undertaking-issuance/submitted-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/undertaking-issuance/sub-menus/events/submitted-records/submitted-records'
-                    ).then((m) => m.SubmittedRecordsComponent),
-            },
+            // {
+            //     path: 'undertaking-issuance/submitted-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/undertaking-issuance/sub-menus/events/submitted-records/submitted-records'
+            //         ).then((m) => m.SubmittedRecordsComponent),
+            // },
             // Approved-Records Route
             //             {
             //     path: 'undertaking-issuance/approved-records',

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router'; // Import Router
 import { MatIconModule } from '@angular/material/icon';
 import { SharedService, TransactionBase } from '../../../core/services/user-service/shared-form-service/shared-service';
 
@@ -49,8 +50,8 @@ export class SearchTransactionID implements OnInit {
   ];
 
   // Sort
-  sortColumn: keyof TransactionBase | '' = '';
-  sortDirection: 'asc' | 'desc' = 'asc';
+  sortColumn: keyof TransactionBase | '' = 'issueDate'; // Default sort
+  sortDirection: 'asc' | 'desc' = 'desc'; // Default desc
 
   // Pagination
   itemsPerPage = 10;
@@ -68,23 +69,22 @@ export class SearchTransactionID implements OnInit {
     'Submitted': 'info'
   };
 
-  constructor(private sharedService: SharedService) {}
+  constructor(
+    private sharedService: SharedService,
+    private router: Router // Injected Router
+  ) {}
 
   ngOnInit(): void {
-    this.loadTransactions();
+    // Subscribe to changes so the table updates automatically after Edit/Delete
     this.sharedService.transactions$.subscribe(transactions => {
       this.allTransactions = transactions;
       this.applyAll();
     });
   }
 
-  loadTransactions(): void {
-    this.allTransactions = this.sharedService.getAllTransactions();
-    this.applyAll();
-  }
-
   // Search and Filter Methods
   onSearch(): void {
+    this.currentPage = 1; // Reset to page 1 on search
     this.applyAll();
   }
 
@@ -100,6 +100,7 @@ export class SearchTransactionID implements OnInit {
 
   applyAdvancedFilters(): void {
     this.hasActiveFilters = true;
+    this.currentPage = 1;
     this.applyAll();
   }
 
@@ -119,32 +120,34 @@ export class SearchTransactionID implements OnInit {
     this.hasActiveFilters = false;
   }
 
+  // 
+
   // Main filtering pipeline
   applyAll(): void {
     let data = [...this.allTransactions];
 
-    // Tab filtering
+    // 1. Tab filtering
     if (this.activeTab !== 'all') {
       data = data.filter(t => this.matchTab(t, this.activeTab));
     }
 
-    // Text search
+    // 2. Text search
     if (this.searchQuery.trim()) {
       const term = this.searchQuery.toLowerCase();
       data = data.filter(t =>
-        t.channelReference?.toLowerCase().includes(term) ||
-        t.customerReference?.toLowerCase().includes(term) ||
-        t.bankReference?.toLowerCase().includes(term) ||
-        t.beneficiary?.toLowerCase().includes(term) ||
-        t.id?.toLowerCase().includes(term)
+        (t.channelReference?.toLowerCase().includes(term) || false) ||
+        (t.customerReference?.toLowerCase().includes(term) || false) ||
+        (t.bankReference?.toLowerCase().includes(term) || false) ||
+        (t.beneficiary?.toLowerCase().includes(term) || false) ||
+        (t.id?.toLowerCase().includes(term) || false)
       );
     }
 
-    // Advanced filters
+    // 3. Advanced filters
     data = data.filter(t => {
-      if (this.filters.channelReference && !t.channelReference?.includes(this.filters.channelReference)) return false;
-      if (this.filters.customerReference && !t.customerReference?.includes(this.filters.customerReference)) return false;
-      if (this.filters.bankReference && !t.bankReference?.includes(this.filters.bankReference)) return false;
+      if (this.filters.channelReference && !t.channelReference?.toLowerCase().includes(this.filters.channelReference.toLowerCase())) return false;
+      if (this.filters.customerReference && !t.customerReference?.toLowerCase().includes(this.filters.customerReference.toLowerCase())) return false;
+      if (this.filters.bankReference && !t.bankReference?.toLowerCase().includes(this.filters.bankReference.toLowerCase())) return false;
       if (this.filters.status && t.status !== this.filters.status) return false;
       if (this.filters.type && t.type !== this.filters.type) return false;
       if (this.filters.currency && t.currency !== this.filters.currency) return false;
@@ -161,18 +164,26 @@ export class SearchTransactionID implements OnInit {
         if (issueDate > toDate) return false;
       }
 
-      if (this.filters.minAmount !== null && t.amount < this.filters.minAmount) return false;
-      if (this.filters.maxAmount !== null && t.amount > this.filters.maxAmount) return false;
+      if (this.filters.minAmount !== null && (t.amount || 0) < this.filters.minAmount) return false;
+      if (this.filters.maxAmount !== null && (t.amount || 0) > this.filters.maxAmount) return false;
 
       return true;
     });
 
-    // Sorting
+    // 4. Sorting
     if (this.sortColumn) {
       data.sort((a, b) => {
         const aVal = a[this.sortColumn as keyof TransactionBase];
         const bVal = b[this.sortColumn as keyof TransactionBase];
         
+        // Handle dates specifically
+        if (this.sortColumn === 'issueDate' || this.sortColumn === 'expiryDate') {
+           const dateA = new Date(aVal as any).getTime();
+           const dateB = new Date(bVal as any).getTime();
+           return this.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        }
+
+        // Handle generic strings/numbers
         if (aVal == null && bVal == null) return 0;
         if (aVal == null) return this.sortDirection === 'asc' ? -1 : 1;
         if (bVal == null) return this.sortDirection === 'asc' ? 1 : -1;
@@ -187,7 +198,6 @@ export class SearchTransactionID implements OnInit {
     this.applyPagination();
   }
 
-  // Tab matching logic
   matchTab(transaction: TransactionBase, tab: string): boolean {
     switch (tab) {
       case 'undertaking':
@@ -209,13 +219,11 @@ export class SearchTransactionID implements OnInit {
     }
   }
 
-  // Tab count
   getTabCount(tabId: string): number {
     if (tabId === 'all') return this.allTransactions.length;
     return this.allTransactions.filter(t => this.matchTab(t, tabId)).length;
   }
 
-  // Sorting
   sortBy(column: keyof TransactionBase): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -251,7 +259,7 @@ export class SearchTransactionID implements OnInit {
     }
   }
 
-  // Status helpers
+  // UI Helpers
   getStatusClass(status: string): string {
     return this.statusColors[status] || 'default';
   }
@@ -265,13 +273,13 @@ export class SearchTransactionID implements OnInit {
     return icons[type] || 'receipt';
   }
 
-  // Action methods
+  // Actions
   canOpenTransaction(t: TransactionBase): boolean {
     return !!(t.canEdit || t.canView);
   }
 
   getTransactionButtonText(t: TransactionBase): string {
-    return t.canEdit ? 'Edit' : 'View';
+    return t.canEdit ? 'Edit Transaction' : 'View Details';
   }
 
   canAcceptTransaction(t: TransactionBase): boolean {
@@ -282,10 +290,36 @@ export class SearchTransactionID implements OnInit {
     return this.canAcceptTransaction(t);
   }
 
+  // === NAVIGATION LOGIC ===
   viewTransaction(t: TransactionBase): void {
-    console.log('Opening transaction:', t);
-    // Navigate to appropriate view/edit page based on type
-    // Example: this.router.navigate([`/${t.type}`, t.id]);
+    // 1. Prepare data in SharedService for the target component
+    this.sharedService.setFormData({
+      transaction: t,
+      mode: t.canEdit ? 'edit' : 'view',
+      transactionId: t.id
+    });
+
+    // 2. Define Route Paths
+    const routes: { [key: string]: string } = {
+      'undertaking': '/undertaking-issuance', 
+      'export-collection': '/export-collection',
+      'shipping-guarantee': '/shipping-guarantee'
+    };
+
+    const basePath = routes[t.type];
+
+    if (!basePath) {
+      console.error('Unknown transaction type:', t.type);
+      return;
+    }
+
+    // 3. Determine sub-path (Request for edits/drafts, Preview for views)
+    // Note: Adjust these sub-paths based on your actual router config
+    if (t.status === 'Draft' || t.canEdit) {
+      this.router.navigate([`${basePath}/request`, t.id]); 
+    } else {
+      this.router.navigate([`${basePath}/preview`, t.id]);
+    }
   }
 
   acceptTransaction(t: TransactionBase): void {
@@ -295,6 +329,7 @@ export class SearchTransactionID implements OnInit {
         canEdit: false,
         canView: true 
       });
+      // No need to call applyAll() manually if subscribed to observable
     }
   }
 
@@ -314,17 +349,17 @@ export class SearchTransactionID implements OnInit {
     }
   }
 
-  // Utility methods
   formatDate(date: Date): string {
-    return date ? new Date(date).toLocaleDateString('en-GB') : 'N/A';
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-GB');
   }
 
   formatCurrency(amount: number, currency: string): string {
+    if (amount === undefined || amount === null) return 'N/A';
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency || 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount || 0);
+      minimumFractionDigits: 2
+    }).format(amount);
   }
 }

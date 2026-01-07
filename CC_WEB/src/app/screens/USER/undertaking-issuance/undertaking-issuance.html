@@ -1,5 +1,4 @@
 <div class="ui-container">
-  <!-- HEADER + ACTION BUTTONS -->
   <div class="ui-header">
     <div class="header-content">
       <h1>Undertaking Issued</h1>
@@ -18,16 +17,14 @@
     </div>
   </div>
 
-  <!-- SEARCH SYSTEM -->
-  <div class="search-system">
+  <!-- <div class="search-system">
     <div class="search-container">
       <div class="search-input-group">
         <mat-icon class="search-icon">search</mat-icon>
         <input 
           type="text" 
           class="search-input" 
-          id="searchInput"
-          placeholder="Search by Channel Reference, Customer Reference, Bank Reference, Beneficiary..."
+          placeholder="Search by Reference, Beneficiary, or Product..."
           [(ngModel)]="searchQuery"
           (input)="onSearch()"
         >
@@ -46,20 +43,11 @@
       </div>
     </div>
 
-    <!-- ADVANCED SEARCH PANEL -->
     <div class="advanced-search-panel" *ngIf="showAdvancedSearch">
       <div class="advanced-search-grid">
         <div class="form-group">
           <label>Channel Reference</label>
-          <input type="text" [(ngModel)]="filters.channelReference" placeholder="e.g., UND-123">
-        </div>
-        <div class="form-group">
-          <label>Customer Reference</label>
-          <input type="text" [(ngModel)]="filters.customerReference" placeholder="e.g., CUST-001">
-        </div>
-        <div class="form-group">
-          <label>Bank Reference</label>
-          <input type="text" [(ngModel)]="filters.bankReference" placeholder="e.g., BNK-123">
+          <input type="text" [(ngModel)]="filters.channelReference" placeholder="e.g., REF-2023">
         </div>
         <div class="form-group">
           <label>Status</label>
@@ -67,11 +55,8 @@
             <option value="">All Status</option>
             <option value="Draft">Draft</option>
             <option value="Pending Approval">Pending Approval</option>
-            <option value="Pending at Bank">Pending at Bank</option>
             <option value="Submitted">Submitted</option>
-            <option value="Live">Live</option>
             <option value="Rejected">Rejected</option>
-            <option value="Closed">Closed</option>
           </select>
         </div>
         <div class="form-group">
@@ -82,45 +67,28 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Applicant Name</label>
-          <input type="text" [(ngModel)]="filters.applicantName" placeholder="Search applicant...">
-        </div>
-        <div class="form-group">
-          <label>Beneficiary</label>
-          <input type="text" [(ngModel)]="filters.beneficiary" placeholder="Search beneficiary...">
-        </div>
-        <div class="form-group">
           <label>Currency</label>
           <select [(ngModel)]="filters.currency">
-            <option value="">All Currencies</option>
-            <option *ngFor="let currency of getUniqueCurrencies()" [value]="currency">{{ currency }}</option>
+            <option value="">All</option>
+            <option *ngFor="let cur of getUniqueCurrencies()" [value]="cur">{{ cur }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label>From Date</label>
-          <input type="date" [(ngModel)]="filters.fromDate">
-        </div>
-        <div class="form-group">
-          <label>To Date</label>
-          <input type="date" [(ngModel)]="filters.toDate">
-        </div>
-        <div class="form-group">
           <label>Min Amount</label>
-          <input type="number" [(ngModel)]="filters.minAmount" placeholder="0.00" step="0.01" min="0">
+          <input type="number" [(ngModel)]="filters.minAmount">
         </div>
         <div class="form-group">
           <label>Max Amount</label>
-          <input type="number" [(ngModel)]="filters.maxAmount" placeholder="0.00" step="0.01" min="0">
+          <input type="number" [(ngModel)]="filters.maxAmount">
         </div>
       </div>
       <div class="advanced-search-actions">
-        <button class="btn-outline" (click)="resetFilters()">Reset Filters</button>
-        <button class="btn-primary" (click)="applyAdvancedFilters()">Apply Filters</button>
+        <button class="btn-outline" (click)="resetFilters()">Reset</button>
+        <button class="btn-primary" (click)="applyAdvancedFilters()">Apply</button>
       </div>
     </div>
   </div>
 
-  <!-- TAB SECTION -->
   <div class="ui-tabs">
     <div *ngFor="let tab of tabs" 
          class="tab" 
@@ -130,233 +98,79 @@
     </div>
   </div>
 
-  <!-- FILTER ROW -->
   <div class="filter-row">
-    <div class="form-group">
-      <label>Select Preference</label>
-      <select>
-        <option>Standard</option>
-        <option>Express</option>
-        <option>Priority</option>
-      </select>
-    </div>
-    
-    <!-- RESULTS SUMMARY -->
-    <div class="results-summary" *ngIf="pagedUndertakings.length > 0">
-      Showing {{ pagedUndertakings.length }} of {{ filteredUndertakings.length }} undertakings 
+    <div class="results-summary">
+      Showing {{ pagedUndertakings.length }} of {{ filteredUndertakings.length }} records 
       (Page {{ currentPage }} of {{ totalPages }})
     </div>
   </div>
 
-  <!-- TABLE SECTION -->
   <div class="table-wrapper">
     <table>
       <thead>
         <tr>
-          <th (click)="sortBy('channelReference')">
-            Channel Reference
-            <mat-icon *ngIf="sortColumn === 'channelReference'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('customerReference')">
-            Customer Reference
-            <mat-icon *ngIf="sortColumn === 'customerReference'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('bankReference')">
-            Bank Reference
-            <mat-icon *ngIf="sortColumn === 'bankReference'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('issueDate')">
-            Issue Date
-            <mat-icon *ngIf="sortColumn === 'issueDate'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('status')">
-            Status
-            <mat-icon *ngIf="sortColumn === 'status'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('beneficiary')">
-            Beneficiary
-            <mat-icon *ngIf="sortColumn === 'beneficiary'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('currency')">
-            Currency
-            <mat-icon *ngIf="sortColumn === 'currency'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th (click)="sortBy('amount')">
-            Amount
-            <mat-icon *ngIf="sortColumn === 'amount'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
-          <th>Outstanding Amount</th>
-          <th (click)="sortBy('expiryDate')">
-            Expiry Date
-            <mat-icon *ngIf="sortColumn === 'expiryDate'">
-              {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
-            </mat-icon>
-          </th>
+          <th (click)="sortBy('channelReference')">Reference <mat-icon>{{ getSortIcon('channelReference') }}</mat-icon></th>
+          <th (click)="sortBy('lastUpdated')">Date <mat-icon>{{ getSortIcon('lastUpdated') }}</mat-icon></th>
+          <th (click)="sortBy('status')">Status <mat-icon>{{ getSortIcon('status') }}</mat-icon></th>
+          <th>Product</th>
+          <th>Beneficiary</th>
+          <th>Amount</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let undertaking of pagedUndertakings">
-          <td class="highlight">{{ undertaking.channelReference }}</td>
-          <td>{{ undertaking.customerReference }}</td>
-          <td>{{ undertaking.bankReference || 'N/A' }}</td>
-          <td>{{ formatDate(undertaking.issueDate) }}</td>
+        <tr *ngFor="let t of pagedUndertakings">
+          <td class="highlight">{{ t.channelReference }}</td>
+          <td>{{ t.lastUpdated | date:'dd MMM yyyy' }}</td>
           <td>
-            <span class="status-badge" [class]="'status-' + getStatusClass(undertaking.status)">
-              {{ undertaking.status }}
+            <span class="status-badge" [ngClass]="getStatusClass(t.status)">
+              {{ t.status }}
             </span>
           </td>
-          <td>{{ undertaking.beneficiary || 'N/A' }}</td>
-          <td>{{ undertaking.currency }}</td>
-          <td class="amount">{{ formatCurrency(undertaking.amount, undertaking.currency) }}</td>
-          <td class="amount">{{ formatCurrency(undertaking.outstandingAmount || undertaking.amount, undertaking.currency) }}</td>
-          <td>{{ formatDate(undertaking.expiryDate) }}</td>
+          <td>{{ t.formData?.generalDetails?.productType || '-' }}</td>
+          <td>{{ t.formData?.applicantBeneficiary?.beneficiaryName || '-' }}</td>
+          <td class="amount">
+            {{ t.formData?.undertakingDetails?.currency }} 
+            {{ t.formData?.undertakingDetails?.undertakingAmount | number:'1.2-2' }}
+          </td>
           <td class="action-buttons">
-            <!-- Single View Button for all transactions -->
-            <button 
-              class="btn-view" 
-              (click)="viewTransaction(undertaking)"
-              [title]="'View ' + undertaking.channelReference">
-              <mat-icon>visibility</mat-icon>
-              View
+            
+            <button class="btn-view" (click)="viewTransaction(t)" [title]="t.status === 'Draft' ? 'Edit' : 'View'">
+              <mat-icon>{{ t.status === 'Draft' ? 'edit' : 'visibility' }}</mat-icon>
+              {{ t.status === 'Draft' ? 'Edit' : 'View' }}
             </button>
             
-            <!-- Accept Button (for Pending Approval and Pending at Bank) -->
-            <button 
-              *ngIf="canAcceptTransaction(undertaking)"
-              class="btn-accept" 
-              (click)="acceptTransaction(undertaking)">
-              <mat-icon>check_circle</mat-icon>
-              {{ undertaking.status === 'Pending at Bank' ? 'Approve Bank' : 'Approve' }}
+            <button *ngIf="t.status === 'Pending Approval'" class="btn-accept" (click)="approveTransaction(t)">
+              <mat-icon>check_circle</mat-icon> Approve
             </button>
             
-            <!-- Reject Button (for Pending Approval and Pending at Bank) -->
-            <button 
-              *ngIf="canRejectTransaction(undertaking)"
-              class="btn-reject" 
-              (click)="rejectTransaction(undertaking)">
-              <mat-icon>cancel</mat-icon>
-              Reject
-            </button>
-            
-            <!-- Delete Button (for Drafts) -->
-            <button 
-              *ngIf="undertaking.status === 'Draft'"
-              class="btn-delete" 
-              (click)="deleteTransaction(undertaking)">
+            <button *ngIf="t.status === 'Draft'" class="btn-delete" (click)="deleteTransaction(t)">
               <mat-icon>delete</mat-icon>
-              Delete
             </button>
+
           </td>
         </tr>
         
         <tr *ngIf="pagedUndertakings.length === 0">
-          <td colspan="11" class="no-records">
+          <td colspan="7" class="no-records">
             <div class="empty-state">
               <mat-icon>search_off</mat-icon>
-              <p>No undertaking records found</p>
-              
-              <div *ngIf="searchQuery || hasActiveFilters" class="empty-actions">
-                <button class="btn-outline" (click)="clearSearch()">
-                  Clear filters to show all undertakings
-                </button>
-              </div>
-              
-              <div *ngIf="allUndertakings.length === 0" class="get-started">
-                <p class="hint">No undertakings in the system yet.</p>
-                <button class="btn-primary" [routerLink]="['/undertaking-issuance/request-undertaking/general-details']">
-                  <mat-icon>add_circle</mat-icon>
-                  Create Your First Undertaking
-                </button>
-              </div>
+              <p>No records found.</p>
+              <button *ngIf="searchQuery || hasActiveFilters" class="btn-outline" (click)="clearSearch()">Clear Filters</button>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
     
-    <!-- PAGINATION -->
     <div class="pagination" *ngIf="filteredUndertakings.length > itemsPerPage">
-      <button 
-        class="btn-pagination" 
-        [disabled]="currentPage === 1" 
-        (click)="previousPage()"
-        title="Previous page">
+      <button class="btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
         <mat-icon>chevron_left</mat-icon>
       </button>
-      
-      <div class="page-info">
-        Page {{ currentPage }} of {{ totalPages }}
-      </div>
-      
-      <button 
-        class="btn-pagination" 
-        [disabled]="currentPage === totalPages" 
-        (click)="nextPage()"
-        title="Next page">
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
         <mat-icon>chevron_right</mat-icon>
       </button>
-      
-      <div class="items-per-page">
-        <label>Show:</label>
-        <select [(ngModel)]="itemsPerPage" (change)="applyPagination()">
-          <option [value]="5">5</option>
-          <option [value]="10">10</option>
-          <option [value]="20">20</option>
-          <option [value]="50">50</option>
-        </select>
-      </div>
     </div>
   </div>
-
-  <!-- SUMMARY STATS -->
-  <div class="summary-stats" *ngIf="allUndertakings.length > 0">
-    <div class="stat-card">
-      <mat-icon class="stat-icon">receipt</mat-icon>
-      <div class="stat-content">
-        <div class="stat-value">{{ allUndertakings.length }}</div>
-        <div class="stat-label">Total Undertakings</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <mat-icon class="stat-icon">monetization_on</mat-icon>
-      <div class="stat-content">
-        <div class="stat-value">{{ formatCurrency(getTotalAmount(), 'USD') }}</div>
-        <div class="stat-label">Total Amount</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <mat-icon class="stat-icon">pending_actions</mat-icon>
-      <div class="stat-content">
-        <div class="stat-value">{{ getPendingCount() }}</div>
-        <div class="stat-label">Pending Approval</div>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <mat-icon class="stat-icon">check_circle</mat-icon>
-      <div class="stat-content">
-        <div class="stat-value">{{ getLiveCount() }}</div>
-        <div class="stat-label">Live Undertakings</div>
-      </div>
-    </div>
-  </div>
-</div>
+</div> -->

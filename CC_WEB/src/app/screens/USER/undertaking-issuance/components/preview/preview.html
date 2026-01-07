@@ -1,351 +1,427 @@
-<div class="preview-page">
+<div class="preview-container">
+
   <div class="preview-header">
-    <div class="header-content">
-      <h1>Undertaking Request Preview</h1>
-      <p class="subtitle">Review all details before submission</p>
+    <div>
+      <h1>Review Application</h1>
+      <p class="subtitle" *ngIf="transactionId">Reference ID: <strong>{{ transactionId }}</strong></p>
+      <p class="subtitle" *ngIf="!transactionId">New Application</p>
     </div>
-    <!-- <div class="header-actions">
-      <button mat-stroked-button (click)="printPreview()" *ngIf="form">
-        <mat-icon>print</mat-icon> Print
-      </button>
-    </div> -->
+    <div class="status-badge" *ngIf="isReadOnly">
+      <mat-icon>lock</mat-icon> Read Only
+    </div>
   </div>
 
-  @if (form) {
-    <div class="preview-content">
-      
-      <!-- Summary Card -->
-      <div class="summary-card">
-        <div class="summary-item">
-          <mat-icon class="summary-icon">check_circle</mat-icon>
-          <div class="summary-text">
-            <div class="summary-label">Status</div>
-            <div class="summary-value">{{ getFormStatus() }}</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon">assignment</mat-icon>
-          <div class="summary-text">
-            <div class="summary-label">Completion</div>
-            <div class="summary-value">{{ getFormCompletion() }}%</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon">attach_file</mat-icon>
-          <div class="summary-text">
-            <div class="summary-label">Files</div>
-            <div class="summary-value">{{ getAttachmentsCount() }}</div>
-          </div>
-        </div>
-        <div class="summary-item">
-          <mat-icon class="summary-icon">update</mat-icon>
-          <div class="summary-text">
-            <div class="summary-label">Last Updated</div>
-            <div class="summary-value">{{ lastUpdated | date:'short' }}</div>
-          </div>
-        </div>
-      </div>
+  <div class="preview-content">
 
-      <!-- Loading State for Save/Submit -->
-      <div class="loading-overlay" *ngIf="isSaving">
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Saving...</p>
-      </div>
-
-      <!-- General Details -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>settings</mat-icon>
-          <h3>General Details</h3>
+    <mat-card class="preview-card">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">General Details</h3>
+          <!-- <button mat-icon-button *ngIf="!isReadOnly" (click)="onEdit()" title="Edit Section"> -->
+            <!-- <mat-icon>edit</mat-icon> -->
+          <!-- </button> -->
         </div>
-        <div class="card-content">
-          <div class="grid">
-            <div class="field-group">
-              <span class="field-label">Product Type</span>
-              <span class="field-value">{{ formatValue(generalDetails?.get('productType')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Mode of Transmission</span>
-              <span class="field-value">{{ formatValue(generalDetails?.get('modeOfTransmission')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Form of Undertaking</span>
-              <span class="field-value">{{ formatValue(generalDetails?.get('formOfUndertaking')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Purpose</span>
-              <span class="field-value">{{ formatValue(generalDetails?.get('purpose')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Preference</span>
-              <span class="field-value">{{ formatValue(generalDetails?.get('preference')?.value) }}</span>
-            </div>
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Product Type</label>
+            <span>{{ getVal('generalDetails', 'productType') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Mode of Transmission</label>
+            <span>{{ getVal('generalDetails', 'modeOfTransmission') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Form of Undertaking</label>
+            <span>{{ getVal('generalDetails', 'formOfUndertaking') }}</span>
+          </div>
+          <div class="data-item full-width">
+            <label>Purpose</label>
+            <span>{{ getVal('generalDetails', 'purpose') }}</span>
           </div>
         </div>
-      </mat-card>
+      </section>
+    </mat-card>
 
-      <!-- Applicant & Beneficiary -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>people</mat-icon>
-          <h3>Applicant & Beneficiary Details</h3>
+    <mat-divider></mat-divider>
+
+    <mat-card class="preview-card">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">Applicant & Beneficiary</h3>
         </div>
-        <div class="card-content">
-          <div class="section">
+        <div class="preview-grid two-col">
+          <div class="sub-group">
             <h4>Applicant</h4>
-            <div class="grid">
-              <div class="field-group">
-                <span class="field-label">Name</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('applicantName')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 1</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('applicantAddress1')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 2</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('applicantAddress2')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 3</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('applicantAddress3')?.value) }}</span>
-              </div>
+            <div class="data-item">
+              <label>Name</label>
+              <span>{{ getVal('applicantBeneficiary', 'applicantName') }}</span>
+            </div>
+            <div class="data-item">
+              <label>Address</label>
+              <span>
+                {{ getVal('applicantBeneficiary', 'applicantAddress1') }}<br>
+                {{ getVal('applicantBeneficiary', 'applicantAddress2') }}
+              </span>
             </div>
           </div>
-          
-          <div class="section">
+
+          <div class="sub-group">
             <h4>Beneficiary</h4>
-            <div class="grid">
-              <div class="field-group">
-                <span class="field-label">Name</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('beneficiaryName')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Country</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('beneficiaryCountry')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 1</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('beneficiaryAddress1')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 2</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('beneficiaryAddress2')?.value) }}</span>
-              </div>
-              <div class="field-group">
-                <span class="field-label">Address 3</span>
-                <span class="field-value">{{ formatValue(applicantBeneficiary?.get('beneficiaryAddress3')?.value) }}</span>
-              </div>
+            <div class="data-item">
+              <label>Name</label>
+              <span>{{ getVal('applicantBeneficiary', 'beneficiaryName') }}</span>
+            </div>
+            <div class="data-item">
+              <label>Country</label>
+              <span>{{ getVal('applicantBeneficiary', 'beneficiaryCountry') }}</span>
+            </div>
+            <div class="data-item">
+              <label>Address</label>
+              <span>
+                {{ getVal('applicantBeneficiary', 'beneficiaryAddress1') }}<br>
+                {{ getVal('applicantBeneficiary', 'beneficiaryAddress2') }}
+              </span>
             </div>
           </div>
         </div>
-      </mat-card>
+      </section>
+    </mat-card>
 
-      <!-- Bank Details -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>account_balance</mat-icon>
-          <h3>Bank Details</h3>
+    <mat-divider></mat-divider>
+
+    <mat-card class="preview-card">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">Bank Details</h3>
         </div>
-        <div class="card-content">
-          <div class="grid">
-            <div class="field-group">
-              <span class="field-label">Recipient Bank</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('recipientBankName')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Issuer Reference</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('issuerReference')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Selected Bank</span>
-              <span class="field-value">{{ formatBankTab(bankForm?.get('selectedTab')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Issuance Type</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('issuanceType')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">SWIFT Code</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('swift')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Bank Name</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('bankName')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Country</span>
-              <span class="field-value">{{ formatValue(bankForm?.get('country')?.value) }}</span>
+
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Recipient Bank Name</label>
+            <span>{{ getVal('bankForm', 'recipientBankName') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Issuer Reference</label>
+            <span>{{ getVal('bankForm', 'issuerReference') }}</span>
+          </div>
+        </div>
+
+        <div class="preview-grid" style="margin-top: 16px;" *ngIf="getVal('bankForm', 'issuanceType') !== '-'">
+          <div class="data-item full-width">
+            <label>Issuance Type</label>
+            <span class="capitalize">
+              {{ getVal('bankForm', 'issuanceType') === 'direct' ? 'Direct (Issued by selected Bank)' : 'Indirect' }}
+            </span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title" style="margin-top: 24px; color: #666; font-size: 0.95rem;">
+          Selected Bank Information
+        </h4>
+
+        <div class="preview-grid three-col">
+          <div class="data-item">
+            <label>SWIFT Code</label>
+            <span class="swift-code">{{ getVal('bankForm', 'swift') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Bank Name</label>
+            <span>{{ getVal('bankForm', 'bankName') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Country</label>
+            <span>{{ getVal('bankForm', 'country') }}</span>
+          </div>
+        </div>
+
+        <div class="preview-grid" style="margin-top: 16px;">
+          <div class="data-item full-width">
+            <label>Address</label>
+            <div class="address-block">
+              <span *ngIf="getVal('bankForm', 'address1') !== '-'">{{ getVal('bankForm', 'address1') }}</span>
+              <span *ngIf="getVal('bankForm', 'address2') !== '-'">{{ getVal('bankForm', 'address2') }}</span>
+              <span *ngIf="getVal('bankForm', 'address3') !== '-'">{{ getVal('bankForm', 'address3') }}</span>
+              <span *ngIf="getVal('bankForm', 'address1') === '-'">-</span>
             </div>
           </div>
         </div>
-      </mat-card>
+      </section>
+    </mat-card>
 
-      <!-- Undertaking Details -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>description</mat-icon>
-          <h3>Undertaking Details</h3>
+    <mat-divider></mat-divider>
+
+    <mat-card class="preview-card">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">Undertaking Details</h3>
         </div>
-        <div class="card-content">
-          <div class="grid">
-            <div class="field-group">
-              <span class="field-label">Type of Undertaking</span>
-              <span class="field-value">{{ formatValue(undertakingDetails?.get('typeOfUndertaking')?.value) }}</span>
+
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Type</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'typeOfUndertaking') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Effective Date</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'effectiveOption') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Expiry Type</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'expiryType') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Expiry Date</label>
+            <span class="date-highlight">{{ formatDate(getVal('undertakingDetails', 'expiryDate')) }}</span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title" style="margin-top: 20px;">Financial Details</h4>
+        <div class="preview-grid">
+
+          <div class="data-item">
+            <label>Undertaking Amount</label>
+            <span class="highlight-amount">
+              {{ getVal('undertakingDetails', 'currency') }}
+              <ng-container *ngIf="!isNaN(getVal('undertakingDetails', 'undertakingAmount')); else rawAmount">
+                {{ getVal('undertakingDetails', 'undertakingAmount') | number:'1.2-2' }}
+              </ng-container>
+              <ng-template #rawAmount>
+                {{ getVal('undertakingDetails', 'undertakingAmount') }}
+              </ng-template>
+            </span>
+          </div>
+
+          <div class="data-item">
+            <label>Tolerance</label>
+            <span>
+              +{{ getVal('undertakingDetails', 'variationPlus') !== '-' ? getVal('undertakingDetails', 'variationPlus') : '0' }}% /
+              -{{ getVal('undertakingDetails', 'variationMinus') !== '-' ? getVal('undertakingDetails', 'variationMinus') : '0' }}%
+            </span>
+          </div>
+          <div class="data-item">
+            <label>Issuance Charges</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'issuanceCharges') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Correspondent Charges</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'correspondentCharges') }}</span>
+          </div>
+          <div class="data-item full-width" *ngIf="getVal('undertakingDetails', 'supplementaryInfo') !== '-'">
+            <label>Supplementary Amount Info</label>
+            <span>{{ getVal('undertakingDetails', 'supplementaryInfo') }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="getVal('undertakingDetails', 'contractReference') !== '-' || getVal('undertakingDetails', 'contractAmount') !== '-'">
+          <h4 class="subsection-title" style="margin-top: 20px;">Contract Information</h4>
+          <div class="preview-grid">
+            <div class="data-item">
+              <label>Contract Type</label>
+              <span class="capitalize">{{ getVal('undertakingDetails', 'contractType') }}</span>
             </div>
-            <div class="field-group">
-              <span class="field-label">Currency</span>
-              <span class="field-value">{{ formatValue(undertakingDetails?.get('currency')?.value) }}</span>
+            <div class="data-item">
+              <label>Contract Ref</label>
+              <span>{{ getVal('undertakingDetails', 'contractReference') }}</span>
             </div>
-            <div class="field-group">
-              <span class="field-label">Undertaking Amount</span>
-              <span class="field-value">{{ formatCurrency(undertakingDetails?.get('undertakingAmount')?.value, undertakingDetails?.get('currency')?.value) }}</span>
+            <div class="data-item">
+              <label>Contract Date</label>
+              <span>{{ formatDate(getVal('undertakingDetails', 'contractDate')) }}</span>
             </div>
-            <div class="field-group">
-              <span class="field-label">Expiry Date</span>
-              <span class="field-value">{{ formatDate(undertakingDetails?.get('expiryDate')?.value) }}</span>
+
+            <div class="data-item">
+              <label>Contract Amount</label>
+              <span>
+                {{ getVal('undertakingDetails', 'contractCurrency') }}
+                <ng-container *ngIf="!isNaN(getVal('undertakingDetails', 'contractAmount')); else rawContract">
+                  {{ getVal('undertakingDetails', 'contractAmount') | number:'1.2-2' }}
+                </ng-container>
+                <ng-template #rawContract>
+                  {{ getVal('undertakingDetails', 'contractAmount') }}
+                </ng-template>
+              </span>
             </div>
-            <div class="field-group">
-              <span class="field-label">Contract Amount</span>
-              <span class="field-value">{{ formatCurrency(undertakingDetails?.get('contractAmount')?.value, undertakingDetails?.get('contractCurrency')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Applicable Rules</span>
-              <span class="field-value">{{ formatValue(undertakingDetails?.get('applicableRules')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Governing Laws</span>
-              <span class="field-value">{{ formatValue(undertakingDetails?.get('governinglawsType')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Language</span>
-              <span class="field-value">{{ formatValue(undertakingDetails?.get('languageType')?.value) }}</span>
+
+            <div class="data-item">
+              <label>Percentage Covered</label>
+              <span>{{ getVal('undertakingDetails', 'percentageCovered') !== '-' ? getVal('undertakingDetails', 'percentageCovered') + '%' : '-' }}</span>
             </div>
           </div>
         </div>
-      </mat-card>
 
-      <!-- Instructions to Bank -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>local_shipping</mat-icon>
-          <h3>Instructions to Bank</h3>
-        </div>
-        <div class="card-content">
-          <div class="grid">
-            <div class="field-group">
-              <span class="field-label">Delivery Type</span>
-              <span class="field-value">{{ formatDeliveryType(instructions?.get('deliveryType')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Delivery Mode</span>
-              <span class="field-value">{{ formatDeliveryMode(instructions?.get('deliveryMode')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Delivery To</span>
-              <span class="field-value">{{ formatDeliveryTo(instructions?.get('deliveryTo')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Principal Account</span>
-              <span class="field-value">{{ formatValue(instructions?.get('principalAccount')?.value) }}</span>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Fee Account</span>
-              <span class="field-value">{{ formatValue(instructions?.get('feeAccount')?.value) }}</span>
-            </div>
-            <div class="field-group full-width">
-              <span class="field-label">Other Instructions</span>
-              <span class="field-value instruction-text">{{ formatValue(instructions?.get('otherInstructions')?.value) }}</span>
-            </div>
+        <h4 class="subsection-title" style="margin-top: 20px;">Rules & Governance</h4>
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Applicable Rules</label>
+            <span class="uppercase">{{ getVal('undertakingDetails', 'applicableRules') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Governing Law</label>
+            <span class="uppercase">{{ getVal('undertakingDetails', 'governinglawsType') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Jurisdiction</label>
+            <span>{{ getVal('undertakingDetails', 'jurisdiction') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Subdivision</label>
+            <span>{{ getVal('undertakingDetails', 'subdivision') }}</span>
           </div>
         </div>
-      </mat-card>
 
-      <!-- Attachments -->
-      <mat-card class="preview-card">
-        <div class="card-header">
-          <mat-icon>attach_file</mat-icon>
-          <h3>Attachments</h3>
-          <span class="badge">{{ getAttachmentsCount() }}</span>
+        <h4 class="subsection-title" style="margin-top: 20px;">Wording & Details</h4>
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Demand Indicator</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'DemandOption') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Text Standard</label>
+            <span class="capitalize">{{ getVal('undertakingDetails', 'tsOption') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Language</label>
+            <span class="uppercase">{{ getVal('undertakingDetails', 'languageType') !== '-' ? getVal('undertakingDetails', 'languageType') : 'EN' }}</span>
+          </div>
         </div>
-        <div class="card-content">
-          @if (getAttachmentsCount() > 0) {
-            <div class="attachments-container">
-              <div class="attachments-header">
-                <div class="col-file">File Name</div>
-                <div class="col-type">Type</div>
-                <div class="col-size">Size</div>
-                <div class="col-actions">Actions</div>
-              </div>
-              
-              <div class="attachments-list">
-                @for (file of getAttachments(); track file; let i = $index) {
-                  <div class="attachment-item">
-                    <div class="col-file">
-                      <mat-icon class="file-icon">{{ getFileIcon(file) }}</mat-icon>
-                      <span class="file-name">{{ file.name || file.fileName || 'Unnamed File' }}</span>
-                    </div>
-                    <div class="col-type">{{ getFileType(file) }}</div>
-                    <div class="col-size">{{ formatSize(file.size || 0) }}</div>
-                    <div class="col-actions">
-                      <button mat-icon-button (click)="downloadFile(file, i)" matTooltip="Download">
-                        <mat-icon>download</mat-icon>
-                      </button>
-                      <button mat-icon-button color="warn" (click)="removeFile(i)" matTooltip="Remove">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                }
-              </div>
-              
-              <div class="attachments-footer">
-                <span>Total: {{ getAttachmentsCount() }} files</span>
-                <span>Total Size: {{ getTotalFileSize() }}</span>
-              </div>
+
+        <div class="preview-grid" style="margin-top: 10px;">
+          <div class="data-item full-width">
+            <label>Underlying Transaction Details</label>
+            <span class="pre-wrap">{{ getVal('undertakingDetails', 'underlyingtransactionInfo') }}</span>
+          </div>
+
+          <div class="data-item full-width">
+            <label>Text of Undertaking</label>
+            <span class="pre-wrap">{{ getVal('undertakingDetails', 'textofundertakingInfo') }}</span>
+          </div>
+
+          <div class="data-item full-width">
+            <label>Presentation Instructions</label>
+            <span class="pre-wrap">{{ getVal('undertakingDetails', 'presentationInfo') }}</span>
+          </div>
+        </div>
+      </section>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+
+    <mat-card class="preview-card">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">Instructions for the Bank</h3>
+        </div>
+
+        <div class="preview-grid">
+          <div class="data-item">
+            <label>Delivery Type</label>
+            <span>{{ getVal('instructions', 'deliveryType') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Delivery Mode</label>
+            <span>{{ getVal('instructions', 'deliveryMode') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Deliver To</label>
+            <span class="capitalize">{{ getVal('instructions', 'deliveryTo') }}</span>
+          </div>
+        </div>
+
+        <div class="preview-grid" style="margin-top: 16px;">
+          <div class="data-item">
+            <label>Principal Account</label>
+            <span class="account-number">{{ getVal('instructions', 'principalAccount') }}</span>
+          </div>
+          <div class="data-item">
+            <label>Fee Account</label>
+            <span class="account-number">
+              {{ getVal('instructions', 'feeAccount') !== '-' ? getVal('instructions', 'feeAccount') : 'Same as Principal' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="preview-grid" style="margin-top: 16px;">
+          <div class="data-item full-width">
+            <label>Other Instructions</label>
+            <span class="text-content pre-wrap">
+              {{ getVal('instructions', 'otherInstructions') !== '-' ? getVal('instructions', 'otherInstructions') : 'No additional instructions provided.' }}
+            </span>
+          </div>
+        </div>
+      </section>
+    </mat-card>
+
+    <mat-divider></mat-divider>
+
+    <mat-card class="preview-card full-width">
+      <section class="preview-section">
+        <div class="section-header">
+          <h3 class="section-title">Attachments</h3>
+        </div>
+
+        @if (uploadedFiles.length > 0) {
+          <div class="preview-attachments-container">
+            
+            <div class="attachment-grid header">
+              <div>Type</div>
+              <div>Title</div>
+              <div>File Name</div>
+              <div>Size</div>
+              <div class="text-center">Actions</div>
             </div>
-          } @else {
-            <div class="no-attachments">
-              <mat-icon>folder_open</mat-icon>
-              <p>No attachments have been uploaded</p>
-            </div>
-          }
-        </div>
-      </mat-card>
 
-      <!-- Actions -->
-      <div class="preview-actions">
-        <button mat-stroked-button (click)="backToForm()" [disabled]="isSaving">
-          <mat-icon>arrow_back</mat-icon> Back to Edit
-        </button>
-        
-        <button mat-stroked-button color="accent" (click)="saveAsDraft()" [disabled]="isSaving">
-          <mat-icon>save</mat-icon> Save as Draft
-        </button>
-        
-        <button mat-flat-button color="primary" (click)="submit()" [disabled]="isSaving">
-          <mat-icon>send</mat-icon> Submit for Approval
-        </button>
-      </div>
+            @for (file of uploadedFiles; track file; let i = $index) {
+              <div class="attachment-grid">
+                <div class="icon-col">
+                  @if (isPdf(file)) {
+                    <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
+                  } @else if (isImage(file)) {
+                    <mat-icon class="image-icon">image</mat-icon>
+                  } @else {
+                    <mat-icon class="default-icon">insert_drive_file</mat-icon>
+                  }
+                </div>
 
-      <!-- Completion Warning -->
-      <div class="completion-warning" *ngIf="getFormCompletion() < 80">
-        <mat-icon>warning</mat-icon>
-        <div class="warning-text">
-          <strong>Incomplete Form:</strong> Form is only {{ getFormCompletion() }}% complete. 
-          Minimum 80% completion required for submission.
-        </div>
-      </div>
-    </div>
-    
-  } @else {
-    <div class="no-data">
-      <mat-icon>description</mat-icon>
-      <h3>No Form Data Available</h3>
-      <p>Please complete the undertaking request form first</p>
-      <button mat-raised-button color="primary" (click)="backToForm()">
-        <mat-icon>arrow_back</mat-icon> Go to Form
+                <div>{{ file.title || '-' }}</div>
+
+                <div>{{ file.fileName || file.name }}</div>
+
+                <div>
+                  @if(file.size) {
+                    {{ (file.size / 1024) | number:'1.0-2' }} KB
+                  } @else { - }
+                </div>
+
+                <div class="actions text-center">
+                  <mat-icon class="action-icon" (click)="downloadFile(i)" title="Download">download</mat-icon>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (uploadedFiles.length === 0) {
+          <p class="empty-text">No attachments uploaded.</p>
+        }
+      </section>
+    </mat-card>
+
+  </div>
+
+  <div class="preview-footer">
+    <button mat-stroked-button color="primary" (click)="onClose()">
+      {{ isReadOnly ? 'Close' : 'Back' }}
+    </button>
+
+    <div class="action-group" *ngIf="!isReadOnly">
+      <button mat-raised-button color="accent" (click)="onUpdate()">
+        <mat-icon>edit</mat-icon> Update
+      </button>
+
+      <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">
+        <mat-icon>send</mat-icon>
+        {{ isLoading ? 'Submitting...' : 'Submit' }}
       </button>
     </div>
-  }
+  </div>
+
 </div>

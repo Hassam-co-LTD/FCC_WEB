@@ -1,346 +1,271 @@
 import { Injectable } from '@angular/core';
-import { SharedService, TransactionBase } from '../../../services/user-service/shared-form-service/shared-service';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
-export interface UndertakingTransaction extends TransactionBase {
-  beneficiaryCountry?: string;
-  isNew?: boolean;
-  preference?: string;
-  productType?: string;
-  applicantName?: string;
-  formOfUndertaking?: string;
-  draftSavedAt?: Date;
+// IMPORTANT: Ensure this path is correct for your project structure
+import { ApiService } from '../../../../core/services/api.service';
+
+// ==========================================
+// 1. INTERFACES
+// ==========================================
+export interface UndertakingTransaction {
+  id: string | number;
+  channelReference: string;
+  status: string;
+  lastUpdated: Date;
+  formData: any; 
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class UndertakingIssuanceService {
-  
-  constructor(private sharedService: SharedService) {}
 
-  private generateId(): string {
-    return `UND-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  // Base Endpoint matching your Java Controller
+  private readonly ENDPOINT = '/undertaking-lc'; 
+
+  constructor(private apiService: ApiService) { }
+
+  // ==========================================
+  // 2. WRITE OPERATIONS (Save, Submit, etc.)
+  // ==========================================
+
+  /**
+   * SAVE DRAFT (Create or Update)
+   * If 'id' is provided, the Backend should treat it as an UPDATE.
+   * If 'id' is null/undefined, the Backend should treat it as a CREATE.
+   */
+  saveDraft(formData: any, id?: string | number | null): Observable<any> {
+    // 1. Convert Nested Angular Form -> Flat Java Entity
+    const payload = this.transformToBackendDTO(formData, id);
+
+    // 2. Send to Backend
+    // Note: Depending on your API design, you might use PUT for updates.
+    // Here we assume the /save endpoint handles both based on the ID presence.
+    return this.apiService.post(`${this.ENDPOINT}/save`, payload);
   }
 
-  getAllTransactions(): UndertakingTransaction[] {
-    return this.sharedService.getAllTransactions()
-      .filter(t => t.type === 'undertaking') as UndertakingTransaction[];
+  /**
+   * SUBMIT
+   */
+  submitTransaction(id: any): Observable<any> {
+    return this.apiService.post(`${this.ENDPOINT}/submit/${id}`, {});
   }
 
-  getTransactionById(id: string): UndertakingTransaction | undefined {
-    const transaction = this.sharedService.getTransactionById(id);
-    return transaction?.type === 'undertaking' ? transaction as UndertakingTransaction : undefined;
+  /**
+   * APPROVE
+   */
+  approveTransaction(id: any): Observable<any> {
+    return this.apiService.post(`${this.ENDPOINT}/approve/${id}`, {});
   }
 
-  saveAsDraft(transactionData: Partial<UndertakingTransaction>): UndertakingTransaction {
-    const transaction: UndertakingTransaction = {
-      id: transactionData.id || this.generateId(),
-      type: 'undertaking',
-      channelReference: transactionData.channelReference || `DRAFT-${Date.now().toString().slice(-8)}`,
-      customerReference: transactionData.customerReference || `CUST-${Date.now().toString().slice(-8)}`,
-      bankReference: transactionData.bankReference || '',
-      issueDate: transactionData.issueDate || new Date(),
-      status: 'Draft',
-      beneficiary: transactionData.beneficiary || '',
-      beneficiaryCountry: transactionData.beneficiaryCountry || '',
-      currency: transactionData.currency || 'USD',
-      amount: transactionData.amount || 0,
-      outstandingAmount: transactionData.outstandingAmount || transactionData.amount || 0,
-      expiryDate: transactionData.expiryDate || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      createdAt: transactionData.createdAt || new Date(),
-      updatedAt: new Date(),
-      canEdit: true,
-      canView: true,
-      formData: transactionData.formData || {},
-      draftSavedAt: new Date(),
-      isNew: transactionData.isNew !== undefined ? transactionData.isNew : true,
-      preference: transactionData.preference || 'Standard',
-      productType: transactionData.productType || 'Performance Guarantee',
-      applicantName: transactionData.applicantName || '',
-      formOfUndertaking: transactionData.formOfUndertaking || 'Standby LC'
-    };
-
-    this.sharedService.addTransaction(transaction);
-    return transaction;
+  /**
+   * REJECT
+   */
+  rejectTransaction(id: any, reason: string): Observable<any> {
+    return this.apiService.post(`${this.ENDPOINT}/reject/${id}`, reason);
   }
 
-  submitForApproval(transactionData: Partial<UndertakingTransaction>): UndertakingTransaction {
-    const transaction: UndertakingTransaction = {
-      id: transactionData.id || this.generateId(),
-      type: 'undertaking',
-      channelReference: transactionData.channelReference || `PEND-${Date.now().toString().slice(-8)}`,
-      customerReference: transactionData.customerReference || `CUST-${Date.now().toString().slice(-8)}`,
-      bankReference: transactionData.bankReference || `BANK-${Date.now().toString().slice(-8)}`,
-      issueDate: transactionData.issueDate || new Date(),
-      status: 'Pending Approval',
-      beneficiary: transactionData.beneficiary || '',
-      beneficiaryCountry: transactionData.beneficiaryCountry || '',
-      currency: transactionData.currency || 'USD',
-      amount: transactionData.amount || 0,
-      outstandingAmount: transactionData.outstandingAmount || transactionData.amount || 0,
-      expiryDate: transactionData.expiryDate || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      createdAt: transactionData.createdAt || new Date(),
-      updatedAt: new Date(),
-      canEdit: false,
-      canView: true,
-      formData: transactionData.formData || {},
-      submittedAt: new Date(),
-      isNew: transactionData.isNew !== undefined ? transactionData.isNew : true,
-      preference: transactionData.preference || 'Standard',
-      productType: transactionData.productType || 'Performance Guarantee',
-      applicantName: transactionData.applicantName || '',
-      formOfUndertaking: transactionData.formOfUndertaking || 'Standby LC'
-    };
-
-    this.sharedService.addTransaction(transaction);
-    return transaction;
+  /**
+   * ISSUE
+   */
+  issueTransaction(id: any): Observable<any> {
+    return this.apiService.post(`${this.ENDPOINT}/issue/${id}`, {});
   }
 
-  // Complete updateTransaction method
-  updateTransaction(id: string, updatedData: Partial<UndertakingTransaction>): boolean {
-    const existingTransaction = this.getTransactionById(id);
-    
-    if (!existingTransaction) {
-      console.error(`Transaction with id ${id} not found`);
-      return false;
-    }
-
-    const updatedTransaction: UndertakingTransaction = {
-      ...existingTransaction,
-      ...updatedData,
-      updatedAt: new Date()
-    };
-
-    return this.sharedService.updateTransaction(id, updatedTransaction);
+  /**
+   * CANCEL
+   */
+  cancelTransaction(id: any): Observable<any> {
+    return this.apiService.post(`${this.ENDPOINT}/cancel/${id}`, {});
   }
 
-  // Complete updateStatus method with full data
-  updateStatus(id: string, status: string, updatedData?: Partial<UndertakingTransaction>): boolean {
-    const existingTransaction = this.getTransactionById(id);
-    
-    if (!existingTransaction) {
-      console.error(`Transaction with id ${id} not found`);
-      return false;
-    }
+  // ==========================================
+  // 3. READ OPERATIONS (List, Get By ID)
+  // ==========================================
 
-    const updatedTransaction: UndertakingTransaction = {
-      ...existingTransaction,
-      status,
-      canEdit: status === 'Draft',
-      canView: true,
-      updatedAt: new Date(),
-      ...updatedData
-    };
+  /**
+   * GET LIST
+   */
+  getTransactions(): Observable<UndertakingTransaction[]> {
+    return this.apiService.get<any[]>(`${this.ENDPOINT}/list`).pipe(
+      map((backendList: any[]) => {
+        if (!Array.isArray(backendList)) return [];
 
-    return this.sharedService.updateTransaction(id, updatedTransaction);
-  }
-
-  // Method to update transaction with form data
-  updateTransactionWithFormData(id: string, formData: any): boolean {
-    const existingTransaction = this.getTransactionById(id);
-    
-    if (!existingTransaction) {
-      console.error(`Transaction with id ${id} not found`);
-      return false;
-    }
-
-    // Extract relevant data from formData to update transaction fields
-    const updatedFields: Partial<UndertakingTransaction> = {
-      formData: formData,
-      updatedAt: new Date(),
-      applicantName: formData?.applicantBeneficiary?.applicantName || existingTransaction.applicantName,
-      beneficiary: formData?.applicantBeneficiary?.beneficiaryName || existingTransaction.beneficiary,
-      beneficiaryCountry: formData?.applicantBeneficiary?.beneficiaryCountry || existingTransaction.beneficiaryCountry,
-      currency: formData?.undertakingDetails?.currency || existingTransaction.currency,
-      amount: Number(formData?.undertakingDetails?.undertakingAmount) || existingTransaction.amount,
-      outstandingAmount: Number(formData?.undertakingDetails?.undertakingAmount) || existingTransaction.outstandingAmount,
-      expiryDate: formData?.undertakingDetails?.expiryDate ? 
-        new Date(formData.undertakingDetails.expiryDate) : 
-        existingTransaction.expiryDate,
-      productType: formData?.generalDetails?.productType || existingTransaction.productType,
-      preference: formData?.generalDetails?.preference || existingTransaction.preference,
-      formOfUndertaking: formData?.generalDetails?.formOfUndertaking || existingTransaction.formOfUndertaking
-    };
-
-    return this.updateTransaction(id, updatedFields);
-  }
-
-  deleteTransaction(id: string): boolean {
-    return this.sharedService.deleteTransaction(id);
-  }
-
-  // Method to get transactions by status
-  getTransactionsByStatus(status: string): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => t.status === status);
-  }
-
-  // Method to get pending transactions (for approval)
-  getPendingTransactions(): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => 
-      t.status === 'Pending Approval' || t.status === 'Pending at Bank'
+        return backendList.map((item: any) => ({
+          id: item.id,
+          channelReference: item.channelReference || item.tnxId || `REF-${item.id}`,
+          status: item.status || 'Draft',
+          lastUpdated: item.updatedAt ? new Date(item.updatedAt) : new Date(),
+          formData: this.transformToAngularForm(item)
+        }));
+      }),
+      catchError(err => {
+        console.error('Error fetching transactions:', err);
+        return of([]); 
+      })
     );
   }
 
-  // Method to get draft transactions
-  getDraftTransactions(): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => t.status === 'Draft');
+  /**
+   * GET BY ID
+   * Called by Component when loading from URL ?transactionId=123
+   */
+  getTransactionById(id: string | number): Observable<any> {
+    return this.apiService.get<any>(`${this.ENDPOINT}/${id}`).pipe(
+      map((backendData: any) => {
+        // Return the nested form structure directly so patchValue works instantly
+        return this.transformToAngularForm(backendData);
+      })
+    );
   }
 
-  // Method to get live transactions
-  getLiveTransactions(): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => t.status === 'Live');
-  }
+  // ==========================================
+  // 4. DATA MAPPERS (The Bridge)
+  // ==========================================
 
-  // Method to create a new transaction from form data
-  createTransactionFromFormData(formData: any): UndertakingTransaction {
-    const timestamp = Date.now();
-    const channelRef = `UND-${timestamp.toString().slice(-6)}`;
-    const customerRef = `CUST-${timestamp.toString().slice(-6)}`;
-
-    const transactionData: Partial<UndertakingTransaction> = {
-      channelReference: channelRef,
-      customerReference: customerRef,
-      bankReference: `BANK-${timestamp.toString().slice(-6)}`,
-      issueDate: new Date(),
-      status: 'Draft',
-      beneficiary: formData?.applicantBeneficiary?.beneficiaryName || '',
-      beneficiaryCountry: formData?.applicantBeneficiary?.beneficiaryCountry || '',
-      currency: formData?.undertakingDetails?.currency || 'USD',
-      amount: Number(formData?.undertakingDetails?.undertakingAmount) || 0,
-      outstandingAmount: Number(formData?.undertakingDetails?.undertakingAmount) || 0,
-      expiryDate: formData?.undertakingDetails?.expiryDate ? 
-        new Date(formData.undertakingDetails.expiryDate) : 
-        new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      productType: formData?.generalDetails?.productType || 'Performance Guarantee',
-      preference: formData?.generalDetails?.preference || 'Standard',
-      applicantName: formData?.applicantBeneficiary?.applicantName || '',
-      formOfUndertaking: formData?.generalDetails?.formOfUndertaking || 'Standby LC',
-      formData: formData,
-      isNew: true
-    };
-
-    return this.saveAsDraft(transactionData);
-  }
-
-  // Method to accept/reject transaction
-  processTransaction(id: string, action: 'accept' | 'reject', remarks?: string): boolean {
-    const existingTransaction = this.getTransactionById(id);
-    
-    if (!existingTransaction) {
-      console.error(`Transaction with id ${id} not found`);
-      return false;
-    }
-
-    const newStatus = action === 'accept' ? 'Live' : 'Rejected';
-    const updatedData: Partial<UndertakingTransaction> = {
-      status: newStatus,
-      canEdit: false,
-      canView: true,
-      updatedAt: new Date(),
-      // Add remarks if provided
-      ...(remarks && { remarks })
-    };
-
-    return this.updateStatus(id, newStatus, updatedData);
-  }
-
-  // Method to close a transaction
-  closeTransaction(id: string): boolean {
-    return this.updateStatus(id, 'Closed');
-  }
-
-  // Method to submit draft for approval
-  submitDraftForApproval(id: string): boolean {
-    const existingTransaction = this.getTransactionById(id);
-    
-    if (!existingTransaction) {
-      console.error(`Transaction with id ${id} not found`);
-      return false;
-    }
-
-    if (existingTransaction.status !== 'Draft') {
-      console.error(`Transaction ${id} is not a draft, cannot submit for approval`);
-      return false;
-    }
-
-    const updatedData: Partial<UndertakingTransaction> = {
-      status: 'Pending Approval',
-      canEdit: false,
-      canView: true,
-      submittedAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    return this.updateStatus(id, 'Pending Approval', updatedData);
-  }
-
-  // Method to check if transaction can be edited
-  canEditTransaction(id: string): boolean {
-    const transaction = this.getTransactionById(id);
-    if (!transaction) return false;
-    
-    const editableStatuses = ['Draft', 'Pending Approval', 'Pending at Bank'];
-    return editableStatuses.includes(transaction.status) && (transaction.canEdit ?? false);
-  }
-
-  // Method to check if transaction can be viewed
-  canViewTransaction(id: string): boolean {
-    const transaction = this.getTransactionById(id);
-    if (!transaction) return false;
-    
-    return transaction.canView ?? false;
-  }
-
-  // Method to get statistics
-  getStatistics(): {
-    total: number;
-    drafts: number;
-    pending: number;
-    live: number;
-    rejected: number;
-    closed: number;
-  } {
-    const transactions = this.getAllTransactions();
+  /**
+   * Maps Java Entity (Flat) -> Angular Form (Nested)
+   * This ensures that when you load a draft, all fields populate correctly.
+   */
+  private transformToAngularForm(backendData: any): any {
+    if (!backendData) return {};
     
     return {
-      total: transactions.length,
-      drafts: transactions.filter(t => t.status === 'Draft').length,
-      pending: transactions.filter(t => 
-        t.status === 'Pending Approval' || t.status === 'Pending at Bank'
-      ).length,
-      live: transactions.filter(t => t.status === 'Live').length,
-      rejected: transactions.filter(t => t.status === 'Rejected').length,
-      closed: transactions.filter(t => t.status === 'Closed').length
+      // General Details
+      generalDetails: {
+        productType: backendData.productType,
+        modeOfTransmission: backendData.modeOfTransmission,
+        formOfUndertaking: backendData.formOfUndertaking,
+        purpose: backendData.purpose
+      },
+      // Applicant & Beneficiary
+      applicantBeneficiary: {
+        applicantName: backendData.applicantName,
+        applicantAddress1: backendData.applicantAddress1,
+        applicantAddress2: backendData.applicantAddress2,
+        applicantAddress3: backendData.applicantAddress3,
+        beneficiaryName: backendData.beneficiaryName,
+        beneficiaryAddress1: backendData.beneficiaryAddress1,
+        beneficiaryAddress2: backendData.beneficiaryAddress2,
+        beneficiaryAddress3: backendData.beneficiaryAddress3,
+        beneficiaryCountry: backendData.beneficiaryCountry
+      },
+      // Bank Details
+      bankForm: {
+        recipientBankName: backendData.recipientBankName,
+        issuerReference: backendData.issuerReference,
+        issuanceType: backendData.issuanceType,
+        swift: backendData.swift,
+        bankName: backendData.bankName,
+        address1: backendData.bankAddress1,
+        address2: backendData.bankAddress2,
+        address3: backendData.bankAddress3,
+        country: backendData.bankCountry
+      },
+      // Undertaking Details
+      undertakingDetails: {
+        typeOfUndertaking: backendData.typeOfUndertaking,
+        effectiveOption: backendData.effectiveOption,
+        expiryType: backendData.expiryType,
+        expiryDate: backendData.expiryDate ? new Date(backendData.expiryDate).toISOString().split('T')[0] : '', // Format for Input Date
+        currency: backendData.currency || 'USD',
+        undertakingAmount: backendData.undertakingAmount,
+        variationPlus: backendData.variationPlus,
+        variationMinus: backendData.variationMinus,
+        issuanceCharges: backendData.issuanceCharges,
+        correspondentCharges: backendData.correspondentCharges,
+        supplementaryInfo: backendData.supplementaryInfo,
+        textofundertakingInfo: backendData.textofundertakingInfo,
+        underlyingtransactionInfo: backendData.underlyingtransactionInfo,
+        presentationInfo: backendData.presentationInfo
+      },
+      // Instructions
+      instructions: {
+        deliveryType: backendData.deliveryType,
+        deliveryMode: backendData.deliveryMode,
+        deliveryTo: backendData.deliveryTo,
+        principalAccount: backendData.principalAccount,
+        feeAccount: backendData.feeAccount,
+        otherInstructions: backendData.otherInstructions
+      },
+      // Attachments (Files usually handled separately or as metadata list)
+      attachments: {
+        files: backendData.files || []
+      }
     };
   }
 
-  // Method to search transactions
-  searchTransactions(searchTerm: string): UndertakingTransaction[] {
-    const term = searchTerm.toLowerCase();
-    return this.getAllTransactions().filter(t =>
-      t.channelReference?.toLowerCase().includes(term) ||
-      t.customerReference?.toLowerCase().includes(term) ||
-      t.bankReference?.toLowerCase().includes(term) ||
-      t.beneficiary?.toLowerCase().includes(term) ||
-      t.applicantName?.toLowerCase().includes(term) ||
-      t.productType?.toLowerCase().includes(term) ||
-      t.id?.toLowerCase().includes(term)
-    );
-  }
+  /**
+   * Maps Angular Form (Nested) -> Java Entity (Flat)
+   */
+  private transformToBackendDTO(form: any, id?: string | number | null): any {
+    const gen = form?.generalDetails || {};
+    const app = form?.applicantBeneficiary || {};
+    const bank = form?.bankForm || {};
+    const und = form?.undertakingDetails || {};
+    const inst = form?.instructions || {};
 
-  // Method to filter transactions by date range
-  filterByDateRange(startDate: Date, endDate: Date): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => {
-      const issueDate = new Date(t.issueDate);
-      return issueDate >= startDate && issueDate <= endDate;
-    });
-  }
+    return {
+      // Identity
+      id: id || form.id || null, // VITAL: This triggers Update vs Create on Backend
 
-  // Method to filter transactions by amount range
-  filterByAmountRange(minAmount: number, maxAmount: number): UndertakingTransaction[] {
-    return this.getAllTransactions().filter(t => {
-      const amount = t.amount || 0;
-      return amount >= minAmount && amount <= maxAmount;
-    });
+      // General
+      productType: gen.productType,
+      modeOfTransmission: gen.modeOfTransmission,
+      formOfUndertaking: gen.formOfUndertaking,
+      purpose: gen.purpose,
+
+      // Applicant
+      applicantName: app.applicantName,
+      applicantAddress1: app.applicantAddress1,
+      applicantAddress2: app.applicantAddress2,
+      applicantAddress3: app.applicantAddress3,
+
+      // Beneficiary
+      beneficiaryName: app.beneficiaryName,
+      beneficiaryAddress1: app.beneficiaryAddress1,
+      beneficiaryAddress2: app.beneficiaryAddress2,
+      beneficiaryAddress3: app.beneficiaryAddress3,
+      beneficiaryCountry: app.beneficiaryCountry,
+
+      // Bank
+      recipientBankName: bank.recipientBankName,
+      issuerReference: bank.issuerReference,
+      issuanceType: bank.issuanceType,
+      swift: bank.swift,
+      bankName: bank.bankName,
+      bankAddress1: bank.address1,
+      bankAddress2: bank.address2,
+      bankAddress3: bank.address3,
+      bankCountry: bank.country,
+
+      // Undertaking
+      typeOfUndertaking: und.typeOfUndertaking,
+      effectiveOption: und.effectiveOption,
+      expiryType: und.expiryType,
+      expiryDate: und.expiryDate,
+      currency: und.currency,
+      undertakingAmount: und.undertakingAmount,
+      variationPlus: und.variationPlus,
+      variationMinus: und.variationMinus,
+      issuanceCharges: und.issuanceCharges,
+      correspondentCharges: und.correspondentCharges,
+      supplementaryInfo: und.supplementaryInfo,
+      textofundertakingInfo: und.textofundertakingInfo,
+      underlyingtransactionInfo: und.underlyingtransactionInfo,
+      presentationInfo: und.presentationInfo,
+
+      // Instructions
+      deliveryType: inst.deliveryType,
+      deliveryMode: inst.deliveryMode,
+      deliveryTo: inst.deliveryTo,
+      principalAccount: inst.principalAccount,
+      feeAccount: inst.feeAccount,
+      otherInstructions: inst.otherInstructions,
+
+      // Attachments
+      files: form.attachments?.files || []
+    };
   }
 }

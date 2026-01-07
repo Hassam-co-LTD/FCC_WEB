@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common'; // <--- IMPORT THIS
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Child components
+// ... (Your other imports remain the same)
 import { Sidebar } from "../../../../core/sidebar/sidebar";
 import { generalDetails } from "../components/general-details/general-details";
 import { ApplicationBeneficiary } from "../components/application-beneficiary/application-beneficiary";
@@ -12,7 +13,7 @@ import { UndertakingDetails } from "../components/undertaking-details/undertakin
 import { InstructionsBank } from "../components/instructions-bank/instructions-bank";
 import { Attachments } from "../components/attachments/attachments";
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
-
+import { UndertakingIssuanceService } from '../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-request-undertaking',
@@ -25,66 +26,85 @@ import { SharedService } from '../../../../core/services/user-service/shared-for
     UndertakingDetails,
     Attachments,
     InstructionsBank,
-
   ],
   templateUrl: './request-undertaking.html',
   styleUrls: ['./request-undertaking.scss'],
 })
 export class RequestUndertaking implements OnInit, AfterViewInit {
   currentStep = 0;
-
   undertakingSteps = [
     { label: "General Details" },
     { label: "Applicant & Beneficiary Details" },
     { label: "Bank Details" },
     { label: "Undertaking Details" },
-    { label: "Instructions For The Bank Only" },
+    { label: "Instructions For Bank" },
     { label: "Attachments" },
-    // { label: "Preview" }
   ];
 
-  // MAIN MASTER FORM
   importForm!: FormGroup;
-
-  // Store files separately for easier access
   uploadedFiles: File[] = [];
+
+  // STATE MANAGEMENT
+  isEditMode: boolean = false;
+  currentTransactionId: string | number | null = null;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private dataService: SharedService,
+    private route: ActivatedRoute,
+    private location: Location, // <--- Inject Location Service
+    private sharedService: SharedService,
+    private backendService: UndertakingIssuanceService,
     private snackBar: MatSnackBar
   ) {
     this.initializeForm();
   }
 
-  private initializeForm(): void {
-    this.importForm = this.fb.group({
-      // General Details
-      generalDetails: this.fb.group({
-        productType: ['' ],
-        modeOfTransmission: ['' ],
-        formOfUndertaking: ['' ],
-        purpose: ['' ]
-      }),
+  ngOnInit() {
+    // Priority 1: Check URL for ID (Deep linking/Refresh support)
+    this.route.queryParams.subscribe(params => {
+      const urlId = params['transactionId'];
+      
+      if (urlId) {
+        // Mode: UPDATE (via URL)
+        this.currentTransactionId = urlId;
+        this.isEditMode = true;
+        this.loadDataFromBackend(urlId);
+      } else {
+        // Priority 2: Check SharedService (Navigation from Pending Records)
+        this.checkForSharedData();
+      }
+    });
+  }
 
-      // Applicant & Beneficiary Details
+  // ==========================================
+  // 1. INITIALIZATION LOGIC
+  // ==========================================
+
+  private initializeForm(): void {
+    // ... (Your existing form group definition stays exactly the same)
+    this.importForm = this.fb.group({
+      generalDetails: this.fb.group({
+        productType: [''],
+        modeOfTransmission: [''],
+        formOfUndertaking: [''],
+        purpose: ['']
+      }),
       applicantBeneficiary: this.fb.group({
-        applicantName: ['' ],
-        applicantAddress1: ['' ],
+        applicantName: [''],
+        applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
-        beneficiaryName: ['' ],
-        beneficiaryAddress1: ['' ],
+        beneficiaryName: [''],
+        beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
-        beneficiaryCountry: ['' ]
+        beneficiaryCountry: ['']
       }),
-
-      // Bank Details
       bankForm: this.fb.group({
-        recipientBankName: ['' ],
-        issuerReference: ['' ],
+        recipientBankName: [''],
+        issuerReference: [''],
         selectedTab: ['issuing'],
         issuanceType: [''],
         swift: [''],
@@ -94,14 +114,12 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
         address3: [''],
         country: ['']
       }),
-
-      // Undertaking Details
       undertakingDetails: this.fb.group({
-        typeOfUndertaking: ['' ],
+        typeOfUndertaking: [''],
         effectiveOption: [''],
         expiryType: [''],
         expiryDate: [''],
-        currency: ['' ],
+        currency: [''],
         undertakingAmount: [0, [Validators.required, Validators.min(0)]],
         variationPlus: [0],
         variationMinus: [0],
@@ -127,65 +145,151 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
         underlyingtransactionInfo: [''],
         presentationInfo: ['']
       }),
-
-      // Instructions to Bank
       instructions: this.fb.group({
-        deliveryType: ['' ],
-        deliveryMode: ['' ],
-        deliveryTo: ['' ],
-        principalAccount: ['' ],
+        deliveryType: [''],
+        deliveryMode: [''],
+        deliveryTo: [''],
+        principalAccount: [''],
         feeAccount: [''],
         otherInstructions: ['', [Validators.maxLength(210)]]
       }),
-
-      // Attachments
       attachments: this.fb.group({
         files: this.fb.array([])
       })
     });
   }
 
-  ngOnInit() {
-    // Load saved data if exists
-    this.loadSavedData();
-    
-    // Debug: Check form structure
-    console.log('Form initialized with sections:');
-    console.log('generalDetails exists:', !!this.importForm.get('generalDetails'));
-    console.log('applicantBeneficiary exists:', !!this.importForm.get('applicantBeneficiary'));
-    console.log('bankForm exists:', !!this.importForm.get('bankForm'));
-    console.log('undertakingDetails exists:', !!this.importForm.get('undertakingDetails'));
-    console.log('instructions exists:', !!this.importForm.get('instructions'));
-    console.log('attachments exists:', !!this.importForm.get('attachments'));
-    
-    // Debug: Check getters
-    console.log('Getter generalDetails:', this.generalDetails);
-    console.log('Getter applicantBeneficiary:', this.applicantBeneficiary);
-    console.log('Getter bankForm:', this.bankForm);
-    console.log('Getter undertakingDetails:', this.undertakingDetails);
-    console.log('Getter instructions:', this.instructions);
+  /**
+   * Scenario A: User clicked "Edit" from a list, data passed via Service
+   */
+  private checkForSharedData() {
+    const sharedData = this.sharedService.getFormData();
+
+    if (sharedData && sharedData.isEditMode) {
+      console.log('Mode: UPDATE (via SharedService)');
+      this.isEditMode = true;
+      this.currentTransactionId = sharedData.transactionId;
+      
+      // Update URL immediately so if they refresh, they stay on this ID
+      this.updateUrlWithId(this.currentTransactionId);
+
+      if (sharedData.formData) {
+        this.importForm.patchValue(sharedData.formData);
+      }
+    } else {
+      console.log('Mode: CREATE');
+      // Optional: Load from local storage for crash recovery
+      this.loadSavedData();
+    }
   }
 
-  // Form getters for child components - CORRECTED
-  get generalDetails(): FormGroup {
-    return this.importForm.get('generalDetails') as FormGroup;
+  /**
+   * Scenario B: User refreshed page with ?transactionId=123
+   */
+  private loadDataFromBackend(id: string | number) {
+    this.isLoading = true;
+    // Assuming you have a getTransactionById method. If not, you need to create one.
+    this.backendService.getTransactionById(id).subscribe({
+      next: (data) => {
+        this.isLoading = false;
+        // Map backend response to Form Structure if necessary
+        this.importForm.patchValue(data); 
+        this.snackBar.open('Record loaded successfully', 'Close', { duration: 2000 });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load transaction', err);
+        this.snackBar.open('Error loading record', 'Close', { duration: 3000 });
+      }
+    });
   }
 
-  get applicantBeneficiary(): FormGroup {
-    return this.importForm.get('applicantBeneficiary') as FormGroup;
+  // ==========================================
+  // 2. SAVE & UPDATE LOGIC
+  // ==========================================
+
+  saveForm() {
+    if (this.importForm.invalid) {
+      this.markAllFieldsAsTouched();
+      this.showValidationError();
+      return;
+    }
+
+    const formData = this.prepareFormData();
+
+    // The service should handle:
+    // 1. POST if currentTransactionId is null
+    // 2. PUT if currentTransactionId is set
+    this.backendService.saveDraft(formData, this.currentTransactionId || undefined)
+      .subscribe({
+        next: (txn) => {
+          // 1. Update State
+          const newId = txn.id || txn.transactionId; // Adjust based on your API response
+          this.currentTransactionId = newId;
+          this.isEditMode = true;
+
+          // 2. Update URL silently (without page reload)
+          this.updateUrlWithId(newId);
+
+          // 3. Feedback
+          this.snackBar.open(`Draft saved! Reference: ${txn.channelReference || newId}`, 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+          });
+
+          // 4. Clean up
+          this.sharedService.clearFormData();
+          localStorage.removeItem('undertakingFormData');
+        },
+        error: (err) => {
+          console.error('Save failed', err);
+          this.snackBar.open('Failed to save draft.', 'Close', { duration: 3000 });
+        }
+      });
   }
 
-  get bankForm(): FormGroup {
-    return this.importForm.get('bankForm') as FormGroup;
+  /**
+   * Helper to change URL from /request to /request?transactionId=123
+   */
+  private updateUrlWithId(id: any) {
+    const url = this.router.createUrlTree([], {
+      relativeTo: this.route,
+      queryParams: { transactionId: id },
+      queryParamsHandling: 'merge', // merge with existing params if any
+    }).toString();
+
+    this.location.go(url); // Changes URL in browser bar without reloading
   }
 
-  get undertakingDetails(): FormGroup {
-    return this.importForm.get('undertakingDetails') as FormGroup;
+  submit() {
+    if (this.importForm.invalid) {
+      this.markAllFieldsAsTouched();
+      this.showValidationError();
+      return;
+    }
+
+    // Pass data to Preview
+    const dataForPreview = {
+      formData: this.importForm.value,
+      uploadedFiles: this.uploadedFiles,
+      transactionId: this.currentTransactionId,
+      isEditMode: this.isEditMode
+    };
+
+    this.sharedService.setFormData(dataForPreview);
+    this.router.navigate(['/undertaking-issuance/preview']);
   }
 
-  get instructions(): FormGroup {
-    return this.importForm.get('instructions') as FormGroup;
-  }
+
+  // ==========================================
+  // 3. GETTERS & HELPERS
+  // ==========================================
+  
+  get generalDetails(): FormGroup { return this.importForm.get('generalDetails') as FormGroup; }
+  get applicantBeneficiary(): FormGroup { return this.importForm.get('applicantBeneficiary') as FormGroup; }
+  get bankForm(): FormGroup { return this.importForm.get('bankForm') as FormGroup; }
+  get undertakingDetails(): FormGroup { return this.importForm.get('undertakingDetails') as FormGroup; }
+  get instructions(): FormGroup { return this.importForm.get('instructions') as FormGroup; }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -197,27 +301,20 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
     const sections = document.querySelectorAll('section');
     const scrollArea = document.querySelector('.scroll-area');
 
-    if (!sections.length || !scrollArea) {
-      console.warn('No sections or scroll area found');
-      return;
-    }
+    if (!sections.length || !scrollArea) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const index = Array.from(sections)
-              .indexOf(entry.target as HTMLElement);
+            const index = Array.from(sections).indexOf(entry.target as HTMLElement);
             if (index !== -1) {
               this.currentStep = index;
             }
           }
         }
       },
-      {
-        threshold: 0.4,
-        root: scrollArea
-      }
+      { threshold: 0.4, root: scrollArea }
     );
 
     sections.forEach(section => observer.observe(section));
@@ -225,13 +322,10 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
 
   scrollToSection(i: number) {
     this.currentStep = i;
-    
-    // Handle navigation to preview section
     if (i === 6) {
       this.submit();
       return;
     }
-    
     const section = document.getElementById(`section-${i}`);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -242,74 +336,12 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
     if (this.currentStep > 0) {
       this.scrollToSection(this.currentStep - 1);
     } else {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/undertaking-issuance/pending-records']);
     }
-  }
-
-  saveForm() {
-    if (this.importForm.invalid) {
-      this.markAllFieldsAsTouched();
-      this.showValidationError();
-      return;
-    }
-
-    // Prepare form data for saving
-    const formData = this.prepareFormData();
-    
-    // Save to local storage
-    this.saveToLocalStorage(formData);
-    
-    // Save to shared service if needed
-    this.dataService.setFormData({ form: this.importForm, uploadedFiles: this.uploadedFiles });
-    
-    // Show success message
-    this.snackBar.open('Undertaking request saved successfully!', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar']
-    });
-    
-    console.log('Form saved locally:', formData);
-  }
-
-  submit() {
-    console.log('Submitting form...');
-    console.log('Form sections:', {
-      generalDetails: this.generalDetails?.value,
-      applicantBeneficiary: this.applicantBeneficiary?.value,
-      bankForm: this.bankForm?.value,
-      undertakingDetails: this.undertakingDetails?.value,
-      instructions: this.instructions?.value,
-      uploadedFiles: this.uploadedFiles
-    });
-
-    if (this.importForm.invalid) {
-      this.importForm.markAllAsTouched();
-      this.showValidationError();
-      return;
-    }
-
-    // Prepare complete data for preview
-    const previewData = {
-      form: this.importForm,  // Pass the entire form
-      uploadedFiles: this.uploadedFiles
-    };
-
-    console.log('Saving to shared service:', previewData);
-
-    // Save to shared service
-    this.dataService.setFormData(previewData);
-
-    // Navigate to preview
-    this.router.navigate(['/undertaking-issuance/preview']);
   }
 
   updateAttachments(files: File[]) {
-    console.log('Files received from attachments component:', files);
     this.uploadedFiles = files;
-    
-    // Also update the form's attachments array
     const attachmentsArray = this.importForm.get('attachments.files') as any;
     if (attachmentsArray) {
       attachmentsArray.clear();
@@ -325,40 +357,15 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
     }
   }
 
-  // ===================== HELPER METHODS =====================
-
   private loadSavedData() {
     try {
       const savedData = localStorage.getItem('undertakingFormData');
       if (savedData) {
         const parsedData = JSON.parse(savedData);
-        
-        // Update form values
         this.importForm.patchValue(parsedData);
-        
-        // Load files if they were saved
-        if (parsedData.uploadedFiles) {
-          console.log('Found saved form data, but files need to be re-uploaded');
-        }
-        
-        console.log('Loaded saved form data from localStorage');
       }
     } catch (error) {
-      console.error('Error loading saved data:', error);
-    }
-  }
-
-  private saveToLocalStorage(formData: any) {
-    try {
-      // Clone the data to avoid circular references
-      const dataToSave = {
-        ...formData,
-        uploadedFiles: [] // Don't save File objects to localStorage
-      };
-      
-      localStorage.setItem('undertakingFormData', JSON.stringify(dataToSave));
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
+      console.error('Error loading local storage data:', error);
     }
   }
 
@@ -367,9 +374,7 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
       ...this.importForm.value,
       attachments: this.prepareAttachmentsForPreview()
     };
-
     this.formatDates(formData);
-    
     return formData;
   }
 
@@ -379,54 +384,31 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
       size: file.size,
       type: file.type,
       lastModified: file.lastModified,
-      // Don't include the actual file object as it can't be serialized
     }));
   }
 
   private formatDates(formData: any) {
-    // Format undertaking dates
-    if (formData.undertakingDetails?.expiryDate) {
-      const expiryDate = formData.undertakingDetails.expiryDate;
-      if (expiryDate instanceof Date) {
-        formData.undertakingDetails.expiryDate = expiryDate.toISOString().split('T')[0];
-      }
-    }
-
-    if (formData.undertakingDetails?.contractDate) {
-      const contractDate = formData.undertakingDetails.contractDate;
-      if (contractDate instanceof Date) {
-        formData.undertakingDetails.contractDate = contractDate.toISOString().split('T')[0];
-      }
+    if (formData.undertakingDetails?.expiryDate instanceof Date) {
+      formData.undertakingDetails.expiryDate = formData.undertakingDetails.expiryDate.toISOString().split('T')[0];
     }
   }
 
   private markAllFieldsAsTouched() {
     this.importForm.markAllAsTouched();
-    
-    // Also mark all child forms
-    [
-      this.generalDetails,
-      this.applicantBeneficiary,
-      this.bankForm,
-      this.undertakingDetails,
-      this.instructions
-    ].forEach(form => form?.markAllAsTouched());
+    [this.generalDetails, this.applicantBeneficiary, this.bankForm, this.undertakingDetails, this.instructions]
+      .forEach(form => form?.markAllAsTouched());
   }
 
   private showValidationError() {
     const invalidFields = this.getInvalidFields();
-    
     if (invalidFields.length > 0) {
-      alert(`Please complete all required fields before proceeding.\n\nMissing or invalid fields:\n• ${invalidFields.join('\n• ')}`);
-      
-      // Scroll to first invalid section
+      alert(`Please complete all required fields.\nMissing: ${invalidFields.length} fields.`);
       this.scrollToFirstInvalidSection();
     }
   }
 
   private getInvalidFields(): string[] {
     const invalidFields: string[] = [];
-    
     const checkGroup = (group: FormGroup, prefix: string = '') => {
       Object.keys(group.controls).forEach(key => {
         const control = group.get(key);
@@ -437,7 +419,6 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
         }
       });
     };
-    
     checkGroup(this.importForm);
     return invalidFields;
   }
@@ -457,67 +438,5 @@ export class RequestUndertaking implements OnInit, AfterViewInit {
         break;
       }
     }
-  }
-
-  // ===================== FORM RESET/CLEAR METHODS =====================
-
-  clearForm() {
-    if (confirm('Are you sure you want to clear all form data?')) {
-      this.importForm.reset();
-      this.uploadedFiles = [];
-      localStorage.removeItem('undertakingFormData');
-      this.snackBar.open('Form cleared successfully!', 'Close', {
-        duration: 3000
-      });
-    }
-  }
-
-  // ===================== VALIDATION METHODS =====================
-
-  isSectionValid(sectionName: string): boolean {
-    const section = this.importForm.get(sectionName);
-    return section ? section.valid : false;
-  }
-
-  getSectionCompletion(sectionName: string): number {
-    const section = this.importForm.get(sectionName) as FormGroup;
-    if (!section) return 0;
-    
-    const totalControls = Object.keys(section.controls).length;
-    const validControls = Object.keys(section.controls).filter(
-      key => section.get(key)?.valid
-    ).length;
-    
-    return Math.round((validControls / totalControls) * 100);
-  }
-
-  // ===================== FORM STATUS =====================
-
-  getFormCompletionPercentage(): number {
-    const sections = [
-      this.generalDetails,
-      this.applicantBeneficiary,
-      this.bankForm,
-      this.undertakingDetails,
-      this.instructions
-    ];
-    
-    let totalControls = 0;
-    let validControls = 0;
-    
-    sections.forEach(section => {
-      if (section) {
-        totalControls += Object.keys(section.controls).length;
-        validControls += Object.keys(section.controls).filter(
-          key => section.get(key)?.valid
-        ).length;
-      }
-    });
-    
-    return totalControls > 0 ? Math.round((validControls / totalControls) * 100) : 0;
-  }
-
-  isFormComplete(): boolean {
-    return this.importForm.valid && this.getFormCompletionPercentage() >= 80;
   }
 }

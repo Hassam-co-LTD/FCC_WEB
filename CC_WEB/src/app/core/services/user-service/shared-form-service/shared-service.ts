@@ -1,136 +1,160 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-
 export interface TransactionBase {
+
   id: string;
   type: 'undertaking' | 'export-collection' | 'shipping-guarantee';
+  status: 'Draft' | 'Pending Approval' | 'Pending at Bank' | 'Live' | 'Rejected' | 'Closed' | 'Submitted';
+
+  // --- References ---
   channelReference: string;
-  customerReference: string;
-  bankReference: string;
-  issueDate: Date;
-  status: string;
-  beneficiary: string;
+  customerReference?: string;
+  bankReference?: string;
+
+  // --- Financials ---
+  beneficiary?: string;
   currency: string;
   amount: number;
   outstandingAmount?: number;
-  expiryDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  canEdit?: boolean;
-  canView?: boolean;
-  formData?: any;
-  submittedAt?: Date;
-  draftSavedAt?: Date;
+
+  // --- Dates ---
+  issueDate: Date | string;
+  expiryDate?: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  submittedAt?: Date | string;
+
+  // --- Permissions ---
+  canEdit: boolean;
+  canView: boolean;
+
+  // --- Data Storage ---
+  formData?: any; 
+
+  collectionType?: string;
+  drawerName?: string;
+  draweeName?: string;
+  shippingDetails?: any;
+  collectionInstructions?: any;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
-  private formData = new BehaviorSubject<any>(null);
-  private allTransactions = new BehaviorSubject<TransactionBase[]>([]);
-  
-  formData$: Observable<any> = this.formData.asObservable();
-  transactions$: Observable<TransactionBase[]> = this.allTransactions.asObservable();
-  
-  private storageKey = 'allTransactions';
+  // 1. Initialize with some dummy data for testing
+  private initialData: TransactionBase[] = [
+    {
+      id: '101',
+      type: 'undertaking',
+      status: 'Live',
+      channelReference: 'UND-2023-001',
+      customerReference: 'REF-A1',
+      beneficiary: 'Acme Corp',
+      currency: 'USD',
+      amount: 50000,
+      outstandingAmount: 50000,
+      issueDate: new Date('2023-10-01'),
+      createdAt: new Date('2023-10-01'),
+      updatedAt: new Date('2023-10-05'),
+      canEdit: false,
+      canView: true,
+      formData: {}
+    },
+    {
+      id: '102',
+      type: 'export-collection',
+      status: 'Draft',
+      channelReference: 'EXP-2023-099',
+      customerReference: 'PO-999',
+      beneficiary: 'Global Trade Ltd',
+      currency: 'EUR',
+      amount: 12500.50,
+      outstandingAmount: 12500.50,
+      issueDate: new Date('2023-11-15'),
+      createdAt: new Date('2023-11-15'),
+      updatedAt: new Date('2023-11-15'),
+      canEdit: true,
+      canView: true,
+      formData: {},
+      collectionType: 'DA',
+      drawerName: 'Global Trade Ltd'
+    }
+  ];
 
-  constructor() {
-    this.loadFromStorage();
+  // 2. BehaviorSubject holds the current state of transactions
+  private transactionsSubject = new BehaviorSubject<TransactionBase[]>(this.initialData);
+
+  // 3. Components subscribe to this Observable
+  public transactions$ = this.transactionsSubject.asObservable();
+
+  // Storage for passing data between pages (View/Edit)
+  private formDataStore: any = null;
+
+  constructor() { }
+
+  // ==========================================================
+  //  TRANSACTION MANAGEMENT
+  // ==========================================================
+
+  addTransaction(transaction: TransactionBase): void {
+    const currentTransactions = this.transactionsSubject.value;
+
+    // Ensure default timestamps
+    const newTransaction = {
+      ...transaction,
+      createdAt: transaction.createdAt || new Date(),
+      updatedAt: transaction.updatedAt || new Date()
+    };
+
+    // Add to the top of the list
+    const updatedTransactions = [newTransaction, ...currentTransactions];
+
+    this.transactionsSubject.next(updatedTransactions);
+    console.log('Transaction added to SharedService:', newTransaction);
   }
 
-  private loadFromStorage(): void {
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const transactions = parsed.map((t: any) => ({
-          ...t,
-          issueDate: new Date(t.issueDate),
-          expiryDate: t.expiryDate ? new Date(t.expiryDate) : undefined,
-          createdAt: t.createdAt ? new Date(t.createdAt) : new Date(),
-          updatedAt: t.updatedAt ? new Date(t.updatedAt) : new Date(),
-          submittedAt: t.submittedAt ? new Date(t.submittedAt) : undefined,
-          draftSavedAt: t.draftSavedAt ? new Date(t.draftSavedAt) : undefined
-        }));
-        this.allTransactions.next(transactions);
-      }
-    } catch (error) {
-      console.error('Error loading transactions:', error);
-      this.allTransactions.next([]);
+  getAllTransactions(): TransactionBase[] {
+    return this.transactionsSubject.value;
+  }
+
+  updateTransaction(id: string, updates: Partial<TransactionBase>): void {
+    const currentTransactions = this.transactionsSubject.value;
+    const index = currentTransactions.findIndex(t => t.id === id);
+
+    if (index !== -1) {
+      // Always update 'updatedAt' timestamp
+      const timestampedUpdates = {
+        ...updates,
+        updatedAt: new Date()
+      };
+
+      const updatedTransactions = [...currentTransactions];
+      updatedTransactions[index] = { ...updatedTransactions[index], ...timestampedUpdates };
+
+      this.transactionsSubject.next(updatedTransactions);
     }
   }
 
-  private saveToStorage(): void {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.allTransactions.getValue()));
-    } catch (error) {
-      console.error('Error saving transactions:', error);
-    }
+  deleteTransaction(id: string): void {
+    const currentTransactions = this.transactionsSubject.value;
+    const updatedTransactions = currentTransactions.filter(t => t.id !== id);
+    this.transactionsSubject.next(updatedTransactions);
   }
+
+  // ==========================================================
+  //  FORM DATA TRANSFER (View/Edit Routing)
+  // ==========================================================
 
   setFormData(data: any): void {
-    this.formData.next(data);
+    this.formDataStore = data;
   }
 
   getFormData(): any {
-    return this.formData.value;
+    return this.formDataStore;
   }
 
   clearFormData(): void {
-    this.formData.next(null);
-  }
-
-  hasFormData(): boolean {
-    return !!this.formData.value;
-  }
-
-  // Transaction management methods
-  getAllTransactions(): TransactionBase[] {
-    return this.allTransactions.getValue();
-  }
-
-  addTransaction(transaction: TransactionBase): void {
-    const current = this.allTransactions.getValue();
-    const updated = [...current, transaction];
-    this.allTransactions.next(updated);
-    this.saveToStorage();
-  }
-
-  updateTransaction(id: string, updates: Partial<TransactionBase>): boolean {
-    const current = this.allTransactions.getValue();
-    const index = current.findIndex(t => t.id === id);
-    
-    if (index === -1) return false;
-    
-    const updated = [...current];
-    updated[index] = { ...updated[index], ...updates, updatedAt: new Date() };
-    this.allTransactions.next(updated);
-    this.saveToStorage();
-    return true;
-  }
-
-  deleteTransaction(id: string): boolean {
-    const current = this.allTransactions.getValue();
-    const updated = current.filter(t => t.id !== id);
-    
-    if (updated.length === current.length) return false;
-    
-    this.allTransactions.next(updated);
-    this.saveToStorage();
-    return true;
-  }
-
-  getTransactionById(id: string): TransactionBase | undefined {
-    return this.allTransactions.getValue().find(t => t.id === id);
-  }
-
-  getTransactionsByType(type: string): TransactionBase[] {
-    return this.allTransactions.getValue().filter(t => t.type === type);
-  }
-
-  clearAllTransactions(): void {
-    this.allTransactions.next([]);
-    localStorage.removeItem(this.storageKey);
+    this.formDataStore = null;
   }
 }
