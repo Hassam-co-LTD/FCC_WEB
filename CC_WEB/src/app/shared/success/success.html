@@ -1,27 +1,28 @@
 <div class="success-page">
 
-    <div class="success-icon">✔</div>
+  <div class="success-icon">✔</div>
 
-    <h1>Success</h1>
-    <p>Your transaction is successfully released to the bank.</p>
+  <h1>Success</h1>
+  <p *ngIf="transaction">
+    Your transaction is successfully released to the bank.
+    {{ transaction.tnxId }}
+  </p>
 
-    <div *ngIf="data" class="summary-table-container">
-        <table mat-table [dataSource]="[data]" class="summary-table mat-elevation-z1">
 
-            <!-- Dynamic columns -->
-            <ng-container *ngFor="let key of displayedColumns" [matColumnDef]="key">
-                <th mat-header-cell *matHeaderCellDef>{{ key | titlecase }}</th>
-                <td mat-cell *matCellDef="let element">{{ displayValue(element[key]) }}</td>
-            </ng-container>
+  <!-- 🔒 Read-only Preview -->
+  <!-- <app-preview
+    [transaction]="transaction"
+    [readonly]="true">
+  </app-preview> -->
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-    </div>
+  <div class="actions">
+    <button mat-flat-button color="primary" (click)="goToListing()">
+      {{ pageName1 }}
+    </button>
 
-    <div class="actions">
-        <button mat-flat-button color="primary">{{ pageName1 }}</button>
-        <button mat-stroked-button color="primary">{{ pageName2 }}</button>
-    </div>
+    <button mat-stroked-button color="primary" (click)="createNew()">
+      {{ pageName2 }}
+    </button>
+  </div>
 
 </div>

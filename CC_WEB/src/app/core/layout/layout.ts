@@ -207,9 +207,7 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/import-screen' },
                 { label: 'Amend', route: '/import-screen/amend' },
-                { label: 'Pending Records', route: '/import-screen/pending-records' },
-                { label: 'Submitted Records', route: '/import-screen/submitted-records' },
-                { label: 'Apporoved Records', route: '/import-screen/approved-records' },
+                { label: 'Enquiries', route: '/import-screen/enquiries' },
               ]
             },
 
@@ -279,14 +277,6 @@ export class LayoutComponent implements OnInit {
       ];
     }
   }
-
-
-
-  toggleShippingGuaranteeMenu() {
-    this.shippingGuaranteeOpen = !this.shippingGuaranteeOpen;
-  }
-
-
   // Ameen function
   onCustomerClick(item: MenuItem) {
     const currentUrl = this.router.url;

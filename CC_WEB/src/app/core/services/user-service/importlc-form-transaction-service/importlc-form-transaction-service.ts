@@ -2,36 +2,19 @@ import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
+import { ImportLcTransaction } from '../../../../core/models/import-lc';
 
-export interface ImportLcTransaction {
-  tnxId: string;
-
-  generalDetails?: any;
-  applicantForm?: any;
-  bankForm?: any;
-  amountChargeForm?: any;
-  paymentDetailsForm?: any;
-  shipmentForm?: any;
-  narrativeForm?: any;
-  instructionForm?: any;
-  attachments?: any[];
-
-  createdAt: Date;
-  status: 'Pending';
-}
 @Injectable({
   providedIn: 'root',
 })
 export class ImportlcFormTransactionService {
   private readonly STORAGE_KEY = 'IMPORT_LC_TRANSACTIONS';
+  /* ================= STATE ================= */
+  private currentTransaction: ImportLcTransaction | null = null;
+  private savetransactions$ = new BehaviorSubject<ImportLcTransaction[]>([]);
+  transactionsStream$ = this.savetransactions$.asObservable();
+  private readOnly = true;
 
-  // current form snapshot (for preview)
-  private formData$ = new BehaviorSubject<any>(null);
-  currentData$ = this.formData$.asObservable();
-
-  // all saved Import LC transactions
-  private transactions$ = new BehaviorSubject<ImportLcTransaction[]>([]);
-  transactionsStream$ = this.transactions$.asObservable();
 
   private isBrowser: boolean;
 
@@ -43,59 +26,153 @@ export class ImportlcFormTransactionService {
     }
   }
 
-  /* ================= FORM DATA ================= */
+  /* ================= TNX ID ================= */
 
-  setFormData(data: any) {
-    this.formData$.next(data);
+  // private generateTnxId(): string {
+  //   const now = new Date();
+
+  //   const datePart =
+  //     now.getFullYear().toString().slice(-2) +
+  //     (now.getMonth() + 1).toString().padStart(2, '0') +
+  //     now.getDate().toString().padStart(2, '0');
+
+  //   const todayTx = this.savetransactions$.value
+  //     .filter(t => t.tnxId.startsWith(`TNX${datePart}`))
+  //     .sort(
+  //       (a, b) =>
+  //         parseInt(a.tnxId.slice(-6), 10) -
+  //         parseInt(b.tnxId.slice(-6), 10)
+  //     );
+
+  //   const lastId = todayTx.length
+  //     ? parseInt(todayTx[todayTx.length - 1].tnxId.slice(-6), 10)
+  //     : 0;
+
+  //   return `TNX${datePart}${(lastId + 1).toString().padStart(6, '0')}`;
+  // }
+
+  /* ================= addOrUpdateTransaction ================= */
+  addOrUpdateTransaction(tx: ImportLcTransaction): void {
+    const transactions = [...this.savetransactions$.value];
+    const index = transactions.findIndex(t => t.tnxId === tx.tnxId);
+
+    if (index > -1) {
+      // Merge new data with existing transaction to avoid nulls
+      transactions[index] = { ...transactions[index], ...tx };
+    } else {
+      transactions.push(tx);
+    }
+
+    this.savetransactions$.next(transactions);
+    this.persist(transactions);
   }
 
-  getFormData() {
-    return this.formData$.value;
-  }
+  /* ================= SAVE ================= */
 
-  clearFormData() {
-    this.formData$.next(null);
-  }
+  // createTransaction(form: FormGroup): ImportLcTransaction {
+  //   const value = form.value;
 
-  /* ================= IMPORT LC SAVE ================= */
+  //   const transaction: ImportLcTransaction = {
+  //     tnxId: this.generateTnxId(),
+  //     createdAt: new Date(),
+  //     status: 'pending',
 
-  saveImportLc(form: FormGroup): ImportLcTransaction {
-    const value = form.value;
+  //     generalDetails: value.generalDetails,
+  //     applicantForm: value.applicantForm,
+  //     bankForm: value.bankForm,
+  //     amountChargeForm: value.amountChargeForm,
+  //     paymentDetailsForm: value.paymentDetailsForm,
+  //     shipmentForm: value.shipmentForm,
+  //     narrativeForm: value.narrativeForm,
+  //     instructionForm: value.instructionForm,
+  //     attachments: value.attachments,
+  //   };
 
-    const transaction: ImportLcTransaction = {
-      tnxId: this.generateTnxId(),
+  //   const updated = [...this.savetransactions$.value, transaction];
+  //   this.savetransactions$.next(updated);
+  //   this.persist(updated);
 
-      generalDetails: value.generalDetails,
-      applicantForm: value.applicantForm,
-      bankForm: value.bankForm,
-      amountChargeForm: value.amountChargeForm,
-      paymentDetailsForm: value.paymentDetailsForm,
-      shipmentForm: value.shipmentForm,
-      narrativeForm: value.narrativeForm,
-      instructionForm: value.instructionForm,
-      attachments: value.attachments,
+  //   this.currentTransaction = transaction;
+  //   return transaction;
+  // }
 
-      createdAt: new Date(),
-      status: 'Pending',
-    };
+  /* ================= SUBMIT ================= */
 
-    const updated = [...this.transactions$.value, transaction];
-    this.transactions$.next(updated);
-    this.persist(updated);
+  // addSubmitted(tnxId: string): ImportLcTransaction {
+  //   const transactions = [...this.savetransactions$.value];
+  //   const index = transactions.findIndex(t => t.tnxId === tnxId);
 
-    return transaction;
-  }
+  //   if (index === -1) {
+  //     throw new Error(`Transaction not found { tnxId: ${tnxId} }`);
+  //   }
+
+  //   if (transactions[index].status === 'submitted') {
+  //     return transactions[index]; // idempotent
+  //   }
+
+  //   transactions[index] = {
+  //     ...transactions[index],
+  //     status: 'submitted',
+  //   };
+
+  //   this.savetransactions$.next(transactions);
+  //   this.persist(transactions);
+
+  //   return transactions[index];
+  // }
+
+
+  /* ================= UPDATE ================= */
+
+  // updateTransaction(form: FormGroup): ImportLcTransaction {
+  //   if (!this.currentTransaction) {
+  //     throw new Error('No transaction selected for update');
+  //   }
+
+  //   const updatedTx: ImportLcTransaction = {
+  //     ...this.currentTransaction,
+  //     ...form.value,
+  //   };
+
+  //   const updatedList = this.savetransactions$.value.map(tx =>
+  //     tx.tnxId === updatedTx.tnxId ? updatedTx : tx
+  //   );
+
+  //   this.savetransactions$.next(updatedList);
+  //   this.persist(updatedList);
+
+  //   this.currentTransaction = updatedTx;
+  //   return updatedTx;
+  // }
 
   /* ================= GETTERS ================= */
 
   getAllTransactions(): ImportLcTransaction[] {
-    return this.transactions$.value;
+    return this.savetransactions$.value;
   }
 
-  getTransactionByTnxId(tnxId: string): ImportLcTransaction | undefined {
-    return this.transactions$.value.find(t => t.tnxId === tnxId);
-  }
+  // getTransactionByTnxId(tnxId: string): ImportLcTransaction | undefined {
+  //   return this.savetransactions$.value.find(t => t.tnxId === tnxId);
+  // }
+  // getCurrentTransaction(): ImportLcTransaction | null {
+  //   return this.currentTransaction;
+  // }
 
+  getCurrentTransaction(): ImportLcTransaction | null {
+    return this.currentTransaction;
+  }
+  /* ================= SETTERS ================= */
+  // setCurrentTransaction(tx: ImportLcTransaction) {
+  //   this.currentTransaction = tx;
+  // }
+
+  setCurrentTransaction(tx: ImportLcTransaction, readOnly = false): void {
+    this.currentTransaction = tx;
+    this.readOnly = readOnly;
+  }
+  // clearCurrentTransaction() {
+  //   this.currentTransaction = null;
+  // }
   /* ================= STORAGE ================= */
 
   private persist(transactions: ImportLcTransaction[]) {
@@ -109,31 +186,25 @@ export class ImportlcFormTransactionService {
 
     const parsed: ImportLcTransaction[] = JSON.parse(stored).map((t: any) => ({
       ...t,
-      createdAt: new Date(t.createdAt),
+      createdOn: t.createdOn ? new Date(t.createdOn) : undefined,
+      updatedOn: t.updatedOn ? new Date(t.updatedOn) : undefined,
     }));
 
-    this.transactions$.next(parsed);
+    this.savetransactions$.next(parsed);
   }
 
-  clearAllTransactions() {
-    this.transactions$.next([]);
-    if (this.isBrowser) {
-      localStorage.removeItem(this.STORAGE_KEY);
-    }
-  }
+  // clearAllTransactions() {
+  //   this.savetransactions$.next([]);
+  //   if (this.isBrowser) {
+  //     localStorage.removeItem(this.STORAGE_KEY);
+  //   }
+  // }
 
-  /* ================= TNX ID ================= */
+  // isReadOnly(): boolean {
+  //   return this.readOnly;
+  // }
 
-  private generateTnxId(): string {
-    const now = new Date();
-    return (
-      'TNX-' +
-      now.getFullYear().toString().slice(-2) +
-      (now.getMonth() + 1).toString().padStart(2, '0') +
-      now.getDate().toString().padStart(2, '0') +
-      '-' +
-      Math.floor(100000 + Math.random() * 900000)
-    );
-  }
-
+  // clear(): void {
+  //   this.readOnly = false;
+  // }
 }

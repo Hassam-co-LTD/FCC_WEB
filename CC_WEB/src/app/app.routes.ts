@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
+import { ImportScreen } from './screens/USER/import-screen/import-screen';
 
 export const routes: Routes = [
     // Default redirect
@@ -380,78 +381,42 @@ export const routes: Routes = [
             // IMPORT LC
             // ==============================
 
+            // Static routes first
             {
-                path: 'import-screen',
+                path: 'import-screen/enquiries',
                 loadComponent: () =>
-                    import('./screens/USER/import-screen/import-screen').then((m) => m.ImportScreen),
-                children: [
-                    {
-                        path: 'general-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/import-screen/components/general-details/general-details'
-                            ).then((m) => m.GeneralDetails),
-                    },
-                    // {
-                    //     path: 'applicant-beneficiary',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/applicant-beneficiary/applicant-beneficiary'
-                    //         ).then((m) => m.ApplicantBeneficiary),
-                    // },
-                    // {
-                    //     path: 'bank-details',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/bank-details/bank-details'
-                    //         ).then((m) => m.BankDetails),
-                    // },
-                    // {
-                    //     path: 'amount-charge-details',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/amount-charge-details/amount-charge-details'
-                    //         ).then((m) => m.AmountChargeDetails),
-                    // },
-                    // {
-                    //     path: 'payment-details',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/payment-details/payment-details'
-                    //         ).then((m) => m.PaymentDetails),
-                    // },
-                    // {
-                    //     path: 'shipment-details',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/shipment-details/shipment-details'
-                    //         ).then((m) => m.ShipmentDetails),
-                    // },
-                    // {
-                    //     path: 'narrative-details',
-                    //     loadComponent: () =>
-                    //         import(
-                    //             './screens/USER/import-screen/components/narrative-details/narrative-details'
-                    //         ).then((m) => m.NarrativeDetails),
-                    // },
-
-                ],
+                    import('./screens/USER/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records')
+                        .then(m => m.EnquiriesOfRecords),
             },
             {
                 path: 'import-screen/preview',
                 loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/components/preview/preview'
-                    ).then((m) => m.Preview),
+                    import('./screens/USER/import-screen/components/preview/preview').then(m => m.Preview),
             },
             {
                 path: 'import-screen/success',
                 loadComponent: () =>
-                    import(
-                        './shared/success/success'
-                    ).then((m) => m.Success),
+                    import('./shared/success/success').then(m => m.Success),
+            },
+            {
+                path: 'import-screen/amend',
+                loadComponent: () =>
+                    import('./screens/USER/import-screen/sub-menus/events/amend-import/amend').then(m => m.AmendScreen),
             },
 
+            // Dynamic TNX ID route
+            {
+                path: 'import-screen/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
+            },
+
+            // Base import screen
+            {
+                path: 'import-screen',
+                loadComponent: () =>
+                    import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
+            },
             {
                 path: 'import-welcome',
                 loadComponent: () =>
@@ -463,42 +428,6 @@ export const routes: Routes = [
                     description: 'Manage all Import LC related activities here.',
                 },
             },
-
-            // Import Amend Route
-            {
-                path: 'import-screen/amend',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/events/amend-import/amend'
-                    ).then((m) => m.AmendScreen),
-            },
-
-            // Import Pending-Records Route
-            {
-                path: 'import-screen/pending-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/records/pending-records/pending-records'
-                    ).then((m) => m.PendingRecords),
-            },
-
-            // Import submitted-Records Route
-            {
-                path: 'import-screen/submitted-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/records/submitted-records/submitted-records'
-                    ).then((m) => m.SubmittedRecords),
-            },
-            // Import approved-Records Route
-            {
-                path: 'import-screen/approved-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
-                    ).then((m) => m.ApprovedRecords),
-            },
-
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
