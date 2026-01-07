@@ -143,10 +143,10 @@
 
   </mat-card>
 </div>
-
+</div>
 <!-- approved result -->
 
-<div *ngIf="getBranchById?.recordstatus === 'A'" class="approved-container">
+<div *ngIf="getBranchById?.branchstatus === 'A'" class="approved-container">
 
   <div class="approved-header">
     <span class="approved-badge">✔ Approved</span>
@@ -222,7 +222,7 @@
   <!-- Action Footer -->
   <div class="approved-actions">
     <button class="btn-back" (click)="back()">← Back</button>
-    <button class="btn-edit" (click)="(getBranchById.id)">Amend</button>
+    <button class="btn-edit" (click)="reject(getBranchById.id)">Amend</button>
   </div>
 
 </div>

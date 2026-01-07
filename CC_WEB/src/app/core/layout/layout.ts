@@ -167,16 +167,28 @@ export class LayoutComponent implements OnInit {
           children: [
             { label: 'Create New', route: '/admin/create-customer' },
              {label:'Inquiry', route:"/admin/customer-list"},
+            
           ]
         },
-      {
+     {
   label: 'Branch',
-  icon: 'location_city',          // updated icon for branch
-  route: '/admin/branches',       // main Branch page
+  icon: 'account_balance',      // ✅ Bank / Branch icon
+  route: '/admin/branches',
   open: false,
   children: [
-    { label: 'Create New', route: '/admin/create-branch' },   // child for creating a branch
-    { label: 'Inquiry', route: '/admin/branch-inquiry' }     // child for viewing branch list
+    { label: 'Create New', route: '/admin/create-branch' },
+    { label: 'Inquiry', route: '/admin/branch-inquiry' }
+  ]
+}
+
+,
+{
+  label: 'City',
+  icon: 'location_city',        // ✅ Correct city icon
+  route: '/admin/city',
+  open: false,
+  children: [
+    { label: 'Create New', route: '/admin/city' }
   ]
 }
 

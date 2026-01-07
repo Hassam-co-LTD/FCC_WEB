@@ -116,11 +116,13 @@ export class CustomerBranch implements OnInit {
 
   getDraftBranchById() {
     const id = Number(this.activateRouter.snapshot.paramMap.get("id"));
+    // console.log(typeof (id), "this is the id",id )
     if (!id) return;
 
-    this.api.getDraftById(id).subscribe({
+    this.api.getSearchById(id).subscribe({
       next: (res: any) => {
-        this.getBranchById = res;
+          this.getBranchById = res;
+        console.log("this is the status", this.getBranchById.branchstatus);
         if (res) this.branchForm.patchValue(this.mapDraftToForm(res));
       },
       error: (err) => console.log("Error fetching draft:", err)
@@ -200,6 +202,7 @@ export class CustomerBranch implements OnInit {
   approved(id: number) {
     this.api.approved(id).subscribe({
       next: res => {
+        this.getBranchById = res;
         Swal.fire({
           title: 'Success!',
           text: 'Status Updated to Approved',

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
 import { ImportScreen } from './screens/USER/import-screen/import-screen';
+import path from 'node:path';
 
 export const routes: Routes = [
     // Default redirect
@@ -81,8 +82,25 @@ export const routes: Routes = [
                         import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
                         .then((m)=> m.CustomerBranch)
                     },
+                    {
+                    path:'city',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
                     
+                }
+                 ,
+                    {
+                    path:'city-list',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
                     
+                },
+                   {
+                    path:'city-inquiry',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
+                    
+                }   
                 
                 ],
     

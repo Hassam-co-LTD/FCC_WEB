@@ -80,19 +80,19 @@ export class ApiService {
    
     // Get customers by status (DRAFT / APPROVED / SUBMITTED)
   getCustomersByStatus(status: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/customers?status=${status}`);
+    return this.http.get<any[]>(`${this.baseUrl}customers?status=${status}`);
   }
 
   // Create draft customer
   createDraft(customer: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl+"/customers", customer);
+    return this.http.post<any>(this.baseUrl+"customers", customer);
   }
 
 
   // get Customer by Id
 
   getCustomerById(Id:number){
-      return this.http.get(this.baseUrl+"/customers/"+Id);
+      return this.http.get(this.baseUrl+"customers/"+Id);
   }
 
 
@@ -101,44 +101,44 @@ export class ApiService {
   UpdateCustomer(customer:any) {
       //  console.log("data to send from frontend to backend", customer)this.http.put(this.baseUrl + "/update/" + customer.cId, customer); 
     
- return this.http.put(this.baseUrl + "/customers/update/"+ customer.id, customer);  
+ return this.http.put(this.baseUrl + "customers/update/"+ customer.id, customer);  
 
   }
 
 
   // Submit draft customer
   submitCustomer(id: number): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/customers/submit/${id}`, {});
+    return this.http.put<any>(`${this.baseUrl}customers/submit/${id}`, {});
   }
 
 
   // load submiteCustomers
 
   getSubmittedCustomers(){
-    return  this.http.get<any>(this.baseUrl+"/customers/submittedCustomers");
+    return  this.http.get<any>(this.baseUrl+"customers/submittedCustomers");
   }
 
   // // Approve submitted customer
   
   setApprovedStatus(id:number):Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/customers/Approved/${id}`,{});
+    return this.http.put<any>(`${this.baseUrl}customers/Approved/${id}`,{});
   }
 
   // get App Approved Customers 
 
   getApprovedCustomers(){
-    return  this.http.get<any>(this.baseUrl+"/customers/ApprovedCustomers")
+    return  this.http.get<any>(this.baseUrl+"customers/ApprovedCustomers")
   }
 
   // reject the customer and set the status back D
 
   rejectCustomer(id:number) {
-    return this.http.put<any>(`${this.baseUrl}/customers/reject/${id}`,{});
+    return this.http.put<any>(`${this.baseUrl}customers/reject/${id}`,{});
   }
 
   // set approved status to draft 
   editApprovedCustomer(id:number){
-     return this.http.put<any>(`${this.baseUrl}/customers/approvedToDraft/${id}`,{}); 
+     return this.http.put<any>(`${this.baseUrl}customers/approvedToDraft/${id}`,{}); 
   }
 
 
@@ -147,58 +147,63 @@ export class ApiService {
 // api services for branch
 
 getAllCities(){
-   return this.http.get<any>(`${this.baseUrl}/branch/cities`);
+   return this.http.get<any>(`${this.baseUrl}branch/cities`);
 }
 
 // save Branch and set status to draft
 saveBranch(data:any){
-     return this.http.post( `${this.baseUrl}/branch`,data);   
+     return this.http.post( `${this.baseUrl}branch`,data);   
 }
 
 // get All Draft List
 
 getDraftList(){
-  return this.http.get<any>(`${this.baseUrl}/branch/draft`);
+  return this.http.get<any>(`${this.baseUrl}branch/draft`);
 }
 
 // get Draft ById 
 
-getDraftById(id:Number){
-   return this.http.get<any>(`${this.baseUrl}/branch/${id}`);
+getSearchById(id:Number){
+   return this.http.get<any>(`${this.baseUrl}branch/${id}`);
 }
 
 // update the Draft 
 
 updateDraftBranch(id:number,updateBranch:any){
    
-  return this.http.put<any>(`${this.baseUrl}/branch/update/${id}`,updateBranch);
+  return this.http.put<any>(`${this.baseUrl}branch/update/${id}`,updateBranch);
 }
 
 // submit the form
 
 submitDraftBranch(id:number){
    console.log("submitted id",typeof(id) , id)
-  return this.http.get<any>(`${this.baseUrl}/branch/submit/${id}`);
+  return this.http.get<any>(`${this.baseUrl}branch/submit/${id}`);
 }
 
 // get all the submitted
 getAllSubmitted(){
-    return   this.http.get<any>(`${this.baseUrl}/branch`) ;
+    return   this.http.get<any>(`${this.baseUrl}branch`) ;
 }
 
 // reject and set status to D
 rejectSubmitted(id:number){
-  return this.http.get<any>( `${this.baseUrl}/branch/reject/${id}`);
+  return this.http.get<any>( `${this.baseUrl}branch/reject/${id}`);
 }
 
 approved(id:number){
-  return this.http.get<any>(`${this.baseUrl}/branch/approved/${id}`);
+  return this.http.get<any>(`${this.baseUrl}branch/approved/${id}`);
 }
 
 // get All Approved
 
 getAllAproved(){
-  return this.http.get<any>(`${this.baseUrl}/branch/approved`);
+  return this.http.get<any>(`${this.baseUrl}branch/approved`);
+}
+
+// set Cities 
+setCity(data:any){
+   return this.http.post<any>(`${this.baseUrl}branch/city`,data)
 }
 }
  

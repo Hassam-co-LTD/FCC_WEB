@@ -127,7 +127,7 @@ filterSubmittedBranches(search: string): void {
 
   // ================== Navigation ==================
   updateRouter(id: any) {
-    this.router.navigate(['/admin/create-branch/' + id]);
+    return  this.router.navigate(['/admin/create-branch/'+id]);
   }
 
   // ================== Track By ==================
