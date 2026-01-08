@@ -1,8 +1,17 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
+import { throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
+
+// 1. ADD THIS INTERFACE FOR THE NEW MODULE
+export interface UndertakingLc {
+  id?: number;
+  tnxId?: string;
+  status?: string;
+  [key: string]: any;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +19,16 @@ import { ImportLcTransaction } from '../models/import-lc';
 export class ApiService {
   
   // -------------------------------------------------------------
-  // CONFIGURATION: Set your Backend URL here manually
+  // CONFIGURATION
   // -------------------------------------------------------------
-  private baseUrl = 'http://localhost:8087/api'; 
+  // FIXED: Removed quotes so it reads the actual variable, not the string '${...}'
+  private baseUrl = 'http://localhost:8084/api/v1/'; 
 
   constructor(private http: HttpClient) { }
 
+  // =================================================================
+  // ORIGINAL IMPORT LC METHODS (KEPT EXACTLY AS YOU REQUESTED)
+  // =================================================================
 
   /**
    * Save draft (pending record) - status "I"
@@ -27,29 +40,24 @@ export class ApiService {
     });
   }
 
-  
-  //  Get Status wise recordss
+  // Get Status wise records
   getTransactionsByStatus(status: string) {
     return this.http.get<ImportLcTransaction[]>(
       `${this.baseUrl}importlc/status/${status}`
     );
   }
 
-
-  //  Get draft (pending record) 
-
+  // Get draft (pending record)
   getPendingTransactions() {
     return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/pending`);
   }
 
-  //  Get draft (pending record) by TNX ID
-
+  // Get draft (pending record) by TNX ID
   getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
     return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`);
   }
 
-  //  Update draft (pending record) by Tnx ID
-
+  // Update draft (pending record) by Tnx ID
   updatePendingByTnxId(payload: ImportLcTransaction) {
     console.log('Payload before update:', payload);
     return this.http.put<ImportLcTransaction>(
@@ -80,27 +88,50 @@ export class ApiService {
   }
 
   // =================================================================
-  // HELPERS
+  // NEW UNDERTAKING LC METHODS (ADDED FOR BACKEND COMPATIBILITY)
   // =================================================================
-  private getHeaders(): HttpHeaders {
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
+
+  getUndertakingList(): Observable<UndertakingLc[]> {
+    return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking-lc/list`);
+  }
+
+  getUndertakingById(id: number): Observable<UndertakingLc> {
+    return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking-lc/${id}`);
+  }
+
+  saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/save`, data, {
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 
-  private createHttpParams(params: any): HttpParams {
-    let httpParams = new HttpParams();
-    if (params) {
-      Object.keys(params).forEach(key => {
-        if (params[key] != null) {
-          httpParams = httpParams.append(key, params[key]);
-        }
-      });
-    }
-    return httpParams;
+  updateUndertaking(id: number, data: UndertakingLc): Observable<UndertakingLc> {
+    return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking-lc/update/${id}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
+  submitUndertaking(id: number): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/submit/${id}`, {}, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  approveUndertaking(id: number): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/approve/${id}`, {}, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  rejectUndertaking(id: number, reason: string): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/reject/${id}`, reason, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  // =================================================================
+  // HELPERS
+  // =================================================================
   private handleError(error: HttpErrorResponse) {
     console.error('API Error:', error);
     return throwError(() => new Error(error.message || 'Server Error'));

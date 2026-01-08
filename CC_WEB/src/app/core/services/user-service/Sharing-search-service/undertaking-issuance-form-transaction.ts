@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-
-// IMPORTANT: Ensure this path is correct for your project structure
-import { ApiService } from '../../../../core/services/api.service';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 // ==========================================
 // 1. INTERFACES
@@ -13,7 +12,7 @@ export interface UndertakingTransaction {
   channelReference: string;
   status: string;
   lastUpdated: Date;
-  formData: any; 
+  formData: any;
 }
 
 @Injectable({
@@ -21,125 +20,184 @@ export interface UndertakingTransaction {
 })
 export class UndertakingIssuanceService {
 
-  // Base Endpoint matching your Java Controller
-  private readonly ENDPOINT = '/undertaking-lc'; 
+  // CONFIGURATION: Backend Endpoint
+  private readonly BASE_URL = 'http://localhost:8084/api/v1/undertaking-lc';
+  // Note: If using environment file, use: `${environment.apiUrl}/undertaking-lc`
 
-  constructor(private apiService: ApiService) { }
+  // ================= STATE MANAGEMENT =================
+  
+  // 1. Internal Store: Holds the list of transactions
+  private transactionsSubject$ = new BehaviorSubject<UndertakingTransaction[]>([]);
 
-  // ==========================================
-  // 2. WRITE OPERATIONS (Save, Submit, etc.)
-  // ==========================================
+  // 2. Public Stream: Components subscribe to this
+  public transactionsStream$ = this.transactionsSubject$.asObservable();
 
-  /**
-   * SAVE DRAFT (Create or Update)
-   * If 'id' is provided, the Backend should treat it as an UPDATE.
-   * If 'id' is null/undefined, the Backend should treat it as a CREATE.
-   */
-  saveDraft(formData: any, id?: string | number | null): Observable<any> {
-    // 1. Convert Nested Angular Form -> Flat Java Entity
-    const payload = this.transformToBackendDTO(formData, id);
+  // 3. Current Selection
+  private currentTransaction: UndertakingTransaction | null = null;
 
-    // 2. Send to Backend
-    // Note: Depending on your API design, you might use PUT for updates.
-    // Here we assume the /save endpoint handles both based on the ID presence.
-    return this.apiService.post(`${this.ENDPOINT}/save`, payload);
-  }
-
-  /**
-   * SUBMIT
-   */
-  submitTransaction(id: any): Observable<any> {
-    return this.apiService.post(`${this.ENDPOINT}/submit/${id}`, {});
-  }
-
-  /**
-   * APPROVE
-   */
-  approveTransaction(id: any): Observable<any> {
-    return this.apiService.post(`${this.ENDPOINT}/approve/${id}`, {});
-  }
-
-  /**
-   * REJECT
-   */
-  rejectTransaction(id: any, reason: string): Observable<any> {
-    return this.apiService.post(`${this.ENDPOINT}/reject/${id}`, reason);
-  }
-
-  /**
-   * ISSUE
-   */
-  issueTransaction(id: any): Observable<any> {
-    return this.apiService.post(`${this.ENDPOINT}/issue/${id}`, {});
-  }
-
-  /**
-   * CANCEL
-   */
-  cancelTransaction(id: any): Observable<any> {
-    return this.apiService.post(`${this.ENDPOINT}/cancel/${id}`, {});
+  constructor(private http: HttpClient) {
+    // Optional: Load data immediately on startup
+    // this.refreshTransactions().subscribe();
   }
 
   // ==========================================
-  // 3. READ OPERATIONS (List, Get By ID)
+  // 2. READ OPERATIONS
   // ==========================================
 
   /**
-   * GET LIST
+   * Fetches latest list from Backend and updates the local State
    */
-  getTransactions(): Observable<UndertakingTransaction[]> {
-    return this.apiService.get<any[]>(`${this.ENDPOINT}/list`).pipe(
-      map((backendList: any[]) => {
+  refreshTransactions(): Observable<UndertakingTransaction[]> {
+    return this.http.get<any[]>(`${this.BASE_URL}/list`).pipe(
+      map(backendList => {
         if (!Array.isArray(backendList)) return [];
-
-        return backendList.map((item: any) => ({
-          id: item.id,
-          channelReference: item.channelReference || item.tnxId || `REF-${item.id}`,
-          status: item.status || 'Draft',
-          lastUpdated: item.updatedAt ? new Date(item.updatedAt) : new Date(),
-          formData: this.transformToAngularForm(item)
-        }));
+        return backendList.map(item => this.mapToFrontend(item));
+      }),
+      tap(transactions => {
+        this.transactionsSubject$.next(transactions);
       }),
       catchError(err => {
         console.error('Error fetching transactions:', err);
-        return of([]); 
+        return of([]);
       })
     );
   }
 
   /**
-   * GET BY ID
-   * Called by Component when loading from URL ?transactionId=123
+   * Get ID: Check memory first, then fallback to API
    */
-  getTransactionById(id: string | number): Observable<any> {
-    return this.apiService.get<any>(`${this.ENDPOINT}/${id}`).pipe(
-      map((backendData: any) => {
-        // Return the nested form structure directly so patchValue works instantly
-        return this.transformToAngularForm(backendData);
-      })
+  getTransactionById(id: string | number): Observable<UndertakingTransaction> {
+    const cached = this.transactionsSubject$.value.find(t => t.id == id);
+    
+    if (cached) {
+      this.currentTransaction = cached;
+      return of(cached);
+    }
+
+    return this.http.get<any>(`${this.BASE_URL}/${id}`).pipe(
+      map(data => this.mapToFrontend(data)),
+      tap(tx => this.currentTransaction = tx)
     );
   }
 
   // ==========================================
-  // 4. DATA MAPPERS (The Bridge)
+  // 3. WRITE OPERATIONS
   // ==========================================
+
+  /**
+   * Create New Draft
+   */
+  saveDraft(formData: any, id?: string | number | null): Observable<UndertakingTransaction> {
+    const payload = this.transformToBackendDTO(formData, id);
+
+    return this.http.post<any>(`${this.BASE_URL}/save`, payload).pipe(
+      map(savedData => this.mapToFrontend(savedData)),
+      tap(savedTx => this.updateLocalState(savedTx))
+    );
+  }
+
+  /**
+   * Update Existing Draft
+   * FIX: Uses BASE_URL and handles payload transformation
+   */
+  updateDraft(formData: any): Observable<UndertakingTransaction> {
+    const payload = this.transformToBackendDTO(formData, formData.id);
+
+    return this.http.put<any>(`${this.BASE_URL}/draft/${payload.id}`, payload).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  /**
+   * Final Submission
+   */
+  submitTransaction(id: string | number, payload?: any): Observable<UndertakingTransaction> {
+    // If payload exists, we might want to save/update before submitting
+    // But typically submit endpoint just changes status or accepts final payload
+    const body = payload ? this.transformToBackendDTO(payload, id) : {};
+    
+    return this.http.post<any>(`${this.BASE_URL}/submit/${id}`, body).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  approveTransaction(id: string | number): Observable<UndertakingTransaction> {
+    return this.http.post<any>(`${this.BASE_URL}/approve/${id}`, {}).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  rejectTransaction(id: string | number, reason: string): Observable<UndertakingTransaction> {
+    return this.http.post<any>(`${this.BASE_URL}/reject/${id}`, { reason }).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  issueTransaction(id: any): Observable<UndertakingTransaction> {
+    return this.http.post<any>(`${this.BASE_URL}/issue/${id}`, {}).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  cancelTransaction(id: any): Observable<UndertakingTransaction> {
+    return this.http.post<any>(`${this.BASE_URL}/cancel/${id}`, {}).pipe(
+      map(updatedData => this.mapToFrontend(updatedData)),
+      tap(updatedTx => this.updateLocalState(updatedTx))
+    );
+  }
+
+  // ==========================================
+  // 4. HELPERS & STATE UPDATERS
+  // ==========================================
+
+  private updateLocalState(updatedTx: UndertakingTransaction) {
+    const currentList = this.transactionsSubject$.value;
+    const index = currentList.findIndex(t => t.id === updatedTx.id);
+
+    if (index > -1) {
+      // Update existing
+      const updatedList = [...currentList];
+      updatedList[index] = updatedTx;
+      this.transactionsSubject$.next(updatedList);
+    } else {
+      // Add new
+      this.transactionsSubject$.next([updatedTx, ...currentList]);
+    }
+    this.currentTransaction = updatedTx;
+  }
+
+  // ==========================================
+  // 5. DATA MAPPERS (DTO <-> Form)
+  // ==========================================
+
+  private mapToFrontend(backendData: any): UndertakingTransaction {
+    return {
+      id: backendData.id,
+      channelReference: backendData.channelReference || backendData.tnxId || `REF-${backendData.id}`,
+      status: backendData.status || 'Draft',
+      lastUpdated: backendData.updatedAt ? new Date(backendData.updatedAt) : new Date(),
+      formData: this.transformToAngularForm(backendData)
+    };
+  }
 
   /**
    * Maps Java Entity (Flat) -> Angular Form (Nested)
-   * This ensures that when you load a draft, all fields populate correctly.
    */
   private transformToAngularForm(backendData: any): any {
     if (!backendData) return {};
     
     return {
-      // General Details
       generalDetails: {
         productType: backendData.productType,
         modeOfTransmission: backendData.modeOfTransmission,
         formOfUndertaking: backendData.formOfUndertaking,
         purpose: backendData.purpose
       },
-      // Applicant & Beneficiary
       applicantBeneficiary: {
         applicantName: backendData.applicantName,
         applicantAddress1: backendData.applicantAddress1,
@@ -151,7 +209,6 @@ export class UndertakingIssuanceService {
         beneficiaryAddress3: backendData.beneficiaryAddress3,
         beneficiaryCountry: backendData.beneficiaryCountry
       },
-      // Bank Details
       bankForm: {
         recipientBankName: backendData.recipientBankName,
         issuerReference: backendData.issuerReference,
@@ -163,12 +220,11 @@ export class UndertakingIssuanceService {
         address3: backendData.bankAddress3,
         country: backendData.bankCountry
       },
-      // Undertaking Details
       undertakingDetails: {
         typeOfUndertaking: backendData.typeOfUndertaking,
         effectiveOption: backendData.effectiveOption,
         expiryType: backendData.expiryType,
-        expiryDate: backendData.expiryDate ? new Date(backendData.expiryDate).toISOString().split('T')[0] : '', // Format for Input Date
+        expiryDate: backendData.expiryDate ? new Date(backendData.expiryDate).toISOString().split('T')[0] : '',
         currency: backendData.currency || 'USD',
         undertakingAmount: backendData.undertakingAmount,
         variationPlus: backendData.variationPlus,
@@ -180,7 +236,6 @@ export class UndertakingIssuanceService {
         underlyingtransactionInfo: backendData.underlyingtransactionInfo,
         presentationInfo: backendData.presentationInfo
       },
-      // Instructions
       instructions: {
         deliveryType: backendData.deliveryType,
         deliveryMode: backendData.deliveryMode,
@@ -189,7 +244,6 @@ export class UndertakingIssuanceService {
         feeAccount: backendData.feeAccount,
         otherInstructions: backendData.otherInstructions
       },
-      // Attachments (Files usually handled separately or as metadata list)
       attachments: {
         files: backendData.files || []
       }
@@ -197,18 +251,30 @@ export class UndertakingIssuanceService {
   }
 
   /**
-   * Maps Angular Form (Nested) -> Java Entity (Flat)
+   * Maps Frontend Data -> Java Entity (Flat)
+   * SMART UPDATE: Handles both Flat (DTO) and Nested (Form) inputs
    */
   private transformToBackendDTO(form: any, id?: string | number | null): any {
-    const gen = form?.generalDetails || {};
-    const app = form?.applicantBeneficiary || {};
-    const bank = form?.bankForm || {};
-    const und = form?.undertakingDetails || {};
-    const inst = form?.instructions || {};
+    if (!form) return {};
+
+    // 1. If form is already flat (Flattened by Component), use it directly
+    if (form.productType || form.applicantName || form.undertakingAmount) {
+        return {
+            ...form,
+            id: id || form.id || null
+        };
+    }
+
+    // 2. If form is Nested (Angular Form Group structure), Flatten it
+    const gen = form.generalDetails || {};
+    const app = form.applicantBeneficiary || {};
+    const bank = form.bankForm || {};
+    const und = form.undertakingDetails || {};
+    const inst = form.instructions || {};
 
     return {
       // Identity
-      id: id || form.id || null, // VITAL: This triggers Update vs Create on Backend
+      id: id || form.id || null, 
 
       // General
       productType: gen.productType,
@@ -265,7 +331,7 @@ export class UndertakingIssuanceService {
       otherInstructions: inst.otherInstructions,
 
       // Attachments
-      files: form.attachments?.files || []
+      files: form.attachments?.files || form.files || []
     };
   }
 }

@@ -250,9 +250,9 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/undertaking-issuance' },
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
-                { label: 'Approved-records', route: '/undertaking-issuance/approved-records' },
-                { label: 'Pending-records', route: '/undertaking-issuance/pending-records' },
-                { label: 'Submitted-records', route: '/undertaking-issuance/submitted-records' },
+                // { label: 'Approved-records', route: '/undertaking-issuance/approved-records' },
+                { label: 'inquiries-records', route: '/undertaking-issuance/inquiries-records' },
+                
 
               ]
             },

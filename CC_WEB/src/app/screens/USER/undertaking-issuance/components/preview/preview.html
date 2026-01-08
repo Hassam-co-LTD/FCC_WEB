@@ -1,427 +1,193 @@
-<div class="preview-container">
+<div class="preview-page" *ngIf="formData">
 
-  <div class="preview-header">
-    <div>
-      <h1>Review Application</h1>
-      <p class="subtitle" *ngIf="transactionId">Reference ID: <strong>{{ transactionId }}</strong></p>
-      <p class="subtitle" *ngIf="!transactionId">New Application</p>
-    </div>
-    <div class="status-badge" *ngIf="isReadOnly">
-      <mat-icon>lock</mat-icon> Read Only
-    </div>
-  </div>
-
-  <div class="preview-content">
-
-    <mat-card class="preview-card">
-      <section class="preview-section">
-        <div class="section-header">
+    <h2 class="page-title">Preview Undertaking</h2>
+  
+    <div class="preview-container">
+  
+      <div class="preview-row">
+  
+        <mat-card class="preview-card">
           <h3 class="section-title">General Details</h3>
-          <!-- <button mat-icon-button *ngIf="!isReadOnly" (click)="onEdit()" title="Edit Section"> -->
-            <!-- <mat-icon>edit</mat-icon> -->
-          <!-- </button> -->
-        </div>
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Product Type</label>
-            <span>{{ getVal('generalDetails', 'productType') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Mode of Transmission</label>
-            <span>{{ getVal('generalDetails', 'modeOfTransmission') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Form of Undertaking</label>
-            <span>{{ getVal('generalDetails', 'formOfUndertaking') }}</span>
-          </div>
-          <div class="data-item full-width">
-            <label>Purpose</label>
-            <span>{{ getVal('generalDetails', 'purpose') }}</span>
-          </div>
-        </div>
-      </section>
-    </mat-card>
-
-    <mat-divider></mat-divider>
-
-    <mat-card class="preview-card">
-      <section class="preview-section">
-        <div class="section-header">
-          <h3 class="section-title">Applicant & Beneficiary</h3>
-        </div>
-        <div class="preview-grid two-col">
-          <div class="sub-group">
-            <h4>Applicant</h4>
-            <div class="data-item">
-              <label>Name</label>
-              <span>{{ getVal('applicantBeneficiary', 'applicantName') }}</span>
-            </div>
-            <div class="data-item">
-              <label>Address</label>
-              <span>
-                {{ getVal('applicantBeneficiary', 'applicantAddress1') }}<br>
-                {{ getVal('applicantBeneficiary', 'applicantAddress2') }}
-              </span>
-            </div>
-          </div>
-
-          <div class="sub-group">
-            <h4>Beneficiary</h4>
-            <div class="data-item">
-              <label>Name</label>
-              <span>{{ getVal('applicantBeneficiary', 'beneficiaryName') }}</span>
-            </div>
-            <div class="data-item">
-              <label>Country</label>
-              <span>{{ getVal('applicantBeneficiary', 'beneficiaryCountry') }}</span>
-            </div>
-            <div class="data-item">
-              <label>Address</label>
-              <span>
-                {{ getVal('applicantBeneficiary', 'beneficiaryAddress1') }}<br>
-                {{ getVal('applicantBeneficiary', 'beneficiaryAddress2') }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </mat-card>
-
-    <mat-divider></mat-divider>
-
-    <mat-card class="preview-card">
-      <section class="preview-section">
-        <div class="section-header">
-          <h3 class="section-title">Bank Details</h3>
-        </div>
-
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Recipient Bank Name</label>
-            <span>{{ getVal('bankForm', 'recipientBankName') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Issuer Reference</label>
-            <span>{{ getVal('bankForm', 'issuerReference') }}</span>
-          </div>
-        </div>
-
-        <div class="preview-grid" style="margin-top: 16px;" *ngIf="getVal('bankForm', 'issuanceType') !== '-'">
-          <div class="data-item full-width">
-            <label>Issuance Type</label>
-            <span class="capitalize">
-              {{ getVal('bankForm', 'issuanceType') === 'direct' ? 'Direct (Issued by selected Bank)' : 'Indirect' }}
-            </span>
-          </div>
-        </div>
-
-        <h4 class="subsection-title" style="margin-top: 24px; color: #666; font-size: 0.95rem;">
-          Selected Bank Information
-        </h4>
-
-        <div class="preview-grid three-col">
-          <div class="data-item">
-            <label>SWIFT Code</label>
-            <span class="swift-code">{{ getVal('bankForm', 'swift') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Bank Name</label>
-            <span>{{ getVal('bankForm', 'bankName') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Country</label>
-            <span>{{ getVal('bankForm', 'country') }}</span>
-          </div>
-        </div>
-
-        <div class="preview-grid" style="margin-top: 16px;">
-          <div class="data-item full-width">
-            <label>Address</label>
-            <div class="address-block">
-              <span *ngIf="getVal('bankForm', 'address1') !== '-'">{{ getVal('bankForm', 'address1') }}</span>
-              <span *ngIf="getVal('bankForm', 'address2') !== '-'">{{ getVal('bankForm', 'address2') }}</span>
-              <span *ngIf="getVal('bankForm', 'address3') !== '-'">{{ getVal('bankForm', 'address3') }}</span>
-              <span *ngIf="getVal('bankForm', 'address1') === '-'">-</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </mat-card>
-
-    <mat-divider></mat-divider>
-
-    <mat-card class="preview-card">
-      <section class="preview-section">
-        <div class="section-header">
-          <h3 class="section-title">Undertaking Details</h3>
-        </div>
-
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Type</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'typeOfUndertaking') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Effective Date</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'effectiveOption') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Expiry Type</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'expiryType') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Expiry Date</label>
-            <span class="date-highlight">{{ formatDate(getVal('undertakingDetails', 'expiryDate')) }}</span>
-          </div>
-        </div>
-
-        <h4 class="subsection-title" style="margin-top: 20px;">Financial Details</h4>
-        <div class="preview-grid">
-
-          <div class="data-item">
-            <label>Undertaking Amount</label>
-            <span class="highlight-amount">
-              {{ getVal('undertakingDetails', 'currency') }}
-              <ng-container *ngIf="!isNaN(getVal('undertakingDetails', 'undertakingAmount')); else rawAmount">
-                {{ getVal('undertakingDetails', 'undertakingAmount') | number:'1.2-2' }}
-              </ng-container>
-              <ng-template #rawAmount>
-                {{ getVal('undertakingDetails', 'undertakingAmount') }}
-              </ng-template>
-            </span>
-          </div>
-
-          <div class="data-item">
-            <label>Tolerance</label>
-            <span>
-              +{{ getVal('undertakingDetails', 'variationPlus') !== '-' ? getVal('undertakingDetails', 'variationPlus') : '0' }}% /
-              -{{ getVal('undertakingDetails', 'variationMinus') !== '-' ? getVal('undertakingDetails', 'variationMinus') : '0' }}%
-            </span>
-          </div>
-          <div class="data-item">
-            <label>Issuance Charges</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'issuanceCharges') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Correspondent Charges</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'correspondentCharges') }}</span>
-          </div>
-          <div class="data-item full-width" *ngIf="getVal('undertakingDetails', 'supplementaryInfo') !== '-'">
-            <label>Supplementary Amount Info</label>
-            <span>{{ getVal('undertakingDetails', 'supplementaryInfo') }}</span>
-          </div>
-        </div>
-
-        <div *ngIf="getVal('undertakingDetails', 'contractReference') !== '-' || getVal('undertakingDetails', 'contractAmount') !== '-'">
-          <h4 class="subsection-title" style="margin-top: 20px;">Contract Information</h4>
           <div class="preview-grid">
-            <div class="data-item">
-              <label>Contract Type</label>
-              <span class="capitalize">{{ getVal('undertakingDetails', 'contractType') }}</span>
+            <div class="preview-item">
+              <div class="preview-label">Product Type</div>
+              <div class="preview-value">{{ getVal('generalDetails', 'productType') }}</div>
             </div>
-            <div class="data-item">
-              <label>Contract Ref</label>
-              <span>{{ getVal('undertakingDetails', 'contractReference') }}</span>
+  
+            <div class="preview-item">
+              <div class="preview-label">Mode of Transmission</div>
+              <div class="preview-value">{{ getVal('generalDetails', 'modeOfTransmission') }}</div>
             </div>
-            <div class="data-item">
-              <label>Contract Date</label>
-              <span>{{ formatDate(getVal('undertakingDetails', 'contractDate')) }}</span>
-            </div>
-
-            <div class="data-item">
-              <label>Contract Amount</label>
-              <span>
-                {{ getVal('undertakingDetails', 'contractCurrency') }}
-                <ng-container *ngIf="!isNaN(getVal('undertakingDetails', 'contractAmount')); else rawContract">
-                  {{ getVal('undertakingDetails', 'contractAmount') | number:'1.2-2' }}
-                </ng-container>
-                <ng-template #rawContract>
-                  {{ getVal('undertakingDetails', 'contractAmount') }}
-                </ng-template>
-              </span>
+  
+            <div class="preview-item">
+              <div class="preview-label">Form of Undertaking</div>
+              <div class="preview-value">{{ getVal('generalDetails', 'formOfUndertaking') }}</div>
             </div>
 
-            <div class="data-item">
-              <label>Percentage Covered</label>
-              <span>{{ getVal('undertakingDetails', 'percentageCovered') !== '-' ? getVal('undertakingDetails', 'percentageCovered') + '%' : '-' }}</span>
+            <div class="preview-item full-width">
+                <div class="preview-label">Purpose</div>
+                <div class="preview-value">{{ getVal('generalDetails', 'purpose') }}</div>
             </div>
           </div>
-        </div>
+        </mat-card>
+  
+        <mat-card class="preview-card">
+          <h3 class="section-title">Applicant / Beneficiary</h3>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Applicant Name</div>
+              <div class="preview-value">{{ getVal('applicantBeneficiary', 'applicantName') }}</div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Applicant Address</div>
+              <div class="preview-value">
+                  {{ getVal('applicantBeneficiary', 'applicantAddress1') }}<br>
+                  {{ getVal('applicantBeneficiary', 'applicantAddress2') }}
+              </div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Beneficiary Name</div>
+              <div class="preview-value">{{ getVal('applicantBeneficiary', 'beneficiaryName') }}</div>
+            </div>
 
-        <h4 class="subsection-title" style="margin-top: 20px;">Rules & Governance</h4>
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Applicable Rules</label>
-            <span class="uppercase">{{ getVal('undertakingDetails', 'applicableRules') }}</span>
+            <div class="preview-item">
+                <div class="preview-label">Beneficiary Country</div>
+                <div class="preview-value">{{ getVal('applicantBeneficiary', 'beneficiaryCountry') }}</div>
+            </div>
           </div>
-          <div class="data-item">
-            <label>Governing Law</label>
-            <span class="uppercase">{{ getVal('undertakingDetails', 'governinglawsType') }}</span>
+        </mat-card>
+  
+      </div>
+  
+      <div class="preview-row">
+  
+        <mat-card class="preview-card">
+          <h3 class="section-title">Bank Details</h3>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Recipient Bank</div>
+              <div class="preview-value">{{ getVal('bankForm', 'recipientBankName') }}</div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Issuer Reference</div>
+              <div class="preview-value">{{ getVal('bankForm', 'issuerReference') }}</div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Selected Bank</div>
+              <div class="preview-value">{{ getVal('bankForm', 'bankName') }}</div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">SWIFT</div>
+              <div class="preview-value">{{ getVal('bankForm', 'swift') }}</div>
+            </div>
           </div>
-          <div class="data-item">
-            <label>Jurisdiction</label>
-            <span>{{ getVal('undertakingDetails', 'jurisdiction') }}</span>
+        </mat-card>
+  
+        <mat-card class="preview-card">
+          <h3 class="section-title">Undertaking Details</h3>
+          <div class="preview-grid">
+            <div class="preview-item">
+              <div class="preview-label">Type</div>
+              <div class="preview-value">{{ getVal('undertakingDetails', 'typeOfUndertaking') }}</div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Amount</div>
+              <div class="preview-value">
+                {{ getVal('undertakingDetails', 'currency') }}
+                {{ getVal('undertakingDetails', 'undertakingAmount') | number:'1.2-2' }}
+              </div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Expiry</div>
+              <div class="preview-value">
+                {{ getVal('undertakingDetails', 'expiryDate') | date:'mediumDate' }}
+                ({{ getVal('undertakingDetails', 'expiryType') }})
+              </div>
+            </div>
+  
+            <div class="preview-item">
+              <div class="preview-label">Tolerance</div>
+              <div class="preview-value">
+                +{{ getVal('undertakingDetails', 'variationPlus') }}% / 
+                -{{ getVal('undertakingDetails', 'variationMinus') }}%
+              </div>
+            </div>
           </div>
-          <div class="data-item">
-            <label>Subdivision</label>
-            <span>{{ getVal('undertakingDetails', 'subdivision') }}</span>
-          </div>
-        </div>
+        </mat-card>
+  
+      </div>
+  
+      <div class="preview-row">
+        <mat-card class="preview-card full-width">
+          <h3 class="section-title">Narrative & Instructions</h3>
+          <div class="preview-grid">
+            <div class="preview-item full-width">
+              <div class="preview-label">Text of Undertaking</div>
+              <div class="preview-value pre-wrap">{{ getVal('undertakingDetails', 'textofundertakingInfo') }}</div>
+            </div>
+  
+            <div class="preview-item full-width">
+              <div class="preview-label">Underlying Transaction</div>
+              <div class="preview-value pre-wrap">{{ getVal('undertakingDetails', 'underlyingtransactionInfo') }}</div>
+            </div>
+  
+            <div class="preview-item">
+                <div class="preview-label">Principal Account</div>
+                <div class="preview-value">{{ getVal('instructions', 'principalAccount') }}</div>
+            </div>
 
-        <h4 class="subsection-title" style="margin-top: 20px;">Wording & Details</h4>
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Demand Indicator</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'DemandOption') }}</span>
+            <div class="preview-item">
+                <div class="preview-label">Fee Account</div>
+                <div class="preview-value">{{ getVal('instructions', 'feeAccount') }}</div>
+            </div>
           </div>
-          <div class="data-item">
-            <label>Text Standard</label>
-            <span class="capitalize">{{ getVal('undertakingDetails', 'tsOption') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Language</label>
-            <span class="uppercase">{{ getVal('undertakingDetails', 'languageType') !== '-' ? getVal('undertakingDetails', 'languageType') : 'EN' }}</span>
-          </div>
-        </div>
-
-        <div class="preview-grid" style="margin-top: 10px;">
-          <div class="data-item full-width">
-            <label>Underlying Transaction Details</label>
-            <span class="pre-wrap">{{ getVal('undertakingDetails', 'underlyingtransactionInfo') }}</span>
-          </div>
-
-          <div class="data-item full-width">
-            <label>Text of Undertaking</label>
-            <span class="pre-wrap">{{ getVal('undertakingDetails', 'textofundertakingInfo') }}</span>
-          </div>
-
-          <div class="data-item full-width">
-            <label>Presentation Instructions</label>
-            <span class="pre-wrap">{{ getVal('undertakingDetails', 'presentationInfo') }}</span>
-          </div>
-        </div>
-      </section>
-    </mat-card>
-
-    <mat-divider></mat-divider>
-
-    <mat-card class="preview-card">
-      <section class="preview-section">
-        <div class="section-header">
-          <h3 class="section-title">Instructions for the Bank</h3>
-        </div>
-
-        <div class="preview-grid">
-          <div class="data-item">
-            <label>Delivery Type</label>
-            <span>{{ getVal('instructions', 'deliveryType') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Delivery Mode</label>
-            <span>{{ getVal('instructions', 'deliveryMode') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Deliver To</label>
-            <span class="capitalize">{{ getVal('instructions', 'deliveryTo') }}</span>
-          </div>
-        </div>
-
-        <div class="preview-grid" style="margin-top: 16px;">
-          <div class="data-item">
-            <label>Principal Account</label>
-            <span class="account-number">{{ getVal('instructions', 'principalAccount') }}</span>
-          </div>
-          <div class="data-item">
-            <label>Fee Account</label>
-            <span class="account-number">
-              {{ getVal('instructions', 'feeAccount') !== '-' ? getVal('instructions', 'feeAccount') : 'Same as Principal' }}
-            </span>
-          </div>
-        </div>
-
-        <div class="preview-grid" style="margin-top: 16px;">
-          <div class="data-item full-width">
-            <label>Other Instructions</label>
-            <span class="text-content pre-wrap">
-              {{ getVal('instructions', 'otherInstructions') !== '-' ? getVal('instructions', 'otherInstructions') : 'No additional instructions provided.' }}
-            </span>
-          </div>
-        </div>
-      </section>
-    </mat-card>
-
-    <mat-divider></mat-divider>
-
-    <mat-card class="preview-card full-width">
-      <section class="preview-section">
-        <div class="section-header">
-          <h3 class="section-title">Attachments</h3>
-        </div>
-
-        @if (uploadedFiles.length > 0) {
+        </mat-card>
+      </div>
+  
+      <mat-card class="preview-card full-width">
+        <h3 class="section-title">Attachments</h3>
+  
+        <ng-container *ngIf="attachments.length > 0; else noAttachments">
           <div class="preview-attachments-container">
-            
             <div class="attachment-grid header">
               <div>Type</div>
-              <div>Title</div>
               <div>File Name</div>
               <div>Size</div>
-              <div class="text-center">Actions</div>
+              <div>Actions</div>
             </div>
-
-            @for (file of uploadedFiles; track file; let i = $index) {
-              <div class="attachment-grid">
-                <div class="icon-col">
-                  @if (isPdf(file)) {
-                    <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
-                  } @else if (isImage(file)) {
-                    <mat-icon class="image-icon">image</mat-icon>
-                  } @else {
-                    <mat-icon class="default-icon">insert_drive_file</mat-icon>
-                  }
-                </div>
-
-                <div>{{ file.title || '-' }}</div>
-
-                <div>{{ file.fileName || file.name }}</div>
-
-                <div>
-                  @if(file.size) {
-                    {{ (file.size / 1024) | number:'1.0-2' }} KB
-                  } @else { - }
-                </div>
-
-                <div class="actions text-center">
-                  <mat-icon class="action-icon" (click)="downloadFile(i)" title="Download">download</mat-icon>
-                </div>
+  
+            <div class="attachment-grid"
+              *ngFor="let f of attachments; let i = index">
+              <div>
+                <mat-icon *ngIf="f.type?.includes('pdf')">picture_as_pdf</mat-icon>
+                <mat-icon *ngIf="f.type?.includes('image')">image</mat-icon>
+                <mat-icon *ngIf="!f.type?.includes('image') && !f.type?.includes('pdf')">insert_drive_file</mat-icon>
               </div>
-            }
+              <div>{{ f.fileName }}</div>
+              <div>{{ (f.size / 1024) | number:'1.0-2' }} KB</div>
+              <div>
+                <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+              </div>
+            </div>
           </div>
-        }
-
-        @if (uploadedFiles.length === 0) {
+        </ng-container>
+  
+        <ng-template #noAttachments>
           <p class="empty-text">No attachments uploaded.</p>
-        }
-      </section>
-    </mat-card>
-
-  </div>
-
-  <div class="preview-footer">
-    <button mat-stroked-button color="primary" (click)="onClose()">
-      {{ isReadOnly ? 'Close' : 'Back' }}
-    </button>
-
-    <div class="action-group" *ngIf="!isReadOnly">
-      <button mat-raised-button color="accent" (click)="onUpdate()">
-        <mat-icon>edit</mat-icon> Update
-      </button>
-
-      <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="isLoading">
-        <mat-icon>send</mat-icon>
-        {{ isLoading ? 'Submitting...' : 'Submit' }}
-      </button>
+        </ng-template>
+      </mat-card>
+  
     </div>
   </div>
-
-</div>
+  
+  <div class="actions">
+    <button mat-stroked-button (click)="back()">Back</button>
+    <button mat-flat-button color="primary" (click)="submit()" [disabled]="readOnly">Submit</button>
+  </div>

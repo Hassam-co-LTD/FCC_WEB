@@ -1,269 +1,137 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Services
-import { SharedService } from '../../../../../core/services/user-service/shared-form-service/shared-service';
+// SERVICES
 import { UndertakingIssuanceService } from '../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-preview',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatDividerModule,
-    MatCardModule
+    CommonModule, 
+    MatIconModule, 
+    MatCardModule, 
+    MatButtonModule, 
+    DecimalPipe,
+    DatePipe
   ],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss']
 })
 export class Preview implements OnInit {
+  
+  @Input() transaction: any; // Input from Success/History page
 
-  // Data Containers
-  formData: any = null;
-  uploadedFiles: any[] = [];
-
-  // State Flags
-  transactionId: string | number | null = null;
-  isEditMode: boolean = false;
-  isReadOnly: boolean = false;
-  isLoading: boolean = false;
+  formData: any = {}; // Holds the raw JSON data
+  currentTxId: any = null;
+  readOnly = false;
 
   constructor(
     private router: Router,
-    private location: Location,
-    private sharedService: SharedService,
-    private backendService: UndertakingIssuanceService,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+    private undertakingService: UndertakingIssuanceService
+  ) {}
 
   ngOnInit(): void {
-    this.loadData();
-  }
-
-  // ============================================
-  // 1. INITIALIZATION
-  // ============================================
-  private loadData() {
-    // Retrieve data passed from Pending Records or Request Form
-    const data = this.sharedService.getFormData();
-
-    if (!data || !data.formData) {
-      console.warn('No preview data found. Redirecting to request page...');
-      this.router.navigate(['/undertaking-issuance/request']);
-      return;
-    }
-
-    // Populate Component State
-    this.formData = data.formData;
-    // Handle cases where attachments might be directly in formData or passed separately
-    this.uploadedFiles = data.uploadedFiles || data.formData?.attachments?.files || [];
-    this.transactionId = data.transactionId;
-
-    // Determine Modes
-    this.isEditMode = data.isEditMode;
-    this.isReadOnly = data.isReadOnly || false;
-
-    console.log('Preview Loaded:', {
-      id: this.transactionId,
-      mode: this.isReadOnly ? 'View Only' : 'Review/Edit',
-      data: this.formData
-    });
-  }
-
-  // ============================================
-  // 2. USER ACTIONS
-  // ============================================
-
-  onUpdate(): void {
-    // 1. Prepare state for the Request Form
-    this.sharedService.setFormData({
-      isEditMode: true,          // TELL FORM: We are editing
-      isReadOnly: false,         // Allow typing
-      transactionId: this.transactionId, // Keep the ID so we update the same record
-      formData: this.formData,   // Pass current data back
-      uploadedFiles: this.uploadedFiles
-    });
-
-    // 2. Navigate
-    this.router.navigate(['/undertaking-issuance/request']);
-  }
-
-  onEdit(): void {
-    if (this.isReadOnly) return;
-    this.onUpdate();
-  }
-
-  onSubmit(): void {
-    if (this.isReadOnly || this.isLoading) return;
-
-    this.isLoading = true;
-
-    // Scenario A: We already have an ID (Existing Record)
-    if (this.transactionId) {
-      this.executeSubmit(this.transactionId);
-    }
-    // Scenario B: New Record (No ID yet) -> Save Draft First
+    // 1. If passed via Input (History/Success View)
+    if (this.transaction) {
+      this.formData = this.transaction.formData || this.transaction;
+      this.currentTxId = this.transaction.id;
+      this.readOnly = true; 
+    } 
+    // 2. If accessed via URL/Draft (Preview View)
     else {
-      console.log('No ID found. Auto-saving draft before submission...');
-      this.backendService.saveDraft(this.formData, null).subscribe({
-        next: (savedTxn) => {
-          // Capture the new ID
-          this.transactionId = savedTxn.id;
-          // Now Submit
-          this.executeSubmit(this.transactionId);
-        },
-        error: (err) => {
-          console.error('Auto-save failed:', err);
-          this.handleError('Failed to save application data. Please try again.');
-          this.isLoading = false;
-        }
-      });
+      const urlParams = new URLSearchParams(window.location.search);
+      const txId = urlParams.get('transactionId');
+      
+      if(txId) {
+         this.undertakingService.getTransactionById(txId).subscribe(tx => {
+             this.currentTxId = tx.id;
+             // Handle structure variations (sometimes data is wrapped in formData property)
+             this.formData = tx.formData || tx; 
+         });
+      } else {
+         this.router.navigate(['/undertaking-issuance/request']);
+      }
     }
   }
 
-  private executeSubmit(id: any) {
-    this.backendService.submitTransaction(id).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        const ref = response.channelReference || response.tnxId || id;
-        this.handleSuccess(`Application Submitted Successfully! Reference: ${ref}`);
+  /**
+   * Safe Getter Helper
+   * Usage: getVal('generalDetails', 'productType')
+   */
+  getVal(group: string, field: string): any {
+    const val = this.formData?.[group]?.[field];
+    return (val === null || val === undefined || val === '') ? '-' : val;
+  }
+
+  get attachments(): any[] {
+    // Handle different structures of attachments in backend response
+    return this.formData?.attachments?.files || this.formData?.attachments || [];
+  }
+
+  // --- ACTIONS ---
+
+  back(): void {
+    if (this.readOnly) {
+        this.router.navigate(['/undertaking-issuance/pending-records']);
+    } else {
+        // Go back to edit mode
+        this.router.navigate(['/undertaking-issuance/request'], {
+            queryParams: { transactionId: this.currentTxId }
+        });
+    }
+  }
+
+  submit(): void {
+    if (this.readOnly || !this.currentTxId) return;
+
+    this.undertakingService.submitTransaction(this.currentTxId).subscribe({
+      next: () => {
+        this.snackBar.open('Undertaking Submitted Successfully', 'Close', { duration: 3000 });
+        this.router.navigate(['/undertaking-issuance/pending-records']); 
       },
-      error: (err) => {
-        this.isLoading = false;
-        this.handleError(err);
+      error: () => {
+        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
       }
     });
   }
 
-  onClose(): void {
-    this.sharedService.clearFormData();
-    this.router.navigate(['/undertaking-issuance/pending-records']);
+  // --- FILE DOWNLOAD LOGIC ---
+
+  downloadFile(index: number) {
+    const fileData = this.attachments[index];
+    if (!fileData) return;
+
+    // A. Browser File Object (New Uploads)
+    if (fileData.fileObj instanceof File) {
+       const url = URL.createObjectURL(fileData.fileObj);
+       this.triggerDownload(url, fileData.fileName);
+       URL.revokeObjectURL(url);
+       return;
+    }
+    
+    // B. Base64 String (Saved Data)
+    const content = fileData.fileContent || fileData.content || fileData.fileObj; 
+    
+    if (typeof content === 'string') {
+        const mime = fileData.type || 'application/octet-stream';
+        // Add prefix if missing
+        const base64Prefix = content.startsWith('data:') ? '' : `data:${mime};base64,`;
+        const url = `${base64Prefix}${content}`;
+        this.triggerDownload(url, fileData.fileName);
+    } 
   }
 
-  // ============================================
-  // 3. ATTACHMENT HANDLING
-  // ============================================
-
-  isPdf(file: any): boolean {
-    const name = (file.fileName || file.name || '').toLowerCase();
-    const type = (file.type || '').toLowerCase();
-    return type.includes('pdf') || name.endsWith('.pdf');
-  }
-
-  isImage(file: any): boolean {
-    const name = (file.fileName || file.name || '').toLowerCase();
-    const type = (file.type || '').toLowerCase();
-    // Regex checks for common image extensions
-    return type.includes('image') || /\.(jpg|jpeg|png|gif|webp)$/i.test(name);
-  }
-
-  downloadFile(index: number): void {
-    const file = this.uploadedFiles[index];
-
-    if (!file) {
-      console.error('File not found at index', index);
-      return;
-    }
-
-    // Case 1: Browser File Object (Newly uploaded in this session)
-    if (file instanceof File || (file.file && file.file instanceof File)) {
-      const fileObj = file instanceof File ? file : file.file;
-      const url = window.URL.createObjectURL(fileObj);
-      this.triggerDownload(url, fileObj.name);
-      window.URL.revokeObjectURL(url); // Clean up memory
-    }
-    // Case 2: Base64 String (Loaded from backend)
-    else if (file.fileContent || file.content) {
-      const content = file.fileContent || file.content;
-      // Check if it already has the data prefix, if not, assume standard binary
-      const mimeType = file.type || 'application/octet-stream';
-      const base64Prefix = content.startsWith('data:') ? '' : `data:${mimeType};base64,`;
-      const url = `${base64Prefix}${content}`;
-      this.triggerDownload(url, file.fileName || file.name || 'download');
-    }
-    // Case 3: Direct URL
-    else if (file.url) {
-      window.open(file.url, '_blank');
-    }
-    // Fallback
-    else {
-      this.handleError('Unable to download: File content is missing.');
-    }
-  }
-
-  private triggerDownload(url: string, name: string): void {
+  private triggerDownload(url: string, fileName: string) {
     const a = document.createElement('a');
     a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
+    a.download = fileName;
     a.click();
-    document.body.removeChild(a);
-  }
-
-  // ============================================
-  // 4. UI HELPERS (For Template Display)
-  // ============================================
-  getVal(group: string, control: string): any {
-    const val = this.formData?.[group]?.[control];
-    if (val === null || val === undefined || val === '') {
-      return '-';
-    }
-    return val;
-  }
-
-  isNaN(value: any): boolean {
-    if (value === null || value === undefined || value === '-') return true;
-    return isNaN(Number(value));
-  }
-
-  formatDate(dateVal: string | Date): string {
-    if (!dateVal || dateVal === '-') return '-';
-    try {
-      const date = new Date(dateVal);
-      // Check if date is valid
-      if (isNaN(date.getTime())) return String(dateVal);
-
-      return date.toLocaleDateString('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric'
-      });
-    } catch (e) {
-      return String(dateVal);
-    }
-  }
-
-  // ============================================
-  // 5. FEEDBACK HANDLERS
-  // ============================================
-
-  private handleSuccess(message: string) {
-    this.snackBar.open(message, 'Close', {
-      duration: 5000,
-      panelClass: ['success-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    });
-    this.sharedService.clearFormData();
-    this.router.navigate(['/undertaking-issuance/pending-records']);
-  }
-
-  private handleError(error: any) {
-    console.error(error);
-    const msg = typeof error === 'string' ? error : 'Error processing request.';
-    this.snackBar.open(msg, 'Close', {
-      duration: 4000,
-      panelClass: ['error-snackbar'],
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom'
-    });
   }
 }

@@ -321,11 +321,11 @@ export const routes: Routes = [
             },
         
             {
-                path: 'undertaking-issuance/pending-records',
+                path: 'undertaking-issuance/inquiries-records',
                 loadComponent: () =>
                     import(
-                        './screens/USER/undertaking-issuance/sub-menus/events/pending-records/pending-records'
-                    ).then((m) => m.PendingRecordsComponent),
+                        './screens/USER/undertaking-issuance/sub-menus/events/records/inquiries-records'
+                    ).then((m) => m.inquiriesRecords),
             },
             // Submitted-Records Route
             // {
@@ -430,18 +430,12 @@ export const routes: Routes = [
                 path: 'import-screen/pending-records',
                 loadComponent: () =>
                     import(
-                        './screens/USER/import-screen/sub-menus/records/pending-records/pending-records'
-                    ).then((m) => m.PendingRecords),
+                        './screens/USER/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records'
+                    ).then((m) => m.EnquiriesOfRecords),
             },
 
             // Import submitted-Records Route
-            {
-                path: 'import-screen/submitted-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/import-screen/sub-menus/records/submitted-records/submitted-records'
-                    ).then((m) => m.SubmittedRecords),
-            },
+
             // Import approved-Records Route
             // {
             //     path: 'import-screen/approved-records',

@@ -1,6 +1,15 @@
 @use "sass:color";
 @use "../../../../../styles/theme" as theme;
 
+/* -----------------------------------------------------
+   CRITICAL FIX: Ensure the component itself fills the space
+----------------------------------------------------- */
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
 /* ------------------------------
    Page Screen Layout
 --------------------------------*/
@@ -30,7 +39,7 @@
         flex: 1;
         padding: 30px 50px;
         height: 100%;
-        overflow-y: auto;
+        overflow-y: auto;       /* This enables the scrolling */
         scrollbar-width: thin;
         scroll-behavior: smooth;
         scrollbar-color: theme.$step-border transparent;
@@ -57,7 +66,6 @@
             background: rgba(theme.$primary, 0.02);
         }
     }
-
 }
 
 /* ------------------------------

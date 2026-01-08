@@ -1,190 +1,96 @@
 @use "sass:color";
-@use "../../../../../../styles/theme" as theme;
+@use "../../../../../../styles/theme" as theme; // Adjust path to your theme.scss
 
-/* ================================
-   PREVIEW CONTAINER
-================================ */
-.preview-container {
-  background: theme.$light-bg;
-  min-height: 100vh;
+/* =================================
+   PAGE WRAPPER
+================================= */
+.preview-page {
   padding: 32px;
-  // border-radius: 12px; // Optional: usually top-level containers don't need radius
+  background-color: theme.$light-bg;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
-/* ================================
-   PREVIEW HEADER
-================================ */
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+/* =================================
+   PAGE HEADER
+================================= */
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: theme.$primary;
+  margin: 0;
+  letter-spacing: -0.5px;
   padding-bottom: 16px;
   border-bottom: 1px solid theme.$border-light;
-
-  h1 {
-    font-size: 24px;
-    margin: 0 0 6px 0;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: theme.$primary;
-  }
-
-  .subtitle {
-    font-size: 14px;
-    color: theme.$text-medium;
-    margin: 0;
-
-    strong {
-      color: theme.$primary-dark;
-      font-weight: 600;
-    }
-  }
-
-  .status-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: theme.$primary-light;
-    color: theme.$primary-dark;
-    border-radius: 16px;
-    font-size: 13px;
-    font-weight: 500;
-    border: 1px solid theme.$border-primary;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-  }
 }
 
-/* ================================
-   PREVIEW CONTENT (MAIN GRID)
-   This controls the side-by-side cards
-================================ */
-.preview-content {
+/* =================================
+   PREVIEW CONTAINER & ROWS
+================================= */
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.preview-row {
   display: grid;
-  // Defaults to 2 columns (General | Applicant)
-  grid-template-columns: repeat(2, 1fr); 
+  grid-template-columns: repeat(2, 1fr); // 2 cards side-by-side
   gap: 24px;
   align-items: start;
-  flex: 1;
 
-  mat-divider {
-    display: none;
-  }
+  // If a row has only one child that isn't full-width, keep it sized properly
 }
 
-/* ================================
-   PREVIEW CARD
-================================ */
+/* =================================
+   CARDS
+================================= */
 .preview-card {
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: 10px;
-  box-shadow: 0 2px 6px theme.$primary-shadow;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  height: 100%; // Ensures cards match height in row if align-items is stretch
-
-  &:hover {
-    border-color: theme.$border-primary;
-    box-shadow: 0 4px 12px rgba(13, 71, 161, 0.12);
-  }
-
-  // Utility to make a card span the full width (like Attachments)
-  &.full-width {
-    grid-column: 1 / -1; 
-  }
-
-  .preview-section {
-    padding: 20px;
-  }
-}
-
-/* ================================
-   SECTION HEADERS
-================================ */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid theme.$border-light;
-
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: theme.$primary-dark;
-    margin: 0;
-  }
-}
-
-/* ================================
-   INTERNAL DATA GRIDS
-   (Grid inside the cards)
-================================ */
-.preview-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); // Default 2 data items per row inside card
-  column-gap: 24px;
-  row-gap: 16px;
-  word-wrap: break-word;
-
-  // Applicant/Beneficiary Split
-  &.two-col {
-    grid-template-columns: 1fr 1fr;
-    gap: 0; // Remove standard gap, handle via padding
-    
-    .sub-group {
-      display: flex;
-      flex-direction: column;
-      gap: 16px; 
-
-      &:first-child {
-        padding-right: 20px;
-        border-right: 1px solid theme.$border-light;
-      }
-      &:last-child {
-        padding-left: 20px;
-      }
-      
-      h4 {
-        font-size: 14px;
-        font-weight: 700;
-        color: theme.$text-dark;
-        margin: 0 0 4px 0;
-        text-transform: uppercase;
-        opacity: 0.8;
-      }
-    }
-  }
-
-  // For Bank Details (3 items per row)
-  &.three-col {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* ================================
-   DATA ITEM STYLING
-================================ */
-.data-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  box-shadow: theme.$shadow-primary;
+  padding: 24px; // Angular Material card padding override
+  height: 100%; // Match height in row
 
   &.full-width {
     grid-column: 1 / -1;
   }
 
-  label {
+  .section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: theme.$primary-dark;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid theme.$border-light;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* =================================
+   DATA GRIDS (Inside Cards)
+================================= */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // 2 data items per row inside card
+  column-gap: 32px;
+  row-gap: 20px;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .preview-label {
     font-size: 12px;
     font-weight: 600;
     color: theme.$text-medium;
@@ -192,195 +98,135 @@
     letter-spacing: 0.5px;
   }
 
-  span {
-    color: theme.$text-dark;
+  .preview-value {
     font-size: 14px;
     font-weight: 500;
-    line-height: 1.4;
+    color: theme.$text-dark;
+    line-height: 1.5;
+    word-break: break-word;
 
-    &.capitalize { text-transform: capitalize; }
-    &.uppercase { text-transform: uppercase; }
-    &.pre-wrap { 
-        white-space: pre-wrap; 
-        background: theme.$light-bg;
-        padding: 8px;
-        border-radius: 4px;
-        font-size: 13px;
-    }
-
-    &.highlight-amount {
-      font-weight: 700;
-      color: theme.$primary;
-      font-size: 15px;
-    }
-
-    &.date-highlight {
-      color: theme.$text-dark;
-    }
-
-    &.swift-code,
-    &.account-number {
-      font-family: 'Roboto Mono', monospace;
-      background: theme.$hover-bg;
-      padding: 2px 6px;
-      border-radius: 4px;
+    // Special styling for long text blocks
+    &.pre-wrap {
+      white-space: pre-wrap;
+      background: theme.$light-bg;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid theme.$border-light;
       font-size: 13px;
+      margin-top: 4px;
     }
   }
 }
 
-.subsection-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: theme.$text-medium;
-  margin: 24px 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ================================
-   ATTACHMENTS & ADDRESS
-================================ */
-.address-block {
-  display: flex;
-  flex-direction: column;
-}
-
+/* =================================
+   ATTACHMENTS TABLE
+================================= */
 .preview-attachments-container {
-  margin-top: 10px;
   border: 1px solid theme.$border-light;
   border-radius: 6px;
   overflow: hidden;
+  margin-top: 8px;
 
   .attachment-grid {
     display: grid;
-    grid-template-columns: 40px 1fr 1.5fr 80px 60px;
+    // Icon | Name | Size | Action
+    grid-template-columns: 48px 1fr 120px 60px; 
     align-items: center;
-    padding: 10px 16px;
+    padding: 12px 16px;
     border-bottom: 1px solid theme.$border-light;
     font-size: 13px;
 
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
 
     &.header {
       background: theme.$light-bg;
       font-weight: 600;
       color: theme.$text-medium;
-      font-size: 12px;
       text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
     }
 
-    .icon-col mat-icon {
-       font-size: 20px; width: 20px; height: 20px;
-       &.pdf-icon { color: #d32f2f; }
-       &.image-icon { color: #1976d2; }
-    }
-    
-    .actions mat-icon {
+    // Icon Styles
+    mat-icon {
+      color: theme.$text-medium;
+      
+      &.action-icon {
         cursor: pointer;
-        font-size: 18px; width: 18px; height: 18px;
-        color: theme.$text-medium;
         &:hover { color: theme.$primary; }
+      }
     }
   }
 }
 
 .empty-text {
-  text-align: center;
-  color: theme.$text-medium;
-  padding: 16px;
   font-style: italic;
-  font-size: 13px;
+  color: theme.$text-medium;
+  text-align: center;
+  padding: 20px;
 }
 
-/* ================================
-   FOOTER & BUTTONS
-================================ */
-.preview-footer {
+/* =================================
+   ACTION BUTTONS (Footer)
+================================= */
+.actions {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  gap: 16px;
   margin-top: 24px;
-  gap: 12px;
-  padding-top: 16px;
+  padding-top: 24px;
   border-top: 1px solid theme.$border-light;
 
-  button:first-child {
-      margin-right: auto; // Pushes "Back" button to the left
+  // Styling Angular Material buttons to match theme
+  button[mat-stroked-button] {
+    border-color: theme.$border-primary;
+    color: theme.$primary;
+    min-width: 100px;
   }
-  
-  .action-group {
-      display: flex;
-      gap: 12px;
-  }
-}
 
-// Button styles (kept from your code)
-button[mat-stroked-button] {
-  border-color: theme.$border-primary;
-  color: theme.$primary;
-}
-button[mat-raised-button] {
-  background: theme.$white; 
-  color: theme.$primary; 
-  border: 1px solid theme.$border-primary;
-}
-button[mat-flat-button] {
-  background: theme.$primary;
-  color: theme.$white;
-}
+  button[mat-flat-button] {
+    background-color: theme.$primary;
+    color: theme.$white;
+    min-width: 100px;
 
-/* ================================
-   RESPONSIVENESS
-================================ */
-
-// Tablet and Small Desktop (Make internal grids 1 column, but keep cards 2 columns)
-@media (max-width: 1100px) {
-    .preview-grid.three-col {
-        grid-template-columns: repeat(2, 1fr);
+    &:disabled {
+      background-color: rgba(0,0,0,0.12);
+      color: rgba(0,0,0,0.38);
     }
-    
-    .preview-grid.two-col {
-        // Stack applicant and beneficiary vertically inside the card if it gets too tight
-        grid-template-columns: 1fr;
-        .sub-group:first-child {
-            border-right: none;
-            border-bottom: 1px solid theme.$border-light;
-            padding-right: 0;
-            padding-bottom: 16px;
-        }
-        .sub-group:last-child {
-            padding-left: 0;
-        }
-    }
+  }
 }
 
-// Mobile (< 768px) - STACK EVERYTHING
-@media (max-width: 768px) {
-  .preview-container {
-      padding: 16px;
-  }
-
-  // Stack the cards vertically
-  .preview-content {
+/* =================================
+   RESPONSIVE DESIGN
+================================= */
+@media (max-width: 900px) {
+  // Stack cards vertically on tablets/small screens
+  .preview-row {
     grid-template-columns: 1fr; 
-    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .preview-page {
+    padding: 16px;
   }
   
-  // Internal grids become 1 column
-  .preview-grid, .preview-grid.three-col {
-      grid-template-columns: 1fr;
-  }
-  
-  .attachment-grid {
-      grid-template-columns: 30px 1fr 50px; 
-      & > div:nth-child(2), & > div:nth-child(4) { display: none; } 
+  // Stack internal data items vertically on mobile
+  .preview-grid {
+    grid-template-columns: 1fr; 
+    row-gap: 16px;
   }
 
-  .preview-footer {
-      flex-direction: column-reverse;
-      gap: 16px;
-      button { width: 100%; }
-      .action-group { width: 100%; flex-direction: column; }
+  .attachment-grid {
+    // Hide size column on mobile
+    grid-template-columns: 40px 1fr 40px; 
+    & > div:nth-child(3) { display: none; } 
+  }
+  
+  .actions {
+    flex-direction: column-reverse;
+    button { width: 100%; }
   }
 }

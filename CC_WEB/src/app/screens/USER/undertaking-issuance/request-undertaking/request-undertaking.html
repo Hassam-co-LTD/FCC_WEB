@@ -1,41 +1,49 @@
 <div class="screen">
-    <!-- Sidebar -->
-    <app-sidebar [steps]="undertakingSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
+    <app-sidebar 
+        [steps]="undertakingSteps" 
+        [currentStep]="currentStep" 
+        (stepChange)="scrollToSection($event)">
     </app-sidebar>
-    <!-- Main Content -->
+
     <div class="content">
-        <div class="scroll-area">
+        <div class="scroll-area" (scroll)="onScroll($event)" #scrollContainer>
 
-            <section id="section-0"> <app-general-details [form]="generalDetails"></app-general-details></section>
-            <hr class="section-divider" />
-
-            <section id="section-1"><app-application-beneficiary
-                    [form]="applicantBeneficiary"></app-application-beneficiary></section>
-            <hr class="section-divider" />
-
-            <section id="section-2"><app-bank-details [form]="bankForm"></app-bank-details></section>
-            <hr class="section-divider" />
-
-            <section id="section-3"><app-undertaking-details [form]="undertakingDetails"></app-undertaking-details>
+            <section id="section-0"> 
+                <app-general-details [form]="generalDetails"></app-general-details>
             </section>
-            <hr class="section-divider" />
 
-            <section id="section-4"><app-instructions-bank [form]="instructions"></app-instructions-bank></section>
-            <hr class="section-divider" />
-
-            <section id="section-5"><app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
+            <section id="section-1">
+                <app-application-beneficiary [form]="applicantBeneficiary"></app-application-beneficiary>
             </section>
-            <hr class="section-divider" />
 
+            <section id="section-2">
+                <app-bank-details [form]="bankForm"></app-bank-details>
+            </section>
 
+            <section id="section-3">
+                <app-undertaking-details [form]="undertakingDetails"></app-undertaking-details>
+            </section>
 
-            <!-- Footer Buttons -->
+            <section id="section-4">
+                <app-instructions-bank [form]="instructions"></app-instructions-bank>
+            </section>
+
+            <section id="section-5">
+                <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
+            </section>
+
             <div class="actions">
-                <button mat-stroked-button (click)="previous()">Back</button>
-                <button mat-flat-button color="primary" (click)="saveForm()">Save</button>
-                <button mat-flat-button color="primary" (click)="submit()">Preview</button>
-            </div>
+                <ng-container *ngIf="!showUpdateSubmit">
+                    <button mat-stroked-button (click)="back()">Back</button>
+                    <button mat-flat-button color="primary" (click)="saveForm()">Save Draft</button>
+                </ng-container>
 
+                <ng-container *ngIf="showUpdateSubmit">
+                    <button mat-stroked-button (click)="back()">Back</button> 
+                    <button mat-stroked-button color="primary" (click)="update()">Update Draft</button>
+                    <button mat-flat-button color="accent" (click)="submit()">Submit</button>
+                </ng-container>
+            </div>
         </div>
     </div>
 </div>
