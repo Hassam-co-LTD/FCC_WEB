@@ -1,95 +1,158 @@
-<!-- ================= HEADER ================= -->
-<div class="page-header">
-    <div class="title">
-        <h2>City Records</h2>
-        <p>Manage and track all cities and related branch locations</p>
-    </div>
-</div>
+<div class="city-status-container">
+  <h2 class="page-title">City Records</h2>
 
-<!-- ================= SEARCH ================= -->
-<div class="search-system">
-    <div class="search-input-group">
-        <input type="text" placeholder="Search by City Name, Country, Branch Code" [(ngModel)]="searchQuery"
-            (input)="applyFilters()" />
-        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
-            <mat-icon>clear</mat-icon>
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterDraftCities(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCities('')">
+          <mat-icon>clear</mat-icon>
         </button>
-    </div>
+      </div>
 
-    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
-        <mat-icon>tune</mat-icon> Advanced
-    </button>
-</div>
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
 
-<!-- ================= ADVANCED SEARCH ================= -->
-<div class="advanced-search" *ngIf="showAdvanced">
-    <div class="field">
-        <label>Country</label>
-        <select [(ngModel)]="countryFilter" (change)="applyFilters()">
-            <option *ngFor="let country of countries" [value]="country.code">{{ country.name }}</option>
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Status</label>
-        <select [(ngModel)]="statusFilter" (change)="applyFilters()">
-            <option *ngFor="let status of statuses" [value]="status.key">{{ status.label }}</option>
-        </select>
-    </div>
-</div>
-
-<!-- ================= TABS ================= -->
-<div class="ui-tabs">
-    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
-        {{ tab.label }} ({{ getTabCount(tab.key) }})
-    </div>
-</div>
-
-<div class="filter-row">
-    <div class="results-summary">
-        Showing {{ pagedCities.length }} of {{ filteredCities.length }} cities
-    </div>
-</div>
-
-<!-- ================= TABLE ================= -->
-<div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th (click)="sortBy('cityCode')">City Code</th>
-                <th (click)="sortBy('cityName')">City Name</th>
+        <div class="table-wrapper" *ngIf="storeFilteredDraftCities && storeFilteredDraftCities.length > 0; else noDrafts">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
                 <th>Country</th>
-                <th>Number of Branches</th>
                 <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr *ngFor="let city of pagedCities; trackBy: trackByCityCode">
-                <td>{{ city.cityCode }}</td>
-                <td>{{ city.cityName }}</td>
-                <td>{{ city.countryName }}</td>
-                <td>{{ city.branchCount }}</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredDraftCities; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
                 <td>
-                    <!-- <span class="status" [ngClass]="city.status">{{ city.status }}</span> -->
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
                 </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedCities(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCities('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedCities && storeFilteredApprovedCities.length > 0; else noApproved">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredApprovedCities; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
                 <td>
-                    <button class="btn-action" (click)="viewCity(city)">
-                        <mat-icon>visibility</mat-icon> View
-                    </button>
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
                 </td>
-            </tr>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-            <tr *ngIf="pagedCities.length === 0">
-                <td colspan="6" class="no-records">No city records found</td>
-            </tr>
-        </tbody>
-    </table>
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
 
-    <div class="pagination">
-        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
-    </div>
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedCities(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCities('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCities && storeFilteredSubmittedCities.length > 0; else noSubmitted">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredSubmittedCities; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
+                <td>
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

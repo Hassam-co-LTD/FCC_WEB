@@ -3,6 +3,9 @@
 /* ===========================
    Section Header
 =========================== */
+.hidden{
+     display: none !important;
+}
 .section-header {
   display: flex;
   justify-content: space-between;

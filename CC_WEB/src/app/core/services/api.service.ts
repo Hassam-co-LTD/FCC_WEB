@@ -205,5 +205,24 @@ getAllAproved(){
 setCity(data:any){
    return this.http.post<any>(`${this.baseUrl}branch/city`,data)
 }
+getCityByStatus(status:String){
+   return this.http.get<any>(`${this.baseUrl}cities/${status}`);
+}
+
+getCityById(id:number){
+    return this.http.get<any>(`${this.baseUrl}city/${id}`);
+}
+
+updateCity(data:any){
+  
+    return this.http.put<any>(`${this.baseUrl}update/city/${data.id}`,data);
+}
+
+setCityByStatus(status:String,id:number){
+      return this.http.post<any>(`${this.baseUrl}cities/setStatus/${id}`,{status})
+}
+
+
+
 }
  

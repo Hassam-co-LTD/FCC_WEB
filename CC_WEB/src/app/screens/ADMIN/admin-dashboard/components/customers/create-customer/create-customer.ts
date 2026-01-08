@@ -36,22 +36,22 @@ export class CreateCustomer implements OnInit {
   }
  getCustomerById : any = ""
   ngOnInit(): void {
-  this.customerForm = this.fb.group({
-    id: [{ value: '', disabled: true }],
-    cId : ['',Validators.required],
-    name: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    contact: ['', Validators.required],
-    legalId: [''],           // corrected
-    customerStatus:['',Validators.required],
-    branchCode: [''],        // corrected
-    countryCity: [''],       // corrected
-    customerType: ['Regular', Validators.required], // corrected
-    address1: [''],
-    address2: [''],
-    address3: ['']
-    // status is not included, backend will set it
-  });
+ this.customerForm = this.fb.group({
+  id: [{ value: '', disabled: true }],           // always disabled
+  cId: [{ value: '', disabled: false }, Validators.required],
+  name: [{ value: '', disabled: false }, Validators.required],
+  email: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
+  contact: [{ value: '', disabled: false }, Validators.required],
+  legalId: [{ value: '', disabled: false }],
+  customerStatus: [{ value: '', disabled: false }, Validators.required],
+  branchCode: [{ value: '', disabled: false }],
+  countryCity: [{ value: '', disabled: false }],
+  customerType: [{ value: 'Regular', disabled: false }, Validators.required],
+  address1: [{ value: '', disabled: false }],
+  address2: [{ value: '', disabled: false }],
+  address3: [{ value: '', disabled: false }]
+});
+
 const idParam = this.activateRoute.snapshot.paramMap.get('id');
 console.log('customer page', idParam);
 
@@ -265,5 +265,13 @@ editApprovedCustomer(id: number) {
     }
   });
 }
+
+// adding an function for toggling 
+isOpen = true;
+
+toggle(): void {
+  this.isOpen = !this.isOpen;
+}
+
 
 }

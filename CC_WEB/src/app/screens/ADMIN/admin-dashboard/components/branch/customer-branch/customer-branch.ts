@@ -106,8 +106,10 @@ export class CustomerBranch implements OnInit {
     this.api.getAllCities().subscribe({
       next: (res: any) => {
         this.getAllCities = res;
+        console.log("getAllCities",this.getAllCities);
         if (this.getBranchById?.citymaster?.id) {
           this.branchForm.patchValue({ cityId: this.getBranchById.citymaster.id });
+          
         }
       },
       error: (err) => console.log(err)
@@ -217,4 +219,10 @@ export class CustomerBranch implements OnInit {
       error: err => console.log("Error while approving branch", err)
     });
   }
+
+isOpen = true;
+toggle(): void {
+  this.isOpen = !this.isOpen;
+}
+
 }

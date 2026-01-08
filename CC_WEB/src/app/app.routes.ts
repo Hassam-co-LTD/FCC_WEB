@@ -96,12 +96,18 @@ export const routes: Routes = [
                     
                 },
                    {
+                    path:'city/:id',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City )
+                    
+                }   
+                ,
+                 {
                     path:'city-inquiry',
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
                     
-                }   
-                
+                } 
                 ],
     
                 

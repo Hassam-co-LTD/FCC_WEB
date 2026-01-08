@@ -15,6 +15,7 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
   open?: boolean;
+   manualOpen?: boolean; //
 }
 
 
@@ -103,27 +104,29 @@ export class LayoutComponent implements OnInit {
     const role = this.authService.getUserCategory();
     this.loadMenu(role);
 
+this.router.events
+  .pipe(filter(event => event instanceof NavigationEnd))
+  .subscribe((event: NavigationEnd) => {
+    const url = event.urlAfterRedirects;
+    this.activeRoute = url;
 
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: any) => {
-        const url = event.urlAfterRedirects;
+    if (url.includes('/system-overview')) {
+      this.currentMenu = 'SYSTEM';
+      this.menuItems = this.systemOverviewMenu;
+    } else if (url.includes('/middle-office')) {
+      this.currentMenu = 'MIDDLE';
+      this.menuItems = this.middleOfficeMenu;
+    } else {
+      this.currentMenu = 'DEFAULT';
+      const role = this.authService.getUserCategory();
+      this.loadMenu(role);
+    }
+
+    // Open menus according to current route
+    this.updateMenuOpenState(this.menuItems, url);
+  });
 
 
-        if (url.includes('/system-overview')) {
-          this.currentMenu = 'SYSTEM';
-          this.menuItems = this.systemOverviewMenu;
-        }
-        else if (url.includes('/middle-office')) {
-          this.currentMenu = 'MIDDLE';
-          this.menuItems = this.middleOfficeMenu;
-        }
-        else {
-          this.currentMenu = 'DEFAULT';
-          const role = this.authService.getUserCategory();
-          this.loadMenu(role);
-        }
-      });
   }
 
 
@@ -144,10 +147,18 @@ export class LayoutComponent implements OnInit {
   }
 
 
-  toggleMenu(item: any) {
-    item.open = !item.open;
-  }
+toggleMenu(item: MenuItem) {
+  // Close all siblings
+  this.menuItems.forEach(m => {
+    if (m !== item) {
+      this.closeAllChildren(m);
+      m.open = false;
+    }
+  });
 
+  // Toggle this item
+  item.open = !item.open;
+}
 
   goTo(item: MenuItem) {
     if (item.route) {
@@ -188,7 +199,8 @@ export class LayoutComponent implements OnInit {
   route: '/admin/city',
   open: false,
   children: [
-    { label: 'Create New', route: '/admin/city' }
+    { label: 'Create New', route: '/admin/city' },
+    {label:'Inquiry',route:"/admin/city-inquiry"}
   ]
 }
 
@@ -311,5 +323,125 @@ export class LayoutComponent implements OnInit {
   Logout() {
     this.authService.logout()
   }
+
+  activeRoute: string = '';
+isExactActive(route?: string): boolean {
+  return !!route && this.activeRoute === route;
+}
+
+isAnyChildActive(item: MenuItem): boolean {
+  return !!item.children?.some(child =>
+    this.activeRoute.startsWith(child.route || '')
+  );
+}
+
+isAnyGrandChildActive(item: MenuItem): boolean {
+  return !!item.children?.some(child =>
+    child.children?.some(sub =>
+      this.activeRoute.startsWith(sub.route || '')
+    )
+  );
+}
+
+
+
+
+/**
+ * Returns true if any grandchild (child's child) of the given item is active
+ */
+isGrandChildActive(item: Partial<MenuItem>): boolean {
+  return !!item.children?.some(child =>
+    child.children?.some(sub =>
+      this.activeRoute === sub.route
+    )
+  );
+}
+
+/**
+ * Helper: check if item has any grandchild
+ */
+hasGrandChildren(item: MenuItem): boolean {
+  return !!item.children?.some(child => child.children && child.children.length > 0);
+}
+
+
+/**
+ * Automatically open parent/child menus if current route matches
+ */
+updateMenuOpenState(items: MenuItem[], url: string) {
+  items.forEach(item => {
+    if (item.children) {
+      // Respect manualOpen first
+      if (item.manualOpen !== undefined) {
+        item.open = item.manualOpen;
+      } else {
+        // Open parent if any descendant (child or grandchild) is active
+        item.open = this.isAnyDescendantActive(item);
+      }
+
+      item.children.forEach(child => {
+        if (child.children) {
+          if (child.manualOpen !== undefined) {
+            child.open = child.manualOpen;
+          } else {
+            child.open = this.isAnyDescendantActive(child);
+          }
+        }
+      });
+    }
+  });
+}
+
+
+// Check if any child or grandchild route is active
+isAnyDescendantActive(item: MenuItem): boolean {
+  if (!item.children) return false;
+
+  return item.children.some(child =>
+    this.activeRoute.startsWith(child.route || '') ||
+    (child.children ? this.isAnyDescendantActive(child) : false)
+  );
+}
+
+
+/**
+ * Returns true if this item, any child, or any grandchild matches the active route
+ */
+// Currently active route
+
+/**
+ * Check if an item (parent/child) is active
+ */
+isActive(item: MenuItem): boolean {
+  // Item route matches exactly
+  if (item.route && this.activeRoute.startsWith(item.route)) return true;
+
+  // Any child active recursively
+  if (item.children?.some(child => this.isActive(child))) return true;
+
+  return false;
+}
+
+/**
+ * Check if a child (not grandchild) is active
+ */
+isChildActive(item: MenuItem): boolean {
+  return item.children?.some(child => child.route && this.activeRoute === child.route) || false;
+}
+
+/**
+ * Check if a grandchild is active
+ */
+
+closeAllChildren(item: MenuItem) {
+  if (!item.children) return;
+
+  item.children.forEach(child => {
+    child.open = false;
+    if (child.children) {
+      this.closeAllChildren(child); // recursive
+    }
+  });
+}
 
 }

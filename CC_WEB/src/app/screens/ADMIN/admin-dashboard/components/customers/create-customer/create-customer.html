@@ -1,169 +1,143 @@
-<div class="customer-container" [ngClass]="{'hidden': getCustomerById?.status === 'A'}" >
-  <div class="card">
-    <form [formGroup]="customerForm">
-      <header class="form-header">
-        <h2 class="page-title">Create Customer Profile</h2>
-        <p class="page-subtitle">Enter the details below to register a new customer.</p>
-      </header>
+<!-- =========================
+     CUSTOMER FORM
+========================= -->
+<div class="customer-container" [ngClass]="{'hidden': getCustomerById?.status === 'A'}">
 
-      <div class="form-grid">
-        <!-- Customer Id -->
-        <div class="form-group">
-          <label>Customer Id</label>
-          <input type="text" formControlName="cId" placeholder="Customer Id" [readonly]="isReadOnly()">
-        </div>
+  <!-- Toggle Header -->
+  <div class="section-header" (click)="isOpen = !isOpen">
+    <h2>Customer General Details</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
 
-        <!-- Name -->
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" formControlName="name" placeholder="Full Name" [readonly]="isReadOnly()">
-        </div>
+  <!-- Collapsible Form -->
+  <div class="collapsible" [class.open]="isOpen" [formGroup]="customerForm">
 
-        <!-- Email -->
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" formControlName="email" placeholder="example@email.com" [readonly]="isReadOnly()">
-        </div>
-
-        <!-- Contact -->
-        <div class="form-group">
-          <label>Contact</label>
-          <input type="tel" formControlName="contact" placeholder="+1 (555) 000-0000" [readonly]="isReadOnly()">
-        </div>
-
-        <!-- Legal ID -->
-        <div class="form-group">
-          <label>Legal ID</label>
-          <input type="text" formControlName="legalId" placeholder="Enter CNIC / NTN / ECIB" [readonly]="isReadOnly()">
-        </div>
-
-        <!-- Status / Branch -->
-        <div class="dropdown-row">
-          <div class="dropdown-half">
-            <mat-form-field appearance="outline">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="customerStatus" [disabled]="isReadOnly()">
-                <mat-option value="Active">Active</mat-option>
-                <mat-option value="Inactive">Inactive</mat-option>
-                <mat-option value="Blocked">Blocked</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="dropdown-half">
-            <mat-form-field appearance="outline">
-              <mat-label>Branch Code</mat-label>
-              <mat-select formControlName="branchCode" [disabled]="isReadOnly()">
-                <mat-option value="">Select Branch</mat-option>
-                <mat-option value="BR-001">Branch 001</mat-option>
-                <mat-option value="BR-002">Branch 002</mat-option>
-                <mat-option value="BR-003">Branch 003</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <!-- Country / Customer Type -->
-        <div class="dropdown-row">
-          <div class="dropdown-half">
-            <mat-form-field appearance="outline">
-              <mat-label>Country / City</mat-label>
-              <mat-select formControlName="countryCity" [disabled]="isReadOnly()">
-                <mat-option value="">Select City</mat-option>
-                <mat-option value="Karachi">Karachi</mat-option>
-                <mat-option value="Lahore">Lahore</mat-option>
-                <mat-option value="Islamabad">Islamabad</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="dropdown-half">
-            <mat-form-field appearance="outline">
-              <mat-label>Customer Type</mat-label>
-              <mat-select formControlName="customerType" [disabled]="isReadOnly()">
-                <mat-option value="Regular">Regular</mat-option>
-                <mat-option value="Premium">Premium</mat-option>
-                <mat-option value="VIP">VIP</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <!-- Addresses -->
-        <div class="form-group full-width">
-          <label>Address Line 1</label>
-          <input type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()">
-        </div>
-        <div class="form-group full-width">
-          <label>Address Line 2</label>
-          <input type="text" formControlName="address2" placeholder="Address Line 2" [readonly]="isReadOnly()">
-        </div>
-        <div class="form-group full-width">
-          <label>Address Line 3</label>
-          <input type="text" formControlName="address3" placeholder="Address Line 3" [readonly]="isReadOnly()">
-        </div>
+    <!-- Plain Input Fields (2 per row) -->
+    <div class="form-grid-2">
+      <div class="field-group">
+        <h4>Customer ID</h4>
+        <input type="text" formControlName="cId" placeholder="Customer ID" [readonly]="isReadOnly()">
+      </div>
+      <div class="field-group">
+        <h4>Name</h4>
+        <input type="text" formControlName="name" placeholder="Full Name" [readonly]="isReadOnly()">
       </div>
 
-      <!-- Footer Buttons -->
-      <footer class="form-actions-container">
-         @if(getCustomerById.status === "D"){
-               <div class="form-buttons">
-          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
-          <button type="button" class="btn-update" 
-                  (click)="update()"  
-                  [disabled]="!customerForm.dirty || !customerForm.valid || isReadOnly()">
-            Update
-          </button>
-          <button type="button" class="btn-save" 
-                  [disabled]="!customerForm.valid || isReadOnly()" 
-                  (click)="submitStatus(customerForm.getRawValue().id)">
-            Submit
-          </button>
-        </div>
+      <div class="field-group">
+        <h4>Email</h4>
+        <input type="email" formControlName="email" placeholder="example@email.com" [readonly]="isReadOnly()">
+      </div>
+      <div class="field-group">
+        <h4>Contact</h4>
+        <input type="tel" formControlName="contact" placeholder="+1 (555) 000-0000" [readonly]="isReadOnly()">
+      </div>
 
-         }
-         @else if (getCustomerById.status === "S") {
-                <div class="form-buttons">
-          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="rejected(this.getCustomerById.id)">Reject</button>
-          <button type="button" class="btn-save" 
-                  (click)="setApprove(this.customerForm.getRawValue().id)"  
-                  >
-            Approve
-          </button>
-                         
-        </div>
+      <div class="field-group">
+        <h4>Legal ID</h4>
+        <input type="text" formControlName="legalId" placeholder="CNIC / NTN / ECIB" [readonly]="isReadOnly()">
+      </div>
+    </div>
 
-         }
-         <!-- @else if (getCustomerById.status === "A"){
-                  <div class="form-buttons">
-          <button type="button" class="btn-back" [disabled]="!customerForm.valid" (click)="onBack()">Back</button>
-        </div>
-         } -->
-        
-        @else {
-          
-        <div class="form-buttons" *ngIf="!['D','S','A'].includes(getCustomerById?.status)">
-          <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
-          <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save Customer</button>
-        </div>
-        }
-      </footer>
-    </form>
+    <!-- Dropdown Fields (2 per row) -->
+    <div class="form-grid-2">
+      <div class="field-group">
+        <h4>Status</h4>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="customerStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Inactive">Inactive</mat-option>
+            <mat-option value="Blocked">Blocked</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <h4>Branch Code</h4>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Branch Code</mat-label>
+          <mat-select formControlName="branchCode" [disabled]="isReadOnly()" panelClass="white-dropdown">
+            <mat-option value="">Select Branch</mat-option>
+            <mat-option value="BR-001">Branch 001</mat-option>
+            <mat-option value="BR-002">Branch 002</mat-option>
+            <mat-option value="BR-003">Branch 003</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <h4>Country / City</h4>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Country / City</mat-label>
+          <mat-select formControlName="countryCity" [disabled]="isReadOnly()" panelClass="white-dropdown">
+            <mat-option value="">Select City</mat-option>
+            <mat-option value="Karachi">Karachi</mat-option>
+            <mat-option value="Lahore">Lahore</mat-option>
+            <mat-option value="Islamabad">Islamabad</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <h4>Customer Type</h4>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Customer Type</mat-label>
+          <mat-select formControlName="customerType" [disabled]="isReadOnly()" panelClass="white-dropdown">
+            <mat-option value="Regular">Regular</mat-option>
+            <mat-option value="Premium">Premium</mat-option>
+            <mat-option value="VIP">VIP</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Address Fields (Full Width) -->
+    <div class="form-grid-2">
+      <div class="field-group full">
+        <h4>Address Line 1</h4>
+        <input type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()">
+      </div>
+      <div class="field-group full">
+        <h4>Address Line 2</h4>
+        <input type="text" formControlName="address2" placeholder="Address Line 2" [readonly]="isReadOnly()">
+      </div>
+      <div class="field-group full">
+        <h4>Address Line 3</h4>
+        <input type="text" formControlName="address3" placeholder="Address Line 3" [readonly]="isReadOnly()">
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="actions">
+      <ng-container *ngIf="getCustomerById?.status === 'D'">
+        <button type="button" class="btn-back" (click)="onBack()">Back</button>
+        <button type="button" class="btn-update" [disabled]="!customerForm.dirty || !customerForm.valid || isReadOnly()" (click)="update()">Update</button>
+        <button type="button" class="btn-save" [disabled]="!customerForm.valid || isReadOnly()" (click)="submitStatus(customerForm.getRawValue().id)">Submit</button>
+      </ng-container>
+
+      <ng-container *ngIf="getCustomerById?.status === 'S'">
+        <button type="button" class="btn-back" (click)="rejected(getCustomerById.id)">Reject</button>
+        <button type="button" class="btn-save" (click)="setApprove(customerForm.getRawValue().id)">Approve</button>
+      </ng-container>
+
+      <ng-container *ngIf="!['D','S','A'].includes(getCustomerById?.status)">
+        <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save Customer</button>
+      </ng-container>
+    </div>
   </div>
 </div>
 
-<!--  show  approved result  -->
-
+<!-- =========================
+     APPROVED CUSTOMER VIEW
+========================= -->
 <div *ngIf="getCustomerById?.status === 'A'" class="approved-container">
-
   <div class="approved-header">
     <span class="approved-badge">✔ Approved</span>
     <h2>Customer Approved Details</h2>
   </div>
 
   <div class="details-grid">
-
-    <!-- Row 1 -->
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Customer ID</span>
@@ -178,8 +152,6 @@
         <span class="value">{{ getCustomerById.email }}</span>
       </div>
     </div>
-
-    <!-- Row 2 -->
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Contact</span>
@@ -194,8 +166,6 @@
         <span class="value">{{ getCustomerById.legalId }}</span>
       </div>
     </div>
-
-    <!-- Row 3 -->
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Branch Code</span>
@@ -210,8 +180,6 @@
         <span class="value">{{ getCustomerById.customerType }}</span>
       </div>
     </div>
-
-    <!-- Row 4 -->
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Address 1</span>
@@ -226,13 +194,10 @@
         <span class="value">{{ getCustomerById.address3 }}</span>
       </div>
     </div>
-
   </div>
 
-  <!-- Action Footer -->
   <div class="approved-actions">
     <button class="btn-back" (click)="onBack()">← Back</button>
-    <button class="btn-edit" (click)="editApprovedCustomer(getCustomerById.id)">amend</button>
-  </div>  
-
+    <button class="btn-edit" (click)="editApprovedCustomer(getCustomerById.id)">Amend</button>
+  </div>
 </div>

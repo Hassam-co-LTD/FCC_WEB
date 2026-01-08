@@ -1,44 +1,43 @@
 @use '../../../../../../../styles/theme' as theme;
 
-/* ------------------------------
-   Branch Card Container
-------------------------------- */
-.branch-card {
-  padding: 20px;
-  border-radius: theme.$radius-large;
-  background: theme.$light-bg;
-  box-shadow: theme.$shadow-primary;
-  margin-bottom: 20px;
+/* ===========================
+   Section Header
+=========================== */
+.hidden {
+  display: none !important;
 }
-
-/* ------------------------------
-   Section Header (Collapsible)
-------------------------------- */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: theme.$primary;
-  color: theme.$text-light;
   padding: 14px 18px;
   border-radius: theme.$radius-large;
   cursor: pointer;
-  margin-bottom: 12px;
+  margin-bottom: theme.$gap-default;
+  color: theme.$text-light;
   transition: background 0.3s ease, box-shadow 0.3s ease;
-
-  mat-icon {
-    font-size: 22px;
-  }
 
   &:hover {
     background: theme.$primary-dark;
     box-shadow: theme.$shadow-primary;
   }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
 }
 
-/* ------------------------------
-   Collapsible Container
-------------------------------- */
+/* ===========================
+   Collapsible Content
+=========================== */
 .collapsible {
   max-height: 0;
   overflow: hidden;
@@ -48,197 +47,304 @@
 }
 
 .collapsible.open {
-  max-height: 3000px; /* enough for large forms */
+  max-height: 3000px;
   opacity: 1;
   transform: translateY(0);
-  padding: 15px;
+  padding: 15px 12px;
   background: theme.$light-bg;
   border-radius: theme.$radius-default;
   border: 1px solid theme.$border-light;
 }
 
-/* ------------------------------
-   Field Group & Form Grids
-------------------------------- */
+/* ===========================
+   Headings with Vertical Line
+=========================== */
+h4 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Form Grid (2 per row)
+=========================== */
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: theme.$gap-default;
-  margin-bottom: 20px;
-}
+  margin-bottom: theme.$gap-default;
 
-.form-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: theme.$gap-default;
-  margin-bottom: 20px;
-}
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 
-.field-group {
-  display: flex;
-  flex-direction: column;
+    label,
+    h4 {
+      font-weight: 500;
+      font-size: 14px;
+      color: theme.$text-dark;
+    }
 
-  h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: theme.$primary-dark;
-  }
-}
+    input,
+    textarea {
+      padding: 14px 12px;
+      font-size: 14px;
+      border: 1px solid theme.$border-light;
+      border-radius: theme.$radius-default;
+      background: theme.$white;
+      color: theme.$text-dark;
+      transition: border-color 0.3s, box-shadow 0.3s;
 
-/* ------------------------------
-   Mat Form Field Styling
-------------------------------- */
-mat-form-field {
-  width: 100%;
+      &:focus {
+        outline: none;
+        border-color: theme.$primary;
+        box-shadow: 0 0 0 2px rgba(11, 78, 179, 0.15);
+      }
 
-  .mat-mdc-form-field-wrapper {
-    padding-top: 14px; // increase input height
-    padding-bottom: 14px;
-  }
+      &:disabled,
+      &[readonly] {
+        background: theme.$light-bg;
+        color: theme.$text-medium;
+        cursor: not-allowed;
+      }
+    }
 
-  &.mat-mdc-select {
-    .mat-mdc-select-value {
-      padding-top: 10px; // smaller dropdown height
-      padding-bottom: 10px;
+    textarea {
+      resize: none;
+      min-height: 60px;
+    }
+
+    /* ===========================
+       Mat-Select / Dropdown
+    ============================ */
+    mat-form-field {
+      width: 100%;
+      font-size: 14px;
+
+      .mat-mdc-select-value,
+      .mat-mdc-select-placeholder {
+        font-size: 14px !important;
+        color: theme.$text-dark !important;
+      }
+    }
+
+    /* Full Width Field */
+    &.full {
+      grid-column: 1 / -1;
+      input, textarea {
+        border-radius: theme.$radius-large;
+        padding: 16px 14px;
+      }
+      mat-form-field {
+        padding: 0;
+      }
     }
   }
+}
 
-  textarea.mat-input-element {
-    min-height: 80px;
-    padding-top: 12px;
-    padding-bottom: 12px;
+/* ===========================
+   Branch Dropdown Fields Styling
+=========================== */
+.field-group.city-field mat-form-field.full,
+.field-group mat-form-field.full {
+  min-height: 48px; /* consistent height */
+  padding: 0;
+
+  .mat-form-field-flex {
+    padding: 0 12px;
+    height: 100%;
+    align-items: center;
+    background: transparent;
+  }
+
+  .mat-select-trigger {
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .mat-select-arrow {
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
-/* White dropdown for select panel */
-.white-dropdown .mat-mdc-option {
-  background: #fff !important;
-  color: #000 !important;
+/* ===========================
+   Dropdown Panel Styling
+=========================== */
+.dropdown-panel {
+  ::ng-deep .mat-mdc-select-panel {
+    padding: 0 !important;   /* remove extra padding */
+    margin: 0 !important;
+    border-radius: theme.$radius-default;
+    background: theme.$white !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    max-height: 300px;
+    overflow-y: auto;
+
+    .mat-mdc-option {
+      padding: 10px 14px;
+      font-size: 14px;
+      color: theme.$text-dark;
+
+      &:hover,
+      &.mat-mdc-active {
+        background-color: rgba(11,78,179,0.05) !important;
+        color: theme.$text-dark !important;
+      }
+    }
+  }
 }
 
-/* ------------------------------
-   Buttons
-------------------------------- */
-.actions,
-.approved-actions {
+/* ===========================
+   Form Actions Buttons Styling
+=========================== */
+.form-actions-container {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 20px;
+  gap: theme.$gap-default;
+  margin-top: theme.$gap-default;
 
   button {
-    min-width: 120px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: theme.$radius-large;
+    border: none;
+    cursor: pointer;
     transition: background 0.3s ease, box-shadow 0.3s ease;
 
-    &:hover {
-      box-shadow: theme.$shadow-primary;
+    &.btn-back {
+      background: theme.$white;
+      color: theme.$primary;
+      border: 1px solid theme.$primary;
     }
-  }
 
-  button[color="primary"] {
-    background: theme.$primary;
-    color: theme.$text-light;
+    &.btn-update,
+    &.btn-save {
+      background: theme.$primary;
+      color: theme.$text-light;
+      box-shadow: theme.$button-shadow;
 
-    &:hover {
-      background: theme.$primary-hover;
+      &:hover {
+        background: theme.$primary-dark;
+      }
     }
-  }
 
-  button.mat-stroked-button {
-    border: 1px solid theme.$primary;
-    color: theme.$primary;
-    background: transparent;
-
-    &:hover {
-      background: theme.$primary-light;
-    }
-  }
-
-  button[color="warn"] {
-    background: theme.$white;
-    color: #fff;
-
-    &:hover {
-      background: darken(theme.$white, 10%);
+    &.btn-cancel {
+      background: theme.$hover-bg;
+      color: theme.$text-dark;
+      border: 1px solid theme.$border-light;
     }
   }
 }
 
-/* ------------------------------
-   Approved Section
-------------------------------- */
+/* ===========================
+   Approved Branch Section
+=========================== */
 .approved-container {
-  .approved-card {
-    padding: 20px;
-    border-radius: theme.$radius-large;
-    background: theme.$light-bg;
-    box-shadow: theme.$shadow-primary;
-    margin-bottom: 20px;
-  }
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  padding: theme.$gap-default;
+  border: 1px solid theme.$border-light;
+  margin-top: theme.$gap-default;
 
   .approved-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: theme.$gap-default;
 
     .approved-badge {
-      background: #4caf50;
-      color: #fff;
-      padding: 4px 8px;
-      border-radius: 4px;
+      background: theme.$primary;
+      color: theme.$text-light;
+      padding: 4px 10px;
+      border-radius: theme.$radius-default;
+      font-weight: 600;
     }
 
     h2 {
-      margin: 0;
       font-size: 18px;
       font-weight: 600;
-      color: theme.$primary-dark;
+      color: theme.$text-dark;
+      margin: 0;
     }
   }
 
   .details-grid {
     display: grid;
-    gap: 12px;
+    gap: theme.$gap-default;
 
     .detail-row {
-      display: flex;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: theme.$gap-default;
 
       .detail-item {
-        flex: 1;
         display: flex;
         flex-direction: column;
+        gap: 4px;
 
         .label {
-          font-weight: 600;
-          color: theme.$primary-dark;
+          font-size: 13px;
+          font-weight: 500;
+          color: theme.$text-medium;
+          border-left: 4px solid theme.$primary; /* vertical line */
+          padding-left: 8px;
         }
 
         .value {
-          font-weight: 500;
+          font-size: 14px;
           color: theme.$text-dark;
+          font-weight: 600;
         }
 
         &.full-width {
-          flex: 1 1 100%;
+          grid-column: 1 / -1;
+        }
+      }
+    }
+  }
+
+  .approved-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    button {
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: theme.$radius-default;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &.btn-back {
+        background: theme.$hover-bg;
+        color: theme.$text-dark;
+        border: 1px solid theme.$border-light;
+      }
+
+      &.btn-edit {
+        background: theme.$primary;
+        color: theme.$text-light;
+        box-shadow: theme.$button-shadow;
+
+        &:hover {
+          background: theme.$primary-dark;
         }
       }
     }
   }
 }
 
-.hidden {
-  display: none !important;
-}
-
-/* ------------------------------
+/* ===========================
    Responsive
-------------------------------- */
+=========================== */
 @media (max-width: 992px) {
   .form-grid-2 {
     grid-template-columns: 1fr;
@@ -246,44 +352,32 @@ mat-form-field {
 }
 
 @media (max-width: 768px) {
-  .form-grid-2,
-  .form-grid {
-    grid-template-columns: 1fr;
-    flex-direction: column;
-    gap: 15px;
+  .section-header {
+    padding: 12px 14px;
   }
 
-  .actions,
-  .approved-actions {
-    flex-direction: column;
-    align-items: stretch;
+  h2 {
+    font-size: 18px;
+  }
 
-    button {
-      width: 100%;
-    }
+  h4 {
+    font-size: 14px;
+    margin: 15px 0 8px;
+  }
+
+  .form-actions-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
   }
 }
 
 @media (max-width: 480px) {
-  .branch-card,
-  .approved-card {
-    padding: 15px;
+  .collapsible.open {
+    padding: 10px 5px;
   }
 
-  .section-header {
-    padding: 12px 14px;
-    h2 {
-      font-size: 16px;
-    }
+  button {
+    width: 100%;
   }
-
-  mat-form-field .mat-mdc-form-field-wrapper {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-}
-
-
-.hidden {
-  display: none !important;
 }
