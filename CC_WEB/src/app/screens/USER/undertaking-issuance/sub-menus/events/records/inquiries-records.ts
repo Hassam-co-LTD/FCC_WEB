@@ -212,16 +212,10 @@ export class inquiriesRecords implements OnInit {
 
   // --- NAVIGATION ACTION ---
 
-  /**
-   * Helper for HTML to determine Button Type
-   */
   isDraft(tx: UndertakingTransaction): boolean {
     return this.mapBackendStatusToChar(tx.status) === 'i';
   }
 
-  /**
-   * Main Navigation Logic
-   */
   openUndertaking(tx: UndertakingTransaction) {
     const statusChar = this.mapBackendStatusToChar(tx.status);
 
