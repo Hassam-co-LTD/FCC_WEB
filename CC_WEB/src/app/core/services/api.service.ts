@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 
-// 1. ADD THIS INTERFACE FOR THE NEW MODULE
+// ADD THIS INTERFACE FOR THE NEW MODULE UndertakingLc
 export interface UndertakingLc {
   id?: number;
   tnxId?: string;
@@ -21,7 +21,7 @@ export class ApiService {
   // CONFIGURATION
   // -------------------------------------------------------------
   // FIXED: Removed quotes so it reads the actual variable, not the string '${...}'
-  private baseUrl = 'http://localhost:8084/api/v1/'; 
+  private baseUrl = `${environment.apiUrl}`; 
 
   constructor(private http: HttpClient) { }
   /* ------------------------------------- Error Handler ------------------------------------- */
@@ -118,4 +118,59 @@ export class ApiService {
   //     headers: { 'Content-Type': 'application/json' }
   //   });
   // }
+
+
+
+
+  // =================================================================
+  // API Methods For UNDERTAKING LC MODULE
+  // =================================================================
+
+  getUndertakingList(): Observable<UndertakingLc[]> {
+    return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking-lc/list`)
+    .pipe(catchError(this.handleError));
+  }
+
+  getUndertakingById(id: number): Observable<UndertakingLc> {
+    return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking-lc/${id}`)
+    .pipe(catchError(this.handleError));
+  }
+
+  saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/save`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));}
+
+  updateUndertaking(id: number, data: UndertakingLc): Observable<UndertakingLc> {
+    return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking-lc/update/${id}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+  submitUndertaking(id: number): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/submit/${id}`, {}, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+  approveUndertaking(id: number): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/approve/${id}`, {}, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+  rejectUndertaking(id: number, reason: string): Observable<UndertakingLc> {
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/reject/${id}`, reason, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+  // =================================================================
+  // API Methods For UNDERTAKING LC MODULE END
+  // =================================================================
 }
