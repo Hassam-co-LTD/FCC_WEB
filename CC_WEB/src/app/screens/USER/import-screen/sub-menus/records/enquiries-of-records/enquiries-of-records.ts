@@ -54,7 +54,7 @@ export class EnquiriesOfRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    this.loadByStatus(this.activeTab);
+    this.loadTransactions();
 
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList;
@@ -63,18 +63,22 @@ export class EnquiriesOfRecords implements OnInit {
   );
   }
 
+
   private loadTransactions(): void {
-    this.api.getPendingTransactions().subscribe({
-      next: (txList: ImportLcTransaction[]) => {
+    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+
+    this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
+      next: (txList) => {
         this.allTransactions = txList;
         this.applyFilters();
       },
       error: () => {
         this.allTransactions = [];
-        this.applyFilters();
+        this.filteredTransactions = [];
       }
     });
   }
+
 
 
   applyFilters(): void {
@@ -107,7 +111,7 @@ export class EnquiriesOfRecords implements OnInit {
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.currentPage = 1;
-    this.loadByStatus(tab);
+    this.loadTransactions();
   }
 
   private loadByStatus(status: string): void {
@@ -200,10 +204,34 @@ export class EnquiriesOfRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
+  // viewTransaction(tx: ImportLcTransaction): void {
+  //   this.transactionService.setCurrentTransaction(tx, true);
+  //   this.router.navigate(['/import-screen/preview']);
+  // }
   viewTransaction(tx: ImportLcTransaction): void {
-    this.transactionService.setCurrentTransaction(tx, true);
-    this.router.navigate(['/import-screen/preview']);
+    // Map the transaction status to backend status
+    const backendStatus = this.mapTabToBackendStatus(tx.status || 'i');
+
+    // Call API to get transactions by status
+    this.api.getTransactionsByStatus(backendStatus).subscribe({
+      next: (txList: ImportLcTransaction[]) => {
+        // Optionally, find this exact transaction in the list if you want
+        const selectedTx = txList.find(t => t.tnxId === tx.tnxId) || tx;
+
+        // Set current transaction in service
+        this.transactionService.setCurrentTransaction(selectedTx, true);
+
+        // Navigate to preview page
+        this.router.navigate(['/import-screen/preview']);
+      },
+      error: () => {
+        // Fallback: just preview clicked transaction
+        this.transactionService.setCurrentTransaction(tx, true);
+        this.router.navigate(['/import-screen/preview']);
+      }
+    });
   }
+
   openImportLc(tx: ImportLcTransaction) {
     // Store transaction in service for import screen to pick up
     // this.transactionService.setCurrentTransaction(tx);
