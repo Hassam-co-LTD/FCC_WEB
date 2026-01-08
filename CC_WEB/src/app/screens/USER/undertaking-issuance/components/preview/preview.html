@@ -187,7 +187,11 @@
     </div>
   </div>
   
-  <div class="actions">
-    <button mat-stroked-button (click)="back()">Back</button>
-    <button mat-flat-button color="primary" (click)="submit()" [disabled]="readOnly">Submit</button>
-  </div>
+ <div class="actions">
+  <button mat-stroked-button (click)="close()">Back</button>
+
+  <ng-container *ngIf="statusChar === 's'">
+    <button mat-flat-button color="warn" (click)="reject()">Reject</button>
+    <button mat-flat-button color="primary" (click)="approve()">Approve</button>
+  </ng-container>
+</div>

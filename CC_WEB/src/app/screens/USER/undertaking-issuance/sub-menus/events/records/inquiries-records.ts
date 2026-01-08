@@ -1,8 +1,8 @@
 import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, DecimalPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 // SERVICES
 import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
@@ -10,9 +10,16 @@ import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../
 @Component({
   selector: 'app-inquiries-records',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
+  imports: [
+    CommonModule, 
+    MatIconModule, 
+    FormsModule,
+    DecimalPipe,
+    DatePipe,
+    TitleCasePipe
+  ],
   templateUrl: './inquiries-records.html',
-  styleUrls: ['./inquiries-records.scss'] // Assuming you share styles or have a similar scss
+  styleUrls: ['./inquiries-records.scss']
 })
 export class inquiriesRecords implements OnInit {
   
@@ -28,11 +35,10 @@ export class inquiriesRecords implements OnInit {
 
   // Tabs Configuration
   tabs = [
-    { key: 'pending', label: 'Pending' },
-    { key: 'submitted', label: 'Submitted' },
+    { key: 'pending', label: 'Pending' }, // Drafts
+    { key: 'submitted', label: 'Submitted' }, // Pending Approval
     { key: 'approved', label: 'Approved' },
-    { key: 'rejected', label: 'Rejected' },
-    { key: 'response awaited', label: 'Response Awaited'}
+    { key: 'rejected', label: 'Rejected' }
   ];
 
   // Pagination
@@ -48,6 +54,7 @@ export class inquiriesRecords implements OnInit {
   constructor(
     private transactionService: UndertakingIssuanceService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -56,14 +63,18 @@ export class inquiriesRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    // Load initial data based on default tab
-    this.loadByStatus(this.activeTab);
+    // 1. Check URL for tab preference (e.g. coming back from Save)
+    this.route.queryParams.subscribe(params => {
+        if(params['tab']) {
+            this.activeTab = params['tab'];
+        }
+        // Initial Load
+        this.loadByStatus();
+    });
 
-    // Subscribe to stream updates
+    // 2. Subscribe to stream updates (Real-time update on Save/Approve)
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList; 
-      
-      // Re-apply local filters (Search/Tab logic)
       this.filterByStatusAndSearch(); 
     });
   }
@@ -73,12 +84,18 @@ export class inquiriesRecords implements OnInit {
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.currentPage = 1;
-    this.loadByStatus(tab);
+    this.loadByStatus();
+    
+    // Update URL without reloading to reflect current tab
+    this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { tab: tab },
+        queryParamsHandling: 'merge'
+    });
   }
 
-  private loadByStatus(status: string): void {
-    const backendStatus = this.mapTabToBackendStatus(status);
-    
+  private loadByStatus(): void {
+    // Calling refresh triggers the API and updates the stream
     this.transactionService.refreshTransactions().subscribe(); 
   }
 
@@ -92,6 +109,7 @@ export class inquiriesRecords implements OnInit {
     const currency = this.currencyFilter.toLowerCase().trim();
     const targetStatusChar = this.mapTabToBackendStatus(this.activeTab);
 
+    // 1. Filter by Status
     let temp = this.allTransactions.filter(tx => {
         const txStatusChar = this.mapBackendStatusToChar(tx.status); 
         return txStatusChar === targetStatusChar;
@@ -99,16 +117,17 @@ export class inquiriesRecords implements OnInit {
 
     // 2. Filter by Search Query
     temp = temp.filter(tx => {
-      // access nested form data safely
       const data = tx.formData || {}; 
       const benName = data.applicantBeneficiary?.beneficiaryName || '';
       const appName = data.applicantBeneficiary?.applicantName || '';
       const cur = data.undertakingDetails?.currency || '';
       const ref = tx.channelReference || '';
+      const issuerRef = data.bankForm?.issuerReference || '';
 
       const matchesSearch =
         !query ||
         ref.toLowerCase().includes(query) ||
+        issuerRef.toLowerCase().includes(query) ||
         benName.toLowerCase().includes(query) ||
         appName.toLowerCase().includes(query) ||
         cur.toLowerCase().includes(query);
@@ -165,10 +184,9 @@ export class inquiriesRecords implements OnInit {
     const data = tx.formData || {};
     switch (column) {
       case 'channelReference': return tx.channelReference;
-      case 'lastUpdated': return new Date(tx.lastUpdated); // Ensure date object
+      case 'lastUpdated': return new Date(tx.lastUpdated);
       case 'currency': return data.undertakingDetails?.currency;
       case 'amount': return data.undertakingDetails?.undertakingAmount;
-      // Add more specific sorts if needed
       default: return null;
     }
   }
@@ -192,22 +210,37 @@ export class inquiriesRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  // --- ACTIONS ---
+  // --- NAVIGATION ACTION ---
 
-  viewTransaction(tx: UndertakingTransaction): void {
-    // Navigate to a preview or read-only screen
-    // this.transactionService.setCurrentTransaction(tx);
-    this.router.navigate(['/undertaking-issuance/preview']);
+  /**
+   * Helper for HTML to determine Button Type
+   */
+  isDraft(tx: UndertakingTransaction): boolean {
+    return this.mapBackendStatusToChar(tx.status) === 'i';
   }
 
+  /**
+   * Main Navigation Logic
+   */
   openUndertaking(tx: UndertakingTransaction) {
-    // 1. Store in service (optional, if your Form component reads from service state)
-    // this.transactionService.setCurrentTransaction(tx);
+    const statusChar = this.mapBackendStatusToChar(tx.status);
 
-    // 2. Navigate to the Request Form (using QueryParams as established in previous logic)
-    this.router.navigate(['/undertaking-issuance/request'], {
-      queryParams: { transactionId: tx.id }
-    });
+    if (statusChar === 'i') {
+        // CASE 1: DRAFT ('i') -> Go to Edit Form
+        this.router.navigate(['/undertaking-issuance/request-undertaking'], {
+            queryParams: { transactionId: tx.id }
+        });
+    } else {
+        // CASE 2: SUBMITTED/APPROVED/REJECTED -> Go to Preview (View/Approve/Reject)
+        this.router.navigate(['/undertaking-issuance/preview'], {
+            queryParams: { transactionId: tx.id }
+        });
+    }
+  }
+  
+  // HTML alias for backward compatibility if needed
+  viewTransaction(tx: UndertakingTransaction) {
+      this.openUndertaking(tx);
   }
 
   trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
@@ -218,7 +251,7 @@ export class inquiriesRecords implements OnInit {
 
   private mapTabToBackendStatus(tab: string): string {
     switch (tab) {
-      case 'pending': return 'i'; // or 'Draft'
+      case 'pending': return 'i'; 
       case 'submitted': return 's';
       case 'approved': return 'a';
       case 'rejected': return 'r';
@@ -227,13 +260,11 @@ export class inquiriesRecords implements OnInit {
   }
 
   private mapBackendStatusToChar(statusStr: string): string {
-    // Helper to normalize backend status strings (e.g. "Draft" -> "i")
-    // Adjust based on what your backend actually returns
     const s = statusStr?.toLowerCase() || '';
     if (s.includes('draft') || s === 'i') return 'i';
     if (s.includes('submit') || s === 's') return 's';
     if (s.includes('approve') || s === 'a') return 'a';
     if (s.includes('reject') || s === 'r') return 'r';
-    return 'i';
+    return 'i'; // Fallback to draft if unknown
   }
 }

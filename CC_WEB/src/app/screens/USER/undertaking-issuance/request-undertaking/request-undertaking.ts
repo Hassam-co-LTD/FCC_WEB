@@ -32,7 +32,6 @@ import { UndertakingIssuanceService } from '../../../../core/services/user-servi
     UndertakingDetails,
     InstructionsBank,
     Attachments,
-    // RouterOutlet
   ],
   templateUrl: './request-undertaking.html',
   styleUrls: ['./request-undertaking.scss'],
@@ -81,10 +80,9 @@ export class RequestUndertaking implements OnInit {
   }
 
   // ==========================================
-  //  SCROLL & NAVIGATION LOGIC (Fixes Sidebar)
+  //  SCROLL & NAVIGATION LOGIC
   // ==========================================
 
-  // Called when user clicks a Sidebar item
   scrollToSection(index: number) {
     this.currentStep = index;
     const element = document.getElementById(`section-${index}`);
@@ -93,17 +91,13 @@ export class RequestUndertaking implements OnInit {
     }
   }
 
-  // Called by HTML (scroll) event
   onScroll(event: Event): void {
     const container = event.target as HTMLElement;
-    // We add an offset (e.g., 100px) so the highlight changes 
-    // just before the section hits the very top of the screen.
     const scrollPosition = container.scrollTop + 100;
 
     for (let i = 0; i < this.undertakingSteps.length; i++) {
       const element = document.getElementById(`section-${i}`);
       if (element) {
-        // offsetTop is relative to the scroll container
         const top = element.offsetTop;
         const bottom = top + element.offsetHeight;
 
@@ -177,7 +171,6 @@ export class RequestUndertaking implements OnInit {
     });
   }
 
-  // Getters for template access
   get generalDetails(): FormGroup { return this.undertakingForm.get('generalDetails') as FormGroup; }
   get applicantBeneficiary(): FormGroup { return this.undertakingForm.get('applicantBeneficiary') as FormGroup; }
   get bankForm(): FormGroup { return this.undertakingForm.get('bankForm') as FormGroup; }
@@ -219,17 +212,14 @@ export class RequestUndertaking implements OnInit {
              undertakingDetails: data.undertakingDetails || {},
              instructions: data.instructions || {}
         });
-        // Note: File inputs usually cannot be programmatically set for security,
-        // but you can display existing files in your Attachment component using a separate input property.
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/undertaking-issuance/pending-records']);
+        this.router.navigate(['/undertaking-issuance/inquiries-records']);
       }
     });
   }
 
-  // Helper to flatten form structure for API
   private flattenForm(): any {
     return {
       ...this.undertakingForm.value.generalDetails,
@@ -257,12 +247,12 @@ export class RequestUndertaking implements OnInit {
 
     this.undertakingService.saveDraft(payload).subscribe({
       next: (res: any) => {
-        this.snackBar.open(`Draft saved (ID: ${res.id})`, 'Close', { duration: 4000 });
-        // Switch to Update Mode
-        this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: { transactionId: res.id },
-            queryParamsHandling: 'merge'
+        this.snackBar.open(`Draft saved successfully (ID: ${res.id})`, 'Close', { duration: 3000 });
+        
+        // --- NAVIGATION UPDATE ---
+        // Redirect to Inquiries Page (Pending Tab)
+        this.router.navigate(['/undertaking-issuance/inquiries-records'], { 
+            queryParams: { tab: 'pending' } 
         });
       },
       error: (err) => {
@@ -281,6 +271,12 @@ export class RequestUndertaking implements OnInit {
     this.undertakingService.updateDraft(finalPayload).subscribe({
       next: () => {
         this.snackBar.open('Draft updated successfully', 'Close', { duration: 3000 });
+        
+        // --- NAVIGATION UPDATE ---
+        // Redirect to Inquiries Page (Pending Tab)
+        this.router.navigate(['/undertaking-issuance/inquiries-records'], { 
+            queryParams: { tab: 'pending' } 
+        });
       },
       error: (err) => {
         console.error(err);
@@ -300,8 +296,13 @@ export class RequestUndertaking implements OnInit {
 
     this.undertakingService.submitTransaction(this.currentTransactionId, finalPayload).subscribe({
         next: () => {
-            this.snackBar.open('Transaction Submitted!', 'Close', { duration: 3000 });
-            this.router.navigate(['/undertaking-issuance/pending-records']);
+            this.snackBar.open('Transaction Submitted Successfully!', 'Close', { duration: 3000 });
+            
+            // --- NAVIGATION UPDATE ---
+            // Redirect to Inquiries Page (Submitted Tab)
+            this.router.navigate(['/undertaking-issuance/inquiries-records'], { 
+                queryParams: { tab: 'submitted' } 
+            });
         },
         error: (err) => {
             console.error(err);
@@ -311,7 +312,7 @@ export class RequestUndertaking implements OnInit {
   }
 
   back(): void {
-    this.router.navigate(['/undertaking-issuance/pending-records']);
+    this.router.navigate(['/undertaking-issuance/inquiries-records']);
   }
 
   // ==========================================

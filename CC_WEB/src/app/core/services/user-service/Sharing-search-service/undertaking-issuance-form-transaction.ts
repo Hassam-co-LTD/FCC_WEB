@@ -100,21 +100,22 @@ export class UndertakingIssuanceService {
    * Update Existing Draft
    * FIX: Uses BASE_URL and handles payload transformation
    */
-  updateDraft(formData: any): Observable<UndertakingTransaction> {
-    const payload = this.transformToBackendDTO(formData, formData.id);
+ updateDraft(formData: any): Observable<UndertakingTransaction> {
+    // Ensure we extract the ID correctly
+    const id = formData.id; 
+    const payload = this.transformToBackendDTO(formData, id);
 
-    return this.http.put<any>(`${this.BASE_URL}/draft/${payload.id}`, payload).pipe(
+    // This URL must match the Java @PutMapping("/draft/{id}")
+    return this.http.put<any>(`${this.BASE_URL}/draft/${id}`, payload).pipe(
       map(updatedData => this.mapToFrontend(updatedData)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
-
   /**
    * Final Submission
    */
   submitTransaction(id: string | number, payload?: any): Observable<UndertakingTransaction> {
-    // If payload exists, we might want to save/update before submitting
-    // But typically submit endpoint just changes status or accepts final payload
+  
     const body = payload ? this.transformToBackendDTO(payload, id) : {};
     
     return this.http.post<any>(`${this.BASE_URL}/submit/${id}`, body).pipe(
@@ -122,20 +123,22 @@ export class UndertakingIssuanceService {
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
-
-  approveTransaction(id: string | number): Observable<UndertakingTransaction> {
+  
+  approveUndertaking(id: string | number): Observable<UndertakingTransaction> {
     return this.http.post<any>(`${this.BASE_URL}/approve/${id}`, {}).pipe(
       map(updatedData => this.mapToFrontend(updatedData)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
 
-  rejectTransaction(id: string | number, reason: string): Observable<UndertakingTransaction> {
+  rejectUndertaking(id: string | number, reason: string): Observable<UndertakingTransaction> {
     return this.http.post<any>(`${this.BASE_URL}/reject/${id}`, { reason }).pipe(
       map(updatedData => this.mapToFrontend(updatedData)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
+
+  // --- OTHER ACTIONS ---
 
   issueTransaction(id: any): Observable<UndertakingTransaction> {
     return this.http.post<any>(`${this.BASE_URL}/issue/${id}`, {}).pipe(

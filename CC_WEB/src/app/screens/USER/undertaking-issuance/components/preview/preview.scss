@@ -10,7 +10,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  box-sizing: border-box;
 }
 
 /* =================================
@@ -20,28 +20,27 @@
   font-size: 24px;
   font-weight: 700;
   color: theme.$primary;
-  margin: 0;
+  margin: 0 0 24px 0;
   letter-spacing: -0.5px;
   padding-bottom: 16px;
   border-bottom: 1px solid theme.$border-light;
 }
 
 /* =================================
-   PREVIEW CONTAINER & ROWS
+   PREVIEW CONTAINER & GRID LAYOUT
 ================================= */
 .preview-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  flex: 1; // Pushes footer down if content is short
 }
 
 .preview-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // 2 cards side-by-side
+  grid-template-columns: repeat(2, 1fr); // Two cards side-by-side
   gap: 24px;
   align-items: start;
-
-  // If a row has only one child that isn't full-width, keep it sized properly
 }
 
 /* =================================
@@ -51,16 +50,17 @@
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: 10px;
-  box-shadow: theme.$shadow-primary;
-  padding: 24px; // Angular Material card padding override
-  height: 100%; // Match height in row
+  // box-shadow: theme.$shadow-sm; // Soft shadow
+  padding: 24px;
+  height: 100%; // Match height of neighbor in row
+  box-sizing: border-box;
 
   &.full-width {
-    grid-column: 1 / -1;
+    grid-column: 1 / -1; // Span full width of the row
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     color: theme.$primary-dark;
     margin: 0 0 20px 0;
@@ -72,11 +72,11 @@
 }
 
 /* =================================
-   DATA GRIDS (Inside Cards)
+   DATA ITEMS (Inside Cards)
 ================================= */
 .preview-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // 2 data items per row inside card
+  grid-template-columns: repeat(2, 1fr); // Two columns of data
   column-gap: 32px;
   row-gap: 20px;
 }
@@ -85,14 +85,15 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0; // Prevent flex item overflow
 
   &.full-width {
     grid-column: 1 / -1;
   }
 
   .preview-label {
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     color: theme.$text-medium;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -105,7 +106,7 @@
     line-height: 1.5;
     word-break: break-word;
 
-    // Special styling for long text blocks
+    // Styling for long narrative text
     &.pre-wrap {
       white-space: pre-wrap;
       background: theme.$light-bg;
@@ -113,6 +114,7 @@
       border-radius: 6px;
       border: 1px solid theme.$border-light;
       font-size: 13px;
+      color: theme.$text-dark;
       margin-top: 4px;
     }
   }
@@ -126,23 +128,29 @@
   border-radius: 6px;
   overflow: hidden;
   margin-top: 8px;
+  background: theme.$white;
 
   .attachment-grid {
     display: grid;
     // Icon | Name | Size | Action
-    grid-template-columns: 48px 1fr 120px 60px; 
+    grid-template-columns: 48px 1fr 100px 60px;
     align-items: center;
     padding: 12px 16px;
     border-bottom: 1px solid theme.$border-light;
     font-size: 13px;
+    transition: background-color 0.2s;
 
     &:last-child {
       border-bottom: none;
     }
 
+    &:hover:not(.header) {
+      background-color: theme.$hover-bg;
+    }
+
     &.header {
       background: theme.$light-bg;
-      font-weight: 600;
+      font-weight: 700;
       color: theme.$text-medium;
       text-transform: uppercase;
       font-size: 11px;
@@ -152,10 +160,14 @@
     // Icon Styles
     mat-icon {
       color: theme.$text-medium;
-      
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+
       &.action-icon {
         cursor: pointer;
-        &:hover { color: theme.$primary; }
+        color: theme.$primary;
+        &:hover { color: theme.$primary-dark; }
       }
     }
   }
@@ -165,35 +177,61 @@
   font-style: italic;
   color: theme.$text-medium;
   text-align: center;
-  padding: 20px;
+  padding: 24px;
+  background: theme.$light-bg;
+  border-radius: 6px;
 }
 
 /* =================================
-   ACTION BUTTONS (Footer)
+   FOOTER ACTIONS
 ================================= */
 .actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid theme.$border-light;
 
-  // Styling Angular Material buttons to match theme
-  button[mat-stroked-button] {
-    border-color: theme.$border-primary;
-    color: theme.$primary;
+  // Generic Button Base
+  button {
     min-width: 100px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
   }
 
-  button[mat-flat-button] {
+  // Back Button
+  button[mat-stroked-button] {
+    border-color: theme.$border-primary;
+    color: theme.$text-medium;
+    
+    &:hover {
+      background: theme.$light-bg;
+      color: theme.$text-dark;
+      border-color: theme.$text-medium;
+    }
+  }
+
+  // Approve Button (Primary)
+  button[mat-flat-button][color="primary"] {
     background-color: theme.$primary;
     color: theme.$white;
-    min-width: 100px;
 
-    &:disabled {
-      background-color: rgba(0,0,0,0.12);
-      color: rgba(0,0,0,0.38);
+    &:hover {
+      background-color: theme.$primary-dark;
+      box-shadow: 0 4px 8px rgba(theme.$primary, 0.3);
+    }
+  }
+
+  // Reject Button (Warn)
+  button[mat-flat-button][color="warn"] {
+    background-color: #d32f2f; // Standard Material Warn Color
+    color: theme.$white;
+
+    &:hover {
+      background-color: #b71c1c;
+      box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
     }
   }
 }
@@ -201,10 +239,10 @@
 /* =================================
    RESPONSIVE DESIGN
 ================================= */
-@media (max-width: 900px) {
-  // Stack cards vertically on tablets/small screens
+@media (max-width: 960px) {
+  // Stack cards vertically on tablets
   .preview-row {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 }
 
@@ -212,19 +250,19 @@
   .preview-page {
     padding: 16px;
   }
-  
+
   // Stack internal data items vertically on mobile
   .preview-grid {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     row-gap: 16px;
   }
 
   .attachment-grid {
-    // Hide size column on mobile
-    grid-template-columns: 40px 1fr 40px; 
-    & > div:nth-child(3) { display: none; } 
+    // Hide size column on mobile to save space
+    grid-template-columns: 40px 1fr 40px;
+    & > div:nth-child(3) { display: none; }
   }
-  
+
   .actions {
     flex-direction: column-reverse;
     button { width: 100%; }
