@@ -204,3 +204,143 @@ button[mat-raised-button] {
     min-width: auto;
   }
 }
+
+
+/* ===========================
+   Approved Branch Section
+=========================== */
+.approved-container {
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  padding: theme.$gap-default;
+  border: 1px solid theme.$border-light;
+  margin-top: theme.$gap-default;
+
+  .approved-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: theme.$gap-default;
+
+    .approved-badge {
+      background: theme.$primary;
+      color: theme.$text-light;
+      padding: 4px 10px;
+      border-radius: theme.$radius-default;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: theme.$text-dark;
+      margin: 0;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    gap: theme.$gap-default;
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: theme.$gap-default;
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .label {
+          font-size: 13px;
+          font-weight: 500;
+          color: theme.$text-medium;
+          border-left: 4px solid theme.$primary; /* vertical line */
+          padding-left: 8px;
+        }
+
+        .value {
+          font-size: 14px;
+          color: theme.$text-dark;
+          font-weight: 600;
+        }
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+      }
+    }
+  }
+
+  .approved-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    button {
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: theme.$radius-default;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &.btn-back {
+        background: theme.$hover-bg;
+        color: theme.$text-dark;
+        border: 1px solid theme.$border-light;
+      }
+
+      &.btn-edit {
+        background: theme.$primary;
+        color: theme.$text-light;
+        box-shadow: theme.$button-shadow;
+
+        &:hover {
+          background: theme.$primary-dark;
+        }
+      }
+    }
+  }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 14px;
+    margin: 15px 0 8px;
+  }
+
+  .form-actions-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .collapsible.open {
+    padding: 10px 5px;
+  }
+
+  button {
+    width: 100%;
+  }
+}

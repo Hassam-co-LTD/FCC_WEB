@@ -1,208 +1,283 @@
 @use "../../../styles/theme" as theme;
 
 .layout {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .body-wrapper {
-  display: flex;
-  flex: 1;
-  background: theme.$bg-body;
-  overflow: hidden;
+    display: flex;
+    flex: 1;
+    background: theme.$bg-body;
+    overflow: hidden;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 250px;
-  background: linear-gradient(160deg, #3f51b5, #5c6bc0, #2196f3);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  padding-top: 10px;
-  transition: width 0.3s ease;
-  overflow: hidden;
-
-  &.collapsed {
-    width: 80px;
-  }
-
-  .toggle-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    width: 100%;
-    text-align: right;
+    width: 250px;
+    background: linear-gradient(160deg, #3f51b5, #5c6bc0, #2196f3);
     color: #fff;
-    border-radius: 8px;
-    transition: 0.2s;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-  }
-
-  nav {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    padding-top: 10px;
+    transition: width 0.3s ease;
+    overflow: hidden;
 
-    a,
-    button.menu-btn {
-      background: transparent;
-      color: #fff;
-      text-align: left;
-      border: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.25s ease, transform 0.15s ease;
-      font-size: 14px;
-      width: 100%;
-      text-decoration: none;
-
-      mat-icon {
-        font-size: 22px;
-        color: inherit;
-      }
-    }
-  }
-
-  /* ================= PARENT ================= */
-  .menu-btn {
-    &:hover,
-    &.active-link {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateX(4px);
-    }
-  }
-
-  /* ================= CHILD ================= */
-  .submenu button {
-    background: transparent;
-    color: #e0e0e0;
-    border: none;
-    padding: 8px 18px;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 13px;
-    transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-      color: #fff;
-      transform: translateX(3px);
+    &.collapsed {
+        width: 80px;
     }
 
-    &.active-sub {
-      background: rgba(255, 255, 255, 0.25);
-      color: #fff;
-      font-weight: 600;
-    }
-  }
-
-  .submenu-item {
-    display: flex;
-    flex-direction: column;
-
-    button {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .arrow {
-        font-size: 18px;
-      }
-    }
-
-    /* ================= GRANDCHILD ================= */
-    .nested-submenu {
-      display: flex;
-      flex-direction: column;
-      margin-left: 15px;
-      border-left: 1px solid rgba(255, 255, 255, 0.2);
-      padding-left: 10px;
-      margin-top: 4px;
-      animation: slideFade 0.25s ease-in-out;
-
-      button {
+    .toggle-btn {
         background: transparent;
-        color: #dcdcdc;
-        padding: 7px 18px;
         border: none;
-        text-align: left;
         cursor: pointer;
-        border-radius: 6px;
-        font-size: 13px;
+        padding: 10px;
+        width: 100%;
+        text-align: right;
+        color: #fff;
+        border-radius: 8px;
+        transition: 0.2s;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.25);
-          color: #fff;
-          transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        a,
+        button.menu-btn {
+            background: transparent;
+            color: #fff;
+            text-align: left;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.15s ease;
+            font-size: 14px;
+            width: 100%;
+            text-decoration: none;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.15);
+                transform: translateX(4px);
+            }
+
+            mat-icon {
+                font-size: 22px;
+                color: inherit;
+            }
+
+            /* Parent link active */
+            &.active-link {
+                background: rgba(255, 255, 255, 0.25);
+                box-shadow: inset 2px 0 0 0 #fff;
+                font-weight: 600;
+            }
+        }
+    }
+
+    /* Submenu */
+    .submenu {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10px;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        padding-left: 10px;
+        margin-top: 4px;
+        animation: fadeIn 0.25s ease-in-out;
+
+        button {
+            background: transparent;
+            color: #e0e0e0;
+            border: none;
+            padding: 8px 18px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+            position: relative;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                transform: translateX(3px);
+            }
+
+            /* Child active (no grandchild selected) curved indicator */
+            &.active-sub {
+                background: transparent;
+                color: #fff;
+                font-weight: 600;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    height: 100%;
+                    width: 6px;
+                    border-top-right-radius: 6px;
+                    border-bottom-right-radius: 6px;
+                    background: #fff; /* side indicator color */
+                }
+            }
         }
 
-        &.active-sub {
-          background: rgba(255, 255, 255, 0.35);
-          color: #fff;
-          font-weight: 600;
+        .submenu-item {
+            display: flex;
+            flex-direction: column;
+
+            button {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                .arrow {
+                    font-size: 18px;
+                }
+            }
+
+            .nested-submenu {
+                display: flex;
+                flex-direction: column;
+                margin-left: 15px;
+                border-left: 1px solid rgba(255, 255, 255, 0.2);
+                padding-left: 10px;
+                margin-top: 4px;
+                animation: slideFade 0.25s ease-in-out;
+
+                button {
+                    background: transparent;
+                    color: #dcdcdc;
+                    padding: 7px 18px;
+                    border: none;
+                    text-align: left;
+                    cursor: pointer;
+                    border-radius: 6px;
+                    font-size: 13px;
+                    position: relative;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.25);
+                        color: #fff;
+                        transform: translateX(4px);
+                    }
+
+                    /* Grandchild active indicator only */
+                    &.active-sub {
+                        background: transparent;
+                        color: #fff;
+                        font-weight: 600;
+
+                        &::before {
+                            content: '';
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            height: 100%;
+                            width: 4px;
+                            border-top-right-radius: 4px;
+                            border-bottom-right-radius: 4px;
+                            background: #fff; /* side indicator color */
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
 /* Main Content */
 .content {
-  flex: 1;
-  padding: 18px;
-  overflow-y: auto;
-  background: theme.$bg-content;
+    flex: 1;
+    padding: 18px;
+    overflow-y: auto;
+    background: theme.$bg-content;
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes slideFade {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
-.menu-btn {
-  &:hover,
-  &.active-link {
-    background: rgba(255, 255, 255, 0.25); // make a bit stronger
-    transform: translateX(4px);
-  }
+/* =========================
+   Parent buttons (Import LC, Branch, City)
+   Only highlight, no curve
+========================= */
+button.menu-btn.active-link {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-weight: 600;
 
-  // Make nested active-child reflect visually
-  &.active-link .arrow {
-    color: #fff; // arrow icon white
+  &::before {
+    content: none; // remove curve
   }
 }
-.menu-btn.active-link {
-  box-shadow: inset 2px 0 0 0 #fff;
+
+/* =========================
+   Child buttons (inside submenu)
+   Only highlight when selected, no curve
+========================= */
+.submenu .submenu-item > button.active-sub,
+.submenu > button.active-sub:not(.submenu-item > button) {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-weight: 600;
+
+  &::before {
+    content: none; // remove curve
+  }
 }
+
+/* =========================
+   Grandchild buttons (nested-submenu)
+   Side curve indicator
+========================= */
+.nested-submenu > button.active-sub {
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background: #fff;
+  }
+}
+

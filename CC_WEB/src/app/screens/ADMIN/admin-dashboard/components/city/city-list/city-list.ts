@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
-// import { FormsModule } from '@angular/forms';
 import { NgModel } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ApiService } from '../../../../../../core/services/api.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-city-records',
   templateUrl: './city-list.html',
   styleUrls: ['./city-list.scss'],
-  imports:[MatTabsModule,CommonModule,MatIconModule,FormsModule,           // <-- Add this
-    ReactiveFormsModule,  ]
+  standalone: true,
+  imports: [MatTabsModule, CommonModule, MatIconModule, FormsModule, ReactiveFormsModule]
 })
 export class CityList implements OnInit {
 
@@ -26,19 +26,20 @@ export class CityList implements OnInit {
   searchText: string = '';
 
   // ================== Records ==================
-  draftCount: number = 0;
-  approvedCount: number = 0;
-  submittedCount: number = 0;
-
-  filteredDraftCount:number=0;
-  filteredApprovedCount:number=0;
-  filteredSubmittedCount:number=0;
+  draftCities: any[] = [];
+  approvedCities: any[] = [];
+  submittedCities: any[] = [];
 
   storeFilteredDraftCities: any[] = [];
   storeFilteredApprovedCities: any[] = [];
   storeFilteredSubmittedCities: any[] = [];
 
-  constructor(private fb: FormBuilder,private api:ApiService,private route:Router) {
+  constructor(
+    private fb: FormBuilder,
+    private api: ApiService,
+    private route: Router,
+    private activatedRoute: ActivatedRoute
+  ) {
     this.cityForm = this.fb.group({
       id: [null, Validators.required],        // Manual ID
       cityName: ['', Validators.required],
@@ -47,68 +48,97 @@ export class CityList implements OnInit {
     });
   }
 
-  ngOnInit(){
-    // Initialize counts and load data
-    this.api.getCityByStatus("D").subscribe({
-       next:res=> {
-         this.storeFilteredDraftCities = res;
-         console.log(this.storeFilteredDraftCities)
-       },
-       error:err=> {
-          console.log("not status found");
-       }
-    })
+  ngOnInit(): void {
+    // Check query params for tabName
+    this.activatedRoute.queryParams.subscribe(params => {
+      const tab = params['tabName'];
+      if (tab === 'Approved') this.selectedTabIndex = 1;
+      else if (tab === 'Submitted') this.selectedTabIndex = 2;
+      else this.selectedTabIndex = 0;
 
-     this.api.getCityByStatus("S").subscribe({
-       next:res=> {
-         this.storeFilteredSubmittedCities = res;
-         console.log(this.storeFilteredSubmittedCities)
-       },
-       error:err=> {
-          console.log("not status found");
-       }
-    })
-
-
-     this.api.getCityByStatus("D").subscribe({
-       next:res=> {
-         this.storeFilteredApprovedCities = res;
-         console.log(this.storeFilteredApprovedCities)
-       },
-       error:err=> {
-          console.log("not status found");
-       }
-    })
-  }
-
-  // ================== Router ==================
-  updateRouter(city: any): void {
-      this.route.navigate(["/admin/city",city])
+      // Load cities for all tabs
+      this.loadDraftCities();
+      this.loadApprovedCities();
+      this.loadSubmittedCities();
+    });
   }
 
   // ================== Tab Change ==================
   onTabChange(index: number): void {
-    // Handle tab change
+    this.selectedTabIndex = index;
+    this.searchText = '';
   }
 
-  // ================== Filters ==================
-  filterDraftCities(searchText:any) {  
-     this.api.getAllCities().subscribe({
-       next:res=> {
-            
-           this.storeFilteredDraftCities = [...res];
-           console.log(this.storeFilteredApprovedCities);    
-       }
-     })
-    
+  // ================== Load Cities ==================
+  loadDraftCities(): void {
+    this.api.getCityByStatus('D').subscribe({
+      next: res => {
+        this.draftCities = res;
+        this.storeFilteredDraftCities = [...res];
+      },
+      error: err => console.error('Error fetching draft cities', err)
+    });
   }
 
-  filterApprovedCities(searchText: string): void {
-    // Filter approved cities based on searchText
+  loadApprovedCities(): void {
+    this.api.getCityByStatus('A').subscribe({
+      next: res => {
+        this.approvedCities = res;
+        this.storeFilteredApprovedCities = [...res];
+      },
+      error: err => console.error('Error fetching approved cities', err)
+    });
   }
 
-  filterSubmittedCities(searchText: string): void {
-    // Filter submitted cities based on searchText
+  loadSubmittedCities(): void {
+    this.api.getCityByStatus('S').subscribe({
+      next: res => {
+        this.submittedCities = res;
+        this.storeFilteredSubmittedCities = [...res];
+      },
+      error: err => console.error('Error fetching submitted cities', err)
+    });
+  }
+
+  // ================== Filter Cities ==================
+  filterDraftCities(search: string): void {
+    if (!search) {
+      this.storeFilteredDraftCities = [...this.draftCities];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredDraftCities = this.draftCities.filter(
+      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+    );
+  }
+
+  filterApprovedCities(search: string): void {
+    if (!search) {
+      this.storeFilteredApprovedCities = [...this.approvedCities];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredApprovedCities = this.approvedCities.filter(
+      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+    );
+  }
+
+  filterSubmittedCities(search: string): void {
+    if (!search) {
+      this.storeFilteredSubmittedCities = [...this.submittedCities];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredSubmittedCities = this.submittedCities.filter(
+      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+    );
+  }
+
+  // ================== Router ==================
+  updateRouter(cityId: any): void {
+    this.route.navigate(['/admin/city', cityId], {
+      queryParams: { tabName: this.selectedTabIndex === 0 ? 'Draft' : this.selectedTabIndex === 1 ? 'Approved' : 'Submitted' }
+    });
   }
 
   // ================== Track By ==================
@@ -116,4 +146,12 @@ export class CityList implements OnInit {
     return item.id;
   }
 
+  // ================== Counts ==================
+  get draftCount(): number { return this.draftCities.length; }
+  get approvedCount(): number { return this.approvedCities.length; }
+  get submittedCount(): number { return this.submittedCities.length; }
+
+  get filteredDraftCount(): number { return this.storeFilteredDraftCities.length; }
+  get filteredApprovedCount(): number { return this.storeFilteredApprovedCities.length; }
+  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedCities.length; }
 }

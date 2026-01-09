@@ -87,8 +87,9 @@
 
 <!-- =========================
      APPROVED CITY VIEW
-========================= -->
+  ========================= -->
 <div *ngIf="storeCity?.cityStatus === 'A'" class="approved-container">
+
   <div class="approved-header">
     <span class="approved-badge">✔ Approved</span>
     <h2>City Approved Details</h2>
@@ -100,10 +101,12 @@
         <span class="label">City ID</span>
         <span class="value">{{ storeCity.id }}</span>
       </div>
+
       <div class="detail-item">
         <span class="label">City Name</span>
         <span class="value">{{ storeCity.cityName }}</span>
       </div>
+
       <div class="detail-item">
         <span class="label">State</span>
         <span class="value">{{ storeCity.state }}</span>
@@ -115,15 +118,14 @@
         <span class="label">Country</span>
         <span class="value">{{ storeCity.country }}</span>
       </div>
-      <div class="detail-item">
-        <span class="label">Record Status</span>
-        <span class="value">{{ storeCity.recordStatus }}</span>
-      </div>
     </div>
   </div>
 
   <div class="approved-actions">
-    <button mat-stroked-button color="primary" type="button" (click)="back()">← Back</button>
-    <button mat-flat-button color="accent" type="button" (click)="editApprovedCity(storeCity.id)">Amend</button>
+    <button class="btn-back" (click)="back()">← Back</button>
+    <button class="btn-edit" (click)="editApprovedCity(storeCity.id)">
+      Amend
+    </button>
   </div>
+ 
 </div>

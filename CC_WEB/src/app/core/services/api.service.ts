@@ -203,7 +203,7 @@ getAllAproved(){
 
 // set Cities 
 setCity(data:any){
-   return this.http.post<any>(`${this.baseUrl}branch/city`,data)
+   return this.http.post<any>(`${this.baseUrl}city`,data)
 }
 getCityByStatus(status:String){
    return this.http.get<any>(`${this.baseUrl}cities/${status}`);

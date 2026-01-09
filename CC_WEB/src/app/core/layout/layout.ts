@@ -160,11 +160,7 @@ toggleMenu(item: MenuItem) {
   item.open = !item.open;
 }
 
-  goTo(item: MenuItem) {
-    if (item.route) {
-      this.router.navigate([item.route]);
-    }
-  }
+ 
   loadMenu(role: 'ADMIN' | 'USER' | null) {
     if (role === 'ADMIN') {
       this.menuItems = [
@@ -349,13 +345,7 @@ isAnyGrandChildActive(item: MenuItem): boolean {
 /**
  * Returns true if any grandchild (child's child) of the given item is active
  */
-isGrandChildActive(item: Partial<MenuItem>): boolean {
-  return !!item.children?.some(child =>
-    child.children?.some(sub =>
-      this.activeRoute === sub.route
-    )
-  );
-}
+
 
 /**
  * Helper: check if item has any grandchild
@@ -412,36 +402,123 @@ isAnyDescendantActive(item: MenuItem): boolean {
 /**
  * Check if an item (parent/child) is active
  */
-isActive(item: MenuItem): boolean {
-  // Item route matches exactly
-  if (item.route && this.activeRoute.startsWith(item.route)) return true;
+/**
+ * Returns true if this item should be highlighted
+ * - Parent active only if direct child is active
+ * - Child active if route matches
+ * - Grandchild active if route matches
+ */
+/**
+ * Returns true if this item should be highlighted
+ * level: 'parent' | 'child' | 'grandchild'
+ */
+isActive(item: MenuItem, level: 'parent' | 'child' | 'grandchild' = 'parent'): boolean {
+  if (!item) return false;
 
-  // Any child active recursively
-  if (item.children?.some(child => this.isActive(child))) return true;
+  // Exact match
+  if (item.route && this.activeRoute === item.route) return true;
+
+  if (item.children) {
+    if (level === 'parent') {
+      // Parent is active ONLY if **direct child** matches route
+      return item.children.some(child => child.route === this.activeRoute);
+    }
+
+    if (level === 'child') {
+      // Child is active if its route matches OR any grandchild matches
+      return item.route === this.activeRoute || item.children.some(sub => sub.route === this.activeRoute);
+    }
+
+    if (level === 'grandchild') {
+      return item.route === this.activeRoute;
+    }
+  }
 
   return false;
 }
 
+
 /**
- * Check if a child (not grandchild) is active
+ * Child active check (used in template for nested submenu)
  */
 isChildActive(item: MenuItem): boolean {
-  return item.children?.some(child => child.route && this.activeRoute === child.route) || false;
+  if (!item.children) return false;
+
+  return item.children.some(child => child.route === this.activeRoute);
+}
+
+/**
+ * Grandchild active check
+ */
+isGrandChildActive(item: MenuItem): boolean {
+  if (!item.children) return false;
+
+  return item.children.some(child =>
+    child.children?.some(sub => sub.route === this.activeRoute)
+  );
 }
 
 /**
  * Check if a grandchild is active
  */
 
+toggleMenuu(item: MenuItem) {
+  // Close all sibling parents
+  this.menuItems.forEach(m => {
+    if (m !== item) {
+      this.closeAllChildren(m);  // close their children recursively
+      m.open = false;
+    }
+  });
+
+  // Toggle this item
+  item.open = !item.open;
+
+  // If the parent is being closed, also close all its children
+  if (!item.open) {
+    this.closeAllChildren(item);
+  }
+}
+
+
+
+// Toggle only children, do NOT navigate
+toggleOnlyChildren(item: MenuItem) {
+  // Optional: close siblings at this level
+  const siblings = this.menuItems; // top-level
+  siblings.forEach(sib => {
+    if (sib !== item) {
+      this.closeAllChildren(sib);
+      sib.open = false;
+    }
+  });
+
+  // Toggle current item
+  item.open = !item.open;
+
+  // Close all nested children if parent is being closed
+  if (!item.open) {
+    this.closeAllChildren(item);
+  }
+}
+
+// Recursive close function (you already have)
 closeAllChildren(item: MenuItem) {
   if (!item.children) return;
 
   item.children.forEach(child => {
     child.open = false;
     if (child.children) {
-      this.closeAllChildren(child); // recursive
+      this.closeAllChildren(child);
     }
   });
+}
+
+// Navigate to route
+goTo(item: MenuItem) {
+  if (item.route) {
+    this.router.navigate([item.route]);
+  }
 }
 
 }
