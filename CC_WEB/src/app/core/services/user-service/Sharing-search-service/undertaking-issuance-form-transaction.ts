@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
-import { environment } from '../../../../../environments/environment';
+// import { environment } from '../../../../../environments/environment';
 
 // ==========================================
 // 1. INTERFACES
@@ -20,10 +20,9 @@ export interface UndertakingTransaction {
 })
 export class UndertakingIssuanceService {
 
-  // CONFIGURATION: Backend Endpoint
+  // CONFIGURATION: Backend Endpoint (Matches your 8084 logs)
   private readonly BASE_URL = 'http://localhost:8084/api/v1/undertaking-lc';
-  // Note: If using environment file, use: `${environment.apiUrl}/undertaking-lc`
-
+  
   // ================= STATE MANAGEMENT =================
   
   // 1. Internal Store: Holds the list of transactions
@@ -35,10 +34,7 @@ export class UndertakingIssuanceService {
   // 3. Current Selection
   private currentTransaction: UndertakingTransaction | null = null;
 
-  constructor(private http: HttpClient) {
-    // Optional: Load data immediately on startup
-    // this.refreshTransactions().subscribe();
-  }
+  constructor(private http: HttpClient) {}
 
   // ==========================================
   // 2. READ OPERATIONS
@@ -46,6 +42,7 @@ export class UndertakingIssuanceService {
 
   /**
    * Fetches latest list from Backend and updates the local State
+   * Endpoint: GET /list
    */
   refreshTransactions(): Observable<UndertakingTransaction[]> {
     return this.http.get<any[]>(`${this.BASE_URL}/list`).pipe(
@@ -60,6 +57,17 @@ export class UndertakingIssuanceService {
         console.error('Error fetching transactions:', err);
         return of([]);
       })
+    );
+  }
+
+  /**
+   * (Optional) Fetch by Status if you used the specific backend endpoint
+   * Endpoint: GET /records/{status}
+   */
+  refreshByStatus(status: string): Observable<UndertakingTransaction[]> {
+     return this.http.get<any[]>(`${this.BASE_URL}/records/${status}`).pipe(
+      map(backendList => backendList.map(item => this.mapToFrontend(item))),
+      tap(transactions => this.transactionsSubject$.next(transactions))
     );
   }
 
@@ -86,6 +94,7 @@ export class UndertakingIssuanceService {
 
   /**
    * Create New Draft
+   * Endpoint: POST /save
    */
   saveDraft(formData: any, id?: string | number | null): Observable<UndertakingTransaction> {
     const payload = this.transformToBackendDTO(formData, id);
@@ -98,25 +107,34 @@ export class UndertakingIssuanceService {
 
   /**
    * Update Existing Draft
-   * FIX: Uses BASE_URL and handles payload transformation
+   * Endpoint: PUT /draft/{id}
    */
- updateDraft(formData: any): Observable<UndertakingTransaction> {
-    // Ensure we extract the ID correctly
-    const id = formData.id; 
+  updateDraft(formData: any): Observable<UndertakingTransaction> {
+    // 1. Ensure we have an ID
+    const id = formData.id || this.currentTransaction?.id;
+    
+    if (!id) {
+        console.error("Update failed: Missing Transaction ID", formData);
+        throw new Error("Cannot update draft without an ID.");
+    }
+
     const payload = this.transformToBackendDTO(formData, id);
 
-    // This URL must match the Java @PutMapping("/draft/{id}")
     return this.http.put<any>(`${this.BASE_URL}/draft/${id}`, payload).pipe(
       map(updatedData => this.mapToFrontend(updatedData)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
+
   /**
    * Final Submission
+   * Endpoint: POST /submit/{id}
    */
   submitTransaction(id: string | number, payload?: any): Observable<UndertakingTransaction> {
-  
-    const body = payload ? this.transformToBackendDTO(payload, id) : {};
+    
+    // Safe Logic: If payload exists, transform it. If not, send null.
+    // This prevents sending an empty object {} which might overwrite data on backend.
+    const body = payload ? this.transformToBackendDTO(payload, id) : null; 
     
     return this.http.post<any>(`${this.BASE_URL}/submit/${id}`, body).pipe(
       map(updatedData => this.mapToFrontend(updatedData)),

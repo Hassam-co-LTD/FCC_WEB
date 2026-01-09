@@ -35,12 +35,12 @@
             <div class="actions">
                 <ng-container *ngIf="!showUpdateSubmit">
                     <button mat-stroked-button (click)="back()">Back</button>
-                    <button mat-flat-button color="primary" (click)="saveForm()">Save Draft</button>
+                    <button mat-flat-button color="primary" (click)="saveForm()">Save</button>
                 </ng-container>
 
                 <ng-container *ngIf="showUpdateSubmit">
                     <button mat-stroked-button (click)="back()">Back</button> 
-                    <button mat-stroked-button color="primary" (click)="update()">Update Draft</button>
+                    <button mat-stroked-button color="primary" (click)="update()">Update</button>
                     <button mat-flat-button color="accent" (click)="submit()">Submit</button>
                 </ng-container>
             </div>

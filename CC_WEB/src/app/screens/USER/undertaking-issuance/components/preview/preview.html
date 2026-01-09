@@ -126,7 +126,7 @@
   
       <div class="preview-row">
         <mat-card class="preview-card full-width">
-          <h3 class="section-title">Narrative & Instructions</h3>
+          <h3 class="section-title">Instructions</h3>
           <div class="preview-grid">
             <div class="preview-item full-width">
               <div class="preview-label">Text of Undertaking</div>
@@ -191,7 +191,7 @@
   <button mat-stroked-button (click)="close()">Back</button>
 
   <ng-container *ngIf="statusChar === 's'">
-    <button mat-flat-button color="warn" (click)="reject()">Reject</button>
+    <button mat-flat-button color="primary" (click)="reject()">Reject</button>
     <button mat-flat-button color="primary" (click)="approve()">Approve</button>
   </ng-container>
 </div>
