@@ -262,11 +262,26 @@
   </div>
 </div>
 
-<!-- <div class="actions" *ngIf="!readOnly">
-  <button mat-stroked-button (click)="updateDraft()">Update</button>
-  <button mat-flat-button color="primary" (click)="submitLc()">Submit</button>
-</div> -->
 <div class="actions">
-<button mat-stroked-button (click)="back()">Back</button>
-<button mat-flat-button color="primary" (click)="submitLc()">Submit</button>
+
+  <!-- ALWAYS -->
+  <button mat-stroked-button (click)="back()">Back</button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+
+    <button mat-flat-button color="primary" (click)="submitLc()" *ngIf="currentTx?.status === 'I'">
+      Submit
+    </button>
+
+    <button mat-flat-button color="warn" (click)="rejectTransaction()" *ngIf="currentTx?.status === 'S'">
+      Reject
+    </button>
+
+    <button mat-flat-button color="primary" (click)="approveTransaction()" *ngIf="currentTx?.status === 'S'">
+      Approve
+    </button>
+    
+  </ng-container>
+
 </div>

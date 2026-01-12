@@ -48,17 +48,38 @@
 
             <!-- Footer Buttons -->
             <div class="actions">
-                <!-- Back & Save: only for CREATE/new form -->
-                <ng-container *ngIf="!showUpdateSubmit">
-                    <button mat-stroked-button (click)="back()">Back</button>
-                    <button mat-flat-button color="primary" (click)="saveForm()">Save</button>
+
+                <!-- CREATE -->
+                <ng-container *ngIf="mode === 'CREATE'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <button mat-flat-button color="accent" (click)="saveForm()">Save</button>
                 </ng-container>
 
-                <!-- Update & Submit: only for UPDATE/edit form -->
-                <ng-container *ngIf="showUpdateSubmit">
+                <!-- EDIT -->
+                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
                     <button mat-stroked-button color="primary" (click)="update()">Update</button>
                     <button mat-flat-button color="accent" (click)="submitLc()">Submit</button>
                 </ng-container>
+
+                <!-- APPROVAL -->
+                <ng-container *ngIf="screenMode === 'SUBMITTED'">
+                    <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+                    
+                    <button mat-flat-button color="accent" (click)="approve()">Approve</button>
+                </ng-container>
+
+                <!-- APPROVED -->
+                <ng-container *ngIf="screenMode === 'APPROVED'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button> -->
+                </ng-container>
+
+                <!-- REJECTED -->
+                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+                </ng-container>
+
             </div>
 
         </div>

@@ -114,19 +114,19 @@ export class EnquiriesOfRecords implements OnInit {
     this.loadTransactions();
   }
 
-  private loadByStatus(status: string): void {
-    const backendStatus = this.mapTabToBackendStatus(status);
-    this.api.getTransactionsByStatus(backendStatus).subscribe({
-      next: (txList) => {
-        this.allTransactions = txList;
-        this.filteredTransactions = txList;
-      },
-      error: () => {
-        this.allTransactions = [];
-        this.filteredTransactions = [];
-      }
-    });
-  }
+  // private loadByStatus(status: string): void {
+  //   const backendStatus = this.mapTabToBackendStatus(status);
+  //   this.api.getTransactionsByStatus(backendStatus).subscribe({
+  //     next: (txList) => {
+  //       this.allTransactions = txList;
+  //       this.filteredTransactions = txList;
+  //     },
+  //     error: () => {
+  //       this.allTransactions = [];
+  //       this.filteredTransactions = [];
+  //     }
+  //   });
+  // }
 
 
   // getTabCount(tabKey: string): number {
@@ -155,26 +155,39 @@ export class EnquiriesOfRecords implements OnInit {
 
   private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
     const sorted = [...source].sort((a, b) => {
-      const aVal = this.resolveColumn(a, this.sortColumn);
-      const bVal = this.resolveColumn(b, this.sortColumn);
+      let aVal = this.resolveColumn(a, this.sortColumn);
+      let bVal = this.resolveColumn(b, this.sortColumn);
 
+      // Handle null or undefined
       if (aVal == null) return 1;
       if (bVal == null) return -1;
 
+      // Handle Dates
       if (aVal instanceof Date && bVal instanceof Date) {
         return this.sortDirection === 'asc'
           ? aVal.getTime() - bVal.getTime()
           : bVal.getTime() - aVal.getTime();
       }
 
+      // Handle numbers
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return this.sortDirection === 'asc'
+          ? aVal - bVal
+          : bVal - aVal;
+      }
+
+      // Everything else: convert to string and use localeCompare
+      const aStr = String(aVal);
+      const bStr = String(bVal);
       return this.sortDirection === 'asc'
-        ? (aVal).localeCompare((bVal))
-        : (bVal).localeCompare((aVal));
+        ? aStr.localeCompare(bStr)
+        : bStr.localeCompare(aStr);
     });
 
     this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
+
 
   private resolveColumn(tx: ImportLcTransaction, column: string): any {
     switch (column) {
@@ -209,24 +222,15 @@ export class EnquiriesOfRecords implements OnInit {
   //   this.router.navigate(['/import-screen/preview']);
   // }
   viewTransaction(tx: ImportLcTransaction): void {
-    // Map the transaction status to backend status
-    const backendStatus = this.mapTabToBackendStatus(tx.status || 'i');
+    const readOnly = ['A', 'R'].includes(tx.status!);
 
-    // Call API to get transactions by status
-    this.api.getTransactionsByStatus(backendStatus).subscribe({
-      next: (txList: ImportLcTransaction[]) => {
-        // Optionally, find this exact transaction in the list if you want
-        const selectedTx = txList.find(t => t.tnxId === tx.tnxId) || tx;
-
-        // Set current transaction in service
-        this.transactionService.setCurrentTransaction(selectedTx, true);
-
-        // Navigate to preview page
+    this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
+      next: (freshTx) => {
+        this.transactionService.setCurrentTransaction(freshTx, readOnly);
         this.router.navigate(['/import-screen/preview']);
       },
       error: () => {
-        // Fallback: just preview clicked transaction
-        this.transactionService.setCurrentTransaction(tx, true);
+        this.transactionService.setCurrentTransaction(tx, readOnly);
         this.router.navigate(['/import-screen/preview']);
       }
     });
@@ -235,18 +239,30 @@ export class EnquiriesOfRecords implements OnInit {
   openImportLc(tx: ImportLcTransaction) {
     // Store transaction in service for import screen to pick up
     // this.transactionService.setCurrentTransaction(tx);
-
+    const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
     this.router.navigate(['/import-screen', tx.tnxId], {
       state: {
         transaction: tx,
-        showUpdateSubmit: true // flag to show buttons
+        // showUpdateSubmit: true // flag to show buttons
+        mode : mode
       }
     });
   }
 
   trackByTnxId(_: number, tx: ImportLcTransaction): string {
     return tx.tnxId!;
+  }
+
+  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+    switch (tab) {
+      case 'pending':
+        return 'EDIT';
+      case 'submitted':
+        return 'APPROVAL';
+      default:
+        return 'READ_ONLY';
+    }
   }
 
   private mapTabToBackendStatus(tab: string): string {
