@@ -76,26 +76,28 @@ export class ApiService {
   }
 
 
-  // Post admin/Create-customer 
-   
-   
 
-// set Cities 
+
+  // admin side generic methods
+
+// save transaction
 saveTnx(tnx:any,name:String){
    return this.http.post<any>(`${this.baseUrl}${name}`,tnx)
 }
+// get transaction by status
 getTnxByStatus(status:String,name:String){
    return this.http.get<any>(`${this.baseUrl}city/${status}`);
 }
 
+// get transaction by id
 getCityById(id:number){
     return this.http.get<any>(`${this.baseUrl}city/${id}`);
 }
-
+// update transaction 
 updateTnx(data:any,name:String){
     return this.http.put<any>(`${this.baseUrl}update/${name}/${data.id}`,data);
 }
-
+// set transaction status by id
 setTnxByStatus(status:String,id:number){
       return this.http.post<any>(`${this.baseUrl}cities/setStatus/${id}`,{status})
 }

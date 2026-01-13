@@ -87,9 +87,10 @@ export class CreateCustomer implements OnInit {
 
     const payload = this.customerForm.getRawValue();
     console.log('Payload to save:', payload);
-
+    
     this.api.saveTnx(payload, 'customer').subscribe({
       next: res => {
+        console.log("Saved response:", res);
         Swal.fire('Saved!', 'Customer saved successfully', 'success')
           .then(() => this.router.navigate(['/admin/customer-list']));
       },
