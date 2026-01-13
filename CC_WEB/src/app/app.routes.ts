@@ -108,6 +108,20 @@ export const routes: Routes = [
                         import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
                     
                 } 
+                ,
+                 {
+                    path:'create-currency',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m)=> m.CreateCurrency )
+                    
+                } ,
+                {
+                    path:'currency-list',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m)=> m.CurrencyList)
+                    
+                }
+                
                 ],
     
                 

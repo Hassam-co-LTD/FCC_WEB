@@ -1,16 +1,34 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import Swal from 'sweetalert2';
 
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
+
+
+// =========================
+// MODELS & ENUMS
+// =========================
+export enum CityStatus {
+  Draft = 'D',
+  Submitted = 'S',
+  Approved = 'A'
+}
+
+export interface City {
+  id: number;
+  cityName: string;
+  state: string;
+  country: string;
+  cityStatus: CityStatus;
+}
 
 @Component({
   selector: 'app-city-master',
@@ -31,32 +49,42 @@ export class City implements OnInit {
 
   cityForm!: FormGroup;
   isOpen = true;
-  storeCity: any;
+  storeCity = {} as City;
+ CityStatus = CityStatus;
+
+  readonly apiName: string = 'city';
 
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
     private location: Location,
-    private activateRouter: ActivatedRoute,
-    private route: Router
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {}
 
   // =========================
   // INIT
   // =========================
   ngOnInit(): void {
+    this.initForm();
+
+    this.activatedRoute.paramMap.subscribe(params => {
+      const id = Number(params.get('id'));
+      if (id) {
+        this.getCityById(id);
+      } else {
+        // this.storeCity = null;
+        this.cityForm.enable();
+      }
+    });
+  }
+
+  private initForm(): void {
     this.cityForm = this.fb.group({
       id: [null],
       cityName: ['', Validators.required],
       state: [''],
       country: ['']
-    });
-
-    // Subscribe to route parameter changes to load city dynamically
-    this.activateRouter.paramMap.subscribe(params => {
-      const id = Number(params.get('id'));
-      if (id) this.getCityById(id);
-      else this.storeCity = null; // clear for new city creation
     });
   }
 
@@ -68,7 +96,7 @@ export class City implements OnInit {
   }
 
   isReadOnly(): boolean {
-    return this.storeCity?.cityStatus === 'A';
+    return this.storeCity?.cityStatus === CityStatus.Approved;
   }
 
   back(): void {
@@ -76,58 +104,57 @@ export class City implements OnInit {
   }
 
   cancel(): void {
-    this.cityForm.reset();
-    this.storeCity = null;
+    if (this.storeCity) {
+      this.cityForm.patchValue(this.storeCity);
+    } else {
+      this.cityForm.reset();
+    }
   }
 
   // =========================
   // CRUD
   // =========================
   save(): void {
-    this.api.setCity(this.cityForm.value).subscribe({
+    if (this.cityForm.invalid) return;
+
+    this.api.saveTnx(this.cityForm.value, this.apiName).subscribe({
       next: res => {
         this.storeCity = res;
-        Swal.fire({
-          title: 'Success!',
-          text: 'Your form was saved!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-        this.route.navigate(["/admin/city-list"])
+        this.handleSuccess('Your form was saved!');
+        this.router.navigate(['/admin/city-list']);
       },
-      error: err => console.log('Error saving city', err)
+      error: err => console.error('Error saving city', err)
     });
   }
 
   update(): void {
-    if (!this.storeCity?.id) return;
+    if (!this.storeCity?.id || this.cityForm.invalid) return;
 
-    this.api.updateCity(this.cityForm.value).subscribe({
+    this.api.updateTnx(this.cityForm.value, this.apiName).subscribe({
       next: res => {
         this.storeCity = res;
-        Swal.fire({
-          title: 'Updated!',
-          text: 'Your form was Updated!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
+        this.handleSuccess('Your form was updated!', false);
       },
-      error: err => console.log('Error updating city', err)
+      error: err => console.error('Error updating city', err)
     });
   }
 
   // =========================
-  // FETCH CITY BY ID
+  // FETCH
   // =========================
-  getCityById(id: number): void {
+  private getCityById(id: number): void {
     this.api.getCityById(id).subscribe({
-      next: res => {
+      next: (res: City) => {
         this.storeCity = res;
         this.cityForm.patchValue(res);
+
+        if (res.cityStatus === CityStatus.Approved) {
+          this.cityForm.disable();
+        } else {
+          this.cityForm.enable();
+        }
       },
-      error: err => console.log('Error fetching city:', err)
+      error: err => console.error('Error fetching city:', err)
     });
   }
 
@@ -137,69 +164,75 @@ export class City implements OnInit {
   submit(): void {
     if (!this.storeCity?.id) return;
 
-    this.api.setCityByStatus('S', this.storeCity.id).subscribe({
-      next: () => {
-        Swal.fire({
-          title: 'Submitted!',
-          text: 'Your form was Submitted!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-        this.route.navigate(['/admin/city-list'], {
-          queryParams: { tabName: 'Submitted' }
-        });
-      },
-      error: err => console.log('Error submitting city:', err)
-    });
+    this.updateStatus(CityStatus.Submitted, 'Submitted!', 'Your form was submitted!', 'Submitted');
   }
 
   approve(id: number): void {
-    this.api.setCityByStatus('A', id).subscribe({
-      next: res => {
-        this.storeCity = res;
+    this.updateStatus(CityStatus.Approved, 'Approved!', 'Your form was approved!', 'Approved', id);
+  }
+
+  reject(id: number): void {
+    this.updateStatus(CityStatus.Draft, 'Rejected!', 'The city was rejected.');
+  }
+
+  editApprovedCity(id: number): void {
+    Swal.fire({
+      title: 'Amend Approved City?',
+      text: 'This will move the city back to Draft for editing.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, amend'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.api.setTnxByStatus(CityStatus.Draft, id).subscribe(() => {
+          this.router.navigate(['/admin/city-list']);
+        });
+      }
+    });
+  }
+
+  // =========================
+  // HELPERS
+  // =========================
+  private updateStatus(
+    status: CityStatus,
+    title: string,
+    message: string,
+    tabName?: string,
+    id?: number
+  ): void {
+    const cityId = id ?? this.storeCity?.id;
+    if (!cityId) return;
+
+    this.api.setTnxByStatus(status, cityId).subscribe({
+      next: () => {
         Swal.fire({
-          title: 'Approved!',
-          text: 'Your form was Approved!',
+          title,
+          text: message,
           icon: 'success',
           confirmButtonText: 'OK',
           customClass: { popup: 'swal2-top-left' }
         });
-        this.route.navigate(['/admin/city-list'], {
-          queryParams: { tabName: 'Approved' }
+
+        this.router.navigate(['/admin/city-list'], {
+          queryParams: tabName ? { tabName } : {}
         });
       },
-      error: err => console.log('Error approving city:', err)
+      error: err => console.error('Status update error:', err)
     });
   }
 
-  reject(id: number): void {
-    this.api.setCityByStatus('D', id).subscribe({
-      next: () => {
-        Swal.fire({
-          title: 'Rejected!',
-          text: 'The city was rejected.',
-          icon: 'info',
-          confirmButtonText: 'OK'
-        });
-        this.route.navigate(['/admin/city-list']);
-      },
-      error: err => console.log('Error rejecting city:', err)
+  private handleSuccess(message: string, showNavigate = true): void {
+    Swal.fire({
+      title: 'Success!',
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'OK',
+      customClass: { popup: 'swal2-top-left' }
     });
-  }
 
-  editApprovedCity(id: number): void {
-    this.api.setCityByStatus('D', id).subscribe({
-      next: () => {
-        Swal.fire({
-          title: 'Amended!',
-          text: 'The approved city can now be edited.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-        this.route.navigate(['/admin/city-list']);
-      },
-      error: err => console.log('Error amending approved city:', err)
-    });
+    if (showNavigate) {
+      this.router.navigate(['/admin/city-list']);
+    }
   }
 }

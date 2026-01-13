@@ -9,15 +9,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-city-records',
-  templateUrl: './city-list.html',
-  styleUrls: ['./city-list.scss'],
+  templateUrl: './currency-list.html',
+  styleUrls: ['./currency-list.scss'],
   standalone: true,
   imports: [MatTabsModule, CommonModule, MatIconModule, FormsModule, ReactiveFormsModule]
 })
-export class CityList implements OnInit {
+export class CurrencyList implements OnInit {
 
   // ================== Form ==================
-  cityForm: FormGroup;
+  TnxForm: FormGroup;
 
   // ================== Tabs ==================
   selectedTabIndex: number = 0;
@@ -26,13 +26,13 @@ export class CityList implements OnInit {
   searchText: string = '';
 
   // ================== Records ==================
-  draftCities: any[] = [];
-  approvedCities: any[] = [];
-  submittedCities: any[] = [];
+  draftTnx: any[] = [];
+  approvedTnx: any[] = [];
+  submittedTnx: any[] = [];
 
-  storeFilteredDraftCities: any[] = [];
-  storeFilteredApprovedCities: any[] = [];
-  storeFilteredSubmittedCities: any[] = [];
+  storeFilteredDraftTnx: any[] = [];
+  storeFilteredApprovedTnx: any[] = [];
+  storeFilteredSubmittedTnx: any[] = [];
   apiName:String = ""
   constructor(
     private fb: FormBuilder,
@@ -40,7 +40,7 @@ export class CityList implements OnInit {
     private route: Router,
     private activatedRoute: ActivatedRoute
   ) {
-    this.cityForm = this.fb.group({
+    this.TnxForm = this.fb.group({
       id: [null, Validators.required],        // Manual ID
       cityName: ['', Validators.required],
       state: [''],
@@ -56,10 +56,10 @@ export class CityList implements OnInit {
       else if (tab === 'Submitted') this.selectedTabIndex = 2;
       else this.selectedTabIndex = 0;
 
-      // Load cities for all tabs
-      this.loadDraftCities();
-      this.loadApprovedCities();
-      this.loadSubmittedCities();
+      // Load Tnx for all tabs
+      this.loadDraftTnx();
+      this.loadApprovedTnx();
+      this.loadSubmittedTnx();
     });
   }
 
@@ -69,67 +69,67 @@ export class CityList implements OnInit {
     this.searchText = '';
   }
 
-  // ================== Load Cities ==================
-  loadDraftCities():void {
+  // ================== Load Tnx ==================
+  loadDraftTnx():void {
     this.api.getTnxByStatus('D',this.apiName).subscribe({
       next: res => {
-        this.draftCities = res;
-        this.storeFilteredDraftCities = [...res];
+        this.draftTnx = res;
+        this.storeFilteredDraftTnx = [...res];
       },
-      error: err => console.error('Error fetching draft cities', err)
+      error: err => console.error('Error fetching draft Tnx', err)
     });
   }
 
-  loadApprovedCities(): void {
+  loadApprovedTnx(): void {
     this.api.getTnxByStatus('A',this.apiName).subscribe({
       next: res => {
-        this.approvedCities = res;
-        this.storeFilteredApprovedCities = [...res];
+        this.approvedTnx = res;
+        this.storeFilteredApprovedTnx = [...res];
       },
-      error: err => console.error('Error fetching approved cities', err)
+      error: err => console.error('Error fetching approved Tnx', err)
     });
   }
 
-  loadSubmittedCities(): void {
+  loadSubmittedTnx(): void {
     this.api.getTnxByStatus('S',this.apiName).subscribe({
       next: res => {
-        this.submittedCities = res;
-        this.storeFilteredSubmittedCities = [...res];
+        this.submittedTnx = res;
+        this.storeFilteredSubmittedTnx = [...res];
       },
-      error: err => console.error('Error fetching submitted cities', err)
+      error: err => console.error('Error fetching submitted Tnx', err)
     });
   }
 
-  // ================== Filter Cities ==================
-  filterDraftCities(search: string): void {
+  // ================== Filter city ==================
+  filterDraftTnx(search: string): void {
     if (!search) {
-      this.storeFilteredDraftCities = [...this.draftCities];
+      this.storeFilteredDraftTnx = [...this.draftTnx];
       return;
     }
     const value = search.toLowerCase();
-    this.storeFilteredDraftCities = this.draftCities.filter(
+    this.storeFilteredDraftTnx = this.draftTnx.filter(
       c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
     );
   }
 
-  filterApprovedCities(search: string): void {
+  filterApprovedTnx(search: string): void {
     if (!search) {
-      this.storeFilteredApprovedCities = [...this.approvedCities];
+      this.storeFilteredApprovedTnx = [...this.approvedTnx];
       return;
     }
     const value = search.toLowerCase();
-    this.storeFilteredApprovedCities = this.approvedCities.filter(
+    this.storeFilteredApprovedTnx = this.approvedTnx.filter(
       c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
     );
   }
 
-  filterSubmittedCities(search: string): void {
+  filterSubmittedTnx(search: string): void {
     if (!search) {
-      this.storeFilteredSubmittedCities = [...this.submittedCities];
+      this.storeFilteredSubmittedTnx = [...this.submittedTnx];
       return;
     }
     const value = search.toLowerCase();
-    this.storeFilteredSubmittedCities = this.submittedCities.filter(
+    this.storeFilteredSubmittedTnx = this.submittedTnx.filter(
       c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
     );
   }
@@ -147,11 +147,11 @@ export class CityList implements OnInit {
   }
 
   // ================== Counts ==================
-  get draftCount(): number { return this.draftCities.length; }
-  get approvedCount(): number { return this.approvedCities.length; }
-  get submittedCount(): number { return this.submittedCities.length; }
+  get draftCount(): number { return this.draftTnx.length; }
+  get approvedCount(): number { return this.approvedTnx.length; }
+  get submittedCount(): number { return this.submittedTnx.length; }
 
-  get filteredDraftCount(): number { return this.storeFilteredDraftCities.length; }
-  get filteredApprovedCount(): number { return this.storeFilteredApprovedCities.length; }
-  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedCities.length; }
+  get filteredDraftCount(): number { return this.storeFilteredDraftTnx.length; }
+  get filteredApprovedCount(): number { return this.storeFilteredApprovedTnx.length; }
+  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedTnx.length; }
 }

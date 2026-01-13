@@ -1,277 +1,187 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ApiService } from '../../../../../../core/services/api.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location, CommonModule } from '@angular/common';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { SharedService } from '../../../../../../core/services/user-service/shared-form-service/shared-service';
-import { ActivatedRoute } from '@angular/router';
+
 import Swal from 'sweetalert2';
+import { ApiService } from '../../../../../../core/services/api.service';
 
-import { error } from 'console';
-import { Location } from '@angular/common';
-
-import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, MatButtonModule, MatInputModule, MatIconModule, MatFormFieldModule, MatSelectModule,CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    CommonModule
+  ],
   templateUrl: './create-customer.html',
   styleUrls: ['./create-customer.scss']
 })
 export class CreateCustomer implements OnInit {
+
   customerForm!: FormGroup;
-  isEditMode : string | null | boolean = null;
+  storeCustomer: any;
+  isEditMode = false;
+  isOpen = true;
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
     private router: Router,
-    private getSharedService:SharedService,
-    private activateRoute:ActivatedRoute,
-    private  location:Location
-  ) {
-  }
- getCustomerById : any = ""
+    private route: ActivatedRoute,
+    private location: Location
+  ) {}
+
   ngOnInit(): void {
- this.customerForm = this.fb.group({
-  id: [{ value: '', disabled: true }],           // always disabled
-  cId: [{ value: '', disabled: false }, Validators.required],
-  name: [{ value: '', disabled: false }, Validators.required],
-  email: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
-  contact: [{ value: '', disabled: false }, Validators.required],
-  legalId: [{ value: '', disabled: false }],
-  customerStatus: [{ value: '', disabled: false }, Validators.required],
-  branchCode: [{ value: '', disabled: false }],
-  countryCity: [{ value: '', disabled: false }],
-  customerType: [{ value: 'Regular', disabled: false }, Validators.required],
-  address1: [{ value: '', disabled: false }],
-  address2: [{ value: '', disabled: false }],
-  address3: [{ value: '', disabled: false }]
-});
-
-const idParam = this.activateRoute.snapshot.paramMap.get('id');
-console.log('customer page', idParam);
-
-const id = Number(idParam);
-
-if (typeof id === 'number' && !isNaN(id)) {
-  this.isEditMode = true;
-
-  this.api.getCustomerById(id).subscribe({
-    next: res => {
-      this.getCustomerById = res;
-
-      console.log(this.getCustomerById.status);
-      console.log(this.getCustomerById.id);
-
-      this.customerForm.patchValue(this.getCustomerById);
-
-      console.log('received data getById', this.customerForm.value);
-    },
-    error: error => {
-      console.log('got error while getting customer by Id', error);
-    }
-  });
-}
-  }
- 
-  onSave() {
-  console.log('onSave called, form valid?', this.customerForm.valid);
-  console.log("myForm",this.customerForm.value)
-  if (!this.customerForm.valid) {
-    alert('Form is invalid');
-    return;
+    this.buildForm();
+    this.loadCustomer();
   }
 
-  const payload = this.customerForm.value;
-  console.log('Form data to send:', payload);
+  private buildForm(): void {
+    this.customerForm = this.fb.group({
+     
+      cId: ['', Validators.required],
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      contact: ['', Validators.required],
+      legalId: [''],
+      customerStatus: ['Active'],  // default Active
+      branchCode: [''],
+      countryCity: [''],
+      customerType: ['Regular', Validators.required],
+      address1: [''],
+      address2: [''],
+      address3: ['']
+    });
+  }
 
-  this.api.createDraft(payload).subscribe({
-    next: (response: any) => {
-      console.log('Backend response received:', response);
-       
-       Swal.fire({
-        title: 'Success!',
-        text: `your form was saved!`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        customClass: {
-          popup: 'swal2-top-left', // use our custom top-left class
+  private loadCustomer(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    if (!isNaN(id)) {
+      this.isEditMode = true;
+
+      this.api.getCityById(id).subscribe({
+        next: res => {
+          this.storeCustomer = res;
+          this.customerForm.patchValue(res);
         },
-        showClass: {
-          popup: 'swal2-show'
-        },
-        hideClass: {
-          popup: 'swal2-hide'
-        }
+        error: err => console.error('Load failed', err)
       });
-      
-      this.customerForm.reset();
-
-      console.log('Navigating to /admin/customer-list...');
-      this.router.navigate(['/admin/customer-list'])
-        .then(() => console.log('Navigation successful'))
-        .catch(err => console.error('Navigation error:', err));
-    },
-
-    error: (error) => {
-      console.error('Error while saving customer:', error);
-      // alert('Error while saving customer');
     }
-  });
-}
+  }
 
-onBack() {
-   this.location.back();
-}
-onCancel(){
-  this.customerForm.reset()
-}
-update(){
-    if(this.customerForm.valid){
-      
-    this.api.UpdateCustomer(this.customerForm.getRawValue()).subscribe({
-      next:res=>{
-               Swal.fire({
-        title: 'Success!',
-        text: `customer updated`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        customClass: {
-          popup: 'swal2-top-left', // use our custom top-left class
-        },
-        showClass: {
-          popup: 'swal2-show'
-        },
-        hideClass: {
-          popup: 'swal2-hide'
-        }
-      });
+  // ---------------- CREATE ----------------
+  onSave(): void {
+    if (this.customerForm.invalid) return;
+
+    const payload = this.customerForm.getRawValue();
+    console.log('Payload to save:', payload);
+
+    this.api.saveTnx(payload, 'customer').subscribe({
+      next: res => {
+        Swal.fire('Saved!', 'Customer saved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/customer-list']));
       },
-      error:error=> {
-             console.log("got error while updating",error);
-      }
-    })
-    }
-}
-submitStatus(id: number) {
-  this.api.submitCustomer(id).subscribe({
-    next: () => {
-      Swal.fire({
-        title: 'Success!',
-        text: 'Your form was submitted!',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      }).then(() => {
-        this.router.navigate(
-          ['/admin/customer-list'],
-          { queryParams: { tabName: 'submitted' } }
-        );
-      });
-    },
-    error: () => {
-      Swal.fire('Error', 'Submission failed', 'error');
-    }
-  });
-}
+      error: err => console.error('Save failed', err)
+    });
+  }
 
+  // ---------------- UPDATE ----------------
+  update(): void {
+    if (this.customerForm.invalid) return;
 
-setApprove(id:number){
-     this.api.setApprovedStatus(id).subscribe({
-       next:res=> {
-            this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-    this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'approved' } });
-});
-           console.log("status updated ",res.status);
-            console.log("Approved Customers", res);  
-           
+    const payload = this.customerForm.getRawValue();
 
-              Swal.fire({
-        title: 'Success!',
-        text: `your form was approved!`,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        customClass: {
-          popup: 'swal2-top-left', // use our custom top-left class
-        },
-        showClass: {
-          popup: 'swal2-show'
-        },
-        hideClass: {
-          popup: 'swal2-hide'
-        }
-        
-      });
-    
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-    this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'approved' } });
-});
-      
-          
-       }
-       ,
-       error:error=> {
-          //  alert("cusotmer did not approved");
-           console.log("error while approving", error);
-       }
-     })
-}
+    this.api.updateTnx(payload, 'customer').subscribe({
+      next: () => {
+        Swal.fire('Updated!', 'Customer updated successfully', 'success')
+          .then(() => this.router.navigate(['/admin/customer-list']));
+      },
+      error: err => console.error('Update failed', err)
+    });
+  }
 
-rejected(id:number){
-      console.log("rejected id", id);
-      this.api.rejectCustomer(id).subscribe({
-         next:next=> {
-              
-               console.log("customer rejected successfully");
-               this.router.navigate(["/admin/customer-list"])
-         },
-         error:error=> {
-              console.log("customer did not rejected ",error);
-              alert("Customer didnot rejected")
-         }
-      })  
-}
+  // ---------------- ACTIVATE / DEACTIVATE ----------------
+  activate(id: number): void {
+    this.api.setTnxByStatus('Active', id).subscribe({
+      next: () => {
+        Swal.fire('Activated!', 'Customer is now Active', 'success')
+          .then(() => this.loadCustomer());
+      },
+      error: err => console.error('Activate failed', err)
+    });
+  }
 
-isReadOnly(): boolean {
-  return (this.getCustomerById?.status === "A");
-}
+  deactivate(id: number): void {
+    this.api.setTnxByStatus('Inactive', id).subscribe({
+      next: () => {
+        Swal.fire('Deactivated!', 'Customer is now Inactive', 'success')
+          .then(() => this.loadCustomer());
+      },
+      error: err => console.error('Deactivate failed', err)
+    });
+  }
 
-// set approved 
-editApprovedCustomer(id: number) {
-  this.api.editApprovedCustomer(id).subscribe({
-    next: res => {
-      Swal.fire({
-        title: 'Success!',
-        text: 'Approved customer moved to Draft',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      }).then(() => {
-  this.router.navigateByUrl('/dummy', { skipLocationChange: true }).then(() => {
-    this.router.navigate(['/admin/customer-list']);
-  });
-});
+  // ---------------- UI HELPERS ----------------
+  isReadOnly(): boolean {
+    return this.storeCustomer?.customerStatus === 'Inactive';
+  }
 
-    },
-    error: () => {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Failed to move Approved to Draft',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    }
-  });
-}
+  toggle(): void {
+    this.isOpen = !this.isOpen;
+  }
 
-// adding an function for toggling 
-isOpen = true;
+  onBack(): void {
+    this.location.back();
+  }
 
-toggle(): void {
-  this.isOpen = !this.isOpen;
-}
+  onCancel(): void {
+    this.customerForm.reset();
+  }
+  submit(id:number): void {    
+    if (!this.storeCustomer?.id) return;
+    this.api.setTnxByStatus('S', this.storeCustomer.id).subscribe({
+      next: () => {
+        Swal.fire('Submitted!', 'Customer submitted successfully', 'success')
+          .then(() => this.router.navigate(['/admin/customer-list']));
+      },  
+      error: err => console.error('Submit failed', err)
+    });
+  }
+
+  reject(id:number): void { 
+    if (!this.storeCustomer?.id) return;
+    this.api.setTnxByStatus('R', this.storeCustomer.id).subscribe({
+      next: () => {
+        Swal.fire('Rejected!', 'Customer rejected successfully', 'success')
+          .then(() => this.router.navigate(['/admin/customer-list']));
+      },
+      error: err => console.error('Reject failed', err)
+    });
+  } 
+
+  approve(id:number): void {  
+    if (!this.storeCustomer?.id) return;    
+
+    this.api.setTnxByStatus('A', this.storeCustomer.id).subscribe({   
+      next: () => {
+        Swal.fire('Approved!', 'Customer approved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/customer-list']));
+      },
+      error: err => console.error('Approve failed', err)
+    });
+  } 
 
 
 }

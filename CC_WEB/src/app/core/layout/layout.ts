@@ -140,11 +140,16 @@ this.router.events
   }
 
 
-  onParentClick(item: any) {
-    if (item.route) {
-      this.router.navigate([item.route]);
-    }
+  onParentClick(item: MenuItem) {
+  if (item.route) {
+    this.router.navigate([item.route]);
   }
+
+  // Toggle children ONLY if there are children
+  if (item.children) {
+    item.open = !item.open;
+  }
+}
 
 
 toggleMenu(item: MenuItem) {
@@ -186,9 +191,7 @@ toggleMenu(item: MenuItem) {
     { label: 'Create New', route: '/admin/create-branch' },
     { label: 'Inquiry', route: '/admin/branch-inquiry' }
   ]
-}
-
-,
+},
 {
   label: 'City',
   icon: 'location_city',        // ✅ Correct city icon
@@ -197,6 +200,16 @@ toggleMenu(item: MenuItem) {
   children: [
     { label: 'Create New', route: '/admin/city' },
     {label:'Inquiry',route:"/admin/city-inquiry"}
+  ]
+},
+{
+  label: 'Currency',
+  icon: 'currency_exchange',
+  route: '/admin/currency',
+  open: false,
+  children: [
+    { label: 'Create New', route: '/admin/create-currency' },
+    { label: 'Inquiry', route: '/admin/currency-inquiry' }
   ]
 }
 
@@ -482,21 +495,13 @@ toggleMenuu(item: MenuItem) {
 
 
 
-// Toggle only children, do NOT navigate
+// Toggle only this item, do NOT close siblings
+// -----------------------------
 toggleOnlyChildren(item: MenuItem) {
-  // Optional: close siblings at this level
-  const siblings = this.menuItems; // top-level
-  siblings.forEach(sib => {
-    if (sib !== item) {
-      this.closeAllChildren(sib);
-      sib.open = false;
-    }
-  });
-
-  // Toggle current item
+  // Simply toggle the item open state
   item.open = !item.open;
 
-  // Close all nested children if parent is being closed
+  // If the item is being closed, close all nested children
   if (!item.open) {
     this.closeAllChildren(item);
   }
@@ -513,12 +518,25 @@ closeAllChildren(item: MenuItem) {
     }
   });
 }
-
 // Navigate to route
 goTo(item: MenuItem) {
   if (item.route) {
     this.router.navigate([item.route]);
   }
 }
+onChildClick(child: MenuItem, parent?: MenuItem) {
+  if (child.route) {
+    this.router.navigate([child.route]);
+  }
 
+  // Keep parent open
+  if (parent) {
+    parent.open = true;
+  }
+
+  // If child has grandchildren, toggle them
+  if (child.children) {
+    child.open = !child.open;
+  }
+}
 }

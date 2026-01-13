@@ -59,7 +59,7 @@ export class BranchList implements OnInit {
 
   // ================== Load Branches ==================
   loadDraftBranches() {
-    this.api.getDraftList().subscribe({
+    this.api.getTnxByStatus('D', 'branch').subscribe({
       next: res => {
         this.draftBranches = res;
         this.storeFilteredDraftBranches = [...res];
@@ -70,7 +70,7 @@ export class BranchList implements OnInit {
   }
 
   loadApprovedBranches() {
-    this.api.getAllAproved().subscribe({
+    this.api.getTnxByStatus('A', 'branch').subscribe({
       next: res => {
         this.approvedBranches = res;
         this.storeFilteredApprovedBranches = [...res];
@@ -81,7 +81,7 @@ export class BranchList implements OnInit {
   }
 
   loadSubmittedBranches() {
-    this.api.getAllSubmitted().subscribe({
+    this.api.getTnxByStatus('S', 'branch').subscribe({
       next: res => {
         this.submittedBranches = res;
         this.storeFilteredSubmittedBranches = [...res];
@@ -92,42 +92,42 @@ export class BranchList implements OnInit {
   }
 
   // ================== Filter Branches ==================
-filterDraftBranches(search: string): void {
-  if (!search) {
-    this.storeFilteredDraftBranches = [...this.draftBranches];
-    return;
+  filterDraftBranches(search: string): void {
+    if (!search) {
+      this.storeFilteredDraftBranches = [...this.draftBranches];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredDraftBranches = this.draftBranches.filter(
+      b => b.branchCode?.toLowerCase().includes(value)
+    );
   }
-  const value = search.toLowerCase();
-  this.storeFilteredDraftBranches = this.draftBranches.filter(
-    b => b.branchId?.toLowerCase().includes(value)
-  );
-}
 
-filterApprovedBranches(search: string): void {
-  if (!search) {
-    this.storeFilteredApprovedBranches = [...this.approvedBranches];
-    return;
+  filterApprovedBranches(search: string): void {
+    if (!search) {
+      this.storeFilteredApprovedBranches = [...this.approvedBranches];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredApprovedBranches = this.approvedBranches.filter(
+      b => b.branchCode?.toLowerCase().includes(value)
+    );
   }
-  const value = search.toLowerCase();
-  this.storeFilteredApprovedBranches = this.approvedBranches.filter(
-    b => b.branchId?.toLowerCase().includes(value)
-  );
-}
 
-filterSubmittedBranches(search: string): void {
-  if (!search) {
-    this.storeFilteredSubmittedBranches = [...this.submittedBranches];
-    return;
+  filterSubmittedBranches(search: string): void {
+    if (!search) {
+      this.storeFilteredSubmittedBranches = [...this.submittedBranches];
+      return;
+    }
+    const value = search.toLowerCase();
+    this.storeFilteredSubmittedBranches = this.submittedBranches.filter(
+      b => b.branchCode?.toLowerCase().includes(value)
+    );
   }
-  const value = search.toLowerCase();
-  this.storeFilteredSubmittedBranches = this.submittedBranches.filter(
-    b => b.branchId?.toLowerCase().includes(value)
-  );
-}
 
   // ================== Navigation ==================
   updateRouter(id: any) {
-    return  this.router.navigate(['/admin/create-branch/'+id]);
+    return this.router.navigate(['/admin/create-branch/' + id]);
   }
 
   // ================== Track By ==================
@@ -143,4 +143,5 @@ filterSubmittedBranches(search: string): void {
   get filteredDraftCount(): number { return this.storeFilteredDraftBranches.length; }
   get filteredApprovedCount(): number { return this.storeFilteredApprovedBranches.length; }
   get filteredSubmittedCount(): number { return this.storeFilteredSubmittedBranches.length; }
+
 }

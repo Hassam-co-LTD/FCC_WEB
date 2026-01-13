@@ -1,0 +1,158 @@
+<div class="city-status-container">
+  <h2 class="page-title">City Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterDraftTnx(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftTnx('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredDraftTnx && storeFilteredDraftTnx.length > 0; else noDrafts">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredDraftTnx; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
+                <td>
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedTnx(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedTnx('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedTnx && storeFilteredApprovedTnx.length > 0; else noApproved">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredApprovedTnx; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
+                <td>
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search City By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedTnx(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedTnx('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedTnx && storeFilteredSubmittedTnx.length > 0; else noSubmitted">
+          <table class="city-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>City Name</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredSubmittedTnx; trackBy: trackById">
+                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+                <td>{{ c.cityName }}</td>
+                <td>{{ c.state }}</td>
+                <td>{{ c.country }}</td>
+                <td>
+                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

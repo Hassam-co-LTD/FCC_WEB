@@ -1,18 +1,19 @@
 <!-- =========================
      CUSTOMER FORM
 ========================= -->
-<div class="customer-container" [ngClass]="{'hidden': getCustomerById?.status === 'A'}">
 
-  <!-- Toggle Header -->
-  <div class="section-header" (click)="isOpen = !isOpen">
-    <h2>Customer General Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-  </div>
+<div class="section-header" (click)="toggle()">
+  <h2>Customer General Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
 
-  <!-- Collapsible Form -->
-  <div class="collapsible" [class.open]="isOpen" [formGroup]="customerForm">
+<!-- COLLAPSIBLE FORM -->
+<div class="collapsible" [class.open]="isOpen" [formGroup]="customerForm">
 
-    <!-- Plain Input Fields (2 per row) -->
+  <!-- SHOW FORM ONLY IF OPEN -->
+  <ng-container *ngIf="isOpen">
+
+    <!-- Basic Details 2 Columns -->
     <div class="form-grid-2">
       <div class="field-group">
         <h4>Customer ID</h4>
@@ -38,16 +39,15 @@
       </div>
     </div>
 
-    <!-- Dropdown Fields (2 per row) -->
+    <!-- Dropdown Details 2 Columns -->
     <div class="form-grid-2">
       <div class="field-group">
-        <h4>Status</h4>
+        <h4>Customer Status</h4>
         <mat-form-field appearance="outline" class="full">
           <mat-label>Status</mat-label>
-          <mat-select formControlName="customerStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+          <mat-select formControlName="status" [disabled]="isReadOnly()" panelClass="white-dropdown">
             <mat-option value="Active">Active</mat-option>
             <mat-option value="Inactive">Inactive</mat-option>
-            <mat-option value="Blocked">Blocked</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -91,8 +91,8 @@
       </div>
     </div>
 
-    <!-- Address Fields (Full Width) -->
-    <div class="form-grid-2">
+    <!-- Address Details Full Width -->
+    <div class="form-grid">
       <div class="field-group full">
         <h4>Address Line 1</h4>
         <input type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()">
@@ -109,95 +109,37 @@
 
     <!-- Form Actions -->
     <div class="actions">
-      <ng-container *ngIf="getCustomerById?.status === 'D'">
-        <button type="button" class="btn-back" (click)="onBack()">Back</button>
-        <button type="button" class="btn-update" [disabled]="!customerForm.dirty || !customerForm.valid || isReadOnly()" (click)="update()">Update</button>
-        <button type="button" class="btn-save" [disabled]="!customerForm.valid || isReadOnly()" (click)="submitStatus(customerForm.getRawValue().id)">Submit</button>
-      </ng-container>
 
-      <ng-container *ngIf="getCustomerById?.status === 'S'">
-        <button type="button" class="btn-back" (click)="rejected(getCustomerById.id)">Reject</button>
-        <button type="button" class="btn-save" (click)="setApprove(customerForm.getRawValue().id)">Approve</button>
-      </ng-container>
-
-      <ng-container *ngIf="!['D','S','A'].includes(getCustomerById?.status)">
+      <!-- CREATE NEW CUSTOMER -->
+      <ng-container *ngIf="!storeCustomer">
         <button type="button" class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save Customer</button>
+        <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
       </ng-container>
-    </div>
-  </div>
-</div>
 
-<!-- =========================
-     APPROVED CUSTOMER VIEW
-========================= -->
-<div *ngIf="getCustomerById?.status === 'A'" class="approved-container">
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h2>Customer Approved Details</h2>
-  </div>
+      <!-- EXISTING CUSTOMER -->
+      <ng-container *ngIf="storeCustomer">
+        <button type="button" class="btn-back" (click)="onBack()">Back</button>
 
-  <div class="details-grid">
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Customer ID</span>
-        <span class="value">{{ getCustomerById.cId }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Name</span>
-        <span class="value">{{ getCustomerById.name }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Email</span>
-        <span class="value">{{ getCustomerById.email }}</span>
-      </div>
-    </div>
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Contact</span>
-        <span class="value">{{ getCustomerById.contact }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Customer Status</span>
-        <span class="value">{{ getCustomerById.customerStatus }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Legal ID</span>
-        <span class="value">{{ getCustomerById.legalId }}</span>
-      </div>
-    </div>
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Branch Code</span>
-        <span class="value">{{ getCustomerById.branchCode || '-' }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Country / City</span>
-        <span class="value">{{ getCustomerById.countryCity }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Customer Type</span>
-        <span class="value">{{ getCustomerById.customerType }}</span>
-      </div>
-    </div>
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Address 1</span>
-        <span class="value">{{ getCustomerById.address1 }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Address 2</span>
-        <span class="value">{{ getCustomerById.address2 }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Address 3</span>
-        <span class="value">{{ getCustomerById.address3 }}</span>
-      </div>
-    </div>
-  </div>
+        <!-- DRAFT -->
+        <ng-container *ngIf="storeCustomer.customerStatus === 'D'">
+          <button type="button" class="btn-update" [disabled]="!customerForm.dirty || !customerForm.valid" (click)="update()">Update</button>
+          <button type="button" class="btn-save" [disabled]="!customerForm.valid" (click)="submit(storeCustomer.id)">Submit</button>
+        </ng-container>
 
-  <div class="approved-actions">
-    <button class="btn-back" (click)="onBack()">← Back</button>
-    <button class="btn-edit" (click)="editApprovedCustomer(getCustomerById.id)">Amend</button>
-  </div>
+        <!-- SUBMITTED -->
+        <ng-container *ngIf="storeCustomer.customerStatus === 'S'">
+          <button type="button" class="btn-back" (click)="reject(storeCustomer.id)">Reject</button>
+          <button type="button" class="btn-save" (click)="approve(storeCustomer.id)">Approve</button>
+        </ng-container>
+
+        <!-- APPROVED (READ ONLY) -->
+        <ng-container *ngIf="storeCustomer.customerStatus === 'A'">
+          <span class="approved-badge">✔ Approved</span>
+        </ng-container>
+
+      </ng-container>
+
+    </div>
+
+  </ng-container>
 </div>

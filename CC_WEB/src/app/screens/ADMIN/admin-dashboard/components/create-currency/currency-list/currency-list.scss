@@ -1,0 +1,346 @@
+@use '../../../../../../../styles/theme' as theme;
+
+/* ===========================
+   Section Header
+=========================== */
+.hidden{
+     display: none !important;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: theme.$radius-large;
+  cursor: pointer;
+  margin-bottom: theme.$gap-default;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-hover;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$text-light;
+  }
+
+  mat-icon {
+    font-size: 22px;
+    color: theme.$text-light;
+  }
+}
+
+/* ===========================
+   Collapsible Container
+=========================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: theme.$gap-default;
+  background: theme.$light-bg;
+  border-radius: theme.$radius-default;
+  border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Field Group
+=========================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: theme.$gap-default;
+}
+
+/* ===========================
+   Section Heading
+=========================== */
+h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px 0;
+  color: theme.$primary;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Form Layout
+=========================== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: theme.$gap-default;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* ===========================
+   Input Styling
+=========================== */
+input[matInput] {
+  font-size: 14px;
+  color: theme.$primary-dark;
+}
+
+::placeholder {
+  color: theme.$primary-dark;
+  opacity: 0.7;
+}
+
+.mdc-text-field {
+  background-color: theme.$white;
+}
+
+/* ===========================
+   Buttons (Actions)
+=========================== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: theme.$gap-default;
+  margin-top: theme.$gap-default;
+}
+
+/* Outline / Stroked Buttons (Cancel / Back / Reject) */
+button[mat-stroked-button] {
+  border-radius: theme.$radius-large; /* larger radius */
+  font-weight: 500;
+  padding: 10px 24px; /* larger, clickable area */
+  color: theme.$primary;
+  border: 2px solid theme.$primary;
+  min-width: 140px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: theme.$primary-hover;
+    color: theme.$text-light;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Primary / Raised Buttons (Save / Submit / Approve) */
+button[mat-flat-button],
+button[mat-raised-button] {
+  border-radius: theme.$radius-large;
+  font-weight: 600;
+  padding: 10px 28px;
+  background-color: theme.$primary;
+  color: theme.$text-light;
+  min-width: 140px;
+  text-transform: uppercase;
+  box-shadow: theme.$button-shadow;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: theme.$primary-hover;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  &:disabled {
+    background-color: theme.$border-light;
+    color: theme.$text-dark; 
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+}
+
+/* ===========================
+   Responsive Breakpoints
+=========================== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 0.95rem;
+    min-width: auto;
+  }
+}
+
+
+/* ===========================
+   Approved Branch Section
+=========================== */
+.approved-container {
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  padding: theme.$gap-default;
+  border: 1px solid theme.$border-light;
+  margin-top: theme.$gap-default;
+
+  .approved-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: theme.$gap-default;
+
+    .approved-badge {
+      background: theme.$primary;
+      color: theme.$text-light;
+      padding: 4px 10px;
+      border-radius: theme.$radius-default;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: theme.$text-dark;
+      margin: 0;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    gap: theme.$gap-default;
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: theme.$gap-default;
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .label {
+          font-size: 13px;
+          font-weight: 500;
+          color: theme.$text-medium;
+          border-left: 4px solid theme.$primary; /* vertical line */
+          padding-left: 8px;
+        }
+
+        .value {
+          font-size: 14px;
+          color: theme.$text-dark;
+          font-weight: 600;
+        }
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+      }
+    }
+  }
+
+  .approved-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    button {
+      padding: 10px 18px;
+      font-size: 14px;
+      border-radius: theme.$radius-default;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+
+      &.btn-back {
+        background: theme.$hover-bg;
+        color: theme.$text-dark;
+        border: 1px solid theme.$border-light;
+      }
+
+      &.btn-edit {
+        background: theme.$primary;
+        color: theme.$text-light;
+        box-shadow: theme.$button-shadow;
+
+        &:hover {
+          background: theme.$primary-dark;
+        }
+      }
+    }
+  }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 14px;
+    margin: 15px 0 8px;
+  }
+
+  .form-actions-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 480px) {
+  .collapsible.open {
+    padding: 10px 5px;
+  }
+
+  button {
+    width: 100%;
+  }
+}

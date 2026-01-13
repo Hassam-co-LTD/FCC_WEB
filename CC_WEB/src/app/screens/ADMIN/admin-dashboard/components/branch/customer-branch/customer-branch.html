@@ -1,160 +1,159 @@
-  <div class="branch-container" [ngClass]="{'hidden': getBranchById?.branchstatus === 'A'}">
+<div class="branch-container" [ngClass]="{'hidden': branchDetails?.status === 'A'}">
 
-    <!-- Toggle Header -->
-    <div class="section-header" (click)="isOpen = !isOpen">
-      <h2>Create Branch</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
-
-    <!-- Collapsible Form -->
-    <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
-
-      <div class="form-grid-2">
-
-        <!-- Branch ID -->
-        <div class="field-group">
-          <h4>Branch ID</h4>
-          <input type="text" formControlName="branchId" placeholder="Enter Branch ID" >
-        </div>
-
-        <!-- Branch Name -->
-        <div class="field-group">
-          <h4>Branch Name</h4>
-          <input type="text" formControlName="branchName" placeholder="Enter Branch Name" >
-        </div>
-
-        <!-- Contact Person -->
-        <div class="field-group">
-          <h4>Contact Person</h4>
-          <input type="text" formControlName="contactPerson" placeholder="Enter Contact Person" >
-        </div>
-
-        <!-- City -->
-    <div class="field-group city-field">
-    <h4>City</h4>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>City</mat-label>
-      <mat-select formControlName="cityId" panelClass="dropdown-panel">
-        <mat-option *ngFor="let item of getAllCities" [value]="item.id">
-          {{ item.cityName }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <!-- Toggle Header -->
+  <div class="section-header" (click)="isOpen = !isOpen">
+    <h2>Create Branch</h2>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
   </div>
 
+  <!-- Collapsible Form -->
+  <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
 
-        <!-- Contact Number -->
-        <div class="field-group">
-          <h4>Contact Number</h4>
-          <input type="text" formControlName="contactNo" placeholder="Enter Contact Number" >
-        </div>
+    <div class="form-grid-2">
 
-        <!-- Swift Address -->
-        <div class="field-group">
-          <h4>Swift Address</h4>
-          <input type="text" formControlName="swiftAddress" placeholder="Enter Swift Address" >
-        </div>
-
-        <!-- Email -->
-        <div class="field-group">
-          <h4>Email Address</h4>
-          <input type="email" formControlName="emailAddress" placeholder="Enter Email Address" >
-        </div>
-
-        <!-- Local Currency -->
-        <div class="field-group">
-          <h4>Local Currency</h4>
-          <input type="text" formControlName="localCurrency" placeholder="Enter Local Currency" >
-        </div>
-
-        <!-- Branch Address (full width) -->
-        <div class="field-group full">
-          <h4>Branch Address</h4>
-          <textarea formControlName="branchAddress" rows="3" placeholder="Enter Branch Address" ></textarea>
-        </div>
-
+      <!-- Branch Code -->
+      <div class="field-group">
+        <h4>Branch Code</h4>
+        <input type="text" formControlName="branchCode" placeholder="Enter Branch Code">
       </div>
 
-      <!-- Form Actions -->
-      <div class="form-actions-container">
-        <button class="btn-back" *ngIf="getBranchById?.branchstatus === 'D'" (click)="back()">Back</button>
-        <button class="btn-update" *ngIf="getBranchById?.branchstatus === 'D'" (click)="update(getBranchById.id)">Update</button>
-        <button class="btn-save" *ngIf="getBranchById?.branchstatus === 'D'" (click)="submit()">Submit</button>
-
-        <button class="btn-back" *ngIf="getBranchById?.branchstatus === 'S'" (click)="reject(getBranchById.id)">Reject</button>
-        <button class="btn-save" *ngIf="getBranchById?.branchstatus === 'S'" (click)="approved(getBranchById.id)">Approve</button>
-
-        <button class="btn-cancel" *ngIf="!['D','S','A'].includes(getBranchById?.branchstatus)" (click)="cancel()">Cancel</button>
-        <button class="btn-save" *ngIf="!['D','S','A'].includes(getBranchById?.branchstatus)" (click)="save()">Save</button>
+      <!-- Branch Name -->
+      <div class="field-group">
+        <h4>Branch Name</h4>
+        <input type="text" formControlName="branchName" placeholder="Enter Branch Name">
       </div>
 
+      <!-- Contact Person -->
+      <div class="field-group">
+        <h4>Contact Person</h4>
+        <input type="text" formControlName="contactPerson" placeholder="Enter Contact Person">
+      </div>
+
+      <!-- City -->
+      <div class="field-group city-field">
+        <h4>City</h4>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>City</mat-label>
+          <mat-select formControlName="cityId" panelClass="dropdown-panel">
+            <mat-option *ngFor="let item of allCities" [value]="item.id">
+              {{ item.cityName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Contact Number -->
+      <div class="field-group">
+        <h4>Contact Number</h4>
+        <input type="text" formControlName="contactNo" placeholder="Enter Contact Number">
+      </div>
+
+      <!-- Swift Address -->
+      <div class="field-group">
+        <h4>Swift Address</h4>
+        <input type="text" formControlName="swiftAddress" placeholder="Enter Swift Address">
+      </div>
+
+      <!-- Email Address -->
+      <div class="field-group">
+        <h4>Email Address</h4>
+        <input type="email" formControlName="emailAddress" placeholder="Enter Email Address">
+      </div>
+
+      <!-- Local Currency -->
+      <div class="field-group">
+        <h4>Local Currency</h4>
+        <input type="text" formControlName="localCurrency" placeholder="Enter Local Currency">
+      </div>
+
+      <!-- Branch Address (full width) -->
+      <div class="field-group full">
+        <h4>Branch Address</h4>
+        <textarea formControlName="branchAddress" rows="3" placeholder="Enter Branch Address"></textarea>
+      </div>
+
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions-container">
+      <button class="btn-back" *ngIf="branchDetails?.status === 'D'" (click)="back()">Back</button>
+      <button class="btn-update" *ngIf="branchDetails?.status === 'D'" (click)="updateBranch(branchDetails.id)">Update</button>
+      <button class="btn-save" *ngIf="branchDetails?.status === 'D'" (click)="setBranchStatus('S', branchDetails.id)">Submit</button>
+
+      <button class="btn-back" *ngIf="branchDetails?.status === 'S'" (click)="setBranchStatus('D', branchDetails.id)">Reject</button>
+      <button class="btn-save" *ngIf="branchDetails?.status === 'S'" (click)="setBranchStatus('A', branchDetails.id)">Approve</button>
+
+      <button class="btn-cancel" *ngIf="!['D','S','A'].includes(branchDetails?.status)" (click)="cancel()">Cancel</button>
+      <button class="btn-save" *ngIf="!['D','S','A'].includes(branchDetails?.status)" (click)="saveBranch()">Save</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Approved Branch -->
+<div *ngIf="branchDetails?.status === 'A'" class="approved-container">
+
+  <div class="approved-header">
+    <span class="approved-badge">✔ Approved</span>
+    <h2>Branch Approved Details</h2>
+  </div>
+
+  <div class="details-grid">
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Branch Code</span>
+        <span class="value">{{ branchDetails.branchCode }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Branch Name</span>
+        <span class="value">{{ branchDetails.branchName }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Email Address</span>
+        <span class="value">{{ branchDetails.emailAddress }}</span>
+      </div>
+    </div>
+
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Contact Person</span>
+        <span class="value">{{ branchDetails.contactPerson }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Contact No</span>
+        <span class="value">{{ branchDetails.contactNo }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Record Status</span>
+        <span class="value">{{ branchDetails.recordStatus }}</span>
+      </div>
+    </div>
+
+    <div class="detail-row three-col">
+      <div class="detail-item">
+        <span class="label">Swift Address</span>
+        <span class="value">{{ branchDetails.swiftAddress }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Local Currency</span>
+        <span class="value">{{ branchDetails.localCurrency }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">City</span>
+        <span class="value">{{ branchDetails.cityMaster?.cityName }}</span>
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-item full-width">
+        <span class="label">Branch Address</span>
+        <span class="value">{{ branchDetails.branchAddress }}</span>
+      </div>
     </div>
   </div>
 
-  <!-- Approved Branch -->
-  <div *ngIf="getBranchById?.branchstatus === 'A'" class="approved-container">
-
-    <div class="approved-header">
-      <span class="approved-badge">✔ Approved</span>
-      <h2>Branch Approved Details</h2>
-    </div>
-
-    <div class="details-grid">
-      <div class="detail-row three-col">
-        <div class="detail-item">
-          <span class="label">Branch ID</span>
-          <span class="value">{{ getBranchById.branchId }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Branch Name</span>
-          <span class="value">{{ getBranchById.branchname }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Email Address</span>
-          <span class="value">{{ getBranchById.emailaddress }}</span>
-        </div>
-      </div>
-
-      <div class="detail-row three-col">
-        <div class="detail-item">
-          <span class="label">Contact Person</span>
-          <span class="value">{{ getBranchById.contactperson }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Contact No</span>
-          <span class="value">{{ getBranchById.contactno }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Record Status</span>
-          <span class="value">{{ getBranchById.recordstatus }}</span>
-        </div>
-      </div>
-
-      <div class="detail-row three-col">
-        <div class="detail-item">
-          <span class="label">Swift Address</span>
-          <span class="value">{{ getBranchById.swiftaddress }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">Local Currency</span>
-          <span class="value">{{ getBranchById.localcurrency }}</span>
-        </div>
-        <div class="detail-item">
-          <span class="label">City</span>
-          <span class="value">{{ getBranchById.citymaster?.cityName }}</span>
-        </div>
-      </div>
-
-      <div class="detail-row">
-        <div class="detail-item full-width">
-          <span class="label">Branch Address</span>
-          <span class="value">{{ getBranchById.branchaddress }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="approved-actions">
-      <button class="btn-back" (click)="back()">← Back</button>
-      <button class="btn-edit" (click)="reject(getBranchById.id)">Amend</button>
-    </div>
+  <div class="approved-actions">
+    <button class="btn-back" (click)="back()">← Back</button>
+    <button class="btn-edit" (click)="setBranchStatus('D', branchDetails.id)">Amend</button>
   </div>
+</div>
