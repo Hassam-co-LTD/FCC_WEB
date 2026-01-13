@@ -19,8 +19,10 @@ export class AuthService {
         (userId === 'user' && companyId === 'user' && password === 'user')) {
 
       if (this.isBrowser()) {
-        localStorage.setItem('token', 'dummy-token');
-        localStorage.setItem('role', userId === 'admin' ? 'ADMIN' : 'USER');
+        sessionStorage.setItem('token', 'dummy-token');
+        sessionStorage.setItem('userId', userId);
+        sessionStorage.setItem('companyId', companyId);
+        sessionStorage.setItem('role', userId === 'admin' ? 'ADMIN' : 'USER');
       }
 
       return true;
@@ -31,6 +33,7 @@ export class AuthService {
 
   logout() {
     if (this.isBrowser()) {
+      sessionStorage.clear();
       localStorage.clear();
     }
   }
@@ -41,7 +44,7 @@ export class AuthService {
       return false;
     }
 
-    return !!localStorage.getItem('token');
+    return !!sessionStorage.getItem('token');
   }
 
   getUserCategory(): 'ADMIN' | 'USER' | null {
@@ -50,6 +53,10 @@ export class AuthService {
       return null;
     }
 
-    return localStorage.getItem('role') as 'ADMIN' | 'USER' | null;
+    return sessionStorage.getItem('role') as 'ADMIN' | 'USER' | null;
+  }
+
+  getCompanyId(): string | null {
+    return sessionStorage.getItem('companyId');
   }
 }

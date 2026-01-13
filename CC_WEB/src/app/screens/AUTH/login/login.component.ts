@@ -44,7 +44,7 @@ export class LoginComponent {
       alert('Invalid User ID, Company ID, or Password');
       return;
     }
-
+    
     const role = this.auth.getUserCategory();
     if (role === 'ADMIN') {
       this.router.navigate(['/admin']);

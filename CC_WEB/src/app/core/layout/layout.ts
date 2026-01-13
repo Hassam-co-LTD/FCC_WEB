@@ -32,6 +32,10 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
+Logout() {
+ this.authService.logout();
+ this.router.navigate(['/login']);
+}
 
 
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
@@ -193,7 +197,7 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/import-screen' },
                 { label: 'Amend', route: '/import-screen/amend' },
-                { label: 'Enquiries', route: '/import-screen/enquiries' },
+                { label: 'Inquiries', route: '/import-screen/inquiries' },
               ]
             },
 

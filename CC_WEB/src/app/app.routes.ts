@@ -374,7 +374,7 @@ export const routes: Routes = [
 
             // Static routes first
             {
-                path: 'import-screen/enquiries',
+                path: 'import-screen/inquiries',
                 loadComponent: () =>
                     import('./screens/USER/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records')
                         .then(m => m.EnquiriesOfRecords),
