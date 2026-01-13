@@ -23,6 +23,7 @@ import { ImportLcTransaction } from '../../../core/models/import-lc';
 import { ImportlcFormTransactionService } from '../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../shared/reject-dialog/reject-dialog';
+import { AuthService } from '../../../core/services/auth.service';
 
 
 @Component({
@@ -58,6 +59,7 @@ export class ImportScreen implements OnInit {
   showApproveReject = false;
   rejectionReason = '';
   tnxId = '';
+  companyId ='';
 
   importSteps = [
     { label: "General Details" },
@@ -79,7 +81,8 @@ export class ImportScreen implements OnInit {
     private api: ApiService,
     private route: ActivatedRoute,
     private dialog: Dialog,
-    private transactionService: ImportlcFormTransactionService
+    private transactionService: ImportlcFormTransactionService,
+    private authservice: AuthService
 
   ) {
     this.buildForm();
@@ -107,6 +110,8 @@ export class ImportScreen implements OnInit {
       this.screenMode = navState.mode;
     }
 
+    this.companyId = this.authservice.getCompanyId() || '';
+    console.log('Company ID from route:', this.companyId);
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
     console.log('TNX ID from route:', this.tnxId);
     // const txFromState = history.state.transaction;
@@ -286,6 +291,7 @@ export class ImportScreen implements OnInit {
   }
     private flattenForm(): ImportLcTransaction {
     return {
+      companyId: this.companyId,
       ...this.importForm.value.generalDetails,
       ...this.importForm.value.applicantForm,
       ...this.importForm.value.bankForm,
@@ -324,13 +330,18 @@ export class ImportScreen implements OnInit {
 
   submitLc(): void {
     const tnxId = this.currentTx?.tnxId;
+    const companyId = this.currentTx?.companyId;
     if (!tnxId) {
       this.snackBar.open('Transaction ID not found. Please save the draft first.', 'Close', { duration: 3000 });
       return;
     }
+    if (!companyId) {
+      this.snackBar.open('Company ID not found. Please save the draft first.', 'Close', { duration: 3000 });
+      return;
+    }
     const payload = {
       ...this.flattenForm(), // merge current form data
-      tnxId: this.tnxId
+      tnxId: this.tnxId,
     }
     this.api.submitTransaction(tnxId, payload).subscribe({
       next: (res: ImportLcTransaction) => {

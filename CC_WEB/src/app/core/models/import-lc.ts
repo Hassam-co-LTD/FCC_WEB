@@ -77,6 +77,7 @@ export interface ImportLcTransaction {
     // System fields
     status?: string; // "I", "S", "A"
     tnxId?: string;
+    companyId?: string;
     createdOn?: Date;
     updatedOn?: Date;
 }
