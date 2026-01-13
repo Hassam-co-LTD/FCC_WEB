@@ -1,6 +1,7 @@
 @use "sass:color";
 @use "../../../../../../../styles/theme" as theme;
 
+
 /* ================= HEADER ================= */
 .page-header {
     margin-bottom: 16px;
@@ -52,6 +53,10 @@
             border: none;
             background: transparent;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
         }
     }
 
@@ -119,12 +124,10 @@
     }
 }
 
-/* ==============================
-   Filter Row
-================================*/
+/* ================= FILTER ROW ================= */
 .filter-row {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end; /* Align right */
     align-items: center;
     margin-bottom: 12px;
 
@@ -153,9 +156,7 @@
     }
 }
 
-/* ==============================
-   Table Wrapper
-================================*/
+/* ================= TABLE WRAPPER ================= */
 .table-wrapper {
     background: theme.$white;
     border-radius: theme.$radius-large;
@@ -164,9 +165,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
-/* ==============================
-   Table
-================================*/
+/* ================= TABLE ================= */
 table {
     width: 100%;
     min-width: 1400px;
@@ -182,11 +181,15 @@ thead {
         font-weight: 600;
         color: theme.$text-dark;
         white-space: nowrap;
-        cursor: pointer;
         user-select: none;
 
-        &:hover {
-            background: color.scale(theme.$primary-light, $lightness: -4%);
+        /* Sortable Indicator */
+        &.sortable {
+            cursor: pointer;
+            &:hover {
+                background: color.scale(theme.$primary-light, $lightness: -4%);
+                color: theme.$primary;
+            }
         }
     }
 }
@@ -211,6 +214,7 @@ tbody {
     }
 }
 
+/* TNX Link */
 .tnx-link {
     color: #0b4eb3;
     cursor: pointer;
@@ -222,83 +226,109 @@ tbody {
     }
 }
 
-/* ==============================
-   Status Badge
-================================*/
-// .status {
-//     padding: 3px 10px;
-//     border-radius: 12px;
-//     font-size: 0.7rem;
-//     font-weight: 500;
-//     display: inline-block;
-
-
-//     &.status-draft {
-//         background: theme.$hover-bg;
-//         color: theme.$text-medium;
-//     }
-
-//     &.status-live {
-//         background: theme.$primary-light;
-//         color: theme.$primary;
-//     }
-// }
+/* ================= STATUS BADGES ================= */
 .status {
     padding: 3px 8px;
     border-radius: 12px;
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
+    display: inline-block;
+
+    // Draft (Yellow/Orange)
+    &.draft {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    // Submitted / Pending (Blue)
+    &.submitted, 
+    &.pending {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    // Approved (Green)
+    &.approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    // Rejected (Red)
+    &.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
 }
 
-.status.draft {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-/* ==============================
-   Amount
-================================*/
+/* ================= AMOUNT ================= */
 .amount {
     font-weight: 600;
     color: theme.$primary;
 }
 
-/* ==============================
-   Actions
-================================*/
+/* ================= ACTIONS ================= */
+.actions-cell {
+    min-width: 100px;
+}
+
 .btn-action {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px;
+    padding: 4px 8px;
     background: transparent;
     border: none;
     color: theme.$primary;
     cursor: pointer;
+    font-size: 0.75rem;
+    gap: 4px;
 
     mat-icon {
         font-size: 18px;
+        height: 18px;
+        width: 18px;
     }
 
     &:hover {
         color: color.scale(theme.$primary, $lightness: -15%);
+        background: rgba(0,0,0,0.03);
+        border-radius: 4px;
+    }
+
+    &.view { color: #0b4eb3; }
+    &.edit { color: #d97706; }
+}
+
+/* ================= NO RECORDS / EMPTY STATE ================= */
+.no-records {
+    text-align: center;
+    padding: 40px 20px;
+    
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+
+        mat-icon {
+            font-size: 48px;
+            height: 48px;
+            width: 48px;
+            color: #cbd5e1; // Light Grey
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: theme.$text-medium;
+            font-weight: 500;
+        }
     }
 }
 
-/* ==============================
-   No Records
-================================*/
-.no-records {
-    text-align: center;
-    padding: 30px;
-    font-size: 0.85rem;
-    color: theme.$text-medium;
-}
-
-/* ==============================
-   Pagination
-================================*/
+/* ================= PAGINATION ================= */
 .pagination {
     display: flex;
     justify-content: center;
@@ -318,23 +348,31 @@ tbody {
         width: 28px;
         height: 28px;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        &:hover:not(:disabled) {
+            background: theme.$hover-bg;
+        }
     }
 }
 
-
-
-/* ==============================
-   Responsive
-================================*/
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
     .filter-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+    
+    .search-system {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

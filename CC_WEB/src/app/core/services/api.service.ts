@@ -4,11 +4,25 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 
-// ADD THIS INTERFACE FOR THE NEW MODULE UndertakingLc
+// --- UPDATED INTERFACE FOR UNDERTAKING LC ---
 export interface UndertakingLc {
-  id?: number;
+  id?: number | string;
   tnxId?: string;
+  channelReference?: string; // e.g. UND-2025-001
   status?: string;
+  
+  // Flat fields for Table View
+  productType?: string;
+  applicantName?: string;
+  beneficiaryName?: string;
+  undertakingAmount?: number;
+  currency?: string;
+  expiryDate?: string;
+
+  // The Nested Form Data
+  formData?: any;
+  
+  // Flexible key for any extra props
   [key: string]: any;
 }
 
@@ -20,10 +34,11 @@ export class ApiService {
   // -------------------------------------------------------------
   // CONFIGURATION
   // -------------------------------------------------------------
-  // FIXED: Removed quotes so it reads the actual variable, not the string '${...}'
+  // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   private baseUrl = `${environment.apiUrl}`; 
 
   constructor(private http: HttpClient) { }
+
   /* ------------------------------------- Error Handler ------------------------------------- */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unexpected error occurred. Please try again later.';
@@ -54,13 +69,9 @@ export class ApiService {
   }
   /* ------------------------------------- Error Handler END ------------------------------------- */
 
-
-
-
-  /* -------------------- API Methods -------------------- */
+  /* -------------------- IMPORT LC API Methods (UNCHANGED) -------------------- */
   
   // Save LC Record (pending record) - status "I"
-   
   savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Saving draft:', data);
     return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data, {
@@ -68,34 +79,36 @@ export class ApiService {
     })
     .pipe(catchError(this.handleError));
   }
-  //  Get full transactions by status
+
+  // Get full transactions by status
   getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
     return this.http.get<ImportLcTransaction[]>(
       `${this.baseUrl}importlc/status/${status}`
     )
     .pipe(catchError(this.handleError));
   }
-  //  Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getRecordTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
     return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/records/${status}`)
     .pipe(catchError(this.handleError));
   }
-  //  Get pending records by TNX ID
 
+  // Get pending records by TNX ID
   getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
     return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`)
     .pipe(catchError(this.handleError));
   }
-  //  Update draft (pending record) by Tnx ID
 
+  // Update draft (pending record) by Tnx ID
   updatePendingByTnxId(payload: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Payload before update:', payload);
     return this.http
     .put<ImportLcTransaction>(`${this.baseUrl}importlc/${payload.tnxId}`,payload)
     .pipe(catchError(this.handleError));
   }
+
   // Submit transaction (status "S") with full data
-   
   submitTransaction(
     tnxId: string,
     data: ImportLcTransaction
@@ -107,70 +120,60 @@ export class ApiService {
     })
     .pipe(catchError(this.handleError));
   }
-
-  /* -------------------- API Methods END -------------------- */
-  /**
-   * Approve transaction by TNX ID (status "A")
-   */
-  // approveTransaction(tnxId: string): Observable<ImportLcTransaction> {
-  //   console.log('Approving transaction ID:', tnxId);
-  //   return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/approve/${tnxId}`, {}, {
-  //     headers: { 'Content-Type': 'application/json' }
-  //   });
-  // }
-
-
+  /* -------------------- IMPORT LC API Methods END -------------------- */
 
 
   // =================================================================
-  // API Methods For UNDERTAKING LC MODULE
-  // =================================================================
+// API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
+// =================================================================
 
-  getUndertakingList(): Observable<UndertakingLc[]> {
-    return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking-lc/list`)
+getUndertakingList(): Observable<UndertakingLc[]> {
+  // GET /api/v1/undertaking_lc/list
+  return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking_lc/list`)
     .pipe(catchError(this.handleError));
-  }
+}
 
-  getUndertakingById(id: number): Observable<UndertakingLc> {
-    return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking-lc/${id}`)
+getUndertakingById(id: number | string): Observable<UndertakingLc> {
+  // GET /api/v1/undertaking_lc/{id}
+  return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking_lc/${id}`)
     .pipe(catchError(this.handleError));
-  }
+}
 
-  saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/save`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .pipe(catchError(this.handleError));}
-
-  updateUndertaking(id: number, data: UndertakingLc): Observable<UndertakingLc> {
-    return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking-lc/update/${id}`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
+  // POST /api/v1/undertaking_lc/save
+  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data)
     .pipe(catchError(this.handleError));
-  }
+}
 
-  submitUndertaking(id: number): Observable<UndertakingLc> {
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/submit/${id}`, {}, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+updateUndertaking(id: number | string, data: UndertakingLc): Observable<UndertakingLc> {
+  // PUT /api/v1/undertaking_lc/update/{id}
+  return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/update/${id}`, data)
     .pipe(catchError(this.handleError));
-  }
+}
 
-  approveUndertaking(id: number): Observable<UndertakingLc> {
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/approve/${id}`, {}, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+submitUndertaking(id: number | string): Observable<UndertakingLc> {
+  // POST /api/v1/undertaking_lc/submit/{id}
+  // Changed from .put to .post to match @PostMapping
+  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/submit/${id}`, {})
     .pipe(catchError(this.handleError));
-  }
+}
 
-  rejectUndertaking(id: number, reason: string): Observable<UndertakingLc> {
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking-lc/reject/${id}`, reason, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+approveUndertaking(id: number | string): Observable<UndertakingLc> {
+  // POST /api/v1/undertaking_lc/approve/{id}
+  // Changed from .put to .post to match @PostMapping
+  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/approve/${id}`, {})
     .pipe(catchError(this.handleError));
-  }
+}
 
-  // =================================================================
-  // API Methods For UNDERTAKING LC MODULE END
-  // =================================================================
+rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
+  // POST /api/v1/undertaking_lc/reject/{id}
+  // Matches @PostMapping and Map<String, String> payload
+  const body = { reason: reason };
+  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/reject/${id}`, body)
+    .pipe(catchError(this.handleError));
+}
+
+// =================================================================
+// API Methods For UNDERTAKING LC MODULE END
+// =================================================================
 }

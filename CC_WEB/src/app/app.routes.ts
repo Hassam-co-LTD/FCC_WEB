@@ -327,6 +327,10 @@ export const routes: Routes = [
                         './screens/USER/undertaking-issuance/sub-menus/events/records/inquiries-records'
                     ).then((m) => m.inquiriesRecords),
             },
+            {
+    path: 'undertaking-issuance/success',
+    loadComponent: () => import('./shared/success/success').then(m => m.Success)
+},
             // Submitted-Records Route
             // {
             //     path: 'undertaking-issuance/submitted-records',

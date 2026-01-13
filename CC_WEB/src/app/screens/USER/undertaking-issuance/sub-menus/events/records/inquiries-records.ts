@@ -1,6 +1,8 @@
 import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { CommonModule, isPlatformBrowser, DecimalPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -13,6 +15,8 @@ import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../
   imports: [
     CommonModule, 
     MatIconModule, 
+    MatButtonModule,
+    MatTooltipModule,
     FormsModule,
     DecimalPipe,
     DatePipe,
@@ -35,7 +39,7 @@ export class inquiriesRecords implements OnInit {
 
   // Tabs Configuration
   tabs = [
-    { key: 'pending', label: 'Pending' }, // Drafts
+    { key: 'pending', label: 'Pending' },     // Drafts
     { key: 'submitted', label: 'Submitted' }, // Pending Approval
     { key: 'approved', label: 'Approved' },
     { key: 'rejected', label: 'Rejected' }
@@ -46,8 +50,8 @@ export class inquiriesRecords implements OnInit {
   itemsPerPage = 10;
 
   // Sorting
-  sortColumn: keyof UndertakingTransaction | string = 'lastUpdated';
-  sortDirection: 'asc' | 'desc' = 'desc';
+  sortColumn: string = 'lastUpdated';
+  sortDirection: 'desc' | 'asc' = 'desc';
 
   private isBrowser: boolean;
 
@@ -63,7 +67,7 @@ export class inquiriesRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    // 1. Check URL for tab preference (e.g. coming back from Save)
+    // 1. Check URL for tab preference
     this.route.queryParams.subscribe(params => {
         if(params['tab']) {
             this.activeTab = params['tab'];
@@ -72,7 +76,7 @@ export class inquiriesRecords implements OnInit {
         this.loadByStatus();
     });
 
-    // 2. Subscribe to stream updates (Real-time update on Save/Approve)
+    // 2. Subscribe to stream updates (Real-time updates)
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList; 
       this.filterByStatusAndSearch(); 
@@ -85,19 +89,14 @@ export class inquiriesRecords implements OnInit {
     this.activeTab = tab;
     this.currentPage = 1;
     this.loadByStatus();
-    
-    // Update URL without reloading to reflect current tab
-    this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { tab: tab },
-        queryParamsHandling: 'merge'
-    });
+    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
   }
 
   private loadByStatus(): void {
-    // Calling refresh triggers the API and updates the stream
     this.transactionService.refreshTransactions().subscribe(); 
   }
+
+  // --- FILTERING ---
 
   applyFilters(): void {
     this.currentPage = 1;
@@ -117,23 +116,23 @@ export class inquiriesRecords implements OnInit {
 
     // 2. Filter by Search Query
     temp = temp.filter(tx => {
-      const data = tx.formData || {}; 
-      const benName = data.applicantBeneficiary?.beneficiaryName || '';
-      const appName = data.applicantBeneficiary?.applicantName || '';
-      const cur = data.undertakingDetails?.currency || '';
-      const ref = tx.channelReference || '';
-      const issuerRef = data.bankForm?.issuerReference || '';
+      const displayId = (tx.channelReference || tx.tnxId || '').toLowerCase();
+      const benName = this.getBeneficiary(tx).toLowerCase();
+      const appName = this.getApplicant(tx).toLowerCase();
+      const cur = this.getCurrency(tx).toLowerCase();
+      const issuerRef = this.getIssuerRef(tx).toLowerCase();
+      const product = this.getProduct(tx).toLowerCase();
 
       const matchesSearch =
         !query ||
-        ref.toLowerCase().includes(query) ||
-        issuerRef.toLowerCase().includes(query) ||
-        benName.toLowerCase().includes(query) ||
-        appName.toLowerCase().includes(query) ||
-        cur.toLowerCase().includes(query);
+        displayId.includes(query) ||
+        issuerRef.includes(query) ||
+        benName.includes(query) ||
+        appName.includes(query) ||
+        product.includes(query) ||
+        cur.includes(query);
 
-      const matchesCurrency =
-        !currency || cur.toLowerCase() === currency;
+      const matchesCurrency = !currency || cur === currency;
 
       return matchesSearch && matchesCurrency;
     });
@@ -143,6 +142,7 @@ export class inquiriesRecords implements OnInit {
 
   clearSearch(): void {
     this.searchQuery = '';
+    this.currencyFilter = '';
     this.applyFilters();
   }
 
@@ -159,9 +159,9 @@ export class inquiriesRecords implements OnInit {
   }
 
   private applySorting(source: UndertakingTransaction[]): void {
-    const sorted = [...source].sort((a, b) => {
-      const aVal = this.resolveColumn(a, this.sortColumn as string);
-      const bVal = this.resolveColumn(b, this.sortColumn as string);
+    this.filteredTransactions = [...source].sort((a, b) => {
+      const aVal = this.resolveColumn(a, this.sortColumn);
+      const bVal = this.resolveColumn(b, this.sortColumn);
 
       if (aVal == null) return 1;
       if (bVal == null) return -1;
@@ -172,21 +172,69 @@ export class inquiriesRecords implements OnInit {
           : bVal.getTime() - aVal.getTime();
       }
 
+      // Numeric Sort
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+      }
+
       return this.sortDirection === 'asc'
         ? String(aVal).localeCompare(String(bVal))
         : String(bVal).localeCompare(String(aVal));
     });
+  }
 
-    this.filteredTransactions = sorted;
+  // --- DATA HELPERS (The Fix for "Missing Data") ---
+  // These helpers check multiple locations for the data
+  
+  getApplicant(tx: UndertakingTransaction): string {
+    return tx.formData?.applicantBeneficiary?.applicantName || (tx as any).applicantName || '';
+  }
+
+  getBeneficiary(tx: UndertakingTransaction): string {
+    return tx.formData?.applicantBeneficiary?.beneficiaryName || (tx as any).beneficiaryName || '';
+  }
+
+  getProduct(tx: UndertakingTransaction): string {
+    return tx.formData?.generalDetails?.productType || (tx as any).productType || 'Undertaking';
+  }
+
+  getIssuerRef(tx: UndertakingTransaction): string {
+    return tx.formData?.bankForm?.issuerReference || (tx as any).issuerReference || '-';
+  }
+
+  getCurrency(tx: UndertakingTransaction): string {
+    return tx.formData?.undertakingDetails?.currency || (tx as any).currency || 'USD';
+  }
+
+  getAmount(tx: UndertakingTransaction): number {
+    // Priority: Nested Form Data -> Root 'undertakingAmount' -> Root 'amount'
+    const nested = tx.formData?.undertakingDetails?.undertakingAmount;
+    if (nested !== null && nested !== undefined) return nested;
+    
+    const rootUnd = (tx as any).undertakingAmount;
+    if (rootUnd !== null && rootUnd !== undefined) return rootUnd;
+
+    const rootAmt = (tx as any).amount; // Handles the mismatch in list API
+    if (rootAmt !== null && rootAmt !== undefined) return rootAmt;
+
+    return 0;
+  }
+  
+  getExpiryDate(tx: UndertakingTransaction): any {
+     return tx.formData?.undertakingDetails?.expiryDate || (tx as any).expiryDate || null;
   }
 
   private resolveColumn(tx: UndertakingTransaction, column: string): any {
-    const data = tx.formData || {};
     switch (column) {
-      case 'channelReference': return tx.channelReference;
+      case 'channelReference': return tx.channelReference; 
       case 'lastUpdated': return new Date(tx.lastUpdated);
-      case 'currency': return data.undertakingDetails?.currency;
-      case 'amount': return data.undertakingDetails?.undertakingAmount;
+      case 'product': return this.getProduct(tx);
+      case 'issuerRef': return this.getIssuerRef(tx);
+      case 'expiryDate': return this.getExpiryDate(tx) ? new Date(this.getExpiryDate(tx)) : null;
+      case 'currency': return this.getCurrency(tx);
+      case 'amount': return this.getAmount(tx);
+      case 'applicant': return this.getApplicant(tx);
+      case 'beneficiary': return this.getBeneficiary(tx);
       default: return null;
     }
   }
@@ -210,7 +258,7 @@ export class inquiriesRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  // --- NAVIGATION ACTION ---
+  // --- NAVIGATION ACTIONS ---
 
   isDraft(tx: UndertakingTransaction): boolean {
     return this.mapBackendStatusToChar(tx.status) === 'i';
@@ -220,21 +268,22 @@ export class inquiriesRecords implements OnInit {
     const statusChar = this.mapBackendStatusToChar(tx.status);
 
     if (statusChar === 'i') {
-        // CASE 1: DRAFT ('i') -> Go to Edit Form
+        // Edit Mode
         this.router.navigate(['/undertaking-issuance/request-undertaking'], {
             queryParams: { transactionId: tx.id }
         });
     } else {
-        // CASE 2: SUBMITTED/APPROVED/REJECTED -> Go to Preview (View/Approve/Reject)
+        // View Mode
         this.router.navigate(['/undertaking-issuance/preview'], {
             queryParams: { transactionId: tx.id }
         });
     }
   }
-  
-  // HTML alias for backward compatibility if needed
-  viewTransaction(tx: UndertakingTransaction) {
-      this.openUndertaking(tx);
+
+  viewOnly(tx: UndertakingTransaction) {
+      this.router.navigate(['/undertaking-issuance/preview'], {
+          queryParams: { transactionId: tx.id }
+      });
   }
 
   trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
@@ -259,6 +308,6 @@ export class inquiriesRecords implements OnInit {
     if (s.includes('submit') || s === 's') return 's';
     if (s.includes('approve') || s === 'a') return 'a';
     if (s.includes('reject') || s === 'r') return 'r';
-    return 'i'; // Fallback to draft if unknown
+    return 'i'; 
   }
 }

@@ -1,13 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe, DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
 
-// SERVICES
-import { UndertakingIssuanceService } from '../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+// --- SERVICE IMPORT ---
+// Updated to use the correct service that handles ID formatting
+import { 
+  UndertakingIssuanceService, 
+  UndertakingTransaction 
+} from '../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-preview',
@@ -18,7 +23,8 @@ import { UndertakingIssuanceService } from '../../../../../core/services/user-se
     MatCardModule, 
     MatButtonModule, 
     DecimalPipe,
-    DatePipe
+    DatePipe,
+    MatDividerModule
   ],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss']
@@ -28,38 +34,66 @@ export class Preview implements OnInit {
   @Input() transaction: any; 
 
   formData: any = {}; 
-  currentTxId: any = null;
+  
+  // Component State
+  currentTxId: string | number | null = null;
+  channelRef: string = ''; 
   statusChar: string = 'i'; 
   readOnly = false;
+  isLoading = false;
 
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
-    private undertakingService: UndertakingIssuanceService
+    // INJECT THE CORRECT SERVICE
+    private undertakingService: UndertakingIssuanceService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    // 1. Direct Input
     if (this.transaction) {
       this.loadTransactionData(this.transaction);
       this.readOnly = true; 
-    } else {
-      const urlParams = new URLSearchParams(window.location.search);
-      const txId = urlParams.get('transactionId');
-      
-      if(txId) {
-         this.undertakingService.getTransactionById(txId).subscribe(tx => {
-             this.loadTransactionData(tx);
-         });
-      } else {
-         this.router.navigate(['/undertaking-issuance/inquiries-records']);
-      }
+    } 
+    // 2. URL Params
+    else {
+      this.route.queryParams.subscribe(params => {
+        const txId = params['transactionId'];
+        if(txId) {
+           this.fetchTransaction(txId);
+        }
+      });
     }
   }
 
-  private loadTransactionData(tx: any) {
-      this.currentTxId = tx.id;
-      this.formData = tx.formData || tx;
-      this.statusChar = this.normalizeStatus(tx.status);
+  private fetchTransaction(id: string) {
+    this.isLoading = true;
+    // Uses the service method which generates the ID format
+    this.undertakingService.getTransactionById(id).subscribe({
+      next: (tx) => {
+        this.loadTransactionData(tx);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackBar.open('Could not load transaction details', 'Close');
+        this.router.navigate(['/undertaking-issuance/inquiries-records']);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private loadTransactionData(tx: UndertakingTransaction) {
+      this.currentTxId = tx.id || null;
+      
+      // The Service puts the form structure in 'formData'
+      this.formData = tx.formData || tx; 
+      
+      this.statusChar = this.normalizeStatus(tx.status || 'Draft');
+
+      // The Service guarantees 'channelReference' is formatted (UND...)
+      this.channelRef = tx.channelReference || `REF-${tx.id}`;
   }
 
   normalizeStatus(s: string): string {
@@ -71,7 +105,9 @@ export class Preview implements OnInit {
       return 'i';
   }
 
-  // --- GETTERS ---
+  // ==========================================
+  //  GETTERS 
+  // ==========================================
 
   getVal(group: string, field: string): any {
     const val = this.formData?.[group]?.[field];
@@ -82,11 +118,10 @@ export class Preview implements OnInit {
     return this.formData?.attachments?.files || this.formData?.attachments || [];
   }
 
-  // --- ACTIONS ---
+  // ==========================================
+  //  ACTIONS
+  // ==========================================
 
-  /**
-   * CLOSE: Go back to Inquiries List (preserve Tab)
-   */
   close(): void {
     let returnTab = 'pending';
     if (this.statusChar === 's') returnTab = 'submitted';
@@ -98,43 +133,76 @@ export class Preview implements OnInit {
     });
   }
 
-  /**
-   * APPROVE: Only visible if status is 's' (Submitted)
-   */
   approve() {
-      if(!confirm('Are you sure you want to Approve this transaction?')) return;
+      if(!confirm(`Are you sure you want to Approve transaction ${this.channelRef}?`)) return;
 
-      this.undertakingService.approveUndertaking(this.currentTxId).subscribe({
+      this.undertakingService.approveUndertaking(this.currentTxId!).subscribe({
           next: () => {
-              this.snackBar.open('Transaction Approved Successfully', 'Close', { duration: 3000 });
+              this.showSuccess('Approved Successfully');
               this.router.navigate(['/undertaking-issuance/inquiries-records'], { 
                   queryParams: { tab: 'approved' } 
               });
           },
-          error: () => this.snackBar.open('Approval Failed', 'Close', { duration: 3000 })
+          error: (err) => this.showError('Approve', err)
       });
   }
 
-  /**
-   * REJECT: Only visible if status is 's' (Submitted)
-   */
   reject() {
       const reason = prompt('Please enter rejection reason:');
       if(reason === null) return; 
 
-      this.undertakingService.rejectUndertaking(this.currentTxId, reason || 'No reason provided').subscribe({
+      this.undertakingService.rejectUndertaking(this.currentTxId!, reason || 'No reason provided').subscribe({
           next: () => {
-              this.snackBar.open('Transaction Rejected', 'Close', { duration: 3000 });
+              this.showSuccess('Rejected Successfully');
               this.router.navigate(['/undertaking-issuance/inquiries-records'], { 
                   queryParams: { tab: 'rejected' } 
               });
           },
-          error: () => this.snackBar.open('Rejection Failed', 'Close', { duration: 3000 })
+          error: (err) => this.showError('Reject', err)
       });
   }
 
-  // --- FILE DOWNLOAD LOGIC ---
+  amend() {
+    if(!confirm(`Amend will move transaction ${this.channelRef} back to Pending/Draft. Continue?`)) return;
+    
+    // Create payload from current data, ensuring ID is present
+    const payload = { ...this.formData, id: this.currentTxId };
 
+    // "Saving as Draft" unlocks it
+    this.undertakingService.saveDraft(payload, this.currentTxId).subscribe({
+        next: (res) => {
+            this.showSuccess('Moved to Pending for Amendment');
+            this.router.navigate(['/undertaking-issuance/request-undertaking'], {
+                queryParams: { transactionId: this.currentTxId }
+            });
+        },
+        error: (err) => this.showError('Amend', err)
+    });
+  }
+
+  updateRejected() {
+    this.amend();
+  }
+
+  // ==========================================
+  //  HELPERS
+  // ==========================================
+
+  private showSuccess(msg: string) {
+    this.snackBar.open(`${msg} - ${this.channelRef}`, 'Close', { 
+        duration: 4000, 
+        panelClass: ['success-snackbar'] 
+    });
+  }
+
+  private showError(action: string, err: any) {
+    console.error(err);
+    this.snackBar.open(`Failed to ${action} transaction. Server might be down.`, 'Close', { duration: 3000 });
+  }
+
+  // ==========================================
+  //  FILE DOWNLOAD
+  // ==========================================
   downloadFile(index: number) {
     const fileData = this.attachments[index];
     if (!fileData) return;
@@ -150,7 +218,10 @@ export class Preview implements OnInit {
     
     if (typeof content === 'string') {
         const mime = fileData.type || 'application/octet-stream';
-        const base64Prefix = content.startsWith('data:') ? '' : `data:${mime};base64,`;
+        const base64Prefix = content.startsWith('data:') 
+            ? '' 
+            : `data:${mime};base64,`;
+            
         const url = `${base64Prefix}${content}`;
         this.triggerDownload(url, fileData.fileName);
     } 
