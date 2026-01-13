@@ -33,6 +33,10 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
+Logout() {
+ this.authService.logout();
+ this.router.navigate(['/login']);
+}
 
 
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
