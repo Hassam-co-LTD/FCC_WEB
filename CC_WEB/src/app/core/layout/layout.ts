@@ -240,7 +240,7 @@ toggleMenu(item: MenuItem) {
               children: [
                 { label: 'Create', route: '/import-screen' },
                 { label: 'Amend', route: '/import-screen/amend' },
-                { label: 'Enquiries', route: '/import-screen/enquiries' },
+                { label: 'Inquiries', route: '/import-screen/inquiries' },
               ]
             },
 

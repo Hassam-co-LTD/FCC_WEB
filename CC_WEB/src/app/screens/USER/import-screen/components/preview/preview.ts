@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { ImportLcTransaction } from "../../../../../core/models/import-lc";
+import { Dialog } from '@angular/cdk/dialog';
+import { RejectDialogComponent } from '../../../../../shared/reject-dialog/reject-dialog';
 
 @Component({
   selector: 'app-preview',
@@ -20,6 +22,7 @@ import { ImportLcTransaction } from "../../../../../core/models/import-lc";
 })
 export class Preview implements OnInit {
   @Input() transaction!: ImportLcTransaction;
+  viewMode: 'submit' | 'readonly' = 'submit';
   // @Input() readonly = false;
 
   // get showActions(): boolean {
@@ -34,7 +37,6 @@ export class Preview implements OnInit {
   isPdf = false;
 
   currentTx: ImportLcTransaction | null = null;
-  readOnly = false;
 
   // pageName1 = 'Update';
   // pageName2 = 'Submit';
@@ -44,110 +46,101 @@ export class Preview implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private api: ApiService,
+    private dialog: Dialog, 
     private transactionService: ImportlcFormTransactionService
   ) { }
 
-  ngOnInit(): void {
-    // 1️⃣ Priority: @Input() transaction (Success page)
-    if (this.transaction) {
-      this.currentTx = this.transaction;
-    }
-    // 2️⃣ Fallback: service (Preview before submit)
-    else {
-      this.currentTx = this.transactionService.getCurrentTransaction();
-    }
+  ngOnInit(): void {    
+    this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
+    ||
+    this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
       this.router.navigate(['/import-screen']);
       return;
     }
+    this.viewMode = this.transactionService.getViewMode();
+     this.initForm();
+  }
 
+    private initForm(): void {
     this.importForm = this.fb.group({
-      id: [this.currentTx.id],
-      tnxId: [this.currentTx.tnxId],
-      status: [this.currentTx.status],
-      createdOn: [this.currentTx.createdOn],
+      id: [this.currentTx!.id],
+      tnxId: [this.currentTx!.tnxId],
+      status: [this.currentTx!.status],
+      createdOn: [this.currentTx!.createdOn],
 
-      productType: [this.currentTx.productType],
-      modeOfTransmission: [this.currentTx.modeOfTransmission], 
-      expiryDate: [this.currentTx.expiryDate],
-      placeOfExpiry: [this.currentTx.placeOfExpiry],
+      productType: [this.currentTx!.productType],
+      modeOfTransmission: [this.currentTx!.modeOfTransmission], 
+      expiryDate: [this.currentTx!.expiryDate],
+      placeOfExpiry: [this.currentTx!.placeOfExpiry],
 
-      applicantName: [this.currentTx.applicantName],
-      applicantAddress1: [this.currentTx.applicantAddress1],
-      applicantAddress2: [this.currentTx.applicantAddress2],
-      applicantAddress3: [this.currentTx.applicantAddress3],
+      applicantName: [this.currentTx!.applicantName],
+      applicantAddress1: [this.currentTx!.applicantAddress1],
+      applicantAddress2: [this.currentTx!.applicantAddress2],
+      applicantAddress3: [this.currentTx!.applicantAddress3],
 
-      beneficiaryName: [this.currentTx.beneficiaryName],
-      beneficiaryAddress1: [this.currentTx.beneficiaryAddress1],
-      beneficiaryAddress2: [this.currentTx.beneficiaryAddress2],
-      beneficiaryAddress3: [this.currentTx.beneficiaryAddress3],
-      beneficiaryCountry: [this.currentTx.beneficiaryCountry],
+      beneficiaryName: [this.currentTx!.beneficiaryName],
+      beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
+      beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
+      beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
-      issuingBankName: [this.currentTx.issuingBankName],
-      issuerReference: [this.currentTx.issuerReference],
-      advisingBankName: [this.currentTx.advisingBankName],
-      adviseThroughBankName: [this.currentTx.adviseThroughBankName],
+      issuingBankName: [this.currentTx!.issuingBankName],
+      issuerReference: [this.currentTx!.issuerReference],
+      advisingBankName: [this.currentTx!.advisingBankName],
+      adviseThroughBankName: [this.currentTx!.adviseThroughBankName],
 
-      currency: [this.currentTx.currency],
-      amount: [this.currentTx.amount],
-      additionalAmount: [this.currentTx.additionalAmount],
-      variationType: [this.currentTx.variationType],
-      variationPlus: [this.currentTx.variationPlus],
-      variationMinus: [this.currentTx.variationMinus],
+      currency: [this.currentTx!.currency],
+      amount: [this.currentTx!.amount],
+      additionalAmount: [this.currentTx!.additionalAmount],
+      variationType: [this.currentTx!.variationType],
+      variationPlus: [this.currentTx!.variationPlus],
+      variationMinus: [this.currentTx!.variationMinus],
 
-      creditAvailableWith: [this.currentTx.creditAvailableWith],
-      bankName: [this.currentTx.bankName],
-      creditAvailableBy: [this.currentTx.creditAvailableBy],
-      paymentDraftAt: [this.currentTx.paymentDraftAt],
+      creditAvailableWith: [this.currentTx!.creditAvailableWith],
+      bankName: [this.currentTx!.bankName],
+      creditAvailableBy: [this.currentTx!.creditAvailableBy],
+      paymentDraftAt: [this.currentTx!.paymentDraftAt],
 
-      shipmentFrom: [this.currentTx.shipmentFrom],
-      shipmentTo: [this.currentTx.shipmentTo],
-      placeOfLoading: [this.currentTx.placeOfLoading],
-      placeOfDischarge: [this.currentTx.placeOfDischarge],
-      lastShipmentDate: [this.currentTx.lastShipmentDate],
-      shipmentPeriodNarrative: [this.currentTx.shipmentPeriodNarrative],
-      partialShipment: [this.currentTx.partialShipment],
-      transhipment: [this.currentTx.transhipment],
+      shipmentFrom: [this.currentTx!.shipmentFrom],
+      shipmentTo: [this.currentTx!.shipmentTo],
+      placeOfLoading: [this.currentTx!.placeOfLoading],
+      placeOfDischarge: [this.currentTx!.placeOfDischarge],
+      lastShipmentDate: [this.currentTx!.lastShipmentDate],
+      shipmentPeriodNarrative: [this.currentTx!.shipmentPeriodNarrative],
+      partialShipment: [this.currentTx!.partialShipment],
+      transhipment: [this.currentTx!.transhipment],
 
-      descriptionOfGoods: [this.currentTx.descriptionOfGoods],
-      documentsRequired: [this.currentTx.documentsRequired],
-      additionalInstructions: [this.currentTx.additionalInstructions],
-      otherInstructions: [this.currentTx.otherInstructions],
+      descriptionOfGoods: [this.currentTx!.descriptionOfGoods],
+      documentsRequired: [this.currentTx!.documentsRequired],
+      additionalInstructions: [this.currentTx!.additionalInstructions],
+      otherInstructions: [this.currentTx!.otherInstructions],
 
-      principalAccount: [this.currentTx.principalAccount],
-      feeAccount: [this.currentTx.feeAccount],
+      principalAccount: [this.currentTx!.principalAccount],
+      feeAccount: [this.currentTx!.feeAccount],
 
-      attachments: this.fb.array(this.currentTx.attachments ?? [])
+      attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
     // 🔒 Read-only mode (Success page)
-    // if (this.readonly) {
-    //   this.importForm.disable({ emitEvent: false });
-    // }
+    if (this.viewMode === 'readonly') {
+      this.importForm.disable({ emitEvent: false });
+    }
   }
 
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
   }
 
-
-  /** UPDATE DRAFT */
-  updateDraft(): void {
-    if (this.readOnly) return;
-
-    this.transactionService.setCurrentTransaction(this.currentTx!);
-    this.router.navigate(['/import-screen'], { state: { isUpdate: true } });
-  }
-
   back() {
-    this.router.navigate(['/import-screen/enquiries'])
+    this.router.navigate(['/import-screen/inquiries'])
   }
 
   /** SUBMIT */
   submitLc(): void {
-    if (this.readOnly) return;
+    if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) {
@@ -164,6 +157,51 @@ export class Preview implements OnInit {
       error: () => {
         this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
       }
+    });
+  }
+
+  approveTransaction(): void {
+    if (!this.currentTx?.tnxId) return;
+
+    this.api.approveTransaction(this.currentTx.tnxId, this.currentTx).subscribe({
+      next: (res) => {
+        this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
+        this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+      },
+      error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
+    });
+  }
+
+  // rejectTransaction(): void {
+  //   if (!this.currentTx?.tnxId) return;
+
+  //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
+  //     next: (res) => {
+  //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
+  //       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+  //     },
+  //     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+  //   });
+  // }
+  rejectTransaction(): void {
+    const tnxId = this.currentTx?.tnxId;
+    if (!tnxId) return;
+
+    const dialogRef = this.dialog.open<string>(RejectDialogComponent, {
+      width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
+      backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
+      panelClass: 'custom-dialog-container'     // white dialog box 
+       });
+
+    dialogRef.closed.subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+      this.api.rejectTransaction(tnxId, reason ).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+        },
+        error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+      });
     });
   }
 

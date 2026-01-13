@@ -52,7 +52,7 @@ export class Success implements OnInit {
   }
 
   goToListing(): void {
-    this.router.navigate(['/import-screen/enquiries']);
+    this.router.navigate(['/import-screen/inquiries']);
   }
 
   createNew(): void {

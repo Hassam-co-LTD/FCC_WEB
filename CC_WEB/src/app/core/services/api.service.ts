@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, retry } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 
@@ -11,97 +11,121 @@ export class ApiService {
   private baseUrl = environment.apiUrl; // base URL
 
   constructor(private http: HttpClient) { }
+  /* ------------------------------------- Error Handler ------------------------------------- */
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'An unexpected error occurred. Please try again later.';
+
+    if (error.error instanceof ErrorEvent) {
+      // Client-side / network error
+      console.error('Client-side error:', error.error.message);
+      errorMessage = error.error.message;
+    } else {
+      // Backend error
+      console.error(
+        `Backend error [${error.status}]:`,
+        error.error
+      );
+
+      if (error.error?.message) {
+        errorMessage = error.error.message;
+      } else if (error.status === 0) {
+        errorMessage = 'Unable to connect to server.';
+      } else if (error.status === 404) {
+        errorMessage = 'Requested resource not found.';
+      } else if (error.status === 500) {
+        errorMessage = 'Internal server error.';
+      }
+    }
+
+    return throwError(() => new Error(errorMessage));
+  }
+  /* ------------------------------------- Error Handler END ------------------------------------- */
 
 
-  /**
-   * Save draft (pending record) - status "I"
-   */
+
+
+  /* -------------------- API Methods -------------------- */
+
+  // Save LC Record (pending record) - status "I"
+
   savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Saving draft:', data);
     return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data, {
       headers: { 'Content-Type': 'application/json' }
-    });
+    })
+      .pipe(catchError(this.handleError));
   }
-
-  
-  //  Get Status wise recordss
-  getTransactionsByStatus(status: string) {
+  //  Get full transactions by status
+  getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
     return this.http.get<ImportLcTransaction[]>(
       `${this.baseUrl}importlc/status/${status}`
-    );
+    )
+      .pipe(catchError(this.handleError));
   }
-
-
-  //  Get draft (pending record) 
-
-  getPendingTransactions() {
-    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/pending`);
+  //  Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
+  getRecordTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
+    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/records/${status}`)
+      .pipe(catchError(this.handleError));
   }
+  //  Get pending records by TNX ID
 
-  //  Get draft (pending record) by TNX ID
-
-  getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
-    return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`);
-  }
+  // getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
+  //   return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`)
+  //     .pipe(catchError(this.handleError));
+  // }
 
   //  Update draft (pending record) by Tnx ID
 
-  updatePendingByTnxId(payload: ImportLcTransaction) {
+  updatePendingByTnxId(payload: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Payload before update:', payload);
-    return this.http.put<ImportLcTransaction>(
-      `${this.baseUrl}importlc/${payload.tnxId}`,
-      payload
-    );
+    return this.http
+      .put<ImportLcTransaction>(`${this.baseUrl}importlc/${payload.tnxId}`, payload)
+      .pipe(catchError(this.handleError));
   }
+  // Submit transaction (status "S") with full data
 
-  /**
-   * Submit transaction (status "S") with full data
-   */
-  submitTransaction(tnxId: string, data: ImportLcTransaction) {
+  submitTransaction(
+    tnxId: string,
+    data: ImportLcTransaction
+  ): Observable<ImportLcTransaction> {
     console.log('Submitting transaction:', tnxId, data);
-    return this.http.post<ImportLcTransaction>(
-      `${this.baseUrl}importlc/submit/${tnxId}`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return this.http
+      .post<ImportLcTransaction>(`${this.baseUrl}importlc/submit/${tnxId}`, data, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .pipe(catchError(this.handleError));
   }
 
-  /**
-   * Approve transaction by TNX ID (status "A")
-   */
-  approveTransaction(tnxId: string): Observable<ImportLcTransaction> {
+  // Get Transaction by TNX ID for READ-ONLY view for approved/rejected records
+  getTransactionByTnxId(tnxId: string): Observable<ImportLcTransaction> {
+    return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/${tnxId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Approve transaction */
+  approveTransaction(tnxId: string,data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Approving transaction ID:', tnxId);
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/approve/${tnxId}`, {}, {
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/approve/${tnxId}`, data, {
       headers: { 'Content-Type': 'application/json' }
-    });
+    })
+      .pipe(catchError(this.handleError));
   }
 
 
-  // Post admin/Create-customer 
-   
-   
-
-// set Cities 
-saveTnx(tnx:any,name:String){
-   console.log('Saving transaction:', tnx);
-   return this.http.post<any>(`${this.baseUrl}${name}`,tnx)
+  /** Reject Reason */
+  rejectTransaction(tnxId: string, reason: string): Observable<ImportLcTransaction> {
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/rejectReason/${tnxId}`, {rejectionReason: reason}, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // update-Rejected
+  updateRejectedTransaction(tnxId: string, payload: ImportLcTransaction) {
+    return this.http.put<ImportLcTransaction>(`${this.baseUrl}importlc/updateRejected/${tnxId}`, payload,{
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
 }
-getTnxByStatus(status:String,name:String){
-   return this.http.get<any>(`${this.baseUrl}city/${status}`);
-}
-
-getCityById(id:number){
-    return this.http.get<any>(`${this.baseUrl}city/${id}`);
-}
-
-updateTnx(data:any,name:String){
-    return this.http.put<any>(`${this.baseUrl}update/${name}/${data.id}`,data);
-}
-
-setTnxByStatus(status:String,id:number){
-      return this.http.post<any>(`${this.baseUrl}cities/setStatus/${id}`,{status})
-}
-
-
-
-} 
- 

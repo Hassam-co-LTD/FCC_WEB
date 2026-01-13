@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -21,12 +21,16 @@ import { Sidebar } from "../../../core/sidebar/sidebar";
 import { ApiService } from '../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../core/models/import-lc';
 import { ImportlcFormTransactionService } from '../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { Dialog } from '@angular/cdk/dialog';
+import { RejectDialogComponent } from '../../../shared/reject-dialog/reject-dialog';
+
 
 @Component({
   selector: 'app-import-lc',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     GeneralDetails,
     ApplicantBeneficiary,
@@ -39,7 +43,7 @@ import { ImportlcFormTransactionService } from '../../../core/services/user-serv
     InstructionToBank,
     Attachments,
     Sidebar,
-    RouterOutlet
+    RouterOutlet,
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']
@@ -47,9 +51,12 @@ import { ImportlcFormTransactionService } from '../../../core/services/user-serv
 export class ImportScreen implements OnInit {
   currentStep = 0;
   importForm!: FormGroup;
-  mode: 'CREATE' | 'UPDATE' = 'CREATE';
+  mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
   currentTx: ImportLcTransaction = {} as ImportLcTransaction;
   showUpdateSubmit = false;
+  showApproveReject = false;
+  rejectionReason = '';
   tnxId = '';
 
   importSteps = [
@@ -71,6 +78,7 @@ export class ImportScreen implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private route: ActivatedRoute,
+    private dialog: Dialog,
     private transactionService: ImportlcFormTransactionService
 
   ) {
@@ -78,6 +86,27 @@ export class ImportScreen implements OnInit {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+            }
+          });
+        },
+        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+      );
+      sections.forEach(section => observer.observe(section));
+    }, 200);
+    
+    const navState = history.state;
+
+    if (navState?.mode) {
+      this.screenMode = navState.mode;
+    }
+
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
     console.log('TNX ID from route:', this.tnxId);
     // const txFromState = history.state.transaction;
@@ -169,22 +198,55 @@ export class ImportScreen implements OnInit {
   private enterCreateMode(): void {
     this.mode = 'CREATE';
     this.showUpdateSubmit = false;
+    this.showApproveReject = false;
     this.currentTx = {} as ImportLcTransaction;
     this.importForm.reset();
     this.buildForm();
   }
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
-    this.showUpdateSubmit = true;
-
-    this.api.getPendingByTnxId(tnxId).subscribe({
+    this.api.getTransactionByTnxId(tnxId).subscribe({
       next: tx => {
         this.currentTx = tx;
         this.patchForm(tx);
+
+        switch (tx.status) {
+          case 'I': // pending
+            this.mode = 'UPDATE';
+            this.screenMode = 'EDIT';
+            this.importForm.enable();
+            // this.showUpdateSubmit = true;
+            // this.showApproveReject = false;
+            break;
+          case 'S': // submitted
+            this.mode = 'UPDATE';
+            this.screenMode = 'SUBMITTED';
+            this.importForm.disable();
+            // this.showUpdateSubmit = false;
+            // this.showApproveReject = true;
+            break;
+          case 'A': // Approved
+            this.mode = 'UPDATE';
+            this.screenMode = 'APPROVED';
+            this.importForm.disable();
+            break;
+
+          case 'R': // Rejected
+            this.mode = 'REJECTED';
+            this.screenMode = 'EDIT';
+            this.importForm.enable(); // allow correction
+            break;
+          default:
+            this.mode = 'UPDATE';
+            this.screenMode = 'FINAL';
+            this.importForm.disable();
+          // this.showUpdateSubmit = false;
+          // this.showApproveReject = false;
+        }
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/enquiries']);
+        this.router.navigate(['/import-screen/inquiries']);
       }
     });
   }
@@ -212,12 +274,17 @@ export class ImportScreen implements OnInit {
     });
   }
 
-  scrollToSection(i: number) {
-    this.currentStep = i;
-    document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  // scrollToSection(i: number) {
+  //   this.currentStep = i;
+  //   document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
 
-  private flattenForm(): ImportLcTransaction {
+  scrollToSection(index: number) {
+    this.currentStep = index;
+    const section = document.getElementById(`section-${index}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+    private flattenForm(): ImportLcTransaction {
     return {
       ...this.importForm.value.generalDetails,
       ...this.importForm.value.applicantForm,
@@ -248,7 +315,7 @@ export class ImportScreen implements OnInit {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
         // this.transactionService.addOrUpdateTransaction(res);
         this.snackBar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/enquiries']), 50);
+        setTimeout(() => this.router.navigate(['/import-screen/inquiries']), 50);
       },
       error: () => this.snackBar.open('Error saving draft', 'Close', { duration: 3000 })
     });
@@ -335,12 +402,79 @@ export class ImportScreen implements OnInit {
         );
 
         setTimeout(
-          () => this.router.navigate(['/import-screen/enquiries']),
+          () => this.router.navigate(['/import-screen/inquiries']),
           300
         );
       },
       error: () => {
         this.snackBar.open('Error updating transaction', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  approve(): void {
+    this.api.approveTransaction(this.currentTx.tnxId!, this.currentTx).subscribe({
+      next: () => this.navigateBack('approved'),
+      error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
+    });
+  }
+  openReject(): void {
+    const dialogRef = this.dialog.open<string>(RejectDialogComponent, {
+      width: '400px'
+    });
+
+    dialogRef.closed.subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+
+      this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
+          this.navigateBack('rejected'); // send user to rejected tab
+        },
+        error: () => {
+          this.snackBar.open('Failed to reject transaction', 'Close', { duration: 3000 });
+        }
+      });
+    });
+  }
+
+  // reject(): void {
+  //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
+  //     next: () => this.navigateBack('rejected'),
+  //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
+  //   });
+  // }
+
+  private navigateBack(tab: string) {
+    this.router.navigate(['/import-screen/inquiries'], {
+      queryParams: { tab }
+    });
+  }
+
+  updateRejected(): void {
+    if (this.importForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const payload = this.flattenForm(); // flatten form values
+    payload.tnxId = this.currentTx.tnxId;
+
+    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
+      next: (res) => {
+        this.snackBar.open(
+          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+          'Close',
+          { duration: 3000 }
+        );
+
+        // Navigate back to inquiries with Pending tab
+        this.router.navigate(['/import-screen/inquiries'], {
+          queryParams: { tab: 'pending' }
+        });
+      },
+      error: () => {
+        this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
       }
     });
   }
