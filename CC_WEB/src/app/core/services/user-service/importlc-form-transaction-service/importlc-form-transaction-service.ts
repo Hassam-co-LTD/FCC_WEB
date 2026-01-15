@@ -8,7 +8,7 @@ import { ImportLcTransaction } from '../../../../core/models/import-lc';
   providedIn: 'root',
 })
 export class ImportlcFormTransactionService {
-  private readonly STORAGE_KEY = 'IMPORT_LC_TRANSACTIONS';
+  // private readonly STORAGE_KEY = 'IMPORT_LC_TRANSACTIONS';
   /* ================= STATE ================= */
   private currentTransaction: ImportLcTransaction | null = null;
   private savetransactions$ = new BehaviorSubject<ImportLcTransaction[]>([]);
@@ -21,9 +21,9 @@ export class ImportlcFormTransactionService {
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
 
-    if (this.isBrowser) {
-      this.loadFromStorage();
-    }
+    // if (this.isBrowser) {
+    //   // this.loadFromStorage();
+    // }
   }
 
   /* ================= addOrUpdateTransaction ================= */
@@ -39,7 +39,7 @@ export class ImportlcFormTransactionService {
     }
 
     this.savetransactions$.next(transactions);
-    this.persist(transactions);
+    // this.persist(transactions);
   }
 
   /* ================= GETTERS ================= */
@@ -60,21 +60,21 @@ export class ImportlcFormTransactionService {
   }
   /* ================= STORAGE ================= */
 
-  private persist(transactions: ImportLcTransaction[]) {
-    if (!this.isBrowser) return;
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(transactions));
-  }
+  // private persist(transactions: ImportLcTransaction[]) {
+  //   if (!this.isBrowser) return;
+  //   // localStorage.setItem(this.STORAGE_KEY, JSON.stringify(transactions));
+  // }
 
-  private loadFromStorage() {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (!stored) return;
+  // private loadFromStorage() {
+  //   // const stored = localStorage.getItem(this.STORAGE_KEY);
+  //   if (!stored) return;
 
-    const parsed: ImportLcTransaction[] = JSON.parse(stored).map((t: any) => ({
-      ...t,
-      createdOn: t.createdOn ? new Date(t.createdOn) : undefined,
-      updatedOn: t.updatedOn ? new Date(t.updatedOn) : undefined,
-    }));
+  //   const parsed: ImportLcTransaction[] = JSON.parse(stored).map((t: any) => ({
+  //     ...t,
+  //     createdOn: t.createdOn ? new Date(t.createdOn) : undefined,
+  //     updatedOn: t.updatedOn ? new Date(t.updatedOn) : undefined,
+  //   }));
 
-    this.savetransactions$.next(parsed);
-  }
+  //   this.savetransactions$.next(parsed);
+  // }
 }
