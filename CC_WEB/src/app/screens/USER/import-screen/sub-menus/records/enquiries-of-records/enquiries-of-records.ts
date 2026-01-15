@@ -31,7 +31,7 @@ export class EnquiriesOfRecords implements OnInit {
     { key: 'submitted', label: 'Submitted' },
     { key: 'approved', label: 'Approved' },
     { key: 'rejected', label: 'Rejected' },
-    { key: 'response awaited', label: 'Response Awaited'}
+    // { key: 'response awaited', label: 'Response Awaited'}
   ];
 
   currentPage = 1;

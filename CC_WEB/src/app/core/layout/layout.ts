@@ -32,10 +32,10 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
-Logout() {
- this.authService.logout();
- this.router.navigate(['/login']);
-}
+  Logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
 
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
@@ -179,7 +179,7 @@ Logout() {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        { label: 'Search', icon: 'search', route: '/Search-by-id' },
+        // { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
           icon: 'article',
@@ -256,7 +256,7 @@ Logout() {
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
                 // { label: 'Approved-records', route: '/undertaking-issuance/approved-records' },
                 { label: 'Inquiries', route: '/undertaking-issuance/inquiries-records' },
-                
+
 
               ]
             },
@@ -264,10 +264,28 @@ Logout() {
 
           ],
         },
-
-
-        { label: 'Settings', icon: 'settings', route: '/settings' },
-        { label: 'Logout', icon: 'exit_to_app', route: '/login' }
+        {
+          label: 'Account Services',
+          icon: 'account_balance_wallet',
+          open: false,
+          children: [
+            { 
+              label: 'IBFT'
+            },
+            {
+              label: 'Bulk Transfer',
+            }
+          ]
+        },
+        {
+          label: 'Payments',
+          icon: 'credit_card',
+        },
+        {
+          label: 'Logout',
+          icon: 'logout',
+          route: '/login'
+        }
       ];
     }
   }

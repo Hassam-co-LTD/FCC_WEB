@@ -34,6 +34,7 @@ export class BankDetails {
   @Input() form!: FormGroup;  
 
   bankList: string[] = [
+    'National Bank Of Pakistan (NBP)',
     'Habib Bank Limited (HBL)',
     'United Bank Limited (UBL)',
     'MCB Bank',

@@ -12,44 +12,56 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class Success implements OnInit {
 
-  tnxId: string = '';
-  reference: string = '';
-  
-  // Default Labels (can be overwritten by state)
-  pageName1 = 'Go to Listing'; 
-  pageName2 = 'Create New';
-  
-  // Routes to navigate to
-  listingRoute = 'undertaking-issuance/inquiries-records';
-  createRoute = '/request-undertaking/general-details';
+  tnxId = '';
+  reference = '';
 
-  constructor(private router: Router) { 
+  pageName1 = 'Go to Listing';
+  pageName2 = 'Create New';
+
+  listingRoute = '';
+  createRoute = '';
+
+  constructor(private router: Router) {
     const nav = this.router.getCurrentNavigation();
     const state = nav?.extras.state as any;
 
-    if (state) {
-      // 1. Capture Transaction Data
-      this.tnxId = state.tnxId || state.transaction?.tnxId;
-      this.reference = state.channelReference || state.transaction?.channelReference;
+    if (!state) {
+      console.warn('No navigation state found on Success page');
+      return;
+    }
 
-      // 2. Capture Dynamic Config (Labels & Routes)
-      if (state.labels) {
-        this.pageName1 = state.labels.listingLabel || this.pageName1;
-        this.pageName2 = state.labels.createLabel || this.pageName2;
-      }
-      
-      if (state.routes) {
-        this.listingRoute = state.routes.listingRoute || this.listingRoute;
-        this.createRoute = state.routes.createRoute || this.createRoute;
-      }
+    this.tnxId = state.tnxId || state.transaction?.tnxId || '';
+    this.reference =
+      state.channelReference || state.transaction?.channelReference || '';
+
+    switch (state.source) {
+      case 'IMPORT_LC':
+        this.listingRoute = 'import-screen/inquiries';
+        this.createRoute = 'import-screen';
+        break;
+
+      case 'UNDERTAKING_ISSUANCE':
+        this.listingRoute = 'undertaking-issuance/inquiries-records';
+        this.createRoute =
+          'undertaking-issuance/request-undertaking/general-details';
+        break;
+    }
+
+    // Explicit overrides (still supported)
+    if (state.routes) {
+      this.listingRoute = state.routes.listingRoute || this.listingRoute;
+      this.createRoute = state.routes.createRoute || this.createRoute;
+    }
+
+    if (state.labels) {
+      this.pageName1 = state.labels.listingLabel || this.pageName1;
+      this.pageName2 = state.labels.createLabel || this.pageName2;
     }
   }
 
   ngOnInit(): void {
-    // Fallback if accessed directly without state
     if (!this.tnxId && !this.reference) {
-      // Optionally redirect back or show empty state
-      console.warn('No transaction state found on Success page');
+      console.warn('Success page accessed without transaction context');
     }
   }
 

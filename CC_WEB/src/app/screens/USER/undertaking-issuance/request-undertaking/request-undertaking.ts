@@ -297,6 +297,7 @@ export class RequestUndertaking implements OnInit {
 
     this.router.navigate([successPath], {
       state: {
+        source: 'UNDERTAKING_ISSUANCE',
         tnxId: id,
         channelReference: reference,
         message: successMessage,

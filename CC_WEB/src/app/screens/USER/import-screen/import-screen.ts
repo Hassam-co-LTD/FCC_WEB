@@ -347,7 +347,7 @@ export class ImportScreen implements OnInit {
       next: (res: ImportLcTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
         this.router.navigate(['/import-screen/success'], {
-          state: { transaction: res }
+          state: { source: 'IMPORT_LC', transaction: res }
         });
       },
       error: () => {

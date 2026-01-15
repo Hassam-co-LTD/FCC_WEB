@@ -20,6 +20,15 @@
     align-items: center;
     gap: 8px; // small space between icon & text
 }
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    height: 25px;
+    width: auto;
+}
 
 /* Hamburger icon */
 .menu-toggle {

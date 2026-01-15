@@ -27,7 +27,7 @@
   <!-- KEY METRICS -->
   <div class="metrics-section">
     <div class="section-header">
-      <h2>Financial Overview</h2>
+      <h2>LC Overview</h2>
       <div class="time-filter">
         <button mat-button [class.active]="timeFilter === 'today'" (click)="setTimeFilter('today')">Today</button>
         <button mat-button [class.active]="timeFilter === 'week'" (click)="setTimeFilter('week')">This Week</button>
@@ -46,8 +46,8 @@
             <div class="metric-value">{{ formatValue(card.value, card.format) }}</div>
             <div class="metric-title">{{ card.title }}</div>
             <div class="metric-trend" [class]="card.trend > 0 ? 'trend-up' : 'trend-down'">
-              <mat-icon>{{ card.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              <span>{{ card.trend }}% from last period</span>
+              <!-- <mat-icon>{{ card.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <span>{{ card.trend }}% from last period</span> -->
             </div>
           </div>
           <div class="metric-action">
