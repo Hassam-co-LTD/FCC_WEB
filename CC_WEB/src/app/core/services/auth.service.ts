@@ -16,7 +16,7 @@ export class AuthService {
 
   login(userId: string, companyId: string, password: string): boolean {
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
-        (userId === 'user' && companyId === 'user' && password === 'user')) {
+        (userId === 'user' && companyId === 'ABC' && password === 'user')) {
 
       if (this.isBrowser()) {
         sessionStorage.setItem('token', 'dummy-token');

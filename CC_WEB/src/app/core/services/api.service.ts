@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -50,21 +50,33 @@ export class ApiService {
 
   savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Saving draft:', data);
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data,
+       {headers})
       .pipe(catchError(this.handleError));
   }
   //  Get full transactions by status
   getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
     return this.http.get<ImportLcTransaction[]>(
-      `${this.baseUrl}importlc/status/${status}`
+      `${this.baseUrl}importlc/status/${status}`,
+      {headers}
     )
       .pipe(catchError(this.handleError));
   }
   //  Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getRecordTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
-    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/records/${status}`)
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/records/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
   //  Get pending records by TNX ID
