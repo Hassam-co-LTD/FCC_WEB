@@ -39,10 +39,10 @@ export class inquiriesRecords implements OnInit {
 
   // Tabs Configuration
   tabs = [
-    { key: 'pending', label: 'Pending' },     // Drafts
-    { key: 'submitted', label: 'Submitted' }, // Pending Approval
-    { key: 'approved', label: 'Approved' },
-    { key: 'rejected', label: 'Rejected' }
+    { key: 'pending', label: 'Pending' },     // Drafts (Input)
+    { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
+    { key: 'approved', label: 'Approved' },   // Final (View Only)
+    { key: 'rejected', label: 'Rejected' }    // Correction (Edit)
   ];
 
   // Pagination
@@ -72,14 +72,15 @@ export class inquiriesRecords implements OnInit {
         if(params['tab']) {
             this.activeTab = params['tab'];
         }
-        // Initial Load
+        // Initial Load (Backend Filtered)
         this.loadByStatus();
     });
 
     // 2. Subscribe to stream updates (Real-time updates)
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList; 
-      this.filterByStatusAndSearch(); 
+      // Filter ONLY by search/sort locally (Status is done by backend)
+      this.filterBySearchOnly(); 
     });
   }
 
@@ -88,51 +89,51 @@ export class inquiriesRecords implements OnInit {
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.currentPage = 1;
-    this.loadByStatus();
+    // URL change triggers ngOnInit subscription -> loadByStatus()
     this.router.navigate([], { relativeTo: this.route, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
   }
 
-  private loadByStatus(): void {
-    this.transactionService.refreshTransactions().subscribe(); 
-  }
-
+private loadByStatus(): void {
+    this.transactionService.refreshTransactions(this.activeTab).subscribe(txList => {
+        this.allTransactions = txList;
+        this.filterBySearchOnly();
+    });
+}
   // --- FILTERING ---
 
   applyFilters(): void {
     this.currentPage = 1;
-    this.filterByStatusAndSearch();
+    this.filterBySearchOnly();
   }
 
-  private filterByStatusAndSearch(): void {
+  // UPDATED: Renamed and removed status filtering logic
+  private filterBySearchOnly(): void {
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
-    const targetStatusChar = this.mapTabToBackendStatus(this.activeTab);
 
-    // 1. Filter by Status
-    let temp = this.allTransactions.filter(tx => {
-        const txStatusChar = this.mapBackendStatusToChar(tx.status); 
-        return txStatusChar === targetStatusChar;
-    });
+    // 1. Start with all records (They are already filtered by status from backend)
+    let temp = [...this.allTransactions];
 
     // 2. Filter by Search Query
     temp = temp.filter(tx => {
-      const displayId = (tx.channelReference || tx.tnxId || '').toLowerCase();
-      const benName = this.getBeneficiary(tx).toLowerCase();
-      const appName = this.getApplicant(tx).toLowerCase();
-      const cur = this.getCurrency(tx).toLowerCase();
-      const issuerRef = this.getIssuerRef(tx).toLowerCase();
-      const product = this.getProduct(tx).toLowerCase();
+      const data = tx.formData || {}; 
+      const benName = data.applicantBeneficiary?.beneficiaryName || '';
+      const appName = data.applicantBeneficiary?.applicantName || '';
+      const cur = data.undertakingDetails?.currency || '';
+      const issuerRef = data.bankForm?.issuerReference || '';
+      
+      // Use channelReference for display ID search
+      const displayId = tx.channelReference || ''; 
 
       const matchesSearch =
         !query ||
-        displayId.includes(query) ||
-        issuerRef.includes(query) ||
-        benName.includes(query) ||
-        appName.includes(query) ||
-        product.includes(query) ||
-        cur.includes(query);
+        displayId.toLowerCase().includes(query) ||
+        issuerRef.toLowerCase().includes(query) ||
+        benName.toLowerCase().includes(query) ||
+        appName.toLowerCase().includes(query) ||
+        cur.toLowerCase().includes(query);
 
-      const matchesCurrency = !currency || cur === currency;
+      const matchesCurrency = !currency || cur.toLowerCase() === currency;
 
       return matchesSearch && matchesCurrency;
     });
@@ -142,7 +143,6 @@ export class inquiriesRecords implements OnInit {
 
   clearSearch(): void {
     this.searchQuery = '';
-    this.currencyFilter = '';
     this.applyFilters();
   }
 
@@ -172,69 +172,19 @@ export class inquiriesRecords implements OnInit {
           : bVal.getTime() - aVal.getTime();
       }
 
-      // Numeric Sort
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
-      }
-
       return this.sortDirection === 'asc'
         ? String(aVal).localeCompare(String(bVal))
         : String(bVal).localeCompare(String(aVal));
     });
   }
 
-  // --- DATA HELPERS (The Fix for "Missing Data") ---
-  // These helpers check multiple locations for the data
-  
-  getApplicant(tx: UndertakingTransaction): string {
-    return tx.formData?.applicantBeneficiary?.applicantName || (tx as any).applicantName || '';
-  }
-
-  getBeneficiary(tx: UndertakingTransaction): string {
-    return tx.formData?.applicantBeneficiary?.beneficiaryName || (tx as any).beneficiaryName || '';
-  }
-
-  getProduct(tx: UndertakingTransaction): string {
-    return tx.formData?.generalDetails?.productType || (tx as any).productType || 'Undertaking';
-  }
-
-  getIssuerRef(tx: UndertakingTransaction): string {
-    return tx.formData?.bankForm?.issuerReference || (tx as any).issuerReference || '-';
-  }
-
-  getCurrency(tx: UndertakingTransaction): string {
-    return tx.formData?.undertakingDetails?.currency || (tx as any).currency || 'USD';
-  }
-
-  getAmount(tx: UndertakingTransaction): number {
-    // Priority: Nested Form Data -> Root 'undertakingAmount' -> Root 'amount'
-    const nested = tx.formData?.undertakingDetails?.undertakingAmount;
-    if (nested !== null && nested !== undefined) return nested;
-    
-    const rootUnd = (tx as any).undertakingAmount;
-    if (rootUnd !== null && rootUnd !== undefined) return rootUnd;
-
-    const rootAmt = (tx as any).amount; // Handles the mismatch in list API
-    if (rootAmt !== null && rootAmt !== undefined) return rootAmt;
-
-    return 0;
-  }
-  
-  getExpiryDate(tx: UndertakingTransaction): any {
-     return tx.formData?.undertakingDetails?.expiryDate || (tx as any).expiryDate || null;
-  }
-
   private resolveColumn(tx: UndertakingTransaction, column: string): any {
+    const data = tx.formData || {};
     switch (column) {
       case 'channelReference': return tx.channelReference; 
       case 'lastUpdated': return new Date(tx.lastUpdated);
-      case 'product': return this.getProduct(tx);
-      case 'issuerRef': return this.getIssuerRef(tx);
-      case 'expiryDate': return this.getExpiryDate(tx) ? new Date(this.getExpiryDate(tx)) : null;
-      case 'currency': return this.getCurrency(tx);
-      case 'amount': return this.getAmount(tx);
-      case 'applicant': return this.getApplicant(tx);
-      case 'beneficiary': return this.getBeneficiary(tx);
+      case 'currency': return data.undertakingDetails?.currency;
+      case 'amount': return data.undertakingDetails?.undertakingAmount;
       default: return null;
     }
   }
@@ -265,24 +215,17 @@ export class inquiriesRecords implements OnInit {
   }
 
   openUndertaking(tx: UndertakingTransaction) {
-    const statusChar = this.mapBackendStatusToChar(tx.status);
-
-    if (statusChar === 'i') {
-        // Edit Mode
-        this.router.navigate(['/undertaking-issuance/request-undertaking'], {
-            queryParams: { transactionId: tx.id }
-        });
-    } else {
-        // View Mode
-        this.router.navigate(['/undertaking-issuance/preview'], {
-            queryParams: { transactionId: tx.id }
-        });
-    }
+    this.router.navigate(['/undertaking-issuance/request-undertaking'], {
+        queryParams: { transactionId: tx.id }
+    });
   }
 
   viewOnly(tx: UndertakingTransaction) {
       this.router.navigate(['/undertaking-issuance/preview'], {
-          queryParams: { transactionId: tx.id }
+          queryParams: { 
+            transactionId: tx.id,
+            mode: 'view' 
+          }
       });
   }
 
@@ -291,16 +234,8 @@ export class inquiriesRecords implements OnInit {
   }
 
   // --- STATUS MAPPERS ---
-
-  private mapTabToBackendStatus(tab: string): string {
-    switch (tab) {
-      case 'pending': return 'i'; 
-      case 'submitted': return 's';
-      case 'approved': return 'a';
-      case 'rejected': return 'r';
-      default: return 'i';
-    }
-  }
+  // (Note: `mapTabToBackendStatus` is no longer used for filtering but kept if needed for reference, 
+  // or you can safely remove it. `mapBackendStatusToChar` is still used by `isDraft`)
 
   private mapBackendStatusToChar(statusStr: string): string {
     const s = statusStr?.toLowerCase() || '';

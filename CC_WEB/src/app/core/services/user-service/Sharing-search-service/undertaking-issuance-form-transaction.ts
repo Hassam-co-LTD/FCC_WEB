@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http'; // Added HttpParams
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 
@@ -8,9 +8,10 @@ export interface UndertakingTransaction {
   id: string | number;
   channelReference: string; 
   tnxId?: string;
-  status: string;
+  status: string; 
   lastUpdated: Date;
   formData: any;
+  companyId?: string;
 }
 
 @Injectable({
@@ -27,8 +28,13 @@ export class UndertakingIssuanceService {
   constructor(private http: HttpClient) {}
 
   // ================= READ OPERATIONS =================
-  refreshTransactions(): Observable<UndertakingTransaction[]> {
-    return this.http.get<any[]>(`${this.BASE_URL}/list`).pipe(
+  
+  // UPDATED: Now accepts 'tab' parameter
+  refreshTransactions(tab: string = 'pending'): Observable<UndertakingTransaction[]> {
+    // Create query params safely
+    let params = new HttpParams().set('tab', tab);
+
+    return this.http.get<any[]>(`${this.BASE_URL}/list`, { params }).pipe(
       map(list => {
         if (!Array.isArray(list)) return [];
         return list.map(item => this.mapToFrontend(item));
@@ -41,16 +47,12 @@ export class UndertakingIssuanceService {
     );
   }
 
+  
   getTransactionById(id: string | number): Observable<UndertakingTransaction> {
-    // REMOVED THE CACHE CHECK HERE. 
-    // We must always hit the API to get full details (addresses, instructions, etc.)
-    // because the 'list' view only provides summary data.
-    
     return this.http.get<any>(`${this.BASE_URL}/${id}`).pipe(
       map(data => this.mapToFrontend(data)),
       tap(tx => {
         this.currentTransaction = tx;
-        // Optionally update the local list with this full detailed version
         this.updateLocalState(tx);
       })
     );
@@ -58,49 +60,50 @@ export class UndertakingIssuanceService {
 
   // ================= WRITE OPERATIONS =================
 
-  saveDraft(formData: any, id?: string | number | null): Observable<UndertakingTransaction> {
-    // 1. Flatten the form data
-    const payload = this.transformToBackendDTO(formData, id);
-    
-    // 2. FORCE STATUS 'Draft' for new saves if not present
-    if (!payload.status) {
-        payload.status = 'Draft'; 
+  // 1. SAVE DRAFT (Status: 'I' or 'Draft')
+saveDraft(formData: any, companyId: string, id?: string | number | null): Observable<UndertakingTransaction> {
+  const payload = this.transformToBackendDTO(formData, id);
+  payload.status = 'I'; 
+
+  return this.http.post<any>(
+    `${this.BASE_URL}/save`,
+    payload,
+    {
+      headers: { 'companyid': companyId }  // <-- Add company ID here
     }
+  ).pipe(
+    map(saved => this.mapToFrontend(saved)),
+    tap(savedTx => this.updateLocalState(savedTx))
+  );
+}
 
-    console.log('Final Payload being sent to Save:', payload);
-
-    return this.http.post<any>(`${this.BASE_URL}/save`, payload).pipe(
-      map(saved => this.mapToFrontend(saved)),
-      tap(savedTx => this.updateLocalState(savedTx))
-    );
-  }
 
   updateDraft(formData: any): Observable<UndertakingTransaction> {
     const id = formData.id; 
     const payload = this.transformToBackendDTO(formData, id);
-    
-    // Ensure status exists (keep existing or default to Draft)
-    if (!payload.status) {
-        payload.status = 'Draft';
-    }
+    payload.status = 'I'; 
 
     return this.http.put<any>(`${this.BASE_URL}/update/${id}`, payload).pipe(
       map(updated => this.mapToFrontend(updated)),
-      tap(updatedTx => this.updateLocalState(updatedTx)),
-      catchError(err => {
-        console.error('Update failed:', err);
-        throw err;
-      })
+      tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
 
-  submitTransaction(id: string | number, payload?: any): Observable<UndertakingTransaction> {
-    return this.http.post<any>(`${this.BASE_URL}/submit/${id}`, {}).pipe(
+  // 2. SUBMIT (Status: 'S' or 'Submitted')
+  submitTransaction(id: string | number, formData?: any): Observable<UndertakingTransaction> {
+    let payload = {};
+    if (formData) {
+        payload = this.transformToBackendDTO(formData, id);
+        (payload as any).status = 'S'; 
+    }
+
+    return this.http.post<any>(`${this.BASE_URL}/submit/${id}`, payload).pipe(
       map(updated => this.mapToFrontend(updated)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
   }
   
+  // 3. APPROVE (Status: 'A')
   approveUndertaking(id: string | number): Observable<UndertakingTransaction> {
     return this.http.post<any>(`${this.BASE_URL}/approve/${id}`, {}).pipe(
       map(updated => this.mapToFrontend(updated)),
@@ -108,20 +111,12 @@ export class UndertakingIssuanceService {
     );
   }
 
+  // 4. REJECT (Status: 'R')
   rejectUndertaking(id: string | number, reason: string): Observable<UndertakingTransaction> {
     return this.http.post<any>(`${this.BASE_URL}/reject/${id}`, { reason }).pipe(
       map(updated => this.mapToFrontend(updated)),
       tap(updatedTx => this.updateLocalState(updatedTx))
     );
-  }
-
-  revertToDraft(id: string | number, currentData: any): Observable<UndertakingTransaction> {
-      const payload = this.transformToBackendDTO(currentData, id);
-      payload.status = 'Draft'; // Force status reset
-      return this.http.post<any>(`${this.BASE_URL}/save`, payload).pipe(
-        map(saved => this.mapToFrontend(saved)),
-        tap(savedTx => this.updateLocalState(savedTx))
-      );
   }
 
   // ================= HELPERS =================
@@ -139,29 +134,17 @@ export class UndertakingIssuanceService {
   }
 
   private mapToFrontend(backendData: any): UndertakingTransaction {
-    const refDate = backendData.createdAt || backendData.updatedAt || new Date();
-    const customRef = backendData.channelReference || 
-                      this.generateBusinessId(backendData.id, refDate);
+    // Use tnxId as channel ref if available, else generate one
+    const customRef = backendData.tnxId || backendData.channelReference || `UND-${backendData.id}`;
 
     return {
       id: backendData.id,
       channelReference: customRef,
       tnxId: backendData.tnxId,
-      status: backendData.status || 'Draft',
+      status: backendData.status || 'I', 
       lastUpdated: backendData.updatedAt ? new Date(backendData.updatedAt) : new Date(),
       formData: this.transformToAngularForm(backendData)
     };
-  }
-
-  private generateBusinessId(id: number | string, dateVal: any): string {
-    if (!id) return 'UND-NEW-DRAFT'; 
-    const dateObj = new Date(dateVal);
-    if (isNaN(dateObj.getTime())) return `UND-${id}`;
-    const yyyy = dateObj.getFullYear();
-    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const dd = String(dateObj.getDate()).padStart(2, '0');
-    const paddedId = String(id).padStart(5, '0');
-    return `UND${yyyy}${mm}${dd}${paddedId}`;
   }
 
   // --- MAPPING: BACKEND FLAT JSON -> ANGULAR NESTED FORM ---
@@ -197,10 +180,10 @@ export class UndertakingIssuanceService {
         issuanceType: backendData.issuanceType,
         swift: backendData.swift,
         bankName: backendData.bankName,
-        address1: backendData.bankAddress1 || backendData.address1,
-        address2: backendData.bankAddress2 || backendData.address2,
-        address3: backendData.bankAddress3 || backendData.address3,
-        country: backendData.bankCountry   || backendData.country
+        address1: backendData.bankAddress1,
+        address2: backendData.bankAddress2,
+        address3: backendData.bankAddress3,
+        country: backendData.bankCountry
       },
       undertakingDetails: {
         typeOfUndertaking: backendData.typeOfUndertaking,
@@ -215,12 +198,10 @@ export class UndertakingIssuanceService {
         correspondentCharges: backendData.correspondentCharges,
         supplementaryInfo: backendData.supplementaryInfo,
         
-        // --- MATCHING COMPONENT CASING (CamelCase) ---
         textOfUndertakingInfo: backendData.textOfUndertakingInfo, 
         underlyingTransactionInfo: backendData.underlyingTransactionInfo, 
         presentationInfo: backendData.presentationInfo,
         basicExtensionType: backendData.basicExtensionType, 
-        
         increaseDecreaseType: backendData.increaseDecreaseType,
         contractType: backendData.contractType,
         contractDate: safeDate(backendData.contractDate),
@@ -231,7 +212,6 @@ export class UndertakingIssuanceService {
         applicableRules: backendData.applicableRules,
         subdivision: backendData.subdivision,
         jurisdiction: backendData.jurisdiction,
-        
         demandOption: backendData.demandOption, 
         governingLawsType: backendData.governingLawsType,
         languageType: backendData.languageType,
@@ -252,10 +232,7 @@ export class UndertakingIssuanceService {
   // --- MAPPING: ANGULAR NESTED FORM -> BACKEND FLAT JSON ---
   private transformToBackendDTO(form: any, id?: string | number | null): any {
     if (!form) return {};
-    
-    // Helper to avoid sending "undefined" to backend
     const val = (v: any) => (v === undefined || v === '' ? null : v);
-
     const gen = form.generalDetails || {};
     const app = form.applicantBeneficiary || {};
     const bank = form.bankForm || {};
@@ -264,17 +241,13 @@ export class UndertakingIssuanceService {
 
     return {
       id: id || form.id || null, 
+      status: form.status,
       
-      // Ensure STATUS is sent
-      status: form.status || 'Draft',
-      
-      // General
       productType: val(gen.productType),
       modeOfTransmission: val(gen.modeOfTransmission),
       formOfUndertaking: val(gen.formOfUndertaking),
       purpose: val(gen.purpose),
       
-      // Applicant & Beneficiary
       applicantName: val(app.applicantName),
       applicantAddress1: val(app.applicantAddress1),
       applicantAddress2: val(app.applicantAddress2),
@@ -285,7 +258,6 @@ export class UndertakingIssuanceService {
       beneficiaryAddress3: val(app.beneficiaryAddress3),
       beneficiaryCountry: val(app.beneficiaryCountry),
       
-      // Bank
       recipientBankName: val(bank.recipientBankName),
       issuerReference: val(bank.issuerReference),
       issuanceType: val(bank.issuanceType),
@@ -296,7 +268,6 @@ export class UndertakingIssuanceService {
       bankAddress3: val(bank.address3),
       bankCountry: val(bank.country),
       
-      // Undertaking
       typeOfUndertaking: val(und.typeOfUndertaking),
       effectiveOption: val(und.effectiveOption),
       expiryType: val(und.expiryType),
@@ -308,34 +279,27 @@ export class UndertakingIssuanceService {
       variationMinus: val(und.variationMinus),
       issuanceCharges: val(und.issuanceCharges),
       correspondentCharges: val(und.correspondentCharges),
-      
       supplementaryInfo: val(und.supplementaryInfo),
 
-      // --- MATCHING COMPONENT CASING ---
       textOfUndertakingInfo: val(und.textOfUndertakingInfo), 
       underlyingTransactionInfo: val(und.underlyingTransactionInfo), 
       presentationInfo: val(und.presentationInfo),
-      
       basicExtensionType: val(und.basicExtensionType),
       increaseDecreaseType: val(und.increaseDecreaseType),
-      
       contractType: val(und.contractType),
       contractDate: this.formatDateToYYYYMMDD(und.contractDate),
       contractCurrency: val(und.contractCurrency),
       contractAmount: val(und.contractAmount),
       percentageCovered: val(und.percentageCovered),
       contractReference: val(und.contractReference),
-
       applicableRules: val(und.applicableRules),
       subdivision: val(und.subdivision),
       jurisdiction: val(und.jurisdiction),
-      
       demandOption: val(und.demandOption),
       governingLawsType: val(und.governingLawsType),
       languageType: val(und.languageType),
       tsOption: val(und.tsOption),
 
-      // Instructions
       deliveryType: val(inst.deliveryType),
       deliveryMode: val(inst.deliveryMode),
       deliveryTo: val(inst.deliveryTo),
@@ -343,16 +307,13 @@ export class UndertakingIssuanceService {
       feeAccount: val(inst.feeAccount),
       otherInstructions: val(inst.otherInstructions),
       
-      // Files
       files: form.attachments?.files || []
     };
   }
 
   private formatDateToYYYYMMDD(dateVal: any): string | null {
     if (!dateVal) return null;
-    if (typeof dateVal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateVal)) {
-        return dateVal;
-    }
+    if (typeof dateVal === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateVal)) return dateVal;
     const date = new Date(dateVal);
     if (isNaN(date.getTime())) return null;
     const year = date.getFullYear();

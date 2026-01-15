@@ -20,8 +20,8 @@ export class Success implements OnInit {
   pageName2 = 'Create New';
   
   // Routes to navigate to
-  listingRoute = '/dashboard';
-  createRoute = '/dashboard';
+  listingRoute = 'undertaking-issuance/inquiries-records';
+  createRoute = '/request-undertaking/general-details';
 
   constructor(private router: Router) { 
     const nav = this.router.getCurrentNavigation();

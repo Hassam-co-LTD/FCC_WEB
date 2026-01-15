@@ -1,296 +1,200 @@
 @use '../../../../../../styles/theme' as theme;
 
 /* ================================
-   PREVIEW PAGE (Blue Fintech Theme)
+   PAGE WRAPPER
 ================================ */
 .preview-page {
-    background: theme.$light-bg; 
-    padding: 40px; // Increased padding for "Big Space" look
-    border-radius: 12px;
-    border: 1px solid theme.$border-light;
-    box-shadow: 0 3px 10px rgba(13, 71, 161, 0.05);
-    min-height: 100vh;
-    box-sizing: border-box;
+  background: theme.$light-bg;
+  padding: 32px;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  box-shadow: theme.$shadow-primary;
 }
 
 /* ================================
    PAGE TITLE
 ================================ */
 .page-title {
-    font-size: 26px;
-    margin-bottom: 40px; // More breathing room
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    color: theme.$primary; 
-    border-bottom: 2px solid theme.$border-light;
-    padding-bottom: 16px;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: theme.$primary;
+  border-bottom: 2px solid theme.$border-light;
+  padding-bottom: 10px;
 }
 
 /* ================================
-   CONTAINER + ROWS
+   LAYOUT
 ================================ */
 .preview-container {
-    display: flex;
-    flex-direction: column;
-    gap: 32px; // Wide gap between rows
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .preview-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr; // Two cards side-by-side
-    gap: 32px; // Wide gap between cards
-    align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
 }
 
 /* ================================
-   CARD STYLING
+   CARD
 ================================ */
 .preview-card {
-    // The "Big Space" Padding: Top/Bot 32px, Left/Right 40px
-    padding: 32px 40px; 
-    border-radius: 12px;
-    background: theme.$white;
-    border: 1px solid theme.$border-light;
-    box-shadow: 0 2px 8px rgba(13, 71, 161, 0.08);
-    transition: 0.2s ease;
-    height: 100%;
-    box-sizing: border-box;
+  background: theme.$white;
+  padding: 22px;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  box-shadow: theme.$shadow-primary;
+  transition: all 0.2s ease;
 
-    &:hover {
-        border-color: theme.$border-primary;
-        box-shadow: 0 3px 10px rgba(13, 71, 161, 0.12);
-    }
-}
+  &:hover {
+    border-color: theme.$border-primary;
+    box-shadow: theme.$button-shadow;
+  }
 
-.preview-card.full-width {
-    grid-column: 1 / -1; // Spans across both columns
+  &.full-width {
+    grid-column: 1 / 3;
+  }
 }
 
 /* ================================
-   SECTION TITLE (Card Header)
+   SECTION TITLES
 ================================ */
 .section-title {
-    font-size: 15px; // Slightly smaller, crisper
-    font-weight: 700;
-    text-transform: uppercase; // Matches the reference image style
-    margin-bottom: 32px; // Big space below title
-    color: theme.$primary-dark;
-    border-bottom: 1px solid theme.$border-light;
-    padding-bottom: 12px;
-    letter-spacing: 0.5px;
-}
-
-.subsection-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: theme.$primary;
-    margin: 24px 0 16px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  font-size: 18px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  margin-bottom: 18px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid theme.$border-light;
 }
 
 /* ================================
-   DATA GRID (The "Big Space" Layout)
+   GRID SYSTEM
 ================================ */
 .preview-grid {
-    display: grid;
-    // Standard: 2 Data items per row
-    grid-template-columns: repeat(2, 1fr); 
-    
-    // THE KEY TO THE LOOK: Wide percentage gap + vertical row spacing
-    column-gap: 15%; 
-    row-gap: 32px;
-}
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  column-gap: 28px;
+  row-gap: 12px;
 
-// Support for the 4-column sections in your HTML (Financials)
-.preview-grid.four-col {
+  &.four-col {
     grid-template-columns: repeat(4, 1fr);
-    column-gap: 24px; // Tighter gap for 4 cols
+    column-gap: 20px;
+  }
 }
 
 .preview-item {
-    display: flex;
-    flex-direction: column; // Stack Label on top of Value
-    gap: 8px;
-    min-width: 0;
-}
-
-.preview-item.full-width {
+  &.full-width {
     grid-column: 1 / -1;
+  }
 }
 
-/* ================================
-   LABELS & VALUES
-================================ */
 .preview-label {
-    font-size: 11px;
-    font-weight: 700;
-    color: theme.$text-medium; // Grey text
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: theme.$text-dark;
 }
 
 .preview-value {
-    color: theme.$text-dark;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.6;
-    word-break: break-word;
+  font-size: 13px;
+  color: theme.$text-medium;
+  line-height: 1.5;
 
-    // Narrative block styling
-    &.pre-wrap {
-        white-space: pre-wrap;
-        background: theme.$light-bg;
-        padding: 16px;
-        border-radius: 6px;
-        border: 1px solid theme.$border-light;
-        font-size: 13px;
-        margin-top: 4px;
-    }
-}
-
-/* Divider styling for Undertaking Details */
-mat-divider.spacer {
-    margin: 32px 0;
-    border-top-color: theme.$border-light;
+  &.pre-wrap {
+    white-space: pre-wrap;
+  }
 }
 
 /* ================================
-   ATTACHMENTS TABLE
+   DIVIDER
+================================ */
+.spacer {
+  margin: 26px 0;
+}
+
+/* ================================
+   ATTACHMENTS
 ================================ */
 .preview-attachments-container {
-    border: 1px solid theme.$border-light;
-    border-radius: 6px;
-    overflow: hidden;
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .attachment-grid {
-    display: grid;
-    // Icon | Name | Size | Action
-    grid-template-columns: 60px 1fr 120px 80px; 
-    padding: 14px 24px;
-    border-bottom: 1px solid theme.$border-light;
-    align-items: center;
-    font-size: 13px;
-    background: theme.$white;
+  display: grid;
+  grid-template-columns: 70px 1fr 120px 80px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid theme.$border-light;
+  font-size: 14px;
 
-    &:last-child { border-bottom: none; }
-    
-    &:hover:not(.header) {
-        background-color: theme.$hover-bg;
-    }
-}
-
-.attachment-grid.header {
-    font-weight: 700;
-    background: theme.$light-bg;
-    color: theme.$text-medium;
-    text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid theme.$border-light;
+  &.header {
+    font-weight: 600;
+    background: theme.$hover-bg;
+    border-bottom: 2px solid theme.$border-primary;
+  }
 }
 
 .action-icon {
-    cursor: pointer;
-    color: theme.$primary;
-    transition: 0.2s ease;
-    &:hover { 
-        color: theme.$primary-dark; 
-        transform: scale(1.1);
-    }
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: theme.$primary-hover;
+    transform: scale(1.1);
+  }
 }
 
 .empty-text {
-    font-style: italic;
-    color: theme.$text-medium;
-    text-align: center;
-    padding: 32px;
-    background: theme.$light-bg;
-    border-radius: 6px;
+  margin-top: 14px;
+  color: theme.$text-medium;
+  font-style: italic;
 }
 
 /* ================================
-   FOOTER BUTTONS
+   ACTION BUTTONS
 ================================ */
 .actions {
-    margin-top: 40px;
-    padding-top: 24px;
-    border-top: 1px solid theme.$border-light;
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-}
-
-button[mat-flat-button], button[mat-stroked-button] {
-    min-width: 120px;
-    height: 42px;
-    border-radius: 50px; // Pill shape
-    font-weight: 500;
-}
-
-/* Primary Button */
-button[mat-flat-button][color="primary"] {
-    background: theme.$primary !important;
-    color: #fff !important;
-    box-shadow: 0 4px 10px rgba(theme.$primary, 0.3);
-    &:hover {
-        background: theme.$primary-dark !important;
-        transform: translateY(-1px);
-    }
-}
-
-/* Warn/Reject Button */
-button[mat-flat-button][color="warn"] {
-    background-color: #d32f2f !important;
-    color: #fff !important;
-    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
-    &:hover {
-        background-color: #b71c1c !important;
-    }
-}
-
-/* Secondary Button */
-button[mat-stroked-button] {
-    border-color: theme.$border-primary;
-    color: theme.$text-medium;
-    &:hover {
-        background: theme.$light-bg;
-        color: theme.$text-dark;
-    }
+  margin-top: 35px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
 }
 
 /* ================================
-   RESPONSIVENESS
+   RESPONSIVE
 ================================ */
 @media (max-width: 1080px) {
-    .preview-row {
-        grid-template-columns: 1fr; // Stack cards vertically
-    }
-    
-    // On tablet, keep the "Big Space" inside the card but reduce gap slightly
-    .preview-grid {
-        column-gap: 10%; 
-    }
+  .preview-row {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-card.full-width {
+    grid-column: 1 / 2;
+  }
+
+  .preview-grid {
+    grid-template-columns: 150px 1fr;
+  }
+
+  .preview-grid.four-col {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-@media (max-width: 768px) {
-    .preview-page { padding: 16px; }
-    .preview-card { padding: 24px; }
-    
-    .preview-grid, .preview-grid.four-col {
-        grid-template-columns: 1fr; // Stack data items vertically
-        row-gap: 20px;
-    }
-    
-    .attachment-grid {
-        grid-template-columns: 40px 1fr 40px; // Hide size
-        & > div:nth-child(3) { display: none; }
-    }
-    
-    .actions {
-        flex-direction: column-reverse;
-        button { width: 100%; }
-    }
+@media (max-width: 767px) {
+  .preview-page {
+    padding: 20px;
+  }
+
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

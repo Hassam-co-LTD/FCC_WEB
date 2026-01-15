@@ -51,13 +51,13 @@
             <tr>
                 <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
                 <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
-                <th (click)="sortBy('product')" class="sortable">Product</th>
-                <th (click)="sortBy('issuerRef')" class="sortable">Issuer Ref</th>
-                <th (click)="sortBy('expiryDate')" class="sortable">Expiry Date</th>
-                <th (click)="sortBy('currency')" class="sortable">Currency</th>
-                <th (click)="sortBy('amount')" class="sortable">Amount</th>
-                <th (click)="sortBy('applicant')" class="sortable">Applicant</th>
-                <th (click)="sortBy('beneficiary')" class="sortable">Beneficiary</th>
+                <th>Product</th>
+                <th>Issuer Ref</th>
+                <th>Expiry Date</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Applicant</th>
+                <th>Beneficiary</th>
                 <th class="text-center">Action</th>
             </tr>
         </thead>
@@ -71,20 +71,13 @@
                 </td>
                 
                 <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
-                
-                <td>{{ getProduct(tx) }}</td>
-                
-                <td>{{ getIssuerRef(tx) }}</td>
-                
-                <td>{{ getExpiryDate(tx) | date:'yyyy-MM-dd' }}</td>
-                
-                <td>{{ getCurrency(tx) }}</td>
-                
-                <td>{{ getAmount(tx) | number:'1.2-2' }}</td>
-                
-                <td>{{ getApplicant(tx) }}</td>
-                
-                <td>{{ getBeneficiary(tx) }}</td>
+                <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
+                <td>{{ tx.formData.bankForm?.issuerReference || '-' }}</td>
+                <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
+                <td>{{ tx.formData.undertakingDetails?.currency }}</td>
+                <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
+                <td>{{ tx.formData.applicantBeneficiary?.applicantName }}</td>
+                <td>{{ tx.formData.applicantBeneficiary?.beneficiaryName }}</td>
                 
                 <td class="text-center actions-cell">
                     <ng-container *ngIf="isDraft(tx)">

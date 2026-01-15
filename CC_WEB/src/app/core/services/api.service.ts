@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -172,6 +172,12 @@ getUndertakingList(): Observable<UndertakingLc[]> {
     .pipe(catchError(this.handleError));
 }
 
+// 2️⃣ Get record list strictly by STATUS (BEST FOR TABS)
+getUndertakingRecordsByStatus(status: string): Observable<UndertakingLc[]> {
+  return this.http.get<UndertakingLc[]>(
+    `${this.baseUrl}undertaking_lc/status/${status}`
+  ).pipe(catchError(this.handleError));
+}
 getUndertakingById(id: number | string): Observable<UndertakingLc> {
   // GET /api/v1/undertaking_lc/{id}
   return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking_lc/${id}`)
@@ -179,8 +185,12 @@ getUndertakingById(id: number | string): Observable<UndertakingLc> {
 }
 
 saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
+  const companyId =sessionStorage.getItem('companyId');
+  const headers = new HttpHeaders({
+    companyid: companyId ?? ''
+  });
   // POST /api/v1/undertaking_lc/save
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data)
+  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data, {headers})
     .pipe(catchError(this.handleError));
 }
 

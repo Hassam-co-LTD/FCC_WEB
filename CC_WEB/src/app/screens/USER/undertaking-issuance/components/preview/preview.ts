@@ -8,11 +8,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 
 // --- SERVICE IMPORT ---
-// Updated to use the correct service that handles ID formatting
 import { 
   UndertakingIssuanceService, 
   UndertakingTransaction 
 } from '../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+
+import { AuthService } from '../../../../../core/services/auth.service'; // <-- Added
 
 @Component({
   selector: 'app-preview',
@@ -42,15 +43,19 @@ export class Preview implements OnInit {
   readOnly = false;
   isLoading = false;
 
+  companyId: string = ''; // <-- Added
+
   constructor(
     private router: Router,
     private snackBar: MatSnackBar,
-    // INJECT THE CORRECT SERVICE
     private undertakingService: UndertakingIssuanceService,
+    private authService: AuthService, // <-- Added
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.companyId = this.authService.getCompanyId() || ''; // <-- Set company ID
+
     // 1. Direct Input
     if (this.transaction) {
       this.loadTransactionData(this.transaction);
@@ -69,7 +74,6 @@ export class Preview implements OnInit {
 
   private fetchTransaction(id: string) {
     this.isLoading = true;
-    // Uses the service method which generates the ID format
     this.undertakingService.getTransactionById(id).subscribe({
       next: (tx) => {
         this.loadTransactionData(tx);
@@ -86,13 +90,8 @@ export class Preview implements OnInit {
 
   private loadTransactionData(tx: UndertakingTransaction) {
       this.currentTxId = tx.id || null;
-      
-      // The Service puts the form structure in 'formData'
       this.formData = tx.formData || tx; 
-      
       this.statusChar = this.normalizeStatus(tx.status || 'Draft');
-
-      // The Service guarantees 'channelReference' is formatted (UND...)
       this.channelRef = tx.channelReference || `REF-${tx.id}`;
   }
 
@@ -165,11 +164,15 @@ export class Preview implements OnInit {
   amend() {
     if(!confirm(`Amend will move transaction ${this.channelRef} back to Pending/Draft. Continue?`)) return;
     
-    // Create payload from current data, ensuring ID is present
+    if (!this.companyId) {
+        this.snackBar.open('Company ID is missing', 'Close');
+        return;
+    }
+
     const payload = { ...this.formData, id: this.currentTxId };
 
-    // "Saving as Draft" unlocks it
-    this.undertakingService.saveDraft(payload, this.currentTxId).subscribe({
+    // Pass companyId as second argument
+    this.undertakingService.saveDraft(payload, this.companyId).subscribe({
         next: (res) => {
             this.showSuccess('Moved to Pending for Amendment');
             this.router.navigate(['/undertaking-issuance/request-undertaking'], {

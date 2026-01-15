@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 // COMPONENTS
 import { Sidebar } from "../../../../core/sidebar/sidebar";
@@ -13,9 +14,11 @@ import { BankDetails } from "../components/bank-details/bank-details";
 import { UndertakingDetails } from "../components/undertaking-details/undertaking-details";
 import { InstructionsBank } from "../components/instructions-bank/instructions-bank";
 import { Attachments } from "../components/attachments/attachments";
+import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 
 // SERVICE
-import { UndertakingIssuanceService } from '../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-request-undertaking',
@@ -25,6 +28,7 @@ import { UndertakingIssuanceService } from '../../../../core/services/user-servi
     ReactiveFormsModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatDialogModule,
     Sidebar,
     generalDetails,
     ApplicationBeneficiary,
@@ -38,20 +42,21 @@ import { UndertakingIssuanceService } from '../../../../core/services/user-servi
 })
 export class RequestUndertaking implements OnInit {
   
-  // 1. References
+  // References
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
-  // 2. Form & State
+  // Form & Data State
   undertakingForm!: FormGroup;
   currentStep = 0;
-  mode: 'CREATE' | 'UPDATE' = 'CREATE';
-  showUpdateSubmit = false;
+  companyId = '';
+  currentTx: UndertakingTransaction | null = null;
   currentTransactionId: string | number | null = null;
-  
-  // This will display the formatted ID (e.g. UND2026011200100)
   channelRef: string = 'New Transaction';
 
-  // 3. Sidebar Configuration
+  // UI State Flags
+  pageMode: 'CREATE' | 'EDIT' | 'CHECKER' | 'VIEW' | 'CORRECT' = 'CREATE';
+
+  // Sidebar Steps
   undertakingSteps = [
     { label: "General Details", id: "section-0" },
     { label: "Applicant & Beneficiary", id: "section-1" },
@@ -66,16 +71,23 @@ export class RequestUndertaking implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private undertakingService: UndertakingIssuanceService
+    private dialog: MatDialog,
+    private undertakingService: UndertakingIssuanceService,
+    private authService: AuthService
   ) {
     this.buildForm();
   }
 
   ngOnInit() {
+    this.companyId = this.authService.getCompanyId() || '';
+    console.log('Company ID:', this.companyId);
+
     this.route.queryParams.subscribe(params => {
       const id = params['transactionId'];
+      const modeParam = params['mode']; 
+      
       if (id) {
-        this.enterEditMode(id);
+        this.loadTransaction(id, modeParam);
       } else {
         this.enterCreateMode();
       }
@@ -83,38 +95,246 @@ export class RequestUndertaking implements OnInit {
   }
 
   // ==========================================
-  //  SCROLL & NAVIGATION LOGIC
+  // STATE MANAGEMENT
+  // ==========================================
+
+  private enterCreateMode(): void {
+    this.pageMode = 'CREATE';
+    this.currentTransactionId = null;
+    this.channelRef = 'New Transaction';
+    this.undertakingForm.reset();
+    this.undertakingForm.enable();
+
+    // Default Values
+    this.generalDetails.patchValue({ 
+      productType: 'Undertaking', 
+      modeOfTransmission: 'SWIFT',
+      currency: 'USD'
+    });
+  }
+
+  private loadTransaction(id: string, modeParam?: string): void {
+    this.currentTransactionId = id;
+    
+    this.undertakingService.getTransactionById(id).subscribe({
+      next: (tx: UndertakingTransaction) => {
+        this.currentTx = tx;
+        this.channelRef = tx.channelReference || `REF-${tx.id}`;
+
+        // Fill Form
+        this.patchForm(tx);
+
+        // Determine Page Mode
+        const status = this.normalizeStatus(tx.status);
+
+        if (modeParam === 'view') {
+          this.setPageMode('VIEW');
+          return;
+        }
+
+        switch (status) {
+          case 'I': this.setPageMode('EDIT'); break;
+          case 'S': this.setPageMode('CHECKER'); break;
+          case 'A': this.setPageMode('VIEW'); break;
+          case 'R': this.setPageMode('CORRECT'); break;
+          default: this.setPageMode('VIEW');
+        }
+      },
+      error: (err) => {
+        console.error('Load Error:', err);
+        this.snackBar.open('Transaction not found', 'Close');
+        this.router.navigate(['/undertaking-issuance/inquiries-records']);
+      }
+    });
+  }
+
+  private setPageMode(mode: 'CREATE' | 'EDIT' | 'CHECKER' | 'VIEW' | 'CORRECT') {
+    this.pageMode = mode;
+    if (mode === 'VIEW' || mode === 'CHECKER') {
+      this.undertakingForm.disable();
+    } else {
+      this.undertakingForm.enable();
+    }
+  }
+
+  private normalizeStatus(statusRaw: string): string {
+    const s = (statusRaw || '').toLowerCase();
+    if (s.includes('draft') || s === 'i') return 'I';
+    if (s.includes('submit') || s === 's') return 'S';
+    if (s.includes('approve') || s === 'a') return 'A';
+    if (s.includes('reject') || s === 'r') return 'R';
+    return 'I';
+  }
+
+  private patchForm(tx: UndertakingTransaction) {
+    const data = tx.formData || {};
+    console.log('Patching Form Data:', data);
+
+    this.undertakingForm.patchValue({
+      generalDetails: data.generalDetails || {},
+      applicantBeneficiary: data.applicantBeneficiary || {},
+      bankForm: data.bankForm || {},
+      undertakingDetails: data.undertakingDetails || {},
+      instructions: data.instructions || {}
+    });
+
+    const files = data.attachments?.files || [];
+    if (Array.isArray(files)) this.rebuildAttachments(files);
+  }
+
+  // ==========================================
+  // BUTTON ACTIONS
+  // ==========================================
+
+  saveForm(): void {
+    if (this.undertakingForm.invalid) {
+      this.undertakingForm.markAllAsTouched();
+      this.snackBar.open('Please fill required fields', 'Close');
+      return;
+    }
+
+    const rawForm = this.undertakingForm.getRawValue();
+
+    if (!this.companyId) {
+      this.snackBar.open('Company ID is missing', 'Close');
+      return;
+    }
+
+    this.undertakingService.saveDraft(rawForm, this.companyId).subscribe({
+      next: (res) => {
+        this.navigateToSuccess(res.id, res.channelReference || 'REF', 'pending', 'Draft Saved Successfully');
+      },
+      error: () => this.snackBar.open('Error saving draft', 'Close')
+    });
+  }
+
+  update(): void {
+    if (!this.currentTransactionId) return;
+    const rawForm = this.undertakingForm.getRawValue();
+    rawForm.id = this.currentTransactionId;
+    rawForm.status = this.currentTx?.status;
+
+    this.undertakingService.updateDraft(rawForm).subscribe({
+      next: () => {
+        const targetTab = this.pageMode === 'CORRECT' ? 'rejected' : 'pending';
+        this.navigateToSuccess(this.currentTransactionId!, this.channelRef, targetTab, 'Transaction Updated');
+      },
+      error: () => this.snackBar.open('Error updating transaction', 'Close')
+    });
+  }
+
+  submit(): void {
+    if (!this.currentTransactionId) {
+      this.snackBar.open('Please save as draft first', 'Close');
+      return;
+    }
+
+    const rawForm = this.undertakingForm.getRawValue();
+    rawForm.id = this.currentTransactionId;
+
+    this.undertakingService.submitTransaction(this.currentTransactionId, rawForm).subscribe({
+      next: () => {
+        this.undertakingService.refreshTransactions('submitted').subscribe(() => {
+          this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'submitted', 'Transaction Submitted for Approval');
+        });
+      },
+      error: () => this.snackBar.open('Error submitting transaction', 'Close')
+    });
+  }
+
+  approve(): void {
+    if (!this.currentTransactionId) return;
+
+    this.undertakingService.approveUndertaking(this.currentTransactionId).subscribe({
+      next: () => {
+        this.undertakingService.refreshTransactions('approved').subscribe(() => {
+          this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'approved', 'Transaction Approved Successfully');
+        });
+      },
+      error: () => this.snackBar.open('Error approving transaction', 'Close')
+    });
+  }
+
+  reject(): void {
+    if (!this.currentTransactionId) return;
+
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+      data: { tnxId: this.channelRef }
+    });
+
+    dialogRef.afterClosed().subscribe(reason => {
+      if (reason) {
+        this.undertakingService.rejectUndertaking(this.currentTransactionId!, reason).subscribe({
+          next: () => {
+            this.undertakingService.refreshTransactions('rejected').subscribe(() => {
+              this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'rejected', 'Transaction Rejected');
+            });
+          },
+          error: () => this.snackBar.open('Error rejecting transaction', 'Close')
+        });
+      }
+    });
+  }
+
+  back(): void {
+    let tab = 'pending';
+    if (this.pageMode === 'CHECKER') tab = 'submitted';
+    if (this.pageMode === 'VIEW') tab = 'approved';
+    if (this.pageMode === 'CORRECT') tab = 'rejected';
+
+    this.router.navigate(['/undertaking-issuance/inquiries-records'], { queryParams: { tab } });
+  }
+
+  // ==========================================
+  // NAVIGATION HELPER
+  // ==========================================
+
+  private navigateToSuccess(id: string | number, reference: string, targetTab: string, successMessage: string) {
+    const successPath = '/undertaking-issuance/success';
+    const listingPath = '/undertaking-issuance/inquiries-records';
+    const createPath = '/undertaking-issuance/request-undertaking/general-details';
+
+    this.router.navigate([successPath], {
+      state: {
+        tnxId: id,
+        channelReference: reference,
+        message: successMessage,
+        labels: {
+          listingLabel: `Go to ${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)} Records`,
+          createLabel: 'Create New Undertaking'
+        },
+        routes: {
+          listingRoute: `${listingPath}?tab=${targetTab}`,
+          createRoute: createPath
+        }
+      }
+    });
+  }
+
+  // ==========================================
+  // UTILITIES
   // ==========================================
 
   scrollToSection(index: number) {
     this.currentStep = index;
     const element = document.getElementById(`section-${index}`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   onScroll(event: Event): void {
     const container = event.target as HTMLElement;
     const scrollPosition = container.scrollTop + 150;
-
     for (let i = 0; i < this.undertakingSteps.length; i++) {
       const element = document.getElementById(`section-${i}`);
       if (element) {
-        const top = element.offsetTop;
-        const bottom = top + element.offsetHeight;
-
-        if (scrollPosition >= top && scrollPosition < bottom) {
+        if (scrollPosition >= element.offsetTop && scrollPosition < (element.offsetTop + element.offsetHeight)) {
           this.currentStep = i;
-          break; 
+          break;
         }
       }
     }
   }
-
-  // ==========================================
-  //  FORM BUILDER
-  // ==========================================
 
   private buildForm(): void {
     this.undertakingForm = this.fb.group({
@@ -152,19 +372,15 @@ export class RequestUndertaking implements OnInit {
         expiryType: [''],
         expiryDate: ['', Validators.required],
         currency: ['USD'],
-        undertakingAmount: [null, [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)]],
+        undertakingAmount: [null, Validators.required],
         variationPlus: [''],
         variationMinus: [''],
         issuanceCharges: [''],
         correspondentCharges: [''],
         supplementaryInfo: [''],
-        
-        // --- FIXED: CamelCase consistency and added missing fields ---
-        textOfUndertakingInfo: [''],      // Fixed casing
-        underlyingTransactionInfo: [''],  // Fixed casing
+        textOfUndertakingInfo: [''],
+        underlyingTransactionInfo: [''],
         presentationInfo: [''],
-        
-        // Added missing fields so patchValue works
         basicExtensionType: [''],
         increaseDecreaseType: [''],
         contractType: [''],
@@ -176,8 +392,8 @@ export class RequestUndertaking implements OnInit {
         applicableRules: [''],
         subdivision: [''],
         jurisdiction: [''],
-        demandOption: [''],        // Fixed casing (was DemandOption)
-        governingLawsType: [''],   // Fixed casing (was governinglawsType)
+        demandOption: [''],
+        governingLawsType: [''],
         languageType: [''],
         tsOption: ['']
       }),
@@ -193,218 +409,12 @@ export class RequestUndertaking implements OnInit {
     });
   }
 
+  private rebuildAttachments(files: any[]) { /* Logic */ }
+  updateAttachments(files: File[]) { /* Logic */ }
+
   get generalDetails(): FormGroup { return this.undertakingForm.get('generalDetails') as FormGroup; }
   get applicantBeneficiary(): FormGroup { return this.undertakingForm.get('applicantBeneficiary') as FormGroup; }
   get bankForm(): FormGroup { return this.undertakingForm.get('bankForm') as FormGroup; }
   get undertakingDetails(): FormGroup { return this.undertakingForm.get('undertakingDetails') as FormGroup; }
   get instructions(): FormGroup { return this.undertakingForm.get('instructions') as FormGroup; }
-  get attachmentsArray(): FormArray { return this.undertakingForm.get('attachments') as FormArray; }
-
-  // ==========================================
-  //  MODES (Create vs Edit)
-  // ==========================================
-
-  private enterCreateMode(): void {
-    this.mode = 'CREATE';
-    this.showUpdateSubmit = false;
-    this.currentTransactionId = null;
-    this.channelRef = 'New Transaction';
-    this.undertakingForm.reset();
-    
-    // Defaults
-    this.generalDetails.patchValue({ 
-        productType: 'Undertaking', 
-        modeOfTransmission: 'SWIFT',
-        currency: 'USD'
-    });
-  }
-
-  private enterEditMode(id: string): void {
-    this.mode = 'UPDATE';
-    this.showUpdateSubmit = true;
-    this.currentTransactionId = id;
-
-    // Use the Service which handles the ID formatting
-    this.undertakingService.getTransactionById(id).subscribe({
-      next: (tx) => {
-        // Here we get the auto-generated "UND2026..." reference
-        this.channelRef = tx.channelReference || `REF-${tx.id}`;
-        
-        // 1. Prefer 'formData' (nested JSON), otherwise fallback to flat 'tx'
-        const data = tx.formData || tx; 
-        
-        // 2. Patch the Form
-        this.undertakingForm.patchValue({
-             generalDetails: data.generalDetails || {},
-             applicantBeneficiary: data.applicantBeneficiary || {},
-             bankForm: data.bankForm || {},
-             undertakingDetails: data.undertakingDetails || {},
-             instructions: data.instructions || {}
-        });
-
-        // 3. Patch Attachments (Rebuild Array)
-        if (data.attachments && Array.isArray(data.attachments.files)) {
-            this.rebuildAttachments(data.attachments.files);
-        } else if (data.attachments && Array.isArray(data.attachments)) {
-             this.rebuildAttachments(data.attachments);
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/undertaking-issuance/inquiries-records']);
-      }
-    });
-  }
-
-  private rebuildAttachments(files: any[]) {
-      this.attachmentsArray.clear();
-      files.forEach((file: any) => {
-          this.attachmentsArray.push(this.fb.group({
-              fileName: file.fileName,
-              size: file.size,
-              type: file.type,
-              content: file.content || null 
-          }));
-      });
-  }
-
-  // ==========================================
-  //  PAYLOAD BUILDER
-  // ==========================================
-
-  private createPayload(): any {
-    const rawForm = this.undertakingForm.getRawValue();
-    const safeValue = (val: any) => (val === '' || val === undefined) ? null : val;
-
-    return {
-       id: this.currentTransactionId,
-       // We send the channel reference back so the backend knows it exists
-       channelReference: this.channelRef !== 'New Transaction' ? this.channelRef : null,
-       
-       productType: safeValue(rawForm.generalDetails?.productType),
-       applicantName: safeValue(rawForm.applicantBeneficiary?.applicantName),
-       beneficiaryName: safeValue(rawForm.applicantBeneficiary?.beneficiaryName),
-       
-       undertakingAmount: rawForm.undertakingDetails?.undertakingAmount ? Number(rawForm.undertakingDetails.undertakingAmount) : null,
-       currency: safeValue(rawForm.undertakingDetails?.currency),
-       expiryDate: safeValue(rawForm.undertakingDetails?.expiryDate),
-       
-       formData: rawForm
-    };
-  }
-
-  // ==========================================
-  //  ACTIONS
-  // ==========================================
-
-// Helper to handle success navigation
-  private navigateToSuccess(transaction: any) {
-    this.router.navigate(['/undertaking-issuance/success'], { // Ensure this route exists in your routes.ts
-      state: {
-        transaction: transaction,
-        tnxId: transaction.id, // or transaction.tnxId depending on backend
-        channelReference: transaction.channelReference,
-        
-        // Dynamic Labels for the Success Screen
-        labels: {
-          listingLabel: 'Undertaking Listing',
-          createLabel: 'New Undertaking'
-        },
-        
-        // Dynamic Routes for the buttons
-        routes: {
-          listingRoute: '/undertaking-issuance/inquiries-records',
-          createRoute: '/undertaking-issuance/request-undertaking' // or whichever route resets the form
-        }
-      }
-    });
-  }
-
-saveForm(): void {
-    // FIX: Send raw form value directly. Pass ID separately if needed.
-    const rawForm = this.undertakingForm.getRawValue();
-    
-    this.undertakingService.saveDraft(rawForm, this.currentTransactionId).subscribe({
-      next: (res) => {
-        if (!res) {
-          this.snackBar.open('Error saving draft', 'Close', { duration: 3000 });
-          return;
-        }
-        this.navigateToSuccess(res);
-      },
-      error: (err) => {
-        console.error('Save Draft Error:', err);
-        this.snackBar.open('Error saving draft.', 'Close', { duration: 3000 });
-      }
-    });
-  }
-
- update(): void {
-    if (!this.currentTransactionId) return;
-
-    // FIX: Send raw form. The Service will extract the ID or we pass it explicitly.
-    const rawForm = this.undertakingForm.getRawValue();
-    // Ensure ID is attached for the update
-    rawForm.id = this.currentTransactionId; 
-
-    this.undertakingService.updateDraft(rawForm).subscribe({
-      next: (res) => {
-        if (!res) {
-          this.snackBar.open('Error updating draft', 'Close', { duration: 3000 });
-          return;
-        }
-        this.navigateToSuccess(res);
-      },
-      error: (err) => {
-        console.error('Update Error:', err);
-        this.snackBar.open('Error updating draft', 'Close', { duration: 3000 });
-      }
-    });
-  }
-
-  submit(): void {
-    if (!this.currentTransactionId) {
-       this.snackBar.open('Please save as draft first', 'Close', { duration: 3000 });
-       return;
-    }
-    
-    this.undertakingService.submitTransaction(this.currentTransactionId).subscribe({
-        next: (res) => {
-            // Redirect to success page
-            this.navigateToSuccess(res);
-        },
-        error: (err) => {
-            console.error('Submit Error:', err);
-            this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
-        }
-    });
-  }
-  back(): void {
-    this.router.navigate(['/undertaking-issuance/inquiries-records']);
-  }
-
-  // ==========================================
-  //  UI UTILS
-  // ==========================================
-
-  private scrollToFirstInvalid() {
-     if(this.generalDetails.invalid) this.scrollToSection(0);
-     else if(this.applicantBeneficiary.invalid) this.scrollToSection(1);
-     else if(this.bankForm.invalid) this.scrollToSection(2);
-     else if(this.undertakingDetails.invalid) this.scrollToSection(3);
-     else if(this.instructions.invalid) this.scrollToSection(4);
-  }
-
-  updateAttachments(files: File[]) {
-    this.attachmentsArray.clear();
-    files.forEach(file => {
-      this.attachmentsArray.push(this.fb.group({
-        fileName: file.name,
-        size: file.size,
-        type: file.type,
-        fileObj: file 
-      }));
-    });
-  }
 }
