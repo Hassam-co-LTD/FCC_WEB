@@ -255,13 +255,14 @@ export class RequestUndertaking implements OnInit {
     });
   }
 
-  reject(): void {
-    if (!this.currentTransactionId) return;
+reject(): void {
+  if (!this.currentTransactionId) return;
 
-    const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px',
-      data: { tnxId: this.channelRef }
-    });
+  // Open dialog to capture rejection reason
+  const dialogRef = this.dialog.open(RejectDialogComponent, {
+    width: '400px',
+    data: { tnxId: this.channelRef } // optional info for user
+  });
 
     dialogRef.afterClosed().subscribe(reason => {
       if (reason) {

@@ -112,12 +112,16 @@ saveDraft(formData: any, companyId: string, id?: string | number | null): Observ
   }
 
   // 4. REJECT (Status: 'R')
-  rejectUndertaking(id: string | number, reason: string): Observable<UndertakingTransaction> {
-    return this.http.post<any>(`${this.BASE_URL}/reject/${id}`, { reason }).pipe(
-      map(updated => this.mapToFrontend(updated)),
-      tap(updatedTx => this.updateLocalState(updatedTx))
-    );
-  }
+ rejectUndertaking(id: string | number, reason: string): Observable<UndertakingTransaction> {
+  return this.http.post<any>(
+    `${this.BASE_URL}/rejectReason/${id}`, 
+    { rejectionReason: reason } // <--- match backend DTO field
+  )
+  .pipe(
+    map(updated => this.mapToFrontend(updated)),
+    tap(updatedTx => this.updateLocalState(updatedTx))
+  );
+}
 
   // ================= HELPERS =================
   private updateLocalState(item: UndertakingTransaction) {

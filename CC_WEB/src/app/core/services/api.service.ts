@@ -227,13 +227,18 @@ approveUndertaking(id: number | string): Observable<UndertakingLc> {
 }
 
 rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
-  // POST /api/v1/undertaking_lc/reject/{id}
-  // Matches @PostMapping and Map<String, String> payload
-  const body = { reason: reason };
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/reject/${id}`, body)
-    .pipe(catchError(this.handleError));
+  const body = { rejectionReason: reason }; // ✅ correct key
+  return this.http.post<UndertakingLc>(
+    `${this.baseUrl}undertaking_lc/rejectReason/${id}`, // ✅ match backend
+    body,
+    { headers: { 'Content-Type': 'application/json' } }
+  ).pipe(catchError(this.handleError));
 }
-
+//   updateRejectedTransaction(id: number | string, payload: UndertakingLc): Observable<UndertakingLc> {
+//     return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/updateRejected/${id}`, payload)
+//       .pipe(catchError(this.handleError));
+//   }
+// }
 // =================================================================
 // API Methods For UNDERTAKING LC MODULE END
 // =================================================================
