@@ -265,21 +265,33 @@ export class LayoutComponent implements OnInit {
           ],
         },
         {
-          label: 'Account Services',
+          label: 'Payments Services',
           icon: 'account_balance_wallet',
           open: false,
           children: [
             { 
-              label: 'IBFT'
+              label: 'Fund Transfer',
+              open: false,
+              children: [
+                { label: 'IBFT', route: '/undertaking-issuance' },
+                { label: 'With-In Bank', route: '/undertaking-issuance/amend' },
+                { label: 'My Accounts', route: '/undertaking-issuance/inquiries-records' },
+                { label: 'Inquiries', route: '/import-screen/inquiries' },
+              ]
             },
-            {
-              label: 'Bulk Transfer',
-            }
-          ]
+            // {
+            //   label: 'Bulk Transfer',
+            // }
+          ],
         },
         {
-          label: 'Payments',
-          icon: 'credit_card',
+          label: 'Beneficiary Management',
+          icon: 'person',
+          open: false,
+          children: [
+            { label: 'Add Beneficiary', route: '/undertaking-issuance' },
+            { label: 'Inquiries', route: '/import-screen/inquiries' },
+          ],
         },
         {
           label: 'Logout',
