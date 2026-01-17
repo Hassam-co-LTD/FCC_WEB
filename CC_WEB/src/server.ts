@@ -1,68 +1,36 @@
-import {
-  AngularNodeAppEngine,
-  createNodeRequestHandler,
-  isMainModule,
-  writeResponseToNodeResponse,
-} from '@angular/ssr/node';
-import express from 'express';
-import { join } from 'node:path';
+import "zone.js/node";
+import express from "express";
+import { fileURLToPath } from "node:url";
+import { dirname, join, resolve } from "node:path";
+import bootstrap from "../src/main.server";
 
-const browserDistFolder = join(import.meta.dirname, '../browser');
+// The Express app is exported so that it can be used by serverless Functions.
+export function app(): express.Express {
+  const server = express();
+  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+  const browserDistFolder = resolve(serverDistFolder, "../browser");
+  const indexHtml = join(serverDistFolder, "index.server.html");
 
-const app = express();
-const angularApp = new AngularNodeAppEngine();
+  server.set("view engine", "html");
+  server.set("views", browserDistFolder);
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+  // Serve static files
+  server.get("*.*", express.static(browserDistFolder, { maxAge: "1y" }));
 
-/**
- * Serve static files from /browser
- */
-app.use(
-  express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  }),
-);
+  // All regular routes use the Universal engine
+  server.get("*", (req, res) => {
+    res.render(indexHtml, { req, providers: [{ provide: "REQUEST", useValue: req }] });
+  });
 
-/**
- * Handle all other requests by rendering the Angular application.
- */
-app.use((req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
-});
+  return server;
+}
 
-/**
- * Start the server if this module is the main entry point, or it is ran via PM2.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
- */
-if (isMainModule(import.meta.url) || process.env['pm_id']) {
-  const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
-
+function run(): void {
+  const port = process.env["PORT"] || 4000;
+  const server = app();
+  server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
 
-/**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
- */
-export const reqHandler = createNodeRequestHandler(app);
+run();
