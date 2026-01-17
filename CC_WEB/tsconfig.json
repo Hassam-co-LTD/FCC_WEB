@@ -1,1 +1,33 @@
-{"compileOnSave":false,"compilerOptions":{"strict":false,"skipLibCheck":true,"experimentalDecorators":true,"target":"ES2022","module":"ES2020","lib":["ES2022","dom"],"moduleResolution":"node","outDir":"./dist/out-tsc"},"angularCompilerOptions":{"strictTemplates":false}}
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": false,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2020",
+    "lib": ["ES2022", "dom"],
+    "moduleResolution": "node",
+    "useDefineForClassFields": false,
+    "outDir": "./dist/out-tsc",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "resolveJsonModule": true
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

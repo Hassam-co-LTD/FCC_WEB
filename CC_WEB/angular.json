@@ -5,6 +5,7 @@
   "projects": {
     "cc-web": {
       "projectType": "application",
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -15,13 +16,58 @@
             "outputPath": "dist/cc-web",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "tsConfig": "tsconfig.app.json"
-          }
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "namedChunks": true,
+              "styles": ["src/styles.css"]
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "development": {
+              "buildTarget": "cc-web:build:development"
+            },
+            "production": {
+              "buildTarget": "cc-web:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }
   },
   "cli": {
-    "analytics": "4552d488-8c12-4a96-adf6-4729e8854175"
+    "analytics": false
   }
 }
