@@ -518,6 +518,46 @@ export const routes: Routes = [
     }
 },
 
+
+            // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
+            // Base fund-transfer screen
+            {
+                path: 'fund-transfer-welcome',
+                loadComponent: () =>
+                    import('./shared/welcome-screen/welcome-screen').then(
+                        (m) => m.WelcomeScreen
+                    ),
+                data: {
+                    title: 'Welcome to Fund Transfer',
+                    description: 'Manage all activities related FUND TRANSFER here.',
+                },
+            },
+
+            // fund-transfer with-in-bank (3rd party) Route
+            {
+                path: 'fund-transfer/with-in',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer'
+                    ).then((m) => m.ThirdPartyTransfer),
+            },
+            // fund-transfer IBFT Route
+            {
+                path: 'fund-transfer/ibft',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer'
+                    ).then((m) => m.ThirdPartyTransfer),
+            },
+            // Import Fund-Records Route
+            {
+                path: 'fund-transfer/fund-transfer-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Payment-Services/FundTransfer/sub-menus/records/inquiry-of-fundtransfer-records/inquiry-of-fundtransfer-records'
+                    ).then((m) => m.InquiryOfFundtransferRecords),
+            },
+
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
