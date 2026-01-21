@@ -1,0 +1,275 @@
+@use "sass:color";
+@use "../../../../../../../styles/theme" as theme;
+
+
+/* ===========================
+   Container
+=========================== */
+.form-container {
+  width: 100%;
+}
+
+.section-container {
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: theme.$text-light;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+}
+
+/* ===========================
+   Collapsible
+=========================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.35s ease-in-out;
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Grid
+=========================== */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ===========================
+   Field Group
+=========================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===========================
+   Section Labels
+=========================== */
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Readonly Fields
+=========================== */
+.readonly-field {
+  padding: 12px 14px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: theme.$text-dark;
+}
+
+/* ===========================
+   Material Fields
+=========================== */
+mat-form-field.full {
+  width: 100%;
+  font-size: 14px;
+}
+
+/* ===========================
+   Balance Hint
+=========================== */
+.balance-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+}
+
+/* ===========================
+   Template Header
+=========================== */
+.template-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .template-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: theme.$primary;
+
+    &:hover {
+      color: theme.$primary-dark;
+    }
+  }
+}
+
+/* ===========================
+   Quick Actions
+=========================== */
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===========================
+   Dropdown Styling
+=========================== */
+.white-dropdown {
+  .mat-mdc-option {
+    background-color: theme.$white !important;
+    color: theme.$text-dark !important;
+
+    &:hover {
+      background-color: theme.$light-bg !important;
+    }
+  }
+}
+
+
+/* ===========================
+   Datepicker Styling
+=========================== */
+
+/* Datepicker overlay panel */
+.mat-mdc-datepicker-content {
+  background-color: theme.$white;
+  border-radius: 8px;
+  border: 1px solid theme.$border-light;
+  color: theme.$text-dark;
+  font-size: 14px;
+}
+
+/* Header (month/year selector) */
+.mat-mdc-calendar-header {
+  background-color: theme.$primary;
+  color: theme.$text-light;
+
+  .mat-mdc-calendar-controls {
+    button {
+      color: theme.$text-light;
+
+      &:hover {
+        background-color: color.scale(theme.$primary, $lightness: -10%);
+      }
+    }
+  }
+
+  .mat-mdc-calendar-period-button {
+    color: theme.$text-light;
+
+    &:hover {
+      background-color: color.scale(theme.$primary, $lightness: -10%);
+    }
+  }
+}
+
+/* Calendar body */
+.mat-mdc-calendar-body {
+  .mat-mdc-calendar-body-cell {
+    button {
+      color: theme.$text-dark;
+
+      &:hover {
+        background-color: color.scale(theme.$primary, $lightness: 80%);
+      }
+
+      &.mat-mdc-calendar-body-selected {
+        background-color: theme.$primary;
+        color: theme.$text-light;
+      }
+
+      &.mat-mdc-calendar-body-today {
+        border: 1px solid theme.$primary-dark;
+      }
+    }
+  }
+}
+
+/* Toggle button */
+.mat-mdc-datepicker-toggle-default-icon {
+  color: theme.$primary;
+
+  &:hover {
+    color: theme.$primary-dark;
+  }
+}
+
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  .collapsible.open {
+    padding: 12px 8px;
+  }
+}

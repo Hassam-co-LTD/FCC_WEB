@@ -275,7 +275,7 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'IBFT', route: '/undertaking-issuance' },
                 { label: 'With-In Bank', route: '/undertaking-issuance/amend' },
-                { label: 'My Accounts', route: '/undertaking-issuance/inquiries-records' },
+                { label: 'My Accounts', route: '/my-accounts' },
                 { label: 'Inquiries', route: '/import-screen/inquiries' },
               ]
             },

@@ -1,0 +1,79 @@
+<div class="form-container">
+  <div class="section-container">
+    <div class="section-header" (click)="toggleGeneralDetails()">
+      <h2>My Accounts</h2>
+      <mat-icon>{{ isGeneralDetailsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <div class="collapsible" [class.open]="isGeneralDetailsOpen" [formGroup]="form">
+      @if (isGeneralDetailsOpen) {
+        <div class="form-grid-2">
+          <div class="field-group">
+            <h4>Product Type</h4>
+            <div class="readonly-field">Internal Transfer</div>
+          </div>
+          <div class="field-group">
+            <h4>Transaction Id</h4>
+            <div class="readonly-field">IT26021000026</div>
+          </div>
+          <div class="field-group">
+            <h4>Transfer From</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Account</mat-label>
+              <mat-select formControlName="transferFrom" panelClass="white-dropdown">
+                <mat-option value="savings">Savings Account (••••1234)</mat-option>
+                <mat-option value="checking">Checking Account (••••5678)</mat-option>
+                <mat-option value="business">Business Account (••••9012)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="field-group">
+            <h4>Transfer To</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Account</mat-label>
+              <mat-select formControlName="transferTo" panelClass="white-dropdown">
+                <mat-option value="savings">Savings Account (••••1234)</mat-option>
+                <mat-option value="checking">Checking Account (••••5678)</mat-option>
+                <mat-option value="business">Business Account (••••9012)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+          <!-- Amount Field -->
+          <div class="field-group">
+            <h4>Amount</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Transfer Amount</mat-label>
+              <span matPrefix style="font-weight: 900;">PKR&nbsp;</span>
+              <input matInput type="number" formControlName="amount" 
+                     placeholder="0.00" min="0.01" step="0.01">
+            </mat-form-field>
+          </div>
+          
+          <!-- Transfer Date Field -->
+            <!-- Transfer Date Field (Readonly) -->
+          <div class="field-group">
+            <h4>Transfer Date</h4>
+            <div class="readonly-field date-field">
+              {{ currentDate }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Remarks Field (Full Width) -->
+        <div class="form-grid-1">
+          <div class="field-group">
+            <h4>Remarks</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Transaction Remarks</mat-label>
+              <textarea matInput formControlName="transactionRemarks" 
+                        placeholder="Enter transaction remarks (Reference is used within Business Internet Banking only)"
+                        rows="3"></textarea>
+              <mat-hint>Optional: Add any notes about this transaction</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

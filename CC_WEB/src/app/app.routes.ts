@@ -79,7 +79,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'USER' },
                 loadComponent: () =>
-                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
+                    import('../app/screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
@@ -447,6 +447,76 @@ export const routes: Routes = [
             //             './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
             //         ).then((m) => m.ApprovedRecords),
             // },
+
+// Add this to your routes array after other USER services (after import-welcome route)
+
+// ==============================
+// PAYMENT SERVICES - MY ACCOUNTS
+// ==============================
+
+{
+    path: 'my-accounts',
+    loadComponent: () =>
+        import('./screens/USER/Payment-Services/my-accounts/my-accounts')
+            .then((m) => m.MyAccountsComponent),
+    children: [
+        // Default redirect to general details
+        { path: '', redirectTo: 'general-details', pathMatch: 'full' },
+        
+        {
+            path: 'general-details',
+            loadComponent: () =>
+                import(
+                    './screens/USER/Payment-Services/my-accounts/components/general-details/general-details'
+                ).then((m) => m.GeneralDetails),
+        },
+        // {
+        //     path: 'transfer-to-details',
+        //     loadComponent: () =>
+        //         import(
+        //             './screens/USER/Payment-Services/my-accounts/components/transfer-to-details/transfer-to-details'
+        //         ).then((m) => m.TransferToDetails),
+        // },
+        // {
+        //     path: 'transaction-details',
+        //     loadComponent: () =>
+        //         import(
+        //             './screens/USER/Payment-Services/my-accounts/components/transaction-details/transaction-details'
+        //         ).then((m) => m.TransactionDetails),
+        // },
+        // {
+        //     path: 'transaction-remarks',
+        //     loadComponent: () =>
+        //         import(
+        //             './screens/USER/Payment-Services/my-accounts/components/transaction-remarks/transaction-remarks'
+        //         ).then((m) => m.TransactionRemarks),
+        // },
+        // Add preview route if needed
+        // {
+        //     path: 'preview',
+        //     loadComponent: () =>
+        //         import(
+        //             './screens/USER/Payment-Services/my-accounts/components/preview/preview'
+        //         ).then((m) => m.PreviewComponent),
+        // },
+    ],
+},
+{
+    path: 'my-accounts/success',
+    loadComponent: () =>
+        import('./shared/success/success').then(m => m.Success),
+    data: { title: 'Payment Service Submitted' }
+},
+{
+    path: 'my-accounts-welcome',
+    loadComponent: () =>
+        import('./shared/welcome-screen/welcome-screen')
+            .then((m) => m.WelcomeScreen),
+    data: {
+        title: 'Welcome to Payment Services - My Accounts',
+        description: 'Manage all your account payment activities here.'
+    }
+},
 
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
