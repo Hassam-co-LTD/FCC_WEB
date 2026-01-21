@@ -1,0 +1,16 @@
+<div class="screen">
+    <app-sidebar [steps]="withinBankSteps" [currentStep]="currentStep">
+    </app-sidebar>
+    <!-- Main Content -->
+    <div class="content">
+        <div class="scroll-area">
+
+            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
+
+            <div class="actions">
+                <button mat-stroked-button (click)="back()">Back</button>
+                <button mat-flat-button color="primary"(click)="save()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

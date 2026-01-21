@@ -1,0 +1,110 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Payment Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+  @if (isOpen) {
+
+  <!-- Product & Bank -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Product Name</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Product</mat-label>
+        <input matInput formControlName="producttype" readonly />
+      </mat-form-field>
+    </div>
+
+    <!-- <div class="field-group">
+      <h4>Bank</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Bank</mat-label>
+        <input matInput formControlName="bank" readonly />
+      </mat-form-field>
+    </div> -->
+    <div class="field-group">
+      <h4>Application Date</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Application Date</mat-label>
+        <input matInput [value]="form.get('appDate')?.value | date:'dd/MMM/yyyy HH:mm'" readonly />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Transfer From & App Date -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Transaction ID</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Transaction ID</mat-label>
+        <input matInput formControlName="tnxId" readonly placeholder="Auto-generated" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Transaction ID -->
+  <div class="form-grid">
+
+    <div class="field-group">
+      <h4>Transfer From *</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Transfer From</mat-label>
+        <input matInput formControlName="transferFrom" placeholder="Enter source account" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Beneficiary -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Beneficiary Name *</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="beneficiaryname" />
+      </mat-form-field>
+    </div>
+
+    <div class="field-group">
+      <h4>Beneficiary Account *</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Account Number</mat-label>
+        <input matInput formControlName="beneficiaryaccount" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Transaction Details -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Amount *</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Amount</mat-label>
+        <span matPrefix class="currency-prefix"> {{ form.get('currency')?.value }}&nbsp;</span>
+        <input matInput type="number" formControlName="amount" />
+      </mat-form-field>
+    </div>
+
+    <!-- <div class="field-group">
+      <h4>Transfer Date</h4>
+      <mat-form-field appearance="outline">
+        <mat-label>Transfer Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="tranferDate" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div> -->
+  </div>
+
+  <!-- Remarks -->
+  <div class="field-group">
+    <h4>Remarks</h4>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Transfer Remarks</mat-label>
+      <textarea matInput formControlName="tranferRemarks" placeholder="Optional" rows="3">
+      </textarea>
+    </mat-form-field>
+  </div>
+
+  }
+</div>

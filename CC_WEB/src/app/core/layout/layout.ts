@@ -271,12 +271,13 @@ export class LayoutComponent implements OnInit {
           children: [
             { 
               label: 'Fund Transfer',
+              route:'/fund-transfer-welcome',
               open: false,
               children: [
-                { label: 'IBFT', route: '/undertaking-issuance' },
-                { label: 'With-In Bank', route: '/undertaking-issuance/amend' },
-                { label: 'My Accounts', route: '/undertaking-issuance/inquiries-records' },
-                { label: 'Inquiries', route: '/import-screen/inquiries' },
+                { label: 'IBFT', route: '/' },
+                { label: 'With-In Bank', route: '/fund-transfer/with-in' },
+                { label: 'My Accounts', route: '/' },
+                { label: 'Inquiries', route: 'fund-transfer/fund-transfer-records' },
               ]
             },
             // {
