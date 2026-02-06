@@ -1,0 +1,189 @@
+<div class="account-search-dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Select Account</h2>
+    <button mat-icon-button (click)="closeDialog()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <!-- Search Bar -->
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search accounts by account number, name, or IBAN</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Type to search...">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-hint>Search by account number, account name, account type, or IBAN</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading accounts...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="hasError && !isLoading" class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+      <button mat-button color="primary" (click)="loadAccounts()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </div>
+
+    <!-- Account List Table -->
+    <div class="table-container" *ngIf="!isLoading && !hasError">
+      <table mat-table [dataSource]="filteredAccounts" class="mat-elevation-z1">
+        
+        <!-- Select Column -->
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let account">
+            <mat-radio-button
+              [checked]="selectedAccount?.accountNumber === account.accountNumber"
+              (click)="selectAccount(account)"
+              [disabled]="!canAccessAccount(account)">
+            </mat-radio-button>
+          </td>
+        </ng-container>
+
+        <!-- Account Number Column -->
+        <ng-container matColumnDef="accountNumber">
+          <th mat-header-cell *matHeaderCellDef>Account Number</th>
+          <td mat-cell *matCellDef="let account">
+            <div class="account-number">
+              <div class="masked-number">{{ account.maskedAccountNumber || maskAccountNumber(account.accountNumber) }}</div>
+              <div class="full-number">{{ account.accountNumber }}</div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Account Name Column -->
+        <ng-container matColumnDef="accountName">
+          <th mat-header-cell *matHeaderCellDef>Account Name</th>
+          <td mat-cell *matCellDef="let account">{{ account.accountName }}</td>
+        </ng-container>
+
+        <!-- Account Type Column -->
+        <ng-container matColumnDef="accountType">
+          <th mat-header-cell *matHeaderCellDef>Type</th>
+          <td mat-cell *matCellDef="let account">
+            <span class="account-type-badge" [class]="account.accountType?.toLowerCase()">
+              {{ getAccountTypeDisplay(account.accountType) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Currency Column -->
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef>Currency</th>
+          <td mat-cell *matCellDef="let account">{{ account.currency || 'PKR' }}</td>
+        </ng-container>
+
+        <!-- Balance Column -->
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef>Balance</th>
+          <td mat-cell *matCellDef="let account">
+            {{ formatCurrency(account.balance || account.currentBalance, account.currency) }}
+          </td>
+        </ng-container>
+
+        <!-- Available Balance Column -->
+        <ng-container matColumnDef="availableBalance">
+          <th mat-header-cell *matHeaderCellDef>Available Balance</th>
+          <td mat-cell *matCellDef="let account">
+            {{ formatCurrency(account.availableBalance || account.balance || account.currentBalance, account.currency) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- No Results Message -->
+      <div class="no-results" *ngIf="filteredAccounts.length === 0 && !isLoading && !hasError">
+        <mat-icon>search_off</mat-icon>
+        <p>No accounts found matching your search criteria.</p>
+      </div>
+    </div>
+
+    <!-- Selected Account Details -->
+    <div class="selected-account-details" *ngIf="selectedAccount">
+      <h3>Selected Account Details</h3>
+      <div class="details-grid">
+        <div class="detail-item">
+          <span class="detail-label">Account Number:</span>
+          <span class="detail-value">{{ selectedAccount.accountNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Account Name:</span>
+          <span class="detail-value">{{ selectedAccount.accountName }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Account Type:</span>
+          <span class="detail-value">{{ getAccountTypeDisplay(selectedAccount.accountType) }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Available Balance:</span>
+          <span class="detail-value">{{ 
+            formatCurrency(selectedAccount.availableBalance || selectedAccount.balance || selectedAccount.currentBalance, selectedAccount.currency) 
+          }}</span>
+        </div>
+        
+        <!-- Conditional IBAN Display -->
+        <div class="detail-item" *ngIf="hasIban(selectedAccount)">
+          <span class="detail-label">IBAN:</span>
+          <span class="detail-value">{{ selectedAccount.iban }}</span>
+        </div>
+        
+        <!-- Conditional Branch Display -->
+        <div class="detail-item" *ngIf="hasBranch(selectedAccount)">
+          <span class="detail-label">Branch:</span>
+          <span class="detail-value">{{ selectedAccount.branch }}</span>
+        </div>
+        
+        <!-- Additional Details -->
+        <div class="detail-item" *ngIf="selectedAccount.accessPolicyType">
+          <span class="detail-label">Access Policy:</span>
+          <span class="detail-value">{{ selectedAccount.accessPolicyType }}</span>
+        </div>
+        
+        <div class="detail-item" *ngIf="selectedAccount.minApprovalLevel !== undefined">
+          <span class="detail-label">Min. Approval Level:</span>
+          <span class="detail-value">{{ getApprovalLevelDisplay(selectedAccount.minApprovalLevel) }}</span>
+        </div>
+        
+        <div class="detail-item" *ngIf="selectedAccount.status">
+          <span class="detail-label">Status:</span>
+          <span class="detail-value" [class]="getStatusColor(selectedAccount.status)">
+            {{ getStatusDisplay(selectedAccount.status) }}
+          </span>
+        </div>
+        
+        <!-- Warning if user can't access -->
+        <div class="detail-item warning" *ngIf="!canAccessAccount(selectedAccount)">
+          <span class="detail-label">
+            <mat-icon>warning</mat-icon>
+            Access Level:
+          </span>
+          <span class="detail-value">
+            Your approval level is insufficient for this account
+          </span>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="closeDialog()">Cancel</button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="confirmSelection()"
+      [disabled]="!selectedAccount || !canAccessAccount(selectedAccount)">
+      Select Account
+    </button>
+  </mat-dialog-actions>
+</div>

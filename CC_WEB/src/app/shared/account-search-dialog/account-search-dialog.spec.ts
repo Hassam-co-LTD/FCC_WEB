@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GeneralDetails } from './general-details';
+import { AccountSearchDialog } from './account-search-dialog';
 
-describe('GeneralDetails', () => {
-  let component: GeneralDetails;
-  let fixture: ComponentFixture<GeneralDetails>;
+describe('AccountSearchDialog', () => {
+  let component: AccountSearchDialog;
+  let fixture: ComponentFixture<AccountSearchDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GeneralDetails]
+      imports: [AccountSearchDialog]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GeneralDetails);
+    fixture = TestBed.createComponent(AccountSearchDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

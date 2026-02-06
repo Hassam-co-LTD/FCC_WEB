@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "../../../../../styles/theme" as theme;
+@use "../../../../../../../../styles/theme" as theme;
 
 /* -----------------------------------------------------
    Ensure component fills full available space
@@ -168,3 +168,4 @@ button[mat-stroked-button] {
     font-size: 0.7rem;
   }
 }
+

@@ -8,11 +8,13 @@
         <div class="scroll-area">
 
             <!-- General Details Section -->
-            <section id="section-0">
-                <app-general-details [form]="generalDetailsForm"></app-general-details>
-            </section>
-            <hr class="section-divider" />
-
+            <section id="section-0" *ngIf="screenMode === 'EDIT'">
+    <app-general-details [form]="generalDetailsForm"></app-general-details>
+</section>
+            <!-- Preview Section -->
+          <section id="section-preview" *ngIf="screenMode !== 'EDIT'">
+    <app-preview [form]="myAccountsForm"></app-preview>
+</section>
             <!-- Footer Buttons -->
             <div class="actions">
                 <!-- CREATE MODE -->
@@ -23,37 +25,37 @@
                 </ng-container>
 
                 <!-- EDIT MODE (DRAFT) -->
-                <!-- <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
-                    <button mat-stroked-button color="primary" (click)="back()">Cancel</button>
-                    <button mat-flat-button color="primary" (click)="update()">Update Draft</button>
+                 <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
+                    <button mat-stroked-button color="primary" (click)="back()">Cancel</button> 
+                     <button mat-flat-button color="primary" (click)="update()">Update Draft</button>
                     <button mat-flat-button color="accent" (click)="submitTransfer()">Submit</button>
-                </ng-container> -->
+                </ng-container> 
 
                 <!-- SUBMITTED MODE (Waiting for Approval) -->
-                <!-- <ng-container *ngIf="screenMode === 'SUBMITTED'">
+                 <ng-container *ngIf="screenMode === 'SUBMITTED'">
                     <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
                     <button mat-flat-button color="accent" (click)="approve()">Approve</button>
-                </ng-container> -->
+                </ng-container> 
 
                 <!-- APPROVED MODE -->
-                <!-- <ng-container *ngIf="screenMode === 'APPROVED'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button> -->
+                <ng-container *ngIf="screenMode === 'APPROVED'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
                     <!-- Optional: Add amend functionality -->
-                    <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button> -->
-                <!-- </ng-container> -->
+                     <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button>  -->
+                </ng-container>
 
                 <!-- REJECTED MODE -->
-                <!-- <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'"> 
                     <button mat-stroked-button color="primary" (click)="back()">Cancel</button>
                     <button mat-flat-button color="primary" (click)="updateRejected()">Resubmit</button>
-                </ng-container> -->
+                </ng-container> 
 
                 <!-- PREVIEW MODE -->
-                <!-- <ng-container *ngIf="screenMode === 'PREVIEW'">
+                 <ng-container *ngIf="screenMode === 'PREVIEW'">
                     <button mat-stroked-button color="primary" (click)="editForm()">Edit</button>
                     <button mat-flat-button color="accent" (click)="confirmTransfer()">Confirm Transfer</button>
                 </ng-container>
-            </div> -->
+            </div> 
 
         </div>
     </div>

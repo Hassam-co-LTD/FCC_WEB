@@ -1,0 +1,549 @@
+@use "sass:color";
+@use "../../../../../../../../../../styles/theme" as theme;
+
+/* ===========================
+   Container
+=========================== */
+.form-container {
+  width: 100%;
+}
+
+.section-container {
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: theme.$text-light;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+}
+
+/* ===========================
+   Collapsible
+=========================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.35s ease-in-out;
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ===========================
+   Grid Layouts
+=========================== */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-grid-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* ===========================
+   Field Group
+=========================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===========================
+   Section Labels
+=========================== */
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Readonly Fields
+=========================== */
+.readonly-field {
+  padding: 12px 14px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: theme.$text-dark;
+
+  &.date-field {
+    font-weight: 500;
+    color: theme.$text-dark;
+  }
+}
+
+/* ===========================
+   Material Fields
+=========================== */
+mat-form-field.full {
+  width: 100%;
+  font-size: 14px;
+}
+
+/* ===========================
+   Account Search Field
+=========================== */
+.account-search-field {
+  position: relative;
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field-flex {
+    align-items: center;
+  }
+  
+  .mat-mdc-text-field-wrapper {
+    padding-right: 0;
+  }
+  
+  button[matSuffix] {
+    margin-right: 8px;
+    color: theme.$primary;
+    
+    &:hover {
+      color: theme.$primary-dark;
+      background-color: color.scale(theme.$primary, $lightness: 90%);
+    }
+    
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+  
+  input[readonly] {
+    cursor: pointer;
+    // background-color: theme.$white;
+    
+    &:focus {
+      background-color: theme.$white;
+      caret-color: transparent;
+    }
+  }
+}
+
+/* ===========================
+   Currency Prefix
+=========================== */
+.currency-prefix {
+  padding-top: 20px;
+  padding-left: 10px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.75);
+  
+  /* Ensure proper alignment in form field */
+  .mat-mdc-form-field-has-label & {
+    padding-top: 0;
+    align-self: flex-end;
+    margin-bottom: 1.34375em;
+  }
+}
+
+/* ===========================
+   Mat Form Field Customization
+=========================== */
+.mat-mdc-form-field.mat-form-field-appearance-outline {
+  .mat-mdc-text-field-wrapper {
+    background-color: theme.$white;
+    
+    &:hover {
+      .mat-mdc-form-field-outline {
+        color: theme.$primary;
+      }
+    }
+  }
+  
+  .mat-mdc-form-field-outline {
+    color: theme.$border-light;
+  }
+  
+  .mat-mdc-form-field-outline-thick {
+    color: theme.$primary;
+  }
+  
+  &.mat-focused {
+    .mat-mdc-form-field-outline-thick {
+      color: theme.$primary;
+    }
+  }
+  
+  &:focus-within {
+    .mat-mdc-form-field-outline-thick {
+      color: theme.$primary;
+    }
+  }
+}
+
+/* ===========================
+   Mat Label Styling
+=========================== */
+.mat-mdc-form-field-label {
+  color: theme.$text-medium;
+  
+  &.mat-mdc-floating-label.mdc-floating-label--float-above {
+    color: theme.$primary;
+  }
+}
+
+/* ===========================
+   Mat Hint Styling
+=========================== */
+.mat-mdc-form-field-hint {
+  color: theme.$text-medium;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===========================
+   Textarea Specific Styling
+=========================== */
+textarea.mat-input-element {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 150px;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: theme.$light-bg;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: color.scale(theme.$primary, $lightness: 60%);
+    border-radius: 4px;
+    
+    &:hover {
+      background: color.scale(theme.$primary, $lightness: 40%);
+    }
+  }
+}
+
+/* ===========================
+   Number Input Styling
+=========================== */
+input[type="number"] {
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    opacity: 1;
+    height: 24px;
+    margin-right: 4px;
+  }
+}
+
+/* ===========================
+   Placeholder Styling
+=========================== */
+::placeholder {
+  color: color.scale(theme.$text-medium, $lightness: 30%);
+  opacity: 0.7;
+}
+
+:-ms-input-placeholder {
+  color: color.scale(theme.$text-medium, $lightness: 30%);
+}
+
+::-ms-input-placeholder {
+  color: color.scale(theme.$text-medium, $lightness: 30%);
+}
+
+/* ===========================
+   Hidden Fields Container
+=========================== */
+[style*="display: none"] {
+  display: none !important;
+}
+
+/* ===========================
+   Account Info Display
+=========================== */
+.account-info-display {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: theme.$light-bg;
+  border-radius: 6px;
+  border-left: 4px solid theme.$primary;
+  
+  .account-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .info-label {
+      color: theme.$text-medium;
+      font-weight: 500;
+    }
+    
+    .info-value {
+      color: theme.$text-dark;
+      font-weight: 600;
+    }
+  }
+}
+
+/* ===========================
+   Balance Hint
+=========================== */
+.balance-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+}
+
+/* ===========================
+   Template Header
+=========================== */
+.template-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .template-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: theme.$primary;
+
+    &:hover {
+      color: theme.$primary-dark;
+    }
+  }
+}
+
+/* ===========================
+   Quick Actions
+=========================== */
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===========================
+   Dropdown Styling
+=========================== */
+.white-dropdown {
+  .mat-mdc-option {
+    background-color: theme.$white !important;
+    color: theme.$text-dark !important;
+
+    &:hover {
+      background-color: theme.$light-bg !important;
+    }
+  }
+}
+
+/* ===========================
+   Datepicker Toggle Icon
+=========================== */
+.mat-mdc-datepicker-toggle-default-icon {
+  color: theme.$primary;
+
+  &:hover {
+    color: theme.$primary-dark;
+  }
+}
+
+/* ===========================
+   Section Divider
+=========================== */
+.section-divider {
+  border: none;
+  border-top: 1px solid theme.$border-light;
+  margin: 24px 0;
+}
+
+/* ===========================
+   Validation States
+=========================== */
+.mat-mdc-form-field {
+  &.ng-invalid.ng-touched {
+    .mat-mdc-form-field-outline {
+      color: #f44336;
+    }
+  }
+  
+  &.ng-valid.ng-touched {
+    .mat-mdc-form-field-outline {
+      color: #4caf50;
+    }
+  }
+}
+
+/* ===========================
+   Animations
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===========================
+   Responsive Design
+=========================== */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .form-grid-1 {
+    gap: 16px;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  .collapsible.open {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-grid-1,
+  .form-grid-2 {
+    gap: 12px;
+  }
+  
+  textarea.mat-input-element {
+    min-height: 60px;
+    max-height: 120px;
+  }
+  
+  .currency-prefix {
+    font-size: 14px;
+    padding-left: 8px;
+  }
+  
+  .section-header {
+    padding: 10px 12px;
+    
+    h2 {
+      font-size: 15px;
+    }
+    
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+  
+  .readonly-field {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* ===========================
+   Print Styles
+=========================== */
+@media print {
+  .account-search-field {
+    button[matSuffix] {
+      display: none;
+    }
+  }
+  
+  .collapsible {
+    max-height: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .section-header {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    
+    h2, mat-icon {
+      color: #000 !important;
+    }
+  }
+  
+  mat-form-field {
+    .mat-mdc-form-field-outline {
+      border: 1px solid #ccc !important;
+    }
+  }
+}
