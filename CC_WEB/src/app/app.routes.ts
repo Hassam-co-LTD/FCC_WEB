@@ -318,7 +318,7 @@ export const routes: Routes = [
                     ),
 
             },
-        
+
             {
                 path: 'undertaking-issuance/inquiries-records',
                 loadComponent: () =>
@@ -327,9 +327,9 @@ export const routes: Routes = [
                     ).then((m) => m.inquiriesRecords),
             },
             {
-    path: 'undertaking-issuance/success',
-    loadComponent: () => import('./shared/success/success').then(m => m.Success)
-},
+                path: 'undertaking-issuance/success',
+                loadComponent: () => import('./shared/success/success').then(m => m.Success)
+            },
             // Submitted-Records Route
             // {
             //     path: 'undertaking-issuance/submitted-records',
