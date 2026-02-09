@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { GeneralDetails } from './components/general-details/general-details';
@@ -14,6 +16,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   selector: 'app-shipping-guarantee',
   standalone: true,
   imports: [
+    CommonModule,
     GeneralDetails,
     ApplicantBeneficiary,
     BankDetails,
@@ -45,9 +48,12 @@ export class ShippingGuarantee implements AfterViewInit {
   @ViewChild(InstructionsComponent) instructions!: InstructionsComponent;
   @ViewChild(Attachments) attachmentsComponent!: Attachments;
 
-  constructor(private router: Router, private sharedService: SharedService) {}
+  constructor(private router: Router, private sharedService: SharedService,@Inject(PLATFORM_ID) private platformId: Object) {}
 
   ngAfterViewInit() {
+    if (!isPlatformBrowser(this.platformId)) {
+      return; // 🚫 SSR: skip browser-only logic
+    }
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(

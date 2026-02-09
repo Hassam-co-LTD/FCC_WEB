@@ -36,8 +36,9 @@ export class InstructionsComponent implements OnInit {
 
   ngOnInit() {
   this.form = this.fb.group({
-    instructionType: ['', Validators.required], // <-- Add this
-    details: ['', [Validators.required, Validators.maxLength(300)]]
+    principalAccount: [''], 
+    feeAccount: [''], 
+    otherInstructions: ['']
   });
 
   // Restore existing data if available

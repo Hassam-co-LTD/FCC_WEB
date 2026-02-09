@@ -1,26 +1,50 @@
-<!-- SECTION HEADER -->
 <div class="section-header" (click)="toggle()">
-  <h2>Instructions</h2>
+  <h2>Instructions to Bank</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE CONTAINER -->
 <div class="collapsible" [class.open]="isOpen">
-  <form [formGroup]="form" class="form-grid-2">
+  <form class="instruction-form" [formGroup]="form">
 
-    <!-- Instruction Type -->
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Instruction Type *</mat-label>
-      <input matInput formControlName="instructionType" placeholder="Enter instruction type" />
-    </mat-form-field>
+    <!-- Accounts Row -->
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Principal Account</mat-label>
+        <mat-select formControlName="principalAccount">
+          <mat-option value="account1">Account 1</mat-option>
+          <mat-option value="account2">Account 2</mat-option>
+        </mat-select>
+        @if (form.get('principalAccount')?.hasError('required')) {
+        <mat-error>
+          Required
+        </mat-error>
+        }
+      </mat-form-field>
 
-    <!-- Instruction Details -->
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Instruction Details *</mat-label>
-      <textarea matInput formControlName="details" rows="4" maxlength="300" placeholder="Enter detailed instructions">
-      </textarea>
-      <mat-hint align="end">{{ form.get('details')?.value?.length || 0 }}/300</mat-hint>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Fee Account</mat-label>
+        <mat-select formControlName="feeAccount">
+          <mat-option value="fee1">Fee Account 1</mat-option>
+          <mat-option value="fee2">Fee Account 2</mat-option>
+        </mat-select>
+        @if (form.get('feeAccount')?.hasError('required')) {
+        <mat-error>
+          Required
+        </mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <!-- Other Instructions -->
+    <div class="form-row full-width">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Other Instructions</mat-label>
+        <textarea matInput formControlName="otherInstructions" rows="4" maxlength="31525"></textarea>
+        <mat-hint align="end">
+          {{ form.get('otherInstructions')?.value?.length || 0 }}/31525
+        </mat-hint>
+      </mat-form-field>
+    </div>
 
   </form>
 </div>

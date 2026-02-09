@@ -1,7 +1,6 @@
 @use '../../../../../../../styles/_theme.scss' as theme;
-
 /* ===========================
-   Section Header
+   Section Header (Collapsible Title)
 =========================== */
 .section-header {
   display: flex;
@@ -9,7 +8,7 @@
   align-items: center;
   background: theme.$primary;
   padding: 14px 18px;
-  border-radius: 8px;
+  border-radius: theme.$radius-large;
   cursor: pointer;
   margin-bottom: 10px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -27,7 +26,7 @@
 }
 
 /* ===========================
-   Collapsible
+   Collapsible Container
 =========================== */
 .collapsible {
   max-height: 0;
@@ -38,18 +37,18 @@
 }
 
 .collapsible.open {
-  max-height: 1500px;
+  max-height: 2000px;
   opacity: 1;
   transform: translateY(0);
   padding: 15px 10px;
   background: theme.$light-bg;
-  border-radius: 6px;
+  border-radius: theme.$radius-default;
   border: 1px solid theme.$border-light;
 }
 
-
-
-/* Headings */
+/* ===========================
+   Titles
+=========================== */
 h2 {
   font-size: 20px;
   font-weight: 600;
@@ -67,57 +66,52 @@ h4 {
 }
 
 /* ===========================
-   Form
+   Form Grid Layout
 =========================== */
-.details-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: theme.$gap-default;
+  margin-bottom: 15px;
 }
 
+/* Alternating Applicant & Beneficiary Box Indicator */
+.form-grid.alternate {
+  padding-left: 10px;
+  border-left: 2px dashed theme.$border-primary;
+  margin-left: 4px;
+}
+
+/* Fields */
 mat-form-field {
   width: 100%;
 }
 
-.full {
-  width: 100%;
+/* Toggle */
+mat-slide-toggle {
+  margin: 12px 0;
+  font-weight: 500;
 }
 
 /* ===========================
-   Actions
+   Button Row (Bottom Actions)
 =========================== */
-.actions {
-  margin-top: 10px;
+.btn-row-bottom {
+  margin-top: 30px;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-}
 
-button[mat-flat-button] {
-  background: theme.$primary !important;
-  color: theme.$text-light !important;
-  box-shadow: theme.$button-shadow;
-  border-radius: 6px;
-
-  &:hover {
-    background: theme.$primary-dark !important;
+  button {
+    min-width: 120px;
   }
 }
 
 /* ===========================
    Responsive
 =========================== */
-@media (max-width: 480px) {
-  .collapsible.open {
-    padding: 10px 6px;
-  }
-
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  button[mat-flat-button] {
-    width: 100%;
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }

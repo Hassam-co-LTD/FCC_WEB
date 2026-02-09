@@ -43,11 +43,11 @@ export class GeneralDetails implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      expiryDate: ['', Validators.required],
+      expiryDate: [''],
       beneficiaryReference: [''],
       customerReference: [''],
-      billNumber: ['', Validators.required],
-      modeOfShipment: ['', Validators.required],
+      billNumber: [''],
+      modeOfShipment: [''],
       shippingDetails: [''],
       descriptionOfGoods: ['', [Validators.required, Validators.maxLength(222)]],
     });

@@ -1,33 +1,70 @@
 <div class="section-header" (click)="toggle()">
-  <h2>Applicant & Beneficiary Details</h2>
+  <h2>Applicant and Beneficiary Details</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE -->
-<div class="collapsible" [class.open]="isOpen">
-  <form [formGroup]="form" class="details-form">
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Applicant Name *</mat-label>
-      <input matInput type="text" formControlName="applicantName" placeholder="Enter applicant name" />
+  <!-- ========================= Applicant ========================= -->
+  <h4>Applicant</h4>
+
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Name *</mat-label>
+      <input matInput formControlName="applicantName">
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Beneficiary Name *</mat-label>
-      <input matInput type="text" formControlName="beneficiaryName" placeholder="Enter beneficiary name" />
+    <mat-form-field appearance="outline">
+      <mat-label>Address 1 *</mat-label>
+      <input matInput formControlName="applicantAddress1">
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Beneficiary Country *</mat-label>
-      <input matInput type="text" formControlName="beneficiaryCountry" placeholder="Enter country" />
+    <mat-form-field appearance="outline">
+      <mat-label>Address 2</mat-label>
+      <input matInput formControlName="applicantAddress2">
     </mat-form-field>
 
-    <!-- <div class="actions">
-      <button type="button" mat-stroked-button (click)="toggle()">Cancel</button>
-      <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">
-        Save
-      </button>
-    </div> -->
+    <mat-form-field appearance="outline">
+      <mat-label>Country *</mat-label>
+      <mat-select formControlName="applicantCountry">
+        <mat-option value="Pakistan">Pakistan</mat-option>
+        <mat-option value="UAE">UAE</mat-option>
+        <mat-option value="USA">USA</mat-option>
+        <mat-option value="UK">UK</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-  </form>
+  <!-- ========================= Beneficiary ========================= -->
+  <h4>Beneficiary</h4>
+
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Name *</mat-label>
+      <input matInput formControlName="beneficiaryName">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address 1 *</mat-label>
+      <input matInput formControlName="beneficiaryAddress1">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address 2</mat-label>
+      <input matInput formControlName="beneficiaryAddress2">
+    </mat-form-field>
+
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Country *</mat-label>
+      <mat-select formControlName="beneficiaryCountry">
+        <mat-option value="Pakistan">Pakistan</mat-option>
+        <mat-option value="UAE">UAE</mat-option>
+        <mat-option value="USA">USA</mat-option>
+        <mat-option value="UK">UK</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
 </div>

@@ -7,32 +7,58 @@
 <div class="collapsible" [class.open]="isOpen">
   <form [formGroup]="form" class="details-form">
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Bank Name *</mat-label>
-      <input matInput type="text" formControlName="bankName" placeholder="Enter bank name" />
-    </mat-form-field>
+    <!-- ===== Bank Details ===== -->
+    <div class="form-grid-2">
+      <div class="field-group">
+        <h4>Bank Details</h4>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Bank Name *</mat-label>
+            <input matInput formControlName="bankName" placeholder="Enter bank name" />
+          </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Issuer Reference *</mat-label>
-      <input matInput type="text" formControlName="issuerReference" placeholder="Enter Issuer Reference" />
-    </mat-form-field>
+        <!-- ===== Issuer Reference ===== -->
+        <div class="field-group">
+        <h4>Issuer Reference</h4>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Issuer’s Reference *</mat-label>
+            <input matInput formControlName="issuerReference" placeholder="Enter issuer reference" />
+          </mat-form-field>
+        </div>
+        </div>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Currency *</mat-label>
-      <input matInput type="text" formControlName="currency" placeholder="Enter Currency" />
-    </mat-form-field>
+        <!-- ===== Guarantee Amount ===== -->
+        <h4>Guarantee Amount</h4>
+        <div class="form-grid-2 unequal">
+          <mat-form-field appearance="outline" class="currency-field">
+            <mat-label>Currency *</mat-label>
+            <mat-select formControlName="currency">
+              @for (c of currencies; track c) {
+              <mat-option [value]="c">{{ c }}</mat-option>
+              }
+            </mat-select>
+            @if (form.get('currency')?.hasError('required')) {
+            <mat-error>
+              Currency is required
+            </mat-error>
+            }
+          </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>SWIFT Code</mat-label>
-      <input matInput type="text" formControlName="swiftCode" placeholder="Enter SWIFT code" />
-    </mat-form-field>
-
-    <!-- <div class="actions">
-      <button type="button" mat-stroked-button (click)="toggle()">Cancel</button>
-      <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid">
-        Save
-      </button>
-    </div> -->
+          <mat-form-field appearance="outline" class="amount-field">
+            <mat-label>Amount *</mat-label>
+            <input matInput formControlName="amount" placeholder="Enter amount" />
+            @if (form.get('amount')?.hasError('required')) {
+            <mat-error>
+              Amount is required
+            </mat-error>
+            }
+            @if (form.get('amount')?.hasError('pattern')) {
+            <mat-error>
+              Enter a valid number
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
 
   </form>
 </div>
