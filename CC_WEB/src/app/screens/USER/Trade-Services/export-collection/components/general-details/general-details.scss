@@ -1,0 +1,204 @@
+@use '../../../../../../../styles/_theme.scss' as theme;
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+}
+
+/* Collapsible */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin-top: 10px;
+  transition: all 0.35s ease-in-out;
+  transform: translateY(-5px);
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* Preview block when collapsed */
+.preview-block {
+  padding: 15px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  strong {
+    color: theme.$primary-dark;
+  }
+}
+
+@media (max-width: 992px) {
+  .preview-block {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Headings */
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$white;
+}
+
+h4 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  // border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* Form layout */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+mat-form-field {
+  width: 100%;
+  font-size: 14px;
+}
+
+
+/* Responsive */
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .preview-block {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    padding: 12px 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collapsible.open {
+    padding: 10px 5px;
+  }
+
+  .preview-block {
+    gap: 8px;
+  }
+}
+
+
+// my scss code for the angular material dropdown to have white background
+
+/* ---------- Angular Material Dropdown Fix ---------- */
+::ng-deep .cdk-overlay-pane,
+::ng-deep .mat-mdc-select-panel,
+::ng-deep .mdc-menu-surface {
+  padding: 0 !important;
+  margin: 0 !important; 
+  border: 1px solid #e0e0e0; // subtle professional border
+ 
+  background-color: #ffffff !important;
+  border-radius: 5px !important; /* smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* soft shadow */
+}
+
+/* mat-option: base styling */
+::ng-deep .mat-mdc-option {
+  background-color: #ffffff !important; /* always white */
+  color: #000 !important; /* black text */
+  border-radius: 4px !important;
+  padding-left: 10px !important;
+  min-height: 38px !important;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  box-shadow: none !important;
+}
+
+/* mat-option hover */
+::ng-deep .mat-mdc-option:hover {
+  background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important; // smooth gradient
+ 
+  color: #000 !important;
+}
+
+/* mat-option selected */
+::ng-deep .mat-mdc-option.mat-selected {
+  background-color: #ffffff !important; /* keep white even when selected */
+  color: #000 !important;
+  box-shadow: none !important;
+  
+  border: none !important;
+}
+
+/* remove ripple */
+::ng-deep .mat-mdc-option .mat-ripple-element {
+  display: none !important;
+}
+
+/* stack dropdowns on small screens */
+@media (max-width: 768px) {
+  .dropdown-row {
+    flex-direction: column;
+
+    .dropdown-half {
+      width: 100%;
+    }
+  }
+}

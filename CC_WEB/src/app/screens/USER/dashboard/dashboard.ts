@@ -10,7 +10,6 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 /* ================= CARD TYPES ================= */
 type CardFormat = 'number' | 'currency';
 
@@ -54,8 +53,8 @@ export class Dashboard implements OnInit, AfterViewInit {
       id: 1,
       type: 'primary',
       icon: 'account_balance',
-      title: 'Total Transactions',
-      value: 1245,
+      title: 'Total LC',
+      value: 1500,
       format: 'number',
       trend: 8,
       link: '/transactions'
@@ -64,8 +63,8 @@ export class Dashboard implements OnInit, AfterViewInit {
       id: 2,
       type: 'success',
       icon: 'check_circle',
-      title: 'Completed',
-      value: 980,
+      title: 'Completed LC',
+      value: 800,
       format: 'number',
       trend: 5,
       link: '/transactions/completed'
@@ -74,19 +73,19 @@ export class Dashboard implements OnInit, AfterViewInit {
       id: 3,
       type: 'warning',
       icon: 'hourglass_empty',
-      title: 'Pending',
-      value: 265,
+      title: 'Pending LC',
+      value: 650,
       format: 'number',
       trend: -3,
       link: '/transactions/pending'
     },
     {
       id: 4,
-      type: 'info',
-      icon: 'payments',
-      title: 'Total Value',
-      value: 25,
-      format: 'currency',
+      type: 'warning',
+      icon: 'warning',
+      title: 'Rejected LC',
+      value: 50,
+      format: 'number',
       trend: 12,
       link: '/transactions/value'
     }

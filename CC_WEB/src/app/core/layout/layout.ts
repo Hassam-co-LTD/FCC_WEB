@@ -32,10 +32,10 @@ interface MenuItem {
   ],
 })
 export class LayoutComponent implements OnInit {
-Logout() {
- this.authService.logout();
- this.router.navigate(['/login']);
-}
+  Logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
 
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
@@ -179,7 +179,7 @@ Logout() {
     } else {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        { label: 'Search', icon: 'search', route: '/Search-by-id' },
+        // { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
           icon: 'article',
@@ -225,6 +225,7 @@ Logout() {
               children: [
                 { label: 'Create', route: '/shipping-guarantee' },
                 { label: 'Amend', route: '/shipping-guarantee/amend' },
+                { label: 'Inquiries', route: '/shipping-guarantee/inquiries-records' },
               ]
             },
 
@@ -256,7 +257,7 @@ Logout() {
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
                 // { label: 'Approved-records', route: '/undertaking-issuance/approved-records' },
                 { label: 'Inquiries', route: '/undertaking-issuance/inquiries-records' },
-                
+
 
               ]
             },
@@ -264,10 +265,41 @@ Logout() {
 
           ],
         },
-
-
-        { label: 'Settings', icon: 'settings', route: '/settings' },
-        { label: 'Logout', icon: 'exit_to_app', route: '/login' }
+        {
+          label: 'Payments Services',
+          icon: 'account_balance_wallet',
+          open: false,
+          children: [
+            { 
+              label: 'Fund Transfer',
+              route:'/fund-transfer-welcome',
+              open: false,
+              children: [
+                { label: 'IBFT', route: '/' },
+                { label: 'With-In Bank', route: '/fund-transfer/with-in' },
+                { label: 'My Accounts', route: '/' },
+                { label: 'Inquiries', route: 'fund-transfer/fund-transfer-records' },
+              ]
+            },
+            // {
+            //   label: 'Bulk Transfer',
+            // }
+          ],
+        },
+        {
+          label: 'Beneficiary Management',
+          icon: 'person',
+          open: false,
+          children: [
+            { label: 'Add Beneficiary', route: '/undertaking-issuance' },
+            { label: 'Inquiries', route: '/import-screen/inquiries' },
+          ],
+        },
+        {
+          label: 'Logout',
+          icon: 'logout',
+          route: '/login'
+        }
       ];
     }
   }

@@ -29,8 +29,8 @@ export class TopbarComponent {
   }
 
 
-  toggleNav() {
-    this.menuVisible = !this.menuVisible;
-  }
+  // toggleNav() {
+  //   this.menuVisible = !this.menuVisible;
+  // }
 
 }
