@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http'; // Added HttpParams
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 
@@ -61,21 +61,21 @@ export class UndertakingIssuanceService {
   // ================= WRITE OPERATIONS =================
 
   // 1. SAVE DRAFT (Status: 'I' or 'Draft')
-saveDraft(formData: any, companyId: string, id?: string | number | null): Observable<UndertakingTransaction> {
-  const payload = this.transformToBackendDTO(formData, id);
-  payload.status = 'I'; 
+  saveDraft(formData: any, companyId: string, id?: string | number | null): Observable<UndertakingTransaction> {
+    const payload = this.transformToBackendDTO(formData, id);
+    payload.status = 'I'; 
 
-  return this.http.post<any>(
-    `${this.BASE_URL}/save`,
-    payload,
-    {
-      headers: { 'companyid': companyId }  // <-- Add company ID here
-    }
-  ).pipe(
-    map(saved => this.mapToFrontend(saved)),
-    tap(savedTx => this.updateLocalState(savedTx))
-  );
-}
+    return this.http.post<any>(
+      `${this.BASE_URL}/save`,
+      payload,
+      {
+        headers: { 'companyid': companyId }
+      }
+    ).pipe(
+      map(saved => this.mapToFrontend(saved)),
+      tap(savedTx => this.updateLocalState(savedTx))
+    );
+  }
 
 
   updateDraft(formData: any): Observable<UndertakingTransaction> {
@@ -113,9 +113,24 @@ saveDraft(formData: any, companyId: string, id?: string | number | null): Observ
 
   // 4. REJECT (Status: 'R')
   rejectUndertaking(id: string | number, reason: string): Observable<UndertakingTransaction> {
-    return this.http.post<any>(`${this.BASE_URL}/reject/${id}`, { reason }).pipe(
-      map(updated => this.mapToFrontend(updated)),
-      tap(updatedTx => this.updateLocalState(updatedTx))
+    console.log('Sending reject request for ID:', id, 'with reason:', reason);
+    
+    // FIXED: Use correct endpoint and parameter name
+    const body = { rejectionReason: reason };
+    
+    return this.http.post<any>(`${this.BASE_URL}/rejectReason/${id}`, body).pipe(
+      map(updated => {
+        console.log('Reject response:', updated);
+        return this.mapToFrontend(updated);
+      }),
+      tap(updatedTx => {
+        console.log('Updating local state after reject:', updatedTx);
+        this.updateLocalState(updatedTx);
+      }),
+      catchError(error => {
+        console.error('Error in rejectUndertaking:', error);
+        throw error;
+      })
     );
   }
 

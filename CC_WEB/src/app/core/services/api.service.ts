@@ -289,11 +289,16 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
-    const body = { rejectionReason: reason };
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/rejectReason/${tnxId}`, body)
-      .pipe(catchError(this.handleError));
-  }
+// In your ApiService
+rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
+  const body = { rejectionReason: reason };
+  return this.http.post<TransferDTO>(
+    `${this.baseUrl}transfers/rejectReason/${tnxId}`, 
+    body
+  ).pipe(
+    catchError(this.handleError)
+  );
+}
 
   updateRejectedTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
     return this.http.put<TransferDTO>(`${this.baseUrl}transfers/updateRejected/${tnxId}`, data)

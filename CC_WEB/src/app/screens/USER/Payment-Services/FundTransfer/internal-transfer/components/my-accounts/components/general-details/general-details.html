@@ -18,32 +18,41 @@
         </div>
         
         <!-- Transfer From with Search Icon -->
-        <div class="field-group">
-          <h4>Transfer From</h4>
-          <div class="account-search-field">
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Select Account</mat-label>
-              <input matInput formControlName="transferFrom" readonly>
-              <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferFrom')" type="button">
-                <mat-icon>search</mat-icon>
-              </button>
-            </mat-form-field>
-          </div>
-        </div>
+        <!-- Transaction search -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Transfer From *</h4>
+      <div class="account-search-field">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Account</mat-label>
+          <input matInput formControlName="transferFrom" readonly placeholder="Click search to select account" />
+          <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferFrom')" type="button">
+            <mat-icon>search</mat-icon>
+          </button>
+          <!-- <mat-hint>Search by name, number, or IBAN</mat-hint> -->
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
         
         <!-- Transfer To with Search Icon -->
-        <div class="field-group">
-          <h4>Transfer To</h4>
-          <div class="account-search-field">
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Select Account</mat-label>
-              <input matInput formControlName="transferTo" readonly>
-              <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferTo')" type="button">
-                <mat-icon>search</mat-icon>
-              </button>
-            </mat-form-field>
-          </div>
-        </div>
+        <!-- Transaction search -->
+  <div class="form-grid">
+    <div class="field-group">
+      <h4>Transfer To *</h4>
+      <div class="account-search-field">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Account</mat-label>
+          <input matInput formControlName="transferTo" readonly placeholder="Click search to select account" />
+          <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferTo')" type="button">
+            <mat-icon>search</mat-icon>
+          </button>
+          <!-- <mat-hint>Search by name, number, or IBAN</mat-hint> -->
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
 
         <!-- Hidden fields for account details -->
         <!-- <div style="display: none;">
