@@ -57,25 +57,21 @@
                 <th>Product</th>
                 <th>Currency</th>
                 <th>Amount</th>
-                <th>Applicant</th>
-                <th>Beneficiary</th>
+                <!-- <th>Applicant</th> -->
+                <!-- <th>Beneficiary</th> -->
                 <th>Action</th>
             </tr>
         </thead>
 
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <!-- <td><a class="tnx-link" (click)="openImportLc(tx)">{{ tx.tnxId }}</a></td> -->
-                <td><a class="tnx-link">{{ tx.tnxId }}</a></td>
+                <td><a class="tnx-link" (click)="viewTransaction(tx)">{{ tx.tnxId }}</a></td>
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
                 <td>{{ tx.productType }}</td>
                 <td>{{ tx.currency }}</td>
                 <td>{{ tx.amount }}</td>
-                <td>{{ tx.applicantName }}</td>
-                <td>{{ tx.beneficiaryName }}</td>
                 <td>
-                    <!-- <button class="btn-action" (click)="viewTransaction(tx)"> -->
-                    <button class="btn-action">
+                    <button class="btn-action" (click)="viewTransaction(tx)">
                         <mat-icon>visibility</mat-icon> View
                     </button>
                 </td>

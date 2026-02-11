@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
-import { DialogRef } from '@angular/cdk/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-reject-dialog',
   templateUrl: './reject-dialog.html',
   styleUrls: ['./reject-dialog.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, MatButtonModule] // Add MatButtonModule
 })
 export class RejectDialogComponent {
   reason = new FormControl('', [
@@ -16,7 +17,8 @@ export class RejectDialogComponent {
     Validators.maxLength(250)
   ]);
 
-  constructor(private dialogRef: DialogRef<string>) { }
+  constructor(private dialogRef: MatDialogRef<RejectDialogComponent>) { }
+
   get errorMessage(): string {
     if (this.reason.hasError('required')) {
       return 'Rejection reason is required.';
@@ -26,11 +28,13 @@ export class RejectDialogComponent {
     }
     return '';
   }
+
   close() {
     this.dialogRef.close();
   }
 
   confirm() {
+    console.log('Confirm called, reason value:', this.reason.value); // Add log
     if (this.reason.valid) {
       this.dialogRef.close(this.reason.value!); 
     }

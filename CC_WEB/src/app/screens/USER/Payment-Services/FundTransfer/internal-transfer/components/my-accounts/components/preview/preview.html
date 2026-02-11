@@ -1,0 +1,57 @@
+<div class="preview-page">
+
+  <h2 class="page-title">Transfer Preview</h2>
+
+  <div class="preview-container">
+
+    <!-- GENERAL DETAILS -->
+    <div class="preview-card">
+      <div class="section-title">General Details</div>
+
+      <div class="preview-grid">
+        <div class="preview-label">Product Type</div>
+        <div class="preview-value">{{ getVal('generalDetails.productType') }}</div>
+
+        <div class="preview-label">Transaction ID</div>
+        <div class="preview-value">{{ getVal('generalDetails.TransactionId') }}</div>
+
+        <div class="preview-label">Transfer Date</div>
+        <div class="preview-value">{{ formatDate() }}</div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT DETAILS -->
+    <div class="preview-card">
+      <div class="section-title">Account Information</div>
+
+      <div class="preview-grid">
+        <div class="preview-label">Transfer From</div>
+        <div class="preview-value">{{ getVal('generalDetails.transferFrom') }}</div>
+
+        <div class="preview-label">Transfer To</div>
+        <div class="preview-value">{{ getVal('generalDetails.transferTo') }}</div>
+
+        <div class="preview-label">Currency</div>
+        <div class="preview-value">{{ getVal('generalDetails.currency') }}</div>
+
+        <div class="preview-label">Amount</div>
+        <div class="preview-value">
+          {{ getVal('generalDetails.currency') }} {{ formatAmount() }}
+        </div>
+      </div>
+    </div>
+
+    <!-- REMARKS -->
+    <div class="preview-card full-width">
+      <div class="section-title">Remarks</div>
+
+      <div class="preview-grid">
+        <div class="preview-label">Transaction Remarks</div>
+        <div class="preview-value">
+          {{ getVal('generalDetails.transactionRemarks') || '—' }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

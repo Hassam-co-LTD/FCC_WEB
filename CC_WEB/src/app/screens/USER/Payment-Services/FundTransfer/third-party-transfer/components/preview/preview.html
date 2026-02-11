@@ -1,0 +1,54 @@
+<div class="preview-container">
+  <div class="section-header">
+    <h2>Transaction Preview</h2>
+  </div>
+
+  <div class="preview-content">
+    <div class="form-grid-2">
+      <div class="preview-group">
+        <label>Product Type</label>
+        <div class="value">{{ getVal('producttype') || 'Internal Transfer' }}</div>
+      </div>
+      
+      <div class="preview-group">
+        <label>Transaction ID</label>
+        <div class="value">{{ getVal('tnxId') }}</div>
+      </div>
+
+      <div class="preview-group">
+        <label>Transfer From</label>
+        <div class="value account-highlight">{{ getVal('transferFrom') }}</div>
+      </div>
+
+      <div class="preview-group">
+        <label>Application Date</label>
+        <div class="value">{{ getVal('appDate') | date:'dd/MMM/yyyy HH:mm' }}</div>
+      </div>
+
+      <div class="preview-group">
+        <label>Beneficiary Name</label>
+        <div class="value">{{ getVal('beneficiaryname') }}</div>
+      </div>
+
+      <div class="preview-group">
+        <label>Beneficiary Account</label>
+        <div class="value">{{ getVal('beneficiaryaccount') }}</div>
+      </div>
+
+      <div class="preview-group amount-section">
+        <label>Amount</label>
+        <div class="value total-amount">
+          <span class="currency">{{ getVal('currency') }}</span> 
+          {{ getVal('amount') | number:'1.2-2' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-grid-1">
+      <div class="preview-group">
+        <label>Remarks</label>
+        <div class="value remarks-text">{{ getVal('tranferRemarks') || 'No remarks provided' }}</div>
+      </div>
+    </div>
+  </div>
+</div>

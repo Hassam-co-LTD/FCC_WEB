@@ -1,5 +1,12 @@
-@use '../../../../../../../../styles/theme' as theme;
+@use '../../../../../../../../../../styles/theme' as theme;
 
+
+.custom-dialog-container {
+    background-color: #ffffff !important; // white background
+    border-radius: 8px; // optional: rounded corners
+    padding: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
 /* ================================
    PREVIEW PAGE (Blue Fintech Theme)
 ================================ */
@@ -197,8 +204,6 @@ button[mat-stroked-button] {
         transform: scale(0.97);
     }
 }
-
-
 
 .success-snackbar {
     background-color: theme.$primary; // your theme blue
