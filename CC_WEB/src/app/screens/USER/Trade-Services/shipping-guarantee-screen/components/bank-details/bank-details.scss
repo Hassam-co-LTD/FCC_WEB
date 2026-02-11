@@ -73,6 +73,27 @@ h4 {
   gap: 20px;
 }
 
+.form-grid-2.unequal {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  /* Currency smaller, Amount bigger */
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 22px;
+  align-items: start;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 mat-form-field {
   width: 100%;
 }

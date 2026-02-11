@@ -1,5 +1,9 @@
 export const environment = {
     production: false,
-    // apiUrl: 'http://desktop-f0rmr14:8050/mydms/'
-    apiUrl: 'http://localhost:8084/api/v1/'
+
+    // Settlement System via Gateway
+    apiUrl: 'http://localhost:8050/settlementsystem/api/v1',
+
+    // Middleware via Gateway
+    apiURL_MIDDLEWARE: 'http://localhost:8050/middleware-service/mw/api/v1'
 };

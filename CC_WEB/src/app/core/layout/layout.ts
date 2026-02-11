@@ -225,6 +225,7 @@ export class LayoutComponent implements OnInit {
               children: [
                 { label: 'Create', route: '/shipping-guarantee' },
                 { label: 'Amend', route: '/shipping-guarantee/amend' },
+                { label: 'Inquiries', route: '/shipping-guarantee/inquiries-records' },
               ]
             },
 

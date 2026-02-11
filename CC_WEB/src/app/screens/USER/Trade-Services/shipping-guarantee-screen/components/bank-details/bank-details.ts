@@ -27,7 +27,7 @@ export class BankDetails implements OnInit {
   isOpen = true;
   activeSection: string | null = 'bank';
   form!: FormGroup;
-
+  currencies = ['USD', 'EUR', 'GBP', 'PKR', 'JPY'];
   bankList = ['UBL', 'HBL', 'SAMBA'];
   currencyList = [
     { code: 'PKR', name: 'Pakistan Rupee' },
@@ -43,11 +43,10 @@ export class BankDetails implements OnInit {
 
   ngOnInit() {
   this.form = this.fb.group({
-    bankName: ['', Validators.required],         // keep bank name if needed
-    issuerReference: ['', Validators.required],
-    currency: ['', Validators.required],
-    swiftCode: [''],                             // new field for SWIFT Code
-    guaranteeAmount: [0, [Validators.required, Validators.min(1)]]
+    bankName: [''],         // keep bank name if needed
+    issuerReference: [''],
+    currency: [''],
+    amount: [''],
   });
 
   // Restore existing data if available

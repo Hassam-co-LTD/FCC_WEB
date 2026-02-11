@@ -42,14 +42,15 @@ export class ApplicantBeneficiary implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      applicantName: ['', Validators.required],
-      applicantAddress1: ['', Validators.required],
+      applicantName: [''],
+      applicantAddress1: [''],
       applicantAddress2: [''],
-
-      beneficiaryName: ['', Validators.required],
-      beneficiaryCountry: ['', Validators.required],
-      beneficiaryAddress1: ['', Validators.required],
-      beneficiaryAddress2: ['']
+      applicantCountry: [''],
+      
+      beneficiaryName: [''],
+      beneficiaryAddress1: [''],
+      beneficiaryAddress2: [''],
+      beneficiaryCountry: [''],
     });
 
     // 🔄 Restore data if available

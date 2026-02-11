@@ -38,6 +38,7 @@ export class ApiService {
   // -------------------------------------------------------------
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   private baseUrl = `${environment.apiUrl}`;
+  private middlewareURl = `${environment.apiURL_MIDDLEWARE}`; 
 
   constructor(private http: HttpClient) { }
 
@@ -84,8 +85,8 @@ export class ApiService {
     const headers = new HttpHeaders({
       companyid: companyId ?? ''
     });
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/save`, data,
-      { headers })
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/save`, data,
+       {headers})
       .pipe(catchError(this.handleError));
   }
 
@@ -96,8 +97,8 @@ export class ApiService {
       companyid: companyId ?? ''
     });
     return this.http.get<ImportLcTransaction[]>(
-      `${this.baseUrl}importlc/status/${status}`,
-      { headers }
+      `${this.baseUrl}/importlc/status/${status}`,
+      {headers}
     )
       .pipe(catchError(this.handleError));
   }
@@ -108,7 +109,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       companyid: companyId ?? ''
     });
-    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}importlc/records/${status}`, { headers })
+    return this.http.get<ImportLcTransaction[]>(`${this.baseUrl}/importlc/records/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
@@ -123,7 +124,7 @@ export class ApiService {
   updatePendingByTnxId(payload: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Payload before update:', payload);
     return this.http
-      .put<ImportLcTransaction>(`${this.baseUrl}importlc/${payload.tnxId}`, payload)
+      .put<ImportLcTransaction>(`${this.baseUrl}/importlc/${payload.tnxId}`, payload)
       .pipe(catchError(this.handleError));
   }
 
@@ -135,7 +136,7 @@ export class ApiService {
   ): Observable<ImportLcTransaction> {
     console.log('Submitting transaction:', tnxId, data);
     return this.http
-      .post<ImportLcTransaction>(`${this.baseUrl}importlc/submit/${tnxId}`, data, {
+      .post<ImportLcTransaction>(`${this.baseUrl}/importlc/submit/${tnxId}`, data, {
         headers: { 'Content-Type': 'application/json' }
       })
       .pipe(catchError(this.handleError));
@@ -143,7 +144,7 @@ export class ApiService {
 
   // Get Transaction by TNX ID for READ-ONLY view for approved/rejected records
   getTransactionByTnxId(tnxId: string): Observable<ImportLcTransaction> {
-    return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/${tnxId}`, {
+    return this.http.get<ImportLcTransaction>(`${this.baseUrl}/importlc/${tnxId}`, {
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));
@@ -152,7 +153,7 @@ export class ApiService {
   /** Approve transaction */
   approveTransaction(tnxId: string, data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Approving transaction ID:', tnxId);
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/approve/${tnxId}`, data, {
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/approve/${tnxId}`, data, {
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));
@@ -161,14 +162,14 @@ export class ApiService {
 
   /** Reject Reason */
   rejectTransaction(tnxId: string, reason: string): Observable<ImportLcTransaction> {
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}importlc/rejectReason/${tnxId}`, { rejectionReason: reason }, {
+    return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/rejectReason/${tnxId}`, {rejectionReason: reason}, {
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));
   }
   // update-Rejected
   updateRejectedTransaction(tnxId: string, payload: ImportLcTransaction) {
-    return this.http.put<ImportLcTransaction>(`${this.baseUrl}importlc/updateRejected/${tnxId}`, payload, {
+    return this.http.put<ImportLcTransaction>(`${this.baseUrl}/importlc/updateRejected/${tnxId}`, payload,{
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));
