@@ -21,7 +21,7 @@ export class AuthService {
       error: err => console.error('Login error:', err)
     }); 
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
-        (userId === 'user' && companyId === 'user' && password === 'user')) {
+      (userId === 'user' && companyId === 'ABC' && password === 'user') || (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
 
       if (this.isBrowser()) {
         sessionStorage.setItem('token', 'dummy-token');

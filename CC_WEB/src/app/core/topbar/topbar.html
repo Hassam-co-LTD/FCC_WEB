@@ -1,13 +1,14 @@
 <header class="topbar">
   <!-- Group hamburger + title -->
   <div class="left-group">
-    <button class="menu-toggle" (click)="toggleNav()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <div class="left">
-      <span class="app-title">Trade Finance Portal</span>
+    <div class="brand">
+      <img src="/branding/infotech-logo.jpg" alt="Infotech" class="brand-logo" routerLink="/dashboard" />
     </div>
+    <!-- <div class="left">
+      <span class="app-title">Trade Finance Portal</span>
+    </div> -->
   </div>
+
   <!-- Center Navigation -->
   <nav class="nav" [class.open]="menuVisible">
 
@@ -21,13 +22,13 @@
       </button>
 
       @if (menuOpen) {
-        <ul class="dropdown-menu">
-          <li><button [routerLink]="['/import-welcome']" (click)="closeMenu()">Import LC</button></li>
-          <li><button [routerLink]="['/exportlc-welcome']" (click)="closeMenu()">Export LC</button></li>
-          <!-- <li><button [[routerLink]]="['/shipping-guarantee-screen']" (click)="closeMenu()">Shipping Guarantee</button></li>
+      <ul class="dropdown-menu">
+        <li><button [routerLink]="['/import-welcome']" (click)="closeMenu()">Import LC</button></li>
+        <li><button [routerLink]="['/exportlc-welcome']" (click)="closeMenu()">Export LC</button></li>
+        <!-- <li><button [[routerLink]]="['/shipping-guarantee-screen']" (click)="closeMenu()">Shipping Guarantee</button></li>
           <li><button [routerLink]="['/financial-request']" (click)="closeMenu()">Financial Request</button></li>
           <li><button [routerLink]="['/export-collection']" (click)="closeMenu()">Export Collection</button></li> -->
-        </ul>
+      </ul>
       }
     </div>
 

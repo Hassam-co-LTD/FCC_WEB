@@ -1,19 +1,15 @@
 <div class="success-page">
-
   <div class="success-icon">✔</div>
 
   <h1>Success</h1>
-  <p *ngIf="transaction">
-    Your transaction is successfully released to the bank.
-    {{ transaction.tnxId }}
+  
+  <p>
+    Your transaction has been successfully processed.
   </p>
-
-
-  <!-- 🔒 Read-only Preview -->
-  <!-- <app-preview
-    [transaction]="transaction"
-    [readonly]="true">
-  </app-preview> -->
+  
+  <h2 *ngIf="reference || tnxId" class="reference-id">
+    {{ reference || tnxId }}
+  </h2>
 
   <div class="actions">
     <button mat-flat-button color="primary" (click)="goToListing()">
@@ -24,5 +20,4 @@
       {{ pageName2 }}
     </button>
   </div>
-
 </div>

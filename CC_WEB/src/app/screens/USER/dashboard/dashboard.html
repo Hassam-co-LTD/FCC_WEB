@@ -27,7 +27,7 @@
   <!-- KEY METRICS -->
   <div class="metrics-section">
     <div class="section-header">
-      <h2>Financial Overview</h2>
+      <h2>LC Overview</h2>
       <div class="time-filter">
         <button mat-button [class.active]="timeFilter === 'today'" (click)="setTimeFilter('today')">Today</button>
         <button mat-button [class.active]="timeFilter === 'week'" (click)="setTimeFilter('week')">This Week</button>
@@ -46,8 +46,8 @@
             <div class="metric-value">{{ formatValue(card.value, card.format) }}</div>
             <div class="metric-title">{{ card.title }}</div>
             <div class="metric-trend" [class]="card.trend > 0 ? 'trend-up' : 'trend-down'">
-              <mat-icon>{{ card.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              <span>{{ card.trend }}% from last period</span>
+              <!-- <mat-icon>{{ card.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              <span>{{ card.trend }}% from last period</span> -->
             </div>
           </div>
           <div class="metric-action">
@@ -157,27 +157,6 @@
           </div>
         </div>
       }
-    </div>
-  </div>
-
-  <!-- PERFORMANCE CHARTS -->
-  <div class="charts-section">
-    <div class="chart-card">
-      <div class="chart-header">
-        <h3>Transaction Volume Trend</h3>
-        <div class="chart-legend">
-          <span class="legend-item"><div class="legend-color" style="background-color: #0b4eb3;"></div> This Month</span>
-          <span class="legend-item"><div class="legend-color" style="background-color: #1a73e8;"></div> Last Month</span>
-        </div>
-      </div>
-      <div class="chart-container">
-        <!-- Chart will be rendered here -->
-        <div class="chart-placeholder" *ngIf="!chartLoaded">
-          <mat-icon>bar_chart</mat-icon>
-          <p>Loading chart data...</p>
-        </div>
-        <canvas #volumeChart *ngIf="chartLoaded"></canvas>
-      </div>
     </div>
   </div>
 

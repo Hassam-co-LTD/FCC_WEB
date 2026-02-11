@@ -1,61 +1,75 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { ImportlcFormTransactionService } from
-  '../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-// import { Preview } from "../../screens/USER/import-screen/components/preview/preview";
-import { ImportLcTransaction } from "../../core/models/import-lc";
 
 @Component({
   selector: 'app-success',
   templateUrl: './success.html',
   styleUrls: ['./success.scss'],
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule],
+  imports: [CommonModule, MatButtonModule],
 })
 export class Success implements OnInit {
 
-  transaction!: ImportLcTransaction;
-  displayedColumns: string[] = [];
+  tnxId = '';
+  reference = '';
 
-  pageName1 = 'Import LC Listing';
-  pageName2 = 'New Import LC';
+  pageName1 = 'Go to Listing';
+  pageName2 = 'Create New';
 
-  constructor(
-    private router: Router,
-    private transactionService: ImportlcFormTransactionService
-  ) { }
+  listingRoute = '';
+  createRoute = '';
+
+  constructor(private router: Router) {
+    const nav = this.router.getCurrentNavigation();
+    const state = nav?.extras.state as any;
+
+    if (!state) {
+      console.warn('No navigation state found on Success page');
+      return;
+    }
+
+    this.tnxId = state.tnxId || state.transaction?.tnxId || '';
+    this.reference =
+      state.channelReference || state.transaction?.channelReference || '';
+
+    switch (state.source) {
+      case 'IMPORT_LC':
+        this.listingRoute = 'import-screen/inquiries';
+        this.createRoute = 'import-screen';
+        break;
+
+      case 'UNDERTAKING_ISSUANCE':
+        this.listingRoute = 'undertaking-issuance/inquiries-records';
+        this.createRoute =
+          'undertaking-issuance/request-undertaking/general-details';
+        break;
+    }
+
+    // Explicit overrides (still supported)
+    if (state.routes) {
+      this.listingRoute = state.routes.listingRoute || this.listingRoute;
+      this.createRoute = state.routes.createRoute || this.createRoute;
+    }
+
+    if (state.labels) {
+      this.pageName1 = state.labels.listingLabel || this.pageName1;
+      this.pageName2 = state.labels.createLabel || this.pageName2;
+    }
+  }
 
   ngOnInit(): void {
-    /** 1️⃣ Try router state first */
-    const navigation = this.router.getCurrentNavigation();
-    const stateData = navigation?.extras?.state as {transaction?: ImportLcTransaction};
-
-    if (stateData?.transaction) {
-      this.transaction = stateData.transaction;
-      return;
+    if (!this.tnxId && !this.reference) {
+      console.warn('Success page accessed without transaction context');
     }
-    /** 2️⃣ Fallback (refresh / deep link) */
-    const lastSubmitted = this.transactionService
-      .getAllTransactions()
-      .filter(tx => tx.status === 'S')
-      .pop();
-
-    if (!lastSubmitted) {
-      this.router.navigate(['/import-screen/success']);
-      return;
-    }
-
-    this.transaction = lastSubmitted;
   }
 
   goToListing(): void {
-    this.router.navigate(['/import-screen/inquiries']);
+    this.router.navigate([this.listingRoute]);
   }
 
   createNew(): void {
-    this.router.navigate(['/import-screen']);
+    this.router.navigate([this.createRoute]);
   }
 }

@@ -1,277 +1,160 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { FormGroup } from '@angular/forms';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+export interface TransactionBase {
 
-export interface Transaction {
-  id: number;
+  id: string;
+  type: 'undertaking' | 'export-collection' | 'shipping-guarantee';
+  status: 'Draft' | 'Pending Approval' | 'Pending at Bank' | 'Live' | 'Rejected' | 'Closed' | 'Submitted';
+
+  // --- References ---
   channelReference: string;
-  customerReference: string;
-  bankReference: string;
-  issueDate: Date;
-  status: string;
-  beneficiary: string;
+  customerReference?: string;
+  bankReference?: string;
+
+  // --- Financials ---
+  beneficiary?: string;
   currency: string;
   amount: number;
-  outstandingAmount: number;
-  expiryDate: Date;
-  formData?: any;
+  outstandingAmount?: number;
+
+  // --- Dates ---
+  issueDate: Date | string;
+  expiryDate?: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  submittedAt?: Date | string;
+
+  // --- Permissions ---
+  canEdit: boolean;
+  canView: boolean;
+
+  // --- Data Storage ---
+  formData?: any; 
+
+  collectionType?: string;
+  drawerName?: string;
+  draweeName?: string;
+  shippingDetails?: any;
+  collectionInstructions?: any;
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class SharedService {
-  // For current form data
-  private formData = new BehaviorSubject<any>(null);
-  currentData$ = this.formData.asObservable();
-
-  // For storing all transactions
-  private transactions = new BehaviorSubject<Transaction[]>([]);
-  transactions$ = this.transactions.asObservable();
-
-  private isBrowser: boolean;
-
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-    console.log('SharedService initialized - isBrowser:', this.isBrowser);
-    
-    // Load saved transactions from localStorage only in browser
-    if (this.isBrowser) {
-      this.loadTransactions();
-    }
-  }
-
-  // ==================== FORM DATA METHODS ====================
-  
-  setFormData(data: any) {
-    console.log('Setting form data:', data);
-    this.formData.next(data);
-  }
-
-  getFormData() {
-    const data = this.formData.value;
-    return data;
-  }
-
-  clearFormData() {
-    console.log('Clearing form data');
-    this.formData.next(null);
-  }
-
-  // ==================== TRANSACTION METHODS ====================
-
-  // Get all transactions (for search screen) - ADD THIS METHOD
-  getAllTransactions(): Transaction[] {
-    return this.transactions.value;
-  }
-
-  // Add a new transaction
-  addTransaction(form: FormGroup) {
-    console.log('=== START: Adding transaction ===');
-    
-    // Generate unique references
-    const timestamp = Date.now();
-    const channelRef = 'CH' + timestamp.toString().slice(-8);
-    const customerRef = 'CUST' + Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    const bankRef = 'BNK' + timestamp.toString().slice(-6);
-
-    // Safely get form values
-    const formValue = form.value || {};
-    const undertakingDetails = formValue.undertakingDetails || {};
-    const applicantBeneficiary = formValue.applicantBeneficiary || {};
-    
-    // Create transaction object
-    const transaction: Transaction = {
-      id: timestamp,
-      channelReference: channelRef,
-      customerReference: customerRef,
-      bankReference: bankRef,
-      issueDate: new Date(),
+  // 1. Initialize with some dummy data for testing
+  private initialData: TransactionBase[] = [
+    {
+      id: '101',
+      type: 'undertaking',
       status: 'Live',
-      beneficiary: applicantBeneficiary.beneficiaryName || 'Unknown Beneficiary',
-      currency: undertakingDetails.currency || 'USD',
-      amount: parseFloat(undertakingDetails.undertakingAmount) || 0,
-      outstandingAmount: parseFloat(undertakingDetails.undertakingAmount) || 0,
-      expiryDate: undertakingDetails.expiryDate ? new Date(undertakingDetails.expiryDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      formData: formValue
+      channelReference: 'UND-2023-001',
+      customerReference: 'REF-A1',
+      beneficiary: 'Acme Corp',
+      currency: 'USD',
+      amount: 50000,
+      outstandingAmount: 50000,
+      issueDate: new Date('2023-10-01'),
+      createdAt: new Date('2023-10-01'),
+      updatedAt: new Date('2023-10-05'),
+      canEdit: false,
+      canView: true,
+      formData: {}
+    },
+    {
+      id: '102',
+      type: 'export-collection',
+      status: 'Draft',
+      channelReference: 'EXP-2023-099',
+      customerReference: 'PO-999',
+      beneficiary: 'Global Trade Ltd',
+      currency: 'EUR',
+      amount: 12500.50,
+      outstandingAmount: 12500.50,
+      issueDate: new Date('2023-11-15'),
+      createdAt: new Date('2023-11-15'),
+      updatedAt: new Date('2023-11-15'),
+      canEdit: true,
+      canView: true,
+      formData: {},
+      collectionType: 'DA',
+      drawerName: 'Global Trade Ltd'
+    }
+  ];
+
+  // 2. BehaviorSubject holds the current state of transactions
+  private transactionsSubject = new BehaviorSubject<TransactionBase[]>(this.initialData);
+
+  // 3. Components subscribe to this Observable
+  public transactions$ = this.transactionsSubject.asObservable();
+
+  // Storage for passing data between pages (View/Edit)
+  private formDataStore: any = null;
+
+  constructor() { }
+
+  // ==========================================================
+  //  TRANSACTION MANAGEMENT
+  // ==========================================================
+
+  addTransaction(transaction: TransactionBase): void {
+    const currentTransactions = this.transactionsSubject.value;
+
+    // Ensure default timestamps
+    const newTransaction = {
+      ...transaction,
+      createdAt: transaction.createdAt || new Date(),
+      updatedAt: transaction.updatedAt || new Date()
     };
 
-    console.log('Created transaction:', transaction);
+    // Add to the top of the list
+    const updatedTransactions = [newTransaction, ...currentTransactions];
 
-    // Add to existing transactions
-    const currentTransactions = this.transactions.value;
-    const updatedTransactions = [...currentTransactions, transaction];
-    
-    this.transactions.next(updatedTransactions);
-    this.saveTransactions(updatedTransactions);
-    
-    console.log('Transaction added successfully. Total transactions:', updatedTransactions.length);
-    
-    return transaction;
+    this.transactionsSubject.next(updatedTransactions);
+    console.log('Transaction added to SharedService:', newTransaction);
   }
 
-  // Search transactions
-  searchTransactions(searchTerm: string, filters?: any): Transaction[] {
-    console.log('Searching transactions:', { searchTerm, filters });
-    
-    let results = [...this.transactions.value];
-    
-    // Apply search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      results = results.filter(t =>
-        t.channelReference.toLowerCase().includes(term) ||
-        t.customerReference.toLowerCase().includes(term) ||
-        t.bankReference.toLowerCase().includes(term) ||
-        t.beneficiary.toLowerCase().includes(term) ||
-        t.id.toString().includes(term)
-      );
-    }
-
-    // Apply filters
-    if (filters) {
-      if (filters.channelReference) {
-        results = results.filter(t => 
-          t.channelReference.toLowerCase().includes(filters.channelReference.toLowerCase())
-        );
-      }
-      
-      if (filters.customerReference) {
-        results = results.filter(t => 
-          t.customerReference.toLowerCase().includes(filters.customerReference.toLowerCase())
-        );
-      }
-      
-      if (filters.bankReference) {
-        results = results.filter(t => 
-          t.bankReference.toLowerCase().includes(filters.bankReference.toLowerCase())
-        );
-      }
-      
-      if (filters.status) {
-        results = results.filter(t => t.status === filters.status);
-      }
-      
-      if (filters.currency) {
-        results = results.filter(t => t.currency === filters.currency);
-      }
-      
-      if (filters.fromDate) {
-        results = results.filter(t => new Date(t.issueDate) >= new Date(filters.fromDate));
-      }
-      
-      if (filters.toDate) {
-        results = results.filter(t => new Date(t.issueDate) <= new Date(filters.toDate));
-      }
-      
-      if (filters.minAmount !== null && filters.minAmount !== undefined) {
-        results = results.filter(t => t.amount >= filters.minAmount);
-      }
-      
-      if (filters.maxAmount !== null && filters.maxAmount !== undefined) {
-        results = results.filter(t => t.amount <= filters.maxAmount);
-      }
-    }
-
-    return results;
+  getAllTransactions(): TransactionBase[] {
+    return this.transactionsSubject.value;
   }
 
-  // Get transaction by ID
-  getTransactionById(id: number): Transaction | undefined {
-    return this.transactions.value.find(t => t.id === id);
-  }
+  updateTransaction(id: string, updates: Partial<TransactionBase>): void {
+    const currentTransactions = this.transactionsSubject.value;
+    const index = currentTransactions.findIndex(t => t.id === id);
 
-  // Get transaction by reference
-  getTransactionByReference(reference: string): Transaction | undefined {
-    return this.transactions.value.find(t => 
-      t.channelReference === reference || 
-      t.customerReference === reference || 
-      t.bankReference === reference
-    );
-  }
+    if (index !== -1) {
+      // Always update 'updatedAt' timestamp
+      const timestampedUpdates = {
+        ...updates,
+        updatedAt: new Date()
+      };
 
-  // Update transaction status
-  updateTransactionStatus(id: number, status: string) {
-    const transactions = this.transactions.value.map(t =>
-      t.id === id ? { ...t, status } : t
-    );
-    this.transactions.next(transactions);
-    this.saveTransactions(transactions);
-  }
+      const updatedTransactions = [...currentTransactions];
+      updatedTransactions[index] = { ...updatedTransactions[index], ...timestampedUpdates };
 
-  // Clear all transactions
-  clearAllTransactions() {
-    console.log('Clearing all transactions');
-    this.transactions.next([]);
-    if (this.isBrowser) {
-      localStorage.removeItem('lc_transactions');
+      this.transactionsSubject.next(updatedTransactions);
     }
   }
 
-  // ==================== PRIVATE METHODS ====================
-
-  // Save transactions to localStorage
-  private saveTransactions(transactions: Transaction[]) {
-    if (!this.isBrowser) {
-      console.log('Skipping localStorage save (not in browser)');
-      return;
-    }
-    
-    try {
-      localStorage.setItem('lc_transactions', JSON.stringify(transactions));
-      console.log('Saved transactions to localStorage:', transactions.length);
-    } catch (error) {
-      console.error('Error saving transactions to localStorage:', error);
-    }
+  deleteTransaction(id: string): void {
+    const currentTransactions = this.transactionsSubject.value;
+    const updatedTransactions = currentTransactions.filter(t => t.id !== id);
+    this.transactionsSubject.next(updatedTransactions);
   }
 
-  // Load transactions from localStorage
-  private loadTransactions() {
-    if (!this.isBrowser) {
-      console.log('Skipping localStorage load (not in browser)');
-      return;
-    }
-    
-    try {
-      const saved = localStorage.getItem('lc_transactions');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        console.log('Loaded transactions from localStorage:', parsed.length);
-        
-        // Convert date strings back to Date objects
-        const transactions = parsed.map((t: any) => ({
-          ...t,
-          issueDate: new Date(t.issueDate),
-          expiryDate: new Date(t.expiryDate)
-        }));
-        
-        this.transactions.next(transactions);
-      } else {
-        console.log('No saved transactions found in localStorage');
-      }
-    } catch (error) {
-      console.error('Error loading transactions from localStorage:', error);
-    }
+  // ==========================================================
+  //  FORM DATA TRANSFER (View/Edit Routing)
+  // ==========================================================
+
+  setFormData(data: any): void {
+    this.formDataStore = data;
   }
 
-  // Clear method
-  clear() {
-    this.formData.next(null);
-    this.transactions.next([]);
+  getFormData(): any {
+    return this.formDataStore;
   }
 
-  // Helper to check if running in browser
-  isRunningInBrowser(): boolean {
-    return this.isBrowser;
-  }
-
-  // Helper method to add transaction directly (for mock data)
-  addTransactionDirectly(transaction: Transaction) {
-    const currentTransactions = this.transactions.value;
-    const updatedTransactions = [...currentTransactions, transaction];
-    this.transactions.next(updatedTransactions);
-    this.saveTransactions(updatedTransactions);
-    console.log('Transaction added directly:', transaction);
+  clearFormData(): void {
+    this.formDataStore = null;
   }
 }

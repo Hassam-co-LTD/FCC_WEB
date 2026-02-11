@@ -1,0 +1,85 @@
+<div class="section-header" (click)="toggle()">
+  <h2>General Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<!-- COLLAPSIBLE -->
+<div class="collapsible" [class.open]="isOpen">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <!-- ===== Row 1 : Expiry Date ===== -->
+    <div class="form-grid-2">
+      <div class="field-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Expiry Date *</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="expiryDate" placeholder="Select expiry date" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- ===== References ===== -->
+    <h4>References</h4>
+    <div class="form-grid-2">
+      <div class="field-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Beneficiary Reference</mat-label>
+          <input matInput formControlName="beneficiaryReference" />
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Customer Reference</mat-label>
+          <input matInput formControlName="customerReference" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- ===== Guarantee Details ===== -->
+    <h4>Guarantee Details</h4>
+    <div class="form-grid-2">
+      <div class="field-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Bill of Lading / Airway Bill Number *</mat-label>
+          <input matInput formControlName="billNumber" />
+        </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Mode of Shipment *</mat-label>
+          <mat-select formControlName="modeOfShipment" panelClass="white-dropdown">
+            <mat-option value="Air">Air</mat-option>
+            <mat-option value="Sea">Sea</mat-option>
+            <mat-option value="Rail">Rail</mat-option>
+            <mat-option value="Road">Road</mat-option>
+            <mat-option value="Postage">Postage</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- ===== Shipping Details ===== -->
+    <div class="form-grid">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Shipping Details</mat-label>
+        <textarea matInput rows="2" formControlName="shippingDetails"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- ===== Description of Goods ===== -->
+    <h4>Description of Goods</h4>
+    <div class="form-grid">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Description of Goods *</mat-label>
+        <textarea matInput rows="3" maxlength="222" formControlName="descriptionOfGoods"></textarea>
+        <mat-hint align="end">
+          {{ form.get('descriptionOfGoods')?.value?.length || 0 }}/222
+        </mat-hint>
+      </mat-form-field>
+    </div>
+
+  </form>
+</div>
