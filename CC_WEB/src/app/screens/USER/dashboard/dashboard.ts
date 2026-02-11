@@ -135,7 +135,7 @@ export class Dashboard implements OnInit, AfterViewInit {
       title: 'Global Trade Growth Forecast Updated',
       excerpt: 'International trade volumes are expected to grow steadily...',
       time: new Date(),
-      link: 'https://example.com'
+      link: 'https://infotechgroup.com/newsroom/'
     }
   ];
 

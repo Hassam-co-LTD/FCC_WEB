@@ -7,3 +7,4 @@ const bootstrap = (context: BootstrapContext) =>
     bootstrapApplication(App, {...config, providers: [provideZoneChangeDetection(), ...config.providers]}, context);
 
 export default bootstrap;
+//export { default } from './src/main.server';

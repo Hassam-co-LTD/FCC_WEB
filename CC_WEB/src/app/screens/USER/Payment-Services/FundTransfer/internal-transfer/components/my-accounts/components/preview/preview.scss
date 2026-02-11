@@ -1,0 +1,281 @@
+@use '../../../../../../../../../../styles/theme' as theme;
+
+
+.custom-dialog-container {
+    background-color: #ffffff !important; // white background
+    border-radius: 8px; // optional: rounded corners
+    padding: 16px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+/* ================================
+   PREVIEW PAGE (Blue Fintech Theme)
+================================ */
+.preview-page {
+    background: theme.$light-bg; // soft fintech light blue
+    padding: 32px;
+    border-radius: 12px;
+    border: 1px solid theme.$border-light;
+    box-shadow: 0 3px 10px rgba(13, 71, 161, 0.05);
+}
+
+/* ================================
+   PAGE TITLE
+================================ */
+.page-title {
+    font-size: 26px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: theme.$primary; // main blue
+    border-bottom: 2px solid theme.$border-light;
+    padding-bottom: 10px;
+}
+
+/* ================================
+   CONTAINER + ROWS
+================================ */
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.preview-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+/* ================================
+   CARD STYLING
+================================ */
+.preview-card {
+    padding: 22px;
+    border-radius: 12px;
+    background: theme.$white;
+    border: 1px solid theme.$border-light;
+    box-shadow: 0 2px 8px rgba(13, 71, 161, 0.08);
+    transition: 0.2s ease;
+
+    &:hover {
+        border-color: theme.$border-primary;
+        box-shadow: 0 3px 10px rgba(13, 71, 161, 0.12);
+    }
+}
+
+.preview-card.full-width {
+    grid-column: 1 / 3;
+}
+
+/* ================================
+   SECTION TITLE (Card Header)
+================================ */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: theme.$primary-dark;
+    border-bottom: 1px solid theme.$border-light;
+    padding-bottom: 8px;
+}
+
+/* ================================
+   LABEL + VALUE GRID
+================================ */
+.preview-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    row-gap: 12px;
+    column-gap: 30px;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.preview-item.full-width {
+    grid-column: 1 / 3;
+}
+
+.preview-label {
+    font-weight: 500;
+    font-size: medium;
+    color: theme.$text-dark;
+    display: flex;
+    align-items: center;
+}
+
+.preview-value {
+    color: theme.$text-dark;
+    font-size: small;
+    // padding: 8px 12px;
+    // background: theme.$primary-light; // subtle fintech blue background
+    border-radius: 6px;
+    // border: 1px solid theme.$border-light;
+    line-height: 1.5;
+}
+
+/* ================================
+   ATTACHMENTS TABLE
+================================ */
+.pdf-icon {
+    color: #c62828;
+}
+
+.image-icon {
+    color: theme.$primary;
+}
+
+.actionss {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-icon {
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:hover {
+        color: theme.$primary-hover;
+        transform: scale(1.1);
+    }
+}
+
+.attachment-grid {
+    display: grid;
+    grid-template-columns: 70px 1fr 1fr 100px 80px;
+    padding: 8px 0;
+    border-bottom: 1px solid theme.$border-light;
+    align-items: center;
+    font-size: 14px;
+}
+
+.attachment-grid.header {
+    font-weight: 700;
+    background: theme.$hover-bg;
+    border-bottom: 2px solid theme.$border-primary;
+}
+
+/* -----------------------------------------------------
+   FOOTER BUTTONS
+----------------------------------------------------- */
+.actions {
+    margin-top: 35px;
+    padding: 0 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+}
+
+/* Primary Button */
+button[mat-flat-button] {
+    background: theme.$primary-btn-bg !important;
+    color: #fff !important;
+    font-weight: 500;
+    border-radius: 50px;
+    padding: 8px 26px;
+    box-shadow: 0 2px 8px theme.$primary-btn-shadow;
+    transition: 0.2s;
+
+    &:hover {
+        background: theme.$primary-btn-hover-bg !important;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+}
+
+/* Secondary Button */
+button[mat-stroked-button] {
+    border-color: theme.$secondary-btn-border;
+    color: theme.$secondary-btn-text;
+    font-weight: 500;
+    border-radius: 50px;
+    padding: 8px 26px;
+    transition: 0.2s;
+
+    &:hover {
+        background: theme.$secondary-btn-hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+}
+
+.success-snackbar {
+    background-color: theme.$primary; // your theme blue
+    color: #fff;
+    font-weight: 600;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(13, 71, 161, 0.25);
+}
+
+/* ================================
+   RESPONSIVENESS
+================================ */
+
+
+/* ---------- DESKTOP (>1080px) ---------- */
+@media (min-width: 1081px) {
+    .preview-row {
+        grid-template-columns: 1fr 1fr; // 2 cards per row
+    }
+
+    .preview-grid {
+        grid-template-columns: 180px 1fr; // label + value layout
+    }
+}
+
+/* ---------- TABLET (768px – 1080px) ---------- */
+@media (max-width: 1080px) and (min-width: 768px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // 1 card per row
+        gap: 20px;
+    }
+
+    .preview-card.full-width {
+        grid-column: 1 / 2;
+    }
+
+    /* Keep label+value on same row */
+    .preview-grid {
+        grid-template-columns: 150px 1fr;
+        column-gap: 20px;
+    }
+}
+
+/* ---------- MOBILE (<768px) ---------- */
+@media (max-width: 767px) {
+
+    .preview-row {
+        grid-template-columns: 1fr; // stack cards
+        gap: 20px;
+    }
+
+    .preview-card.full-width {
+        grid-column: 1 / 2;
+    }
+
+    /* Change to vertical layout */
+    .preview-grid {
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+    }
+
+    .preview-label {
+        font-size: 14px;
+    }
+
+    .preview-value {
+        font-size: 13px;
+        padding-top: 2px;
+    }
+
+    .preview-item.full-width {
+        grid-column: 1 / 2;
+    }
+}

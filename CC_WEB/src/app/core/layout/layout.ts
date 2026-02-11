@@ -367,7 +367,7 @@ toggleMenu(item: MenuItem) {
               children: [
                 { label: 'IBFT', route: '/' },
                 { label: 'With-In Bank', route: '/fund-transfer/with-in' },
-                { label: 'My Accounts', route: '/' },
+                { label: 'My Accounts', route: '/my-accounts' },
                 { label: 'Inquiries', route: 'fund-transfer/fund-transfer-records' },
               ]
             },

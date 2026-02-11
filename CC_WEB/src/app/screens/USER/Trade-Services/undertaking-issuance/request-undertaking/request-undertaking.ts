@@ -52,6 +52,7 @@ export class RequestUndertaking implements OnInit {
   currentTx: UndertakingTransaction | null = null;
   currentTransactionId: string | number | null = null;
   channelRef: string = 'New Transaction';
+  isLoading = false; // Add loading state
 
   // UI State Flags
   pageMode: 'CREATE' | 'EDIT' | 'CHECKER' | 'VIEW' | 'CORRECT' = 'CREATE';
@@ -115,11 +116,13 @@ export class RequestUndertaking implements OnInit {
 
   private loadTransaction(id: string, modeParam?: string): void {
     this.currentTransactionId = id;
+    this.isLoading = true;
     
     this.undertakingService.getTransactionById(id).subscribe({
       next: (tx: UndertakingTransaction) => {
         this.currentTx = tx;
         this.channelRef = tx.channelReference || `REF-${tx.id}`;
+        this.isLoading = false;
 
         // Fill Form
         this.patchForm(tx);
@@ -141,8 +144,9 @@ export class RequestUndertaking implements OnInit {
         }
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Load Error:', err);
-        this.snackBar.open('Transaction not found', 'Close');
+        this.snackBar.open('Transaction not found', 'Close', { duration: 5000 });
         this.router.navigate(['/undertaking-issuance/inquiries-records']);
       }
     });
@@ -189,90 +193,142 @@ export class RequestUndertaking implements OnInit {
   saveForm(): void {
     if (this.undertakingForm.invalid) {
       this.undertakingForm.markAllAsTouched();
-      this.snackBar.open('Please fill required fields', 'Close');
+      this.snackBar.open('Please fill required fields', 'Close', { duration: 3000 });
       return;
     }
 
     const rawForm = this.undertakingForm.getRawValue();
 
     if (!this.companyId) {
-      this.snackBar.open('Company ID is missing', 'Close');
+      this.snackBar.open('Company ID is missing', 'Close', { duration: 3000 });
       return;
     }
 
+    this.isLoading = true;
     this.undertakingService.saveDraft(rawForm, this.companyId).subscribe({
       next: (res) => {
+        this.isLoading = false;
         this.navigateToSuccess(res.id, res.channelReference || 'REF', 'pending', 'Draft Saved Successfully');
       },
-      error: () => this.snackBar.open('Error saving draft', 'Close')
+      error: (err) => {
+        this.isLoading = false;
+        this.snackBar.open('Error saving draft: ' + err.message, 'Close', { duration: 5000 });
+      }
     });
   }
 
   update(): void {
     if (!this.currentTransactionId) return;
+    
     const rawForm = this.undertakingForm.getRawValue();
     rawForm.id = this.currentTransactionId;
     rawForm.status = this.currentTx?.status;
 
+    this.isLoading = true;
     this.undertakingService.updateDraft(rawForm).subscribe({
       next: () => {
+        this.isLoading = false;
         const targetTab = this.pageMode === 'CORRECT' ? 'rejected' : 'pending';
         this.navigateToSuccess(this.currentTransactionId!, this.channelRef, targetTab, 'Transaction Updated');
       },
-      error: () => this.snackBar.open('Error updating transaction', 'Close')
+      error: (err) => {
+        this.isLoading = false;
+        this.snackBar.open('Error updating transaction: ' + err.message, 'Close', { duration: 5000 });
+      }
     });
   }
 
   submit(): void {
     if (!this.currentTransactionId) {
-      this.snackBar.open('Please save as draft first', 'Close');
+      this.snackBar.open('Please save as draft first', 'Close', { duration: 3000 });
       return;
     }
 
     const rawForm = this.undertakingForm.getRawValue();
     rawForm.id = this.currentTransactionId;
 
+    this.isLoading = true;
     this.undertakingService.submitTransaction(this.currentTransactionId, rawForm).subscribe({
       next: () => {
         this.undertakingService.refreshTransactions('submitted').subscribe(() => {
+          this.isLoading = false;
           this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'submitted', 'Transaction Submitted for Approval');
         });
       },
-      error: () => this.snackBar.open('Error submitting transaction', 'Close')
+      error: (err) => {
+        this.isLoading = false;
+        this.snackBar.open('Error submitting transaction: ' + err.message, 'Close', { duration: 5000 });
+      }
     });
   }
 
   approve(): void {
     if (!this.currentTransactionId) return;
 
+    const confirmApprove = confirm('Are you sure you want to approve this transaction?');
+    if (!confirmApprove) return;
+
+    this.isLoading = true;
     this.undertakingService.approveUndertaking(this.currentTransactionId).subscribe({
       next: () => {
         this.undertakingService.refreshTransactions('approved').subscribe(() => {
+          this.isLoading = false;
           this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'approved', 'Transaction Approved Successfully');
         });
       },
-      error: () => this.snackBar.open('Error approving transaction', 'Close')
+      error: (err) => {
+        this.isLoading = false;
+        this.snackBar.open('Error approving transaction: ' + err.message, 'Close', { duration: 5000 });
+      }
     });
   }
 
   reject(): void {
     if (!this.currentTransactionId) return;
 
+    console.log('Opening reject dialog for transaction:', this.currentTransactionId);
+
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px',
-      data: { tnxId: this.channelRef }
+      width: '500px',
+      data: { tnxId: this.channelRef },
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(reason => {
-      if (reason) {
-        this.undertakingService.rejectUndertaking(this.currentTransactionId!, reason).subscribe({
-          next: () => {
-            this.undertakingService.refreshTransactions('rejected').subscribe(() => {
-              this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'rejected', 'Transaction Rejected');
-            });
-          },
-          error: () => this.snackBar.open('Error rejecting transaction', 'Close')
+      console.log('Dialog closed with reason:', reason);
+      
+      if (reason && typeof reason === 'string' && reason.trim().length > 0) {
+        this.executeReject(reason.trim());
+      } else {
+        console.log('Dialog cancelled or no reason provided');
+      }
+    });
+  }
+
+  private executeReject(reason: string): void {
+    console.log('Executing reject with reason:', reason);
+    
+    this.isLoading = true;
+    this.undertakingService.rejectUndertaking(this.currentTransactionId!, reason).subscribe({
+      next: (res) => {
+        console.log('Reject successful:', res);
+        this.undertakingService.refreshTransactions('rejected').subscribe(() => {
+          this.isLoading = false;
+          this.navigateToSuccess(this.currentTransactionId!, this.channelRef, 'rejected', 'Transaction Rejected Successfully');
         });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error in reject:', err);
+        
+        let errorMessage = 'Error rejecting transaction';
+        if (err.error && err.error.message) {
+          errorMessage = err.error.message;
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        
+        this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
       }
     });
   }

@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, retry, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
+import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
+
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
 export interface UndertakingLc {
@@ -10,7 +12,7 @@ export interface UndertakingLc {
   tnxId?: string;
   channelReference?: string; // e.g. UND-2025-001
   status?: string;
-  
+
   // Flat fields for Table View
   productType?: string;
   applicantName?: string;
@@ -21,7 +23,7 @@ export interface UndertakingLc {
 
   // The Nested Form Data
   formData?: any;
-  
+
   // Flexible key for any extra props
   [key: string]: any;
 }
@@ -30,7 +32,7 @@ export interface UndertakingLc {
   providedIn: 'root',
 })
 export class ApiService {
-  
+
   // -------------------------------------------------------------
   // CONFIGURATION
   // -------------------------------------------------------------
@@ -243,65 +245,70 @@ setStatusByRoleId(status: String, id: String, name: String) {
 
 
   // =================================================================
-// API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
-// =================================================================
+  // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
+  // =================================================================
 
-getUndertakingList(): Observable<UndertakingLc[]> {
-  // GET /api/v1/undertaking_lc/list
-  return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking_lc/list`)
-    .pipe(catchError(this.handleError));
-}
+  getUndertakingList(): Observable<UndertakingLc[]> {
+    // GET /api/v1/undertaking_lc/list
+    return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking_lc/list`)
+      .pipe(catchError(this.handleError));
+  }
 
-// 2️⃣ Get record list strictly by STATUS (BEST FOR TABS)
-getUndertakingRecordsByStatus(status: string): Observable<UndertakingLc[]> {
-  return this.http.get<UndertakingLc[]>(
-    `${this.baseUrl}undertaking_lc/status/${status}`
-  ).pipe(catchError(this.handleError));
-}
-getUndertakingById(id: number | string): Observable<UndertakingLc> {
-  // GET /api/v1/undertaking_lc/{id}
-  return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking_lc/${id}`)
-    .pipe(catchError(this.handleError));
-}
+  // 2️⃣ Get record list strictly by STATUS (BEST FOR TABS)
+  getUndertakingRecordsByStatus(status: string): Observable<UndertakingLc[]> {
+    return this.http.get<UndertakingLc[]>(
+      `${this.baseUrl}undertaking_lc/status/${status}`
+    ).pipe(catchError(this.handleError));
+  }
+  getUndertakingById(id: number | string): Observable<UndertakingLc> {
+    // GET /api/v1/undertaking_lc/{id}
+    return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking_lc/${id}`)
+      .pipe(catchError(this.handleError));
+  }
 
-saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
-  const companyId =sessionStorage.getItem('companyId');
-  const headers = new HttpHeaders({
-    companyid: companyId ?? ''
-  });
-  // POST /api/v1/undertaking_lc/save
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data, {headers})
-    .pipe(catchError(this.handleError));
-}
+  saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
+    const companyId = sessionStorage.getItem('companyId');
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    // POST /api/v1/undertaking_lc/save
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data, { headers })
+      .pipe(catchError(this.handleError));
+  }
 
-updateUndertaking(id: number | string, data: UndertakingLc): Observable<UndertakingLc> {
-  // PUT /api/v1/undertaking_lc/update/{id}
-  return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/update/${id}`, data)
-    .pipe(catchError(this.handleError));
-}
+  updateUndertaking(id: number | string, data: UndertakingLc): Observable<UndertakingLc> {
+    // PUT /api/v1/undertaking_lc/update/{id}
+    return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/update/${id}`, data)
+      .pipe(catchError(this.handleError));
+  }
 
-submitUndertaking(id: number | string): Observable<UndertakingLc> {
-  // POST /api/v1/undertaking_lc/submit/{id}
-  // Changed from .put to .post to match @PostMapping
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/submit/${id}`, {})
-    .pipe(catchError(this.handleError));
-}
+  submitUndertaking(id: number | string): Observable<UndertakingLc> {
+    // POST /api/v1/undertaking_lc/submit/{id}
+    // Changed from .put to .post to match @PostMapping
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/submit/${id}`, {})
+      .pipe(catchError(this.handleError));
+  }
 
-approveUndertaking(id: number | string): Observable<UndertakingLc> {
-  // POST /api/v1/undertaking_lc/approve/{id}
-  // Changed from .put to .post to match @PostMapping
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/approve/${id}`, {})
-    .pipe(catchError(this.handleError));
-}
+  approveUndertaking(id: number | string): Observable<UndertakingLc> {
+    // POST /api/v1/undertaking_lc/approve/{id}
+    // Changed from .put to .post to match @PostMapping
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/approve/${id}`, {})
+      .pipe(catchError(this.handleError));
+  }
 
 rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
-  // POST /api/v1/undertaking_lc/reject/{id}
-  // Matches @PostMapping and Map<String, String> payload
-  const body = { reason: reason };
-  return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/reject/${id}`, body)
-    .pipe(catchError(this.handleError));
+  const body = { rejectionReason: reason }; // ✅ correct key
+  return this.http.post<UndertakingLc>(
+    `${this.baseUrl}undertaking_lc/rejectReason/${id}`, // ✅ match backend
+    body,
+    { headers: { 'Content-Type': 'application/json' } }
+  ).pipe(catchError(this.handleError));
 }
-
+//   updateRejectedTransaction(id: number | string, payload: UndertakingLc): Observable<UndertakingLc> {
+//     return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/updateRejected/${id}`, payload)
+//       .pipe(catchError(this.handleError));
+//   }
+// }
 // =================================================================
 // API Methods For UNDERTAKING LC MODULE END
 // =================================================================

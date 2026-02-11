@@ -1,0 +1,457 @@
+@use "sass:color";
+@use "../../../styles/theme" as theme;
+
+.account-search-dialog-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid theme.$border-light;
+  
+  h2 {
+    margin: 0;
+    color: theme.$primary-dark;
+  }
+  
+  .close-button {
+    color: theme.$text-medium;
+    
+    &:hover {
+      color: theme.$text-dark;
+    }
+  }
+}
+
+mat-dialog-content {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  
+  /* Custom scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 10px; /* Vertical scrollbar width */
+    height: 10px; /* Horizontal scrollbar height */
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: theme.$light-bg;
+    border-radius: 8px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: color.scale(theme.$primary, $lightness: 40%);
+    border-radius: 8px;
+    border: 2px solid theme.$light-bg;
+    
+    &:hover {
+      background: color.scale(theme.$primary, $lightness: 20%);
+    }
+  }
+}
+
+.search-container {
+  margin-bottom: 24px;
+  
+  .full-width {
+    width: 100%;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  
+  mat-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: theme.$text-medium;
+    margin: 0;
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: color.scale(red, $lightness: 20%);
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    margin-bottom: 16px;
+    // color: theme.$error;
+  }
+  
+  button {
+    color: theme.$primary;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      margin-bottom: 0;
+    }
+    
+    &:hover {
+      background-color: color.scale(theme.$primary, $lightness: 95%);
+    }
+  }
+}
+
+.table-container {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: auto;
+  
+  /* Custom scrollbar for table */
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: theme.$light-bg;
+    border-radius: 8px;
+    margin: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: color.scale(theme.$primary, $lightness: 40%);
+    border-radius: 8px;
+    border: 2px solid theme.$light-bg;
+    
+    &:hover {
+      background: color.scale(theme.$primary, $lightness: 20%);
+    }
+  }
+  
+  table {
+    width: 100%;
+    min-width: 700px;
+  }
+  
+  .mat-column-select {
+    width: 60px;
+    min-width: 60px;
+  }
+  
+  .mat-column-accountNumber {
+    min-width: 180px;
+  }
+  
+  .mat-column-accountName {
+    min-width: 200px;
+  }
+  
+  .mat-column-accountType {
+    min-width: 120px;
+  }
+  
+  .mat-column-currency {
+    width: 100px;
+    min-width: 100px;
+  }
+  
+  .mat-column-balance,
+  .mat-column-availableBalance {
+    min-width: 150px;
+  }
+}
+
+.account-number {
+  .masked-number {
+    font-weight: 600;
+    color: theme.$text-dark;
+  }
+  
+  .full-number {
+    font-size: 12px;
+    color: theme.$text-medium;
+  }
+}
+
+.account-type-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.savings {
+    background-color: color.scale(#4caf50, $lightness: 80%);
+    color: #4caf50;
+  }
+  
+  &.current {
+    background-color: color.scale(#2196f3, $lightness: 80%);
+    color: #2196f3;
+  }
+  
+  &.checking {
+    background-color: color.scale(#ff9800, $lightness: 80%);
+    color: #ff9800;
+  }
+  
+  &.business {
+    background-color: color.scale(#9c27b0, $lightness: 80%);
+    color: #9c27b0;
+  }
+  
+  &.corporate {
+    background-color: color.scale(#673ab7, $lightness: 80%);
+    color: #673ab7;
+  }
+  
+  &.personal {
+    background-color: color.scale(#00bcd4, $lightness: 80%);
+    color: #00bcd4;
+  }
+}
+
+.warning-icon {
+  margin-left: 8px;
+  // color: theme.$warn;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.no-results {
+  text-align: center;
+  padding: 48px 24px;
+  color: theme.$text-medium;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+  
+  p {
+    margin: 0;
+  }
+}
+
+.selected-account-details {
+  margin-top: 24px;
+  padding: 20px;
+  background-color: theme.$light-bg;
+  border-radius: 8px;
+  border: 1px solid theme.$border-light;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: theme.$primary-dark;
+  }
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  
+  &.warning {
+    grid-column: span 2;
+    
+    @media (max-width: 768px) {
+      grid-column: span 1;
+    }
+    
+    .detail-label,
+    .detail-value {
+      // color: theme.$error;
+    }
+    
+    .detail-label {
+      display: flex;
+      align-items: center;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+      }
+    }
+  }
+  
+  .detail-label {
+    font-size: 12px;
+    color: theme.$text-medium;
+    margin-bottom: 4px;
+  }
+  
+  .detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: theme.$text-dark;
+    word-break: break-word;
+    
+    &.primary {
+      color: theme.$primary;
+    }
+    
+    &.warn {
+      // color: theme.$warn;
+    }
+    
+    &.accent {
+      // color: theme.$accent;
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid theme.$border-light;
+  
+  /* Scrollbar for action buttons if they overflow */
+  overflow-x: auto;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: color.scale(theme.$primary, $lightness: 40%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: color.scale(theme.$primary, $lightness: 20%);
+    }
+  }
+  
+  button {
+    min-width: 120px;
+    white-space: nowrap;
+    
+    &:first-child {
+      margin-right: 12px;
+    }
+    
+    &[disabled] {
+      background-color: color.scale(theme.$primary, $lightness: 60%);
+      color: theme.$text-light;
+    }
+  }
+}
+
+// Add some padding to rows
+.mat-mdc-row {
+  cursor: pointer;
+  
+  &:hover {
+    background-color: color.scale(theme.$primary, $lightness: 95%);
+  }
+  
+  &.selected {
+    background-color: color.scale(theme.$primary, $lightness: 85%);
+  }
+}
+
+/* Cross-browser scrollbar styling */
+@media screen and (min-width: 768px) {
+  /* For Firefox */
+  mat-dialog-content,
+  .table-container,
+  mat-dialog-actions {
+    scrollbar-width: thin;
+    scrollbar-color: color.scale(theme.$primary, $lightness: 40%) theme.$light-bg;
+  }
+  
+  /* For Internet Explorer */
+  mat-dialog-content,
+  .table-container {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+  }
+}
+
+// Global dialog styling
+::ng-deep .account-search-dialog {
+  .mat-mdc-dialog-surface {
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+  
+  .mat-mdc-dialog-content {
+    /* Additional scrollbar styling for dialog content */
+    &::-webkit-scrollbar {
+      width: 12px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: theme.$light-bg;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: theme.$primary;
+      border-radius: 6px;
+      border: 3px solid theme.$light-bg;
+      
+      &:hover {
+        background: theme.$primary-dark;
+      }
+    }
+  }
+}
+
+// Accessibility improvements
+@media (prefers-reduced-motion: reduce) {
+  .mat-mdc-row {
+    transition: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .account-type-badge {
+    border: 1px solid currentColor;
+  }
+  
+  .selected-account-details {
+    border: 2px solid theme.$border-light;
+  }
+  
+  .mat-mdc-row.selected {
+    border: 1px solid theme.$primary;
+  }
+}

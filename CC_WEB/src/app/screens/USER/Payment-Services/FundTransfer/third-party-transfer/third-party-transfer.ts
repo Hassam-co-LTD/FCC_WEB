@@ -62,18 +62,11 @@ export class ThirdPartyTransfer {
     this.withinBankForm = this.fb.group({
       generalDetails: this.fb.group({
         producttype: [{ value: 'Third Party Transfer', disabled: true }],
-        // bank: [{
-        //   //  value: this.authService.getLoggedInBankName(),
-        //   value: 'ABC',
-        //   disabled: true
-        // }],
         transferFrom: [''],
         tnxId: [{ value: '', disabled: true }],
         appDate: [{ value: new Date(), disabled: true }],
-        // transferToDetails
         beneficiaryname: [''],
         beneficiaryaccount: [''],
-        // transactionDetails
         amount: [''],
         currency: [{ value: 'PKR', disabled: true }],
         tranferDate: [null],
