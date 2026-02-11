@@ -229,20 +229,244 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
-  const body = { rejectionReason: reason }; // ✅ correct key
-  return this.http.post<UndertakingLc>(
-    `${this.baseUrl}undertaking_lc/rejectReason/${id}`, // ✅ match backend
-    body,
-    { headers: { 'Content-Type': 'application/json' } }
-  ).pipe(catchError(this.handleError));
+  rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
+    // POST /api/v1/undertaking_lc/reject/{id}
+    // Matches @PostMapping and Map<String, String> payload
+    const body = { reason: reason };
+    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/reject/${id}`, body)
+      .pipe(catchError(this.handleError));
+  }
+
+  // =================================================================
+  // API Methods For UNDERTAKING LC MODULE END
+  // =================================================================
+
+
+  // =================================================================
+  // TRANSFERS API Methods
+  // =================================================================
+
+  saveTransferDraft(data: TransferDTO): Observable<TransferDTO> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'companyid': companyId
+    });
+    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/save`, data, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  getTransfersByStatus(status: string): Observable<TransferDTO[]> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const headers = new HttpHeaders({
+      'companyid': companyId
+    });
+    return this.http.get<TransferDTO[]>(`${this.baseUrl}transfers/status/${status}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  getTransferRecordsByStatus(status: string): Observable<RecordsListTransferDTO[]> {
+    return this.http.get<RecordsListTransferDTO[]>(`${this.baseUrl}transfers/records/${status}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  getTransferByTnxId(tnxId: string): Observable<TransferDTO> {
+    return this.http.get<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  updateTransferDraft(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
+    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  submitTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
+    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/submit/${tnxId}`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  approveTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
+    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/approve/${tnxId}`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+// In your ApiService
+rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
+  const body = { rejectionReason: reason };
+  return this.http.post<TransferDTO>(
+    `${this.baseUrl}transfers/rejectReason/${tnxId}`, 
+    body
+  ).pipe(
+    catchError(this.handleError)
+  );
 }
-//   updateRejectedTransaction(id: number | string, payload: UndertakingLc): Observable<UndertakingLc> {
-//     return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/updateRejected/${id}`, payload)
-//       .pipe(catchError(this.handleError));
-//   }
-// }
-// =================================================================
-// API Methods For UNDERTAKING LC MODULE END
-// =================================================================
+
+  updateRejectedTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
+    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/updateRejected/${tnxId}`, data)
+      .pipe(catchError(this.handleError));
+  }
+
+  // =================================================================
+  // ACCOUNTS API Methods (UPDATED WITH PARAMETERS)
+  // =================================================================
+
+  /**
+   * Get accessible accounts based on user role and access policies
+   */
+  getAccessibleAccounts(userRole: string, companyId: string, userId: string): Observable<AccountsMaster[]> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<AccountsMaster[]>(
+      `${this.baseUrl}accounts/accessible?companyId=${companyId}&userId=${userId}&userRole=${userRole}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get accounts that can be transferred FROM
+   */
+  getTransferFromAccounts(userRole: string, companyId: string, userId: string): Observable<AccountsMaster[]> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<AccountsMaster[]>(
+      `${this.baseUrl}accounts/transfer-from?companyId=${companyId}&userId=${userId}&userRole=${userRole}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get accounts that can be transferred TO
+   */
+  getTransferToAccounts(userRole: string, companyId: string, userId: string): Observable<AccountsMaster[]> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<AccountsMaster[]>(
+      `${this.baseUrl}accounts/transfer-to?companyId=${companyId}&userId=${userId}&userRole=${userRole}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Check if user has access to specific account
+   */
+  checkAccountAccess(accountNumber: string, accessType: string): Observable<boolean> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const userId = sessionStorage.getItem('userId') || '';
+    const userRole = sessionStorage.getItem('userRole') || '';
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<boolean>(
+      `${this.baseUrl}accounts/check-access?accountNumber=${accountNumber}&companyId=${companyId}&userId=${userId}&userRole=${userRole}&accessType=${accessType}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get company accounts
+   */
+  getCompanyAccounts(companyId: string): Observable<AccountsMaster[]> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get<AccountsMaster[]>(
+      `${this.baseUrl}accounts/company/${companyId}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get account by number
+   */
+  getAccountByNumber(accountNumber: string): Observable<AccountsMaster> {
+    return this.http.get<AccountsMaster>(`${this.baseUrl}accounts/${accountNumber}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Create a new account
+   */
+  createAccount(accountData: any): Observable<string> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    return this.http.post<string>(
+      `${this.baseUrl}accounts/save`,
+      accountData,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Update existing account
+   */
+  updateAccount(accountData: any): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    return this.http.put<string>(
+      `${this.baseUrl}accounts/update`,
+      accountData,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get user roles
+   */
+  getUserRoles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}roles/active`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get role by code
+   */
+  getRoleByCode(roleCode: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}roles/code/${roleCode}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Check if role can transfer funds
+   */
+  canRoleTransferFunds(roleCode: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}roles/permissions/can-transfer/${roleCode}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Check if role can approve transfers
+   */
+  canRoleApproveTransfers(roleCode: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}roles/permissions/can-approve/${roleCode}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get account options for dropdown (mock/static data)
+   */
+  getAccountOptions(): Observable<any[]> {
+    const mockAccounts = [
+      { value: 'ACC001', label: 'Main Operating Account (ACC001) - PKR 5,000,000.00', balance: 5000000.00 },
+      { value: 'ACC002', label: 'Savings Account (ACC002) - PKR 2,500,000.00', balance: 2500000.00 },
+      { value: 'ACC003', label: 'USD Foreign Account (ACC003) - USD 100,000.00', balance: 100000.00 }
+    ];
+    return new Observable(observer => {
+      observer.next(mockAccounts);
+      observer.complete();
+    });
+  }
 }
