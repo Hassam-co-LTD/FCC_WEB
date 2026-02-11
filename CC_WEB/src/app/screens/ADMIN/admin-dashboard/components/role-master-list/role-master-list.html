@@ -1,0 +1,197 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Role Master Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Role ID, Description, Destination"
+          [(ngModel)]="searchText"
+          (input)="filterDraftRoles(searchText)"
+        />
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterDraftRoles('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper"
+             *ngIf="storeFilteredDraftRoles.length > 0; else noDrafts">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Role ID</th>
+                <th>Description</th>
+                <th>Destination</th>
+                <th>Role Status</th>
+                <th>Record Status</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of storeFilteredDraftRoles; trackBy: trackByRoleId">
+                <td>
+                  <a [routerLink]="['/admin/edit-role-master', r.roleId]">
+                    {{ r.roleId }}
+                  </a>
+                </td>
+                <td>{{ r.roleDesc }}</td>
+                <td>{{ r.roleDest }}</td>
+                <td>
+                  <span class="status {{ r.roleStatus }}">
+                    {{ r.roleStatus }}
+                  </span>
+                </td>
+                <td>{{ r.recordStatus }}</td>
+                <td>{{ r.createdBy }}</td>
+                <td>{{ r.createdOn | date:'short' }}</td>
+                <td>{{ r.updatedBy }}</td>
+                <td>{{ r.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft roles found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Role ID, Description, Destination"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedRoles(searchText)"
+        />
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterApprovedRoles('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper"
+             *ngIf="storeFilteredApprovedRoles.length > 0; else noApproved">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Role ID</th>
+                <th>Description</th>
+                <th>Destination</th>
+                <th>Role Status</th>
+                <th>Record Status</th>
+                <th>Authorizer</th>
+                <th>Authorized On</th>
+                <th>Reject Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of storeFilteredApprovedRoles; trackBy: trackByRoleId">
+               <a [routerLink]="['/admin/edit-role-master', r.roleId]">
+                    {{ r.roleId }}
+                  </a>
+                <td>{{ r.roleDesc }}</td>
+                <td>{{ r.roleDest }}</td>
+                <td>
+                  <span class="status {{ r.roleStatus }}">
+                    {{ r.roleStatus }}
+                  </span>
+                </td>
+                <td>{{ r.recordStatus }}</td>
+                <td>{{ r.authorizerId }}</td>
+                <td>{{ r.authorizerDttm | date:'short' }}</td>
+                <td>{{ r.rejectReason || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved roles found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Role ID, Description, Destination"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedRoles(searchText)"
+        />
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterSubmittedRoles('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper"
+             *ngIf="storeFilteredSubmittedRoles.length > 0; else noSubmitted">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Role ID</th>
+                <th>Description</th>
+                <th>Destination</th>
+                <th>Inputter</th>
+                <th>Submitted On</th>
+                <th>Role Status</th>
+                <th>Record Status</th>
+                <th>Reject Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of storeFilteredSubmittedRoles; trackBy: trackByRoleId">
+                <td><a [routerLink]="['/admin/edit-role-master', r.roleId]">{{ r.roleId }}</a></td>
+                <td>{{ r.roleDesc }}</td>
+                <td>{{ r.roleDest }}</td>
+                <td>{{ r.inputterId }}</td>
+                <td>{{ r.inputterDttm | date:'short' }}</td>
+                <td>{{ r.roleStatus }}</td>
+                <td>{{ r.recordStatus }}</td>
+                <td>{{ r.rejectReason || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted roles found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

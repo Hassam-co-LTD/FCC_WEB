@@ -1,0 +1,232 @@
+@use "sass:color";
+@use "../../../../../../styles/theme" as theme;
+/* ===========================
+   Container & Header
+=========================== */
+.customer-status-container {
+  padding: theme.$gap-default;
+
+  .page-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    margin-bottom: theme.$gap-default;
+  }
+}
+
+/* ===========================
+   Search Bars
+=========================== */
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: theme.$radius-default;
+    border: 1px solid theme.$border-light;
+    outline: none;
+
+    &::placeholder {
+      color: theme.$text-medium;
+    }
+
+    &:focus {
+      border-color: theme.$primary;
+ box-shadow: 0 0 0 2px rgba(theme.$primary, 0.1);
+
+    }
+  }
+
+  .clear-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 18px;
+      color: theme.$text-medium;
+
+      &:hover {
+        color: theme.$primary;
+      }
+    }
+  }
+}
+
+/* ===========================
+   Tab Content
+=========================== */
+.tab-content {
+  margin-bottom: 16px;
+
+  .table-wrapper {
+    background: theme.$white;
+    border-radius: theme.$radius-large;
+    border: 1px solid theme.$border-light;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* ===========================
+   Tables
+=========================== */
+.customer-table {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+
+  thead {
+    background: theme.$primary-light;
+
+    th {
+      padding: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: theme.$text-dark;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      text-align: center;
+
+      &:hover {
+        background: color.scale(theme.$primary-light, $lightness: -4%);
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-top: 1px solid theme.$border-light;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: theme.$hover-bg;
+      }
+    }
+
+    td {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      color: theme.$text-medium;
+      white-space: nowrap;
+      text-align: center;
+      vertical-align: middle;
+    }
+  }
+}
+
+/* ===========================
+   Clickable CustomerId
+=========================== */
+.cid {
+  color: theme.$primary;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+    color: color.scale(theme.$primary, $lightness: -10%);
+  }
+}
+
+/* ===========================
+   Status Badges
+=========================== */
+.status {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+
+  &.Draft {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.Approved {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &.Submitted {
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+}
+
+/* ===========================
+   No Records Message
+=========================== */
+.no-records {
+  text-align: center;
+  padding: 30px;
+  font-size: 0.85rem;
+  color: theme.$text-medium;
+}
+
+/* ===========================
+   Angular Material Tabs Styling
+=========================== */
+mat-tab-group {
+  margin-bottom: 16px;
+
+  .mat-tab-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: theme.$text-dark;
+
+    &.mat-tab-label-active {
+      color: theme.$primary;
+    }
+  }
+
+  .mat-tab-body-wrapper {
+    padding-top: 12px;
+  }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 1024px) {
+  .customer-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .customer-table {
+    min-width: 600px;
+
+    td,
+    .cid {
+      font-size: 0.75rem;
+      padding: 6px 8px;
+    }
+  }
+
+  mat-tab-group {
+    .mat-tab-label {
+      font-size: 0.75rem;
+    }
+  }
+}

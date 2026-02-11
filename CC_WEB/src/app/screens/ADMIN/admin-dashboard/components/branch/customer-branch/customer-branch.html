@@ -1,4 +1,4 @@
-<div class="branch-container" [ngClass]="{'hidden': branchDetails?.status === 'A'}">
+<div class="branch-container" [ngClass]="{'hidden': storeBranch?.status === 'A'}">
 
   <!-- Toggle Header -->
   <div class="section-header" (click)="isOpen = !isOpen">
@@ -35,7 +35,7 @@
         <mat-form-field appearance="outline" class="full">
           <mat-label>City</mat-label>
           <mat-select formControlName="cityId" panelClass="dropdown-panel">
-            <mat-option *ngFor="let item of allCities" [value]="item.id">
+            <mat-option *ngFor="let item of storeCities" [value]="item.id">
               {{ item.cityName }}
             </mat-option>
           </mat-select>
@@ -75,23 +75,32 @@
     </div>
 
     <!-- Form Actions -->
-    <div class="form-actions-container">
-      <button class="btn-back" *ngIf="branchDetails?.status === 'D'" (click)="back()">Back</button>
-      <button class="btn-update" *ngIf="branchDetails?.status === 'D'" (click)="updateBranch(branchDetails.id)">Update</button>
-      <button class="btn-save" *ngIf="branchDetails?.status === 'D'" (click)="setBranchStatus('S', branchDetails.id)">Submit</button>
+    <div class="customer-actions">
+  <!-- ---------------- New Customer ---------------- -->
+  <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
+    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn-save" [disabled]="!branchForm.valid" (click)="onSave()">Save</button>
+  </ng-container>
 
-      <button class="btn-back" *ngIf="branchDetails?.status === 'S'" (click)="setBranchStatus('D', branchDetails.id)">Reject</button>
-      <button class="btn-save" *ngIf="branchDetails?.status === 'S'" (click)="setBranchStatus('A', branchDetails.id)">Approve</button>
+  <!-- ---------------- Edit Mode: Draft ---------------- -->
+  <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'I'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" [disabled]="!branchForm.dirty || !branchForm.valid" (click)="update(storeBranch.id)">Update</button>
+    <button class="btn-submit" [disabled]="!branchForm.valid" (click)="submit()">Submit</button>
+  </ng-container>
+  <!-- ---------------- Edit Mode: Submitted ---------------- -->
+  <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'S'">
+    <button class="btn-reject" (click)="reject(storeBranch.id)">Reject</button>
+    <button class="btn-approve" (click)="approve(storeBranch.id)">Approve</button>
+  </ng-container>
+</div>
 
-      <button class="btn-cancel" *ngIf="!['D','S','A'].includes(branchDetails?.status)" (click)="cancel()">Cancel</button>
-      <button class="btn-save" *ngIf="!['D','S','A'].includes(branchDetails?.status)" (click)="saveBranch()">Save</button>
-    </div>
 
   </div>
 </div>
 
 <!-- Approved Branch -->
-<div *ngIf="branchDetails?.status === 'A'" class="approved-container">
+<div *ngIf="storeBranch?.status === 'A'" class="approved-container">
 
   <div class="approved-header">
     <span class="approved-badge">✔ Approved</span>
@@ -102,58 +111,58 @@
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Branch Code</span>
-        <span class="value">{{ branchDetails.branchCode }}</span>
+        <span class="value">{{ storeBranch.branchCode }}</span>
       </div>
       <div class="detail-item">
         <span class="label">Branch Name</span>
-        <span class="value">{{ branchDetails.branchName }}</span>
+        <span class="value">{{ storeBranch.branchName }}</span>
       </div>
       <div class="detail-item">
         <span class="label">Email Address</span>
-        <span class="value">{{ branchDetails.emailAddress }}</span>
+        <span class="value">{{ storeBranch.emailAddress }}</span>
       </div>
     </div>
 
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Contact Person</span>
-        <span class="value">{{ branchDetails.contactPerson }}</span>
+        <span class="value">{{ storeBranch.contactPerson }}</span>
       </div>
       <div class="detail-item">
         <span class="label">Contact No</span>
-        <span class="value">{{ branchDetails.contactNo }}</span>
+        <span class="value">{{ storeBranch.contactNo }}</span>
       </div>
       <div class="detail-item">
         <span class="label">Record Status</span>
-        <span class="value">{{ branchDetails.recordStatus }}</span>
+        <span class="value">{{ storeBranch.recordStatus }}</span>
       </div>
     </div>
 
     <div class="detail-row three-col">
       <div class="detail-item">
         <span class="label">Swift Address</span>
-        <span class="value">{{ branchDetails.swiftAddress }}</span>
+        <span class="value">{{ storeBranch.swiftAddress }}</span>
       </div>
       <div class="detail-item">
         <span class="label">Local Currency</span>
-        <span class="value">{{ branchDetails.localCurrency }}</span>
+        <span class="value">{{ storeBranch.localCurrency }}</span>
       </div>
       <div class="detail-item">
         <span class="label">City</span>
-        <span class="value">{{ branchDetails.cityMaster?.cityName }}</span>
+        <span class="value">{{ storeBranch.cityMaster?.cityName }}</span>
       </div>
     </div>
 
     <div class="detail-row">
       <div class="detail-item full-width">
         <span class="label">Branch Address</span>
-        <span class="value">{{ branchDetails.branchAddress }}</span>
+        <span class="value">{{ storeBranch.branchAddress }}</span>
       </div>
     </div>
   </div>
 
   <div class="approved-actions">
-    <button class="btn-back" (click)="back()">← Back</button>
-    <button class="btn-edit" (click)="setBranchStatus('D', branchDetails.id)">Amend</button>
+    <button class="btn-back" (click)="onBack()">← Back</button>
+    <button class="btn-edit" (click)="reject(storeBranch.id)">Amend</button>
   </div>
 </div>

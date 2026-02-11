@@ -8,7 +8,7 @@ import { ApiService } from '../../../../../../core/services/api.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-city-records',
+  selector: 'app-currency-records',
   templateUrl: './currency-list.html',
   styleUrls: ['./currency-list.scss'],
   standalone: true,
@@ -33,7 +33,9 @@ export class CurrencyList implements OnInit {
   storeFilteredDraftTnx: any[] = [];
   storeFilteredApprovedTnx: any[] = [];
   storeFilteredSubmittedTnx: any[] = [];
-  apiName:String = ""
+
+  apiName: string = "currency";  // API endpoint name
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
@@ -41,10 +43,11 @@ export class CurrencyList implements OnInit {
     private activatedRoute: ActivatedRoute
   ) {
     this.TnxForm = this.fb.group({
-      id: [null, Validators.required],        // Manual ID
-      cityName: ['', Validators.required],
-      state: [''],
-      country: ['']
+      currencyCode: ['', Validators.required],       // Currency Code
+      currencyDesc: ['', Validators.required],
+      currencyMapId: [''],
+      currencyStatus: [''],
+      recordStatus: ['']
     });
   }
 
@@ -70,10 +73,11 @@ export class CurrencyList implements OnInit {
   }
 
   // ================== Load Tnx ==================
-  loadDraftTnx():void {
-    this.api.getTnxByStatus('D',this.apiName).subscribe({
+  loadDraftTnx(): void {
+    this.api.getTnxByStatus('I', this.apiName).subscribe({
       next: res => {
         this.draftTnx = res;
+        console.log('Draft Tnx response:', res);
         this.storeFilteredDraftTnx = [...res];
       },
       error: err => console.error('Error fetching draft Tnx', err)
@@ -81,7 +85,7 @@ export class CurrencyList implements OnInit {
   }
 
   loadApprovedTnx(): void {
-    this.api.getTnxByStatus('A',this.apiName).subscribe({
+    this.api.getTnxByStatus('A', this.apiName).subscribe({
       next: res => {
         this.approvedTnx = res;
         this.storeFilteredApprovedTnx = [...res];
@@ -91,7 +95,7 @@ export class CurrencyList implements OnInit {
   }
 
   loadSubmittedTnx(): void {
-    this.api.getTnxByStatus('S',this.apiName).subscribe({
+    this.api.getTnxByStatus('S', this.apiName).subscribe({
       next: res => {
         this.submittedTnx = res;
         this.storeFilteredSubmittedTnx = [...res];
@@ -100,7 +104,7 @@ export class CurrencyList implements OnInit {
     });
   }
 
-  // ================== Filter city ==================
+  // ================== Filter currency ==================
   filterDraftTnx(search: string): void {
     if (!search) {
       this.storeFilteredDraftTnx = [...this.draftTnx];
@@ -108,7 +112,7 @@ export class CurrencyList implements OnInit {
     }
     const value = search.toLowerCase();
     this.storeFilteredDraftTnx = this.draftTnx.filter(
-      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+      c => c.currencyCode?.toLowerCase().includes(value) || c.currencyDesc?.toLowerCase().includes(value)
     );
   }
 
@@ -119,7 +123,7 @@ export class CurrencyList implements OnInit {
     }
     const value = search.toLowerCase();
     this.storeFilteredApprovedTnx = this.approvedTnx.filter(
-      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+      c => c.currencyCode?.toLowerCase().includes(value) || c.currencyDesc?.toLowerCase().includes(value)
     );
   }
 
@@ -130,20 +134,22 @@ export class CurrencyList implements OnInit {
     }
     const value = search.toLowerCase();
     this.storeFilteredSubmittedTnx = this.submittedTnx.filter(
-      c => c.id?.toString().toLowerCase().includes(value) || c.cityName?.toLowerCase().includes(value)
+      c => c.currencyCode?.toLowerCase().includes(value) || c.currencyDesc?.toLowerCase().includes(value)
     );
   }
 
   // ================== Router ==================
-  updateRouter(cityId: any): void {
-    this.route.navigate(['/admin/city', cityId], {
-      queryParams: { tabName: this.selectedTabIndex === 0 ? 'Draft' : this.selectedTabIndex === 1 ? 'Approved' : 'Submitted' }
+  updateRouter(currencyCode: any): void {
+    this.route.navigate(['/admin/currency', currencyCode], {
+      queryParams: { 
+        tabName: this.selectedTabIndex === 0 ? 'Draft' : this.selectedTabIndex === 1 ? 'Approved' : 'Submitted' 
+      }
     });
   }
 
   // ================== Track By ==================
   trackById(index: number, item: any): any {
-    return item.id;
+    return item.currencyCode;
   }
 
   // ================== Counts ==================

@@ -1,205 +1,192 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
-import Swal from 'sweetalert2';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core'; 
 
+import Swal from 'sweetalert2'; 
 import { ApiService } from '../../../../../core/services/api.service';
 
 @Component({
-  selector: 'app-Tnx-master',
-  templateUrl: './create-currency.html',
-  styleUrls: ['./create-currency.scss'],
+  selector: 'app-currency-profile',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButtonModule,
+    MatFormFieldModule,   
     MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatRadioModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatSelectModule
-  ]
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+  ],
+  templateUrl: './create-currency.html',
+  styleUrls: ['./create-currency.scss']
 })
 export class CreateCurrency implements OnInit {
 
-  TnxForm!: FormGroup;
+  currencyForm!: FormGroup;
+  storeCurrency: any = {};
+
+  isEditMode = false;
   isOpen = true;
-  storeTnx: any;
-  apiName: String = "currency"
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private location: Location,
-    private activateRouter: ActivatedRoute,
-    private route: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
-  // =========================
-  // INIT
-  // =========================
   ngOnInit(): void {
-    this.TnxForm = this.fb.group({
-      id: [null],
-      TnxName: ['', Validators.required],
-      state: [''],
-      country: ['']
-    });
+    this.buildForm();
+    this.loadCurrency();
+  }
 
-    // Subscribe to route parameter changes to load Tnx dynamically
-    this.activateRouter.paramMap.subscribe(params => {
-      const id = Number(params.get('id'));
-      if (id) this.getTnxById(id);
-      else this.storeTnx = null; // clear for new Tnx creation
+  private buildForm(): void {
+    this.currencyForm = this.fb.group({
+      currencyCode: ['', Validators.required],
+      currencyDesc: ['', Validators.required],
+      currencyMapId: [''],
+      currencyStatus: ['A'],  // default Active
+      recordStatus: ['N'],
+      inputterId: [''],
+      authorizerId: [''],
+      rejectReason: ['']
     });
   }
 
-  // =========================
-  // UI HELPERS
-  // =========================
+  private loadCurrency(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log('Loading currency with ID:', id);
+    if (id) {
+      this.isEditMode = true;
+
+      this.api.getTnxById(Number(id), "currency").subscribe({
+        next: res => {
+          this.storeCurrency = res;
+          console.log('get Currency By:', res);
+          this.currencyForm.patchValue(res);
+        },
+        error: err => console.error('Load failed', err)
+      });
+    }
+  }
+
+  // ---------------- CREATE ----------------
+  onSave(): void {
+    if (this.currencyForm.invalid) return;
+
+    const payload = this.currencyForm.getRawValue();
+    console.log('Payload to save:', payload);
+    
+    this.api.saveTnx(payload, 'currency').subscribe({
+      next: res => {
+        console.log("Saved response:", res);
+        Swal.fire('Saved!', 'Currency saved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']));
+      },
+      error: err => console.error('Save failed', err)
+    });
+  }
+
+  // ---------------- UPDATE ----------------
+  update(id: number): void {
+    if (this.currencyForm.invalid) return;
+
+    const payload = this.currencyForm.getRawValue();
+
+    this.api.updateTnx(payload, 'currency', id).subscribe({
+      next: () => {
+        Swal.fire('Updated!', 'Currency updated successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']));
+      },
+      error: err => console.error('Update failed', err)
+    });
+  }
+
+  activate(id: number): void {
+    this.api.setTnxByStatus('A', id, 'currency').subscribe({
+      next: () => {
+        Swal.fire('Activated!', 'Currency is now Active', 'success')
+          .then(() => this.loadCurrency());
+      },
+      error: err => console.error('Activate failed', err)
+    });
+  }
+
+  deactivate(id: number): void {
+    this.api.setTnxByStatus('I', id, 'currency').subscribe({
+      next: () => {
+        Swal.fire('Deactivated!', 'Currency is now Inactive', 'success')
+          .then(() => this.loadCurrency());
+      },
+      error: err => console.error('Deactivate failed', err)
+    });
+  }
+
+  // ---------------- UI HELPERS ----------------
+  isReadOnly(): boolean {
+    if (!this.storeCurrency) return true;
+    return false;
+  }
+
   toggle(): void {
     this.isOpen = !this.isOpen;
   }
 
-  isReadOnly(): boolean {
-    return this.storeTnx?.TnxStatus === 'A';
-  }
-
-  back(): void {
+  onBack(): void {
     this.location.back();
   }
 
-  cancel(): void {
-    this.TnxForm.reset();
-    this.storeTnx = null;
+  onCancel(): void {
+    this.currencyForm.reset();
   }
 
-  // =========================
-  // CRUD
-  // =========================
-  save(): void {
-    this.api.saveTnx(this.TnxForm.value,this.apiName).subscribe({
+  submit(): void {    
+    if (!this.storeCurrency?.currencyCode) return;
+    this.api.setTnxByStatus('S', this.storeCurrency.currencyCode, 'currency').subscribe({
       next: res => {
-        this.storeTnx = res;
-        Swal.fire({
-          title: 'Success!',
-          text: 'Your form was saved!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-        this.route.navigate(["/admin/Tnx-list"])
-      },
-      error: err => console.log('Error saving Tnx', err)
+        console.log('Submitted response:', res);
+        Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']));
+      },  
+      error: err => console.error('Submit failed', err)
     });
   }
 
-  update(): void {
-    if (!this.storeTnx?.id) return;
-
-    this.api.updateTnx(this.TnxForm.value,this.apiName).subscribe({
-      next: res => {
-        this.storeTnx = res;
-        Swal.fire({
-          title: 'Updated!',
-          text: 'Your form was Updated!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-      },
-      error: err => console.log('Error updating Tnx', err)
-    });
-  }
-
-  // =========================
-  // FETCH Tnx BY ID
-  // =========================
-  getTnxById(id: number): void {
-    this.api.getCityById(id).subscribe({
-      next: res => {
-        this.storeTnx = res;
-        this.TnxForm.patchValue(res);
-      },
-      error: err => console.log('Error fetching Tnx:', err)
-    });
-  }
-
-  // =========================
-  // STATUS ACTIONS
-  // =========================
-  submit(): void {
-    if (!this.storeTnx?.id) return;
-
-    this.api.setTnxByStatus('S', this.storeTnx.id).subscribe({
+  reject(id: number): void { 
+    if (!this.storeCurrency?.currencyCode) return;
+    this.api.setTnxByStatus('D', this.storeCurrency.currencyCode, 'currency').subscribe({
       next: () => {
-        Swal.fire({
-          title: 'Submitted!',
-          text: 'Your form was Submitted!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-        this.route.navigate(['/admin/Tnx-list'], {
-          queryParams: { tabName: 'Submitted' }
-        });
+        Swal.fire('Rejected!', 'Currency rejected successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']));
       },
-      error: err => console.log('Error submitting Tnx:', err)
+      error: err => console.error('Reject failed', err)
     });
-  }
+  } 
 
-  approve(id: number): void {
-    this.api.setTnxByStatus('A', id).subscribe({
-      next: res => {
-        this.storeTnx = res;
-        Swal.fire({
-          title: 'Approved!',
-          text: 'Your form was Approved!',
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-        this.route.navigate(['/admin/Tnx-list'], {
-          queryParams: { tabName: 'Approved' }
-        });
-      },
-      error: err => console.log('Error approving Tnx:', err)
-    });
-  }
-
-  reject(id: number): void {
-    this.api.setTnxByStatus('D', id).subscribe({
+  approve(id: number): void {  
+    if (!this.storeCurrency?.currencyCode) return;    
+    this.api.setTnxByStatus('A', this.storeCurrency.currencyCode, 'currency').subscribe({   
       next: () => {
-        Swal.fire({
-          title: 'Rejected!',
-          text: 'The Tnx was rejected.',
-          icon: 'info',
-          confirmButtonText: 'OK'
-        });
-        this.route.navigate(['/admin/Tnx-list']);
+        Swal.fire('Approved!', 'Currency approved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']));
       },
-      error: err => console.log('Error rejecting Tnx:', err)
+      error: err => console.error('Approve failed', err)
     });
-  }
-
-  editApprovedTnx(id: number): void {
-    this.api.setTnxByStatus('D', id).subscribe({
-      next: () => {
-        Swal.fire({
-          title: 'Amended!',
-          text: 'The approved Tnx can now be edited.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-        this.route.navigate(['/admin/Tnx-list']);
-      },
-      error: err => console.log('Error amending approved Tnx:', err)
-    });
-  }
+  } 
 }

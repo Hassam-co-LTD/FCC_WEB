@@ -1,182 +1,117 @@
-<!-- =========================
-     CITY MASTER FORM
+<!-- ========================= 
+     CREATE CUSTOMER PAGE
 ========================= -->
-<div class="city-container" *ngIf="storeCity?.cityStatus !== CityStatus.Approved">
+<div class="create-customer-page">
 
-  <!-- Toggle Header -->
-  <div class="section-header" (click)="toggle()">
-    <h2>City Master</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Customer</h1>
   </div>
 
-  <!-- Collapsible Form -->
-  <div
-    class="collapsible"
-    *ngIf="cityForm"
-    [class.open]="isOpen"
-    [formGroup]="cityForm"
-  >
+  <!-- =========================
+       Customer Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCity?.recordStatus=== 'A'}">
 
-    <!-- =========================
-         FORM FIELDS
-    ========================= -->
-    <div class="form-grid-2">
-
-      <!-- City ID -->
-      <div class="field-group">
-        <h4>City ID</h4>
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>City ID</mat-label>
-          <input matInput type="text" formControlName="id" >
-        </mat-form-field>
-      </div>
-
-      <!-- City Name -->
-      <div class="field-group">
-        <h4>City Name</h4>
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>City Name</mat-label>
-          <input matInput type="text" formControlName="cityName">
-        </mat-form-field>
-      </div>
-
-      <!-- State -->
-      <div class="field-group">
-        <h4>State</h4>
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>State</mat-label>
-          <input matInput type="text" formControlName="state">
-        </mat-form-field>
-      </div>
-
-      <!-- Country -->
-      <div class="field-group">
-        <h4>Country</h4>
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Country</mat-label>
-          <input matInput type="text" formControlName="country">
-        </mat-form-field>
-      </div>
-
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Customer General Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
     </div>
 
-    <!-- =========================
-         ACTIONS
-    ========================= -->
-    <div class="actions">
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="cityForm">
 
-      <!-- ================= Draft Mode ================= -->
-      <ng-container *ngIf="storeCity?.cityStatus === CityStatus.Draft">
-        <button mat-stroked-button color="primary" type="button" (click)="back()">
-          Back
-        </button>
+      <ng-container *ngIf="isOpen">
 
-        <button
-          mat-flat-button
-          color="accent"
-          type="button"
-          [disabled]="!cityForm.dirty || !cityForm.valid"
-          (click)="update()"
-        >
-          Update
-        </button>
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
 
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          [disabled]="!cityForm.valid"
-          (click)="submit()"
-        >
-          Submit
-        </button>
+          <div class="field-group">
+            <h4>City ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="cityId" placeholder="City ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Name</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="cityName" placeholder="Full Name" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>State</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="state" placeholder="State" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Country</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="country" placeholder="Country" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+        </div> <!-- ✅ form-grid CLOSED -->
+
       </ng-container>
-
-      <!-- ================= Submitted Mode ================= -->
-      <ng-container *ngIf="storeCity?.cityStatus === CityStatus.Submitted">
-        <button
-          mat-stroked-button
-          color="primary"
-          type="button"
-          (click)="reject(storeCity!.id)"
-        >
-          Reject
-        </button>
-
-        <button
-          mat-flat-button
-          color="accent"
-          type="button"
-          (click)="approve(storeCity!.id)"
-        >
-          Approve
-        </button>
-      </ng-container>
-
-      <!-- ================= Create Mode ================= -->
-      <ng-container *ngIf="!storeCity">
-        <button mat-stroked-button color="primary" type="button" (click)="cancel()">
-          Cancel
-        </button>
-
-        <button
-          mat-flat-button
-          color="primary"
-          type="button"
-          [disabled]="!cityForm.valid"
-          (click)="save()"
-        >
-          Save City
-        </button>
-      </ng-container>
-
     </div>
   </div>
-</div>
 
-<!-- =========================
-     APPROVED CITY VIEW
-========================= -->
-<div *ngIf="storeCity?.cityStatus === CityStatus.Approved" class="approved-container">
+  <!-- =========================
+       CUSTOMER ACTION BUTTONS
+  ========================== -->
+  <div class="customer-actions">
 
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h2>City Approved Details</h2>
-  </div>
+    <!-- New -->
+    <ng-container *ngIf="!storeCity || !storeCity.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!cityForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
 
-  <div class="details-grid">
+    <!-- Draft -->
+    <ng-container *ngIf="isEditMode && storeCity?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update"
+              [disabled]="!cityForm.dirty || !cityForm.valid"
+              (click)="update(storeCity.id)">
+        Update
+      </button>
+      <button class="btn-submit" [disabled]="!cityForm.valid" (click)="submit()">Submit</button>
+    </ng-container>
 
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">City ID</span>
-        <span class="value">{{ storeCity.id }}</span>
-      </div>
-
-      <div class="detail-item">
-        <span class="label">City Name</span>
-        <span class="value">{{ storeCity.cityName }}</span>
-      </div>
-
-      <div class="detail-item">
-        <span class="label">State</span>
-        <span class="value">{{ storeCity.state }}</span>
-      </div>
-    </div>
-
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Country</span>
-        <span class="value">{{ storeCity.country }}</span>
-      </div>
-    </div>
+    <!-- Submitted -->
+    <ng-container *ngIf="isEditMode && storeCity?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeCity.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeCity.id)">Approve</button>
+    </ng-container>
 
   </div>
 
-  <div class="approved-actions">
-    <button class="btn-back" (click)="back()">← Back</button>
-    <button class="btn-edit" (click)="editApprovedCity(storeCity.id)">
-      Amend
-    </button>
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeCity?.recordStatus !== 'A'}">
+
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>City Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">City ID:</span> <span class="value">{{ storeCity.cityId }}</span></div>
+      <div class="info-item"><span class="key">Name:</span> <span class="value">{{ storeCity.cityName }}</span></div>
+      <div class="info-item"><span class="key">State:</span> <span class="value">{{ storeCity.state }}</span></div>
+      <div class="info-item"><span class="key">Country:</span> <span class="value">{{ storeCity.country }}</span></div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeCity?.recordStatus=== 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="reject(storeCity.id)">Amend</button>
   </div>
 
 </div>

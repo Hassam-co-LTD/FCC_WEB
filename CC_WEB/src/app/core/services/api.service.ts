@@ -85,24 +85,57 @@ saveTnx(tnx:any,name:String){
    return this.http.post<any>(`${this.baseUrl}${name}`,tnx)
 }
 // get transaction by status
-getTnxByStatus(status:String,name:String){
-   return this.http.get<any>(`${this.baseUrl}city/${status}`);
+getTnxByStatus(status:String,Tnx:String){
+   return this.http.get<any>(`${this.baseUrl}${Tnx}/status/${status}`);
 }
 
 // get transaction by id
-getCityById(id:number){
-    return this.http.get<any>(`${this.baseUrl}city/${id}`);
+
+getTnxById(id:Number,name:String){
+    return this.http.get<any>(`${this.baseUrl}${name}/id/${id}`);
+}
+getTnxByRolId(id:String,name:String){
+    return this.http.get<any>(`${this.baseUrl}${name}/id/${id}`);
 }
 // update transaction 
-updateTnx(data:any,name:String){
-    return this.http.put<any>(`${this.baseUrl}update/${name}/${data.id}`,data);
+updateTnx(data:any,name:String,id?:Number){
+     console.log("the id ",id);
+    return this.http.put<any>(`${this.baseUrl}${name}/update/${id}`,data);
+}
+updateTnxByRoleId(data:any,name:String,id:String){
+     console.log("the id ",id);
+    return this.http.put<any>(`${this.baseUrl}${name}/update/${id}`,data);
 }
 // set transaction status by id
-setTnxByStatus(status:String,id:number){
-      return this.http.post<any>(`${this.baseUrl}cities/setStatus/${id}`,{status})
+setTnxByStatus(status: string, id: Number, name: string) {
+  console.log('Setting status:', status, 'for ID:', id, 'on', name);
+
+  const url = `${this.baseUrl}${name}/setStatus/${id}`;
+  return this.http.put<any>(url, null, { params: { status } }); 
 }
 
+//get list of data
+getDatalist(name:String){
+   return this.http.get<any>(`${this.baseUrl}${name}/list`);
+}
 
+deleteTnx(payload: any, name: string) {
+  return this.http.delete<any>(`${this.baseUrl}${name}`, {
+    body: payload
+  });
+}
+updateTnxx(payload: any, name: string) {
+  return this.http.put<any>(`${this.baseUrl}${name}`, payload);
+}
+getRolesByUser(userId: Number,name:String): Observable<any> {
+  return this.http.get<any>(`${this.baseUrl}${name}/${userId}`);
+}
+setStatusByRoleId(status: String, id: String, name: String) {
+  console.log('Setting status:', status, 'for Role ID:', id, 'on', name);
+  const url = `${this.baseUrl}${name}/setStatus/${id}`;
+  return this.http.put<any>(url, status);
 
-} 
+}
+
+  } 
  

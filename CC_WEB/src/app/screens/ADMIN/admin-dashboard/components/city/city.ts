@@ -1,238 +1,209 @@
-import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
-
-
-// =========================
-// MODELS & ENUMS
-// =========================
-export enum CityStatus {
-  Draft = 'D',
-  Submitted = 'S',
-  Approved = 'A'
-}
-
-export interface City {
-  id: number;
-  cityName: string;
-  state: string;
-  country: string;
-  cityStatus: CityStatus;
-}
-
 @Component({
-  selector: 'app-city-master',
-  templateUrl: './city.html',
-  styleUrls: ['./city.scss'],
+  selector: 'app-customer-profile',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButtonModule,
+    MatFormFieldModule,   
     MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatRadioModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatSelectModule
-  ]
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+
+    
+  ],
+  templateUrl: './city.html',
+  styleUrls: ['./city.scss']
 })
 export class City implements OnInit {
 
   cityForm!: FormGroup;
-  isOpen = true;
-  storeCity = {} as City;
- CityStatus = CityStatus;
+  storeCity: any = {};
 
-  readonly apiName: string = 'city';
+  isEditMode = false;
+  isOpen = true;
 
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private location: Location,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
-  // =========================
-  // INIT
-  // =========================
   ngOnInit(): void {
-    this.initForm();
-
-    this.activatedRoute.paramMap.subscribe(params => {
-      const id = Number(params.get('id'));
-      if (id) {
-        this.getCityById(id);
-      } else {
-        // this.storeCity = null;
-        this.cityForm.enable();
-      }
-    });
+    this.buildForm();
+    this.loadCustomer();
   }
 
-  private initForm(): void {
+  private buildForm(): void {
     this.cityForm = this.fb.group({
-      id: [null],
+     
+      cityId: [''],
       cityName: ['', Validators.required],
-      state: [''],
-      country: ['']
+      state: ['', Validators.required],
+      country: ['', Validators.required],
+    
     });
   }
 
-  // =========================
-  // UI HELPERS
-  // =========================
+  private loadCustomer(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Loading customer with ID:', id);
+     if (!isNaN(id)) {
+      this.isEditMode = true;
+
+      this.api.getTnxById(id,"city").subscribe({
+        next: res => {
+          this.storeCity = res;
+          console.log('get City By:', res);
+          this.cityForm.patchValue(res);
+        },
+        error: err => console.error('Load failed', err)
+      });
+    }
+  }
+
+  // ---------------- CREATE ----------------
+  onSave(): void {
+    if (this.cityForm.invalid) return;
+
+    const payload = this.cityForm.getRawValue();
+    console.log('Payload to save:', payload);
+    
+    this.api.saveTnx(payload, 'city').subscribe({
+     
+      next: res => {
+        console.log("Saved response:", res);
+        Swal.fire('Saved!', 'City saved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/city-list'], { queryParams: { tabName: 'Draft' } } ));
+      },
+      error: err => console.error('Save failed', err)
+    });
+  }
+
+  // ---------------- UPDATE ----------------
+  update(id:number): void {
+    if (this.cityForm.invalid) return;
+
+    const payload = this.cityForm.getRawValue();
+
+    this.api.updateTnx(payload, 'city',id).subscribe({
+      next: () => {
+        Swal.fire('Updated!', 'City updated successfully', 'success')
+          .then(() => this.router.navigate(['/admin/city-list'], { queryParams: { tabName: 'Draft' } }));
+      },
+      error: err => console.error('Update failed', err)
+    });
+  }
+
+  
+  activate(id: number): void {
+    this.api.setTnxByStatus('Active', id, 'city').subscribe({
+      next: () => {
+        Swal.fire('Activated!', 'City is now Active', 'success')
+          .then(() => this.loadCustomer());
+      },
+      error: err => console.error('Activate failed', err)
+    });
+  }
+
+  deactivate(id: number): void {
+    this.api.setTnxByStatus('Inactive', id, 'city').subscribe({
+      next: () => {
+        Swal.fire('Deactivated!', 'City is now Inactive', 'success')
+          .then(() => this.loadCustomer());
+      },
+      error: err => console.error('Deactivate failed', err)
+    });
+  }
+
+  // ---------------- UI HELPERS ----------------
+ isReadOnly(): boolean {
+  // New city (no storeCity) → editable
+  if (!this.storeCity) {
+    return false;
+  }
+
+  // Existing city:
+  // - Draft (D) → editable
+  // - Submitted (S), Approved (A) → read-only
+  return false;
+}
+
+
+
   toggle(): void {
     this.isOpen = !this.isOpen;
   }
 
-  isReadOnly(): boolean {
-    return this.storeCity?.cityStatus === CityStatus.Approved;
-  }
-
-  back(): void {
+  onBack(): void {
     this.location.back();
   }
 
-  cancel(): void {
-    if (this.storeCity) {
-      this.cityForm.patchValue(this.storeCity);
-    } else {
-      this.cityForm.reset();
-    }
+  onCancel(): void {
+    this.cityForm.reset();
   }
-
-  // =========================
-  // CRUD
-  // =========================
-  save(): void {
-    if (this.cityForm.invalid) return;
-
-    this.api.saveTnx(this.cityForm.value, this.apiName).subscribe({
-      next: res => {
-        this.storeCity = res;
-        this.handleSuccess('Your form was saved!');
-        this.router.navigate(['/admin/city-list']);
-      },
-      error: err => console.error('Error saving city', err)
-    });
-  }
-
-  update(): void {
-    if (!this.storeCity?.id || this.cityForm.invalid) return;
-
-    this.api.updateTnx(this.cityForm.value, this.apiName).subscribe({
-      next: res => {
-        this.storeCity = res;
-        this.handleSuccess('Your form was updated!', false);
-      },
-      error: err => console.error('Error updating city', err)
-    });
-  }
-
-  // =========================
-  // FETCH
-  // =========================
-  private getCityById(id: number): void {
-    this.api.getCityById(id).subscribe({
-      next: (res: City) => {
-        this.storeCity = res;
-        this.cityForm.patchValue(res);
-
-        if (res.cityStatus === CityStatus.Approved) {
-          this.cityForm.disable();
-        } else {
-          this.cityForm.enable();
-        }
-      },
-      error: err => console.error('Error fetching city:', err)
-    });
-  }
-
-  // =========================
-  // STATUS ACTIONS
-  // =========================
-  submit(): void {
+  submit() {    
     if (!this.storeCity?.id) return;
-
-    this.updateStatus(CityStatus.Submitted, 'Submitted!', 'Your form was submitted!', 'Submitted');
+    this.api.setTnxByStatus('S', this.storeCity.id, 'city').subscribe({
+      next: (res) => {
+        console.log('Submited response:', res);
+        Swal.fire('Submitted!', 'City submitted successfully', 'success')
+          .then(() => this.router.navigate(['/admin/city-list'],{ queryParams: { tabName: 'submitted' } }));
+      },  
+      error: err => console.error('Submit failed', err)
+    });
   }
+
+ 
+
+
+  reject(id:number): void { 
+    if (!this.storeCity?.id) return;
+    this.api.setTnxByStatus('I', this.storeCity.id, 'city').subscribe({
+      next: () => {
+        Swal.fire('Rejected!', 'City rejected successfully', 'success')
+          .then(() => this.router.navigate(['/admin/city-list'],{ queryParams: { tabName: 'Rejected' } }));
+      },
+      error: err => console.error('Reject failed', err)
+    });
+  } 
 
   approve(id: number): void {
-    this.updateStatus(CityStatus.Approved, 'Approved!', 'Your form was approved!', 'Approved', id);
-  }
+  if (!this.storeCity?.id) return;
 
-  reject(id: number): void {
-    this.updateStatus(CityStatus.Draft, 'Rejected!', 'The city was rejected.');
-  }
+  this.api.setTnxByStatus('A', this.storeCity.id, 'city').subscribe({
+    next: () => {
+      Swal.fire('Approved!', 'City approved successfully', 'success')
+        .then(() => 
+          this.router.navigate(['/admin/city-list'], { queryParams: { tabName: 'approved' } })
+        );
+    },
+    error: err => console.error('Approve failed', err)
+  });
+}
 
-  editApprovedCity(id: number): void {
-    Swal.fire({
-      title: 'Amend Approved City?',
-      text: 'This will move the city back to Draft for editing.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, amend'
-    }).then(result => {
-      if (result.isConfirmed) {
-        this.api.setTnxByStatus(CityStatus.Draft, id).subscribe(() => {
-          this.router.navigate(['/admin/city-list']);
-        });
-      }
-    });
-  }
 
-  // =========================
-  // HELPERS
-  // =========================
-  private updateStatus(
-    status: CityStatus,
-    title: string,
-    message: string,
-    tabName?: string,
-    id?: number
-  ): void {
-    const cityId = id ?? this.storeCity?.id;
-    if (!cityId) return;
-
-    this.api.setTnxByStatus(status, cityId).subscribe({
-      next: () => {
-        Swal.fire({
-          title,
-          text: message,
-          icon: 'success',
-          confirmButtonText: 'OK',
-          customClass: { popup: 'swal2-top-left' }
-        });
-
-        this.router.navigate(['/admin/city-list'], {
-          queryParams: tabName ? { tabName } : {}
-        });
-      },
-      error: err => console.error('Status update error:', err)
-    });
-  }
-
-  private handleSuccess(message: string, showNavigate = true): void {
-    Swal.fire({
-      title: 'Success!',
-      text: message,
-      icon: 'success',
-      confirmButtonText: 'OK',
-      customClass: { popup: 'swal2-top-left' }
-    });
-
-    if (showNavigate) {
-      this.router.navigate(['/admin/city-list']);
-    }
-  }
 }

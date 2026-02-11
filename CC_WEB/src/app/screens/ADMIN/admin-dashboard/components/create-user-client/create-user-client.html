@@ -1,0 +1,175 @@
+<!-- =========================
+     CREATE CLIENT USER PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Client User</h1>
+  </div>
+
+  <!-- =========================
+       Client User Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Client User Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="clientUserForm">
+
+      <ng-container *ngIf="isOpen">
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Login ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="loginId" placeholder="Login ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Password</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="password" formControlName="password" placeholder="Password" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>User Category</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="userCategory" placeholder="User Category" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Company</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Company</mat-label>
+              <mat-select formControlName="companyId" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
+                  {{ company.companyName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>User Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="userStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="A">Active</mat-option>
+                <mat-option value="I">Inactive</mat-option>
+                
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+ 
+  <!-- =========================
+       USER DETAILS + ROLES
+  ========================== -->
+  <div class="user-details-roles-container" *ngIf="storeClientUser">
+
+    <!-- ================= ROLES ASSIGNMENT ================= -->
+    <section class="card collapsible-card roles-section">
+      <div class="card-header" (click)="toggleRoles()">
+        <h2>Role Assignment</h2>
+        <mat-icon>{{ isRolesOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+
+      <div class="card-body" [class.collapsed]="!isRolesOpen">
+
+        <!-- Role Multi-Select -->
+        <mat-form-field appearance="fill" class="role-select">
+          <mat-label>Select Roles</mat-label>
+          <mat-select multiple [(value)]="selectedRoleIds!">
+            <mat-option *ngFor="let role of userRoles ?? []" [value]="role.roleId">
+              {{ role.roleDesc }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="assignRoles()" [disabled]="!storeClientUser">
+            Assign Roles
+          </button>
+
+          <button mat-raised-button color="accent" (click)="updateRoles()" [disabled]="!storeClientUser">
+            Update Roles
+          </button>
+        </div>
+
+        <!-- Currently Assigned Roles -->
+        <div class="assigned-roles" *ngIf="userAssignedRoles?.length">
+          <p><strong>Currently Assigned Roles:</strong></p>
+          <ul>
+            <li *ngFor="let r of userAssignedRoles">
+              {{ getRoleName(r.roleId) }}
+              <button mat-icon-button color="warn" (click)="deleteRole(r.roleId)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="!userAssignedRoles?.length">
+          <p>No roles assigned yet.</p>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+   <!-- ---------------- FORM ACTIONS ---------------- -->
+    <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" [disabled]="!clientUserForm.dirty || !clientUserForm.valid" (click)="update(storeClientUser.id)">Update</button>
+      <button class="btn-submit" [disabled]="!clientUserForm.valid" (click)="submit()">Submit</button>
+    </ng-container>
+  <div class="customer-actions">
+    <ng-container *ngIf="!storeClientUser || !storeClientUser.userStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!clientUserForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    
+
+    <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeClientUser?.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeClientUser?.id)">Approve</button>
+    </ng-container>
+  </div>
+
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus !== 'A'}">
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Client User Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Login ID:</span> <span class="value">{{ storeClientUser?.loginId }}</span></div>
+      <div class="info-item"><span class="key">User Category:</span> <span class="value">{{ storeClientUser?.userCategory }}</span></div>
+      <div class="info-item"><span class="key">Company:</span> <span class="value">{{ storeClientUser?.companyId }}</span></div>
+      <div class="info-item"><span class="key">User Status:</span> <span class="value">{{ storeClientUser?.recordStatus }}</span></div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeClientUser?.recordStatus === 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="reject(storeClientUser.id)">Amend</button>
+  </div>
+
+</div>

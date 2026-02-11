@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
-import { ImportScreen } from './screens/USER/import-screen/import-screen';
+// import { ImportScreen } from './screens/USER/import-screen/import-screen';
 import path from 'node:path';
 
 export const routes: Routes = [
@@ -77,16 +77,21 @@ export const routes: Routes = [
                         .then((m)=> m.BranchList)
                     },
                      {
-                    path:'create-branch/:id',
+                    path:'edit-branch/:id',
                     loadComponent : ()=> 
                         import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
                         .then((m)=> m.CustomerBranch)
                     },
                     {
-                    path:'city',
+                    path:'create-city',
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
                     
+                },
+                {
+                  path:'edit-city/:id',
+                  loadComponent:()=> 
+                    import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
                 }
                  ,
                     {
@@ -120,13 +125,96 @@ export const routes: Routes = [
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m)=> m.CurrencyList)
                     
+                },
+                {
+                    path:'create-client-user',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
+                    
+                },
+                    {
+                        path:'user-client-inquiry',
+                        loadComponent:()=> 
+                            import("./screens/ADMIN/admin-dashboard/components/list-user-client/list-user-client").then((m)=> m.clientUsersList)
+                        
+                    },
+                  {
+                   path:'edit-client-user/:id',
+                    loadComponent:()=>
+                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
+                  },
+                
+                {
+                    path:'create-company',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m)=> m.CreateCompany)
+                    
                 }
+                ,
+                {
+                    path:'company-inquiry',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-company/company-list/company-list").then((m)=> m.CompanyList)
+                },
+                {
+                    path:'edit-company/:id',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m)=> m.CreateCompany)
+                },
+                {
+                    path:'create-role-master',
+                    loadComponent:()=>
+                        import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m)=> m.CreateRoleMaster)
+                },
+                {
+                    path:'role-master-inquiry',
+                    loadComponent:()=>
+                        import("./screens/ADMIN/admin-dashboard/components/role-master-list/role-master-list").then((m)=> m.RoleMasterList)
+                },
+                {
+                    path:'edit-role-master/:id',
+                    loadComponent:()=>
+                        import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m)=> m.CreateRoleMaster)
+                },
+                // showing the user details roles component 
+                {
+                  path:'create-client-user/:id',
+                    loadComponent:()=>
+                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
+                },
                 
-                ],
+                
+                        {
+  path: 'create-generate-fields',
+  loadComponent: () =>
+    import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+    .then((m) => m.CreateGenerateFields)
+},
+{
+  path: 'list-generate-fields',
+  loadComponent: () =>
+    import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
+    .then((m) => m.ListGenerateFields)
+},
+{
+    path: 'edit-field/:id',
+    loadComponent: () =>
+      import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+      .then((m) => m.CreateGenerateFields)      
+
+}
+
+           
+           
+                    ],
     
+            },
                 
-            }
-            ,
+        
+  
+
+            
+            
 
 
             // ==============================
@@ -420,17 +508,17 @@ export const routes: Routes = [
             // ==============================
 
             // Static routes first
-            {
-                path: 'import-screen/inquiries',
-                loadComponent: () =>
-                    import('./screens/USER/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records')
-                        .then(m => m.EnquiriesOfRecords),
-            },
-            {
-                path: 'import-screen/preview',
-                loadComponent: () =>
-                    import('./screens/USER/import-screen/components/preview/preview').then(m => m.Preview),
-            },
+            // {
+            //     path: 'import-screen/inquiries',
+            //     loadComponent: () =>
+            //         import('./screens/USER/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records')
+            //             .then(m => m.EnquiriesOfRecords),
+            // },
+            // {
+            //     path: 'import-screen/preview',
+            //     loadComponent: () =>
+            //         import('./screens/USER/import-screen/components/preview/preview').then(m => m.Preview),
+            // },
             {
                 path: 'import-screen/success',
                 loadComponent: () =>
@@ -443,18 +531,18 @@ export const routes: Routes = [
             },
 
             // Dynamic TNX ID route
-            {
-                path: 'import-screen/:tnxId',
-                loadComponent: () =>
-                    import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
-            },
+            // {
+            //     path: 'import-screen/:tnxId',
+            //     loadComponent: () =>
+            //         import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
+            // },
 
             // Base import screen
-            {
-                path: 'import-screen',
-                loadComponent: () =>
-                    import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
-            },
+            // {
+            //     path: 'import-screen',
+            //     loadComponent: () =>
+            //         import('./screens/USER/import-screen/import-screen').then(m => m.ImportScreen),
+            // },
             {
                 path: 'import-welcome',
                 loadComponent: () =>

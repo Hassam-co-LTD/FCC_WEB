@@ -1,5 +1,5 @@
-<div class="city-status-container">
-  <h2 class="page-title">City Records</h2>
+<div class="customer-status-container">
+  <h2 class="page-title">Customer Records</h2>
 
   <mat-tab-group
     [selectedIndex]="selectedTabIndex"
@@ -10,11 +10,11 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID or Name"
+          placeholder="Search City By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
-          (input)="filterDraftCities(searchText)"
+          (input)="filterDraftCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCities('')">
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCity('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -24,26 +24,26 @@
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftCities && storeFilteredDraftCities.length > 0; else noDrafts">
-          <table class="city-table">
+        <div class="table-wrapper" *ngIf="storeFilteredDraftCity?.length; else noDrafts">
+          <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>City Name</th>
+                <th>City ID</th>
+                <th>City</th>
                 <th>State</th>
                 <th>Country</th>
-                <th>Status</th>
+                 <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredDraftCities; trackBy: trackById">
-                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+              <tr *ngFor="let c of storeFilteredDraftCity; trackBy: trackById">
+                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
                 <td>{{ c.cityName }}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>
-                <td>
-                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
-                </td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -60,11 +60,11 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID or Name"
+          placeholder="Search City By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
-          (input)="filterApprovedCities(searchText)"
+          (input)="filterApprovedCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCities('')">
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCity('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -74,26 +74,28 @@
           Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedCities && storeFilteredApprovedCities.length > 0; else noApproved">
-          <table class="city-table">
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedCity?.length; else noApproved">
+          <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>City Name</th>
+                <th>City ID</th>
+                <th>Name</th>
                 <th>State</th>
                 <th>Country</th>
                 <th>Status</th>
+                <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedCities; trackBy: trackById">
-                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
+              <tr *ngFor="let c of storeFilteredApprovedCity; trackBy: trackById">
+                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
                 <td>{{ c.cityName }}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>
-                <td>
-                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
-                </td>
+                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
+                 <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -110,11 +112,11 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID or Name"
+          placeholder="Search City By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
-          (input)="filterSubmittedCities(searchText)"
+          (input)="filterSubmittedCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCities('')">
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCity('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -124,26 +126,27 @@
           Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCities && storeFilteredSubmittedCities.length > 0; else noSubmitted">
-          <table class="city-table">
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCity?.length; else noSubmitted">
+          <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>City Name</th>
+                <th>City ID</th>
+                <th>Name</th>
                 <th>State</th>
                 <th>Country</th>
-                <th>Status</th>
+                <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedCities; trackBy: trackById">
-                <td (click)="updateRouter(c.id)" class="cid">{{ c.id }}</td>
-                <td>{{ c.cityName }}</td>
+              <tr *ngFor="let c of storeFilteredSubmittedCity; trackBy: trackById">
+                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
+                <td>{{ c.cityName}}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>
-                <td>
-                  <span class="status {{ c.cityStatus }}">{{ c.cityStatus }}</span>
-                </td>
+                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>

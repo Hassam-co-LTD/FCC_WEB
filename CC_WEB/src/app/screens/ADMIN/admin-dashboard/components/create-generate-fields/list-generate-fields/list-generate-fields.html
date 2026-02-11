@@ -1,0 +1,224 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Dynamic Fields Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Field ID, Field Name, or Label"
+          [(ngModel)]="searchText"
+          (input)="filterDraftFields(searchText)"
+        />
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftFields('')"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredDraftFields && storeFilteredDraftFields.length > 0; else noDrafts"
+        >
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Field ID</th>
+                <th>Field Name</th>
+                <th>Label</th>
+                <th>Field Type</th>
+                <th>Screen</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let f of storeFilteredDraftFields; trackBy: trackById">
+                <!-- <td>{{ f.id }}</td> -->
+               <a routerLink="/admin/edit-field/{{f.id}}"> <td>{{ f.fieldId }}</td></a>
+                <td>{{ f.fieldName }}</td>
+                <td>{{ f.label }}</td>
+                <td>{{ f.fieldType }}</td>
+                <td>{{ f.screen }}</td>
+                <td>
+                  <span class="status {{ f.recordStatus }}">
+                    {{ f.recordStatus }}
+                  </span>
+                </td>
+                <td>{{ f.createdBy }}</td>
+                <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.updatedBy }}</td>
+                <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Field ID, Field Name, or Label"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedFields(searchText)"
+        />
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedFields('')"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredApprovedFields && storeFilteredApprovedFields.length > 0; else noApproved"
+        >
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Field ID</th>
+                <th>Field Name</th>
+                <th>Label</th>
+                <th>Field Type</th>
+                <th>Screen</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let f of storeFilteredApprovedFields; trackBy: trackById">
+                <td>{{ f.id }}</td>
+                <td>{{ f.fieldId }}</td>
+                <td>{{ f.fieldName }}</td>
+                <td>{{ f.label }}</td>
+                <td>{{ f.fieldType }}</td>
+                <td>{{ f.screen }}</td>
+                <td>
+                  <span class="status {{ f.recordStatus }}">
+                    {{ f.recordStatus }}
+                  </span>
+                </td>
+                <td>{{ f.createdBy }}</td>
+                <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.updatedBy }}</td>
+                <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Field ID, Field Name, or Label"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedFields(searchText)"
+        />
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedFields('')"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredSubmittedFields && storeFilteredSubmittedFields.length > 0; else noSubmitted"
+        >
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Field ID</th>
+                <th>Field Name</th>
+                <th>Label</th>
+                <th>Field Type</th>
+                <th>Screen</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let f of storeFilteredSubmittedFields; trackBy: trackById">
+                <td>{{ f.id }}</td>
+                <td>{{ f.fieldId }}</td>
+                <td>{{ f.fieldName }}</td>
+                <td>{{ f.label }}</td>
+                <td>{{ f.fieldType }}</td>
+                <td>{{ f.screen }}</td>
+                <td>
+                  <span class="status {{ f.recordStatus }}">
+                    {{ f.recordStatus }}
+                  </span>
+                </td>
+                <td>{{ f.createdBy }}</td>
+                <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.updatedBy }}</td>
+                <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>

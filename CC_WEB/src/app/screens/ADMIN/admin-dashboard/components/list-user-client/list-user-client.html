@@ -1,0 +1,207 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Client Users Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search ClientUser"
+          [(ngModel)]="searchText"
+          (input)="filterDraftclientUsers(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftclientUsers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredDraftclientUsers && storeFilteredDraftclientUsers.length > 0; else noDrafts">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Login ID</th>
+                <th>Password</th>
+                <th>Company ID</th>
+                <th>User Status</th>
+                <th>User Category</th>
+                <th>Record Status</th>
+                <th>Created By</th>
+                <th>Updated By</th>
+                <th>Inputter ID</th>
+                <th>Authorizer ID</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+                <th>Inputter DTTM</th>
+                <th>Authorizer DTTM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of storeFilteredDraftclientUsers; trackBy: trackById">
+                <td><a [routerLink]="['/admin/edit-client-user/',u.id ]">{{ u.loginId }}</a></td>
+                <td>{{ u.password }}</td>
+                <td>{{ u.companyId }}</td>
+                <td>{{ u.userStatus }}</td>
+                <td>{{ u.userCategory }}</td>
+                <td>{{ u.recordStatus }}</td>
+                <td>{{ u.createdBy }}</td>
+                <td>{{ u.updatedBy }}</td>
+                <td>{{ u.inputterId }}</td>
+                <td>{{ u.authorizerId }}</td>
+                <td>{{ u.createdOn }}</td>
+                <td>{{ u.updatedOn }}</td>
+                <td>{{ u.inputterDttm }}</td>
+                <td>{{ u.authorizerDttm }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search ClientUser"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedclientUsers(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedclientUsers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedclientUsers && storeFilteredApprovedclientUsers.length > 0; else noApproved">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Login ID</th>
+                <th>Password</th>
+                <th>Company ID</th>
+                <th>User Status</th>
+                <th>User Category</th>
+                <th>Record Status</th>
+                <th>Created By</th>
+                <th>Updated By</th>
+                <th>Inputter ID</th>
+                <th>Authorizer ID</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+                <th>Inputter DTTM</th>
+                <th>Authorizer DTTM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of storeFilteredApprovedclientUsers; trackBy: trackById">
+                <td><a [routerLink]="['/admin/create-client-user', u.id]">{{ u.loginId }}</a></td>
+                <td>{{ u.password }}</td>
+                
+                <td>{{ u.companyId }}</td>
+                <td>{{ u.userStatus }}</td> 
+                <td>{{ u.userCategory }}</td>
+                <td>{{ u.recordStatus }}</td>
+                <td>{{ u.createdBy }}</td>
+                <td>{{ u.updatedBy }}</td>
+                <td>{{ u.inputterId }}</td>
+                <td>{{ u.authorizerId }}</td>
+                <td>{{ u.createdOn }}</td>
+                <td>{{ u.updatedOn }}</td>
+                <td>{{ u.inputterDttm }}</td>
+                <td>{{ u.authorizerDttm }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search ClientUser"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedclientUsers(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedclientUsers('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedclientUsers && storeFilteredSubmittedclientUsers.length > 0; else noSubmitted">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Login ID</th>
+                <th>Password</th>
+                <th>Company ID</th>
+                <th>User Status</th>
+                <th>User Category</th>
+                <th>Record Status</th>
+                <th>Created By</th>
+                <th>Updated By</th>
+                <th>Inputter ID</th>
+                <th>Authorizer ID</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+                <th>Inputter DTTM</th>
+                <th>Authorizer DTTM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of storeFilteredSubmittedclientUsers; trackBy: trackById">
+                <td><a [routerLink]="['/admin/create-client-user', u.id]">{{ u.loginId }}</a></td>
+                <td>{{ u.password }}</td>
+                <td>{{ u.companyId }}</td>
+                <td>{{ u.userStatus }}</td>
+                <td>{{ u.userCategory }}</td>
+                <td>{{ u.recordStatus }}</td>
+                <td>{{ u.createdBy }}</td>
+                <td>{{ u.updatedBy }}</td>
+                <td>{{ u.inputterId }}</td>
+                <td>{{ u.authorizerId }}</td>
+                <td>{{ u.createdOn }}</td>
+                <td>{{ u.updatedOn }}</td>
+                <td>{{ u.inputterDttm }}</td>
+                <td>{{ u.authorizerDttm }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

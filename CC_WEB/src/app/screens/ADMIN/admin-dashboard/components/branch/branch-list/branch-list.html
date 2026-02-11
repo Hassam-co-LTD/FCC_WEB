@@ -42,7 +42,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let b of storeFilteredDraftBranches; trackBy: trackById">
-                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchCode }}</td>
+            <td><a [routerLink]="['/admin/edit-branch',b.id]">{{ b.branchCode }}</a></td>
+         
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>
@@ -100,7 +101,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let b of storeFilteredApprovedBranches; trackBy: trackById">
-                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchCode }}</td>
+                <td><a [routerLink]="['/admin/edit-branch', b.id]">{{ b.branchCode }}</a></td>
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>
@@ -158,7 +159,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let b of storeFilteredSubmittedBranches; trackBy: trackById">
-                <td (click)="updateRouter(b.id)" class="cid">{{ b.branchCode }}</td>
+                <td><a [routerLink]="['/admin/edit-branch', b.id]">{{ b.branchCode }}</a></td>
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>

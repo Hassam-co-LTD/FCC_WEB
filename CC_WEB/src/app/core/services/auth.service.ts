@@ -1,10 +1,11 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-
+import { ApiService } from './api.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  constructor(private api: ApiService) {}
   getCurrentUser() {
     throw new Error('Method not implemented.');
   }
@@ -15,6 +16,10 @@ export class AuthService {
   }
 
   login(userId: string, companyId: string, password: string): boolean {
+       this.api.saveTnx({ userId, companyId, password }, 'login').subscribe({
+      next: response => console.log('Login response:', response),
+      error: err => console.error('Login error:', err)
+    }); 
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
         (userId === 'user' && companyId === 'user' && password === 'user')) {
 

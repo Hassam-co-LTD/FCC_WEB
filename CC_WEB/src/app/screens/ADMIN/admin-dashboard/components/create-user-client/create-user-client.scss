@@ -1,0 +1,326 @@
+@use '../../../../../../styles/theme' as theme;
+
+/* =========================
+   GLOBAL STYLING
+=========================== */
+.create-client-user-page, 
+.user-details-roles-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  padding: 20px;
+
+  h1, h2, h3, h4 {
+    margin: 0;
+  }
+}
+
+/* =========================
+   Hide When Approved
+=========================== */
+.hide-when-approved {
+  display: none !important;
+}
+
+/* =========================
+   Section Header (Collapsible)
+=========================== */
+.section-header, 
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  color: theme.$text-light;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  mat-icon {
+    font-size: 22px;
+    color: theme.$text-light;
+  }
+}
+
+/* =========================
+   Collapsible Sections
+=========================== */
+.collapsible, 
+.card-body {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all 0.35s ease-in-out;
+}
+
+.collapsible.open,
+.card-body:not(.collapsed) {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 20px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* =========================
+   Form Layout
+=========================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-grid,
+.form-grid-responsive {
+  display: grid;
+  gap: theme.$gap-default;
+  margin-bottom: 15px;
+}
+
+.form-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid-responsive {
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (min-width: 1441px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1440px) and (min-width: 1025px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Alternating Form Border */
+.form-grid.alternate {
+  padding-left: 10px;
+  border-left: 2px dashed theme.$border-primary;
+  margin-left: 4px;
+}
+
+/* Fields */
+mat-form-field {
+  width: 100%;
+}
+
+input[matInput] {
+  font-size: 14px !important;
+  color: theme.$primary-dark;
+}
+
+::placeholder {
+  color: theme.$primary-dark;
+  opacity: 0.8;
+}
+
+/* =========================
+   Buttons
+=========================== */
+button,
+.customer-actions button,
+.approved-actions button {
+  background: theme.$primary;
+  color: theme.$text-light;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  box-shadow: theme.$button-shadow;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background: theme.$primary-dark;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.customer-actions, 
+.approved-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* =========================
+   Approved Container
+=========================== */
+.approved-container {
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  padding: 24px;
+  margin: 20px auto;
+  box-shadow: theme.$shadow-primary;
+
+  .approved-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: theme.$primary-dark;
+    }
+  }
+
+  .approved-badge {
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 6px 14px;
+    border-radius: theme.$radius-default;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .approved-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+
+    @media (min-width: 1440px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid theme.$border-light;
+      border-radius: theme.$radius-default;
+      background: theme.$light-bg;
+
+      .key {
+        font-weight: 600;
+        color: theme.$primary-dark;
+        white-space: nowrap;
+      }
+
+      .value {
+        color: theme.$primary-dark;
+        text-align: right;
+        word-break: break-word;
+
+        @media (min-width: 1440px) {
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
+/* =========================
+   User Roles Section
+=========================== */
+.roles-section {
+  margin-top: 20px;
+
+  .role-select {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .assigned-roles {
+    margin-top: 15px;
+
+    p {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        padding: 6px 12px;
+        background: theme.$light-bg;
+        border-radius: 8px;
+        font-weight: 500;
+
+        .role-name {
+          flex-grow: 1;
+        }
+
+        button {
+          background: #f44336;
+          color: #fff;
+          border: none;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #d32f2f;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* =========================
+   No User / Fallback
+=========================== */
+.no-user {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 16px;
+  color: #777;
+}

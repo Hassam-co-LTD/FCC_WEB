@@ -1,131 +1,146 @@
 <!-- =========================
-     CITY MASTER FORM
+     CREATE CURRENCY PAGE
 ========================= -->
-<div class="city-container" [ngClass]="{'hidden': storeTnx?.cityStatus === 'A'}">
+<div class="create-customer-page">
 
-  <!-- Toggle Header -->
-  <div class="section-header" (click)="isOpen = !isOpen">
-    <h2>City Master</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Currency</h1>
   </div>
 
-  <!-- Collapsible Form -->
-  <div class="collapsible" [class.open]="isOpen" [formGroup]="TnxForm">
+  <!-- =========================
+       Currency Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCurrency?.recordStatus === 'A'}">
 
-    <!-- Plain Input Fields (2 per row) -->
-    <div class="form-grid-2">
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Currency General Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
 
-  <!-- City ID -->
-  <div class="field-group">
-    <h4>City ID</h4>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>City ID</mat-label>
-      <input matInput type="number" formControlName="id" [readonly]="isReadOnly()">
-    </mat-form-field>
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="currencyForm">
+
+      <ng-container *ngIf="isOpen">
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Currency Code</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="currencyCode" placeholder="Currency Code" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Currency Description</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="currencyDesc" placeholder="Currency Description" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Currency Map ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="currencyMapId" placeholder="Currency Map ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Currency Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="currencyStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="A">Active</mat-option>
+                <mat-option value="I">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Record Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Record Status</mat-label>
+              <mat-select formControlName="recordStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="N">New</mat-option>
+                <mat-option value="U">Updated</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- ---------------- AUDIT DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Inputter ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="inputterId" placeholder="Inputter ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Authorizer ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="authorizerId" placeholder="Authorizer ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group full">
+            <h4>Reject Reason</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="rejectReason" placeholder="Reject Reason" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+        </div>
+      </ng-container>
+    </div>
   </div>
 
-  <!-- City Name -->
-  <div class="field-group">
-    <h4>City Name</h4>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>City Name</mat-label>
-      <input matInput type="text" formControlName="cityName" [readonly]="isReadOnly()">
-    </mat-form-field>
-  </div>
+  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+<div class="customer-actions">
 
-  <!-- State -->
-  <div class="field-group">
-    <h4>State</h4>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>State</mat-label>
-      <input matInput type="text" formControlName="state" [readonly]="isReadOnly()">
-    </mat-form-field>
-  </div>
+  <ng-container *ngIf="!storeCurrency || !storeCurrency.recordStatus">
+    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn-save" [disabled]="!currencyForm.valid" (click)="onSave()">Save</button>
+  </ng-container>
 
-  <!-- Country -->
-  <div class="field-group">
-    <h4>Country</h4>
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Country</mat-label>
-      <input matInput type="text" formControlName="country" [readonly]="isReadOnly()">
-    </mat-form-field>
-  </div>
+  <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'D'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" [disabled]="!currencyForm.dirty || !currencyForm.valid" (click)="update(storeCurrency.currencyCode)">Update</button>
+    <button class="btn-submit" [disabled]="!currencyForm.valid" (click)="submit()">Submit</button>
+  </ng-container>
+
+  <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'S'">
+    <button class="btn-reject" (click)="reject(storeCurrency.currencyCode)">Reject</button>
+    <button class="btn-approve" (click)="approve(storeCurrency.currencyCode)">Approve</button>
+  </ng-container>
+
 </div>
 
-    <!-- Actions -->
-    <!-- =========================
-     CITY MASTER FORM ACTIONS
-========================= -->
-<div class="actions">
-  <!-- Draft / Update Mode -->
-  <ng-container *ngIf="storeTnx?.cityStatus === 'D'">
-    <button mat-stroked-button color="primary" type="button" (click)="back()">Back</button>
-    <button mat-flat-button color="accent" type="button"
-            [disabled]="!TnxForm.dirty || !TnxForm.valid || isReadOnly()"
-            (click)="update()">Update</button>
-    <button mat-flat-button color="primary" type="button"
-            [disabled]="!TnxForm.valid || isReadOnly()"
-            (click)="submit()">Submit</button>
-  </ng-container>
-
-  <!-- Submitted / Approval Mode -->
-  <ng-container *ngIf="storeTnx?.cityStatus === 'S'">
-    <button mat-stroked-button color="primary" type="button" (click)="reject(storeTnx.id)">Reject</button>
-    <button mat-flat-button color="accent" type="button" (click)="approve(storeTnx.id)">Approve</button>
-  </ng-container>
-
-  <!-- Create / New Mode -->
-  <ng-container *ngIf="!['D','S','A'].includes(storeTnx?.cityStatus)">
-    <button mat-stroked-button color="primary" type="button" (click)="cancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="button" 
-            [disabled]="!TnxForm.valid" (click)="save()">Save City</button>
-  </ng-container>
-</div>
-
-</div> <!-- End collapsible -->
-</div> <!-- End city-container -->
-
-<!-- =========================
-     APPROVED CITY VIEW
-  ========================= -->
-<div *ngIf="storeTnx?.cityStatus === 'A'" class="approved-container">
-
+ <!-- ---------------- APPROVED VIEW ---------------- -->
+<div class="approved-container" [ngClass]="{'hide-when-approved': storeCurrency?.recordStatus === 'A'}">
   <div class="approved-header">
     <span class="approved-badge">✔ Approved</span>
-    <h2>City Approved Details</h2>
+    <h3>Currency Details</h3>
   </div>
 
-  <div class="details-grid">
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">City ID</span>
-        <span class="value">{{ storeTnx.id }}</span>
-      </div>
-
-      <div class="detail-item">
-        <span class="label">City Name</span>
-        <span class="value">{{ storeTnx.cityName }}</span>
-      </div>
-
-      <div class="detail-item">
-        <span class="label">State</span>
-        <span class="value">{{ storeTnx.state }}</span>
-      </div>
-    </div>
-
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Country</span>
-        <span class="value">{{ storeTnx.country }}</span>
-      </div>
-    </div>
+  <div class="approved-info">
+    <div class="info-item"><span class="key">Currency Code:</span> <span class="value">{{ storeCurrency.currencyCode }}</span></div>
+    <div class="info-item"><span class="key">Currency Description:</span> <span class="value">{{ storeCurrency.currencyDesc }}</span></div>
+    <div class="info-item"><span class="key">Currency Map ID:</span> <span class="value">{{ storeCurrency.currencyMapId }}</span></div>
+    <div class="info-item"><span class="key">Currency Status:</span> <span class="value">{{ storeCurrency.currencyStatus }}</span></div>
+    <div class="info-item"><span class="key">Record Status:</span> <span class="value">{{ storeCurrency.recordStatus }}</span></div>
+    <div class="info-item"><span class="key">Inputter ID:</span> <span class="value">{{ storeCurrency.inputterId }}</span></div>
+    <div class="info-item"><span class="key">Authorizer ID:</span> <span class="value">{{ storeCurrency.authorizerId }}</span></div>
+    <div class="info-item"><span class="key">Reject Reason:</span> <span class="value">{{ storeCurrency.rejectReason }}</span></div>
   </div>
+</div>
 
-  <div class="approved-actions">
-    <button class="btn-back" (click)="back()">← Back</button>
-    <button class="btn-edit" (click)="editApprovedTnx(storeTnx.id)">
-      Amend
-    </button>
-  </div>
- 
+<div class="approved-actions" *ngIf="storeCurrency?.recordStatus === 'A'">
+  <button class="btn-back" (click)="onBack()">Back</button>
+  <button class="btn-update" (click)="approve(storeCurrency.currencyCode)">Amend</button>
+</div>
+
 </div>

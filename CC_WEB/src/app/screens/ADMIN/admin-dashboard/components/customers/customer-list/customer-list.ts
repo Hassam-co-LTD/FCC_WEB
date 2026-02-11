@@ -6,11 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
-
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTabsModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatTabsModule, MatIconModule, RouterLink],
   templateUrl: './customer-list.html',
   styleUrls: ['./customer-list.scss']
 })
@@ -55,10 +55,11 @@ export class CustomerList implements OnInit {
 
   // ================== Load Customers ==================
   loadDraftCustomers() {
-    this.api.getTnxByStatus('D','customer').subscribe({
+    this.api.getTnxByStatus('I','customer').subscribe({
       next: res => {
+        console.log('Draft customers response:', res);
         this.draftCustomers = res;
-        this.storeFilteredDraftCustomers = [...res];
+        this.storeFilteredDraftCustomers = [...res];  
       },
       error: err => console.error('Error fetching draft customers', err)
     });
@@ -121,7 +122,7 @@ export class CustomerList implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id).subscribe({
+    this.api.setTnxByStatus('S', id, 'customer').subscribe({
       next: () => {
         Swal.fire('Success', 'Customer submitted successfully', 'success');
         this.loadDraftCustomers();
@@ -132,7 +133,7 @@ export class CustomerList implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id).subscribe({
+    this.api.setTnxByStatus('A', id, 'customer').subscribe({
       next: () => {
         Swal.fire('Success', 'Customer approved successfully', 'success');
         this.loadSubmittedCustomers();
@@ -143,7 +144,7 @@ export class CustomerList implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id).subscribe({
+    this.api.setTnxByStatus('R', id, 'customer').subscribe({
       next: () => {
         Swal.fire('Success', 'Customer rejected successfully', 'success');
         this.loadSubmittedCustomers();
@@ -155,7 +156,7 @@ export class CustomerList implements OnInit {
   /** ================== Edit Approved Customer ================== */
   editApprovedCustomer(id: number) {
     // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('D', id).subscribe({
+    this.api.setTnxByStatus('D', id, 'customer').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved customer moved to Draft for editing', 'success');
         // Reload all tabs

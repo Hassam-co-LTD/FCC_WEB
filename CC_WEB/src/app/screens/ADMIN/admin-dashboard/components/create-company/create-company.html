@@ -1,0 +1,128 @@
+<!-- =========================
+     CREATE COMPANY PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Company</h1>
+  </div>
+
+  <!-- =========================
+       Company Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCompany?.companyStatus === 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Company Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="companyForm">
+
+      <ng-container *ngIf="isOpen">
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Company ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="companyId" placeholder="Company ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Company Name</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="companyName" placeholder="Company Name" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Company Address</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="companyAddress" placeholder="Company Address" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+    
+
+        <!-- ---------------- DROPDOWN DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Company Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="companyStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="A">Active</mat-option>
+                <mat-option value="I">Inactive</mat-option>
+                <mat-option value="D">Draft</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Company Type</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Type</mat-label>
+              <mat-select formControlName="companyType" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="Internal">Internal</mat-option>
+                <mat-option value="External">External</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+  <div class="customer-actions">
+
+    <!-- ---------------- New Company ---------------- -->
+    <ng-container *ngIf="!storeCompany || !storeCompany.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!companyForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    <!-- ---------------- Edit Mode: Draft ---------------- -->
+    <ng-container *ngIf="isEditMode && storeCompany?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" [disabled]="!companyForm.dirty || !companyForm.valid" (click)="update(storeCompany.id)">Update</button>
+      <button class="btn-submit" [disabled]="!companyForm.valid" (click)="submit()">Submit</button>
+    </ng-container>
+
+    <!-- ---------------- Edit Mode: Submitted ---------------- -->
+    <ng-container *ngIf="isEditMode && storeCompany?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeCompany.companyId)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeCompany.companyId)">Approve</button>
+    </ng-container>
+
+  </div>
+
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeCompany?.recordStatus !== 'A'}">
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Company Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Company ID:</span> <span class="value">{{ storeCompany.companyid }}</span></div>
+      <div class="info-item"><span class="key">Company Name:</span> <span class="value">{{ storeCompany.companyName }}</span></div>
+      <div class="info-item"><span class="key">Company Address:</span> <span class="value">{{ storeCompany.companyAddress }}</span></div>
+      <div class="info-item"><span class="key">Company Type:</span> <span class="value">{{ storeCompany.companyType }}</span></div>
+      <div class="info-item"><span class="key">Status:</span> <span class="value">{{ storeCompany.companyStatus }}</span></div>
+      <div class="info-item"><span class="key">App User ID:</span> <span class="value">{{ storeCompany.appUserId }}</span></div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeCompany?.recordStatus === 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="approve(storeCompany.companyId  )">Amend</button>
+  </div>
+

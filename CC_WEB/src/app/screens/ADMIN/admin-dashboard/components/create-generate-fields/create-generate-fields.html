@@ -1,0 +1,128 @@
+<!-- =========================
+     GENERATE FIELDS PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Generate Fields</h1>
+  </div>
+
+  <!-- =========================
+       Field Form Container
+  ========================== -->
+    <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeField.recordStatus === 'A'}">
+
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Field Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="fieldForm">
+      <ng-container *ngIf="isOpen">
+
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Field ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="fieldId" placeholder="Field ID" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Field Name</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="fieldName" placeholder="Field Name" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Label</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="label" placeholder="Label" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Field Type</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Field Type</mat-label>
+              <mat-select formControlName="fieldType" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="text">Text</mat-option>
+                <mat-option value="number">Number</mat-option>
+                <mat-option value="dropdown">Dropdown</mat-option>
+                <mat-option value="date">Date</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Screen</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Screen</mat-label>
+              <mat-select formControlName="screen" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="customer">Customer</mat-option>
+                <mat-option value="branch">Branch</mat-option>
+                <mat-option value="city">City</mat-option>
+                <mat-option value="role">Role</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+  <div class="customer-actions">
+
+    <!-- ---------------- New Field ---------------- -->
+    <ng-container *ngIf="!storeField || !storeField.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!fieldForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    <!-- ---------------- Edit Mode: Draft ---------------- -->
+    <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" [disabled]="!fieldForm.dirty || !fieldForm.valid" (click)="update(storeField.id)">Update</button>
+      <button class="btn-submit" [disabled]="!fieldForm.valid" (click)="submit()">Submit</button>
+    </ng-container>
+
+    <!-- ---------------- Edit Mode: Submitted ---------------- -->
+    <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeField.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeField.id)">Approve</button>
+    </ng-container>
+
+  </div>
+
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeField.recordStatus !=='A'}">
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Field Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Field ID:</span> <span class="value">{{ storeField.fieldId }}</span></div>
+      <div class="info-item"><span class="key">Field Name:</span> <span class="value">{{ storeField.fieldName }}</span></div>
+      <div class="info-item"><span class="key">Label:</span> <span class="value">{{ storeField.label }}</span></div>
+      <div class="info-item"><span class="key">Field Type:</span> <span class="value">{{ storeField.fieldType }}</span></div>
+      <div class="info-item"><span class="key">Screen:</span> <span class="value">{{ storeField.screen }}</span></div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeField.recordStatus === 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="approve(storeField.id)">Amend</button>
+  </div>
+
+</div>

@@ -1,0 +1,182 @@
+<!-- =========================
+     CREATE ROLE PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Role</h1>
+  </div>
+
+  <!-- =========================
+       Role Form Container
+  ========================== -->
+  <div class="customer-form-wrapper"
+       [ngClass]="{'hide-when-approved': storeRole?.recordStatus === 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Role General Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="roleForm">
+
+      <ng-container *ngIf="isOpen">
+
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+
+          <!-- Role ID -->
+          <div class="field-group">
+            <h4>Role ID</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input
+                matInput
+                type="text"
+                formControlName="roleId"
+                placeholder="Role ID"
+                [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <!-- Role Description -->
+          <div class="field-group">
+            <h4>Role Description</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input
+                matInput
+                type="text"
+                formControlName="roleDesc"
+                placeholder="Role Description"
+                [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <!-- Role Destination -->
+          <div class="field-group">
+            <h4>Role Destination</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input
+                matInput
+                type="text"
+                formControlName="roleDest"
+                placeholder="Role Destination"
+                [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+        </div>
+
+        <!-- ---------------- DROPDOWN DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+
+          <!-- Role Status -->
+          <div class="field-group">
+            <h4>Role Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Role Status</mat-label>
+              <mat-select
+                formControlName="roleStatus"
+                [disabled]="isReadOnly()"
+                panelClass="white-dropdown">
+                <mat-option value="A">Active</mat-option>
+                <mat-option value="I">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- =========================
+       FORM ACTIONS
+  ========================== -->
+  <div class="customer-actions">
+
+    <!-- New Role -->
+    <ng-container *ngIf="!storeRole || !storeRole.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save"
+              [disabled]="!roleForm.valid"
+              (click)="onSave()">
+        Save
+      </button>
+    </ng-container>
+
+    <!-- Draft (I) -->
+    <ng-container *ngIf="isEditMode && storeRole?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update"
+              [disabled]="!roleForm.dirty || !roleForm.valid"
+              (click)="update(storeRole.roleId)">
+        Update
+      </button>
+      <button class="btn-submit"
+              [disabled]="!roleForm.valid"
+              (click)="submit()">
+        Submit
+      </button>
+    </ng-container>
+
+    <!-- Submitted (S) -->
+    <ng-container *ngIf="isEditMode && storeRole?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeRole.roleId)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeRole.roleId)">Approve</button>
+    </ng-container>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     APPROVED VIEW
+========================= -->
+<div class="approved-container"
+     [ngClass]="{'hide-when-approved': storeRole?.recordStatus !== 'A'}">
+
+  <div class="approved-header">
+    <span class="approved-badge">✔ Approved</span>
+    <h3>Role Details</h3>
+  </div>
+
+  <div class="approved-info">
+    <div class="info-item">
+      <span class="key">Role ID:</span>
+      <span class="value">{{ storeRole.roleId }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="key">Role Description:</span>
+      <span class="value">{{ storeRole.roleDesc }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="key">Role Destination:</span>
+      <span class="value">{{ storeRole.roleDest }}</span>
+    </div>
+
+    <div class="info-item">
+      <span class="key">Role Status:</span>
+      <span class="value">
+        {{ storeRole.roleStatus === 'A' ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+
+    <div class="info-item">
+      <span class="key">Record Status:</span>
+      <span class="value">{{ storeRole.recordStatus }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="approved-actions" *ngIf="storeRole?.recordStatus === 'A'">
+  <button class="btn-back" (click)="onBack()">Back</button>
+  <button class="btn-update" (click)="amend(storeRole.id)">Amend</button>
+</div>

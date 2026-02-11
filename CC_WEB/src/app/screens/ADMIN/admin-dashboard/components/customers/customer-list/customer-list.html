@@ -10,7 +10,7 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search Customer By ID, Name, or Email"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
           (input)="filterDraftCustomers(searchText)"
         />
@@ -24,45 +24,42 @@
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftCustomers && storeFilteredDraftCustomers.length > 0; else noDrafts">
+        <div class="table-wrapper" *ngIf="storeFilteredDraftCustomers?.length; else noDrafts">
           <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Legal ID</th>
                 <th>Status</th>
-                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
+                <th>Legal ID</th>
+                <th>Branch Code</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
-                <th>Actions</th>
+                <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftCustomers; trackBy: trackById">
-                <td>{{ c.id }}</td>
-                <td>{{ c.cId }}</td>
+                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.legalId }}</td>
-                <td><span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span></td>
-                <td>{{ c.branchCode || '-' }}</td>
+                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
-                <td class="actions">
-                  <button mat-stroked-button color="primary" (click)="updateRouter(c)">Edit</button>
-                  <button mat-flat-button color="accent" (click)="submitStatus(c.id)">Submit</button>
-                </td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -79,7 +76,7 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search Customer By ID, Name, or Email"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
           (input)="filterApprovedCustomers(searchText)"
         />
@@ -93,44 +90,42 @@
           Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedCustomers && storeFilteredApprovedCustomers.length > 0; else noApproved">
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedCustomers?.length; else noApproved">
           <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Legal ID</th>
                 <th>Status</th>
-                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
+                <th>Legal ID</th>
+                <th>Branch Code</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
-                <th>Actions</th>
+                <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredApprovedCustomers; trackBy: trackById">
-                <td>{{ c.id }}</td>
-                <td>{{ c.cId }}</td>
+                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.legalId }}</td>
-                <td><span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span></td>
-                <td>{{ c.branchCode || '-' }}</td>
+                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
-                <td class="actions">
-                  <button mat-stroked-button color="primary" (click)="editApprovedCustomer(c.id)">Amend</button>
-                </td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -147,7 +142,7 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search Customer By ID, Name, or Email"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
           (input)="filterSubmittedCustomers(searchText)"
         />
@@ -161,45 +156,42 @@
           Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomers && storeFilteredSubmittedCustomers.length > 0; else noSubmitted">
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomers?.length; else noSubmitted">
           <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Legal ID</th>
                 <th>Status</th>
-                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
+                <th>Legal ID</th>
+                <th>Branch Code</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
-                <th>Actions</th>
+                <th>Created On</th>
+                <th>Updated On</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedCustomers; trackBy: trackById">
-                <td>{{ c.id }}</td>
-                <td>{{ c.cId }}</td>
+                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td>{{ c.legalId }}</td>
-                <td><span class="status {{ c.customerStatus }}">{{ c.customerStatus }}</span></td>
-                <td>{{ c.branchCode || '-' }}</td>
+                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
+                <td>{{ c.legalId }}</td>
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
-                <td class="actions">
-                  <button mat-stroked-button color="warn" (click)="Reject(c.id)">Reject</button>
-                  <button mat-flat-button color="accent" (click)="setApprove(c.id)">Approve</button>
-                </td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
