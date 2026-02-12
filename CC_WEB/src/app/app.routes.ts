@@ -79,7 +79,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'USER' },
                 loadComponent: () =>
-                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
