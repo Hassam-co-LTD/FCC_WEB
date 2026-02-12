@@ -5,17 +5,16 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class AuthService {
+  getCurrentUser() {
+     throw new Error('Method not implemented.');
+  }
   private platformId = inject(PLATFORM_ID);
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
-  login(userId: string, companyId: string, password: string): boolean {
-       this.api.saveTnx({ userId, companyId, password }, 'login').subscribe({
-      next: response => console.log('Login response:', response),
-      error: err => console.error('Login error:', err)
-    }); 
+  login(userId: string, companyId: string, password: string): boolean { 
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
       (userId === 'user' && companyId === 'ABC' && password === 'user') || 
       (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
@@ -71,14 +70,6 @@ export class AuthService {
 
   getUserRole(): string | null {
     return sessionStorage.getItem('role') || sessionStorage.getItem('userRole');
-  }
-
-  getCurrentUser() {
-    return {
-      userId: this.getUserId(),
-      companyId: this.getCompanyId(),
-      role: this.getUserCategory()
-    };
   }
 
   // Simple permission checks

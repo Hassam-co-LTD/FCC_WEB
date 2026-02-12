@@ -69,6 +69,8 @@ export class CreateClientUser implements OnInit {
   allCompanies: any[] = [];
   isEditMode = false;
   isOpen = true;
+  
+ userId = sessionStorage.getItem('userId');
 
   // ---------- ROLES ----------
   userRoles: RoleMasterResponseDTO[] = [];       
@@ -90,19 +92,14 @@ export class CreateClientUser implements OnInit {
     this.loadClientUserDetails(); // ✅ user-details logic replaces old getTnxById
     this.loadCompanies();
     this.fetchAllRoles();
-     const data = localStorage.getItem('currentUser');
-     console.log('Current User from localStorage:', data);
-    // if (data) {
-    //   // If it’s JSON, parse it
-    //   this.localStorageData = JSON.parse(data);
-    //   console.log('Current User from localStorage:', this.localStorageData);
-    // }
+    console.log('Session UserId:', this.userId);
+
   }
 
   // ================= CLIENT USER FORM =================
   private buildClientUserForm(): void {
     this.clientUserForm = this.fb.group({
-      loginId: ['', Validators.required],
+      loginId: [this.userId, Validators.required],
       password: ['', Validators.required],
       userCategory: [''],
       companyId: ["", Validators.required],

@@ -9,7 +9,7 @@ import {
   AccountsMaster,
 } from '../../../../models/my-accounts';
 import { AuthService } from '../../../auth.service';
-
+ 
 @Injectable({
   providedIn: 'root'
 })
@@ -19,14 +19,14 @@ export class MyAccountsService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<string | null>(null);
   private userRoleSubject = new BehaviorSubject<string>('');
-
+ 
   // Public observables
   public currentTransfer$ = this.currentTransferSubject.asObservable();
   public transfers$ = this.transfersSubject.asObservable();
   public loading$ = this.loadingSubject.asObservable();
   public error$ = this.errorSubject.asObservable();
   public userRole$ = this.userRoleSubject.asObservable();
-
+ 
   constructor(
     private apiService: ApiService,
     private authService: AuthService
@@ -35,13 +35,13 @@ export class MyAccountsService {
     const userRole = this.authService.getUserCategory() || '';
     this.userRoleSubject.next(userRole);
     console.log('MyAccountsService initialized with user role:', userRole);
-    
+   
     // Also store in sessionStorage for backward compatibility
     if (userRole) {
       sessionStorage.setItem('userRole', userRole);
     }
   }
-
+ 
   /**
    * Initialize form data with defaults
    */
@@ -57,7 +57,7 @@ export class MyAccountsService {
       TransactionId: ''
     };
   }
-
+ 
   /**
    * Validate if user has access to transfer from/to specific accounts
    */
@@ -74,7 +74,7 @@ export class MyAccountsService {
               observer.complete();
               return;
             }
-
+ 
             // Check TO account access
             this.apiService.checkAccountAccess(transferData.transferTo, 'TRANSFER_TO')
               .pipe(catchError(() => of(false)))
@@ -93,7 +93,7 @@ export class MyAccountsService {
         });
     });
   }
-
+ 
   /**
    * Get accounts that user can transfer FROM using ApiService
    */
@@ -101,7 +101,7 @@ export class MyAccountsService {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
     const userId = this.authService.getUserId() || '';
-
+ 
     return this.apiService.getTransferFromAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
         value: account.accountNumber,
@@ -118,7 +118,7 @@ export class MyAccountsService {
       })
     );
   }
-
+ 
   /**
    * Get accounts that user can transfer TO using ApiService
    */
@@ -126,7 +126,7 @@ export class MyAccountsService {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
     const userId = this.authService.getUserId() || '';
-
+ 
     return this.apiService.getTransferToAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
         value: account.accountNumber,
@@ -142,7 +142,7 @@ export class MyAccountsService {
       })
     );
   }
-
+ 
   /**
    * Check if current user can transfer funds
    */
@@ -151,7 +151,7 @@ export class MyAccountsService {
     const canTransfer = this.authService.canTransfer();
     return of(canTransfer);
   }
-
+ 
   /**
    * Check if current user can approve transfers
    * TEMPORARY: Returns true for testing
@@ -160,7 +160,7 @@ export class MyAccountsService {
     // TEMPORARY: Always return true for testing
     console.log('canApproveTransfers called - returning true for testing');
     return of(true);
-    
+   
     // Original code (commented out for testing):
     /*
     // Use AuthService for permission check
@@ -169,21 +169,21 @@ export class MyAccountsService {
     return of(canApprove);
     */
   }
-
+ 
   /**
    * Get account options for dropdown (backward compatibility)
    */
   getAccountOptions(): Observable<any[]> {
     return this.getTransferFromAccounts();
   }
-
+ 
   /**
    * Create a new transfer draft with validation
    */
   createTransferDraft(transferData: CreateTransferRequest): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     return new Observable(observer => {
       // Get company ID from AuthService
       const companyId = this.authService.getCompanyId();
@@ -193,7 +193,7 @@ export class MyAccountsService {
         observer.error(new Error('Company ID not found'));
         return;
       }
-
+ 
       // First validate access
       this.validateTransferAccess(transferData).subscribe({
         next: (isValid) => {
@@ -202,7 +202,7 @@ export class MyAccountsService {
             observer.error(new Error('Transfer access validation failed'));
             return;
           }
-
+ 
           // Map to TransferDTO for backend
           const transferDTO: TransferDTO = {
             productType: transferData.productType,
@@ -216,7 +216,7 @@ export class MyAccountsService {
             status: 'I',
             companyId: companyId  // Add companyId from AuthService
           };
-
+ 
           this.apiService.saveTransferDraft(transferDTO).subscribe({
             next: (transfer) => {
               this.currentTransferSubject.next(transfer);
@@ -238,7 +238,7 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Get draft transfers
    */
@@ -255,7 +255,7 @@ export class MyAccountsService {
       }
     });
   }
-
+ 
   /**
    * Get submitted transfers
    */
@@ -272,7 +272,7 @@ export class MyAccountsService {
       }
     });
   }
-
+ 
   /**
    * Get approved transfers
    */
@@ -289,7 +289,7 @@ export class MyAccountsService {
       }
     });
   }
-
+ 
   /**
    * Get rejected transfers
    */
@@ -306,7 +306,7 @@ export class MyAccountsService {
       }
     });
   }
-
+ 
   /**
    * Load transfer by ID for editing
    */
@@ -323,14 +323,14 @@ export class MyAccountsService {
       }
     });
   }
-
+ 
   /**
    * Update existing draft with validation
    */
   updateTransferDraft(tnxId: string, transferData: any): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     return new Observable(observer => {
       // Validate access for the updated data
       this.validateTransferAccess(transferData).subscribe({
@@ -340,13 +340,13 @@ export class MyAccountsService {
             observer.error(new Error('Transfer access validation failed'));
             return;
           }
-
+ 
           const transferDTO: TransferDTO = {
             ...transferData,
             tnxId: tnxId,
             status: 'I'
           };
-
+ 
           this.apiService.updateTransferDraft(tnxId, transferDTO).subscribe({
             next: (transfer) => {
               this.currentTransferSubject.next(transfer);
@@ -368,14 +368,14 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Submit transfer for approval
    */
   submitTransfer(tnxId: string, transferData: any): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     return new Observable(observer => {
       // First check if user can submit transfers
       this.canTransferFunds().subscribe({
@@ -386,13 +386,13 @@ export class MyAccountsService {
             observer.error(new Error('Insufficient permissions'));
             return;
           }
-
+ 
           const transferDTO: TransferDTO = {
             ...transferData,
             tnxId: tnxId,
             status: 'S'
           };
-
+ 
           this.apiService.submitTransfer(tnxId, transferDTO).subscribe({
             next: (transfer) => {
               this.currentTransferSubject.next(transfer);
@@ -414,7 +414,7 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Approve transfer with permission check
    * TEMPORARY: Permission check bypassed for testing
@@ -422,17 +422,17 @@ export class MyAccountsService {
   approveTransfer(tnxId: string, transferData: any): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     return new Observable(observer => {
       // TEMPORARY: Bypass permission check for testing
       console.log('Bypassing permission check for approve transfer');
-      
+     
       const transferDTO: TransferDTO = {
         ...transferData,
         tnxId: tnxId,
         status: 'A'
       };
-
+ 
       this.apiService.approveTransfer(tnxId, transferDTO).subscribe({
         next: (transfer) => {
           this.currentTransferSubject.next(transfer);
@@ -446,7 +446,7 @@ export class MyAccountsService {
           observer.error(error);
         }
       });
-      
+     
       /*
       // Original code (with permission check):
       // First check if user can approve transfers
@@ -458,13 +458,13 @@ export class MyAccountsService {
             observer.error(new Error('Insufficient permissions'));
             return;
           }
-
+ 
           const transferDTO: TransferDTO = {
             ...transferData,
             tnxId: tnxId,
             status: 'A'
           };
-
+ 
           this.apiService.approveTransfer(tnxId, transferDTO).subscribe({
             next: (transfer) => {
               this.currentTransferSubject.next(transfer);
@@ -487,7 +487,7 @@ export class MyAccountsService {
       */
     });
   }
-
+ 
   /**
    * Reject transfer with permission check
    * TEMPORARY: Permission check bypassed for testing
@@ -495,13 +495,13 @@ export class MyAccountsService {
   rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     console.log('Rejecting transfer:', tnxId, 'with reason:', reason);
-
+ 
     return new Observable(observer => {
       // TEMPORARY: Bypass permission check for testing
       console.log('Bypassing permission check for reject transfer');
-      
+     
       this.apiService.rejectTransfer(tnxId, reason).subscribe({
         next: (transfer) => {
           console.log('Reject API success:', transfer);
@@ -517,7 +517,7 @@ export class MyAccountsService {
           observer.error(error);
         }
       });
-      
+     
       /*
       // Original code (with permission check):
       // First check if user can approve/reject transfers
@@ -529,7 +529,7 @@ export class MyAccountsService {
             observer.error(new Error('Insufficient permissions'));
             return;
           }
-
+ 
           this.apiService.rejectTransfer(tnxId, reason).subscribe({
             next: (transfer) => {
               this.currentTransferSubject.next(transfer);
@@ -552,21 +552,21 @@ export class MyAccountsService {
       */
     });
   }
-
+ 
   /**
    * Update rejected transfer back to draft
    */
   updateRejectedTransfer(tnxId: string, transferData: any): Observable<TransferDTO> {
     this.loadingSubject.next(true);
     this.errorSubject.next(null);
-
+ 
     return new Observable(observer => {
       const transferDTO: TransferDTO = {
         ...transferData,
         tnxId: tnxId,
         status: 'I'
       };
-
+ 
       this.apiService.updateRejectedTransfer(tnxId, transferDTO).subscribe({
         next: (transfer) => {
           this.currentTransferSubject.next(transfer);
@@ -582,7 +582,7 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Get account details by account number
    */
@@ -591,7 +591,7 @@ export class MyAccountsService {
       catchError(() => of(null))
     );
   }
-
+ 
   /**
    * Get all transfers by status (full TransferDTO objects)
    */
@@ -612,21 +612,21 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Clear current transfer
    */
   clearCurrentTransfer(): void {
     this.currentTransferSubject.next(null);
   }
-
+ 
   /**
    * Clear errors
    */
   clearError(): void {
     this.errorSubject.next(null);
   }
-
+ 
   /**
    * Get status display text
    */
@@ -639,7 +639,7 @@ export class MyAccountsService {
       default: return 'Unknown';
     }
   }
-
+ 
   /**
    * Get status color for UI
    */
@@ -652,7 +652,7 @@ export class MyAccountsService {
       default: return '';
     }
   }
-
+ 
   /**
    * Update user role (called after login)
    */
@@ -661,7 +661,7 @@ export class MyAccountsService {
     this.userRoleSubject.next(role);
     sessionStorage.setItem('userRole', role);
   }
-
+ 
   /**
    * Get current user role
    */
@@ -670,7 +670,7 @@ export class MyAccountsService {
     console.log('getCurrentUserRole returning:', role);
     return role;
   }
-
+ 
   /**
    * Get accessible accounts for user
    */
@@ -678,12 +678,12 @@ export class MyAccountsService {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
     const userId = this.authService.getUserId() || '';
-    
+   
     return this.apiService.getAccessibleAccounts(userRole, companyId, userId).pipe(
       catchError(() => of([]))
     );
   }
-
+ 
   /**
    * Check if user can perform specific action on account
    */
@@ -692,7 +692,7 @@ export class MyAccountsService {
       catchError(() => of(false))
     );
   }
-
+ 
   /**
    * Get all company accounts (admin view)
    */
@@ -702,7 +702,7 @@ export class MyAccountsService {
       catchError(() => of([]))
     );
   }
-
+ 
   /**
    * Create a new account (admin only)
    */
@@ -712,23 +712,23 @@ export class MyAccountsService {
       this.errorSubject.next('Only admin users can create accounts');
       return of('Permission denied');
     }
-    
+   
     const companyId = this.authService.getCompanyId();
     if (!companyId) {
       return of('Company ID not found');
     }
-    
+   
     const accountWithCompany = {
       ...accountData,
       companyId: companyId,
       isActive: true
     };
-    
+   
     return this.apiService.createAccount(accountWithCompany).pipe(
       catchError(error => of('Error creating account: ' + error.message))
     );
   }
-
+ 
   /**
    * Update existing account (admin only)
    */
@@ -738,12 +738,12 @@ export class MyAccountsService {
       this.errorSubject.next('Only admin users can update accounts');
       return of('Permission denied');
     }
-    
+   
     return this.apiService.updateAccount(accountData).pipe(
       catchError(error => of('Error updating account: ' + error.message))
     );
   }
-
+ 
   /**
    * Get role details by code
    */
@@ -752,14 +752,14 @@ export class MyAccountsService {
       catchError(() => of(null))
     );
   }
-
+ 
   /**
    * Get user permissions based on role
    */
   getUserPermissions(): Observable<any> {
     const userRole = this.userRoleSubject.value;
     if (!userRole) return of({});
-
+ 
     return this.apiService.getRoleByCode(userRole).pipe(
       map(role => ({
         canTransfer: role?.canTransferFunds || false,
@@ -771,7 +771,7 @@ export class MyAccountsService {
       catchError(() => of({}))
     );
   }
-
+ 
   /**
    * Validate transfer amount against account limits
    */
@@ -783,7 +783,7 @@ export class MyAccountsService {
           observer.complete();
           return;
         }
-
+ 
         // Check max transfer limit
         if (account.maxTransferLimit && amount > account.maxTransferLimit) {
           observer.next({
@@ -793,7 +793,7 @@ export class MyAccountsService {
           observer.complete();
           return;
         }
-
+ 
         // Check daily transfer limit
         if (account.dailyTransferLimit) {
           // Note: Would need to get daily transfer usage from backend
@@ -807,7 +807,7 @@ export class MyAccountsService {
             return;
           }
         }
-
+ 
         // Check account balance for transfer from accounts
         if (account.currentBalance < amount) {
           observer.next({
@@ -817,20 +817,20 @@ export class MyAccountsService {
           observer.complete();
           return;
         }
-
+ 
         observer.next({ isValid: true, message: 'Amount is valid' });
         observer.complete();
       });
     });
   }
-
+ 
   /**
    * Get transaction summary for dashboard
    */
   getTransactionSummary(): Observable<any> {
     return new Observable(observer => {
       const companyId = this.authService.getCompanyId() || '';
-
+ 
       // Get all status counts
       const statuses = ['I', 'S', 'A', 'R'];
       const summary: any = {
@@ -841,9 +841,9 @@ export class MyAccountsService {
         rejected: 0,
         pendingApproval: 0
       };
-
+ 
       let completed = 0;
-
+ 
       statuses.forEach(status => {
         this.apiService.getTransfersByStatus(status).subscribe(transfers => {
           switch (status) {
@@ -861,9 +861,9 @@ export class MyAccountsService {
               summary.rejected = transfers.length;
               break;
           }
-
+ 
           completed++;
-
+ 
           if (completed === statuses.length) {
             summary.total = summary.draft + summary.submitted + summary.approved + summary.rejected;
             observer.next(summary);
@@ -879,7 +879,7 @@ export class MyAccountsService {
       });
     });
   }
-
+ 
   /**
    * Get current user info from AuthService
    */
@@ -890,14 +890,14 @@ export class MyAccountsService {
       role: this.userRoleSubject.value
     };
   }
-
+ 
   /**
    * Check if user is logged in
    */
   isAuthenticated(): boolean {
     return this.authService.checkAuth();
   }
-
+ 
   /**
    * Logout user
    */

@@ -14,13 +14,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-
+ 
 // Import your models and services
 import { AccountsMaster } from '../../core/models/my-accounts';
 import { ApiService } from '../../core/services/api.service';
 import { MyAccountsService } from '../../core/services/user-service/Payment-Service/my-accounts-services/account-transfer';
 import { AuthService } from '../../core/services/auth.service';
-
+ 
 // Base interface for account data
 export interface BaseAccount {
   accountNumber: string;
@@ -46,7 +46,7 @@ export interface BaseAccount {
   createdOn?: Date;
   updatedOn?: Date;
 }
-
+ 
 export interface AccountSearchDialogData {
   accountType: 'transferFrom' | 'transferTo';
   currentSelectedAccount?: string;
@@ -55,7 +55,7 @@ export interface AccountSearchDialogData {
   // Optional: Custom mapping function to transform API data
   mapAccount?: (account: any) => BaseAccount;
 }
-
+ 
 @Component({
   selector: 'app-account-search-dialog',
   standalone: true,
@@ -79,28 +79,28 @@ export interface AccountSearchDialogData {
 export class AccountSearchDialogComponent implements OnInit, OnDestroy {
   // Form Control
   searchControl = new FormControl('');
-  
+ 
   // Table Configuration
   displayedColumns: string[] = ['select', 'accountNumber', 'accountName', 'accountType', 'currency', 'balance', 'availableBalance'];
-  
+ 
   // Data
   dataSource: BaseAccount[] = [];
   filteredAccounts: BaseAccount[] = [];
   selectedAccount: BaseAccount | null = null;
-  
+ 
   // Loading and Error States
   isLoading: boolean = false;
   hasError: boolean = false;
   errorMessage: string = '';
-  
+ 
   // User Info
   currentUserRole: string = '';
   currentUserId: string = '';
   currentCompanyId: string = '';
-  
+ 
   // Subscriptions
   private searchSubscription?: Subscription;
-
+ 
   constructor(
     public dialogRef: MatDialogRef<AccountSearchDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AccountSearchDialogData,
@@ -109,16 +109,16 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private snackBar: MatSnackBar
   ) {}
-
+ 
   ngOnInit() {
     // Get current user info from AuthService
     this.currentUserRole = this.authService.getUserRole() || '';
     this.currentUserId = this.authService.getUserId() || '';
     this.currentCompanyId = this.authService.getCompanyId() || '';
-    
+   
     // Load accounts
     this.loadAccounts();
-    
+   
     // Set up search with debounce
     this.searchSubscription = this.searchControl.valueChanges
       .pipe(
@@ -128,7 +128,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       .subscribe(searchTerm => {
         this.filterAccounts(searchTerm || '');
       });
-
+ 
     // If there's a currently selected account, pre-select it
     if (this.data.currentSelectedAccount) {
       setTimeout(() => {
@@ -136,13 +136,13 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       }, 500); // Give time for accounts to load
     }
   }
-
+ 
   ngOnDestroy() {
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
   }
-
+ 
   /**
    * Load accounts from the appropriate source
    */
@@ -151,9 +151,9 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     this.hasError = false;
     this.errorMessage = '';
     this.selectedAccount = null;
-    
+   
     let accountsObservable: Observable<BaseAccount[]>;
-
+ 
     // Check if custom data source function is provided
     if (this.data.getAccounts) {
       accountsObservable = this.data.getAccounts();
@@ -169,7 +169,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         );
       }
     }
-
+ 
     accountsObservable.pipe(
       catchError(error => {
         console.error('Failed to load accounts:', error);
@@ -183,18 +183,18 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         this.dataSource = accounts;
         this.filteredAccounts = [...accounts];
         this.isLoading = false;
-        
+       
         // Apply custom mapping if provided
         if (this.data.mapAccount && accounts.length > 0) {
           this.dataSource = accounts.map(account => this.data.mapAccount!(account));
           this.filteredAccounts = [...this.dataSource];
         }
-        
+       
         // After loading, try to pre-select the account if one was provided
         if (this.data.currentSelectedAccount && this.dataSource.length > 0) {
           this.preselectAccount(this.data.currentSelectedAccount);
         }
-        
+       
         // Show success message
         if (accounts.length > 0) {
           this.snackBar.open(`Loaded ${accounts.length} accounts`, 'Close', {
@@ -214,7 +214,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       }
     });
   }
-
+ 
   /**
    * Transform MyAccountsService response to BaseAccount format
    */
@@ -223,14 +223,14 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       // Extract account number from different possible sources
       const accountNumber = account.accountNumber || account.value || '';
       const accountName = account.accountName || account.label?.split('(')[0]?.trim() || 'Unknown Account';
-      
+     
       // Extract balance information
       const balance = account.balance || account.currentBalance || 0;
       const availableBalance = account.availableBalance || balance;
-      
+     
       // Extract currency (default to PKR if not specified)
       const currency = account.currency || 'PKR';
-      
+     
       // Create the BaseAccount object
       const baseAccount: BaseAccount = {
         accountNumber: accountNumber,
@@ -255,26 +255,26 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         createdOn: account.createdOn ? new Date(account.createdOn) : undefined,
         updatedOn: account.updatedOn ? new Date(account.updatedOn) : undefined
       };
-      
+     
       return baseAccount;
     }).filter(account => account.accountNumber); // Filter out empty accounts
   }
-
+ 
   /**
    * Preselect an account based on account number
    */
   private preselectAccount(accountNumber: string) {
     if (!accountNumber) return;
-    
+   
     // Clean the account number (remove any masking)
     const cleanAccountNumber = this.unmaskAccountNumber(accountNumber);
-    
+   
     // Try to find in current dataSource
-    const account = this.dataSource.find(acc => 
-      acc.accountNumber === cleanAccountNumber || 
+    const account = this.dataSource.find(acc =>
+      acc.accountNumber === cleanAccountNumber ||
       acc.accountNumber === accountNumber
     );
-    
+   
     if (account) {
       this.selectedAccount = account;
       this.snackBar.open(`Pre-selected account: ${account.accountName}`, 'Close', {
@@ -304,12 +304,12 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
               requiresDualAuthorization: accountDetail.requiresDualAuthorization,
               allowedRoles: accountDetail.allowedRoles
             };
-            
+           
             // Add to dataSource and select
             this.dataSource.push(baseAccount);
             this.filteredAccounts = [...this.dataSource];
             this.selectedAccount = baseAccount;
-            
+           
             this.snackBar.open(`Loaded pre-selected account: ${baseAccount.accountName}`, 'Close', {
               duration: 2000
             });
@@ -321,7 +321,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       });
     }
   }
-
+ 
   /**
    * Remove mask from account number if present
    */
@@ -335,7 +335,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     }
     return maskedNumber;
   }
-
+ 
   /**
    * Filter accounts based on search term
    */
@@ -344,7 +344,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       this.filteredAccounts = [...this.dataSource];
       return;
     }
-
+ 
     const term = searchTerm.toLowerCase().trim();
     this.filteredAccounts = this.dataSource.filter(account =>
       account.accountNumber.toLowerCase().includes(term) ||
@@ -356,7 +356,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       account.currency.toLowerCase().includes(term)
     );
   }
-
+ 
   /**
    * Select an account
    */
@@ -369,17 +369,17 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+   
     this.selectedAccount = account;
-    
+   
     // Ensure maskedAccountNumber is set
     if (!account.maskedAccountNumber) {
       account.maskedAccountNumber = this.maskAccountNumber(account.accountNumber);
     }
-    
+   
     console.log('Selected account:', account);
   }
-
+ 
   /**
    * Confirm selection and return selected account
    */
@@ -391,7 +391,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         selectionTimestamp: new Date(),
         accountType: this.data.accountType
       };
-      
+     
       this.dialogRef.close(returnData);
     } else if (!this.selectedAccount) {
       this.snackBar.open('Please select an account first', 'Close', {
@@ -405,14 +405,14 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       });
     }
   }
-
+ 
   /**
    * Close dialog without selection
    */
   closeDialog() {
     this.dialogRef.close();
   }
-
+ 
   /**
    * Check if user can access this account
    */
@@ -421,7 +421,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     if (!account.allowedRoles && !account.minApprovalLevel && !account.requiresDualAuthorization) {
       return true;
     }
-    
+   
     // Check if user role is in allowed roles
     if (account.allowedRoles) {
       const allowedRolesArray = account.allowedRoles.split(',').map(role => role.trim());
@@ -429,7 +429,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         return false;
       }
     }
-    
+   
     // Check approval level (if specified)
     if (account.minApprovalLevel !== undefined && account.minApprovalLevel !== null) {
       const userApprovalLevel = this.getUserApprovalLevel(this.currentUserRole);
@@ -437,7 +437,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         return false;
       }
     }
-    
+   
     // Check if user has required permissions via AuthService
     if (this.data.accountType === 'transferFrom') {
       return this.authService.canTransfer();
@@ -445,16 +445,16 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       // For transfer to, we might want different permission checks
       return this.authService.canTransfer();
     }
-    
+   
     return true;
   }
-
+ 
   /**
    * Get user approval level based on role
    */
   private getUserApprovalLevel(userRole: string): number {
     if (!userRole) return 0;
-    
+   
     const roleUpper = userRole.toUpperCase();
     switch (roleUpper) {
       case 'ADMIN':
@@ -473,7 +473,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         return 0;
     }
   }
-
+ 
   /**
    * Format currency with locale
    */
@@ -481,14 +481,14 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     if (amount === undefined || amount === null) {
       return `${currency || 'PKR'} 0.00`;
     }
-    
+   
     try {
       // Handle different currencies
-      const currencyCode = currency === 'PKR' ? 'PKR' : 
-                          currency === 'USD' ? 'USD' : 
-                          currency === 'EUR' ? 'EUR' : 
+      const currencyCode = currency === 'PKR' ? 'PKR' :
+                          currency === 'USD' ? 'USD' :
+                          currency === 'EUR' ? 'EUR' :
                           currency || 'PKR';
-      
+     
       // For PKR, we'll format with Pakistani locale
       if (currencyCode === 'PKR') {
         return new Intl.NumberFormat('en-PK', {
@@ -499,7 +499,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
           maximumFractionDigits: 2
         }).format(amount).replace('PKR', 'PKR ');
       }
-      
+     
       // For other currencies
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -511,7 +511,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       return `${currency || 'PKR'} ${amount.toFixed(2)}`;
     }
   }
-
+ 
   /**
    * Mask account number for display (shows last 4 digits)
    */
@@ -522,13 +522,13 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     const lastFour = accountNumber.slice(-4);
     return `••••${lastFour}`;
   }
-
+ 
   /**
    * Get approval level display name
    */
   getApprovalLevelDisplay(level: number | undefined): string {
     if (level === undefined || level === null) return 'Not specified';
-    
+   
     switch (level) {
       case 0: return 'Viewer';
       case 1: return 'Maker (Level 1)';
@@ -538,7 +538,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
       default: return `Level ${level}`;
     }
   }
-
+ 
   /**
    * Get status color
    */
@@ -546,9 +546,9 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     if (typeof status === 'boolean') {
       return status ? 'status-active' : 'status-inactive';
     }
-    
+   
     if (!status) return 'status-unknown';
-    
+   
     const statusStr = String(status).toLowerCase();
     if (statusStr === 'active' || statusStr === 'true') {
       return 'status-active';
@@ -561,7 +561,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     }
     return 'status-unknown';
   }
-
+ 
   /**
    * Get status display text
    */
@@ -569,33 +569,33 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
     if (typeof status === 'boolean') {
       return status ? 'Active' : 'Inactive';
     }
-    
+   
     if (!status) return 'Unknown';
-    
+   
     const statusStr = String(status);
     return statusStr.charAt(0).toUpperCase() + statusStr.slice(1).toLowerCase();
   }
-
+ 
   /**
    * Check if account has IBAN
    */
   hasIban(account: BaseAccount): boolean {
     return !!(account.iban && account.iban.trim().length > 0);
   }
-
+ 
   /**
    * Check if account has branch info
    */
   hasBranch(account: BaseAccount): boolean {
     return !!(account.branch && account.branch.trim().length > 0);
   }
-
+ 
   /**
    * Get account type display with proper casing
    */
   getAccountTypeDisplay(type: string): string {
     if (!type) return 'Unknown';
-    
+   
     const typeLower = type.toLowerCase();
     switch (typeLower) {
       case 'savings':
@@ -617,20 +617,20 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
         return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
     }
   }
-
+ 
   /**
    * Check if user needs dual authorization for this account
    */
   requiresDualAuth(account: BaseAccount): boolean {
     return !!account.requiresDualAuthorization;
   }
-
+ 
   /**
    * Get access policy display
    */
   getAccessPolicyDisplay(policyType: string): string {
     if (!policyType) return 'Default';
-    
+   
     switch (policyType.toUpperCase()) {
       case 'PUBLIC':
         return 'Public Access';
