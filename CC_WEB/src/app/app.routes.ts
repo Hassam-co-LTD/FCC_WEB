@@ -162,13 +162,13 @@ export const routes: Routes = [
                 path: 'shipping-guarantee/inquiries-records',
                 loadComponent: () =>
                     import(
-                        './screens/USER/Trade-Services/shipping-guarantee-screen/components/sub-menus/events/records/inquiries-records'
+                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records'
                     ).then((m) => m.inquiriesRecords),
             },
             {
                 path: 'shipping-guarantee/amend',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/sub-menus/events/amend/amend')
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend/amend')
                         .then((m) => m.Amend),
                 data: { title: 'Amend Shipping Guarantee' }
             },

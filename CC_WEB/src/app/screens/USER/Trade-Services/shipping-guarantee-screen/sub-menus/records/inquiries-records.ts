@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // SERVICES
-import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-inquiries-records',

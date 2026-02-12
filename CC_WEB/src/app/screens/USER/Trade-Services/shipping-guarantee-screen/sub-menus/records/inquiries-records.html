@@ -49,16 +49,16 @@
     <table>
         <thead>
             <tr>
-                <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
-                <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
+                <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th (click)="sortBy('createdOn')">Created</th>
                 <th>Product</th>
-                <th>Issuer Ref</th>
+                <th>Issuer Reference</th>
                 <th>Expiry Date</th>
                 <th>Currency</th>
                 <th>Amount</th>
                 <th>Applicant</th>
                 <th>Beneficiary</th>
-                <th class="text-center">Action</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -95,18 +95,21 @@
             </tr>
 
             <tr *ngIf="pagedTransactions.length === 0">
-                <td colspan="10" class="no-records">
+                <!-- <td colspan="10" class="no-records">
                     <div class="empty-state">
                         <mat-icon>search_off</mat-icon>
                         <p>No {{ activeTab }} Shipping records found.</p>
                     </div>
-                </td>
+                </td> -->
+                                <td colspan="20" class="no-records">
+                                    No {{ activeTab }} Shipping records found
+                                </td>
             </tr>
 
         </tbody>
     </table>
 
-    <div class="pagination" *ngIf="filteredTransactions.length > 0">
+    <div class="pagination">
         <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
         <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
