@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Upload } from './upload';
+import { AccountSearchDialog } from './account-search-dialog';
 
-describe('Upload', () => {
-  let component: Upload;
-  let fixture: ComponentFixture<Upload>;
+describe('AccountSearchDialog', () => {
+  let component: AccountSearchDialog;
+  let fixture: ComponentFixture<AccountSearchDialog>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Upload]
+      imports: [AccountSearchDialog]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Upload);
+    fixture = TestBed.createComponent(AccountSearchDialog);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

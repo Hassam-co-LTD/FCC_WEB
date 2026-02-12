@@ -17,27 +17,33 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-  "browser": "src/main.ts",
-  "polyfills": [
-    "zone.js"
-  ],
-  "tsConfig": "tsconfig.app.json",
-  "inlineStyleLanguage": "scss",
-  "assets": [
-    {
-      "glob": "**/*",
-      "input": "public"
-    }
-  ],
-  "styles": [
-    "src/styles.scss",
-    "@angular/material/prebuilt-themes/azure-blue.css",
-    "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-  ],
-  "stylePreprocessorOptions": {
-    "includePaths": ["src/styles"]
-  }
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+            ],
+
+            "stylePreprocessorOptions": {
+            "includePaths": ["src/styles"]
 },
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "src/server.ts"
+            }
+          },
           "configurations": {
             "production": {
               "budgets": [

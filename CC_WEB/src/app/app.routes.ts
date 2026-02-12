@@ -79,7 +79,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'USER' },
                 loadComponent: () =>
-                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
@@ -455,6 +455,28 @@ export const routes: Routes = [
             //         ).then((m) => m.ApprovedRecords),
             // },
 
+            // Add this to your routes array after other USER services (after import-welcome route)
+
+         // ==============================
+// PAYMENT SERVICES - MY ACCOUNTS
+// ==============================
+{
+    path: 'my-accounts',
+    children: [
+        {
+            path: '', // The main form (Create mode)
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+        },
+        {
+            path: 'transfer/:tnxId', // The main form (Edit/View mode)
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+        },
+        {
+            path: 'general-details',
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
+        }
+    ]
+},
 
             // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
             // Base fund-transfer screen

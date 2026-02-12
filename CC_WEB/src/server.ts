@@ -6,7 +6,7 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
-
+import * as server from '../src/main.server';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
