@@ -14,15 +14,16 @@ export class AuthService {
     return isPlatformBrowser(this.platformId);
   }
 
-  login(userId: string, companyId: string, password: string): boolean { 
+  login(userId: string, companyId: string, password: string, loginId="Ameen123"): boolean { 
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
       (userId === 'user' && companyId === 'ABC' && password === 'user') || 
-      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
+      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP' && loginId === "Ameen123")) {
 
       if (this.isBrowser()) {
         sessionStorage.setItem('token', 'dummy-token');
         sessionStorage.setItem('userId', userId);
         sessionStorage.setItem('companyId', companyId);
+        sessionStorage.setItem('loginId', loginId);
         sessionStorage.setItem('role', userId === 'admin' ? 'ADMIN' : 'USER');
         sessionStorage.setItem('userRole', userId === 'admin' ? 'ADMIN' : 'USER');
       }

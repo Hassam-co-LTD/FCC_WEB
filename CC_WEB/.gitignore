@@ -42,3 +42,8 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# user panel ignore
+/src/app/screens/USER/
+/src/app/screens/AUTH/
+

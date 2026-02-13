@@ -112,6 +112,18 @@
               </mat-select>
             </mat-form-field>
           </div>
+
+          <div class="field-group">
+            <h4>Customer Category</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Customer Category</mat-label>
+              <mat-select formControlName="customerCategorty" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option value="Bank">Bank</mat-option>
+                <mat-option value="Client">Client</mat-option>
+                
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
         <!-- ---------------- ADDRESS ---------------- -->
         <div class="form-grid form-grid-large">

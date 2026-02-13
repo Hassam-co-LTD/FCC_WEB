@@ -70,6 +70,7 @@ export class CreateCustomer implements OnInit {
       branchCode: [''],
       countryCity: [''],
       customerType: ['Regular', Validators.required],
+      customerCategorty: ['Bank', Validators.required],
       address1: [''],
       address2: [''],
       address3: ['']

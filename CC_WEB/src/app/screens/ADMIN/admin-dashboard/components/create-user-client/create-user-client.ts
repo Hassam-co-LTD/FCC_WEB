@@ -92,7 +92,8 @@ export class CreateClientUser implements OnInit {
     this.loadClientUserDetails(); // ✅ user-details logic replaces old getTnxById
     this.loadCompanies();
     this.fetchAllRoles();
-    console.log('Session UserId:', this.userId);
+  
+ console.log("session storage data:", sessionStorage)
 
   }
 
