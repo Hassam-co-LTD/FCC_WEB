@@ -1,5 +1,5 @@
 import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { CommonModule, isPlatformBrowser, DecimalPipe, DatePipe, TitleCasePipe } from '@angular/common';
+import { CommonModule, isPlatformBrowser, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -7,7 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // SERVICES
-import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { ShippingGuaranteeTransaction } from '../../../../../../core/models/shipping-guarantee';
+import { ApiService } from '../../../../../../core/services/api.service';
+import { ShippingGuaranteeFormTransactionService } from '../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 
 @Component({
   selector: 'app-inquiries-records',
@@ -18,7 +20,6 @@ import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../
     MatButtonModule,
     MatTooltipModule,
     FormsModule,
-    DecimalPipe,
     DatePipe,
     TitleCasePipe
   ],
@@ -28,8 +29,8 @@ import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../
 export class inquiriesRecords implements OnInit {
   
   // State
-  allTransactions: UndertakingTransaction[] = [];
-  filteredTransactions: UndertakingTransaction[] = [];
+  allTransactions: ShippingGuaranteeTransaction[] = [];
+  filteredTransactions: ShippingGuaranteeTransaction[] = [];
   
   // Filters
   searchQuery = '';
@@ -50,13 +51,14 @@ export class inquiriesRecords implements OnInit {
   itemsPerPage = 10;
 
   // Sorting
-  sortColumn: string = 'lastUpdated';
-  sortDirection: 'desc' | 'asc' = 'desc';
+  sortColumn: keyof ShippingGuaranteeTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
+  sortDirection: 'asc' | 'desc' = 'desc';
 
   private isBrowser: boolean;
 
   constructor(
-    private transactionService: UndertakingIssuanceService,
+     private api: ApiService,
+    private transactionService: ShippingGuaranteeFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: Object,
@@ -64,83 +66,81 @@ export class inquiriesRecords implements OnInit {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  // ngOnInit(): void {
+  //   if (!this.isBrowser) return;
+
+  //   // 1. Check URL for tab preference
+  //   this.route.queryParams.subscribe(params => {
+  //       if(params['tab']) {
+  //           this.activeTab = params['tab'];
+  //       }
+  //       // Initial Load (Backend Filtered)
+  //       this.loadByStatus();
+  //   });
+
+  //   // 2. Subscribe to stream updates (Real-time updates)
+  //   this.transactionService.transactionsStream$.subscribe(txList => {
+  //     this.allTransactions = txList; 
+  //     // Filter ONLY by search/sort locally (Status is done by backend)
+  //     this.filterBySearchOnly(); 
+  //   });
+  // }
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    // 1. Check URL for tab preference
-    this.route.queryParams.subscribe(params => {
-        if(params['tab']) {
-            this.activeTab = params['tab'];
-        }
-        // Initial Load (Backend Filtered)
-        this.loadByStatus();
-    });
+    this.loadTransactions();
 
-    // 2. Subscribe to stream updates (Real-time updates)
     this.transactionService.transactionsStream$.subscribe(txList => {
-      this.allTransactions = txList; 
-      // Filter ONLY by search/sort locally (Status is done by backend)
-      this.filterBySearchOnly(); 
+      this.allTransactions = txList;
+      this.applyFilters();
+    }
+    );
+  }
+  private loadTransactions(): void {
+    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+
+    this.api.getRecordTransactionsByStatusForShippingGuarantee(backendStatus).subscribe({
+      next: (txList) => {
+        this.allTransactions = txList;
+        this.applyFilters();
+      },
+      error: () => {
+        this.allTransactions = [];
+        this.filteredTransactions = [];
+      }
     });
   }
-
   // --- DATA LOADING ---
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
     this.currentPage = 1;
-    // URL change triggers ngOnInit subscription -> loadByStatus()
-    this.router.navigate([], { relativeTo: this.route, queryParams: { tab: tab }, queryParamsHandling: 'merge' });
+    this.loadTransactions();
   }
 
-private loadByStatus(): void {
-    this.transactionService.refreshTransactions(this.activeTab).subscribe(txList => {
-        this.allTransactions = txList;
-        this.filterBySearchOnly();
-    });
-}
   // --- FILTERING ---
 
   applyFilters(): void {
-    this.currentPage = 1;
-    this.filterBySearchOnly();
-  }
-
-  // UPDATED: Renamed and removed status filtering logic
-  private filterBySearchOnly(): void {
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
 
-    // 1. Start with all records (They are already filtered by status from backend)
-    let temp = [...this.allTransactions];
-
-    // 2. Filter by Search Query
-    temp = temp.filter(tx => {
-      const data = tx.formData || {}; 
-      const benName = data.applicantBeneficiary?.beneficiaryName || '';
-      const appName = data.applicantBeneficiary?.applicantName || '';
-      const cur = data.undertakingDetails?.currency || '';
-      const issuerRef = data.bankForm?.issuerReference || '';
-      
-      // Use channelReference for display ID search
-      const displayId = tx.channelReference || ''; 
+    const filtered = this.allTransactions.filter(tx => {
 
       const matchesSearch =
         !query ||
-        displayId.toLowerCase().includes(query) ||
-        issuerRef.toLowerCase().includes(query) ||
-        benName.toLowerCase().includes(query) ||
-        appName.toLowerCase().includes(query) ||
-        cur.toLowerCase().includes(query);
+        tx.tnxId?.toLowerCase().includes(query) ||
+        tx.beneficiaryName?.toLowerCase().includes(query) ||
+        tx.currency?.toLowerCase().includes(query);
 
-      const matchesCurrency = !currency || cur.toLowerCase() === currency;
+      const matchesCurrency =
+        !currency || tx.currency?.toLowerCase() === currency;
 
       return matchesSearch && matchesCurrency;
     });
 
-    this.applySorting(temp);
+    this.applySorting(filtered);
   }
-
+  
   clearSearch(): void {
     this.searchQuery = '';
     this.applyFilters();
@@ -148,7 +148,7 @@ private loadByStatus(): void {
 
   // --- SORTING ---
 
-  sortBy(column: string): void {
+  sortBy(column: typeof this.sortColumn): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -158,33 +158,48 @@ private loadByStatus(): void {
     this.applyFilters();
   }
 
-  private applySorting(source: UndertakingTransaction[]): void {
-    this.filteredTransactions = [...source].sort((a, b) => {
-      const aVal = this.resolveColumn(a, this.sortColumn);
-      const bVal = this.resolveColumn(b, this.sortColumn);
+  private applySorting(source: ShippingGuaranteeTransaction[] = this.allTransactions): void {
+    const sorted = [...source].sort((a, b) => {
+      let aVal = this.resolveColumn(a, this.sortColumn);
+      let bVal = this.resolveColumn(b, this.sortColumn);
 
+      // Handle null or undefined
       if (aVal == null) return 1;
       if (bVal == null) return -1;
 
+      // Handle Dates
       if (aVal instanceof Date && bVal instanceof Date) {
         return this.sortDirection === 'asc'
           ? aVal.getTime() - bVal.getTime()
           : bVal.getTime() - aVal.getTime();
       }
 
+      // Handle numbers
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return this.sortDirection === 'asc'
+          ? aVal - bVal
+          : bVal - aVal;
+      }
+
+      // Everything else: convert to string and use localeCompare
+      const aStr = String(aVal);
+      const bStr = String(bVal);
       return this.sortDirection === 'asc'
-        ? String(aVal).localeCompare(String(bVal))
-        : String(bVal).localeCompare(String(aVal));
+        ? aStr.localeCompare(bStr)
+        : bStr.localeCompare(aStr);
     });
+
+    this.filteredTransactions = sorted;
+    this.currentPage = 1;
   }
 
-  private resolveColumn(tx: UndertakingTransaction, column: string): any {
-    const data = tx.formData || {};
+  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
     switch (column) {
-      case 'channelReference': return tx.channelReference; 
-      case 'lastUpdated': return new Date(tx.lastUpdated);
-      case 'currency': return data.undertakingDetails?.currency;
-      case 'amount': return data.undertakingDetails?.undertakingAmount;
+      case 'tnxId': return tx.tnxId;
+      case 'currency': return tx.currency;
+      case 'amount': return tx.amount;
+      case 'expiryDate': return tx.expiryDate;
+      case 'createdOn': return tx.createdOn;
       default: return null;
     }
   }
@@ -195,7 +210,7 @@ private loadByStatus(): void {
     return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
   }
 
-  get pagedTransactions(): UndertakingTransaction[] {
+  get pagedTransactions(): ShippingGuaranteeTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -205,44 +220,68 @@ private loadByStatus(): void {
   }
 
   nextPage(): void {
-    // if (this.currentPage < this.totalPages) this.currentPage++;
+    if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
   // --- NAVIGATION ACTIONS ---
 
-  isDraft(tx: UndertakingTransaction): boolean {
-    return this.mapBackendStatusToChar(tx.status) === 'i';
-  }
+ viewTransaction(tx: ShippingGuaranteeTransaction): void {
+    const readOnly = ['A', 'R'].includes(tx.status!);
 
-  openUndertaking(tx: UndertakingTransaction) {
-    this.router.navigate(['/undertaking-issuance/request-undertaking'], {
-        queryParams: { transactionId: tx.id }
+   this.api.getTransactionForShippingGuaranteeByTnxId(tx.tnxId!).subscribe({
+      next: (freshTx) => {
+        this.transactionService.setCurrentTransaction(freshTx, readOnly);
+        this.router.navigate(['/shipping-guarantee/preview']);
+      },
+      error: () => {
+        this.transactionService.setCurrentTransaction(tx, readOnly);
+        this.router.navigate(['/shipping-guarantee/preview']);
+      }
     });
   }
 
-  viewOnly(tx: UndertakingTransaction) {
-      this.router.navigate(['/undertaking-issuance/preview'], {
-          queryParams: { 
-            transactionId: tx.id,
-            mode: 'view' 
-          }
-      });
+  openShippingGuarantee(tx: ShippingGuaranteeTransaction) {
+    // Store transaction in service for import screen to pick up
+    // this.transactionService.setCurrentTransaction(tx);
+    const mode = this.resolveScreenMode(this.activeTab);
+    // Navigate to import screen
+    this.router.navigate(['/shipping-guarantee', tx.tnxId], {
+      state: {
+        transaction: tx,
+        // showUpdateSubmit: true // flag to show buttons
+        mode: mode
+      }
+    });
+  }
+  
+  trackByTnxId(_: number, tx: ShippingGuaranteeTransaction): string {
+    return tx.tnxId!;
   }
 
-  trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
-    return tx.id;
+  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+    switch (tab) {
+      case 'pending':
+        return 'EDIT';
+      case 'submitted':
+        return 'APPROVAL';
+      default:
+        return 'READ_ONLY';
+    }
   }
 
-  // --- STATUS MAPPERS ---
-  // (Note: `mapTabToBackendStatus` is no longer used for filtering but kept if needed for reference, 
-  // or you can safely remove it. `mapBackendStatusToChar` is still used by `isDraft`)
-
-  private mapBackendStatusToChar(statusStr: string): string {
-    const s = statusStr?.toLowerCase() || '';
-    if (s.includes('draft') || s === 'i') return 'i';
-    if (s.includes('submit') || s === 's') return 's';
-    if (s.includes('approve') || s === 'a') return 'a';
-    if (s.includes('reject') || s === 'r') return 'r';
-    return 'i'; 
+  private mapTabToBackendStatus(tab: string): string {
+    switch (tab) {
+      case 'pending':
+        return 'i';
+      case 'submitted':
+        return 's';
+      case 'approved':
+        return 'a';
+      case 'rejected':
+        return 'r';
+      default:
+        return 'i';
+    }
   }
+
 }

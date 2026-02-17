@@ -126,13 +126,12 @@ export const routes: Routes = [
             // ==============================
             // SHIPPING GUARANTEE
             // ==============================
-
             {
-                path: 'shipping-guarantee',
+                path: 'shipping-guarantee/inquiries-records',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen')
-                        .then((m) => m.ShippingGuarantee),
-                data: { title: 'Shipping Guarantee' }
+                    import(
+                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records'
+                    ).then((m) => m.inquiriesRecords),
             },
             {
                 path: 'shipping-guarantee/preview',
@@ -148,6 +147,20 @@ export const routes: Routes = [
                         .then((m) => m.Success),
                 data: { title: 'Shipping Guarantee Submitted' }
             },
+
+            // Dynamic TNX ID route
+            {
+                path: 'shipping-guarantee/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
+            },
+            {
+                path: 'shipping-guarantee',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen')
+                        .then((m) => m.ShippingGuarantee),
+                data: { title: 'Shipping Guarantee' }
+            },
             {
                 path: 'shipping-welcome',
                 loadComponent: () =>
@@ -159,20 +172,12 @@ export const routes: Routes = [
                 }
             },
             {
-                path: 'shipping-guarantee/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records'
-                    ).then((m) => m.inquiriesRecords),
-            },
-            {
                 path: 'shipping-guarantee/amend',
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend/amend')
                         .then((m) => m.Amend),
                 data: { title: 'Amend Shipping Guarantee' }
             },
-
             // ==============================
             // EXPORT COLLECTION
             // ==============================
@@ -457,26 +462,26 @@ export const routes: Routes = [
 
             // Add this to your routes array after other USER services (after import-welcome route)
 
-         // ==============================
-// PAYMENT SERVICES - MY ACCOUNTS
-// ==============================
-{
-    path: 'my-accounts',
-    children: [
-        {
-            path: '', // The main form (Create mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
-        },
-        {
-            path: 'transfer/:tnxId', // The main form (Edit/View mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
-        },
-        {
-            path: 'general-details',
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
-        }
-    ]
-},
+            // ==============================
+            // PAYMENT SERVICES - MY ACCOUNTS
+            // ==============================
+            {
+                path: 'my-accounts',
+                children: [
+                    {
+                        path: '', // The main form (Create mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+                    },
+                    {
+                        path: 'transfer/:tnxId', // The main form (Edit/View mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+                    },
+                    {
+                        path: 'general-details',
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
+                    }
+                ]
+            },
 
             // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
             // Base fund-transfer screen

@@ -5,12 +5,11 @@
     </div>
 </div>
 
+<!-- ================= SEARCH ================= -->
 <div class="search-system">
     <div class="search-input-group">
-        <input type="text" 
-               placeholder="Search by TNX ID, Beneficiary, Bank, Currency" 
-               [(ngModel)]="searchQuery"
-               (input)="applyFilters()" />
+        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
+            (input)="applyFilters()" />
 
         <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
             <mat-icon>clear</mat-icon>
@@ -22,20 +21,22 @@
     </button>
 </div>
 
+<!-- ================= ADVANCED SEARCH ================= -->
 <div class="advanced-search" *ngIf="showAdvanced">
     <div class="field">
         <label>Currency</label>
-        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" placeholder="e.g. USD" />
+        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
     </div>
 </div>
 
+
+<!-- ================= TABS ================= -->
 <div class="ui-tabs">
-    <div class="tab" *ngFor="let tab of tabs" 
-         [class.active]="activeTab === tab.key" 
-         (click)="setActiveTab(tab.key)">
+    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
         {{ tab.label }}
     </div>
 </div>
+
 
 <div class="filter-row">
     <div class="results-summary">
@@ -51,7 +52,6 @@
             <tr>
                 <th (click)="sortBy('tnxId')">TNX ID</th>
                 <th (click)="sortBy('createdOn')">Created</th>
-                <th>Product</th>
                 <th>Issuer Reference</th>
                 <th>Expiry Date</th>
                 <th>Currency</th>
@@ -61,51 +61,30 @@
                 <th>Action</th>
             </tr>
         </thead>
-
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
+                <td><a class="tnx-link" (click)="openShippingGuarantee(tx)">{{ tx.tnxId }}</a></td>
+                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+                <td>{{tx.issuerReference}}</td>
+                <td>{{ tx.expiryDate }}</td>
+                <td>{{ tx.currency }}</td>
+                <td>{{ tx.amount }}</td>
+                <td>{{ tx.applicantName }}</td>
+                <td>{{ tx.beneficiaryName }}</td>
+                <!-- <td>{{ tx.status }}</td> -->
                 <td>
-                    <a class="tnx-link" (click)="openUndertaking(tx)">
-                        {{ tx.channelReference }}
-                    </a>
-                </td>
-                
-                <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
-                <td>{{ tx.formData.bankForm?.issuerReference || '-' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.currency }}</td>
-                <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.applicantName }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.beneficiaryName }}</td>
-                
-                <td class="text-center actions-cell">
-                    <ng-container *ngIf="isDraft(tx)">
-                        <button class="btn-action view" (click)="viewOnly(tx)" matTooltip="Preview Draft">
-                            <mat-icon>visibility</mat-icon> View
-                        </button>
-                    </ng-container>
-
-                    <ng-container *ngIf="!isDraft(tx)">
-                        <button class="btn-action view" (click)="openUndertaking(tx)">
-                            <mat-icon>visibility</mat-icon> View
-                        </button>
-                    </ng-container>
+                    <button class="btn-action" (click)="viewTransaction(tx)">
+                        <mat-icon>visibility</mat-icon> View
+                    </button>
                 </td>
             </tr>
-
+        
             <tr *ngIf="pagedTransactions.length === 0">
-                <!-- <td colspan="10" class="no-records">
-                    <div class="empty-state">
-                        <mat-icon>search_off</mat-icon>
-                        <p>No {{ activeTab }} Shipping records found.</p>
-                    </div>
-                </td> -->
-                                <td colspan="20" class="no-records">
-                                    No {{ activeTab }} Shipping records found
-                                </td>
+                <td colspan="20" class="no-records">
+                    No {{ activeTab }} Shipping Guarantee records found
+                </td>
             </tr>
-
+        
         </tbody>
     </table>
 
