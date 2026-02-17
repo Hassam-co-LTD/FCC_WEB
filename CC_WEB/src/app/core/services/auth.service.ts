@@ -1,31 +1,30 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ApiService } from './api.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  getCurrentUser() {
-     throw new Error('Method not implemented.');
-  }
   private platformId = inject(PLATFORM_ID);
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
-  login(userId: string, companyId: string, password: string, loginId="Ameen123"): boolean { 
+  /** Dummy login for testing */
+  login(userId: string, companyId: string, password: string): boolean { 
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
-      (userId === 'user' && companyId === 'ABC' && password === 'user') || 
-      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP' && loginId === "Ameen123")) {
+        (userId === 'user' && companyId === 'ABC' && password === 'user') || 
+        (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
 
       if (this.isBrowser()) {
         sessionStorage.setItem('token', 'dummy-token');
         sessionStorage.setItem('userId', userId);
         sessionStorage.setItem('companyId', companyId);
-        sessionStorage.setItem('loginId', loginId);
-        sessionStorage.setItem('role', userId === 'admin' ? 'ADMIN' : 'USER');
-        sessionStorage.setItem('userRole', userId === 'admin' ? 'ADMIN' : 'USER');
+        // normalize role to uppercase
+        const role = userId === 'admin' ? 'ADMIN' : 'USER';
+        sessionStorage.setItem('role', role);
+        sessionStorage.setItem('userRole', role);
       }
 
       return true;
@@ -34,57 +33,69 @@ export class AuthService {
     return false;
   }
 
+  /** Logout */
   logout() {
     if (this.isBrowser()) {
       sessionStorage.clear();
       localStorage.clear();
-    }
-    else{
-      console.log("you are on the serve")
+    } else {
+      console.log("You are on the server");
     }
   }
 
+  /** Check if user is logged in (sessionStorage contains backend userData) */
   checkAuth(): boolean {
-    if (!this.isBrowser()) {
-      return false;
-    }
-
-    return !!sessionStorage.getItem('token');
+    return !!sessionStorage.getItem('userData');
   }
 
-  getUserCategory(): 'ADMIN' | 'USER' | null {
-    if (!this.isBrowser()) {
-      return null;
-    }
+  /** Get normalized user category (ADMIN / USER) */
+  getUserCategory(): 'A' | 'U' | null {
+    const data = sessionStorage.getItem('userData');
+    if (!data) return null;
 
-    return sessionStorage.getItem('role') as 'ADMIN' | 'USER' | null;
+    const parsed = JSON.parse(data);
+    return parsed.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
   }
 
+  /** Get companyId from sessionStorage */
   getCompanyId(): string | null {
-    return sessionStorage.getItem('companyId');
+    const data = sessionStorage.getItem('userData');
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    return parsed.companyId || null;
   }
 
-  // ✅ ADDED METHODS
+  /** Get userId from sessionStorage */
   getUserId(): string | null {
-    return sessionStorage.getItem('userId');
+    const data = sessionStorage.getItem('userData');
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    return parsed.userId?.toString() || null;
   }
 
-  getUserRole(): string | null {
-    return sessionStorage.getItem('role') || sessionStorage.getItem('userRole');
+  /** Get role (ADMIN / USER) */
+  getUserRole(): 'A' | 'U' | null {
+    return this.getUserCategory();
   }
 
-  // Simple permission checks
+  /** Permissions helpers */
   canTransfer(): boolean {
     const role = this.getUserCategory();
-    return role === 'USER' || role === 'ADMIN';
+    return role === 'U' || role === 'A';
   }
 
   canApprove(): boolean {
-    const role = this.getUserCategory();
-    return role === 'ADMIN';
+    return this.getUserCategory() === 'A';
   }
 
   canReject(): boolean {
     return this.canApprove();
+  }
+  getCompanyType(): 'B' | 'C' | null {
+    const data = sessionStorage.getItem('userData');
+    console.log("getCompanyType - raw session data:", data);
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    return parsed.companyType?.toUpperCase() || null;
   }
 }

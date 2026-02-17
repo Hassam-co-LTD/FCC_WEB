@@ -105,9 +105,11 @@ export class LayoutComponent implements OnInit {
 
 
   ngOnInit() {
-    const role = this.authService.getUserCategory();
-    this.loadMenu(role);
 
+    const role = this.authService.getUserCategory();
+    const companyType = this.authService.getCompanyType();
+    this.loadMenu(role, companyType);
+ 
 this.router.events
   .pipe(filter(event => event instanceof NavigationEnd))
   .subscribe((event: NavigationEnd) => {
@@ -123,7 +125,7 @@ this.router.events
     } else {
       this.currentMenu = 'DEFAULT';
       const role = this.authService.getUserCategory();
-      this.loadMenu(role);
+      this.loadMenu(role, companyType);
     }
 
     // Open menus according to current route
@@ -169,104 +171,158 @@ toggleMenu(item: MenuItem) {
 }
 
  
-  loadMenu(role: 'ADMIN' | 'USER' | null) {
-    if (role === 'ADMIN') {
-      this.menuItems = [
-        { label: 'System Features', icon: 'insights', route: '/system-overview' },
-        { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
-        {
-          label: 'Customers',
-          icon: 'group',
-          route: '/admin',              // <-- main Customers page
-          open: false,
-          children: [
-            { label: 'Create New', route: '/admin/create-customer' },
-             {label:'Inquiry', route:"/admin/customer-list"},
-            
+  loadMenu(role: 'A' | 'U' | null, companyType: 'B' | 'C' | null) {
+    if (companyType === 'B') {
+   this.menuItems = [
+
+  { label: 'System Features', icon: 'insights', route: '/system-overview' },
+  { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
+
+  // ================================
+  // MASTER DATA CATEGORY
+  // ================================
+  {
+    label: 'Master Data',
+    icon: 'storage',
+    open: false,
+    children: [
+
+      {
+        label: 'Customers',
+        icon: 'group',
+        route: '/admin',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-customer' },
+          { label: 'Inquiry', route: '/admin/customer-list' }
+        ]
+      },
+
+      {
+        label: 'Branch',
+        icon: 'account_balance',
+        route: '/admin/branches',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-branch' },
+          { label: 'Inquiry', route: '/admin/branch-inquiry' }
+        ]
+      },
+
+      {
+        label: 'City',
+        icon: 'location_city',
+        route: '/admin/create-city',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-city' },
+          { label: 'Inquiry', route: '/admin/city-inquiry' }
+        ]
+      },
+
+      {
+        label: 'Currency',
+        icon: 'currency_exchange',
+        route: '/admin/currency',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-currency' },
+          { label: 'Inquiry', route: '/admin/currency-inquiry' }
+        ]
+      }
+
+    ]
+  },
+
+  // ================================
+  // ACCESS MANAGEMENT CATEGORY
+  // ================================
+  {
+    label: 'Access Management',
+    icon: 'security',
+    open: false,
+    children: [
+
+      {
+        label: 'Client User',
+        icon: 'person',
+        route: '/admin/client-user',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-client-user' },
+          { label: 'Inquiry', route: '/admin/user-client-inquiry' }
+        ]
+      },
+
+      {
+        label: 'Company',
+        icon: 'apartment',
+        route: '/admin/company',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-company' },
+          { label: 'Inquiry', route: '/admin/company-inquiry' }
+        ]
+      },
+
+      {
+        label: 'Role Master',
+        icon: 'admin_panel_settings',
+        route: '/admin/role',
+        open: false,
+        children: [
+          { label: 'Create New', route: '/admin/create-role-master' },
+          { label: 'Inquiry', route: '/admin/role-master-inquiry' }
+        ]
+      }
+
+    ]
+  },
+
+  {
+    label: 'Generate Fields',
+    icon: 'dynamic_form',
+    route: '/admin/generate-fields',
+    open: false,
+    children: [
+      { label: 'Create New', route: '/admin/create-generate-fields' },
+      { label: 'Inquiry', route: '/admin/list-generate-fields' }
+    ]
+  },
+
+  { label: 'Users', icon: 'person', route: '/users' },
+  { label: 'Logout', icon: 'logout', route: '/login' }
+
+];
+
+         }
+         
+         else if (companyType === 'C' && role === 'A') {
+            console.log("Loading Customer User Menu",companyType, role);
+          this.menuItems = [
+
+              {
+  label: 'CustomerUser',
+  icon: 'dashboard',
+  route: '/customer-user',
+  open: false,
+  children: [
+    {
+      label: 'Create New',
+      route: '/customer-user/create-customer-user'
+    },
+    {
+      label: 'Inquiry',
+      route: '/customer-user/inquiry'
+    }
+  ]
+}
+  
+                
           ]
-        },
-     {
-  label: 'Branch',
-  icon: 'account_balance',      // ✅ Bank / Branch icon
-  route: '/admin/branches',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-branch' },
-    { label: 'Inquiry', route: '/admin/branch-inquiry' }
-  ]
-},
-{
-  label: 'City',
-  icon: 'location_city',        // ✅ Correct city icon
-  route: '/admin/create-city',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-city' },
-    {label:'Inquiry',route:"/admin/city-inquiry"}
-  ]
-},
-{
-  label: 'Currency',
-  icon: 'currency_exchange',
-  route: '/admin/currency',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-currency' },
-    { label: 'Inquiry', route: '/admin/currency-inquiry' }
-  ]
-}
-,
-{
-  label: 'Client User',
-  icon: 'person',
-  route: '/admin/client-user',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-client-user' },
-    { label: 'Inquiry', route: '/admin/user-client-inquiry' }
-  ]
-},
-{
-  label: 'Company',
-  icon: 'apartment',
-  route: '/admin/company',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-company' },
-    { label: 'Inquiry', route: '/admin/company-inquiry' }
-  ]
-},
-{
-  label: 'Role Master',
-  icon: 'admin_panel_settings',
-  route: '/admin/role',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-role-master' },
-    { label: 'Inquiry', route: '/admin/role-master-inquiry' }
-  ]
-}
+         }
 
-,
-{
-  label: 'Generate Fields',
-  icon: 'dynamic_form',
-  route: '/admin/generate-fields',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-generate-fields' },
-    { label: 'Inquiry', route: '/admin/list-generate-fields' } // ✅ matches route path
-  ]
-}
-
-
-,
-        { label: 'Users', icon: 'person', route: '/users' },
-        {label:"Logout",icon:"logout",route:"/login"}
-      ];
-
-
-    } else {
+         else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         // { label: 'Search', icon: 'search', route: '/Search-by-id' },

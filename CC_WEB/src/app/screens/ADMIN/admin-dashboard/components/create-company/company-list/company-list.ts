@@ -123,7 +123,8 @@ export class CompanyList implements OnInit {
 
   submitStatus(id: number) {
     this.api.setTnxByStatus('S', id, 'company').subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('Submit response:', res);
         Swal.fire('Success', 'Company submitted successfully', 'success');
         this.loadDraftCompany();
         this.loadSubmittedCompany();

@@ -48,7 +48,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let u of storeFilteredDraftclientUsers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-client-user/',u.id ]">{{ u.loginId }}</a></td>
+                <td><a [routerLink]="['/customer-user/edit-customer-user/',u.id ]">{{ u.loginId }}</a></td>
                 <td>{{ u.userName }}</td>
                 <td>{{ u.password }}</td>
                 <td>{{ u.companyId }}</td>
@@ -118,7 +118,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let u of storeFilteredApprovedclientUsers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-client-user', u.id]">{{ u.loginId }}</a></td>
+                <td><a [routerLink]="['/customer-user/edit-customer-user/',u.id ]">{{ u.loginId }}</a></td>
                 <td>{{ u.userName }}</td>
                 <td>{{ u.password }}</td>
                 
@@ -153,7 +153,7 @@
           type="text"
           placeholder="Search ClientUser"
           [(ngModel)]="searchText"
-          (input)="filterApprovedclientUsers(searchText)"
+          (input)="filterSubmittedclientUsers(searchText)"
         />
         <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedclientUsers('')">
           <mat-icon>clear</mat-icon>
@@ -170,8 +170,7 @@
             <thead>
               <tr>
                 <th>Login ID</th>
-                  <th>User Name</th>
-                  <th>Password</th>
+                <th>User Name</th>
                 <th>Password</th>
                 <th>Company ID</th>
                 <th>User Status</th>
@@ -190,9 +189,10 @@
             </thead>
             <tbody>
               <tr *ngFor="let u of storeFilteredSubmittedclientUsers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-client-user', u.id]">{{ u.loginId }}</a></td>
-                <td>{{ u.userName }}</td> 
+                <td><a [routerLink]="['/customer-user/edit-customer-user/',u.id ]">{{ u.loginId }}</a></td>
+                <td>{{ u.userName }}</td>
                 <td>{{ u.password }}</td>
+                
                 <td>{{ u.companyId }}</td>
                 <td>{{ u.userStatus }}</td>
                 <td>{{ u.userCategory }}</td>

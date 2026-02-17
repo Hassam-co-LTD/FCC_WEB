@@ -206,11 +206,42 @@ export const routes: Routes = [
            
                     ],
     
+
+             
             },
+
+//  CustomerUser Dashboard
+            {
+                path: 'customer-user',
+                loadComponent: () =>
+                    import('./screens/CustomerUser/create-customer/create-customer').then((m) => m.CreateCustomer),
+                children:[
+
+                    {
+                        path: 'create-customer-user',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer/user-of-customer').then((m) => m.UserOfCustomer),
+
+                    },
+                    {
+                        path: 'edit-customer-user/:id',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer/user-of-customer').then((m) => m.UserOfCustomer),
+                    },
+                    {
+
+                        path: 'inquiry',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer-inquiry/user-of-customer-inquiry').then((m) => m.UserOfCustomerInquiry),
+                    },
+                    
+                ]
+
+            }
                 
         
   
-
+,
             
             
 

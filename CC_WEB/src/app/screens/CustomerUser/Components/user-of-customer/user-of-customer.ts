@@ -12,8 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import Swal from 'sweetalert2';
-import { ApiService } from '../../../../../core/services/api.service';
-
+import { ApiService } from '../../../../core/services/api.service';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -58,10 +57,10 @@ export interface UsersRolesResponseDTO {
     MatDatepickerModule,
     MatNativeDateModule
   ],
-  templateUrl: './create-user-client.html',
-  styleUrls: ['./create-user-client.scss']
+  templateUrl: './user-of-customer.html',
+  styleUrls: ['./user-of-customer.scss']
 })
-export class CreateClientUser implements OnInit {
+export class UserOfCustomer implements OnInit {
 
   // ---------- CLIENT USER FORM ----------
   clientUserForm!: FormGroup;
@@ -71,7 +70,7 @@ export class CreateClientUser implements OnInit {
   isOpen = true;
   
  userId = sessionStorage.getItem('userId');
-
+ 
   // ---------- ROLES ----------
   userRoles: RoleMasterResponseDTO[] = [];       
   selectedRoleIds: string[] = [];
@@ -91,13 +90,13 @@ UserData = {
   userName: '',
   password: '',
   userCategory: '',
-  companyId: '',
+  companyId: sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).
   appUserId: '',
 }
   ngOnInit(): void {
     this.buildClientUserForm();
     this.loadClientUserDetails(); // ✅ user-details logic replaces old getTnxById
-    this.loadCompanies();
+    
     this.fetchAllRoles();
   
 
@@ -107,11 +106,9 @@ UserData = {
   private buildClientUserForm(): void {
     this.clientUserForm = this.fb.group({
       loginId: [this.userId, Validators.required],
-      userName: ['', Validators.required],
-
       password: ['', Validators.required],
       userCategory: [''],
-      companyId: ["", Validators.required],
+      companyId: [ sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).companyId : '', Validators.required],
       userStatus: ['']
     });
   }
@@ -134,27 +131,18 @@ UserData = {
     }
   }
 
-  private loadCompanies(): void {
-    this.api.getTnxByStatus('A',"company").subscribe({
-      next: companies =>{
-           this.allCompanies = companies
-           console.log('Fetched companies:', this.allCompanies);
-      } ,
-      error: err => console.error('Error fetching companies', err)
-    });
-  }
-
+  
   onSave(): void {
+  
     if (this.clientUserForm.invalid) return;
     const payload = this.clientUserForm.getRawValue();
-    console.log('Saving client user with payload:', payload);
     this.api.saveTnx(payload, 'clientUsers').subscribe({
       next: res => {
         // sessionStorage.setItem('clientUser', JSON.stringify(res));
         // console.log('Client User saved successfully in sessions', sessionStorage.getItem('clientUser'));
         
         Swal.fire('Saved!', 'Client User saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry']))
+        .then(() => this.router.navigate(['/customer-user/inquiry']))
         
         },
       error: err => console.error('Save failed', err)
@@ -167,7 +155,7 @@ UserData = {
     console.log('Update payload:', payload);
     this.api.updateTnx(payload, 'clientUsers', id).subscribe({
       next: () => Swal.fire('Updated!', 'Client User updated successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry'])),
+        .then(() => this.router.navigate(['/customer-user/inquiry'])),
       error: err => console.error('Update failed', err)
     });
   }
@@ -194,7 +182,9 @@ UserData = {
 
   toggle(): void { this.isOpen = !this.isOpen; }
   onBack(): void { this.location.back(); }
-  onCancel(): void { this.clientUserForm.reset(); }
+  onCancel(): void { 
+
+    this.clientUserForm.reset(); }
 
   submit(): void {
     if (!this.storeClientUser?.id) return;
@@ -202,7 +192,7 @@ UserData = {
       next: (res) => {
         console.log('Client User submitted successfully',res);
         Swal.fire('Submitted!', 'Client User submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/user-client-inquiry'], { queryParams: { tabName: "submitted" } } ));
+          .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "submitted" } } ));
       },
     
        
@@ -214,7 +204,7 @@ UserData = {
     if (!this.storeClientUser?.id) return;
     this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
       next: () => Swal.fire('Rejected!', 'Client User rejected successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry'], { queryParams: { tabName: "rejected" } } )),
+        .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "rejected" } } )),
       error: err => console.error('Reject failed', err)
     });
   }
@@ -223,7 +213,7 @@ UserData = {
     if (!this.storeClientUser?.id) return;
     this.api.setTnxByStatus('A', id, 'clientUsers').subscribe({
       next: () => Swal.fire('Approved!', 'Client User approved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry'], { queryParams: { tabName: "approved" } } )),
+        .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "approved" } } )),
       error: err => console.error('Approve failed', err)
     });
   }
@@ -232,7 +222,7 @@ UserData = {
   fetchAllRoles(): void {
     this.api.getTnxByStatus('A',"roles").subscribe({
       next: (roles: RoleMasterResponseDTO[]) => {
-        this.userRoles = roles.filter(r => r.roleDest === 'BANK'); // Only BANK roles for client users
+        this.userRoles = roles.filter(r => r.roleDest === 'CUSTOMER'); // Only BANK roles for client users
         console.log('Fetched all roles:', this.userRoles);
         this.fetchAssignedRoles();
       },

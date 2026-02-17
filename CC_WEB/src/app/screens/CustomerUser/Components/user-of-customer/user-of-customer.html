@@ -35,14 +35,16 @@
             </mat-form-field>
           </div>
 
-          <div class="field-group">
+          <div class=" field-group">
             <h4>Name</h4>
             <mat-form-field appearance="outline" class="full">
               <input matInput type="text" formControlName="userName" placeholder="User Name" 
               [readonly]="isReadOnly()"  />
             </mat-form-field>
+
           </div>
 
+          
           <div class="field-group">
             <h4>Password</h4>
             <mat-form-field appearance="outline" class="full">
@@ -54,26 +56,16 @@
             <h4>User Category</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Category</mat-label>
-              <mat-select formControlName="userCategory" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="userCategorty" [disabled]="isReadOnly()" panelClass="white-dropdown">
                 <mat-option value="A">Admin</mat-option>
-                <mat-option value="U">user</mat-option>
+                <mat-option value="I">USER</mat-option>
                 
               </mat-select>
             </mat-form-field>
           </div>
          
-          <div class="field-group">
-            <h4>Company</h4>
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Select Company</mat-label>
-              <mat-select formControlName="companyId" [disabled]="isReadOnly()" panelClass="white-dropdown">
-                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
-                  {{ company.companyName }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-           
+          
+
           <div class="field-group">
             <h4>User Status</h4>
             <mat-form-field appearance="outline" class="full">

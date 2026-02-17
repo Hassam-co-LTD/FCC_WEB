@@ -1,145 +1,145 @@
-<div class="layout">
+  <div class="layout">
 
-  <!-- Top Navigation -->
-  <app-topbar></app-topbar>
+    <!-- Top Navigation -->
+    <app-topbar></app-topbar>
 
-  <div class="body-wrapper">
+    <div class="body-wrapper">
 
-    <!-- Sidebar -->
-    <aside class="sidebar" [class.collapsed]="isCollapsed()">
+      <!-- Sidebar -->
+      <aside class="sidebar" [class.collapsed]="isCollapsed()">
 
-      <!-- Toggle Button -->
-      <button class="toggle-btn" (click)="toggleSidebar()">
-        <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
-      </button>
-
-      <!-- MENU -->
-      <nav>
-        <ng-container [ngSwitch]="currentMenu">
-
-          <!-- DEFAULT MENU -->
-          <ng-container *ngSwitchCase="'DEFAULT'">
-            <ng-container *ngFor="let item of menuItems">
-              <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-          <!-- SYSTEM MENU -->
-          <ng-container *ngSwitchCase="'SYSTEM'">
-            <ng-container *ngFor="let item of systemOverviewMenu">
-              <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-          <!-- MIDDLE-OFFICE MENU -->
-          <ng-container *ngSwitchCase="'MIDDLE'">
-            <ng-container *ngFor="let item of middleOfficeMenu">
-              <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-        </ng-container>
-      </nav>
-
-      <!-- ======================== -->
-      <!-- REUSABLE MENU TEMPLATE   -->
-      <!-- ======================== -->
-      <ng-template #menuTemplate let-item>
-
-        <!-- MENU ITEM WITH CHILDREN -->
-        <div *ngIf="item.children" class="menu-group">
-
-          <!-- Parent -->
-          <button class="menu-btn"
-                  [class.active-parent]="
-                    item.label !== 'Trade Services' && isAnyDescendantActive(item)
-                  "
-                  (click)="item.label === 'Customers'
-                    ? onCustomerClick(item)
-                    : toggleMenu(item)">
-            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-            <span *ngIf="!isCollapsed()">{{ item.label }}</span>
-            <mat-icon class="arrow" *ngIf="!isCollapsed()">
-              {{ item.open ? 'expand_less' : 'expand_more' }}
-            </mat-icon>
-          </button>
-
-          <!-- Submenu -->
-          <div class="submenu" *ngIf="item.open && !isCollapsed()">
-
-            <ng-container *ngFor="let child of item.children">
-
-              <!-- Child WITH nested submenu -->
-              <div *ngIf="child.children" class="submenu-item">
-
-                <button type="button"
-                        class="submenu-btn"
-                        [class.active-child]="isAnyDescendantActive(child)">
-
-                  <!-- LABEL = NAVIGATION ONLY -->
-                  <span class="label"
-                        (click)="goTo(child); $event.stopPropagation()">
-                    {{ child.label }}
-                  </span>
-
-                  <!-- ARROW = TOGGLE ONLY -->
-                  <mat-icon class="arrow"
-                            (click)="toggleOnlyChildren(child); $event.stopPropagation()">
-                    {{ child.open ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-
-                </button>
-
-                <!-- Nested submenu -->
-                <div class="nested-submenu" *ngIf="child.open">
-                  <button *ngFor="let sub of child.children"
-                          (click)="goTo(sub)"
-                          [class.active-leaf]="isExactActive(sub.route)">
-                    {{ sub.label }}
-                  </button>
-                </div>
-
-              </div>
-
-              <!-- Child WITHOUT submenu (LEAF NODE) -->
-              <button *ngIf="!child.children"
-                      (click)="goTo(child)"
-                      class="submenu-leaf"
-                      [class.active-leaf]="isExactActive(child.route)">
-                {{ child.label }}
-              </button>
-
-            </ng-container>
-
-          </div>
-        </div>
-
-        <!-- SIMPLE LINK (NO CHILDREN) -->
-        <button *ngIf="!item.children"
-                class="menu-btn"
-                [class.active-parent]="isExactActive(item.route)"
-                (click)="item.label === 'Logout'
-                  ? Logout()
-                  : goTo(item)">
-          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-          <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+        <!-- Toggle Button -->
+        <button class="toggle-btn" (click)="toggleSidebar()">
+          <mat-icon>{{ isCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
         </button>
 
-      </ng-template>
+        <!-- MENU -->
+        <nav>
+          <ng-container [ngSwitch]="currentMenu">
 
-    </aside>
+            <!-- DEFAULT MENU -->
+            <ng-container *ngSwitchCase="'DEFAULT'">
+              <ng-container *ngFor="let item of menuItems">
+                <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
+                </ng-container>
+              </ng-container>
+            </ng-container>
 
-    <!-- Main Content -->
-    <main class="content">
-      <router-outlet></router-outlet>
-    </main>
+            <!-- SYSTEM MENU -->
+            <ng-container *ngSwitchCase="'SYSTEM'">
+              <ng-container *ngFor="let item of systemOverviewMenu">
+                <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
+                </ng-container>
+              </ng-container>
+            </ng-container>
 
+            <!-- MIDDLE-OFFICE MENU -->
+            <ng-container *ngSwitchCase="'MIDDLE'">
+              <ng-container *ngFor="let item of middleOfficeMenu">
+                <ng-container *ngTemplateOutlet="menuTemplate; context:{ $implicit: item }">
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+          </ng-container>
+        </nav>
+
+        <!-- ======================== -->
+        <!-- REUSABLE MENU TEMPLATE   -->
+        <!-- ======================== -->
+        <ng-template #menuTemplate let-item>
+
+          <!-- MENU ITEM WITH CHILDREN -->
+          <div *ngIf="item.children" class="menu-group">
+
+            <!-- Parent -->
+            <button class="menu-btn"
+                    [class.active-parent]="
+                      item.label !== 'Trade Services' && isAnyDescendantActive(item)
+                    "
+                    (click)="item.label === 'Customers'
+                      ? onCustomerClick(item)
+                      : toggleMenu(item)">
+              <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+              <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+              <mat-icon class="arrow" *ngIf="!isCollapsed()">
+                {{ item.open ? 'expand_less' : 'expand_more' }}
+              </mat-icon>
+            </button>
+
+            <!-- Submenu -->
+            <div class="submenu" *ngIf="item.open && !isCollapsed()">
+
+              <ng-container *ngFor="let child of item.children">
+
+                <!-- Child WITH nested submenu -->
+                <div *ngIf="child.children" class="submenu-item">
+
+                  <button type="button"
+                          class="submenu-btn"
+                          [class.active-child]="isAnyDescendantActive(child)">
+
+                    <!-- LABEL = NAVIGATION ONLY -->
+                    <span class="label"
+                          (click)="goTo(child); $event.stopPropagation()">
+                      {{ child.label }}
+                    </span>
+
+                    <!-- ARROW = TOGGLE ONLY -->
+                    <mat-icon class="arrow"
+                              (click)="toggleOnlyChildren(child); $event.stopPropagation()">
+                      {{ child.open ? 'expand_less' : 'expand_more' }}
+                    </mat-icon>
+
+                  </button>
+
+                  <!-- Nested submenu -->
+                  <div class="nested-submenu" *ngIf="child.open">
+                    <button *ngFor="let sub of child.children"
+                            (click)="goTo(sub)"
+                            [class.active-leaf]="isExactActive(sub.route)">
+                      {{ sub.label }}
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Child WITHOUT submenu (LEAF NODE) -->
+                <button *ngIf="!child.children"
+                        (click)="goTo(child)"
+                        class="submenu-leaf"
+                        [class.active-leaf]="isExactActive(child.route)">
+                  {{ child.label }}
+                </button>
+
+              </ng-container>
+
+            </div>
+          </div>
+
+          <!-- SIMPLE LINK (NO CHILDREN) -->
+          <button *ngIf="!item.children"
+                  class="menu-btn"
+                  [class.active-parent]="isExactActive(item.route)"
+                  (click)="item.label === 'Logout'
+                    ? Logout()
+                    : goTo(item)">
+            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+            <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+          </button>
+
+        </ng-template>
+
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content">
+        <router-outlet></router-outlet>
+      </main>
+
+    </div>
+    <!-- Footer -->
+    <footer class="app-footer">
+      © All Rights Reserved – Infotech Pvt Ltd
+    </footer>
   </div>
-  <!-- Footer -->
-  <footer class="app-footer">
-    © All Rights Reserved – Infotech Pvt Ltd
-  </footer>
-</div>

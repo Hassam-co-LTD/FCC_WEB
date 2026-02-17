@@ -19,7 +19,9 @@ export class TopbarComponent {
 
 
   constructor() { }
-
+       userData = sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!) : null;
+       userName = this.userData?.userName || 'User';
+        lastGoodLogin = this.userData?.lastGoodLogin ? new Date(this.userData.lastGoodLogin).toLocaleString() : 'N/A';
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }

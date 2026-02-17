@@ -90,6 +90,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
  
+
   // Get full transactions by status
   getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
     const companyId = sessionStorage.getItem('companyId')
@@ -519,6 +520,7 @@ deleteTnx(payload: any, name: string) {
   });
 }
 updateTnxx(payload: any, name: string) {
+  console.log("Updating transaction with payload:", payload);
   return this.http.put<any>(`${this.baseUrl}${name}`, payload);
 }
 getRolesByUser(userId: Number,name:String): Observable<any> {
@@ -529,6 +531,10 @@ setStatusByRoleId(status: String, id: String, name: String) {
   const url = `${this.baseUrl}${name}/setStatus/${id}`;
   return this.http.put<any>(url, status);
 
+}
+
+userLogin(payload: any, name: string) {
+  return this.http.post<any>(`${this.baseUrl}${name}/login`, payload);
 }
 
 }

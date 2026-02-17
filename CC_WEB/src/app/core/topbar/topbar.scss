@@ -288,3 +288,38 @@
         font-size: 13px;
     }
 }
+
+/* 🔹 Username */
+/* ================================
+   Topbar – User Identity Section
+   Banking Professional Style
+================================ */
+
+/* Username */
+.nav span:not(.last-login) {
+  display: inline-flex;
+  align-items: center;
+  color: theme.$text-dark;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: theme.$gap-default;
+  padding: 6px 12px;
+  background: theme.$primary-light;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-default;
+  letter-spacing: 0.2px;
+}
+
+/* Last Good Login */
+.nav .last-login {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: theme.$text-medium;
+  padding: 6px 10px;
+  background: theme.$light-bg;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+}

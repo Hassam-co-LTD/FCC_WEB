@@ -18,14 +18,15 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
 
   if (isBrowser && !isLoggedIn) {
     console.error('❌ User not logged in, redirecting to /login');
-    router.navigate(['/login']);
+    // router.navigate(['/login']);
+    router.navigate(['/admin'])
     return false;
   }
 
-  const requiredRole = route.data?.['role'] as 'ADMIN' | 'USER' | null;
+  const requiredRole = route.data?.['role'] as 'A' | 'U' | null;
 
   if (isBrowser && requiredRole && userRole !== requiredRole) {
-    router.navigate([userRole === 'ADMIN' ? '/admin' : '/dashboard']);
+    router.navigate([userRole === 'A' ? '/admin' : '/dashboard']);
     return false;
   }
 
