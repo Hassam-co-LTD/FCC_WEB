@@ -108,32 +108,31 @@ export class MyAccountsComponent implements OnInit {
   /**
    * Syncs the TS logic with your HTML *ngIf conditions
    */
-  private updateWorkflowState(status: string) {
-    console.log('Updating workflow state:', status);
+private updateWorkflowState(status: string) {
+  console.log('Current Status:', status);
     
-    switch (status) {
-      case 'I': // Pending Drafts
-        this.mode = 'UPDATE';
-        this.screenMode = 'EDIT';
-        this.myAccountsForm.enable();
-        break;
-      case 'S': // submitted
-        this.mode = 'UPDATE';
-        this.screenMode = 'SUBMITTED';
-        this.myAccountsForm.disable();
-        console.log('Transfer is submitted. User can approve?', this.canApprove);
-        break;
-      case 'A': // Approved
-        this.mode = 'UPDATE';
-        this.screenMode = 'APPROVED';
-        this.myAccountsForm.disable();
-        break;
-      case 'R': // Rejected - Shows Edit + Resubmit button
-        this.mode = 'REJECTED';
-        this.screenMode = 'EDIT';
-        this.myAccountsForm.enable();
-        break;
-    }
+ switch (status) {
+    case 'I': // DRAFT/PENDING
+      this.mode = 'UPDATE';
+      this.screenMode = 'EDIT';
+      this.myAccountsForm.enable();
+      break;
+   case 'S': // SUBMITTED (View-Only for Checker)
+      this.mode = 'UPDATE'; // It's an existing record
+      this.screenMode = 'SUBMITTED'; // This triggers View-Only in HTML
+      this.myAccountsForm.disable(); // Locks all inputs
+      break;
+ case 'R': // REJECTED (Edit mode for Maker)
+      this.mode = 'REJECTED';
+      this.screenMode = 'EDIT';
+      this.myAccountsForm.enable();
+      break;
+
+    case 'A': // APPROVED (Historical View)
+      this.screenMode = 'APPROVED';
+      this.myAccountsForm.disable();
+      break;
+  }
     this.generalDetailsForm.get('currency')?.disable();
   }
 
@@ -203,8 +202,8 @@ export class MyAccountsComponent implements OnInit {
       return;
     }
     
-    const confirmApprove = confirm('Are you sure you want to approve this transaction?');
-    if (!confirmApprove) return;
+    // const confirmApprove = confirm('Are you sure you want to approve this transaction?');
+    // if (!confirmApprove) return;
     
     this.isLoading = true;
     this.myAccountsService.approveTransfer(this.tnxId, this.getFormData()).subscribe({

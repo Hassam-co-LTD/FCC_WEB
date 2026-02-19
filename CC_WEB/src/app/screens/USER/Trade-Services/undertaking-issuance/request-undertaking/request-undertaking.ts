@@ -41,7 +41,7 @@ import { AuthService } from '../../../../../core/services/auth.service';
   styleUrls: ['./request-undertaking.scss'],
 })
 export class RequestUndertaking implements OnInit {
-  
+
   // References
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
 
@@ -85,8 +85,8 @@ export class RequestUndertaking implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       const id = params['transactionId'];
-      const modeParam = params['mode']; 
-      
+      const modeParam = params['mode'];
+
       if (id) {
         this.loadTransaction(id, modeParam);
       } else {
@@ -107,8 +107,8 @@ export class RequestUndertaking implements OnInit {
     this.undertakingForm.enable();
 
     // Default Values
-    this.generalDetails.patchValue({ 
-      productType: 'Undertaking', 
+    this.generalDetails.patchValue({
+      productType: 'Undertaking',
       modeOfTransmission: 'SWIFT',
       currency: 'USD'
     });
@@ -117,7 +117,7 @@ export class RequestUndertaking implements OnInit {
   private loadTransaction(id: string, modeParam?: string): void {
     this.currentTransactionId = id;
     this.isLoading = true;
-    
+
     this.undertakingService.getTransactionById(id).subscribe({
       next: (tx: UndertakingTransaction) => {
         this.currentTx = tx;
@@ -218,26 +218,33 @@ export class RequestUndertaking implements OnInit {
   }
 
   update(): void {
-    if (!this.currentTransactionId) return;
-    
+    const tnxId = this.currentTx?.tnxId || this.currentTransactionId;
+    if (!tnxId) return;
+
     const rawForm = this.undertakingForm.getRawValue();
-    rawForm.id = this.currentTransactionId;
+
+    // Ensure tnxId is inside rawForm so the service can extract it
+    rawForm.tnxId = tnxId;
+    rawForm.id = this.currentTx?.id || this.currentTransactionId;
     rawForm.status = this.currentTx?.status;
 
     this.isLoading = true;
+
     this.undertakingService.updateDraft(rawForm).subscribe({
       next: () => {
         this.isLoading = false;
         const targetTab = this.pageMode === 'CORRECT' ? 'rejected' : 'pending';
-        this.navigateToSuccess(this.currentTransactionId!, this.channelRef, targetTab, 'Transaction Updated');
+        this.navigateToSuccess(tnxId, this.channelRef, targetTab, 'Transaction Updated');
       },
       error: (err) => {
         this.isLoading = false;
-        this.snackBar.open('Error updating transaction: ' + err.message, 'Close', { duration: 5000 });
+        // MATCHING YOUR BACKEND: Extract 'message' from ErrorResponse POJO
+        // err.error is the ErrorResponse object from your Java code
+        const backendMessage = err.error?.message || "Update failed";
+        this.snackBar.open('Error: ' + backendMessage, 'Close', { duration: 5000 });
       }
     });
   }
-
   submit(): void {
     if (!this.currentTransactionId) {
       this.snackBar.open('Please save as draft first', 'Close', { duration: 3000 });
@@ -265,8 +272,8 @@ export class RequestUndertaking implements OnInit {
   approve(): void {
     if (!this.currentTransactionId) return;
 
-    const confirmApprove = confirm('Are you sure you want to approve this transaction?');
-    if (!confirmApprove) return;
+    // const confirmApprove = confirm('Are you sure you want to approve this transaction?');
+    // if (!confirmApprove) return;
 
     this.isLoading = true;
     this.undertakingService.approveUndertaking(this.currentTransactionId).subscribe({
@@ -296,7 +303,7 @@ export class RequestUndertaking implements OnInit {
 
     dialogRef.afterClosed().subscribe(reason => {
       console.log('Dialog closed with reason:', reason);
-      
+
       if (reason && typeof reason === 'string' && reason.trim().length > 0) {
         this.executeReject(reason.trim());
       } else {
@@ -307,7 +314,7 @@ export class RequestUndertaking implements OnInit {
 
   private executeReject(reason: string): void {
     console.log('Executing reject with reason:', reason);
-    
+
     this.isLoading = true;
     this.undertakingService.rejectUndertaking(this.currentTransactionId!, reason).subscribe({
       next: (res) => {
@@ -320,14 +327,14 @@ export class RequestUndertaking implements OnInit {
       error: (err) => {
         this.isLoading = false;
         console.error('Error in reject:', err);
-        
+
         let errorMessage = 'Error rejecting transaction';
         if (err.error && err.error.message) {
           errorMessage = err.error.message;
         } else if (err.message) {
           errorMessage = err.message;
         }
-        
+
         this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
       }
     });

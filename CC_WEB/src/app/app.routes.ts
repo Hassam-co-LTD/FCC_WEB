@@ -458,8 +458,8 @@ export const routes: Routes = [
             // Add this to your routes array after other USER services (after import-welcome route)
 
          // ==============================
-// PAYMENT SERVICES - MY ACCOUNTS
-// ==============================
+        // PAYMENT SERVICES - MY ACCOUNTS
+        // ==============================
 {
     path: 'my-accounts',
     children: [
@@ -474,6 +474,27 @@ export const routes: Routes = [
         {
             path: 'general-details',
             loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
+        }
+    ]
+},
+
+        // ==============================
+        // PAYMENT SERVICES - IBFT
+        // ==============================
+{
+    path: 'IBFT',
+    children: [
+        {
+            path: '', // The main form (Create mode)
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
+        },
+        {
+            path: 'transfer/:tnxId', // The main form (Edit/View mode)
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
+        },
+        {
+            path: 'general-details',
+            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(m => m.GeneralDetails),
         }
     ]
 },

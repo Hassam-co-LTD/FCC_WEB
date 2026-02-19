@@ -1,63 +1,71 @@
-<!-- Drawer & Drawee Details Accordion -->
 <div class="section-header" (click)="toggle()">
   <h2>Drawer & Drawee Details</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-  <!-- COLLAPSED PREVIEW -->
   @if (!isOpen) {
     <div class="preview-block">
-      <!-- Drawer Preview -->
-      <h4>Drawer</h4>
-      <div><strong>Drawer Name:</strong> {{ form.value.drawerName }}</div>
-      <div><strong>Address 1:</strong> {{ form.value.drawerAddress1 }}</div>
-      <div><strong>Address 2:</strong> {{ form.value.drawerAddress2 }}</div>
-      <!-- Drawee Preview -->
-      <h4>Drawee</h4>
-      <div><strong>Drawee Name:</strong> {{ form.value.draweeName }}</div>
-      <div><strong>Address 1:</strong> {{ form.value.draweeAddress1 }}</div>
-      <div><strong>Address 2:</strong> {{ form.value.draweeAddress2 }}</div>
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Drawer</h4>
+        <div><strong>Name:</strong> {{ form.value.drawerName || '—' }}</div>
+        <div><strong>Address:</strong> {{ form.value.drawerAddress1 || '—' }}</div>
+      </div>
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Drawee</h4>
+        <div><strong>Name:</strong> {{ form.value.draweeName || '—' }}</div>
+        <div><strong>Address:</strong> {{ form.value.draweeAddress1 || '—' }}</div>
+      </div>
     </div>
   }
 
-  <!-- Drawer Section -->
-  <h4 class="sub-title">Drawer</h4>
+  <div class="form-content">
+    
+    <h4 class="sub-title">Drawer Details</h4>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Drawer Name *</mat-label>
+        <input matInput type="text" formControlName="drawerName" placeholder="Enter Drawer Name">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Drawer Name *</mat-label>
-    <input matInput type="text" formControlName="drawerName" placeholder="Enter Drawer Name">
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 1 *</mat-label>
+        <input matInput type="text" formControlName="drawerAddress1" placeholder="Enter Address 1">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Address 1 *</mat-label>
-    <input matInput type="text" formControlName="drawerAddress1" placeholder="Enter Address 1">
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 2</mat-label>
+        <input matInput type="text" formControlName="drawerAddress2" placeholder="Enter Address 2">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Address 2</mat-label>
-    <input matInput type="text" formControlName="drawerAddress2" placeholder="Enter Address 2">
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 3</mat-label>
+        <input matInput type="text" formControlName="drawerAddress3" placeholder="Enter Address 3">
+      </mat-form-field>
+    </div>
 
-  <!-- Drawee Section -->
-  <h4 class="sub-title">Drawee</h4>
+    <h4 class="sub-title">Drawee Details</h4>
+    <div class="form-grid-2">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Drawee Name *</mat-label>
+        <input matInput type="text" formControlName="draweeName" placeholder="Enter Drawee Name">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Drawee Name *</mat-label>
-    <input matInput type="text" formControlName="draweeName" placeholder="Enter Drawee Name">
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 1 *</mat-label>
+        <input matInput type="text" formControlName="draweeAddress1" placeholder="Enter Address 1">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Address 1 *</mat-label>
-    <input matInput type="text" formControlName="draweeAddress1" placeholder="Enter Address 1">
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 2</mat-label>
+        <input matInput type="text" formControlName="draweeAddress2" placeholder="Enter Address 2">
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full">
-    <mat-label>Address 2</mat-label>
-    <input matInput type="text" formControlName="draweeAddress2" placeholder="Enter Address 2">
-  </mat-form-field>
-
-
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 3</mat-label>
+        <input matInput type="text" formControlName="draweeAddress3" placeholder="Enter Address 3">
+      </mat-form-field>
+    </div>
+  </div>
 </div>

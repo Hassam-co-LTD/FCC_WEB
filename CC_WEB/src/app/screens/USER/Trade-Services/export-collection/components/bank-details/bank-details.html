@@ -1,109 +1,109 @@
-<!-- Bank Details Accordion -->
 <div class="section-header" (click)="toggle()">
   <h2>Bank Details</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
-  <!-- COLLAPSED PREVIEW -->
+  
   @if (!isOpen) {
     <div class="preview-block">
-      <h4>Remitting Bank</h4>
-      <div><strong>Bank Name:</strong> {{ form.value.remittingBankName }}</div>
-      <div><strong>Issuer Reference:</strong> {{ form.value.remittingIssuerRef }}</div>
-      <div><strong>Principal Account:</strong> {{ form.value.principalAccount }}</div>
-      <div><strong>Fee Account:</strong> {{ form.value.feeAccount }}</div>
-      <h4>Presenting Bank</h4>
-      <div><strong>Bank Name:</strong> {{ form.value.presentingBankName }}</div>
-      <div><strong>Address 1:</strong> {{ form.value.presentingAddress1 }}</div>
-      <div><strong>Address 2:</strong> {{ form.value.presentingAddress2 }}</div>
-      <h4>Collecting Bank</h4>
-      <div><strong>Bank Name:</strong> {{ form.value.collectingBankName }}</div>
-      <div><strong>SWIFT Code:</strong> {{ form.value.collectingSwiftCode }}</div>
-      <div><strong>Reference:</strong> {{ form.value.collectingReference }}</div>
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Remitting</h4>
+        <div><strong>Bank:</strong> {{ form.value.remittingBankName || '—' }}</div>
+      </div>
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Presenting</h4>
+        <div><strong>Bank:</strong> {{ form.value.presentingBankName || '—' }}</div>
+      </div>
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Collecting</h4>
+        <div><strong>Bank:</strong> {{ form.value.collectingBankName || '—' }}</div>
+      </div>
     </div>
   }
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tab" [class.active]="bankTab === 'remitting'" (click)="switchBankTab('remitting')">Remitting</div>
-    <div class="tab" [class.active]="bankTab === 'presenting'" (click)="switchBankTab('presenting')">Presenting</div>
-    <div class="tab" [class.active]="bankTab === 'collecting'" (click)="switchBankTab('collecting')">Collecting</div>
-  </div>
+  <div class="form-content">
+    <div class="tabs">
+      <div class="tab" [class.active]="bankTab === 'remitting'" (click)="switchBankTab('remitting')">Remitting Bank</div>
+      <div class="tab" [class.active]="bankTab === 'presenting'" (click)="switchBankTab('presenting')">Presenting Bank</div>
+      <div class="tab" [class.active]="bankTab === 'collecting'" (click)="switchBankTab('collecting')">Collecting Bank</div>
+    </div>
 
-  <!-- Form -->
-  <form class="form-grid-2">
-
-    <!-- REMITTING -->
     @if (bankTab === 'remitting') {
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Bank Name *</mat-label>
-        <mat-select formControlName="remittingBankName">
-          <mat-option value="">Select Bank</mat-option>
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">{{ b }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Issuer Reference *</mat-label>
-        <input matInput formControlName="remittingIssuerRef" placeholder="Enter issuer reference" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Principal Account *</mat-label>
-        <mat-select formControlName="principalAccount">
-          <mat-option value="">Select Account</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Fee Account *</mat-label>
-        <mat-select formControlName="feeAccount">
-          <mat-option value="">Select Account</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <h4 class="sub-title">Remitting Bank Details</h4>
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Bank Name *</mat-label>
+          <mat-select formControlName="remittingBankName">
+            <mat-option value="">Select Bank</mat-option>
+            @for (b of bankList; track b) {
+              <mat-option [value]="b">{{ b }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Issuer Reference *</mat-label>
+          <input matInput formControlName="remittingIssuerRef" placeholder="Enter issuer reference" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Principal Account *</mat-label>
+          <mat-select formControlName="principalAccount">
+            <mat-option value="">Select Account</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Fee Account *</mat-label>
+          <mat-select formControlName="feeAccount">
+            <mat-option value="">Select Account</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     }
 
-    <!-- PRESENTING -->
     @if (bankTab === 'presenting') {
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Bank Name *</mat-label>
-        <mat-select formControlName="presentingBankName">
-          <mat-option value="">Select Bank</mat-option>
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">{{ b }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 1</mat-label>
-        <input matInput formControlName="presentingAddress1" placeholder="Enter address 1" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 2</mat-label>
-        <input matInput formControlName="presentingAddress2" placeholder="Enter address 2" />
-      </mat-form-field>
+      <h4 class="sub-title">Presenting Bank Details</h4>
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Bank Name *</mat-label>
+          <mat-select formControlName="presentingBankName">
+            <mat-option value="">Select Bank</mat-option>
+            @for (b of bankList; track b) {
+              <mat-option [value]="b">{{ b }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 1</mat-label>
+          <input matInput formControlName="presentingAddress1" placeholder="Enter address 1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 2</mat-label>
+          <input matInput formControlName="presentingAddress2" placeholder="Enter address 2" />
+        </mat-form-field>
+      </div>
     }
 
-    <!-- COLLECTING -->
     @if (bankTab === 'collecting') {
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Collecting Bank</mat-label>
-        <mat-select formControlName="collectingBankName">
-          <mat-option value="">Select Bank</mat-option>
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">{{ b }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>SWIFT Code</mat-label>
-        <input matInput formControlName="collectingSwiftCode" placeholder="Enter SWIFT code" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Reference</mat-label>
-        <input matInput formControlName="collectingReference" placeholder="Enter reference" />
-      </mat-form-field>
+      <h4 class="sub-title">Collecting Bank Details</h4>
+      <div class="form-grid-2">
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Collecting Bank</mat-label>
+          <mat-select formControlName="collectingBankName">
+            <mat-option value="">Select Bank</mat-option>
+            @for (b of bankList; track b) {
+              <mat-option [value]="b">{{ b }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>SWIFT Code</mat-label>
+          <input matInput formControlName="collectingSwiftCode" placeholder="Enter SWIFT code" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Reference</mat-label>
+          <input matInput formControlName="collectingReference" placeholder="Enter reference" />
+        </mat-form-field>
+      </div>
     }
-
-  </form>
+  </div>
 </div>

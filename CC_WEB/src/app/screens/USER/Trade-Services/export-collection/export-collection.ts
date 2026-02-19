@@ -74,9 +74,11 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         drawerName: [''],
         drawerAddress1: [''],
         drawerAddress2: [''],
+        drawerAddress3: [''],
         draweeName: [''],
         draweeAddress1: [''],
-        draweeAddress2: ['']
+        draweeAddress2: [''],
+        draweeAddress3: ['']
       }),
 
       bankdetails: this.fb.group({
@@ -106,7 +108,7 @@ export class ExportCollectionComponent implements OnInit, AfterViewInit {
         shippingFrom: [''],
         shippingTo: [''],
         shipmentDate: [''],
-        incotermsRules: [''],
+        ApplicableRules: [''],
         incoterms: ['']
       }),
 

@@ -1,0 +1,313 @@
+@use "sass:color";
+@use "../../../../../../../../../styles/theme" as theme;
+
+/* ===========================
+   Container
+=========================== */
+.form-container {
+  width: 100%;
+}
+
+.section-container {
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: theme.$primary;
+  padding: 14px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: theme.$text-light;
+  }
+
+  mat-icon {
+    color: theme.$text-light;
+    font-size: 22px;
+  }
+
+  &:hover {
+    background: theme.$primary-dark;
+    box-shadow: theme.$shadow-primary;
+  }
+}
+
+/* ===========================
+   Collapsible Panel
+=========================== */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.35s ease-in-out;
+}
+
+.collapsible.open {
+  max-height: 2000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding: 15px 10px;
+  background: theme.$light-bg;
+  border-radius: 6px;
+  border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Grid Layout
+=========================== */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===========================
+   Field Group
+=========================== */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===========================
+   Labels
+=========================== */
+h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+  padding-left: 8px;
+}
+
+/* ===========================
+   Readonly Field
+=========================== */
+.readonly-field {
+  padding: 12px 14px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: theme.$text-dark;
+}
+
+.date-field {
+  color: theme.$text-dark;
+}
+
+/* ===========================
+   Material Form Field
+=========================== */
+mat-form-field {
+  width: 100%;
+  font-size: 14px;
+}
+
+/* ===========================
+   Account Search Field
+=========================== */
+.account-search-field {
+  position: relative;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .mat-mdc-form-field-flex {
+    align-items: center;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    padding-right: 0;
+  }
+
+  button[matSuffix] {
+    margin-right: 8px;
+    color: theme.$primary;
+
+    &:hover {
+      color: theme.$primary-dark;
+      background-color: color.scale(theme.$primary, $lightness: 90%);
+    }
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  input[readonly] {
+    cursor: pointer;
+
+    &:focus {
+      background-color: theme.$white;
+      caret-color: transparent;
+    }
+  }
+}
+
+/* ===========================
+   Checkbox Section (Right aligned)
+=========================== */
+.checkbox-action-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: right;
+  padding-top: 10px;
+}
+
+/* Checkbox Label */
+.checkbox-label {
+  font-weight: 500;
+  color: theme.$text-dark;
+}
+
+/* Checkbox theme styling */
+::ng-deep .mat-mdc-checkbox {
+
+  .mdc-checkbox__background {
+    border-color: theme.$primary;
+  }
+
+  &.mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: theme.$primary;
+    border-color: theme.$primary;
+  }
+
+  .mdc-form-field {
+    color: theme.$text-dark;
+  }
+}
+
+/* ===========================
+   Beneficiary Details Panel
+=========================== */
+.beneficiary-details-panel {
+  margin-top: 16px;
+  padding: 16px;
+  background: theme.$light-bg;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  transition: border 0.25s ease;
+
+  &:hover {
+    border-color: theme.$border-primary;
+  }
+}
+
+.editable-beneficiary {
+  width: 100%;
+}
+
+.beneficiary-details-panel .field-group {
+  gap: 6px;
+}
+
+/* ===========================
+   Full Width Utility
+=========================== */
+.full {
+  width: 100%;
+}
+
+/* ===========================
+   Material Field Customization
+=========================== */
+.mat-mdc-form-field.mat-form-field-appearance-outline {
+
+  .mat-mdc-text-field-wrapper {
+    background: theme.$white;
+  }
+
+  .mat-mdc-form-field-outline {
+    color: theme.$border-light;
+  }
+
+  .mat-mdc-form-field-outline-thick {
+    color: theme.$primary;
+  }
+
+  &.mat-focused .mat-mdc-form-field-outline-thick {
+    color: theme.$primary;
+  }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .beneficiary-details-panel {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .section-header {
+    padding: 12px 14px;
+
+    h2 {
+      font-size: 16px;
+    }
+  }
+
+  .collapsible.open {
+    padding: 12px 8px;
+  }
+
+  .checkbox-action-container {
+    padding-top: 8px;
+  }
+
+  .beneficiary-details-panel {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .form-grid-2,
+  .form-grid {
+    gap: 12px;
+  }
+
+  .readonly-field {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .checkbox-label {
+    font-size: 13px;
+  }
+
+  .beneficiary-details-panel {
+    padding: 10px;
+  }
+}
