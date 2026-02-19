@@ -13,6 +13,9 @@ import { ApiService } from '../../../../core/services/api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ShippingGuaranteeFormTransactionService } from '../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
+import { Dialog } from '@angular/cdk/dialog';
+import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-shipping-guarantee',
@@ -23,6 +26,7 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../core/servic
     ApplicantBeneficiary,
     BankDetails,
     InstructionsComponent,
+    MatDialogModule,
     Attachments,
     Sidebar,
   ],
@@ -55,6 +59,7 @@ export class ShippingGuarantee implements OnInit {
     private api: ApiService,
     private authservice: AuthService,
     private route: ActivatedRoute,
+    private dialog: MatDialog,
     private transactionService: ShippingGuaranteeFormTransactionService
   ) {
     this.buildForm();
@@ -308,24 +313,7 @@ export class ShippingGuarantee implements OnInit {
       console.error('TNX ID is missing!');
       return;
     }
-    // ImportLcTransaction = {
-    //   id: this.currentTx.id,
-
-    //   // ===== FLATTEN FORM VALUES =====
-    //   ...this.importForm.value.generalDetails,
-    //   ...this.importForm.value.applicantForm,
-    //   ...this.importForm.value.bankForm,
-    //   ...this.importForm.value.amountChargeForm,
-    //   ...this.importForm.value.paymentDetailsForm,
-    //   ...this.importForm.value.shipmentForm,
-    //   ...this.importForm.value.narrativeForm,
-    //   ...this.importForm.value.instructionForm,
-
-    //   attachments: this.attachmentsArray.value,
-    //   tnxId: this.currentTx?.tnxId
-    // };
-
-    this.api.updatePendingByTnxId(payload).subscribe({
+    this.api.updatePendingByTnxIdForShippingGuarantee(payload.tnxId!, payload).subscribe({
       next: (res) => {
         // this.transactionService.addOrUpdateTransaction(res);
         this.snackbar.open(
@@ -335,7 +323,7 @@ export class ShippingGuarantee implements OnInit {
         );
 
         setTimeout(
-          () => this.router.navigate(['/import-screen/inquiries']),
+          () => this.router.navigate(['/shipping-guarantee/inquiries-records']),
           300
         );
       },
@@ -345,4 +333,86 @@ export class ShippingGuarantee implements OnInit {
     });
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  approve(): void {
+      this.api.approveTransactionForShippingGuarantee(this.currentTx.tnxId!, this.currentTx).subscribe({
+        next: () => this.navigateBack('approved'),
+        error: () => this.snackbar.open('Approval failed', 'Close', { duration: 3000 })
+      });
+    }
+    openReject(): void {
+      const dialogRef = this.dialog.open(RejectDialogComponent, {
+        width: '400px'
+      });
+  
+      dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+        if (!reason) return; // user cancelled
+  
+        this.api.rejectTransactionForShippingGuarantee(this.currentTx.tnxId!, reason).subscribe({
+          next: (res) => {
+            this.snackbar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
+            this.navigateBack('rejected'); // send user to rejected tab
+          },
+          error: () => {
+            this.snackbar.open('Failed to reject transaction', 'Close', { duration: 3000 });
+          }
+        });
+      });
+    }
+  
+    // reject(): void {
+    //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
+    //     next: () => this.navigateBack('rejected'),
+    //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
+    //   });
+    // }
+  
+    private navigateBack(tab: string) {
+      this.router.navigate(['/shipping-guarantee/inquiries-records'], {
+        queryParams: { tab }
+      });
+    }
+  
+    updateRejected(): void {
+      if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
+        this.snackbar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+        return;
+      }
+  
+      const payload = this.flattenForm(); // flatten form values
+      payload.tnxId = this.currentTx.tnxId;
+  
+      this.api.updateRejectedTransactionForShippingGuarantee(payload.tnxId, payload).subscribe({
+        next: (res) => {
+          this.snackbar.open(
+            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+            'Close',
+            { duration: 3000 }
+          );
+  
+          // Navigate back to inquiries with Pending tab
+          this.router.navigate(['/shipping-guarantee/inquiries-records'], {
+            queryParams: { tab: 'pending' }
+          });
+        },
+        error: () => {
+          this.snackbar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
+        }
+      });
+    }
 }

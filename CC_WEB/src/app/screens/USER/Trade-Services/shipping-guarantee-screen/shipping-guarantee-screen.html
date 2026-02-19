@@ -38,9 +38,9 @@
 
         <!-- APPROVAL -->
         <ng-container *ngIf="screenMode === 'SUBMITTED'">
-          <button mat-stroked-button color="primary">Reject</button>
+          <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
 
-          <button mat-flat-button color="accent">Approve</button>
+          <button mat-flat-button color="accent" (click)="approve()">Approve</button>
         </ng-container>
 
         <!-- APPROVED -->
@@ -52,7 +52,7 @@
         <!-- REJECTED -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
           <button mat-stroked-button color="primary" (click)="back()">Back</button>
-          <button mat-flat-button color="primary">Update</button>
+          <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
         </ng-container>
 
       </div>

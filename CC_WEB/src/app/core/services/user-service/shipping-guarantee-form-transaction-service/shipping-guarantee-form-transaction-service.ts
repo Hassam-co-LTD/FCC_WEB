@@ -33,4 +33,11 @@ export class ShippingGuaranteeFormTransactionService {
         this.currentTransaction = tx;
         this.viewMode = readOnly ? 'readonly' : 'submit';
       }
+
+  getCurrentTransaction(): ShippingGuaranteeTransaction | null {
+          return this.currentTransaction;
+        }
+  getViewMode(): 'submit' | 'readonly' {
+    return this.viewMode;
+  }
 }

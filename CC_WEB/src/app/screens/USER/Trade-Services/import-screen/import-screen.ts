@@ -24,6 +24,7 @@ import { ImportlcFormTransactionService } from '../../../../core/services/user-s
 import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
 @Component({
@@ -43,6 +44,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     Licenses,
     InstructionToBank,
     Attachments,
+    MatDialogModule,
     Sidebar,
     RouterOutlet,
   ],
@@ -80,7 +82,7 @@ export class ImportScreen implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private route: ActivatedRoute,
-    private dialog: Dialog,
+    private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService
 
@@ -430,11 +432,11 @@ export class ImportScreen implements OnInit {
     });
   }
   openReject(): void {
-    const dialogRef = this.dialog.open<string>(RejectDialogComponent, {
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px'
     });
 
-    dialogRef.closed.subscribe((reason: string | undefined) => {
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
 
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({

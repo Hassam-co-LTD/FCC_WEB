@@ -237,6 +237,30 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  /** Approve transaction */
+  approveTransactionForShippingGuarantee(tnxId: string, data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/approve/${tnxId}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+
+  /** Reject Reason */
+  rejectTransactionForShippingGuarantee(tnxId: string, reason: string): Observable<ShippingGuaranteeTransaction> {
+    return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/rejectReason/${tnxId}`, { rejectionReason: reason }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // update-Rejected
+  updateRejectedTransactionForShippingGuarantee(tnxId: string, payload: ShippingGuaranteeTransaction) {
+    return this.http.put<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/updateRejected/${tnxId}`, payload, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
   //=================================================================
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================

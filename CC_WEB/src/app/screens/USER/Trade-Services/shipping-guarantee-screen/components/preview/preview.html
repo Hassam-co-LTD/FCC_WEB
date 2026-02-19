@@ -1,6 +1,6 @@
-<div class="preview-page">
+<div class="preview-page" *ngIf="ShippingGuaranteeForm">
 
-  <h2 class="page-title">Shipping Guarantee Preview</h2>
+  <h2 class="page-title">Preview</h2>
 
   <div class="preview-container">
 
@@ -9,39 +9,157 @@
     <!-- ============================== -->
     <div class="preview-row">
 
+      <!-- GENERAL DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">General Details</h3>
-        <div *ngIf="previewData?.generalDetails" class="preview-grid">
-          <div class="preview-item" *ngFor="let key of ['expiryDate','beneficiaryReference','customerReference','billNumber','modeOfShipment','shippingDetails','descriptionOfGoods']">
-            <div class="preview-label">{{ key | titlecase }}:</div>
-            <div class="preview-value">{{ previewData.generalDetails[key] }}</div>
+        <div class="preview-grid">
+
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Reference</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.beneficiaryReference }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Customer Reference</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.customerReference }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Bill Of Lading</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.billoflading }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Mode Of Shipment</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.modeOfShipment }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Shipping Details</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.shippingDetails }}</div>
+          </div>
+          <div class="preview-item">
+            <div class="preview-label">Description</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.description }}</div>
           </div>
         </div>
       </mat-card>
 
+      <!-- APPLICANT / BENEFICIARY -->
       <mat-card class="preview-card">
-        <h3 class="section-title">Applicant & Beneficiary</h3>
-        <div *ngIf="previewData?.applicantBeneficiary" class="preview-grid">
-          <div class="preview-item" *ngFor="let key of ['applicantName','beneficiaryName','beneficiaryCountry']">
-            <div class="preview-label">{{ key | titlecase }}:</div>
-            <div class="preview-value">{{ previewData.applicantBeneficiary[key] }}</div>
+        <h3 class="section-title">Applicant / Beneficiary</h3>
+        <div class="preview-grid">
+
+          <div class="preview-item">
+            <div class="preview-label">Applicant Name</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.applicantName }}
+            </div>
           </div>
+          
+          <div class="preview-item">
+            <div class="preview-label">Applicant Address</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.applicantAddress1 }}
+              {{ ShippingGuaranteeForm.value.applicantAddress2 }}
+            </div>
+          </div>
+          
+          <div class="preview-item">
+            <div class="preview-label">Applicant Country</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.applicantCountry }}
+            </div>
+          </div>
+          
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Name</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.beneficiaryName }}
+            </div>
+          </div>
+          
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Address</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.beneficiaryAddress1 }}
+              {{ ShippingGuaranteeForm.value.beneficiaryAddress2 }}
+            </div>
+          </div>
+          
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Country</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.beneficiaryCountry }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
 
     </div>
 
     <!-- ============================== -->
-    <!-- ROW 2 → BANK DETAILS           -->
+    <!-- ROW 2 → BANK + AMOUNT         -->
     <!-- ============================== -->
     <div class="preview-row">
 
+      <!-- BANK DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">Bank Details</h3>
-        <div *ngIf="previewData?.bankDetails" class="preview-grid">
-          <div class="preview-item" *ngFor="let key of ['swiftCode','bankName','issuerReference','currency','guaranteeAmount']">
-            <div class="preview-label">{{ key | titlecase }}:</div>
-            <div class="preview-value">{{ previewData.bankDetails[key] }}</div>
+        <div class="preview-grid">
+         <div class="preview-item">
+            <div class="preview-label">Bank Name</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.bankName }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Issuer Reference</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.issuerReference }}
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- AMOUNT & CHARGES -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Amount & Charges</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Currency</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.currency }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Amount</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.amount | number:'1.2-2' }}
+            </div>
+          </div>
+
+      
+
+      
+        </div>
+      </mat-card>
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Instructions to Bank</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Principal Account</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.principalAccount }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Fee Account</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.feeAccount }}</div>
+          </div>
+
+          <div class="preview-item full-width">
+            <div class="preview-label">Other Instructions</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.otherInstructions }}</div>
           </div>
         </div>
       </mat-card>
@@ -49,62 +167,65 @@
     </div>
 
     <!-- ============================== -->
-    <!-- ROW 3 → INSTRUCTIONS           -->
+    <!-- ROW 5 → ATTACHMENTS           -->
     <!-- ============================== -->
-    <div class="preview-row">
-
-      <mat-card class="preview-card full-width">
-        <h3 class="section-title">Instructions</h3>
-        <div *ngIf="previewData?.instructions" class="preview-grid">
-          <div class="preview-item" *ngFor="let key of ['instructionType','details']">
-            <div class="preview-label">{{ key | titlecase }}:</div>
-            <div class="preview-value">{{ previewData.instructions[key] }}</div>
-          </div>
-        </div>
-      </mat-card>
-
-    </div>
-
-    <!-- ============================== -->
-    <!-- ROW 4 → ATTACHMENTS            -->
-    <!-- ============================== -->
-<mat-card class="preview-card full-width">
+    <mat-card class="preview-card full-width">
       <h3 class="section-title">Attachments</h3>
 
-      <div *ngIf="attachmentsArray.length > 0" class="preview-attachments-container">
-
-        <div class="attachment-grid header">
-          <div>Type</div>
-          <div>Title</div>
-          <div>File Name</div>
-          <div>Size</div>
-          <div>Actions</div>
-        </div>
-
-        <div class="attachment-grid" *ngFor="let f of attachmentsArray; let i = index">
-          <div>
-            <mat-icon *ngIf="f.type.includes('pdf')" class="pdf-icon">picture_as_pdf</mat-icon>
-            <mat-icon *ngIf="f.type.includes('image')" class="image-icon">image</mat-icon>
+      <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
+        <div class="preview-attachments-container">
+          <div class="attachment-grid header">
+            <div>Type</div>
+            <div>Title</div>
+            <div>File Name</div>
+            <div>Size</div>
+            <div>Actions</div>
           </div>
 
-          <div>{{ f.title }}</div>
-          <div>{{ f.fileName }}</div>
-          <div>{{ (f.size / 1024) | number:'1.0-2' }} KB</div>
-
-          <div class="actionss">
-            <mat-icon  class="action-icon" (click)="downloadFile(i)">download</mat-icon>
+          <div class="attachment-grid"
+            *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex">
+            <div>
+              <mat-icon *ngIf="f.value.type?.includes('pdf')">picture_as_pdf</mat-icon>
+              <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
+            </div>
+            <div>{{ f.value.title }}</div>
+            <div>{{ f.value.fileName }}</div>
+            <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+            <div>
+              <mat-icon (click)="downloadFile(i)">download</mat-icon>
+            </div>
           </div>
         </div>
-      </div>
+      </ng-container>
 
-      <p *ngIf="attachmentsArray.length === 0">No attachments uploaded.</p>
+      <ng-template #noAttachments>
+        <p>No attachments uploaded.</p>
+      </ng-template>
     </mat-card>
 
   </div>
-
 </div>
 
 <div class="actions">
+
+  <!-- ALWAYS -->
   <button mat-stroked-button (click)="back()">Back</button>
-  <button mat-flat-button color="primary" (click)="submit()">Submit</button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+
+    <button mat-flat-button color="primary" (click)="submit()" *ngIf="currentTx?.status === 'I'">
+      Submit
+    </button>
+
+    <button mat-flat-button color="warn" (click)="rejectTransaction()" *ngIf="currentTx?.status === 'S'">
+      Reject
+    </button>
+
+    <button mat-flat-button color="primary" (click)="approveTransaction()" *ngIf="currentTx?.status === 'S'">
+      Approve
+    </button>
+
+  </ng-container>
+
 </div>

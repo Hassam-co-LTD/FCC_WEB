@@ -36,6 +36,12 @@ export interface ShippingGuaranteeTransaction{
     feeAccount?: string;
     otherInstructions?: string;
 
+    attachments?: {
+        id?: number;
+        fileName: string;
+        file: string | Blob;
+    }[];
+    
     // System fields
     status?: string; // "I", "S", "A"
     tnxId?: string;
