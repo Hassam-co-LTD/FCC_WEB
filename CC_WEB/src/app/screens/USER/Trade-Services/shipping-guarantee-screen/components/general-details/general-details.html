@@ -5,7 +5,7 @@
 
 <!-- COLLAPSIBLE -->
 <div class="collapsible" [class.open]="isOpen">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form [formGroup]="form">
 
     <!-- ===== Row 1 : Expiry Date ===== -->
     <div class="form-grid-2">
@@ -43,7 +43,7 @@
       <div class="field-group">
         <mat-form-field appearance="outline">
           <mat-label>Bill of Lading / Airway Bill Number *</mat-label>
-          <input matInput formControlName="billNumber" />
+          <input matInput formControlName="billoflading" />
         </mat-form-field>
       </div>
 
@@ -74,9 +74,9 @@
     <div class="form-grid">
       <mat-form-field appearance="outline" class="full">
         <mat-label>Description of Goods *</mat-label>
-        <textarea matInput rows="3" maxlength="222" formControlName="descriptionOfGoods"></textarea>
+        <textarea matInput rows="3" maxlength="222" formControlName="description"></textarea>
         <mat-hint align="end">
-          {{ form.get('descriptionOfGoods')?.value?.length || 0 }}/222
+          {{ form.get('description')?.value?.length || 0 }}/222
         </mat-hint>
       </mat-form-field>
     </div>

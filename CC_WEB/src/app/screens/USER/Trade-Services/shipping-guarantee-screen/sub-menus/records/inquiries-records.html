@@ -1,11 +1,9 @@
-<!-- ================= HEADER ================= -->
 <div class="page-header">
     <div class="title">
-        <h2>{{ activeTab | titlecase }} Import LC Records</h2>
-        <p>Manage and track all Import LC {{ activeTab }} transactions</p>
+        <h2>{{ activeTab | titlecase }} Shipping Records</h2>
+        <p>Manage and track all Shipping {{ activeTab }} transactions</p>
     </div>
 </div>
-
 
 <!-- ================= SEARCH ================= -->
 <div class="search-system">
@@ -23,21 +21,14 @@
     </button>
 </div>
 
-
 <!-- ================= ADVANCED SEARCH ================= -->
 <div class="advanced-search" *ngIf="showAdvanced">
-    <!-- <div class="field">
-        <label>Status</label>
-        <select [(ngModel)]="activeTab" (change)="applyFilters()">
-            <option *ngFor="let tab of tabs" [value]="tab.key">{{ tab.label }}</option>
-        </select>
-    </div> -->
-
     <div class="field">
         <label>Currency</label>
         <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
     </div>
 </div>
+
 
 <!-- ================= TABS ================= -->
 <div class="ui-tabs">
@@ -49,8 +40,8 @@
 
 <div class="filter-row">
     <div class="results-summary">
-        Showing <strong>{{ pagedTransactions.length }}</strong>
-        of <strong>{{ filteredTransactions.length }}</strong>
+        Showing <strong>{{ pagedTransactions.length }}</strong> 
+        of <strong>{{ filteredTransactions.length }}</strong> 
         {{ activeTab }} records
     </div>
 </div>
@@ -61,23 +52,19 @@
             <tr>
                 <th (click)="sortBy('tnxId')">TNX ID</th>
                 <th (click)="sortBy('createdOn')">Created</th>
-                <th>Product</th>
                 <th>Issuer Reference</th>
                 <th>Expiry Date</th>
                 <th>Currency</th>
                 <th>Amount</th>
                 <th>Applicant</th>
                 <th>Beneficiary</th>
-                <!-- <th>Status</th> -->
                 <th>Action</th>
             </tr>
         </thead>
-
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <td><a class="tnx-link" (click)="openImportLc(tx)">{{ tx.tnxId }}</a></td>
+                <td><a class="tnx-link" (click)="openShippingGuarantee(tx)">{{ tx.tnxId }}</a></td>
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.productType }}</td>
                 <td>{{tx.issuerReference}}</td>
                 <td>{{ tx.expiryDate }}</td>
                 <td>{{ tx.currency }}</td>
@@ -91,13 +78,13 @@
                     </button>
                 </td>
             </tr>
-
+        
             <tr *ngIf="pagedTransactions.length === 0">
                 <td colspan="20" class="no-records">
-                    No {{ activeTab }} Import LC records found
+                    No {{ activeTab }} Shipping Guarantee records found
                 </td>
             </tr>
-
+        
         </tbody>
     </table>
 

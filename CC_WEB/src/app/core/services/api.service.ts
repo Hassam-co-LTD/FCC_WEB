@@ -4,7 +4,8 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
-import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';
+import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
+
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
 export interface UndertakingLc {
@@ -38,7 +39,7 @@ export class ApiService {
   // -------------------------------------------------------------
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   private baseUrl = `${environment.apiUrl}`;
-  // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
+  private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) { }
 
@@ -91,17 +92,17 @@ export class ApiService {
   }
 
   // Get full transactions by status
-  getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
-    const companyId = sessionStorage.getItem('companyId')
-    const headers = new HttpHeaders({
-      companyid: companyId ?? ''
-    });
-    return this.http.get<ImportLcTransaction[]>(
-      `${this.baseUrl}/importlc/status/${status}`,
-      { headers }
-    )
-      .pipe(catchError(this.handleError));
-  }
+  // getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
+  //   const companyId = sessionStorage.getItem('companyId')
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId ?? ''
+  //   });
+  //   return this.http.get<ImportLcTransaction[]>(
+  //     `${this.baseUrl}/importlc/status/${status}`,
+  //     {headers}
+  //   )
+  //     .pipe(catchError(this.handleError));
+  // }
 
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getRecordTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
@@ -117,8 +118,6 @@ export class ApiService {
   //   return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`)
   //     .pipe(catchError(this.handleError));
   // }
-
-  //  Update draft (pending record) by Tnx ID
 
   // Update draft (pending record) by Tnx ID
   updatePendingByTnxId(payload: ImportLcTransaction): Observable<ImportLcTransaction> {
@@ -176,9 +175,94 @@ export class ApiService {
   }
   /* -------------------- IMPORT LC API Methods END -------------------- */
 
-
   // =================================================================
-  // API Methods For UNDERTAKING LC MODULE – ✅ FULLY ALIGNED WITH CONTROLLER
+  // API Methods For SHIPPING GUARANTEE MODULE END
+  // =================================================================
+  // Save LC Record (pending record) - status "I"
+
+  savePendingShippingGuarantee(data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
+    console.log('Saving draft:', data);
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/save`, data,
+      { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------} --- List so using ShippingGuaranteeTransaction[] -> "[]"
+  getRecordTransactionsByStatusForShippingGuarantee(status: String): Observable<ShippingGuaranteeTransaction[]> {
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    })
+    return this.http.get<ShippingGuaranteeTransaction[]>(`${this.baseUrl}/shippingguarantee/records/${status}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Update draft (pending record) by Tnx ID
+  updatePendingByTnxIdForShippingGuarantee(
+    tnxId: string,
+    payload: ShippingGuaranteeTransaction
+  ): Observable<ShippingGuaranteeTransaction> {
+
+    return this.http
+      .put<ShippingGuaranteeTransaction>(
+        `${this.baseUrl}/shippingguarantee/${tnxId}`,
+        payload
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  // Submit transaction (status "S") with full data
+
+  submitShippingGuaranteeByTnxId(
+    tnxId: string,
+    data: ShippingGuaranteeTransaction
+  ): Observable<ShippingGuaranteeTransaction> {
+    console.log('Submitting transaction:', tnxId, data);
+    return this.http
+      .post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/submit/${tnxId}`, data, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get Transaction by TNX ID for record clicking for READ-ONLY view for approved/rejected records --- NOT a List so not using ShippingGuaranteeTransaction X -> []
+  getTransactionForShippingGuaranteeByTnxId(tnxId: string): Observable<ShippingGuaranteeTransaction> {
+    return this.http.get<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/${tnxId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Approve transaction */
+  approveTransactionForShippingGuarantee(tnxId: string, data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/approve/${tnxId}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+
+  /** Reject Reason */
+  rejectTransactionForShippingGuarantee(tnxId: string, reason: string): Observable<ShippingGuaranteeTransaction> {
+    return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/rejectReason/${tnxId}`, { rejectionReason: reason }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // update-Rejected
+  updateRejectedTransactionForShippingGuarantee(tnxId: string, payload: ShippingGuaranteeTransaction) {
+    return this.http.put<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/updateRejected/${tnxId}`, payload, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  //=================================================================
+  // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
 
   getUndertakingByStatus(status: string): Observable<RecordListDTO[]> {

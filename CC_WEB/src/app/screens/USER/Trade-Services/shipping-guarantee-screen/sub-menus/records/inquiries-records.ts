@@ -1,56 +1,90 @@
 import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
-import {
-  ImportlcFormTransactionService,
-} from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+// SERVICES
+import { ShippingGuaranteeTransaction } from '../../../../../../core/models/shipping-guarantee';
+import { ApiService } from '../../../../../../core/services/api.service';
+import { ShippingGuaranteeFormTransactionService } from '../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 
-import { ImportLcTransaction } from "../../../../../../../core/models/import-lc";
-import { ApiService } from '../../../../../../../core/services/api.service';
 @Component({
-  selector: 'app-enquiries-of-records',
+  selector: 'app-inquiries-records',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
-  templateUrl: './enquiries-of-records.html',
-  styleUrls: ['./enquiries-of-records.scss']
+  imports: [
+    CommonModule, 
+    MatIconModule, 
+    MatButtonModule,
+    MatTooltipModule,
+    FormsModule,
+    DatePipe,
+    TitleCasePipe
+  ],
+  templateUrl: './inquiries-records.html',
+  styleUrls: ['./inquiries-records.scss']
 })
-export class EnquiriesOfRecords implements OnInit {
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
+export class inquiriesRecords implements OnInit {
+  
+  // State
+  allTransactions: ShippingGuaranteeTransaction[] = [];
+  filteredTransactions: ShippingGuaranteeTransaction[] = [];
+  
+  // Filters
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
   showAdvanced = false;
 
+  // Tabs Configuration
   tabs = [
-    // { key: 'live', label: 'Live' },
-    { key: 'pending', label: 'Pending' },
-    { key: 'submitted', label: 'Submitted' },
-    { key: 'approved', label: 'Approved' },
-    { key: 'rejected', label: 'Rejected' },
-    // { key: 'response awaited', label: 'Response Awaited'}
+    { key: 'pending', label: 'Pending' },     // Drafts (Input)
+    { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
+    { key: 'approved', label: 'Approved' },   // Final (View Only)
+    { key: 'rejected', label: 'Rejected' }    // Correction (Edit)
   ];
 
+  // Pagination
   currentPage = 1;
   itemsPerPage = 10;
 
-  sortColumn: keyof ImportLcTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
+  // Sorting
+  sortColumn: keyof ShippingGuaranteeTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
   private isBrowser: boolean;
 
   constructor(
-    private api: ApiService,
-    private transactionService: ImportlcFormTransactionService,
+     private api: ApiService,
+    private transactionService: ShippingGuaranteeFormTransactionService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  // ngOnInit(): void {
+  //   if (!this.isBrowser) return;
+
+  //   // 1. Check URL for tab preference
+  //   this.route.queryParams.subscribe(params => {
+  //       if(params['tab']) {
+  //           this.activeTab = params['tab'];
+  //       }
+  //       // Initial Load (Backend Filtered)
+  //       this.loadByStatus();
+  //   });
+
+  //   // 2. Subscribe to stream updates (Real-time updates)
+  //   this.transactionService.transactionsStream$.subscribe(txList => {
+  //     this.allTransactions = txList; 
+  //     // Filter ONLY by search/sort locally (Status is done by backend)
+  //     this.filterBySearchOnly(); 
+  //   });
+  // }
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
@@ -60,14 +94,12 @@ export class EnquiriesOfRecords implements OnInit {
       this.allTransactions = txList;
       this.applyFilters();
     }
-  );
+    );
   }
-
-
   private loadTransactions(): void {
     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
-    this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
+    this.api.getRecordTransactionsByStatusForShippingGuarantee(backendStatus).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
         this.applyFilters();
@@ -78,8 +110,15 @@ export class EnquiriesOfRecords implements OnInit {
       }
     });
   }
+  // --- DATA LOADING ---
 
+  setActiveTab(tab: string): void {
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.loadTransactions();
+  }
 
+  // --- FILTERING ---
 
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
@@ -91,7 +130,6 @@ export class EnquiriesOfRecords implements OnInit {
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
         tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.issuingBankName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
 
       const matchesCurrency =
@@ -102,46 +140,13 @@ export class EnquiriesOfRecords implements OnInit {
 
     this.applySorting(filtered);
   }
-
-  // setActiveTab(tab: string): void {
-  //   this.activeTab = tab;
-  //   this.applyFilters();
-  // }
-
-  setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadTransactions();
-  }
-
-  // private loadByStatus(status: string): void {
-  //   const backendStatus = this.mapTabToBackendStatus(status);
-  //   this.api.getTransactionsByStatus(backendStatus).subscribe({
-  //     next: (txList) => {
-  //       this.allTransactions = txList;
-  //       this.filteredTransactions = txList;
-  //     },
-  //     error: () => {
-  //       this.allTransactions = [];
-  //       this.filteredTransactions = [];
-  //     }
-  //   });
-  // }
-
-
-  // getTabCount(tabKey: string): number {
-  //   return this.allTransactions.filter(tx => this.mapStatusToTab(tx.status!) === tabKey).length;
-  // }
-
+  
   clearSearch(): void {
     this.searchQuery = '';
     this.applyFilters();
   }
 
-  // clearCurrency(): void {
-  //   this.currencyFilter = '';
-  //   this.applyFilters();
-  // }
+  // --- SORTING ---
 
   sortBy(column: typeof this.sortColumn): void {
     if (this.sortColumn === column) {
@@ -153,7 +158,7 @@ export class EnquiriesOfRecords implements OnInit {
     this.applyFilters();
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
+  private applySorting(source: ShippingGuaranteeTransaction[] = this.allTransactions): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
@@ -188,8 +193,7 @@ export class EnquiriesOfRecords implements OnInit {
     this.currentPage = 1;
   }
 
-
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
+  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
     switch (column) {
       case 'tnxId': return tx.tnxId;
       case 'currency': return tx.currency;
@@ -200,11 +204,13 @@ export class EnquiriesOfRecords implements OnInit {
     }
   }
 
+  // --- PAGINATION ---
+
   get totalPages(): number {
     return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
   }
 
-  get pagedTransactions(): ImportLcTransaction[] {
+  get pagedTransactions(): ShippingGuaranteeTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -217,40 +223,38 @@ export class EnquiriesOfRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  // viewTransaction(tx: ImportLcTransaction): void {
-  //   this.transactionService.setCurrentTransaction(tx, true);
-  //   this.router.navigate(['/import-screen/preview']);
-  // }
-  viewTransaction(tx: ImportLcTransaction): void {
+  // --- NAVIGATION ACTIONS ---
+
+ viewTransaction(tx: ShippingGuaranteeTransaction): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-    this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
+   this.api.getTransactionForShippingGuaranteeByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+        this.router.navigate(['/shipping-guarantee/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+        this.router.navigate(['/shipping-guarantee/preview']);
       }
     });
   }
 
-  openImportLc(tx: ImportLcTransaction) {
+  openShippingGuarantee(tx: ShippingGuaranteeTransaction) {
     // Store transaction in service for import screen to pick up
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
-    this.router.navigate(['/import-screen', tx.tnxId], {
+    this.router.navigate(['/shipping-guarantee', tx.tnxId], {
       state: {
         transaction: tx,
         // showUpdateSubmit: true // flag to show buttons
-        mode : mode
+        mode: mode
       }
     });
   }
-
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  
+  trackByTnxId(_: number, tx: ShippingGuaranteeTransaction): string {
     return tx.tnxId!;
   }
 
@@ -279,6 +283,5 @@ export class EnquiriesOfRecords implements OnInit {
         return 'i';
     }
   }
-
 
 }
