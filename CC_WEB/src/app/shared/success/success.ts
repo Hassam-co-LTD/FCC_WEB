@@ -45,6 +45,11 @@ export class Success implements OnInit {
         this.createRoute =
           'undertaking-issuance/request-undertaking/general-details';
         break;
+
+      case 'SHIPPING_GUARANTEE':
+        this.listingRoute = 'shipping-guarantee/inquiries-records';
+        this.createRoute = 'shipping-guarantee';
+        break;
     }
 
     // Explicit overrides (still supported)
