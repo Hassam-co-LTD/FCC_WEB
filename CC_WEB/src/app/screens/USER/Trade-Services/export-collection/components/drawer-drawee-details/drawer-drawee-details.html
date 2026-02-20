@@ -10,12 +10,18 @@
       <div class="preview-column">
         <h4 class="preview-sub-title">Drawer</h4>
         <div><strong>Name:</strong> {{ form.value.drawerName || '—' }}</div>
-        <div><strong>Address:</strong> {{ form.value.drawerAddress1 || '—' }}</div>
+        <div><strong>Address1:</strong> {{ form.value.drawerAddress1 || '—' }}</div>
+        <div><strong>Address2:</strong> {{ form.value.drawerAddress2 || '—' }}</div>
+        <div><strong>Address3:</strong> {{ form.value.drawerAddress3 || '—' }}</div>
+        <div><strong>Address4:</strong> {{ form.value.drawerAddress4 || '—' }}</div>
       </div>
       <div class="preview-column">
         <h4 class="preview-sub-title">Drawee</h4>
         <div><strong>Name:</strong> {{ form.value.draweeName || '—' }}</div>
-        <div><strong>Address:</strong> {{ form.value.draweeAddress1 || '—' }}</div>
+        <div><strong>Address1:</strong> {{ form.value.draweeAddress1 || '—' }}</div>
+        <div><strong>Address2:</strong> {{ form.value.draweeAddress2 || '—' }}</div>
+        <div><strong>Address3:</strong> {{ form.value.draweeAddress3 || '—' }}</div>
+        <div><strong>Address4:</strong> {{ form.value.draweeAddress4 || '—' }}</div>
       </div>
     </div>
   }
@@ -43,6 +49,10 @@
         <mat-label>Address 3</mat-label>
         <input matInput type="text" formControlName="drawerAddress3" placeholder="Enter Address 3">
       </mat-form-field>
+       <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 4</mat-label>
+        <input matInput type="text" formControlName="drawerAddress4" placeholder="Enter Address 4">
+      </mat-form-field>
     </div>
 
     <h4 class="sub-title">Drawee Details</h4>
@@ -65,6 +75,10 @@
       <mat-form-field appearance="outline" class="full">
         <mat-label>Address 3</mat-label>
         <input matInput type="text" formControlName="draweeAddress3" placeholder="Enter Address 3">
+      </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+        <mat-label>Address 4</mat-label>
+        <input matInput type="text" formControlName="draweeAddress4" placeholder="Enter Address 4">
       </mat-form-field>
     </div>
   </div>

@@ -33,8 +33,8 @@
       <h4 class="sub-title">Remitting Bank Details</h4>
       <div class="form-grid-2">
         <mat-form-field appearance="outline" class="full">
-          <mat-label>Bank Name *</mat-label>
-          <mat-select formControlName="remittingBankName">
+          <mat-label>Remitting Bank *</mat-label>
+          <mat-select formControlName="remittingBank">
             <mat-option value="">Select Bank</mat-option>
             @for (b of bankList; track b) {
               <mat-option [value]="b">{{ b }}</mat-option>
@@ -64,8 +64,8 @@
       <h4 class="sub-title">Presenting Bank Details</h4>
       <div class="form-grid-2">
         <mat-form-field appearance="outline" class="full">
-          <mat-label>Bank Name *</mat-label>
-          <mat-select formControlName="presentingBankName">
+          <mat-label>Presenting Bank *</mat-label>
+          <mat-select formControlName="presentingBank">
             <mat-option value="">Select Bank</mat-option>
             @for (b of bankList; track b) {
               <mat-option [value]="b">{{ b }}</mat-option>
@@ -80,6 +80,14 @@
           <mat-label>Address 2</mat-label>
           <input matInput formControlName="presentingAddress2" placeholder="Enter address 2" />
         </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 3</mat-label>
+          <input matInput formControlName="presentingAddress3" placeholder="Enter address 3" />
+        </mat-form-field>
+          <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 4</mat-label>
+          <input matInput formControlName="presentingAddress4" placeholder="Enter address 4" />
+        </mat-form-field>
       </div>
     }
 
@@ -88,7 +96,7 @@
       <div class="form-grid-2">
         <mat-form-field appearance="outline" class="full">
           <mat-label>Collecting Bank</mat-label>
-          <mat-select formControlName="collectingBankName">
+          <mat-select formControlName="collectingBank">
             <mat-option value="">Select Bank</mat-option>
             @for (b of bankList; track b) {
               <mat-option [value]="b">{{ b }}</mat-option>
@@ -100,7 +108,7 @@
           <input matInput formControlName="collectingSwiftCode" placeholder="Enter SWIFT code" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">
-          <mat-label>Reference</mat-label>
+          <mat-label>Collecting Reference</mat-label>
           <input matInput formControlName="collectingReference" placeholder="Enter reference" />
         </mat-form-field>
       </div>

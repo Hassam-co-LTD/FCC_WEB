@@ -39,7 +39,7 @@ export class ApiService {
   // -------------------------------------------------------------
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   private baseUrl = `${environment.apiUrl}`;
-  private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
+  // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) { }
 

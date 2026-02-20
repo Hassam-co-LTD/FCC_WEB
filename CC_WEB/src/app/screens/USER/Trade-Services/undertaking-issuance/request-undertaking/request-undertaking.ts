@@ -413,10 +413,12 @@ export class RequestUndertaking implements OnInit {
         applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
+        applicantAddress4: [''],
         beneficiaryName: ['', Validators.required],
         beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
         beneficiaryCountry: ['']
       }),
       bankForm: this.fb.group({
@@ -428,6 +430,7 @@ export class RequestUndertaking implements OnInit {
         address1: [''],
         address2: [''],
         address3: [''],
+        address4: [''],
         country: ['']
       }),
       undertakingDetails: this.fb.group({
@@ -445,8 +448,8 @@ export class RequestUndertaking implements OnInit {
         textOfUndertakingInfo: [''],
         underlyingTransactionInfo: [''],
         presentationInfo: [''],
-        basicExtensionType: [''],
-        increaseDecreaseType: [''],
+        BasicExtensionType: [''],
+        IncreaseDecreaseType: [''],
         contractType: [''],
         contractDate: [''],
         contractCurrency: [''],
