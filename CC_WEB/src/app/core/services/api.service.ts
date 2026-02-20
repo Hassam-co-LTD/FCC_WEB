@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
-import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
+import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
@@ -39,7 +39,7 @@ export class ApiService {
   // -------------------------------------------------------------
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   private baseUrl = `${environment.apiUrl}`;
-  private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
+  // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) { }
 
@@ -265,81 +265,102 @@ export class ApiService {
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
 
-  getUndertakingList(): Observable<UndertakingLc[]> {
-    // GET /api/v1/undertaking_lc/list
-    return this.http.get<UndertakingLc[]>(`${this.baseUrl}undertaking_lc/list`)
-      .pipe(catchError(this.handleError));
-  }
-
-  // 2️⃣ Get record list strictly by STATUS (BEST FOR TABS)
-  getUndertakingRecordsByStatus(status: string): Observable<UndertakingLc[]> {
-    return this.http.get<UndertakingLc[]>(
-      `${this.baseUrl}undertaking_lc/status/${status}`
+  getUndertakingByStatus(status: string): Observable<RecordListDTO[]> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<RecordListDTO[]>(
+      `${this.baseUrl}undertaking_lc/status/${status}`,
+      { headers }
     ).pipe(catchError(this.handleError));
   }
-  getUndertakingById(id: number | string): Observable<UndertakingLc> {
-    // GET /api/v1/undertaking_lc/{id}
-    return this.http.get<UndertakingLc>(`${this.baseUrl}undertaking_lc/${id}`)
-      .pipe(catchError(this.handleError));
+
+  getUndertakingRecordsByStatus(status: string): Observable<RecordListDTO[]> {
+    return this.http.get<RecordListDTO[]>(
+      `${this.baseUrl}undertaking_lc/records/${status}`
+    ).pipe(catchError(this.handleError));
   }
 
-  saveUndertakingDraft(data: UndertakingLc): Observable<UndertakingLc> {
-    const companyId = sessionStorage.getItem('companyId');
+  getUndertakingByTnxId(tnxId: string): Observable<UndertakingResponseDTO> {
+    return this.http.get<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/${tnxId}`
+    ).pipe(catchError(this.handleError));
+  }
+
+  saveUndertakingDraft(dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
+    const companyId = sessionStorage.getItem('companyId') || '';
     const headers = new HttpHeaders({
-      companyid: companyId ?? ''
+      'Content-Type': 'application/json',
+      companyid: companyId
     });
-    // POST /api/v1/undertaking_lc/save
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/save`, data, { headers })
-      .pipe(catchError(this.handleError));
+    return this.http.post<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/save`,
+      dto,
+      { headers }
+    ).pipe(catchError(this.handleError));
   }
 
-  updateUndertaking(id: number | string, data: UndertakingLc): Observable<UndertakingLc> {
-    // PUT /api/v1/undertaking_lc/update/{id}
-    return this.http.put<UndertakingLc>(`${this.baseUrl}undertaking_lc/update/${id}`, data)
-      .pipe(catchError(this.handleError));
+updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
+  const url = `${this.baseUrl}undertaking/update-draft/${tnxId}`;
+
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'companyid': sessionStorage.getItem('companyId') || 'ABC'
+  });
+
+  return this.http.put<UndertakingResponseDTO>(url, dto, { headers })
+    .pipe(catchError(this.handleError));
+}
+
+  submitUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
+    return this.http.post<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/submit/${tnxId}`,
+      dto,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
   }
 
-  submitUndertaking(id: number | string): Observable<UndertakingLc> {
-    // POST /api/v1/undertaking_lc/submit/{id}
-    // Changed from .put to .post to match @PostMapping
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/submit/${id}`, {})
-      .pipe(catchError(this.handleError));
+  approveUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
+    return this.http.post<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/approve/${tnxId}`,
+      dto,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
   }
 
-  approveUndertaking(id: number | string): Observable<UndertakingLc> {
-    // POST /api/v1/undertaking_lc/approve/{id}
-    // Changed from .put to .post to match @PostMapping
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/approve/${id}`, {})
-      .pipe(catchError(this.handleError));
+  rejectUndertaking(tnxId: string, rejectionReason: string): Observable<UndertakingResponseDTO> {
+    const body = { rejectionReason };
+    return this.http.post<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/rejectReason/${tnxId}`,
+      body,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
   }
 
-  rejectUndertaking(id: number | string, reason: string): Observable<UndertakingLc> {
-    // POST /api/v1/undertaking_lc/reject/{id}
-    // Matches @PostMapping and Map<String, String> payload
-    const body = { reason: reason };
-    return this.http.post<UndertakingLc>(`${this.baseUrl}undertaking_lc/reject/${id}`, body)
-      .pipe(catchError(this.handleError));
+  updateRejectedUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
+    return this.http.put<UndertakingResponseDTO>(
+      `${this.baseUrl}undertaking_lc/updateRejected/${tnxId}`,
+      dto,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
   }
-
-  // =================================================================
-  // API Methods For UNDERTAKING LC MODULE END
-  // =================================================================
-
 
   // =================================================================
   // TRANSFERS API Methods
   // =================================================================
 
   saveTransferDraft(data: TransferDTO): Observable<TransferDTO> {
-    const companyId = sessionStorage.getItem('companyId') || '';
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'companyid': companyId
-    });
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/save`, data, { headers })
-      .pipe(catchError(this.handleError));
-  }
+    const companyId = sessionStorage.getItem('companyId') || 'ABC';
+    const headers = new HttpHeaders()
+      .set('companyid', companyId);
 
+    console.log('Sending to Backend -> companyid:', companyId);
+
+    return this.http.post<TransferDTO>(
+      `${this.baseUrl}transfers/save`,
+      data,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
   getTransfersByStatus(status: string): Observable<TransferDTO[]> {
     const companyId = sessionStorage.getItem('companyId') || '';
     const headers = new HttpHeaders({
@@ -542,15 +563,15 @@ export class ApiService {
   /**
    * Get account options for dropdown (mock/static data)
    */
-  getAccountOptions(): Observable<any[]> {
-    const mockAccounts = [
-      { value: 'ACC001', label: 'Main Operating Account (ACC001) - PKR 5,000,000.00', balance: 5000000.00 },
-      { value: 'ACC002', label: 'Savings Account (ACC002) - PKR 2,500,000.00', balance: 2500000.00 },
-      { value: 'ACC003', label: 'USD Foreign Account (ACC003) - USD 100,000.00', balance: 100000.00 }
-    ];
-    return new Observable(observer => {
-      observer.next(mockAccounts);
-      observer.complete();
-    });
-  }
+  // getAccountOptions(): Observable<any[]> {
+  //   const mockAccounts = [
+  //     { value: 'ACC001', label: 'Main Operating Account (ACC001) - PKR 5,000,000.00', balance: 5000000.00 },
+  //     { value: 'ACC002', label: 'Savings Account (ACC002) - PKR 2,500,000.00', balance: 2500000.00 },
+  //     { value: 'ACC003', label: 'USD Foreign Account (ACC003) - USD 100,000.00', balance: 100000.00 }
+  //   ];
+  //   return new Observable(observer => {
+  //     observer.next(mockAccounts);
+  //     observer.complete();
+  //   });
+  // }
 }

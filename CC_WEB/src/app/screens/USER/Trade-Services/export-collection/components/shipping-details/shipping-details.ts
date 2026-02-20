@@ -25,8 +25,8 @@ export class ShippingDetailsComponent implements OnInit {
   isOpen = true;
 
   shippingMethods = ['Air', 'Sea', 'Land'];
-  incotermsRules = ['FOB', 'CIF', 'EXW'];
-  incoterms = ['DAP', 'DDP', 'FCA'];
+  ApplicableRules = ['DAP', 'DDP', 'FCA'];
+  incoterms       = ['FOB', 'CIF', 'EXW'];
 
   ngOnInit(): void {
     // ❗ Do NOT create a new form here

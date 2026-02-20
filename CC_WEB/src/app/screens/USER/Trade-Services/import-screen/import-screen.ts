@@ -147,11 +147,13 @@ export class ImportScreen implements OnInit {
         applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
+        applicantAddress4: [''],
         applicantCountry: [''],
         beneficiaryName: [''],
         beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
         beneficiaryCountry: ['']
       }),
       bankForm: this.fb.group({

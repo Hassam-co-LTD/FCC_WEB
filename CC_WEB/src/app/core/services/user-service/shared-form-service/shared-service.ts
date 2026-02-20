@@ -43,47 +43,47 @@ export interface TransactionBase {
 })
 export class SharedService {
   // 1. Initialize with some dummy data for testing
-  private initialData: TransactionBase[] = [
-    {
-      id: '101',
-      type: 'undertaking',
-      status: 'Live',
-      channelReference: 'UND-2023-001',
-      customerReference: 'REF-A1',
-      beneficiary: 'Acme Corp',
-      currency: 'USD',
-      amount: 50000,
-      outstandingAmount: 50000,
-      issueDate: new Date('2023-10-01'),
-      createdAt: new Date('2023-10-01'),
-      updatedAt: new Date('2023-10-05'),
-      canEdit: false,
-      canView: true,
-      formData: {}
-    },
-    {
-      id: '102',
-      type: 'export-collection',
-      status: 'Draft',
-      channelReference: 'EXP-2023-099',
-      customerReference: 'PO-999',
-      beneficiary: 'Global Trade Ltd',
-      currency: 'EUR',
-      amount: 12500.50,
-      outstandingAmount: 12500.50,
-      issueDate: new Date('2023-11-15'),
-      createdAt: new Date('2023-11-15'),
-      updatedAt: new Date('2023-11-15'),
-      canEdit: true,
-      canView: true,
-      formData: {},
-      collectionType: 'DA',
-      drawerName: 'Global Trade Ltd'
-    }
-  ];
+  // private initialData: TransactionBase[] = [
+  //   {
+  //     id: '101',
+  //     type: 'undertaking',
+  //     status: 'Live',
+  //     channelReference: 'UND-2023-001',
+  //     customerReference: 'REF-A1',
+  //     beneficiary: 'Acme Corp',
+  //     currency: 'USD',
+  //     amount: 50000,
+  //     outstandingAmount: 50000,
+  //     issueDate: new Date('2023-10-01'),
+  //     createdAt: new Date('2023-10-01'),
+  //     updatedAt: new Date('2023-10-05'),
+  //     canEdit: false,
+  //     canView: true,
+  //     formData: {}
+  //   },
+  //   {
+  //     id: '102',
+  //     type: 'export-collection',
+  //     status: 'Draft',
+  //     channelReference: 'EXP-2023-099',
+  //     customerReference: 'PO-999',
+  //     beneficiary: 'Global Trade Ltd',
+  //     currency: 'EUR',
+  //     amount: 12500.50,
+  //     outstandingAmount: 12500.50,
+  //     issueDate: new Date('2023-11-15'),
+  //     createdAt: new Date('2023-11-15'),
+  //     updatedAt: new Date('2023-11-15'),
+  //     canEdit: true,
+  //     canView: true,
+  //     formData: {},
+  //     collectionType: 'DA',
+  //     drawerName: 'Global Trade Ltd'
+  //   }
+  // ];
 
   // 2. BehaviorSubject holds the current state of transactions
-  private transactionsSubject = new BehaviorSubject<TransactionBase[]>(this.initialData);
+  private transactionsSubject = new BehaviorSubject<TransactionBase[]>([]);
 
   // 3. Components subscribe to this Observable
   public transactions$ = this.transactionsSubject.asObservable();
