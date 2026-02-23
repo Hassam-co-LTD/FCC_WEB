@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -19,7 +19,7 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './shipping-details.html',
   styleUrls: ['./shipping-details.scss']
 })
-export class ShippingDetailsComponent implements OnInit {
+export class ShippingDetailsComponent  {
 
   @Input() form!: FormGroup;   // <-- parent passes the form
   isOpen = true;
@@ -27,11 +27,6 @@ export class ShippingDetailsComponent implements OnInit {
   shippingMethods = ['Air', 'Sea', 'Land'];
   ApplicableRules = ['DAP', 'DDP', 'FCA'];
   incoterms       = ['FOB', 'CIF', 'EXW'];
-
-  ngOnInit(): void {
-    // ❗ Do NOT create a new form here
-    // The form must come from parent component
-  }
 
   toggle() {
     this.isOpen = !this.isOpen;

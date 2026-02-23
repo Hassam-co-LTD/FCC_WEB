@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
 import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
+import { ExportCollectionTransaction } from '../models/export-collection';
 
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
@@ -176,7 +177,7 @@ export class ApiService {
   /* -------------------- IMPORT LC API Methods END -------------------- */
 
   // =================================================================
-  // API Methods For SHIPPING GUARANTEE MODULE END
+  // API Methods For SHIPPING GUARANTEE MODULE START
   // =================================================================
   // Save LC Record (pending record) - status "I"
 
@@ -257,6 +258,97 @@ export class ApiService {
   // update-Rejected
   updateRejectedTransactionForShippingGuarantee(tnxId: string, payload: ShippingGuaranteeTransaction) {
     return this.http.put<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/updateRejected/${tnxId}`, payload, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
+
+
+
+
+  // =================================================================
+  // API Methods For EXPORT COLLECTION MODULE START  
+  // =================================================================
+  
+  // Save LC Record (pending record) - status "I"
+  savePendingForExportCollection(data: ExportCollectionTransaction): Observable<ExportCollectionTransaction> {
+    console.log('Saving draft:', data);
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/save`, data,
+      { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------} --- List so using ShippingGuaranteeTransaction[] -> "[]"
+  getRecordTransactionsByStatusForExportCollection(status: String): Observable<ExportCollectionTransaction[]> {
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    })
+    return this.http.get<ExportCollectionTransaction[]>(`${this.baseUrl}/exportcollection/records/${status}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Update draft (pending record) by Tnx ID
+  updatePendingByTnxIdForExportCollection(
+    tnxId: string,
+    payload: ExportCollectionTransaction
+  ): Observable<ExportCollectionTransaction> {
+
+    return this.http
+      .put<ExportCollectionTransaction>(
+        `${this.baseUrl}/exportcollection/${tnxId}`,
+        payload
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  // Submit transaction (status "S") with full data
+
+  submitExportCollectionByTnxId(
+    tnxId: string,
+    data: ExportCollectionTransaction
+  ): Observable<ExportCollectionTransaction> {
+    console.log('Submitting transaction:', tnxId, data);
+    return this.http
+      .post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/submit/${tnxId}`, data, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get Transaction by TNX ID for record clicking for READ-ONLY view for approved/rejected records --- NOT a List so not using ShippingGuaranteeTransaction X -> []
+  getTransactionForExportCollectionByTnxId(tnxId: string): Observable<ExportCollectionTransaction> {
+    return this.http.get<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/${tnxId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Approve transaction */
+  approveTransactionForExportCollection(tnxId: string, data: ExportCollectionTransaction): Observable<ExportCollectionTransaction> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/approve/${tnxId}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+
+  /** Reject Reason */
+  rejectTransactionForExportCollection(tnxId: string, reason: string): Observable<ExportCollectionTransaction> {
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/rejectReason/${tnxId}`, { rejectionReason: reason }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // update-Rejected
+  updateRejectedTransactionForExportCollection(tnxId: string, payload: ExportCollectionTransaction) {
+    return this.http.put<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/updateRejected/${tnxId}`, payload, {
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));

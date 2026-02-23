@@ -22,19 +22,22 @@ export class Success implements OnInit {
   createRoute = '';
 
   constructor(private router: Router) {
-    const nav = this.router.getCurrentNavigation();
-    const state = nav?.extras.state as any;
 
-    if (!state) {
+    const state = history.state as any;
+
+    if (!state || !state.source) {
       console.warn('No navigation state found on Success page');
+      this.router.navigate(['/dashboard']);
       return;
     }
+
 
     this.tnxId = state.tnxId || state.transaction?.tnxId || '';
     this.reference =
       state.channelReference || state.transaction?.channelReference || '';
 
     switch (state.source) {
+
       case 'IMPORT_LC':
         this.listingRoute = 'import-screen/inquiries';
         this.createRoute = 'import-screen';
@@ -42,14 +45,22 @@ export class Success implements OnInit {
 
       case 'UNDERTAKING_ISSUANCE':
         this.listingRoute = 'undertaking-issuance/inquiries-records';
-        this.createRoute =
-          'undertaking-issuance/request-undertaking/general-details';
+        this.createRoute = 'undertaking-issuance/request-undertaking/general-details';
         break;
 
       case 'SHIPPING_GUARANTEE':
         this.listingRoute = 'shipping-guarantee/inquiries-records';
         this.createRoute = 'shipping-guarantee';
         break;
+
+      case 'EXPORT_COLLECTION':
+        this.listingRoute = 'export-collection/inquiries-records';
+        this.createRoute = 'export-collection';
+        break;
+
+      default:
+        this.listingRoute = 'dashboard';
+        this.createRoute = 'dashboard';
     }
 
     // Explicit overrides (still supported)

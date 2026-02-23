@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -17,14 +17,10 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './drawer-drawee-details.html',
   styleUrls: ['./drawer-drawee-details.scss']
 })
-export class DrawerDraweeDetails implements OnInit {
+export class DrawerDraweeDetails {
 
   @Input() form!: FormGroup;
   isOpen = true;
-
-  ngOnInit(): void {
-    // Do NOT recreate form here — use the form from parent
-  }
 
   toggle() {
     this.isOpen = !this.isOpen;
