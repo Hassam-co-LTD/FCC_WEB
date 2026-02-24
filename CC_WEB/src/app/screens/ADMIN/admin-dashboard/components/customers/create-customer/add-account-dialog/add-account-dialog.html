@@ -1,0 +1,81 @@
+<h2 mat-dialog-title style="color: #08408f; font-weight: 600; border-left: 4px solid #0b4eb3; padding-left: 12px; display: flex; justify-content: space-between;">
+  Add Account for {{ customerName }}
+</h2>
+
+<mat-dialog-content [formGroup]="AccountsForm" class="create-customer-popup">
+  <!-- Collapsible Form -->
+  <div class="customer-form-wrapper">
+    <div class="section-header" (click)="toggle()">
+      <h3 class="section-title">Create Account for Customer</h3>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <div class="collapsible" [class.open]="isOpen">
+      <ng-container *ngIf="isOpen">
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Account No</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="accountNo" placeholder="Account No" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>IBAN</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="iban" placeholder="IBAN" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Account Type</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-select formControlName="accountType" placeholder="Select Account Type">
+                <mat-option value="SAVINGS">Savings</mat-option>
+                <mat-option value="CURRENT">Current</mat-option>
+                <mat-option value="FIXED">Fixed Deposit</mat-option>
+                <mat-option value="ISLAMIC">Islamic</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Account Title</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="accountTitle" placeholder="Account Title" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Account Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-select formControlName="accountStatus" placeholder="Select Account Status">
+                <mat-option value="ACTIVE">Active</mat-option>
+                <mat-option value="INACTIVE">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          
+          <div class="field-group">
+            <h4>Company</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Company</mat-label>
+              <mat-select formControlName="companyId" panelClass="white-dropdown">
+                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
+                  {{ company.companyName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+           
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button color="primary" [disabled]="!AccountsForm.valid" (click)="onSave()">Add</button>
+</mat-dialog-actions>

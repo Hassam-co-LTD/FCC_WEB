@@ -1,0 +1,152 @@
+<!-- =========================
+     CREATE ACCOUNT TYPE PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Account Type</h1>
+  </div>
+
+  <!-- =========================
+       Form Wrapper (Hidden When Approved)
+  ========================== -->
+  <div class="customer-form-wrapper"
+       [ngClass]="{'hide-when-approved': storeAccountMaster?.recordStatus === 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Account Type Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible"
+         [class.open]="isOpen"
+         [formGroup]="accountForm">
+
+      <ng-container *ngIf="isOpen">
+
+        <div class="form-grid form-grid-large">
+
+          <!-- Account Type Name -->
+          <div class="field-group">
+            <h4>Account Type</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput
+                     type="text"
+                     formControlName="typeName"
+                     placeholder="Enter Account Type Name"
+                     [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <!-- Description -->
+          <div class="field-group full">
+            <h4>Description</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput
+                     type="text"
+                     formControlName="description"
+                     placeholder="Enter Description"
+                     [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <!-- Account Status -->
+          <div class="field-group">
+            <h4>Status</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="accountStatus"
+                          [disabled]="isReadOnly()"
+                          panelClass="white-dropdown">
+                <mat-option value="Active">Active</mat-option>
+                <mat-option value="Inactive">Inactive</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        </div>
+
+      </ng-container>
+    </div>
+
+    <!-- =========================
+         ACTION BUTTONS (Inside Wrapper)
+    ========================== -->
+    <div class="customer-actions">
+
+      <!-- New Mode -->
+      <ng-container *ngIf="!storeAccountMaster || !storeAccountMaster.recordStatus">
+        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button class="btn-save"
+                [disabled]="!accountForm.valid"
+                (click)="onSave()">Save</button>
+      </ng-container>
+
+      <!-- Edit Mode - Draft -->
+      <ng-container *ngIf="isEditMode && storeAccountMaster?.recordStatus === 'I'">
+        <button class="btn-back" (click)="onBack()">Back</button>
+        <button class="btn-update"
+                [disabled]="!accountForm.dirty || !accountForm.valid"
+                (click)="update(storeAccountMaster.id)">Update</button>
+        <button class="btn-submit"
+                [disabled]="!accountForm.valid"
+                (click)="submit()">Submit</button>
+      </ng-container>
+
+      <!-- Edit Mode - Submitted -->
+      <ng-container *ngIf="isEditMode && storeAccountMaster?.recordStatus === 'S'">
+        <button class="btn-reject"
+                (click)="reject(storeAccountMaster.id)">Reject</button>
+        <button class="btn-approve"
+                (click)="approve(storeAccountMaster.id)">Approve</button>
+      </ng-container>
+
+    </div>
+
+  </div> <!-- END FORM WRAPPER -->
+
+  <!-- =========================
+       Approved View Mode
+  ========================== -->
+  <div class="approved-container"
+       [ngClass]="{'hide-when-approved': storeAccountMaster?.recordStatus !== 'A'}">
+
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Account Type Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item">
+        <span class="key">Account Type:</span>
+        <span class="value">{{ storeAccountMaster.typeName }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="key">Description:</span>
+        <span class="value">{{ storeAccountMaster.description }}</span>
+      </div>
+
+      <div class="info-item">
+        <span class="key">Status:</span>
+        <span class="value">{{ storeAccountMaster.accountStatus }}</span>
+      </div>
+    </div>
+
+    <!-- Approved Actions -->
+    <div class="approved-actions">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update"
+              (click)="reject(storeAccountMaster.id)">
+        Amend
+      </button>
+    </div>
+
+  </div>
+
+</div>

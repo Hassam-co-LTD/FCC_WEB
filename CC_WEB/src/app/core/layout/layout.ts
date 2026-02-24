@@ -146,30 +146,20 @@ this.router.events
   }
 
 
-  onParentClick(item: MenuItem) {
-  if (item.route) {
-    this.router.navigate([item.route]);
-  }
+onParentClick(item: MenuItem) {
+  // Toggle this parent ONLY
+  item.open = !item.open;
 
-  // Toggle children ONLY if there are children
-  if (item.children) {
-    item.open = !item.open;
+  // Ensure all direct children are initially closed when opening
+  if (item.open && item.children) {
+    item.children.forEach(child => child.open = false);
   }
 }
-
 
 toggleMenu(item: MenuItem) {
-  // DO NOT close siblings if navigation is happening
-  this.menuItems.forEach(m => {
-    if (m !== item && !this.isAnyDescendantActive(m)) {
-      m.open = false;
-      this.closeAllChildren(m);
-    }
-  });
-
+  // Only toggle the clicked parent
   item.open = !item.open;
 }
-
  
   loadMenu(role: 'A' | 'U' | null, companyType: 'B' | 'C' | null) {
     if (companyType === 'B') {
@@ -229,7 +219,17 @@ toggleMenu(item: MenuItem) {
           { label: 'Create New', route: '/admin/create-currency' },
           { label: 'Inquiry', route: '/admin/currency-inquiry' }
         ]
-      }
+      },
+     {
+  label: 'Account Types',
+  icon: 'account_balance_wallet', // Angular Material Icon
+  route: '/admin/create-Account-types',
+  open: false,
+  children: [
+    { label: 'Create New', route: '/admin/create-account-types' },
+    { label: 'Inquiry', route: '/admin/account-types-inquiry' }
+  ]
+}
 
     ]
   },
@@ -534,7 +534,7 @@ isAnyDescendantActive(item: MenuItem): boolean {
   if (!item.children) return false;
 
   return item.children.some(child =>
-    this.activeRoute.startsWith(child.route || '') ||
+    this.activeRoute === child.route || // exact match
     (child.children ? this.isAnyDescendantActive(child) : false)
   );
 }
@@ -631,19 +631,13 @@ toggleMenuu(item: MenuItem) {
 // Toggle only this item, do NOT close siblings
 // -----------------------------
 toggleOnlyChildren(item: MenuItem) {
-  // Simply toggle the item open state
+  // Smooth toggle: do not close children immediately
   item.open = !item.open;
-
-  // If the item is being closed, close all nested children
-  if (!item.open) {
-    this.closeAllChildren(item);
-  }
 }
 
 // Recursive close function (you already have)
 closeAllChildren(item: MenuItem) {
   if (!item.children) return;
-
   item.children.forEach(child => {
     child.open = false;
     if (child.children) {
@@ -655,28 +649,46 @@ closeAllChildren(item: MenuItem) {
 goTo(item: MenuItem) {
   if (!item.route) return;
 
-  // Navigate FIRST
   this.router.navigateByUrl(item.route).then(() => {
-    // Keep parent menus open after navigation
+    // Only highlight active branches; do NOT close other branches
     this.menuItems.forEach(m => {
-      if (this.isAnyDescendantActive(m)) {
-        m.open = true;
-      }
+      this.keepActiveOpen(m); // recursive open only for active path
     });
   });
 }
 
+// Keep parent open if it contains the active route
+keepActiveOpen(item: MenuItem) {
+  if (this.isAnyDescendantActive(item) || this.activeRoute === item.route) {
+    item.open = true; // expand only the active path
+  }
+  if (item.children) {
+    item.children.forEach(child => this.keepActiveOpen(child));
+  }
+}
+
+closeInactiveChildren(item: MenuItem) {
+  if (!item.children) return;
+
+  item.children.forEach(child => {
+    if (!this.isAnyDescendantActive(child) && this.activeRoute !== child.route) {
+      child.open = false;
+    }
+    if (child.children) this.closeInactiveChildren(child);
+  });
+}
+ 
 onChildClick(child: MenuItem, parent?: MenuItem) {
   if (child.route) {
     this.router.navigate([child.route]);
   }
 
-  // Keep parent open
+  // Keep parent open — do not toggle or close it
   if (parent) {
     parent.open = true;
   }
 
-  // If child has grandchildren, toggle them
+  // Only toggle child if it has its own children
   if (child.children) {
     child.open = !child.open;
   }

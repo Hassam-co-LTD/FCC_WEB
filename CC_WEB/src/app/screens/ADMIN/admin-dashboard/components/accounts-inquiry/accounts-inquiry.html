@@ -1,0 +1,175 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Account Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
+          [(ngModel)]="searchText"
+          (input)="filterDraftAccounts(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftAccounts('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredDraftAccounts?.length; else noDrafts">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Account No</th>
+                <th>IBAN</th>
+                <th>Account Type</th>
+                <th>Account Title</th>
+                <th>Company ID</th>
+                <th>Account Status</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredDraftAccounts; trackBy: trackById">
+                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td>{{ c.iban }}</td>
+                <td>{{ c.accountType }}</td>
+                <td>{{ c.accountTitle }}</td>
+                <td>{{ c.companyId }}</td>
+                <td>{{ c.accountStatus }}</td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedAccounts(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedAccounts('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedAccounts?.length; else noApproved">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Account No</th>
+                <th>IBAN</th>
+                <th>Account Type</th>
+
+                <th>Account Title</th>
+                <th>Company ID</th>
+                <th>Account Status</th>
+
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredApprovedAccounts; trackBy: trackById">
+                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td>{{ c.iban }}</td>
+                <td>{{ c.accountType }}</td>
+                <td>{{ c.accountTitle }}</td>
+                <td>{{ c.companyId }}</td>
+                <td><span class="status {{ c.accountStatus }}">{{ c.accountStatus }}</span></td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search Customer By ID, Name, Email, or Legal ID"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedAccounts(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedAccounts('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedAccounts?.length; else noSubmitted">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                 <th>Account No</th>
+                <th>IBAN</th>
+                <th>Account Type</th>
+
+                <th>Account Title</th>
+                <th>Company ID</th>
+                <th>Account Status</th>
+
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredSubmittedAccounts; trackBy: trackById">
+                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td>{{ c.iban }}</td>
+                <td>{{ c.accountType }}</td>
+                <td>{{ c.accountTitle }}</td>
+                <td>{{ c.companyId }}</td>
+                <td><span class="status {{ c.accountStatus }}">{{ c.accountStatus }}</span></td>
+                
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted records found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

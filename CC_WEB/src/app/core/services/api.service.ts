@@ -537,4 +537,12 @@ userLogin(payload: any, name: string) {
   return this.http.post<any>(`${this.baseUrl}${name}/login`, payload);
 }
 
+getCustomerAccounts(custId:String,name:String){
+
+  return this.http.get<any>(`${this.baseUrl}${name}/${custId}`,)
+}
+
+deleteAccount(id:Number,apiName:String){
+ return  this.http.delete<any>(`${this.baseUrl}${apiName}/delete/${id}`)
+}
 }

@@ -7,7 +7,7 @@
        Page Header
   ========================== -->
   <div class="page-header">
-    <h1>Create Customer</h1>
+    <h1>Create </h1>
   </div>
   <!-- =========================
        Customer Form Container
@@ -73,7 +73,8 @@
                 <mat-option value="Inactive">Inactive</mat-option>
               </mat-select>
             </mat-form-field>
-          </div>
+          </div>    
+
 
           <div class="field-group">
             <h4>Branch Code</h4>
@@ -88,6 +89,8 @@
             </mat-form-field>
           </div>
 
+          
+           
           <div class="field-group">
             <h4>Country / City</h4>
             <mat-form-field appearance="outline" class="full">
@@ -117,22 +120,24 @@
             <h4>Customer Category</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Customer Category</mat-label>
-              <mat-select formControlName="customerCategorty" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="customerCategory"
+ [disabled]="isReadOnly()" panelClass="white-dropdown">
                 <mat-option value="Bank">Bank</mat-option>
                 <mat-option value="Client">Client</mat-option>
                 
               </mat-select>
             </mat-form-field>
           </div>
-        </div>
-        <!-- ---------------- ADDRESS ---------------- -->
-        <div class="form-grid form-grid-large">
           <div class="field-group full">
             <h4>Address Line 1</h4>
             <mat-form-field appearance="outline" class="full">
               <input matInput type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
+        </div>
+        <!-- ---------------- ADDRESS ---------------- -->
+        <div class="form-grid form-grid-large">
+          
           <div class="field-group full">
             <h4>Address Line 2</h4>
             <mat-form-field appearance="outline" class="full">
@@ -144,7 +149,10 @@
             <mat-form-field appearance="outline" class="full">
               <input matInput type="text" formControlName="address3" placeholder="Address Line 3" [readonly]="isReadOnly()" />
             </mat-form-field>
+            
           </div>
+
+
         </div>
       </ng-container>
     </div>
@@ -159,7 +167,13 @@
   <!-- ---------------- New Customer ---------------- -->
   <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
     <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn-save " [disabled]="!storeCustomerResponseForAccounts?.id" (click)="openAddAccountDialog(storeCustomerResponseForAccounts.id ,storeCustomerResponseForAccounts.name)">
+    
+  Add Account
+</button>
+
     <button class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
+    
   </ng-container>
 
   <!-- ---------------- Edit Mode: Draft ---------------- -->
@@ -167,7 +181,23 @@
     <button class="btn-back" (click)="onBack()">Back</button>
     <button class="btn-update" [disabled]="!customerForm.dirty || !customerForm.valid" (click)="update(storeCustomer.id)">Update</button>
     <button class="btn-submit" [disabled]="!customerForm.valid" (click)="submit()">Submit</button>
+      <button
+  class="btn-save"
+  *ngIf="storeCustomerAccounts?.length === 0"
+  (click)="openAddAccountDialog(
+      storeCustomer?.custId,
+      storeCustomer?.name
+  )">
+  Create Account
+</button>
+    <!-- show customer  accounts details here  -->
+    
+    <!-- <div class="" *ngif="storeCustomer">
+      <h1>Customer Acccounts</h1>
+       
+    </div> -->
   </ng-container>
+
   <!-- ---------------- Edit Mode: Submitted ---------------- -->
   <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
     <button class="btn-reject" (click)="reject(storeCustomer.id)">Reject</button>
@@ -183,7 +213,7 @@
   </div>
 
   <div class="approved-info">
-    <div class="info-item"><span class="key">Customer ID:</span> <span class="value">{{ storeCustomer.cId }}</span></div>
+    <div class="info-item"><span class="key">Customer ID:</span> <span class="value">{{ storeCustomer.custId }}</span></div>
     <div class="info-item"><span class="key">Name:</span> <span class="value">{{ storeCustomer.name }}</span></div>
     <div class="info-item"><span class="key">Email:</span> <span class="value">{{ storeCustomer.email }}</span></div>
     <div class="info-item"><span class="key">Contact:</span> <span class="value">{{ storeCustomer.contact }}</span></div>
@@ -202,4 +232,75 @@
   <button class="btn-update" (click)="reject(storeCustomer.id)">Amend</button>
 </div>
 
+<!-- ============================= -->
+<!-- Customer Accounts Section -->
+<!-- ============================= --><div class="customer-accounts" *ngIf="storeCustomerAccounts?.length > 0">
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <h2>Customer Accounts</h2>
+    <span class="account-count">
+      Total Accounts: {{ storeCustomerAccounts.length }}
+    </span>
+  </div>
+
+  <!-- Table Layout -->
+  <div class="accounts-table">
+    <!-- Table Header -->
+    <div class="table-header">
+      <span>Account No</span>
+      <span>IBAN</span>
+      <span>Account Type</span>
+      <span>Company</span>
+      <span>Created On</span>
+      <span>Status</span>
+     
+    </div>
+
+    <!-- Table Rows -->
+    <div class="table-row" *ngFor="let account of storeCustomerAccounts">
+      
+      <!-- Account No as clickable link -->
+      <a [routerLink]="['/admin/edit-accounts', account.id]">
+        {{ account.accountNo }}
+      </a>
+
+      <span>{{ account.iban }}</span>
+      <span>{{ account.accountType }}</span>
+      <span>{{ getCompanyName(account.companyId) }}</span>
+      <span>{{ account.createdOn | date:'mediumDate' }}</span>
+
+      <span [ngClass]="{
+             'active': account.accountStatus === 'Active',
+             'inactive': account.accountStatus !== 'Active'
+           }">
+        {{ account.accountStatus }}
+      </span>
+
+      
+    </div>
+  </div>
+
+  <!-- Create Button -->
+  <div class="card-actions">
+    <button class="btn-save"
+            (click)="openAddAccountDialog(storeCustomer.custId, storeCustomer.name)">
+      Create Another Account
+    </button>
+  </div>
+
+</div>
+
+<!-- ============================= -->
+<!-- No Accounts State -->
+<!-- ============================= -->
+
+<!-- <div class="no-accounts" *ngIf="storeCustomerAccounts?.length === 0">
+  <p>No Accounts Found</p>
+<div class="card-actions">
+  <button class="btn-create-account"
+          (click)="openAddAccountDialog(storeCustomer.custId, storeCustomer.name)">
+    Create Another Account
+  </button>
+</div> -->
 </div>

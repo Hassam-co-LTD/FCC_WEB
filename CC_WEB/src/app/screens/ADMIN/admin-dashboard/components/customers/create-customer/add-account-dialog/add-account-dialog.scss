@@ -1,0 +1,198 @@
+@use '../../../../../../../../styles/theme' as theme;
+
+/* =========================
+   Dialog Wrapper
+=========================== */
+.create-customer-popup {
+  padding: 20px;
+  max-width: 700px;
+  background: theme.$white;
+  border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
+
+  /* Section Header */
+.section-title-one {
+  font-size: 20px;          // same as page header
+  font-weight: 600;
+  margin: 0 0 16px 0;       // spacing below title
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary; // accent line on left
+  padding-left: 12px;       // space between border and text
+}
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color:white;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      background: theme.$primary-dark;
+      box-shadow: theme.$shadow-primary;
+    }
+
+    mat-icon {
+      color: theme.$text-light;
+      font-size: 22px;
+    }
+  }
+
+  /* Collapsible Form */
+  .collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.35s ease-in-out;
+
+    &.open {
+      max-height: 2000px;
+      opacity: 1;
+      transform: translateY(0);
+      padding: 15px 10px;
+      background: theme.$light-bg;
+      border-radius: theme.$radius-default;
+      border: 1px solid theme.$border-light;
+    }
+  }
+
+  /* Headings */
+  h2, h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$primary-dark;
+  }
+
+  h4 {
+    font-size: 16px;
+    margin: 16px 0 8px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    border-left: 4px solid theme.$primary;
+    padding-left: 8px;
+  }
+
+  /* Form Layout */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: theme.$gap-default;
+    margin-bottom: 15px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Material Input Styles */
+  mat-form-field {
+    width: 100%;
+  }
+
+  input[matInput] {
+    font-size: 14px !important;
+    color: theme.$primary-dark;
+  }
+
+  ::placeholder {
+    color: theme.$primary-dark;
+    opacity: 0.8;
+  }
+
+  .mat-mdc-floating-label,
+  .mat-mdc-form-field-label {
+    font-size: 14px !important;
+  }
+
+  .mdc-text-field {
+    background-color: theme.$white;
+  }
+
+  /* Dialog Actions */
+  mat-dialog-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      padding: 10px 18px;
+      border-radius: theme.$radius-default;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      box-shadow: theme.$button-shadow;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background-color: theme.$primary-dark;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+
+    button[color='primary'] {
+      background-color: theme.$primary-btn;
+      color: theme.$text-light;
+
+      &:hover:not(:disabled) {
+        background-color: theme.$primary-btn-hover;
+      }
+    }
+  }
+
+  /* =========================
+     Add Account Button (if in popup footer)
+  ============================ */
+  .customer-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: theme.$gap-default;
+    margin-top: theme.$gap-default;
+
+    .btn-add-account {
+      background-color: theme.$primary-btn;
+      color: theme.$text-light;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: theme.$radius-default;
+      border: none;
+      cursor: pointer;
+      box-shadow: theme.$button-shadow;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        background-color: theme.$primary-btn-hover;
+        box-shadow: 0 4px 10px rgba(13, 71, 161, 0.25);
+      }
+
+      &:disabled {
+        background-color: theme.$light-bg;
+        color: theme.$text-medium;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+  }
+}

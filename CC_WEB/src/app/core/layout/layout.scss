@@ -87,12 +87,11 @@
       }
     }
 
-    /* =========================
-       Parent Active
-    ========================= */
-    button.menu-btn.active-parent {
+    /* Parent Active */
+    .menu-btn.active-parent {
       background: rgba(255, 255, 255, 0.25);
       font-weight: 600;
+      color: #fff;
     }
   }
 
@@ -118,19 +117,19 @@
       cursor: pointer;
       border-radius: 6px;
       font-size: 13px;
-      transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
       position: relative;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.28);
         color: #fff;
-        transform: translateX(3px);
+        transform: translateX(1px);
       }
 
       &.active-leaf {
         background: rgba(255, 255, 255, 0.3);
-        color: #fff;
         font-weight: 600;
+        color: #fff;
 
         &::before {
           content: '';
@@ -146,9 +145,7 @@
       }
     }
 
-    /* =========================
-       Child with nested submenu
-    ========================= */
+    /* Child with nested submenu */
     .submenu-item {
       display: flex;
       flex-direction: column;
@@ -165,18 +162,20 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+        transition: all 0.25s ease;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.2);
           color: #fff;
-          transform: translateX(3px);
+          transform: translateX(2px);
+          border-left: 3px solid #fff;
+          padding-left: 15px;
         }
 
         &.active-child {
-          background: rgba(255, 255, 255, 0.22);
           color: #fff;
           font-weight: 600;
+          border-left: 3px solid #fff;
+          padding-left: 15px;
         }
 
         .arrow {
@@ -184,9 +183,7 @@
         }
       }
 
-      /* =========================
-         Nested Submenu (Grandchild)
-      ========================= */
+      /* Nested Submenu (Grandchild) */
       .nested-submenu {
         display: flex;
         flex-direction: column;
@@ -236,26 +233,17 @@
   }
 }
 
+/* =========================
+   Footer
+========================= */
 .app-footer {
-    height: 40px;
-    background-color: #f5f5f5;
-    color: #555;
-    text-align: center;
-    line-height: 40px;
-    font-size: 13px;
-    border-top: 1px solid #ddd;
-    background: theme.$white;
-}
-
-.app-footer {
-    height: 40px;
-    background-color: #f5f5f5;
-    color: #555;
-    text-align: center;
-    line-height: 40px;
-    font-size: 13px;
-    border-top: 1px solid #ddd;
-    background: theme.$white;
+  height: 40px;
+  background: theme.$white;
+  color: #555;
+  text-align: center;
+  line-height: 40px;
+  font-size: 13px;
+  border-top: 1px solid #ddd;
 }
 
 /* Main Content */
@@ -289,4 +277,28 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* =========================
+   Submenu & Nested Submenu
+========================= */
+.submenu,
+.nested-submenu {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 
+    max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.submenu.open,
+.nested-submenu.open {
+  max-height: 500px;
+  opacity: 1;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }

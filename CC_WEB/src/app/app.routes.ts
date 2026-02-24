@@ -200,7 +200,49 @@ export const routes: Routes = [
       import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
       .then((m) => m.CreateGenerateFields)      
 
+},
+
+// ========Acounts========
+{
+    path: 'create-account',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+},
+{
+    path:'Accounts-inquiry',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+},
+{
+    path:'edit-accounts/:id',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+    
 }
+
+// create-account-types
+,
+{
+    path:'create-account-types',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+    
+}
+ 
+,
+{
+    path:'edit-account-types/:id',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+    
+},
+{
+    path:'account-types-inquiry',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) =>m.AccountTypesInquiry )
+    
+}
+
 
            
            

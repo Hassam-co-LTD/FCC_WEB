@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,10 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
-
+import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
-
+import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
@@ -31,6 +31,7 @@ import { ApiService } from '../../../../../../core/services/api.service';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
+    RouterLink
 
     
   ],
@@ -41,22 +42,29 @@ export class CreateCustomer implements OnInit {
 
   customerForm!: FormGroup;
   storeCustomer: any = {};
-
+  
+  allCompanies: any[] = [];
   isEditMode = false;
   isOpen = true;
-
+  storeCustomerResponseForAccounts: any = {};
+  storeCustomerAccounts : any =  [];
+ 
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.loadCustomer();
+    this.loadCompanies();
+    
   }
+
 
   private buildForm(): void {
     this.customerForm = this.fb.group({
@@ -70,7 +78,7 @@ export class CreateCustomer implements OnInit {
       branchCode: [''],
       countryCity: [''],
       customerType: ['Regular', Validators.required],
-      customerCategorty: ['Bank', Validators.required],
+      customerCategory: ['Bank', Validators.required],
       address1: [''],
       address2: [''],
       address3: ['']
@@ -88,12 +96,22 @@ export class CreateCustomer implements OnInit {
           this.storeCustomer = res;
           console.log('get Customer By:', res);
           this.customerForm.patchValue(res);
+          this.getAllCustomerAccounts(this.storeCustomer?.custId)
         },
         error: err => console.error('Load failed', err)
       });
     }
   }
 
+  private loadCompanies(): void {
+    this.api.getTnxByStatus('A',"company").subscribe({
+      next: companies =>{
+           this.allCompanies = companies
+           console.log('Fetched companies:', this.allCompanies);
+      } ,
+      error: err => console.error('Error fetching companies', err)
+    });
+  }
   // ---------------- CREATE ----------------
   onSave(): void {
     if (this.customerForm.invalid) return;
@@ -104,8 +122,9 @@ export class CreateCustomer implements OnInit {
     this.api.saveTnx(payload, 'customer').subscribe({
       next: res => {
         console.log("Saved response:", res);
+        this.storeCustomerResponseForAccounts = res;
         Swal.fire('Saved!', 'Customer saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'Draft' } } ));
+          
       },
       error: err => console.error('Save failed', err)
     });
@@ -214,4 +233,53 @@ export class CreateCustomer implements OnInit {
 }
 
 
+
+// ---------------- ADD ACCOUNT DIALOG ----------------
+openAddAccountDialog( customerId: number, customerName: string): void {
+  const dialogRef = this.dialog.open(AddAccountDialog, {
+    width: '600px',
+    data: { customerId: customerId, customerName: customerName }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      // result contains the new account data
+      console.log('New Account:', result);
+
+      // TODO: call service to save account for this customer
+      this.addAccountToCustomer(result);
+    }
+  });
+}
+
+addAccountToCustomer(accountData: any) {
+  // Example: push to customer's accounts array or call backend API
+  if (!this.storeCustomer.accounts) {
+    this.storeCustomer.accounts = [];
+  }
+  this.storeCustomer.accounts.push(accountData);
+}
+
+// getAllCustomerAccounts
+
+getAllCustomerAccounts(custId:String){
+     this.api.getCustomerAccounts(custId,'accounts').subscribe({
+        next:res=> {
+           console.log("got all customer Accounts",res)
+           this.storeCustomerAccounts = res;
+        }
+        ,
+        error:err=> {
+           console.log("got error while fetching all customer accounts ",err);
+        }
+     })
+}
+
+
+getCompanyName(companyId: number): string {
+  const company = this.allCompanies?.find(
+    c => c.companyId === companyId
+  );
+  return company ? company.companyName : 'N/A';
+}
 }

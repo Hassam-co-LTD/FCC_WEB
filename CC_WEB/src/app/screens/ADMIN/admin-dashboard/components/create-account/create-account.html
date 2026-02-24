@@ -1,0 +1,144 @@
+<!-- =========================
+     CREATE CUSTOMER PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create </h1>
+  </div>
+  <!-- =========================
+       Customer Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeAccounts?.recordStatus=== 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Customer General Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="AccountsForm">
+
+      <ng-container *ngIf="isOpen">
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+          <div class="field-group">
+            <h4>Account No</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="accountNo" placeholder="Account No" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>IBAN</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="iban" placeholder="IBAN" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+         <div class="field-group">
+  <h4>Account Type</h4>
+  <mat-form-field appearance="outline" class="full">
+  <mat-label>Account Type</mat-label>
+  <mat-select formControlName="accountType" [disabled]="isReadOnly()">
+    <mat-option value="SAVINGS">Savings</mat-option>
+    <mat-option value="CURRENT">Current</mat-option>
+    <mat-option value="FIXED">Fixed Deposit</mat-option>
+    <mat-option value="ISLAMIC">Islamic</mat-option>
+  </mat-select>
+</mat-form-field>
+
+</div>
+
+
+          <div class="field-group">
+            <h4>Company</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Company</mat-label>
+              <mat-select formControlName="companyId" [disabled]="isReadOnly()" panelClass="white-dropdown">
+                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
+                  {{ company.companyName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Account Title</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="accountTitle" placeholder="Account Title" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>       
+          
+          
+  <div class="field-group">
+  <h4>Account Status</h4>
+ <mat-form-field appearance="outline" class="full">
+  <mat-label>Account Status</mat-label>
+  <mat-select formControlName="accountStatus" [disabled]="isReadOnly()">
+    <mat-option value="Active">Active</mat-option>
+    <mat-option value="Inactive">Inactive</mat-option>
+  </mat-select>
+</mat-form-field>
+</div>
+        </div>
+
+
+        
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+<!-- =========================
+     ACCOUNTS ACTION BUTTONS
+     Positioned outside the form container
+========================= -->
+<div class="customer-actions">
+  <!-- ---------------- New Accounts ---------------- -->
+  <!-- <ng-container *ngIf="!storeAccounts || !storeAccounts.recordStatus">
+    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn-save" [disabled]="!AccountsForm.valid" (click)="onSave()">Save</button>
+  </ng-container>
+ -->
+  <!-- ---------------- Edit Mode: Draft ---------------- -->
+  <ng-container *ngIf="isEditMode || storeAccounts">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" [disabled]="!AccountsForm.dirty || !AccountsForm.valid" (click)="update(storeAccounts.id)">Update</button>
+    <button class="btn-submit" [disabled]="!AccountsForm.valid" (click)="deleteAccount(storeAccounts.id)">Delete</button>
+  </ng-container>
+  <!-- ---------------- Edit Mode: Submitted ---------------- -->
+  <ng-container *ngIf="isEditMode && storeAccounts?.recordStatus === 'S'">
+    <button class="btn-reject" (click)="reject(storeAccounts.id)">Reject</button>
+    <button class="btn-approve" (click)="approve(storeAccounts.id)">Approve</button>
+  </ng-container>
+</div>
+
+ <!-- ---------------- APPROVED VIEW ---------------- -->
+<div class="approved-container" [ngClass]="{'hide-when-approved': storeAccounts?.recordStatus !== 'A'}">
+  <div class="approved-header">
+    <span class="approved-badge">✔ Approved</span>
+    <h3>Accounts Details</h3>
+  </div>
+
+  <div class="approved-info">
+    <div class="info-item"><span class="key">Account No:</span> <span class="value">{{ storeAccounts.accountNo }}</span></div>
+    <div class="info-item"><span class="key">IBAN:</span> <span class="value">{{ storeAccounts.iban }}</span></div>
+    <div class="info-item"><span class="key">Account Type:</span> <span class="value">{{ storeAccounts.accountType }}</span></div>
+    <div class="info-item"><span class="key">Account Title:</span> <span class="value">{{ storeAccounts.accountTitle }}</span></div>
+    <div class="info-item"><span class="key">Company ID:</span> <span class="value">{{ storeAccounts.companyId }}</span></div>
+    
+  </div>
+</div>
+
+<div class="approved-actions" *ngIf="storeAccounts?.recordStatus=== 'A'">
+  <button class="btn-back" (click)="onBack()">Back</button>
+  <button class="btn-update" (click)="reject(storeAccounts.id)">Amend</button>
+</div>
+
+</div>
