@@ -143,13 +143,15 @@ export class CustomerAccountMaster implements OnInit {
  isReadOnly(): boolean {
   // New AccountMaster (no storeAccountMaster) → editable
   if (!this.storeAccountMaster) {
-    return false;
+    return true;
   }
 
   // Existing AccountMaster:
   // - Draft (D) → editable
   // - Submitted (S), Approved (A) → read-only
-  return this.storeAccountMaster.status !== 'D';
+  // return  → editable
+  // - Submitted (S), Approved (A) → read-only
+  return false;
 } 
 
 
