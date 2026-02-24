@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatIconModule } from '@angular/material/icon';
@@ -19,15 +19,10 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss']
 })
-export class GeneralDetails implements OnInit {
+export class GeneralDetails {
   
   @Input() form!: FormGroup;
   isOpen = true;
-
-  ngOnInit(): void {
-    // Do NOT recreate form here
-  }
-
   toggle() {
     this.isOpen = !this.isOpen;
   }

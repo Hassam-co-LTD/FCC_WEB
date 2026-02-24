@@ -19,17 +19,13 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './bank-details.html',
   styleUrls: ['./bank-details.scss']
 })
-export class BankDetailsComponent implements OnInit {
+export class BankDetailsComponent{
 
   @Input() form!: FormGroup;
   isOpen = true;
   bankTab: 'remitting' | 'presenting' | 'collecting' = 'remitting';
 
   bankList: string[] = ['Bank A', 'Bank B', 'Bank C']; // Example bank list
-
-  ngOnInit(): void {
-    // Form comes from parent
-  }
 
   toggle() {
     this.isOpen = !this.isOpen;

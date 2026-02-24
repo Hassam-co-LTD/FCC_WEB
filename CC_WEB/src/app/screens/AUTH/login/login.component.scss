@@ -6,6 +6,7 @@
   align-items: center;
   min-height: 100vh;
   padding: 1.5rem;
+  padding: 1.5rem;
   font-family: 'Poppins', sans-serif;
   position: relative;
   overflow: hidden;
@@ -14,8 +15,6 @@
   background: linear-gradient(125deg, #001529, #003366, #001529, #0a2a43);
   background-size: 400% 400%;
   animation: auroraBackground 15s ease infinite;
-  
-  
 
   // 2. Corporate Dot Pattern Overlay
   &::after {
@@ -54,7 +53,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     text-align: center;
-    
+
     // 4. Smooth Entrance Animation
     opacity: 0;
     transform: translateY(20px);
@@ -74,7 +73,7 @@
       font-weight: 600;
       animation: fadeIn 1s ease-out forwards;
     }
-    
+
 
     form {
       display: flex;
@@ -245,166 +244,80 @@ button[type="submit"] {
 //     z-index: 0;
 //   }
 
-//   // 3. Subtle Animated Mesh (Floating Glows)
-//   &::before {
-//     content: "";
-//     position: absolute;
-//     width: 300px;
-//     height: 300px;
-//     background: radial-gradient(circle, rgba(24, 144, 255, 0.15) 0%, transparent 70%);
-//     top: 10%;
-//     left: 10%;
-//     animation: floatGlow 20s infinite alternate;
-//     z-index: 0;
-//   }
+// Add this inside your mat-card { ... } block
 
-//   mat-card {
-//     position: relative;
-//     z-index: 1; 
-//     width: 100%;
-//     max-width: 400px;
-//     padding: 3rem 2.5rem;
-//     background: rgba(255, 255, 255, 0.95) !important;
-//     backdrop-filter: blur(10px);
-//     border-radius: 16px;
-//     border: 1px solid rgba(255, 255, 255, 0.2);
-//     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-//     text-align: center;
-    
-//     opacity: 0;
-//     transform: translateY(20px);
-//     animation: cardReveal 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-//     animation-delay: 0.2s;
+.forgot-password-container {
+  display: flex;
+  justify-content: flex-end; // Finastra style: link on the right
+  margin-top: -0.5rem; // Bring it closer to the password field
+  margin-bottom: 1rem;
 
-//     &:hover {
-//       transform: translateY(-3px);
-//       box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-//       transition: all 0.3s ease-in-out;
-//     }
+  .forgot-link {
+    font-size: 0.85rem;
+    color: theme.$primary;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
 
-//     h2 {
-//       font-size: 1.75rem;
-//       color: theme.$primary;
-//       margin-bottom: 1.5rem;
-//       font-weight: 600;
-//       animation: fadeIn 1s ease-out forwards;
-//     }
+    &:hover {
+      color: theme.$primary-hover;
+      text-decoration: underline;
+      transform: translateX(-2px); // Subtle "nudge" effect
+    }
+  }
+}
 
-//     form {
-//       display: flex;
-//       flex-direction: column;
-//       gap: 1.25rem;
+// Adjusting the Login button margin to breathe better
+button[type="submit"] {
+  margin-top: 0.5rem !important;
+}
 
-//       .full-width {
-//         width: 100%;
-//       }
+// --- Animation Keyframes ---
+@keyframes auroraBackground {
+  0% {
+    background-position: 0% 50%;
+  }
 
-//       mat-form-field {
-//         width: 100%;
-//         transition: transform 0.2s ease;
+  50% {
+    background-position: 100% 50%;
+  }
 
-//         &:focus-within {
-//           transform: scale(1.02);
-//         }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-//         ::ng-deep .mat-mdc-text-field-wrapper {
-//           background-color: theme.$light-bg;
-//           border-radius: theme.$radius-default;
-//         }
+@keyframes floatGlow {
+  from {
+    transform: translate(0, 0);
+  }
 
-//         ::ng-deep .mdc-text-field--focused {
-//           border-color: theme.$primary;
-//         }
-//       }
+  to {
+    transform: translate(100px, 50px);
+  }
+}
 
-//       button {
-//         background-color: theme.$primary-btn;
-//         color: white;
-//         font-weight: 600;
-//         border-radius: theme.$radius-default;
-//         padding: 0.75rem 0;
-//         box-shadow: theme.$button-shadow;
-//         transition: all 0.3s ease;
+@keyframes cardReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-//         &:hover {
-//           background-color: theme.$primary-btn-hover;
-//           transform: translateY(-2px);
-//           filter: brightness(1.1);
-//         }
-//       }
-//     }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
 
-//     p {
-//       margin-top: 1.25rem;
-//       color: theme.$text-medium;
-//       font-size: 0.9rem;
+  to {
+    opacity: 1;
+  }
+}
 
-//       a {
-//         color: theme.$primary;
-//         font-weight: 600;
-//         text-decoration: none;
-//         &:hover { text-decoration: underline; }
-//       }
-//     }
-//   }
-// }
-
-// .forgot-password-container {
-//   display: flex;
-//   justify-content: flex-end; 
-//   margin-top: -0.5rem; 
-//   margin-bottom: 1rem;
-
-//   .forgot-link {
-//     font-size: 0.85rem;
-//     color: theme.$primary;
-//     font-weight: 500;
-//     cursor: pointer;
-//     text-decoration: none;
-//     transition: all 0.2s ease;
-
-//     &:hover {
-//       color: theme.$primary-hover;
-//       text-decoration: underline;
-//       transform: translateX(-2px); 
-//     }
-//   }
-// }
-
-// button[type="submit"] {
-//   margin-top: 0.5rem !important;
-// }
-
-// // --- Animation Keyframes ---
-// @keyframes auroraBackground {
-//   0% { background-position: 0% 50%; }
-//   50% { background-position: 100% 50%; }
-//   100% { background-position: 0% 50%; }
-// }
-
-// @keyframes twinkleStars {
-//   0%, 100% { opacity: 0.8; }
-//   50% { opacity: 1; }
-// }
-
-// @keyframes floatGlow {
-//   from { transform: translate(0, 0); }
-//   to { transform: translate(100px, 50px); }
-// }
-
-// @keyframes cardReveal {
-//   to {
-//     opacity: 1;
-//     transform: translateY(0);
-//   }
-// }
-
-// @keyframes fadeIn {
-//   from { opacity: 0; }
-//   to { opacity: 1; }
-// }
-
-// /* Responsive Fixes */
-// @media (max-width: 480px) {
-//   .auth-container mat-card { padding: 2rem 1.5rem; }
-// }
+/* Responsive Fixes */
+@media (max-width: 480px) {
+  .auth-container mat-card {
+    padding: 2rem 1.5rem;
+  }
+}

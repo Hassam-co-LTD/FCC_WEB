@@ -181,78 +181,41 @@ export const routes: Routes = [
             // ==============================
             // EXPORT COLLECTION
             // ==============================
-
             {
-                path: 'export-collection',
+                path: 'export-collection/inquiries-records',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-collection/export-collection')
-                        .then((m) => m.ExportCollectionComponent),
-                children: [
-                    {
-                        path: 'general-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/general-details/general-details'
-                            ).then((m) => m.GeneralDetails),
-                    },
-                    {
-                        path: 'drawer-drawee-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/drawer-drawee-details/drawer-drawee-details'
-                            ).then((m) => m.DrawerDraweeDetails),
-                    },
-                    {
-                        path: 'payment-amount',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/payment-amount/payment-amount'
-                            ).then((m) => m.PaymentAmountComponent),
-                    },
-                    {
-                        path: 'bank-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/bank-details/bank-details'
-                            ).then((m) => m.BankDetailsComponent),
-                    },
-                    {
-                        path: 'attachments-documents',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/attachments-documents/attachments-documents'
-                            ).then((m) => m.AttachmentsDocuments),
-                    },
-                    {
-                        path: 'collection-instructions',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/collection-instructions/collection-instructions'
-                            ).then((m) => m.CollectionInstructionsComponent),
-                    },
-                    {
-                        path: 'shipping-details',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/shipping-details/shipping-details'
-                            ).then((m) => m.ShippingDetailsComponent),
-                    },
-                    {
-                        path: 'license',
-                        loadComponent: () =>
-                            import(
-                                './screens/USER/Trade-Services/export-collection/components/license/license'
-                            ).then((m) => m.License),
-                    },
-                ],
+                    import(
+                        './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-records'
+                    ).then((m) => m.inquiriesRecords),
             },
             {
                 path: 'export-collection/preview',
                 loadComponent: () =>
                     import(
                         './screens/USER/Trade-Services/export-collection/components/preview/preview'
-                    ).then((m) => m.PreviewSectionComponent),
+                    ).then((m) => m.Preview),
+                data: { title: 'Preview Export Collection' }
             },
+            {
+                path: 'export-collection/success',
+                loadComponent: () =>
+                    import('./shared/success/success')
+                        .then((m) => m.Success),
+                data: { title: 'Export Collection Submitted' }
+            },
+            {
+                path: 'export-collection/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/export-collection').then(m => m.ExportCollection),
+            },
+            {
+                path: 'export-collection',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/export-collection')
+                        .then((m) => m.ExportCollection),
+                data: { title: 'Export Collection' }
+            },
+
             {
                 path: 'export-collection-welcome',
                 loadComponent: () =>
@@ -263,6 +226,13 @@ export const routes: Routes = [
                     title: 'Welcome to Export Collection',
                     description: 'Manage all Export Collection related activities here.',
                 },
+            },
+            {
+                path: 'export-collection/amend',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/sub-menus/event/amend/amend')
+                        .then((m) => m.Amend),
+                data: { title: 'Amend Export Collection' }
             },
 
             // ==============================
