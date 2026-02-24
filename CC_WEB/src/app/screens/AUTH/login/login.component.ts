@@ -16,7 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   standalone: true,
   imports: [
     FormsModule,
-    RouterLink,
+    // RouterLink,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
@@ -52,7 +52,13 @@ export class LoginComponent {
       this.router.navigate(['/dashboard']);
     }
   }
+forgotPassword() {
+  // Option A: Navigate to a recovery page
+  this.router.navigate(['/forgot-password']);
 
+  // Option B: For testing/demo
+  // console.log("Redirecting to secure recovery flow...");
+}
   togglePassword(){
     this.hidePassword = !this.hidePassword;
   }

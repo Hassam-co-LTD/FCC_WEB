@@ -81,28 +81,27 @@ export class EnquiriesOfRecords implements OnInit {
 
 
 
-  applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
+ applyFilters(): void {
+  const query = this.searchQuery.toLowerCase().trim();
+  const currency = this.currencyFilter.toLowerCase().trim();
 
-    const filtered = this.allTransactions.filter(tx => {
+  const filtered = this.allTransactions.filter(tx => {
+    const matchesSearch =
+      !query ||
+      tx.tnxId?.toLowerCase().includes(query) ||
+      tx.beneficiaryName?.toLowerCase().includes(query) ||
+      tx.issuingBankName?.toLowerCase().includes(query) ||
+      tx.currency?.toLowerCase().includes(query);
 
-      const matchesSearch =
-        !query ||
-        tx.tnxId?.toLowerCase().includes(query) ||
-        tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.issuingBankName?.toLowerCase().includes(query) ||
-        tx.currency?.toLowerCase().includes(query);
+    const matchesCurrency =
+      !currency || tx.currency?.toLowerCase() === currency;
 
-      const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+    return matchesSearch && matchesCurrency;
+  });
 
-      return matchesSearch && matchesCurrency;
-    });
-
-    this.applySorting(filtered);
-  }
-
+  // After filtering, we sort and the sorting will handle the page reset
+  this.applySorting(filtered);
+}
   // setActiveTab(tab: string): void {
   //   this.activeTab = tab;
   //   this.applyFilters();
@@ -153,40 +152,35 @@ export class EnquiriesOfRecords implements OnInit {
     this.applyFilters();
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
-    const sorted = [...source].sort((a, b) => {
-      let aVal = this.resolveColumn(a, this.sortColumn);
-      let bVal = this.resolveColumn(b, this.sortColumn);
+private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
+  const sorted = [...source].sort((a, b) => {
+    let aVal = this.resolveColumn(a, this.sortColumn);
+    let bVal = this.resolveColumn(b, this.sortColumn);
 
-      // Handle null or undefined
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
 
       // Handle Dates
-      if (aVal instanceof Date && bVal instanceof Date) {
-        return this.sortDirection === 'asc'
-          ? aVal.getTime() - bVal.getTime()
-          : bVal.getTime() - aVal.getTime();
-      }
+    if (aVal instanceof Date && bVal instanceof Date) {
+      return this.sortDirection === 'asc' ? aVal.getTime() - bVal.getTime() : bVal.getTime() - aVal.getTime();
+    }
 
       // Handle numbers
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc'
-          ? aVal - bVal
-          : bVal - aVal;
-      }
+    if (typeof aVal === 'number' && typeof bVal === 'number') {
+      return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+    }
 
       // Everything else: convert to string and use localeCompare
-      const aStr = String(aVal);
-      const bStr = String(bVal);
-      return this.sortDirection === 'asc'
-        ? aStr.localeCompare(bStr)
-        : bStr.localeCompare(aStr);
-    });
+    const aStr = String(aVal);
+    const bStr = String(bVal);
+    return this.sortDirection === 'asc' ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+  });
 
-    this.filteredTransactions = sorted;
-    this.currentPage = 1;
-  }
+ this.filteredTransactions = sorted;
+  
+  // CRITICAL: Reset to page 1 whenever the data changes (tab change or search)
+  this.currentPage = 1; 
+}
 
 
   private resolveColumn(tx: ImportLcTransaction, column: string): any {
@@ -200,9 +194,10 @@ export class EnquiriesOfRecords implements OnInit {
     }
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-  }
+get totalPages(): number {
+  const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+  return count < 1 ? 1 : count;
+}
 
   get pagedTransactions(): ImportLcTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;

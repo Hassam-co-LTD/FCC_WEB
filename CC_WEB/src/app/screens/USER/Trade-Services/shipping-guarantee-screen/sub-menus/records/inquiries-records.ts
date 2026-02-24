@@ -206,9 +206,10 @@ export class inquiriesRecords implements OnInit {
 
   // --- PAGINATION ---
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-  }
+ get totalPages(): number {
+  const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+  return count < 1 ? 1 : count;
+}
 
   get pagedTransactions(): ShippingGuaranteeTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;

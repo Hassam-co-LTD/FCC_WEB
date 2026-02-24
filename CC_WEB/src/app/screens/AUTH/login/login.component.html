@@ -21,12 +21,15 @@
           {{ hidePassword ? 'visibility_off' : 'visibility' }}
         </mat-icon></button>
     </mat-form-field>
+    <div class="forgot-password-container">
+  <a (click)="forgotPassword()" class="forgot-link">Forgot Password?</a>
+</div>
 
     <button mat-flat-button color="primary" class="full-width" type="submit" (click)="login()">Login</button>
 
-    <p>
+    <!-- <p>
       Don’t have an account?
       <a routerLink="/signup">Sign up</a>
-    </p>
+    </p> -->
   </mat-card>
 </div>
