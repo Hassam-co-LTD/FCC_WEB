@@ -1,12 +1,12 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Subscription, interval } from 'rxjs';
 import { AccountSearchDialogComponent } from '../../../../../../../../shared/account-search-dialog/account-search-dialog';
 
@@ -18,19 +18,20 @@ import { AccountSearchDialogComponent } from '../../../../../../../../shared/acc
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatIconModule,
     MatDialogModule,
     MatCheckboxModule,
+    MatAutocompleteModule,
     FormsModule,
   ],
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss']
 })
-export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
+export class GeneralDetails implements OnInit, OnDestroy {
   @Input() form!: FormGroup;
-  @Input() transactionId: string = '';
+  @Input() savedBeneficiaries: any[] = []; // Input from parent
   @Output() sectionToggled = new EventEmitter<boolean>();
+  @Output() nicknameSaved = new EventEmitter<{nickname: string, accountNumber: string, accountName: string}>();
   
   isGeneralDetailsOpen = true;
   isBeneficiaryDetailsVisible = false;
@@ -42,11 +43,6 @@ export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.updateCurrentDate();
     this.dateSubscription = interval(60000).subscribe(() => this.updateCurrentDate());
-    this.updateFormDate();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['transactionId']) { /* Logic for ID updates */ }
   }
 
   ngOnDestroy() {
@@ -54,8 +50,8 @@ export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
   }
 
   toggleBeneficiaryDetails() {
-  this.isBeneficiaryDetailsVisible = !this.isBeneficiaryDetailsVisible;
-}
+    this.isBeneficiaryDetailsVisible = !this.isBeneficiaryDetailsVisible;
+  }
 
   toggleGeneralDetails() {
     this.isGeneralDetailsOpen = !this.isGeneralDetailsOpen;
@@ -67,15 +63,24 @@ export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
     this.currentDate = now.toLocaleDateString('en-US', {
       year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
     });
-    this.updateFormDate();
-  }
-
-  private updateFormDate() {
     if (this.form.get('transferDate')) {
-      this.form.get('transferDate')?.setValue(new Date());
+      this.form.get('transferDate')?.setValue(now);
     }
   }
+saveNewNickname() {
+  const controls = this.form.controls;
+  const nickname = controls['transferTo_accountNickname'].value;
+  const accNum = controls['transferTo'].value;
+  const accName = controls['transferTo_accountName'].value;
 
+  if (nickname && accNum) {
+    this.nicknameSaved.emit({
+      nickname: nickname.trim(),
+      accountNumber: accNum.trim(),
+      accountName: accName ? accName.trim() : ''
+    });
+  }
+}
   openAccountSearchDialog(accountType: 'transferFrom' | 'transferTo') {
     const dialogRef = this.dialog.open(AccountSearchDialogComponent, {
       width: '800px',
@@ -90,8 +95,6 @@ export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
       if (result) {
         this.form.get(accountType)?.setValue(result.accountNumber);
         this.form.get(`${accountType}_accountName`)?.setValue(result.accountName);
-        // Reset visibility if account changes to force a re-check
-        if(accountType === 'transferTo') this.isBeneficiaryDetailsVisible = false;
       }
     });
   }

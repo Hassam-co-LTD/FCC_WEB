@@ -16,56 +16,43 @@
 
         <div class="field-group">
           <h4>Transfer Date</h4>
-          <div class="readonly-field date-field">
-            {{ currentDate }}
-          </div>
+          <div class="readonly-field date-field">{{ currentDate }}</div>
         </div>
 
-        <div class="form-grid">
-          <div class="field-group">
-            <h4>Transfer From *</h4>
-            <div class="account-search-field">
-              <mat-form-field appearance="outline">
-                <mat-label>Select Account</mat-label>
-                <input matInput formControlName="transferFrom" readonly placeholder="Click search to select account" />
-                <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferFrom')" type="button">
-                  <mat-icon>search</mat-icon>
-                </button>
-              </mat-form-field>
-            </div>
-          </div>
+        <div class="field-group account-search-field">
+          <h4>Transfer From *</h4>
+          <mat-form-field appearance="outline">
+            <mat-label>Select Account</mat-label>
+            <input matInput formControlName="transferFrom" readonly placeholder="Click search to select" />
+            <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferFrom')" type="button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
         </div>
 
-        <div class="form-grid">
-          <div class="field-group">
-            <h4>Transfer To *</h4>
-            <div class="account-search-field">
-              <mat-form-field appearance="outline">
-                <mat-label>Select Account</mat-label>
-                <input matInput formControlName="transferTo" readonly placeholder="Click search to select account" />
-                <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferTo')" type="button">
-                  <mat-icon>search</mat-icon>
-                </button>
-              </mat-form-field>
-            </div>
-          </div>
+        <div class="field-group account-search-field">
+          <h4>Transfer To *</h4>
+          <mat-form-field appearance="outline">
+            <mat-label>Select Account</mat-label>
+            <input matInput formControlName="transferTo" readonly placeholder="Click search to select" />
+            <button mat-icon-button matSuffix (click)="openAccountSearchDialog('transferTo')" type="button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
         </div>
 
-        <!-- Remarks Field -->
         <div class="form-grid-1">
           <div class="field-group">
             <h4>Remarks</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Transaction Remarks</mat-label>
-              <textarea matInput formControlName="transactionRemarks"
-                placeholder="Enter transaction remarks (Reference is used within Business Internet Banking only)"
-                rows="3"></textarea>
-              <mat-hint>Optional: Add any notes about this transaction</mat-hint>
+              <textarea matInput formControlName="transactionRemarks" rows="3"></textarea>
             </mat-form-field>
           </div>
         </div>
+
         <div></div>
-        <!-- Changed from button to checkbox -->
+
         <div class="field-group checkbox-action-container">
           <mat-checkbox [checked]="isBeneficiaryDetailsVisible" (change)="toggleBeneficiaryDetails()" color="primary">
             <span class="checkbox-label">Add Beneficiary Details</span>
@@ -77,32 +64,40 @@
 
       @if (isBeneficiaryDetailsVisible) {
       <div class="form-grid-2 beneficiary-details-panel">
+        
+        <div class="field-group">
+          <h4>Beneficiary Account Nickname</h4>
+          <mat-form-field appearance="outline" class="full editable-beneficiary">
+            <mat-label>Enter Account Nickname</mat-label>
+            <input matInput formControlName="transferTo_accountNickname" [matAutocomplete]="auto" placeholder="Search saved nickname" />
+            <mat-autocomplete #auto="matAutocomplete">
+              @for (ben of savedBeneficiaries; track ben.nickname) {
+                <mat-option [value]="ben.nickname">
+                  {{ben.nickname}} <small>({{ben.accountNumber}})</small>
+                </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
         <div class="field-group">
           <h4>Beneficiary Account Name</h4>
           <mat-form-field appearance="outline" class="full editable-beneficiary">
-            <mat-label>Enter Account Name</mat-label>
-            <input matInput formControlName="transferTo_accountName" placeholder="Edit account name" />
+            <mat-label>Account Name</mat-label>
+            <input matInput formControlName="transferTo_accountName" placeholder="Account Name" />
           </mat-form-field>
         </div>
 
         <div class="field-group">
           <h4>Beneficiary Account Number</h4>
           <mat-form-field appearance="outline" class="full editable-beneficiary">
-            <mat-label>Enter Account Number</mat-label>
-            <input matInput formControlName="transferTo" placeholder="Edit account number" />
+            <mat-label>Account Number</mat-label>
+            <input matInput formControlName="transferTo" placeholder="Account Number" />
           </mat-form-field>
+        </div>
 
-        </div>
-         <div class="field-group">
-          <h4>Beneficiary Account Nickname</h4>
-          <mat-form-field appearance="outline" class="full editable-beneficiary">
-            <mat-label>Enter Account Nickname</mat-label>
-            <input matInput formControlName="transferTo_accountNickname" placeholder="Edit account nickname" />
-          </mat-form-field>
-        </div>
       </div>
       }
-
       }
     </div>
   </div>

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Services
 import { MyAccountsService } from '../../../../../../../core/services/user-service/Payment-Service/my-accounts-services/account-transfer';
@@ -32,20 +33,21 @@ import { Preview } from '../IBFT/preview/preview';
   styleUrls: ['./IBFT.scss']
 })
 export class IBFT implements OnInit {
-  // Navigation & UI State
   currentStep = 0;
   accountSteps = [{ label: "IBFT" }];
   isLoading = false;
-  
-  // Form & Transaction State
   myAccountsForm!: FormGroup;
   tnxId?: string;
   canApprove = false;
 
-  /**
-   * mode: Controls the logical operation (New, existing Draft, or Resubmitting Rejected)
-   * screenMode: Controls which UI section is visible (Edit form, Preview, or readonly views)
-   */
+  // Mock Data: This represents accounts previously saved with nicknames
+  savedBeneficiaries = [
+    { nickname: 'Salary Acct', accountNumber: 'PK51000000000000000006UNIL', accountName: 'Unilever Corp' },
+    { nickname: 'Savings', accountNumber: 'NB001', accountName: 'Personal Savings' },
+    { nickname: 'Rent', accountNumber: 'ACC005', accountName: 'Landlord Account' },
+    { nickname: 'NBP-01', accountNumber: 'NB005', accountName: 'NBP Main Branch' }
+  ];
+
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
   screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'PREVIEW' | 'REJECTED_VIEW' = 'EDIT';
 
@@ -72,9 +74,9 @@ export class IBFT implements OnInit {
     });
 
     this.checkPermissions();
+    this.setupNicknameLookup();
   }
 
-  // --- Form Initialization ---
   private buildForm(): void {
     this.myAccountsForm = this.fb.group({
       generalDetails: this.fb.group({
@@ -85,10 +87,33 @@ export class IBFT implements OnInit {
         transferTo_accountName: [''], 
         transferTo_accountNickname: [''],
         transferDate: [new Date(), Validators.required],
-        // amount: [null, [Validators.required, Validators.min(1)]],
-        // currency: [{ value: 'PKR', disabled: true }],
         transactionRemarks: ['', [Validators.maxLength(500)]]
       })
+    });
+  }
+
+  // Look up details when user types a nickname
+  private setupNicknameLookup() {
+    const nicknameCtrl = this.generalDetailsForm.get('transferTo_accountNickname');
+    
+    nicknameCtrl?.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(val => {
+      if (val) {
+        const match = this.savedBeneficiaries.find(
+          b => b.nickname.toLowerCase() === val.toLowerCase()
+        );
+
+        if (match) {
+          this.generalDetailsForm.patchValue({
+            transferTo: match.accountNumber,
+            transferTo_accountName: match.accountName
+          }, { emitEvent: false });
+          
+          this.snackBar.open(`Account details for "${match.nickname}" loaded.`, 'Dismiss', { duration: 2000 });
+        }
+      }
     });
   }
 
@@ -96,7 +121,6 @@ export class IBFT implements OnInit {
     return this.myAccountsForm.get('generalDetails') as FormGroup;
   }
 
-  // --- Logic & Workflow ---
   private checkPermissions() {
     this.myAccountsService.canApproveTransfers().subscribe(hasPerm => this.canApprove = hasPerm);
   }
@@ -109,7 +133,7 @@ export class IBFT implements OnInit {
         this.setWorkflowByStatus(data.status);
         this.isLoading = false;
       },
-      error: (err) => {
+      error: () => {
         this.snackBar.open('Error loading transaction', 'Close', { duration: 3000 });
         this.isLoading = false;
       }
@@ -125,35 +149,18 @@ export class IBFT implements OnInit {
       transferTo_accountName: data.transferTo_accountName,
       transferTo_accountNickname: data.transferTo_accountNickname,
       transferDate: data.transferDate ? new Date(data.transferDate) : new Date(),
-      // amount: data.amount,
       transactionRemarks: data.transactionRemarks
     });
   }
 
   private setWorkflowByStatus(status: string) {
     switch (status) {
-      case 'I': // Initiated/Draft
-        this.mode = 'UPDATE';
-        this.screenMode = 'EDIT';
-        break;
-      case 'S': // Submitted
-        this.mode = 'UPDATE';
-        this.screenMode = 'SUBMITTED';
-        this.myAccountsForm.disable();
-        break;
-      case 'A': // Approved
-        this.mode = 'UPDATE';
-        this.screenMode = 'APPROVED';
-        this.myAccountsForm.disable();
-        break;
-      case 'R': // Rejected
-        this.mode = 'REJECTED';
-        this.screenMode = 'EDIT';
-        break;
+      case 'I': this.mode = 'UPDATE'; this.screenMode = 'EDIT'; break;
+      case 'S': this.mode = 'UPDATE'; this.screenMode = 'SUBMITTED'; this.myAccountsForm.disable(); break;
+      case 'A': this.mode = 'UPDATE'; this.screenMode = 'APPROVED'; this.myAccountsForm.disable(); break;
+      case 'R': this.mode = 'REJECTED'; this.screenMode = 'EDIT'; break;
     }
   }
-
-  // --- Button Actions ---
 
   saveForm() {
     if (this.generalDetailsForm.invalid) return;
@@ -172,7 +179,6 @@ export class IBFT implements OnInit {
   }
 
   submitTransfer() {
-    // This moves the UI to Preview mode as per typical IBFT flow
     if (this.generalDetailsForm.valid) {
       this.screenMode = 'PREVIEW';
     } else {
@@ -182,7 +188,6 @@ export class IBFT implements OnInit {
 
   confirmTransfer() {
     if (!this.tnxId) {
-      // Logic to create and THEN submit if it's a brand new record
       this.myAccountsService.createTransferDraft(this.getRawData()).subscribe((res: any) => {
         this.executeSubmission(res.tnxId);
       });
@@ -222,7 +227,6 @@ export class IBFT implements OnInit {
     }
   }
 
-  // --- Helpers ---
   private initializeNewTransfer() {
     this.mode = 'CREATE';
     this.screenMode = 'EDIT';
@@ -235,7 +239,6 @@ export class IBFT implements OnInit {
   editForm() {
     this.screenMode = 'EDIT';
     this.myAccountsForm.enable();
-    this.generalDetailsForm.get('currency')?.disable();
   }
 
   back() {
