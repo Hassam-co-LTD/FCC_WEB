@@ -53,37 +53,28 @@
 }
 
 /* ===========================
-   Dropzone & File Upload
+   Dropzone (Responsive)
 =========================== */
-.hint,
-.extensions {
-    font-size: 0.85rem;
-    color: #555;
-    margin: 0.3rem 0;
-}
-
 .dropzone {
     border: 2px dashed #c5cae9;
-    border-radius: 10px;
-    padding: 2rem;
+    border-radius: 12px;
+    padding: 2rem 1rem;
     text-align: center;
-    color: #6c63ff;
     background: #fff;
     cursor: pointer;
-    margin: 1rem 0;
+    margin: 1.2rem 0;
+    transition: 0.2s ease;
 
     mat-icon {
-        font-size: 3rem;
+        font-size: 3.2rem;
         margin-bottom: 0.5rem;
         display: block;
+        color: theme.$primary;
     }
 
     &:hover {
         background: #f4f5fb;
-    }
-
-    button {
-        margin-top: 0.8rem;
+        border-color: theme.$primary;
     }
 }
 
@@ -166,7 +157,7 @@
 
     .btn-remove {
         margin-top: 1rem;
-        background: #e53935;
+        background: #af1411;
         color: #fff;
         border: none;
         padding: 0.4rem 0.8rem;
@@ -174,14 +165,14 @@
         cursor: pointer;
 
         &:hover {
-            background: #c62828;
+            background: #af1411;
         }
     }
 }
 
 .btn-add {
     margin-top: 1rem;
-    background: #6c63ff;
+    background: #0b4eb3;
     color: #fff;
     border: none;
     padding: 0.5rem 1rem;
@@ -189,7 +180,7 @@
     cursor: pointer;
 
     &:hover {
-        background: #5a54d1;
+        background: #0b4eb3;
     }
 }
 

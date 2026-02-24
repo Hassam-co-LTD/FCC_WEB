@@ -4,31 +4,59 @@
 
   <div class="content">
     <div class="scroll-area">
-      <section id="section-0"><app-general-details></app-general-details></section>
+      <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
       <hr class="section-divider" />
 
-      <section id="section-1"><app-applicant-beneficiary></app-applicant-beneficiary></section>
+      <section id="section-1"><app-applicant-beneficiary [form]="applicantBeneficiaryForm"></app-applicant-beneficiary>
+      </section>
       <hr class="section-divider" />
 
-      <section id="section-2"><app-bank-details></app-bank-details></section>
+      <section id="section-2"><app-bank-details [form]="issuingbankForm"></app-bank-details></section>
       <hr class="section-divider" />
 
-      <section id="section-3"><app-instructions></app-instructions></section>
+      <section id="section-3"><app-instructions [form]="instructionForm"></app-instructions></section>
       <hr class="section-divider" />
 
       <section id="section-4">
         <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
       </section>
 
-
+      <!-- Footer Buttons -->
       <div class="actions">
-        <button mat-stroked-button (click)="back()">Back</button>
-        <button mat-flat-button color="primary">Save</button>
-        <button mat-flat-button color="primary" (click)="goToPreview()">Preview</button>
+
+        <!-- CREATE -->
+        <ng-container *ngIf="mode === 'CREATE'">
+          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-flat-button color="accent" (click)="saveForm()">Save</button>
+        </ng-container>
+
+        <!-- EDIT -->
+        <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
+          <button mat-stroked-button color="primary" (click)="update()">Update</button>
+          <button mat-flat-button color="accent" (click)="submitGuarantee()">Submit</button>
+        </ng-container>
+
+        <!-- APPROVAL -->
+        <ng-container *ngIf="screenMode === 'SUBMITTED'">
+          <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+
+          <button mat-flat-button color="accent" (click)="approve()">Approve</button>
+        </ng-container>
+
+        <!-- APPROVED -->
+        <ng-container *ngIf="screenMode === 'APPROVED'">
+          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button> -->
+        </ng-container>
+
+        <!-- REJECTED -->
+        <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+        </ng-container>
+
       </div>
+
     </div>
   </div>
 </div>
-
-<!-- The preview will be loaded via child route, no ngIf needed -->
-<router-outlet></router-outlet>

@@ -421,7 +421,7 @@ toggleMenu(item: MenuItem) {
               route:'/fund-transfer-welcome',
               open: false,
               children: [
-                { label: 'IBFT', route: '/' },
+                { label: 'IBFT', route: '/IBFT' },
                 { label: 'With-In Bank', route: '/fund-transfer/with-in' },
                 { label: 'My Accounts', route: '/my-accounts' },
                 { label: 'Inquiries', route: 'fund-transfer/fund-transfer-records' },

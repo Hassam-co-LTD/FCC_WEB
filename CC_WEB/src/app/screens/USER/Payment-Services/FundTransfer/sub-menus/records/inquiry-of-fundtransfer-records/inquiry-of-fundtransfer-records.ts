@@ -120,9 +120,10 @@ loadTransactions(): void {
    * Called when clicking "View" or the TNX ID link
    * Redirects to the form which will handle screenMode based on status
    */
-  viewTransaction(tx: RecordsListTransferDTO): void {
-    this.router.navigate(['/my-accounts/transfer', tx.tnxId]);
-  }
+ viewTransaction(tx: RecordsListTransferDTO): void {
+  // Redirects to the form in "View-Only" or "Edit" based on status logic above
+  this.router.navigate(['/my-accounts/transfer', tx.tnxId]);
+}
 
   // ==========================================
   // FILTERING & PAGINATION LOGIC

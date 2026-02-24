@@ -1,0 +1,35 @@
+<div class="preview-card">
+  <div class="header">
+    <h3>IBFT Summary</h3>
+    <span class="badge">{{ getVal('productType') }}</span>
+  </div>
+
+  <div class="preview-grid">
+    <div class="item">
+      <label>Transfer From</label>
+      <div class="val">{{ getVal('transferFrom') }}</div>
+      <div class="sub-val">{{ getVal('transferFrom_accountName') || 'Source Account' }}</div>
+    </div>
+
+    <div class="item">
+      <label>Transfer To</label>
+      <div class="val">{{ getVal('transferTo') }}</div>
+      <div class="sub-val">{{ getVal('transferTo_accountName') }}</div>
+    </div>
+
+    <div class="item">
+      <label>Amount</label>
+      <div class="val highlight">{{ getVal('currency') }} {{ getVal('amount') | number:'1.2-2' }}</div>
+    </div>
+
+    <div class="item">
+      <label>Transfer Date</label>
+      <div class="val">{{ getVal('transferDate') | date:'fullDate' }}</div>
+    </div>
+
+    <div class="item full">
+      <label>Remarks</label>
+      <div class="val">{{ getVal('transactionRemarks') || 'N/A' }}</div>
+    </div>
+  </div>
+</div>

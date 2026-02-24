@@ -138,10 +138,10 @@ export class EnquiriesOfRecords implements OnInit {
     this.applyFilters();
   }
 
-  clearCurrency(): void {
-    this.currencyFilter = '';
-    this.applyFilters();
-  }
+  // clearCurrency(): void {
+  //   this.currencyFilter = '';
+  //   this.applyFilters();
+  // }
 
   sortBy(column: typeof this.sortColumn): void {
     if (this.sortColumn === column) {

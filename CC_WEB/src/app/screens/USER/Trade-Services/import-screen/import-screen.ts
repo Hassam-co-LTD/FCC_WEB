@@ -24,6 +24,7 @@ import { ImportlcFormTransactionService } from '../../../../core/services/user-s
 import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
 @Component({
@@ -43,6 +44,7 @@ import { AuthService } from '../../../../core/services/auth.service';
     Licenses,
     InstructionToBank,
     Attachments,
+    MatDialogModule,
     Sidebar,
     RouterOutlet,
   ],
@@ -59,7 +61,7 @@ export class ImportScreen implements OnInit {
   showApproveReject = false;
   rejectionReason = '';
   tnxId = '';
-  companyId ='';
+  companyId = '';
 
   importSteps = [
     { label: "General Details" },
@@ -80,7 +82,7 @@ export class ImportScreen implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private route: ActivatedRoute,
-    private dialog: Dialog,
+    private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService
 
@@ -103,7 +105,7 @@ export class ImportScreen implements OnInit {
       );
       sections.forEach(section => observer.observe(section));
     }, 200);
-    
+
     const navState = history.state;
 
     if (navState?.mode) {
@@ -145,11 +147,13 @@ export class ImportScreen implements OnInit {
         applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
+        applicantAddress4: [''],
         applicantCountry: [''],
         beneficiaryName: [''],
         beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
         beneficiaryCountry: ['']
       }),
       bankForm: this.fb.group({
@@ -255,7 +259,7 @@ export class ImportScreen implements OnInit {
       }
     });
   }
-  // Safe getters
+  // Safe getters for html form access of the specific form groups 
   get generalDetailsForm(): FormGroup { return this.importForm.get('generalDetails') as FormGroup; }
   get applicantForm(): FormGroup { return this.importForm.get('applicantForm') as FormGroup; }
   get bankForm(): FormGroup { return this.importForm.get('bankForm') as FormGroup; }
@@ -289,7 +293,7 @@ export class ImportScreen implements OnInit {
     const section = document.getElementById(`section-${index}`);
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-    private flattenForm(): ImportLcTransaction {
+  private flattenForm(): ImportLcTransaction {
     return {
       companyId: this.companyId,
       ...this.importForm.value.generalDetails,
@@ -430,11 +434,11 @@ export class ImportScreen implements OnInit {
     });
   }
   openReject(): void {
-    const dialogRef = this.dialog.open<string>(RejectDialogComponent, {
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px'
     });
 
-    dialogRef.closed.subscribe((reason: string | undefined) => {
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
 
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({

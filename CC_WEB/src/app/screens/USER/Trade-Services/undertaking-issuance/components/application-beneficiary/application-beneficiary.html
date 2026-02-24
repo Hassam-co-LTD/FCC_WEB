@@ -3,7 +3,7 @@
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen" [formGroup]="form"> <!-- ADD THIS -->
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form"> 
 
     <!-- ========================= Applicant ========================= -->
     <h4>Applicant</h4>
@@ -27,6 +27,10 @@
         <mat-form-field appearance="outline">
             <mat-label>Address 3</mat-label>
             <input matInput formControlName="applicantAddress3">
+        </mat-form-field>
+         <mat-form-field appearance="outline">
+            <mat-label>Address 4</mat-label>
+            <input matInput formControlName="applicantAddress4">
         </mat-form-field>
     </div>
 
@@ -55,9 +59,14 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+            <mat-label>Address 4</mat-label>
+            <input matInput formControlName="beneficiaryAddress4">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
             <mat-label>Country *</mat-label>
             <mat-select formControlName="beneficiaryCountry">
-                <mat-option value="">Select Country</mat-option> <!-- ADD default option -->
+                <mat-option value="">Select Country</mat-option> 
                 <mat-option value="Pakistan">Pakistan</mat-option>
                 <mat-option value="UAE">UAE</mat-option>
                 <mat-option value="USA">USA</mat-option>

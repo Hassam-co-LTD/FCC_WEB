@@ -12,12 +12,13 @@ import { ImportlcFormTransactionService } from '../../../../../../core/services/
 import { ImportLcTransaction } from "../../../../../../core/models/import-lc";
 import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
-  imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule],
+  imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule, MatDialogModule],
   standalone: true,
 })
 export class Preview implements OnInit {
@@ -46,7 +47,7 @@ export class Preview implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private api: ApiService,
-    private dialog: Dialog, 
+    private dialog: MatDialog, 
     private transactionService: ImportlcFormTransactionService
   ) { }
 
@@ -187,13 +188,13 @@ export class Preview implements OnInit {
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
-    const dialogRef = this.dialog.open<string>(RejectDialogComponent, {
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
       backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
       panelClass: 'custom-dialog-container'     // white dialog box 
        });
 
-    dialogRef.closed.subscribe((reason: string | undefined) => {
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
       this.api.rejectTransaction(tnxId, reason ).subscribe({
         next: (res) => {

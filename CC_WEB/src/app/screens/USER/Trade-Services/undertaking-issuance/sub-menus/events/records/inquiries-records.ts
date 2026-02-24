@@ -214,21 +214,24 @@ private loadByStatus(): void {
     return this.mapBackendStatusToChar(tx.status) === 'i';
   }
 
-  openUndertaking(tx: UndertakingTransaction) {
+ openUndertaking(tx: UndertakingTransaction) {
+    // CHANGE: Use tx.tnxId instead of tx.id
+    const identifier = tx.tnxId || tx.id; 
     this.router.navigate(['/undertaking-issuance/request-undertaking'], {
-        queryParams: { transactionId: tx.id }
+        queryParams: { transactionId: identifier }
     });
   }
 
   viewOnly(tx: UndertakingTransaction) {
+      // CHANGE: Use tx.tnxId instead of tx.id
+      const identifier = tx.tnxId || tx.id;
       this.router.navigate(['/undertaking-issuance/preview'], {
           queryParams: { 
-            transactionId: tx.id,
+            transactionId: identifier,
             mode: 'view' 
           }
       });
   }
-
   trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
     return tx.id;
   }
