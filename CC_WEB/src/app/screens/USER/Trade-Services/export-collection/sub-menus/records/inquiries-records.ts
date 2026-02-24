@@ -206,9 +206,9 @@ export class inquiriesRecords implements OnInit {
   // --- PAGINATION ---
 
   get totalPages(): number {
-    return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    return count < 1 ? 1 : count;
   }
-
   get pagedTransactions(): ExportCollectionTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);

@@ -173,7 +173,8 @@ loadTransactions(): void {
 
   // --- Pagination Helpers ---
   get totalPages(): number {
-    return Math.ceil(this.filteredTransactions.length / this.itemsPerPage) || 1;
+    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    return count < 1 ? 1 : count;
   }
 
   get pagedTransactions(): RecordsListTransferDTO[] {

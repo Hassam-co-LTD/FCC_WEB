@@ -5,24 +5,64 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, theme.$screen-bg 0%, theme.$light-bg 100%);
-  font-family: 'Poppins', sans-serif;
   padding: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow: hidden;
+
+  // 1. Moving Atmospheric Background (Optimized)
+  background: linear-gradient(125deg, #001529, #003366, #001529, #0a2a43);
+  background-size: 400% 400%;
+  animation: auroraBackground 15s ease infinite;
+
+  // 2. Corporate Dot Pattern Overlay
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // 3. Subtle Animated Mesh (Floating Glows)
+  &::before {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(24, 144, 255, 0.15) 0%, transparent 70%);
+    top: 10%;
+    left: 10%;
+    animation: floatGlow 20s infinite alternate;
+    z-index: 0;
+  }
 
   mat-card {
+    position: relative;
+    z-index: 1; // Above background patterns
     width: 100%;
-    max-width: 420px;
-    background: theme.$white;
-    border: 1px solid theme.$border-light;
-    box-shadow: theme.$shadow-primary;
-    border-radius: theme.$radius-large;
-    padding: 2.5rem 2rem;
+    max-width: 400px;
+    padding: 3rem 2.5rem;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
     text-align: center;
-    transition: all 0.3s ease-in-out;
+
+    // 4. Smooth Entrance Animation
+    opacity: 0;
+    transform: translateY(20px);
+    animation: cardReveal 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+    animation-delay: 0.2s;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(11, 78, 179, 0.15);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease-in-out;
     }
 
     h2 {
@@ -30,7 +70,9 @@
       color: theme.$primary;
       margin-bottom: 1.5rem;
       font-weight: 600;
+      animation: fadeIn 1s ease-out forwards;
     }
+
 
     form {
       display: flex;
@@ -43,43 +85,35 @@
 
       mat-form-field {
         width: 100%;
+        transition: transform 0.2s ease;
+
+        &:focus-within {
+          transform: scale(1.02);
+        }
 
         ::ng-deep .mat-mdc-text-field-wrapper {
           background-color: theme.$light-bg;
           border-radius: theme.$radius-default;
-          transition: border-color 0.2s ease;
-
-          &:hover {
-            border-color: theme.$border-primary;
-          }
         }
 
         ::ng-deep .mdc-text-field--focused {
           border-color: theme.$primary;
         }
-
-        input {
-          font-size: 0.95rem;
-          color: theme.$text-dark;
-        }
       }
 
       button {
         background-color: theme.$primary-btn;
-        color: theme.$text-light;
+        color: white;
         font-weight: 600;
         border-radius: theme.$radius-default;
         padding: 0.75rem 0;
         box-shadow: theme.$button-shadow;
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: all 0.3s ease;
 
         &:hover {
           background-color: theme.$primary-btn-hover;
           transform: translateY(-2px);
-        }
-
-        &:active {
-          transform: translateY(0);
+          filter: brightness(1.1);
         }
       }
     }
@@ -91,12 +125,10 @@
 
       a {
         color: theme.$primary;
-        font-weight: 500;
+        font-weight: 600;
         text-decoration: none;
-        transition: color 0.3s;
 
         &:hover {
-          color: theme.$primary-hover;
           text-decoration: underline;
         }
       }
@@ -104,13 +136,51 @@
   }
 }
 
-/* Small screen optimization */
-@media (max-width: 480px) {
-  .auth-container mat-card {
-    padding: 2rem 1.25rem;
+// --- Animation Keyframes ---
+@keyframes auroraBackground {
+  0% {
+    background-position: 0% 50%;
   }
 
-  .auth-container h2 {
-    font-size: 1.5rem;
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes floatGlow {
+  from {
+    transform: translate(0, 0);
+  }
+
+  to {
+    transform: translate(100px, 50px);
+  }
+}
+
+@keyframes cardReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive Fixes */
+@media (max-width: 480px) {
+  .auth-container mat-card {
+    padding: 2rem 1.5rem;
   }
 }
