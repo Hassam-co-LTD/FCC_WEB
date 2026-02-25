@@ -65,7 +65,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "host": "hassam",
+            "host": "localhost",
             "allowedHosts": [
               "hassam",
               "Lovekumar",
