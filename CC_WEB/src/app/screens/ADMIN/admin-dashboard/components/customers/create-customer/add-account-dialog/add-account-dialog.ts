@@ -25,6 +25,7 @@ export class AddAccountDialog {
   AccountsForm: FormGroup;
   isOpen = true;
   customerName: string;
+  approvedAccountTypes:any[]=[];
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +55,19 @@ export class AddAccountDialog {
     this.loadCompanies();
     console.log('Dialog opened for customer:', this.customerName);
     console.log('Dialog data:', this.data);
+    this.loadApprovedAccountTypes();
   }
+
+  
+  loadApprovedAccountTypes() {
+    this.api.getTnxByStatus('A','AccountMaster').subscribe({
+      next: res => {
+        this.approvedAccountTypes = res;
+      },
+      error: err => console.error('Error fetching approved AccountTypes', err)
+    });
+  }
+
   onCancel() {
     this.dialogRef.close();
   }

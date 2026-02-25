@@ -8,7 +8,7 @@ import { ApiService } from '../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
 @Component({
-  selector: 'app-customer-list',
+  selector: 'app-AccountMaster-list',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTabsModule, MatIconModule, RouterLink],
   templateUrl: './account-types-inquiry.html', 
@@ -55,7 +55,7 @@ export class AccountTypesInquiry implements OnInit {
 
   // ================== Load AccountTypes ==================
   loadDraftAccountTypes() {
-    this.api.getTnxByStatus('I','customer').subscribe({
+    this.api.getTnxByStatus('I','AccountMaster').subscribe({
       next: res => {
         console.log('Draft AccountTypes response:', res);
         this.draftAccountTypes = res;
@@ -66,7 +66,7 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   loadApprovedAccountTypes() {
-    this.api.getTnxByStatus('A','customer').subscribe({
+    this.api.getTnxByStatus('A','AccountMaster').subscribe({
       next: res => {
         this.approvedAccountTypes = res;
         this.storeFilteredApprovedAccountTypes = [...res];
@@ -76,7 +76,7 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   loadSubmittedAccountTypes() {
-    this.api.getTnxByStatus('S','customer').subscribe({
+    this.api.getTnxByStatus('S','AccountMaster').subscribe({
       next: res => {
         this.submittedAccountTypes = res;
         this.storeFilteredSubmittedAccountTypes = [...res];
@@ -117,53 +117,53 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   // ================== Actions ==================
-  updateRouter(customer: any) {
-    this.router.navigate(['/admin/create-customer/' + customer.id]);
+  updateRouter(AccountMaster: any) {
+    this.router.navigate(['/admin/create-AccountMaster/' + AccountMaster.id]);
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'customer').subscribe({
+    this.api.setTnxByStatus('S', id, 'AccountMaster').subscribe({
       next: () => {
-        Swal.fire('Success', 'Customer submitted successfully', 'success');
+        Swal.fire('Success', 'AccountMaster submitted successfully', 'success');
         this.loadDraftAccountTypes();
         this.loadSubmittedAccountTypes();
       },
-      error: err => Swal.fire('Error', 'Failed to submit customer', 'error')
+      error: err => Swal.fire('Error', 'Failed to submit AccountMaster', 'error')
     });
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'customer').subscribe({
+    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
       next: () => {
-        Swal.fire('Success', 'Customer approved successfully', 'success');
+        Swal.fire('Success', 'AccountMaster approved successfully', 'success');
         this.loadSubmittedAccountTypes();
         this.loadApprovedAccountTypes();
       },
-      error: err => Swal.fire('Error', 'Failed to approve customer', 'error')
+      error: err => Swal.fire('Error', 'Failed to approve AccountMaster', 'error')
     });
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'customer').subscribe({
+    this.api.setTnxByStatus('R', id, 'AccountMaster').subscribe({
       next: () => {
-        Swal.fire('Success', 'Customer rejected successfully', 'success');
+        Swal.fire('Success', 'AccountMaster rejected successfully', 'success');
         this.loadSubmittedAccountTypes();
       },
-      error: err => Swal.fire('Error', 'Failed to reject customer', 'error')
+      error: err => Swal.fire('Error', 'Failed to reject AccountMaster', 'error')
     });
   }
 
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCustomer(id: number) {
-    // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'customer').subscribe({
+  /** ================== Edit Approved AccountMaster ================== */
+  editApprovedAccountMaster(id: number) {
+    // Move approved AccountMaster back to Draft for editing
+    this.api.setTnxByStatus('D', id, 'AccountMaster').subscribe({
       next: () => {
-        Swal.fire('Success', 'Approved customer moved to Draft for editing', 'success');
+        Swal.fire('Success', 'Approved AccountMaster moved to Draft for editing', 'success');
         // Reload all tabs
         this.loadDraftAccountTypes();
         this.loadApprovedAccountTypes();
       },
-      error: err => Swal.fire('Error', 'Failed to move approved customer to draft', 'error')
+      error: err => Swal.fire('Error', 'Failed to move approved AccountMaster to draft', 'error')
     });
   }
 

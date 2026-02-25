@@ -41,7 +41,7 @@ export class Accounts implements OnInit {
   AccountsForm!: FormGroup;
   storeAccounts: any = {};
   allCompanies : any = {};
-  
+  approvedAccountTypes:any [] = []
   isEditMode = false;
   isOpen = true;
 
@@ -56,7 +56,8 @@ export class Accounts implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.loadAccounts();
-    this.loadCompanies()
+    this.loadCompanies();
+    this.loadApprovedAccountTypes()
   }
 
   private buildForm(): void {
@@ -68,6 +69,17 @@ export class Accounts implements OnInit {
     accountTitle: ['', Validators.required],
     accountStatus: ['', Validators.required],
     companyId:['',Validators.required]
+    });
+  }
+
+ 
+  loadApprovedAccountTypes() {
+    this.api.getTnxByStatus('A','AccountMaster').subscribe({
+      next: res => {
+        this.approvedAccountTypes = res;
+        console.log("approved AccountTypes",this.approvedAccountTypes)
+      },
+      error: err => console.error('Error fetching approved AccountTypes', err)
     });
   }
 

@@ -1,10 +1,8 @@
 <div class="customer-status-container">
   <h2 class="page-title">Customer Records</h2>
 
-  <mat-tab-group
-    [selectedIndex]="selectedTabIndex"
-    (selectedIndexChange)="onTabChange($event)"
-  >
+  <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)">
+    
     <!-- ================= Draft Tab ================= -->
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
@@ -28,30 +26,28 @@
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Account Type</th>
-                <th>Account description</th>
+                <th>Description</th>
                 <th>Account Status</th>
                 <th>Created On</th>
-                <th>CreatedBy</th>
+                <th>Created By</th>
                 <th>Updated On</th>
-                <th>UpdatedBy</th>
-                <th>AuthorizedBy</th>
+                <th>Updated By</th>
+                <th>Authorized By</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftAccountTypes; trackBy: trackById">
-                <td><a [routerLink]="['/admin/account-types-inquiry', c.id]">{{ c.custId }}</a></td>
-              >
-              <th>{{c.accountType}}</th>
-              <th>{{c.accoutDescription}}</th>
-              <th>{{c.accountStatus}}</th>
-              <th>{{c.createdOn}}</th>
-              <th>{{c.createdBy}}</th>
-              <th>{{c.updatedOn}}</th>
-              <th>{{c.updatedBy}}</th>
-              <th>{{c.authorizedBy}}</th>
+                <td><a [routerLink]="['/admin/edit-account-types/', c.id]">{{ c.id }}</a></td>
+                <td>{{ c.typeName }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.accountStatus }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
+                <td>{{ c.updatedBy }}</td>
+                <td>{{ c.authorizedBy }}</td>
               </tr>
             </tbody>
           </table>
@@ -85,32 +81,29 @@
         <div class="table-wrapper" *ngIf="storeFilteredApprovedAccountTypes?.length; else noApproved">
           <table class="customer-table">
             <thead>
-             <tr>
+              <tr>
+                <th>ID</th>
                 <th>Account Type</th>
-                <th>Account description</th>
+                <th>Description</th>
                 <th>Account Status</th>
                 <th>Created On</th>
-                <th>CreatedBy</th>
+                <th>Created By</th>
                 <th>Updated On</th>
-                <th>UpdatedBy</th>
-                <th>AuthorizedBy</th>
+                <th>Updated By</th>
+                <th>Authorized By</th>
               </tr>
-
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredApprovedAccountTypes; trackBy: trackById">
-              <td><a [routerLink]="['/admin/account-types-inquiry', c.id]">{{ c.custId }}</a></td>
-              >
-              <th>{{c.accountType}}</th>
-              <th>{{c.accoutDescription}}</th>
-              <th>{{c.accountStatus}}</th>
-              <th>{{c.createdOn}}</th>
-              <th>{{c.createdBy}}</th>
-              <th>{{c.updatedOn}}</th>
-              <th>{{c.updatedBy}}</th>
-              <th>{{c.authorizedBy}}</th>
+                <td><a [routerLink]="['/admin/edit-account-types/', c.id]">{{ c.id }}</a></td>
+                <td>{{ c.typeName }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.accountStatus }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
+                <td>{{ c.updatedBy }}</td>
+                <td>{{ c.authorizedBy }}</td>
               </tr>
             </tbody>
           </table>
@@ -144,33 +137,29 @@
         <div class="table-wrapper" *ngIf="storeFilteredSubmittedAccountTypes?.length; else noSubmitted">
           <table class="customer-table">
             <thead>
-             <tr>
+              <tr>
+                <th>ID</th>
                 <th>Account Type</th>
-                <th>Account description</th>
+                <th>Description</th>
                 <th>Account Status</th>
                 <th>Created On</th>
-                <th>CreatedBy</th>
+                <th>Created By</th>
                 <th>Updated On</th>
-                <th>UpdatedBy</th>
-                <th>AuthorizedBy</th>
+                <th>Updated By</th>
+                <th>Authorized By</th>
               </tr>
-            
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedAccountTypes; trackBy: trackById">
-                 <td><a [routerLink]="['/admin/account-types-inquiry', c.id]">{{ c.custId }}</a></td>
-              >
-              <th>{{c.accountType}}</th>
-              <th>{{c.accoutDescription}}</th>
-              <th>{{c.accountStatus}}</th>
-              <th>{{c.createdOn}}</th>
-              <th>{{c.createdBy}}</th>
-              <th>{{c.updatedOn}}</th>
-              <th>{{c.updatedBy}}</th>
-              <th>{{c.authorizedBy}}</th>
+                <td><a [routerLink]="['/admin/edit-account-types/', c.id]">{{ c.id }}</a></td>
+                <td>{{ c.typeName }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.accountStatus }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
-              
+                <td>{{ c.updatedBy }}</td>
+                <td>{{ c.authorizedBy }}</td>
               </tr>
             </tbody>
           </table>
@@ -181,5 +170,6 @@
         </ng-template>
       </div>
     </mat-tab>
+
   </mat-tab-group>
 </div>

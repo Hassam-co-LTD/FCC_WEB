@@ -28,17 +28,15 @@
           </div>
 
           <div class="field-group">
-            <h4>Account Type</h4>
-            <mat-form-field appearance="outline" class="full">
-              <mat-select formControlName="accountType" placeholder="Select Account Type">
-                <mat-option value="SAVINGS">Savings</mat-option>
-                <mat-option value="CURRENT">Current</mat-option>
-                <mat-option value="FIXED">Fixed Deposit</mat-option>
-                <mat-option value="ISLAMIC">Islamic</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
+  <h4>Account Type</h4>
+  <mat-form-field appearance="outline" class="full">
+    <mat-select formControlName="accountType" placeholder="Select Account Type">
+      <mat-option *ngFor="let acc of approvedAccountTypes" [value]="acc.name">
+        {{ acc.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
           <div class="field-group">
             <h4>Account Title</h4>
             <mat-form-field appearance="outline" class="full">

@@ -64,7 +64,7 @@ export class CustomerAccountMaster implements OnInit {
   this.accountForm = this.fb.group({
     typeName: [''],        // Account Type Name
     description: [''],     // Description of the account type
-    accountStatus: ['Active'] // Active / Inactive
+    accountStatus: [''] // Active / Inactive
   });
 }
 
@@ -88,8 +88,9 @@ export class CustomerAccountMaster implements OnInit {
 
   // ---------------- CREATE ----------------
   onSave(): void {
+    console.log("AccountRequestData ",this.accountForm)
     if (this.accountForm.invalid) return;
-
+ 
     const payload = this.accountForm.getRawValue();
     console.log('Payload to save:', payload);
     
@@ -97,7 +98,7 @@ export class CustomerAccountMaster implements OnInit {
       next: res => {
         console.log("Saved response:", res);
         Swal.fire('Saved!', 'AccountMaster saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/AccountMaster-list'], { queryParams: { tabName: 'Draft' } } ));
+          .then(() => this.router.navigate(['/admin/account-types-inquiry'] ));
       },
       error: err => console.error('Save failed', err)
     });
@@ -112,7 +113,7 @@ export class CustomerAccountMaster implements OnInit {
     this.api.updateTnx(payload, 'AccountMaster',id).subscribe({
       next: () => {
         Swal.fire('Updated!', 'AccountMaster updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/create-AccountMaster', id]));
+          .then(() => this.router.navigate(['/admin/edity-accounts', id]));
       },
       error: err => console.error('Update failed', err)
     });
@@ -173,7 +174,7 @@ export class CustomerAccountMaster implements OnInit {
       next: (res) => {
         console.log('Submited response:', res);
         Swal.fire('Submitted!', 'AccountMaster submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/AccountMaster-list'],{ queryParams: { tabName: 'submitted' } }));
+          .then(() => this.router.navigate(['/admin/account-types-inquiry'],{ queryParams: { tabName: 'submitted' } }));
       },  
       error: err => console.error('Submit failed', err)
     });
@@ -187,7 +188,7 @@ export class CustomerAccountMaster implements OnInit {
     this.api.setTnxByStatus('I', this.storeAccountMaster.id, 'AccountMaster').subscribe({
       next: () => {
         Swal.fire('Rejected!', 'AccountMaster rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/AccountMaster-list'],{ queryParams: { tabName: 'Rejected' } }));
+          .then(() => this.router.navigate(['/admin/acount-types-inquiry'],{ queryParams: { tabName: 'Rejected' } }));
       },
       error: err => console.error('Reject failed', err)
     });
@@ -197,10 +198,11 @@ export class CustomerAccountMaster implements OnInit {
   if (!this.storeAccountMaster?.id) return;
 
   this.api.setTnxByStatus('A', this.storeAccountMaster.id, 'AccountMaster').subscribe({
-    next: () => {
+    next: (res) => {
+      console.log("approved transactions ",res)
       Swal.fire('Approved!', 'AccountMaster approved successfully', 'success')
         .then(() => 
-          this.router.navigate(['/admin/AccountMaster-list'], { queryParams: { tabName: 'approved' } })
+          this.router.navigate(['/admin/account-types-inquiry'], { queryParams: { tabName: 'approved' } })
         );
     },
     error: err => console.error('Approve failed', err)
