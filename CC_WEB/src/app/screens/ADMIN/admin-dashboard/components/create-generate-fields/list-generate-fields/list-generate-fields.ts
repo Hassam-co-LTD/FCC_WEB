@@ -37,8 +37,8 @@ export class ListGenerateFields implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       const tab = params['tabName'];
-      if (tab === 'submitted') this.onTabChange(2);
-      else if (tab === 'approved') this.onTabChange(1);
+      if (tab === 'Submitted') this.onTabChange(2);
+      else if (tab === 'Approved') this.onTabChange(1);
       else this.onTabChange(0);
     });
   }
@@ -56,7 +56,7 @@ export class ListGenerateFields implements OnInit {
 
   // ================== Load Fields ==================
   loadDraftFields() {
-    this.api.getTnxByStatus('I','DynamicFields').subscribe({
+    this.api.getTnxByStatus('I','dynamic-fields').subscribe({
       next: res => {
         console.log('Draft fields response:', res);
         this.draftFields = res;
@@ -67,7 +67,7 @@ export class ListGenerateFields implements OnInit {
   }
 
   loadApprovedFields() {
-    this.api.getTnxByStatus('A','DynamicFields').subscribe({
+    this.api.getTnxByStatus('A','dynamic-fields').subscribe({
       next: res => {
         this.approvedFields = res;
         this.storeFilteredApprovedFields   = [...res];
@@ -77,7 +77,7 @@ export class ListGenerateFields implements OnInit {
   }
 
   loadSubmittedFields() {
-    this.api.getTnxByStatus('S','DynamicFields').subscribe({
+    this.api.getTnxByStatus('S','dynamic-fields').subscribe({
       next: res => {
         this.submittedFields = res;
         this.storeFilteredSubmittedFields = [...res];
@@ -120,7 +120,7 @@ export class ListGenerateFields implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'DynamicFields').subscribe({
+    this.api.setTnxByStatus('S', id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field submitted successfully', 'success');
         this.loadDraftFields();
@@ -131,7 +131,7 @@ export class ListGenerateFields implements OnInit {
   }
   
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'DynamicFields').subscribe({
+    this.api.setTnxByStatus('A', id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field approved successfully', 'success');
         this.loadSubmittedFields();
@@ -142,7 +142,7 @@ export class ListGenerateFields implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'DynamicFields').subscribe({
+    this.api.setTnxByStatus('R', id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field rejected successfully', 'success');
         this.loadSubmittedFields();
@@ -154,7 +154,7 @@ export class ListGenerateFields implements OnInit {
   /** ================== Edit Approved Field ================== */
   editApprovedField(id: number) {
     // Move approved field back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'DynamicFields').subscribe({
+    this.api.setTnxByStatus('D', id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved field moved to Draft for editing', 'success');
         // Reload all tabs

@@ -15,6 +15,8 @@ import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
+import { DynamicFieldsResponseDto } from '../../create-generate-fields/create-generate-fields';
+
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
@@ -31,7 +33,7 @@ import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-    RouterLink
+  
 
     
   ],
@@ -48,20 +50,39 @@ export class CreateCustomer implements OnInit {
   isOpen = true;
   storeCustomerResponseForAccounts: any = {};
   storeCustomerAccounts : any =  [];
- 
+  fields: DynamicFieldsResponseDto[] = [];
+  // Add at the top of your class
+dynamicFieldsForm: FormGroup = new FormGroup({});
+isDynamicFieldsOpen = true;  // default open
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.loadCustomer();
     this.loadCompanies();
+    this.api.getFieldsByScreenAndStatus('customer', 'A').subscribe({
+      next: res => {
+        this.fields = res;
+        console.log("got customer screens ", this.fields);
+        // Initialize dynamic form controls
+        this.fields.forEach(field => {
+          this.dynamicFieldsForm.addControl(
+            field.fieldName,
+            this.fb.control('', Validators.required) // add validators if needed
+          );
+        });
+      },
+      error: err => console.error(err)
+    });
+
     
   }
 
@@ -117,8 +138,7 @@ export class CreateCustomer implements OnInit {
     if (this.customerForm.invalid) return;
 
     const payload = this.customerForm.getRawValue();
-    console.log('Payload to save:', payload);
-    
+    console.log('Payload to save:', payload);    
     this.api.saveTnx(payload, 'customer').subscribe({
       next: res => {
         console.log("Saved response:", res);
@@ -127,6 +147,25 @@ export class CreateCustomer implements OnInit {
           
       },
       error: err => console.error('Save failed', err)
+    });
+
+  // save payload of dynamic fields
+  const dynamicPayload = this.fields.map(field => ({
+  id: field.fieldId,
+  name: field.fieldName,
+  label: field.label,
+  type: field.fieldType,
+  screen: field.screen,
+  recordStatus: field.recordStatus,
+  custId: payload.custId, // associate with customer
+  
+}));
+
+console.log('Constructed Dynamic Fields Payload:', dynamicPayload);
+    console.log('Dynamic Fields Payload on Save:', dynamicPayload);
+    this.api.saveTnx(dynamicPayload, 'customer/Dynamicfields').subscribe({
+      next: res => console.log('Dynamic fields saved:', res),
+      error: err => console.error('Failed to save dynamic fields', err)
     });
   }
 
@@ -281,5 +320,9 @@ getCompanyName(companyId: number): string {
     c => c.companyId === companyId
   );
   return company ? company.companyName : 'N/A';
+}
+ 
+  toggleDynamicFields() {
+  this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
 }
 }

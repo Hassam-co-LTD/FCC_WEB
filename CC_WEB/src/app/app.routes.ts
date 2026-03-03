@@ -182,14 +182,14 @@ export const routes: Routes = [
                 },
                 
                 
-                        {
+{
   path: 'create-generate-fields',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
     .then((m) => m.CreateGenerateFields)
 },
 {
-  path: 'list-generate-fields',
+  path: 'generate-fields-inquiry',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
     .then((m) => m.ListGenerateFields)

@@ -45,16 +45,30 @@
       <ng-template #menuTemplate let-item>
 
         <!-- Parent Menu -->
-        <div class="menu-group" *ngIf="item">
+         <div class="menu-group" *ngIf="item.children">
           <button class="menu-btn"
-                  [class.active-parent]="isAnyDescendantActive(item)"
-                  (click)="item.label === 'Customers' ? onCustomerClick(item) : toggleMenu(item)">
-            <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-            <span *ngIf="!isCollapsed()">{{ item.label }}</span>
-            <mat-icon class="arrow" *ngIf="!isCollapsed()">
-              {{ item.open ? 'expand_less' : 'expand_more' }}
-            </mat-icon>
-          </button>
+        [class.active-parent]="isAnyDescendantActive(item)">
+
+  <!-- ICON -->
+  <mat-icon *ngIf="item.icon"
+            (click)="item.route ? goTo(item) : toggleMenu(item)">
+    {{ item.icon }}
+  </mat-icon>
+
+  <!-- LABEL -->
+  <span *ngIf="!isCollapsed()"
+        (click)="item.route ? goTo(item) : toggleMenu(item)">
+    {{ item.label }}
+  </span>
+
+  <!-- ARROW -->
+  <mat-icon class="arrow"
+            *ngIf="item.children && !isCollapsed()"
+            (click)="toggleMenu(item); $event.stopPropagation()">
+    {{ item.open ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+
+</button>
 
           <!-- Submenu -->
           <div class="submenu" [class.open]="item.open && !isCollapsed()">
@@ -77,10 +91,10 @@
                 <!-- Nested submenu (grandchild) -->
                 <div class="nested-submenu" [class.open]="child.open">
                   <button *ngFor="let sub of child.children"
-                          (click)="goTo(sub)"
-                          [class.active-leaf]="isExactActive(sub.route)">
-                    {{ sub.label }}
-                  </button>
+        (click)="onGrandChildClick(sub, $event)"
+        [class.active-leaf]="isExactActive(sub.route)">
+  {{ sub.label }}
+</button>
                 </div>
 
               </div>

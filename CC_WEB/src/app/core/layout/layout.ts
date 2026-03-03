@@ -286,7 +286,7 @@ toggleMenu(item: MenuItem) {
     open: false,
     children: [
       { label: 'Create New', route: '/admin/create-generate-fields' },
-      { label: 'Inquiry', route: '/admin/list-generate-fields' }
+      { label: 'Inquiry', route: '/admin/generate-fields-inquiry' }
     ]
   },
 
@@ -693,4 +693,12 @@ onChildClick(child: MenuItem, parent?: MenuItem) {
     child.open = !child.open;
   }
 }
+
+
+onGrandChildClick(sub: any, event: Event) {
+  event.stopPropagation();
+  this.goTo(sub);
+}
+
+
 }

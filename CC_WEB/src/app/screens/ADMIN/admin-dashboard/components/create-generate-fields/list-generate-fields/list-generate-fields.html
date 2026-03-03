@@ -52,7 +52,7 @@
             <tbody>
               <tr *ngFor="let f of storeFilteredDraftFields; trackBy: trackById">
                 <!-- <td>{{ f.id }}</td> -->
-               <a routerLink="/admin/edit-field/{{f.id}}"> <td>{{ f.fieldId }}</td></a>
+               <td><a [routerLink]="['/admin/edit-field/',f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
@@ -122,8 +122,8 @@
 
             <tbody>
               <tr *ngFor="let f of storeFilteredApprovedFields; trackBy: trackById">
-                <td>{{ f.id }}</td>
-                <td>{{ f.fieldId }}</td>
+               
+                <td><a [routerLink]="['/admin/edit-field/',f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
@@ -178,7 +178,6 @@
           <table class="customer-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Field ID</th>
                 <th>Field Name</th>
                 <th>Label</th>
@@ -194,8 +193,7 @@
 
             <tbody>
               <tr *ngFor="let f of storeFilteredSubmittedFields; trackBy: trackById">
-                <td>{{ f.id }}</td>
-                <td>{{ f.fieldId }}</td>
+                 <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>

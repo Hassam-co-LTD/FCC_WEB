@@ -3,17 +3,16 @@
 ========================= -->
 <div class="create-customer-page">
 
-  <!-- =========================
-       Page Header
-  ========================== -->
+  <!-- Page Header -->
   <div class="page-header">
-    <h1>Create </h1>
+    <h1>Create Customer</h1>
   </div>
-  <!-- =========================
-       Customer Form Container
-  ========================== -->
-  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCustomer?.recordStatus=== 'A'}">
 
+  <!-- =========================
+       Customer General Details Form
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCustomer?.recordStatus === 'A'}">
+    
     <!-- Section Header -->
     <div class="section-header" (click)="toggle()">
       <h2>Customer General Details</h2>
@@ -22,65 +21,58 @@
 
     <!-- Collapsible Form -->
     <div class="collapsible" [class.open]="isOpen" [formGroup]="customerForm">
-
       <ng-container *ngIf="isOpen">
-        <!-- ---------------- BASIC DETAILS ---------------- -->
-        <div class="form-grid form-grid-large">
+
+        <!-- BASIC DETAILS -->
+        <div class="form-grid">
           <div class="field-group">
             <h4>Customer ID</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="custId" placeholder="Customer ID" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
-
           <div class="field-group">
             <h4>Name</h4>
-            <mat-form-field appearance="outline" cla ss="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="name" placeholder="Full Name" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
 
           <div class="field-group">
             <h4>Email</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="email" formControlName="email" placeholder="example@email.com" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
-
           <div class="field-group">
             <h4>Contact</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="tel" formControlName="contact" placeholder="+1 (555) 000-0000" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
 
           <div class="field-group">
             <h4>Legal ID</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="legalId" placeholder="CNIC / NTN / ECIB" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
-        </div>
-
-        <!-- ---------------- DROPDOWN DETAILS ---------------- -->
-        <div class="form-grid form-grid-large">
           <div class="field-group">
             <h4>Customer Status</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <mat-label>Status</mat-label>
-              <mat-select formControlName="customerStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="customerStatus" [disabled]="isReadOnly()">
                 <mat-option value="Active">Active</mat-option>
                 <mat-option value="Inactive">Inactive</mat-option>
               </mat-select>
             </mat-form-field>
-          </div>    
-
+          </div>
 
           <div class="field-group">
             <h4>Branch Code</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <mat-label>Branch Code</mat-label>
-              <mat-select formControlName="branchCode" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="branchCode" [disabled]="isReadOnly()">
                 <mat-option value="">Select Branch</mat-option>
                 <mat-option value="BR-001">Branch 001</mat-option>
                 <mat-option value="BR-002">Branch 002</mat-option>
@@ -88,14 +80,11 @@
               </mat-select>
             </mat-form-field>
           </div>
-
-          
-           
           <div class="field-group">
             <h4>Country / City</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <mat-label>Country / City</mat-label>
-              <mat-select formControlName="countryCity" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="countryCity" [disabled]="isReadOnly()">
                 <mat-option value="">Select City</mat-option>
                 <mat-option value="Karachi">Karachi</mat-option>
                 <mat-option value="Lahore">Lahore</mat-option>
@@ -106,201 +95,112 @@
 
           <div class="field-group">
             <h4>Customer Type</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <mat-label>Customer Type</mat-label>
-              <mat-select formControlName="customerType" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="customerType" [disabled]="isReadOnly()">
                 <mat-option value="Regular">Regular</mat-option>
                 <mat-option value="Premium">Premium</mat-option>
                 <mat-option value="VIP">VIP</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-
           <div class="field-group">
             <h4>Customer Category</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <mat-label>Customer Category</mat-label>
-              <mat-select formControlName="customerCategory"
- [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select formControlName="customerCategory" [disabled]="isReadOnly()">
                 <mat-option value="Bank">Bank</mat-option>
                 <mat-option value="Client">Client</mat-option>
-                
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="field-group full">
+
+          <div class="field-group">
             <h4>Address Line 1</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="address1" placeholder="Address Line 1" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
-        </div>
-        <!-- ---------------- ADDRESS ---------------- -->
-        <div class="form-grid form-grid-large">
-          
-          <div class="field-group full">
+          <div class="field-group">
             <h4>Address Line 2</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="address2" placeholder="Address Line 2" [readonly]="isReadOnly()" />
             </mat-form-field>
           </div>
-          <div class="field-group full">
+
+          <div class="field-group">
             <h4>Address Line 3</h4>
-            <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline">
               <input matInput type="text" formControlName="address3" placeholder="Address Line 3" [readonly]="isReadOnly()" />
             </mat-form-field>
-            
           </div>
-
-
         </div>
       </ng-container>
     </div>
   </div>
 
-  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
-<!-- =========================
-     CUSTOMER ACTION BUTTONS
-     Positioned outside the form container
-========================= -->
-<div class="customer-actions">
-  <!-- ---------------- New Customer ---------------- -->
-  <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
-    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-    <button class="btn-save " [disabled]="!storeCustomerResponseForAccounts?.id" (click)="openAddAccountDialog(storeCustomerResponseForAccounts.id ,storeCustomerResponseForAccounts.name)">
-    
-  Add Account
-</button>
-
-    <button class="btn-save" [disabled]="!customerForm.valid" (click)="onSave()">Save</button>
-    
-  </ng-container>
-
-  <!-- ---------------- Edit Mode: Draft ---------------- -->
-  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
-    <button class="btn-back" (click)="onBack()">Back</button>
-    <button class="btn-update" [disabled]="!customerForm.dirty || !customerForm.valid" (click)="update(storeCustomer.id)">Update</button>
-    <button class="btn-submit" [disabled]="!customerForm.valid" (click)="submit()">Submit</button>
-      <button
-  class="btn-save"
-  *ngIf="storeCustomerAccounts?.length === 0"
-  (click)="openAddAccountDialog(
-      storeCustomer?.custId,
-      storeCustomer?.name
-  )">
-  Create Account
-</button>
-    <!-- show customer  accounts details here  -->
-    
-    <!-- <div class="" *ngif="storeCustomer">
-      <h1>Customer Acccounts</h1>
-       
-    </div> -->
-  </ng-container>
-
-  <!-- ---------------- Edit Mode: Submitted ---------------- -->
-  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
-    <button class="btn-reject" (click)="reject(storeCustomer.id)">Reject</button>
-    <button class="btn-approve" (click)="approve(storeCustomer.id)">Approve</button>
-  </ng-container>
-</div>
-
- <!-- ---------------- APPROVED VIEW ---------------- -->
-<div class="approved-container" [ngClass]="{'hide-when-approved': storeCustomer?.recordStatus !== 'A'}">
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h3>Customer Details</h3>
-  </div>
-
-  <div class="approved-info">
-    <div class="info-item"><span class="key">Customer ID:</span> <span class="value">{{ storeCustomer.custId }}</span></div>
-    <div class="info-item"><span class="key">Name:</span> <span class="value">{{ storeCustomer.name }}</span></div>
-    <div class="info-item"><span class="key">Email:</span> <span class="value">{{ storeCustomer.email }}</span></div>
-    <div class="info-item"><span class="key">Contact:</span> <span class="value">{{ storeCustomer.contact }}</span></div>
-    <div class="info-item"><span class="key">Legal ID:</span> <span class="value">{{ storeCustomer.legalId }}</span></div>
-    <div class="info-item"><span class="key">Branch Code:</span> <span class="value">{{ storeCustomer.branchCode }}</span></div>
-    <div class="info-item"><span class="key">Country / City:</span> <span class="value">{{ storeCustomer.countryCity }}</span></div>
-    <div class="info-item"><span class="key">Customer Type:</span> <span class="value">{{ storeCustomer.customerType }}</span></div>
-    <div class="info-item"><span class="key">Address 1:</span> <span class="value">{{ storeCustomer.address1 }}</span></div>
-    <div class="info-item"><span class="key">Address 2:</span> <span class="value">{{ storeCustomer.address2 }}</span></div>
-    <div class="info-item"><span class="key">Address 3:</span> <span class="value">{{ storeCustomer.address3 }}</span></div>
-  </div>
-</div>
-
-<div class="approved-actions" *ngIf="storeCustomer?.recordStatus=== 'A'">
-  <button class="btn-back" (click)="onBack()">Back</button>
-  <button class="btn-update" (click)="reject(storeCustomer.id)">Amend</button>
-</div>
-
-<!-- ============================= -->
-<!-- Customer Accounts Section -->
-<!-- ============================= --><div class="customer-accounts" *ngIf="storeCustomerAccounts?.length > 0">
-
-  <!-- Section Header -->
-  <div class="section-header">
-    <h2>Customer Accounts</h2>
-    <span class="account-count">
-      Total Accounts: {{ storeCustomerAccounts.length }}
-    </span>
-  </div>
-
-  <!-- Table Layout -->
-  <div class="accounts-table">
-    <!-- Table Header -->
-    <div class="table-header">
-      <span>Account No</span>
-      <span>IBAN</span>
-      <span>Account Type</span>
-      <span>Company</span>
-      <span>Created On</span>
-      <span>Status</span>
-     
+  <!-- =========================
+       DYNAMIC CUSTOMER FIELDS
+       (Two columns enforced)
+  ========================== -->
+  <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
+    <div class="section-header" (click)="toggleDynamicFields()">
+      <h2>Customer Additional Fields</h2>
+      <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
     </div>
 
-    <!-- Table Rows -->
-    <div class="table-row" *ngFor="let account of storeCustomerAccounts">
-      
-      <!-- Account No as clickable link -->
-      <a [routerLink]="['/admin/edit-accounts', account.id]">
-        {{ account.accountNo }}
-      </a>
+    <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+      <div class="form-grid">
+        <ng-container *ngFor="let field of fields">
+          <div class="field-group">
+            <h4>{{ field.label }}</h4>
 
-      <span>{{ account.iban }}</span>
-      <span>{{ account.accountType }}</span>
-      <span>{{ getCompanyName(account.companyId) }}</span>
-      <span>{{ account.createdOn | date:'mediumDate' }}</span>
+            <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
+              <input matInput [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
+            </mat-form-field>
 
-      <span [ngClass]="{
-             'active': account.accountStatus === 'Active',
-             'inactive': account.accountStatus !== 'Active'
-           }">
-        {{ account.accountStatus }}
-      </span>
+            <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
+              <input matInput type="number" [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
+            </mat-form-field>
 
-      
+            <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
+              <input matInput type="date" [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+              <mat-label>{{ field.label }}</mat-label>
+              <mat-select [formControlName]="field.fieldName">
+                <mat-option value="">Select {{ field.label }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+        </ng-container>
+      </div>
     </div>
   </div>
 
-  <!-- Create Button -->
-  <div class="card-actions">
-    <button class="btn-save"
-            (click)="openAddAccountDialog(storeCustomer.custId, storeCustomer.name)">
-      Create Another Account
-    </button>
+  <!-- =========================
+       CUSTOMER ACTION BUTTONS
+  ========================== -->
+  <div class="customer-actions">
+    <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!storeCustomerResponseForAccounts?.id" (click)="openAddAccountDialog(storeCustomerResponseForAccounts.id ,storeCustomerResponseForAccounts.name)">Add Account</button>
+      <button class="btn-save" [disabled]="!customerForm.valid || !dynamicFieldsForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" [disabled]="!customerForm.dirty || !dynamicFieldsForm.dirty || !customerForm.valid || !dynamicFieldsForm.valid" (click)="update(storeCustomer.id)">Update</button>
+      <button class="btn-submit" [disabled]="!customerForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>
+      <button class="btn-save" *ngIf="storeCustomerAccounts?.length === 0" (click)="openAddAccountDialog(storeCustomer?.custId, storeCustomer?.name)">Create Account</button>
+    </ng-container>
+
+    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeCustomer.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeCustomer.id)">Approve</button>
+    </ng-container>
   </div>
 
-</div>
-
-<!-- ============================= -->
-<!-- No Accounts State -->
-<!-- ============================= -->
-
-<!-- <div class="no-accounts" *ngIf="storeCustomerAccounts?.length === 0">
-  <p>No Accounts Found</p>
-<div class="card-actions">
-  <button class="btn-create-account"
-          (click)="openAddAccountDialog(storeCustomer.custId, storeCustomer.name)">
-    Create Another Account
-  </button>
-</div> -->
 </div>

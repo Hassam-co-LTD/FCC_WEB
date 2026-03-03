@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
 import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
+import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
@@ -650,5 +651,8 @@ deleteAccount(id:Number,apiName:String){
  return  this.http.delete<any>(`${this.baseUrl}${apiName}/delete/${id}`)
 }
 
+getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFieldsResponseDto[]> {
+    return this.http.get<DynamicFieldsResponseDto[]>(`${this.baseUrl}dynamic-fields/screen/${screen}/status/${status}`);
+}
 
 }
