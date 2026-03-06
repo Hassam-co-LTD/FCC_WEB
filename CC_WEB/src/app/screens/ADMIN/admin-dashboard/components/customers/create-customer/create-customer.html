@@ -144,41 +144,97 @@
        (Two columns enforced)
   ========================== -->
   <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
-    <div class="section-header" (click)="toggleDynamicFields()">
-      <h2>Customer Additional Fields</h2>
-      <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </div>
+  <div class="section-header" (click)="toggleDynamicFields()">
+    <h2>Customer Additional Fields</h2>
+    <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
 
-    <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
-      <div class="form-grid">
-        <ng-container *ngFor="let field of fields">
-          <div class="field-group">
-            <h4>{{ field.label }}</h4>
+  <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+    <div class="form-grid">
+      <ng-container *ngFor="let field of fields">
+        <div class="field-group">
+          <h4>{{ field.label || field.fieldName }}</h4>
 
-            <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
-              <input matInput [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
-            </mat-form-field>
+          <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
+            <input matInput [formControlName]="field.fieldName" placeholder="{{ field.label || field.fieldName }}" />
+          </mat-form-field>
 
-            <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
-              <input matInput type="number" [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
-            </mat-form-field>
+          <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
+            <input matInput type="number" [formControlName]="field.fieldName" placeholder="{{ field.label || field.fieldName }}" />
+          </mat-form-field>
 
-            <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
-              <input matInput type="date" [formControlName]="field.fieldName" placeholder="{{ field.label }}" />
-            </mat-form-field>
+          <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
+            <input matInput type="date" [formControlName]="field.fieldName" placeholder="{{ field.label || field.fieldName }}" />
+          </mat-form-field>
 
-            <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-              <mat-label>{{ field.label }}</mat-label>
-              <mat-select [formControlName]="field.fieldName">
-                <mat-option value="">Select {{ field.label }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+          <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+            <mat-label>{{ field.label || field.fieldName }}</mat-label>
+            <mat-select [formControlName]="field.fieldName">
+              <mat-option value="">Select {{ field.label || field.fieldName }}</mat-option>
+              <ng-container *ngFor="let option of field.options || []">
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
 
-          </div>
-        </ng-container>
-      </div>
+        </div>
+      </ng-container>
     </div>
   </div>
+</div>
+
+<!-- accounts section -->
+  <div class="customer-accounts" *ngIf="storeCustomerAccounts?.length">
+
+  <div class="section-header">
+    <h2>Customer Accounts</h2>
+    <span class="account-count">
+      {{ storeCustomerAccounts?.length }}
+    </span>
+  </div>
+
+  <div class="accounts-table">
+
+    <!-- Header -->
+    <div class="table-header">
+      <span>#</span>
+      <span>Account No</span>
+      <span>Title</span>
+      <span>Type</span>
+      <span>Status</span>
+      <span>IBAN</span>
+    </div>
+
+    <!-- Rows -->
+    <div class="table-row"
+         *ngFor="let account of storeCustomerAccounts; let i = index">
+
+      <span class="col-index">{{ i + 1 }}</span>
+     <a href="/admin/edit-accounts/{{ account.id }}"> <span class="col-account">{{ account.accountNo }}</span></a>
+      <span class="col-title">{{ account.accountTitle }}</span>
+      <span class="col-type">{{ account.accountType }}</span>
+
+      <span class="col-status"
+            [ngClass]="{
+              'active': account.accountStatus === 'Active',
+              'inactive': account.accountStatus !== 'Active'
+            }">
+        {{ account.accountStatus }}
+      </span>
+
+      <span class="col-iban">{{ account.iban }}</span>
+    </div>
+
+    <div class="card-actions">
+      <button class="btn-save"
+              (click)="openAddAccountDialog(storeCustomer?.custId, storeCustomer?.name)">
+        Add Account
+      </button>
+    </div>
+
+  </div>
+</div>
+  
 
   <!-- =========================
        CUSTOMER ACTION BUTTONS
@@ -192,7 +248,7 @@
 
     <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update" [disabled]="!customerForm.dirty || !dynamicFieldsForm.dirty || !customerForm.valid || !dynamicFieldsForm.valid" (click)="update(storeCustomer.id)">Update</button>
+      <button class="btn-update" [disabled]="!customerForm.dirty || !dynamicFieldsForm.dirty || !customerForm.valid || !dynamicFieldsForm.valid" (click)="updateCustomer()">Update</button>
       <button class="btn-submit" [disabled]="!customerForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>
       <button class="btn-save" *ngIf="storeCustomerAccounts?.length === 0" (click)="openAddAccountDialog(storeCustomer?.custId, storeCustomer?.name)">Create Account</button>
     </ng-container>
@@ -203,4 +259,6 @@
     </ng-container>
   </div>
 
-</div>
+</div>    
+
+

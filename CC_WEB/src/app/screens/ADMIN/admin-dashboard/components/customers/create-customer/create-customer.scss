@@ -278,7 +278,7 @@ input[matInput] {
     .table-header,
     .table-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(6, 1fr);
       padding: 10px 12px;
       align-items: center;
       gap: 8px;
@@ -349,8 +349,46 @@ input[matInput] {
       }
     }
   }
-}
 
+  /* ================= RESPONSIVENESS ================= */
+
+  @media (max-width: 992px) {
+    .accounts-table {
+
+      .table-header,
+      .table-row {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .accounts-table {
+
+      .table-header {
+        display: none;
+      }
+
+      .table-row {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 6px;
+
+        span {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .col-index::before { content: "#"; font-weight: 600; }
+        .col-account::before { content: "Account No"; font-weight: 600; }
+        .col-title::before { content: "Title"; font-weight: 600; }
+        .col-type::before { content: "Type"; font-weight: 600; }
+        .col-status::before { content: "Status"; font-weight: 600; }
+        .col-iban::before { content: "IBAN"; font-weight: 600; }
+      }
+    }
+  }
+}
 /* ========================================
    Dynamic Customer Fields Section
 ======================================== */

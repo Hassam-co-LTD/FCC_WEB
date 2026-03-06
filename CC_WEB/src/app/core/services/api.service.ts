@@ -591,7 +591,7 @@ getTnxByStatus(status:String,Tnx:String){
 
 // get transaction by id
 
-getTnxById(id:Number,name:String){
+getTnxById(id:Number | String,name:String){
     return this.http.get<any>(`${this.baseUrl}${name}/id/${id}`);
 }
 getTnxByRolId(id:String,name:String){

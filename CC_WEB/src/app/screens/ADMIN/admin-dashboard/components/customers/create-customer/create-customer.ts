@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,12 +10,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
-import { DynamicFieldsResponseDto } from '../../create-generate-fields/create-generate-fields';
 
 @Component({
   selector: 'app-customer-profile',
@@ -23,7 +22,7 @@ import { DynamicFieldsResponseDto } from '../../create-generate-fields/create-ge
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -32,10 +31,6 @@ import { DynamicFieldsResponseDto } from '../../create-generate-fields/create-ge
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule,
-  
-
-    
   ],
   templateUrl: './create-customer.html',
   styleUrls: ['./create-customer.scss']
@@ -43,17 +38,21 @@ import { DynamicFieldsResponseDto } from '../../create-generate-fields/create-ge
 export class CreateCustomer implements OnInit {
 
   customerForm!: FormGroup;
+  dynamicFieldsForm!: FormGroup;
+
   storeCustomer: any = {};
-  
+  storeDynamicFieldsResponse: any[] = [];
+  storeCustomerAccounts: any = {};
+  fields: any[] = [];
   allCompanies: any[] = [];
-  isEditMode = false;
-  isOpen = true;
+
   storeCustomerResponseForAccounts: any = {};
-  storeCustomerAccounts : any =  [];
-  fields: DynamicFieldsResponseDto[] = [];
-  // Add at the top of your class
-dynamicFieldsForm: FormGroup = new FormGroup({});
-isDynamicFieldsOpen = true;  // default open
+
+  isOpen = true;
+  isAccountsOpen = true;
+  isDynamicFieldsOpen = true;
+  isEditMode = false;
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
@@ -61,41 +60,28 @@ isDynamicFieldsOpen = true;  // default open
     private route: ActivatedRoute,
     private location: Location,
     private dialog: MatDialog,
-    
   ) {}
 
   ngOnInit(): void {
+
     this.buildForm();
     this.loadCustomer();
     this.loadCompanies();
-    this.api.getFieldsByScreenAndStatus('customer', 'A').subscribe({
-      next: res => {
-        this.fields = res;
-        console.log("got customer screens ", this.fields);
-        // Initialize dynamic form controls
-        this.fields.forEach(field => {
-          this.dynamicFieldsForm.addControl(
-            field.fieldName,
-            this.fb.control('', Validators.required) // add validators if needed
-          );
-        });
-      },
-      error: err => console.error(err)
-    });
+    this.loadDynamicFields();
 
-    
   }
 
+  // ---------------- FORM ----------------
 
   private buildForm(): void {
+
     this.customerForm = this.fb.group({
-     
       custId: ['', Validators.required],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       contact: ['', Validators.required],
       legalId: [''],
-      customerStatus: ['Active'],  // default Active
+      customerStatus: ['Active'],
       branchCode: [''],
       countryCity: [''],
       customerType: ['Regular', Validators.required],
@@ -104,225 +90,349 @@ isDynamicFieldsOpen = true;  // default open
       address2: [''],
       address3: ['']
     });
+
   }
+
+  // ---------------- LOAD CUSTOMER ----------------
 
   private loadCustomer(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loading customer with ID:', id);
-     if (!isNaN(id)) {
-      this.isEditMode = true;
 
-      this.api.getTnxById(id,"customer").subscribe({
-        next: res => {
-          this.storeCustomer = res;
-          console.log('get Customer By:', res);
-          this.customerForm.patchValue(res);
-          this.getAllCustomerAccounts(this.storeCustomer?.custId)
-        },
-        error: err => console.error('Load failed', err)
-      });
-    }
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (!id) return;
+
+    this.isEditMode = true;
+
+    this.api.getTnxById(id, "customer").subscribe({
+
+      next: (res: any) => {
+
+        console.log("Loaded customer:", res);
+
+        this.storeCustomer = res;
+        this.storeDynamicFieldsResponse = res.dynamicFields || [];
+
+        this.customerForm.patchValue(res);
+
+        this.getAllCustomerAccounts(res?.custId);
+
+        // if fields already loaded then patch
+        this.patchDynamicValues();
+
+      },
+
+      error: (err: any) => console.error('Load failed', err)
+
+    });
+
   }
+
+  // ---------------- LOAD DYNAMIC FIELD DEFINITIONS ----------------
+
+  private loadDynamicFields(): void {
+
+    this.api.getFieldsByScreenAndStatus('customer', 'A').subscribe({
+
+      next: (res: any) => {
+
+        console.log("Field definitions:", res);
+
+        this.fields = res;
+
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err)
+
+    });
+
+  }
+
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+
+  private patchDynamicValues(): void {
+
+    if (!this.dynamicFieldsForm || !this.fields?.length || !this.storeDynamicFieldsResponse?.length) return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+
+    });
+
+    console.log("Dynamic patch object:", patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+
+  }
+
+  // ---------------- LOAD COMPANIES ----------------
 
   private loadCompanies(): void {
-    this.api.getTnxByStatus('A',"company").subscribe({
-      next: companies =>{
-           this.allCompanies = companies
-           console.log('Fetched companies:', this.allCompanies);
-      } ,
-      error: err => console.error('Error fetching companies', err)
+
+    this.api.getTnxByStatus('A', "company").subscribe({
+      next: (companies: any) => this.allCompanies = companies,
+      error: (err: any) => console.error('Error fetching companies', err)
     });
+
   }
-  // ---------------- CREATE ----------------
+
+  // ---------------- SAVE ----------------
+
   onSave(): void {
+
     if (this.customerForm.invalid) return;
 
     const payload = this.customerForm.getRawValue();
-    console.log('Payload to save:', payload);    
+
     this.api.saveTnx(payload, 'customer').subscribe({
-      next: res => {
-        console.log("Saved response:", res);
+
+      next: (res: any) => {
+
         this.storeCustomerResponseForAccounts = res;
+
         Swal.fire('Saved!', 'Customer saved successfully', 'success')
-          
+                .then(() =>
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: { tabName: 'draft' }
+          })
+        ),
+          console.log('Customer saved:', res);
+
       },
-      error: err => console.error('Save failed', err)
+
+      error: (err: any) => console.error('Save failed', err)
+
     });
 
-  // save payload of dynamic fields
-  const dynamicPayload = this.fields.map(field => ({
-  id: field.fieldId,
-  name: field.fieldName,
-  label: field.label,
-  type: field.fieldType,
-  screen: field.screen,
-  recordStatus: field.recordStatus,
-  custId: payload.custId, // associate with customer
-  
-}));
+    const formValues = this.dynamicFieldsForm.value;
 
-console.log('Constructed Dynamic Fields Payload:', dynamicPayload);
-    console.log('Dynamic Fields Payload on Save:', dynamicPayload);
+    const dynamicPayload = this.fields.map((f: any) => ({
+
+      fieldId: f.fieldId,
+      value: formValues[f.fieldName],
+      custId: this.customerForm.value.custId
+
+    }));
+
     this.api.saveTnx(dynamicPayload, 'customer/Dynamicfields').subscribe({
-      next: res => console.log('Dynamic fields saved:', res),
-      error: err => console.error('Failed to save dynamic fields', err)
+
+      next: (res: any) => console.log('Dynamic fields saved:', res),
+
+      error: (err: any) => console.error('Failed to save dynamic fields', err)
+
     });
+
   }
 
   // ---------------- UPDATE ----------------
-  update(id:number): void {
-    if (this.customerForm.invalid) return;
+updateCustomer(): void {
+  if (this.customerForm.invalid || this.dynamicFieldsForm.invalid) return;
 
-    const payload = this.customerForm.getRawValue();
+  const custId = this.customerForm.value.custId;
 
-    this.api.updateTnx(payload, 'customer',id).subscribe({
-      next: () => {
-        Swal.fire('Updated!', 'Customer updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/create-customer', id]));
-      },
-      error: err => console.error('Update failed', err)
-    });
-  }
+  // 1️⃣ Main customer payload
+  const customerPayload = this.customerForm.getRawValue();
 
-  
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'Customer is now Active', 'success')
-          .then(() => this.loadCustomer());
-      },
-      error: err => console.error('Activate failed', err)
-    });
-  }
+  // 2️⃣ Dynamic fields payload
+  const dynamicPayload = this.fields.map(f => ({
+    fieldId: f.fieldId,
+    custId: custId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+  }));
 
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'Customer is now Inactive', 'success')
-          .then(() => this.loadCustomer());
-      },
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
-  // ---------------- UI HELPERS ----------------
- isReadOnly(): boolean {
-  // New customer (no storeCustomer) → editable
-  if (!this.storeCustomer) {
-    return true;
-  }
-
-  // Existing customer:
-  // - Draft (D) → editable
-  // - Submitted (S), Approved (A) → read-only
-  return false;
-}
-
-
-
-  toggle(): void {
-    this.isOpen = !this.isOpen;
-  }
-
-  onBack(): void {
-    this.location.back();
-  }
-
-  onCancel(): void {
-    this.customerForm.reset();
-  }
-  submit() {    
-    if (!this.storeCustomer?.id) return;
-    this.api.setTnxByStatus('S', this.storeCustomer.id, 'customer').subscribe({
-      next: (res) => {
-        console.log('Submited response:', res);
-        Swal.fire('Submitted!', 'Customer submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/customer-list'],{ queryParams: { tabName: 'submitted' } }));
-      },  
-      error: err => console.error('Submit failed', err)
-    });
-  }
-
- 
-
-
-  reject(id:number): void { 
-    if (!this.storeCustomer?.id) return;
-    this.api.setTnxByStatus('I', this.storeCustomer.id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Rejected!', 'Customer rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/customer-list'],{ queryParams: { tabName: 'Rejected' } }));
-      },
-      error: err => console.error('Reject failed', err)
-    });
-  } 
-
-  approve(id: number): void {
-  if (!this.storeCustomer?.id) return;
-
-  this.api.setTnxByStatus('A', this.storeCustomer.id, 'customer').subscribe({
+  // 3️⃣ Update main customer using custId
+  this.api.updateTnxx(customerPayload, `customer/byCustId/${custId}`).subscribe({
     next: () => {
-      Swal.fire('Approved!', 'Customer approved successfully', 'success')
-        .then(() => 
-          this.router.navigate(['/admin/customer-list'], { queryParams: { tabName: 'approved' } })
-        );
+
+      // 4️⃣ Update dynamic fields using fieldId
+      this.api.updateTnxx(dynamicPayload, 'customer/Dynamicfield').subscribe({
+        next: () => {
+          // ✅ Success popup
+          Swal.fire({
+            title: 'Updated!',
+            text: 'Customer and Additional Fields updated successfully',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
+
+          // 5️⃣ Refresh form with latest values
+          this.api.getTnxById(custId, 'customer').subscribe({
+            next: (res) => {
+              this.customerForm.patchValue(res);
+
+              if (res.dynamicFields?.length) {
+                res.dynamicFields.forEach((field: any) => {
+                  if (this.dynamicFieldsForm.contains(field.fieldId)) {
+                    this.dynamicFieldsForm.get(field.fieldId)?.setValue(field.value);
+                  }
+                });
+              }
+            },
+            error: (err) => {
+              console.error('Failed to reload customer', err);
+              Swal.fire({
+                title: 'Reload Failed',
+                text: 'Could not fetch updated customer data',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Failed to update dynamic fields', err);
+          Swal.fire({
+            title: 'Update Failed',
+            text: 'Failed to update additional fields',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      });
+
     },
-    error: err => console.error('Approve failed', err)
-  });
-}
-
-
-
-// ---------------- ADD ACCOUNT DIALOG ----------------
-openAddAccountDialog( customerId: number, customerName: string): void {
-  const dialogRef = this.dialog.open(AddAccountDialog, {
-    width: '600px',
-    data: { customerId: customerId, customerName: customerName }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      // result contains the new account data
-      console.log('New Account:', result);
-
-      // TODO: call service to save account for this customer
-      this.addAccountToCustomer(result);
+    error: (err) => {
+      console.error('Failed to update customer', err);
+      Swal.fire({
+        title: 'Update Failed',
+        text: 'Failed to update customer information',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
   });
-}
+}  // ---------------- UI HELPERS ----------------
 
-addAccountToCustomer(accountData: any) {
-  // Example: push to customer's accounts array or call backend API
-  if (!this.storeCustomer.accounts) {
-    this.storeCustomer.accounts = [];
+  isReadOnly(): boolean {
+    return this.storeCustomer?.recordStatus === 'A';
   }
-  this.storeCustomer.accounts.push(accountData);
-}
 
-// getAllCustomerAccounts
+  toggle(): void { this.isOpen = !this.isOpen; }
+  toggleAccounts(): void { this.isAccountsOpen = !this.isAccountsOpen; }
+  toggleDynamicFields(): void { this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen; }
 
-getAllCustomerAccounts(custId:String){
-     this.api.getCustomerAccounts(custId,'accounts').subscribe({
-        next:res=> {
-           console.log("got all customer Accounts",res)
-           this.storeCustomerAccounts = res;
-        }
-        ,
-        error:err=> {
-           console.log("got error while fetching all customer accounts ",err);
-        }
-     })
-}
+  onBack(): void { this.location.back(); }
 
+  onCancel(): void { this.customerForm.reset(); }
 
-getCompanyName(companyId: number): string {
-  const company = this.allCompanies?.find(
-    c => c.companyId === companyId
-  );
-  return company ? company.companyName : 'N/A';
-}
- 
-  toggleDynamicFields() {
-  this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
-}
+  // ---------------- WORKFLOW ----------------
+
+  submit(): void {
+
+    if (!this.storeCustomer?.id) return;
+
+    this.api.setTnxByStatus('S', this.storeCustomer.id, 'customer').subscribe({
+
+      next: () =>
+        Swal.fire('Submitted!', 'Customer submitted successfully', 'success')
+        .then(() =>
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: { tabName: 'submitted' }
+          })
+        ),
+
+      error: (err: any) => console.error('Submit failed', err)
+
+    });
+
+  }
+
+  reject(id: number): void {
+
+    this.api.setTnxByStatus('I', id, 'customer').subscribe({
+
+      next: () =>
+        Swal.fire('Rejected!', 'Customer rejected successfully', 'success')
+        .then(() =>
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: { tabName: 'Rejected' }
+          })
+        ),
+
+      error: (err: any) => console.error('Reject failed', err)
+
+    });
+
+  }
+
+  approve(id: number): void {
+
+    this.api.setTnxByStatus('A', id, 'customer').subscribe({
+
+      next: () =>
+        Swal.fire('Approved!', 'Customer approved successfully', 'success')
+        .then(() =>
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: { tabName: 'approved' }
+          })
+        ),
+
+      error: (err: any) => console.error('Approve failed', err)
+
+    });
+
+  }
+
+  // ---------------- ACCOUNTS ----------------
+
+  openAddAccountDialog(customerId: number, customerName: string): void {
+
+    const dialogRef = this.dialog.open(AddAccountDialog, {
+      width: '600px',
+      data: { customerId, customerName }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) this.addAccountToCustomer(result);
+    });
+
+  }
+
+  addAccountToCustomer(accountData: any) {
+
+    if (!this.storeCustomer.accounts) this.storeCustomer.accounts = [];
+
+    this.storeCustomer.accounts.push(accountData);
+
+  }
+
+  getAllCustomerAccounts(custId: any) {
+
+    this.api.getCustomerAccounts(custId, 'accounts').subscribe({
+
+      next: (res: any) => this.storeCustomerAccounts = res,
+
+      error: (err: any) => console.error("Error fetching customer accounts", err)
+
+    });
+
+  }
+
+  getCompanyName(companyId: any): string {
+
+    const company = this.allCompanies?.find((c: any) => c.companyId === companyId);
+
+    return company ? company.companyName : 'N/A';
+
+  }
+
 }

@@ -46,7 +46,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
@@ -112,7 +112,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredApprovedCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
@@ -178,7 +178,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
