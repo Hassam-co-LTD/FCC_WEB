@@ -278,17 +278,27 @@ toggleMenu(item: MenuItem) {
 
     ]
   },
-
   {
-    label: 'Generate Fields',
-    icon: 'dynamic_form',
-    route: '/admin/generate-fields',
+    label: 'Dynamic Fields',
+    icon: 'add_box', // for creating/generating dynamic fields
+    route: '/admin/create-dynamic-fields',
     open: false,
     children: [
-      { label: 'Create New', route: '/admin/create-generate-fields' },
-      { label: 'Inquiry', route: '/admin/generate-fields-inquiry' }
+      { label: 'Create New', route: '/admin/create-dynamic-fields' },
+      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
     ]
   },
+  {
+    label: 'Dynamic Field Options',
+    icon: 'list_alt', // for configuring dropdown values
+    route: '/admin/create-dynamic-field-options',
+    open: false,
+    children: [
+      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
+      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
+    ]
+  },
+  
 
   { label: 'Users', icon: 'person', route: '/users' },
   { label: 'Logout', icon: 'logout', route: '/login' }

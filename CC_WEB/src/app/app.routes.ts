@@ -183,7 +183,7 @@ export const routes: Routes = [
                 
                 
 {
-  path: 'create-generate-fields',
+  path: 'create-dynamic-fields',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
     .then((m) => m.CreateGenerateFields)
@@ -197,11 +197,21 @@ export const routes: Routes = [
 {
     path: 'edit-field/:id',
     loadComponent: () =>
-      import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
-      .then((m) => m.CreateGenerateFields)      
+      import('./screens/ADMIN/admin-dashboard/components/create-dynamic-field-options/create-dynamic-field-options')
+      .then((m) => m.CreateDynamicFieldOptions)
 
 },
-
+{
+    path: 'create-dynamic-field-options',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-dynamic-field-options/create-dynamic-field-options').then((m) => m.CreateDynamicFieldOptions)
+},
+{
+  
+    path: 'dynamic-field-options-inquiry',
+    loadComponent: () =>
+         import('./screens/ADMIN/admin-dashboard/components/dynamic-field-options-inquiry/dynamic-field-options-inquiry').then((m) => m.DynamicFieldOptionsInquiry)
+},
 // ========Acounts========
 {
     path: 'create-account',
@@ -276,6 +286,7 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import('./screens/CustomerUser/Components/user-of-customer-inquiry/user-of-customer-inquiry').then((m) => m.UserOfCustomerInquiry),
                     },
+                    
                     
                 ]
 

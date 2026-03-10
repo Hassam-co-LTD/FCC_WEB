@@ -1,0 +1,141 @@
+<!-- ========================= 
+     CREATE CUSTOMER PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Dynamic Field Values</h1>
+  </div>
+
+  <!-- =========================
+       Customer Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeDropdown?.recordStatus=== 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Dynamic Field Options</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="dropdownForm">
+
+      <ng-container *ngIf="isOpen">
+
+        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <div class="form-grid form-grid-large">
+
+          <div class="field-group">
+            <h4>Label</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="label" placeholder="Enter label" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Screen</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="screen" placeholder="Enter screen" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <div class="field-group">
+            <h4>Dropdown</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="dropDown" placeholder="Enter dropDown" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+        </div> <!-- ✅ form-grid CLOSED -->
+
+        <!-- ---------------- OPTIONS / VALUES ---------------- -->
+     <div class="form-grid form-grid-large" formArrayName="values">
+  <div class="field-group" *ngFor="let val of values.controls; let i = index" [formGroupName]="i">
+    <h4>Value {{ i + 1 }}</h4>
+
+    <!-- Auto-incremented value (readonly) -->
+    <mat-form-field appearance="outline" class="half">
+      <input matInput formControlName="value" placeholder="Value" [readonly]="true" />
+    </mat-form-field>
+
+    <!-- Label input -->
+    <mat-form-field appearance="outline" class="half">
+      <input matInput formControlName="label" placeholder="Enter label" [readonly]="isReadOnly()" />
+    </mat-form-field>
+
+    <!-- Delete button -->
+    <button mat-icon-button color="warn" type="button" (click)="removeValue(i)" [disabled]="isReadOnly()">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Add value button -->
+<div class="value-actions">
+  <button class="btn-add" type="button" (click)="addValue()" [disabled]="isReadOnly()">
+    <mat-icon class="icon-small">add</mat-icon> Add Value
+  </button>
+</div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- =========================
+       CUSTOMER ACTION BUTTONS
+  ========================== -->
+  <div class="customer-actions">
+
+    <!-- New -->
+    <ng-container *ngIf="!storeDropdown || !storeDropdown.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!dropdownForm.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    <!-- Draft -->
+    <ng-container *ngIf="isEditMode && storeDropdown?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update"
+              [disabled]="!dropdownForm.dirty || !dropdownForm.valid"
+              (click)="update(storeDropdown.id)">
+        Update
+      </button>
+      <button class="btn-submit" [disabled]="!dropdownForm.valid" (click)="submit()">Submit</button>
+    </ng-container>
+
+    <!-- Submitted -->
+    <ng-container *ngIf="isEditMode && storeDropdown?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeDropdown.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeDropdown.id)">Approve</button>
+    </ng-container>
+
+  </div>
+
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeDropdown?.recordStatus !== 'A'}">
+
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Dropdown Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Label:</span> <span class="value">{{ storeDropdown.label }}</span></div>
+      <div class="info-item"><span class="key">Screen:</span> <span class="value">{{ storeDropdown.screen }}</span></div>
+      <div class="info-item"><span class="key">Dropdown:</span> <span class="value">{{ storeDropdown.dropdown }}</span></div>
+      <div class="info-item" *ngFor="let val of storeDropdown.values; let i = index">
+        <span class="key">Value {{ i + 1 }}:</span> 
+        <span class="value">{{ val.label }} ({{ val.value }})</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeDropdown?.recordStatus=== 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="reject(storeDropdown.id)">Amend</button>
+  </div>
+
+</div>

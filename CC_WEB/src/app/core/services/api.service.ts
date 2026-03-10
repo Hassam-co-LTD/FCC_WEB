@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -655,4 +655,10 @@ getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFi
     return this.http.get<DynamicFieldsResponseDto[]>(`${this.baseUrl}dynamic-fields/screen/${screen}/status/${status}`);
 }
 
+  getDropdownOptionsByScreenAndType(screen: string, dropdownType: string): Observable<any[]> {
+    const params = new HttpParams()
+      .set('screen', screen)
+      .set('dropdownType', dropdownType);
+    return this.http.get<any[]>(`${this.baseUrl}/dynamic-dropdown-options`, { params });
+  }
 }
