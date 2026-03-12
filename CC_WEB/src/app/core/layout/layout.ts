@@ -285,9 +285,11 @@ toggleMenu(item: MenuItem) {
     open: false,
     children: [
       { label: 'Create New', route: '/admin/create-dynamic-fields' },
-      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
+      { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' }
     ]
   },
+  
+
   // {
   //   label: 'Dynamic Field Options',
   //   icon: 'list_alt', // for configuring dropdown values

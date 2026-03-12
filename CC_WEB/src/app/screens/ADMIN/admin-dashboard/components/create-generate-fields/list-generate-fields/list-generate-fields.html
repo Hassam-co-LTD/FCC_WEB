@@ -41,31 +41,34 @@
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th>Status</th>
+                <th *ngIf="hasDraftSelect">Options</th>
+                <th>recordStatus</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
-                <th>Updated On</th>
+                <th>Updated On</th> 
+                
               </tr>
             </thead>
 
             <tbody>
               <tr *ngFor="let f of storeFilteredDraftFields; trackBy: trackById">
-                <!-- <td>{{ f.id }}</td> -->
-               <td><a [routerLink]="['/admin/edit-field/',f.id]">{{ f.fieldId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                <td>
-                  <span class="status {{ f.recordStatus }}">
-                    {{ f.recordStatus }}
-                  </span>
+                <td *ngIf="f.fieldType === 'select'">
+                  <ul style="margin:0; padding-left: 16px;">
+                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                  </ul>
                 </td>
+                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                
               </tr>
             </tbody>
           </table>
@@ -112,31 +115,34 @@
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th>Status</th>
+                <th *ngIf="hasApprovedSelect">Options</th>
+                <th>recordStatus</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
+                <th *ngIf="hasApprovedSelect">Options</th>
               </tr>
             </thead>
 
             <tbody>
               <tr *ngFor="let f of storeFilteredApprovedFields; trackBy: trackById">
-               
                 <td><a [routerLink]="['/admin/edit-field/',f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                <td>
-                  <span class="status {{ f.recordStatus }}">
-                    {{ f.recordStatus }}
-                  </span>
+                <td *ngIf="f.fieldType === 'select'">
+                  <ul style="margin:0; padding-left: 16px;">
+                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                  </ul>
                 </td>
+                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                
               </tr>
             </tbody>
           </table>
@@ -183,30 +189,34 @@
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th>Status</th>
+                <th *ngIf="hasSubmittedSelect">Options</th>
+                <th>recordStatus</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
+                
               </tr>
             </thead>
 
             <tbody>
               <tr *ngFor="let f of storeFilteredSubmittedFields; trackBy: trackById">
-                 <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                <td>
-                  <span class="status {{ f.recordStatus }}">
-                    {{ f.recordStatus }}
-                  </span>
+                 <td *ngIf="f.fieldType === 'select'">
+                  <ul style="margin:0; padding-left: 16px;">
+                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                  </ul>
                 </td>
+                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+               
               </tr>
             </tbody>
           </table>

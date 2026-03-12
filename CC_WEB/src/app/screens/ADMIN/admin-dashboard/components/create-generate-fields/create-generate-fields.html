@@ -113,6 +113,14 @@
       </mat-form-field>
     </div>
 
+    <!-- dropDownKey -->
+
+    <div class="field-group" style="flex: 1 1 200px; min-width: 150px;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <input matInput formControlName="dropDownKey" placeholder="Dropdown Key" [readonly]="isReadOnly()" />
+      </mat-form-field>
+    </div>
+
     <!-- Remove Button -->
     <div class="field-group" style="flex: 0 0 auto;">
       <button mat-icon-button color="warn" type="button"
@@ -136,53 +144,28 @@
 
 
 </div>  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
-  <div class="customer-actions">
-    <!-- ... your existing buttons here ... -->
-     <!-- ================= FORM ACTION BUTTONS ================= -->
-<div class="customer-actions" *ngIf="storeField.recordStatus !== 'A'">
+<div class="customer-actions">
+  <!-- ---------------- New Customer ---------------- -->
+  <ng-container *ngIf="!storeField || !storeField.recordStatus">
+    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button class="btn-save" [disabled]="!fieldForm.valid" (click)="onSave()">Save</button>
+  </ng-container>
 
-  <!-- Back -->
-  <button
-    mat-stroked-button
-    color="primary"
-    type="button"
-    (click)="onBack()">
-    Back
-  </button>
-
-  <!-- Save Draft -->
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="onSave()"
-    *ngIf="!isReadOnly()">
-    Save Draft
-  </button>
-
-  <!-- Submit -->
-  <button
-    mat-flat-button
-    color="accent"
-    type="button"
-    (click)="submit()"
-    *ngIf="!isReadOnly()">
-    Submit
-  </button>
-
-  <!-- Update -->
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    (click)="update(storeField.id)"
-    *ngIf="isEditMode && !isReadOnly()">
-    Update
-  </button>
-
+  <!-- ---------------- Edit Mode: Draft ---------------- -->
+  <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'I'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" [disabled]="!fieldForm.dirty || !fieldForm.valid" (click)="update(storeField.id)">Update</button>
+    <button class="btn-submit" [disabled]="!fieldForm.valid" (click)="submit()">Submit</button>
+  </ng-container>
+  <!-- ---------------- Edit Mode: Submitted ---------------- -->
+  <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'S'">
+    <button class="btn-reject" (click)="reject(storeField.id)">Reject</button>
+    <button class="btn-approve" (click)="approve(storeField.id)">Approve</button>
+  </ng-container>
 </div>
-  </div>
 
+
+      
   <!-- ---------------- APPROVED VIEW ---------------- -->
   <div class="approved-container" [ngClass]="{'hide-when-approved': storeField.recordStatus !=='A'}">
     <div class="approved-header">

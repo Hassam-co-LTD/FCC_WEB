@@ -189,7 +189,7 @@ export const routes: Routes = [
     .then((m) => m.CreateGenerateFields)
 },
 {
-  path: 'generate-fields-inquiry',
+  path: 'dynamic-field-inquiry',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
     .then((m) => m.ListGenerateFields)
@@ -197,8 +197,8 @@ export const routes: Routes = [
 {
     path: 'edit-field/:id',
     loadComponent: () =>
-      import('./screens/ADMIN/admin-dashboard/components/create-dynamic-field-options/create-dynamic-field-options')
-      .then((m) => m.CreateDynamicFieldOptions)
+      import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+      .then((m) => m.CreateGenerateFields)
 
 },
 {

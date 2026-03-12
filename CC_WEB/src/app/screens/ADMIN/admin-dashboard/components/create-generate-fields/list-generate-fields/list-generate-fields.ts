@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
-import { RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -46,11 +46,9 @@ export class ListGenerateFields implements OnInit {
   // ================== Tab Change ==================
   onTabChange(index: number) {
     this.selectedTabIndex = index;
-
     if (index === 0) this.loadDraftFields();
     else if (index === 1) this.loadApprovedFields();
     else if (index === 2) this.loadSubmittedFields();
-
     this.searchText = '';
   }
 
@@ -58,8 +56,8 @@ export class ListGenerateFields implements OnInit {
   loadDraftFields() {
     this.api.getTnxByStatus('I','dynamic-fields').subscribe({
       next: res => {
-        console.log('Draft fields response:', res);
         this.draftFields = res;
+        console.log('Draft Fields:', this.draftFields);
         this.storeFilteredDraftFields = [...res];  
       },
       error: err => console.error('Error fetching draft fields', err)
@@ -70,7 +68,7 @@ export class ListGenerateFields implements OnInit {
     this.api.getTnxByStatus('A','dynamic-fields').subscribe({
       next: res => {
         this.approvedFields = res;
-        this.storeFilteredApprovedFields   = [...res];
+        this.storeFilteredApprovedFields = [...res];
       },
       error: err => console.error('Error fetching approved fields', err)
     });
@@ -129,7 +127,7 @@ export class ListGenerateFields implements OnInit {
       error: err => Swal.fire('Error', 'Failed to submit field', 'error')
     });
   }
-  
+
   setApprove(id: number) {
     this.api.setTnxByStatus('A', id, 'dynamic-fields').subscribe({
       next: () => {
@@ -151,13 +149,10 @@ export class ListGenerateFields implements OnInit {
     });
   }
 
-  /** ================== Edit Approved Field ================== */
   editApprovedField(id: number) {
-    // Move approved field back to Draft for editing
     this.api.setTnxByStatus('D', id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved field moved to Draft for editing', 'success');
-        // Reload all tabs
         this.loadDraftFields();
         this.loadApprovedFields();
       },
@@ -177,5 +172,18 @@ export class ListGenerateFields implements OnInit {
 
   get filteredDraftCount(): number { return this.storeFilteredDraftFields.length; }
   get filteredApprovedCount(): number { return this.storeFilteredApprovedFields.length; }
-  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedFields .length; }
+  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedFields.length; }
+
+  // ================== Dropdown Checks (Safe for Template) ==================
+  get hasDraftSelect(): boolean {
+    return this.storeFilteredDraftFields?.some(f => f.fieldType === 'select');
+  }
+
+  get hasApprovedSelect(): boolean {
+    return this.storeFilteredApprovedFields?.some(f => f.fieldType === 'select');
+  }
+
+  get hasSubmittedSelect(): boolean {
+    return this.storeFilteredSubmittedFields?.some(f => f.fieldType === 'select');
+  }
 }
