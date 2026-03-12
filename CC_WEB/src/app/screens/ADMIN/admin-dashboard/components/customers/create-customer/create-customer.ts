@@ -68,11 +68,12 @@ export class CreateCustomer implements OnInit {
     this.loadCustomer();
     this.loadCompanies();
     this.loadDynamicFields();
-
+    this.loadDropdownOptions();
   }
 
   // ---------------- FORM ----------------
 
+  
   private buildForm(): void {
 
     this.customerForm = this.fb.group({
@@ -433,6 +434,17 @@ updateCustomer(): void {
 
     return company ? company.companyName : 'N/A';
 
+  }
+
+  
+  loadDropdownOptions(): void {
+    this.api.findByRecordStatusAndScreenAndDropDown('A', 'customers', 'customerType').subscribe({
+      next: res => {
+        console.log('Dropdown options loaded:', res);
+        // Handle dropdown options as needed
+      },
+      error: err => console.error('Failed to load dropdown options', err)
+    });
   }
 
 }

@@ -288,16 +288,16 @@ toggleMenu(item: MenuItem) {
       { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
     ]
   },
-  {
-    label: 'Dynamic Field Options',
-    icon: 'list_alt', // for configuring dropdown values
-    route: '/admin/create-dynamic-field-options',
-    open: false,
-    children: [
-      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
-      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
-    ]
-  },
+  // {
+  //   label: 'Dynamic Field Options',
+  //   icon: 'list_alt', // for configuring dropdown values
+  //   route: '/admin/create-dynamic-field-options',
+  //   open: false,
+  //   children: [
+  //     { label: 'Create New', route: '/admin/create-dynamic-field-options' },
+  //     { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
+  //   ]
+  // },
   
 
   { label: 'Users', icon: 'person', route: '/users' },

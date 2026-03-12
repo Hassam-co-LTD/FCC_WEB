@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
+
 export interface DynamicFieldsResponseDto {
   fieldId: number;
   fieldName: string;
@@ -21,16 +22,18 @@ export interface DynamicFieldsResponseDto {
   fieldType: string;
   screen: string;
   recordStatus: string;
-  createdOn?: string;   // optional ISO date string
-  updatedOn?: string;   // optional ISO date string
+  options?: { id: number, value: string, text: string }[];
+  createdOn?: string;
+  updatedOn?: string;
 }
+
 @Component({
   selector: 'app-dynamic-fields',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -38,25 +41,19 @@ export interface DynamicFieldsResponseDto {
     MatIconModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatFormField
   ],
-  
   templateUrl: './create-generate-fields.html',
   styleUrls: ['./create-generate-fields.scss'],
-  
 })
-
-
-
 export class CreateGenerateFields implements OnInit {
 
-  
-  
   fieldForm!: FormGroup;
   storeField: any = {};
-
   isEditMode = false;
   isOpen = true;
+  maxOptions = 5;
 
   constructor(
     private fb: FormBuilder,
@@ -67,18 +64,55 @@ export class CreateGenerateFields implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.buildForm();
-    this.loadField();
+  this.buildForm();
+  this.loadField();
+
+  // Ensure FormArray has at least one option for 'select' type
+  if (this.fieldForm.get('fieldType')?.value === 'select' && this.options.length === 0) {
+    this.addOption();
   }
 
+  // Watch fieldType changes
+  this.fieldForm.get('fieldType')?.valueChanges.subscribe(type => {
+    if (type === 'select' && this.options.length === 0) {
+      this.addOption();
+    } else if (type !== 'select') {
+      this.options.clear();
+    }
+  });
+}
   private buildForm(): void {
     this.fieldForm = this.fb.group({
       fieldId: ['', Validators.required],
       fieldName: ['', Validators.required],
       label: ['', Validators.required],
       fieldType: ['', Validators.required],
-      screen: ['', Validators.required]
+      screen: ['', Validators.required],
+      options: this.fb.array([]) // <-- FormArray starts empty, populate later
     });
+  }
+
+  get options(): FormArray {
+    return this.fieldForm.get('options') as FormArray;
+  }
+
+  private createOption(fieldId: string , value:string, text:string): FormGroup {
+    return this.fb.group({
+      fieldId: [fieldId, Validators.required],
+      value: [value, Validators.required],
+      text: [text, Validators.required]
+    });
+  }
+
+  addOption(): void {
+    if (this.options.length >= this.maxOptions) return;
+    this.options.push(this.createOption('', '', ''));
+  }
+
+  removeOption(index: number): void {
+    if (this.options.length > 1) {
+      this.options.removeAt(index);
+    }
   }
 
   private loadField(): void {
@@ -89,45 +123,23 @@ export class CreateGenerateFields implements OnInit {
         next: res => {
           this.storeField = res;
           this.fieldForm.patchValue(res);
+
+          if (res.fieldType === 'select' && res.options?.length) {
+            this.options.clear();
+            res.options.forEach((opt: any) => this.options.push(this.createOption(opt.id, opt.value, opt.text)));
+          } else if (res.fieldType === 'select') {
+            this.addOption(); // ensure at least one option exists
+          }
         },
         error: err => console.error('Load failed', err)
       });
     }
   }
 
-  // ---------------- CREATE ----------------
-  onSave(): void {
-    if (this.fieldForm.invalid) return;
-
-    const payload = this.fieldForm.getRawValue();
-    this.api.saveTnx(payload, 'dynamic-fields').subscribe({
-      next: res => {
-        console.log('Saved Field:', res);
-        Swal.fire('Saved!', 'Field saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/list-generate-fields']));
-      },
-      error: err => console.error('Save failed', err)
-    });
+  isReadOnly(): boolean {
+    return this.storeField?.recordStatus === 'S' || this.storeField?.recordStatus === 'A';
   }
 
-  // ---------------- UPDATE ----------------
-  update(id:number): void {
-    if (this.fieldForm.invalid) return;
-
-    const payload = this.fieldForm.getRawValue();
-    console.log('Updating Field with ID:', id, 'Payload:', payload);
-    this.api.updateTnx(payload, 'dynamic-fields', id).subscribe({
-      next: (res) => {
-        console.log('Updated Field:', res);
-        Swal.fire('Updated!', 'Field updated successfully', 'success')
-           
-          .then(() => this.router.navigate(['/admin/list-generate-fields']));
-      },
-      error: err => console.error('Update failed', err)
-    });
-  }
-
-  // ---------------- UI HELPERS ----------------
   toggle(): void {
     this.isOpen = !this.isOpen;
   }
@@ -138,70 +150,59 @@ export class CreateGenerateFields implements OnInit {
 
   onCancel(): void {
     this.fieldForm.reset();
+    this.options.clear();
   }
 
-  // ========Submit Status
-submit() {
-  if (!this.storeField?.id) {
-    Swal.fire('Error', 'ID missing', 'error');
-    return;
+  onSave(): void {
+    if (this.fieldForm.invalid) return;
+
+    const payload = this.fieldForm.getRawValue();
+    console.log('Saving payload:', payload);
+    this.api.saveTnx(payload, 'dynamic-fields').subscribe({
+      next: (res) =>{
+        console.log('Saved response:', res) 
+         Swal.fire('Saved!', 'Field saved successfully', 'success')
+        .then(() => this.router.navigate(['/admin/list-generate-fields']))
+        },
+      error: err => console.error('Save failed', err)
+    });
   }
 
-  this.api.setTnxByStatus('S', this.storeField.id, 'dynamic-fields').subscribe({
-    next: res => {
-      Swal.fire('Saved!', 'Dynamic Field saved', 'success')
-        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Submitted' } }));
-    },
-    error: err => {
-      console.error('Submit failed', err);
-      Swal.fire('Error', 'Save failed', 'error');
-    }
-  });
-}
-
-// ===== Rejetc Status 
-reject(id: number): void {
-  if (!this.storeField?.id) {
-    Swal.fire('Error', 'ID missing', 'error');
-    return;
+  update(id: number): void {
+    if (this.fieldForm.invalid) return;
+    const payload = this.fieldForm.getRawValue();
+    this.api.updateTnx(payload, 'dynamic-fields', id).subscribe({
+      next: () => Swal.fire('Updated!', 'Field updated successfully', 'success')
+        .then(() => this.router.navigate(['/admin/list-generate-fields'])),
+      error: err => console.error('Update failed', err)
+    });
   }
 
-  this.api.setTnxByStatus('I', this.storeField.id, 'dynamic-fields').subscribe({
-    next: () => {
-      Swal.fire('Rejected!', 'Field rejected successfully', 'success')
-        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Draft' } }));
-    },
-    error: err => {
-      console.error('Reject failed', err);
-      Swal.fire('Error', 'Rejection failed', 'error');
-    }
-  });
-}
-
-// ===== Approved Status ===========
-
- approve(id: number): void {
-  if (!this.storeField?.id) {
-    Swal.fire('Error', 'ID missing', 'error');
-    return;
+  submit(): void {
+    if (!this.storeField?.id) return;
+    this.api.setTnxByStatus('S', this.storeField.id, 'dynamic-fields').subscribe({
+      next: () => Swal.fire('Saved!', 'Dynamic Field submitted', 'success')
+        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Submitted' } })),
+      error: err => Swal.fire('Error', 'Submit failed', 'error')
+    });
   }
 
-  this.api.setTnxByStatus('A', this.storeField.id, 'dynamic-fields').subscribe({
-    next: () => {
-      Swal.fire('Approved!', 'Field approved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Approved' } }));
-    },
-    error: err => {
-      console.error('Approve failed', err);
-      Swal.fire('Error', 'Approval failed', 'error');
-    }
-  });
-}
-
-
-  isReadOnly(): boolean {
-    // Draft editable, others read-only
-    if (!this.storeField) return false;
-    return this.storeField?.status === 'S' || this.storeField?.status === 'A';
+  reject(id: number): void {
+    if (!this.storeField?.id) return;
+    this.api.setTnxByStatus('I', this.storeField.id, 'dynamic-fields').subscribe({
+      next: () => Swal.fire('Rejected!', 'Field rejected', 'success')
+        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Draft' } })),
+      error: err => Swal.fire('Error', 'Rejection failed', 'error')
+    });
   }
+
+  approve(id: number): void {
+    if (!this.storeField?.id) return;
+    this.api.setTnxByStatus('A', this.storeField.id, 'dynamic-fields').subscribe({
+      next: () => Swal.fire('Approved!', 'Field approved', 'success')
+        .then(() => this.router.navigate(['/admin/generate-fields-inquiry'], { queryParams: { tabName: 'Approved' } })),
+      error: err => Swal.fire('Error', 'Approval failed', 'error')
+    });
+  }
+
 }

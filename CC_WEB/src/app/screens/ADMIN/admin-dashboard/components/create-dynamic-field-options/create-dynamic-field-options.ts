@@ -67,38 +67,44 @@ export class CreateDynamicFieldOptions implements OnInit {
   // VALUES FORM ARRAY
   // =========================
   get values(): FormArray {
-    return this.dropdownForm.get('values') as FormArray;
-  }
-
- addValue(label?: string) {
-  const nextValue = this.values.length + 1; // auto-increment value
-  this.values.push(this.fb.group({
-    value: [nextValue, Validators.required],   // auto-incremented
-    label: [label || '', Validators.required]  // user can enter label
-  }));
+  return this.dropdownForm.get('values') as FormArray;
 }
 
-  removeValue(index: number) {
-    this.values.removeAt(index);
-  }
+addValue(label?: string, value?: number) {
+  const nextValue = value ?? this.values.length + 1;
 
-  // Initialize default 5 empty values
-  initValues() {
-    this.values.clear();
-    for (let i = 0; i < 5; i++) {
-      this.addValue();
-    }
-  }
+  this.values.push(
+    this.fb.group({
+      value: [nextValue, Validators.required],
+      label: [label || '', Validators.required]
+    })
+  );
+}
 
-  // Patch existing values from backend
-  patchValues(existingValues: any[]) {
-    this.values.clear();
-    if (!existingValues || existingValues.length === 0) {
-      this.initValues();
-    } else {
-      existingValues.forEach(v => this.addValue(v));
-    }
+removeValue(index: number) {
+  this.values.removeAt(index);
+}
+
+/* Initialize default 5 empty values */
+initValues() {
+  this.values.clear();
+  for (let i = 0; i < 5; i++) {
+    this.addValue();
   }
+}
+
+/* Patch values from backend */
+patchValues(existingValues: any[]) {
+  this.values.clear();
+
+  if (!existingValues || existingValues.length === 0) {
+    this.initValues();
+  } else {
+    existingValues.forEach(v => {
+      this.addValue(v.label, v.value);
+    });
+  }
+}
 
   // ---------------- LOAD CUSTOMER ----------------
   private loadCustomer(): void {
@@ -107,6 +113,7 @@ export class CreateDynamicFieldOptions implements OnInit {
       this.isEditMode = true;
       this.api.getTnxById(id, 'dropdown-values').subscribe({
         next: res => {
+          console.log('Loaded dropdown by id:', res);
           this.storeDropdown = res;
           this.dropdownForm.patchValue({
             label: res.label,
@@ -140,10 +147,10 @@ export class CreateDynamicFieldOptions implements OnInit {
   update(id: number): void {
     if (this.dropdownForm.invalid) return;
     const payload = this.dropdownForm.getRawValue();
-    this.api.updateTnx(payload, 'dropdown', id).subscribe({
+    this.api.updateTnx(payload, 'dropdown-values', id).subscribe({
       next: () => {
         Swal.fire('Updated!', 'Dropdown updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/dropdown-list'], { queryParams: { tabName: 'Draft' } }));
+          .then(() => this.router.navigate(['/admin/edit-field/' + id], { queryParams: { tabName: 'Draft' } }));
       },
       error: err => console.error('Update failed', err)
     });
@@ -151,10 +158,10 @@ export class CreateDynamicFieldOptions implements OnInit {
 
   submit() {
     if (!this.storeDropdown?.id) return;
-    this.api.setTnxByStatus('S', this.storeDropdown.id, 'dropdown').subscribe({
+    this.api.setTnxByStatus('S', this.storeDropdown.id, 'dropdown-values').subscribe({
       next: () => {
         Swal.fire('Submitted!', 'Dropdown submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/dropdown-list'], { queryParams: { tabName: 'submitted' } }));
+          .then(() => this.router.navigate(['/admin/dynamic-field-options-inquiry'], { queryParams: { tabName: 'submitted' } }));
       },
       error: err => console.error('Submit failed', err)
     });
@@ -162,10 +169,10 @@ export class CreateDynamicFieldOptions implements OnInit {
 
   reject(id: number) {
     if (!this.storeDropdown?.id) return;
-    this.api.setTnxByStatus('I', this.storeDropdown.id, 'dropdown').subscribe({
+    this.api.setTnxByStatus('I', this.storeDropdown.id, 'dropdown-values').subscribe({
       next: () => {
         Swal.fire('Rejected!', 'Dropdown rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/dropdown-list'], { queryParams: { tabName: 'Rejected' } }));
+          .then(() => this.router.navigate(['/admin/dynamic-field-options-inquiry'], { queryParams: { tabName: 'rejected' } }));
       },
       error: err => console.error('Reject failed', err)
     });
@@ -173,10 +180,10 @@ export class CreateDynamicFieldOptions implements OnInit {
 
   approve(id: number) {
     if (!this.storeDropdown?.id) return;
-    this.api.setTnxByStatus('A', this.storeDropdown.id, 'dropdown').subscribe({
+    this.api.setTnxByStatus('A', this.storeDropdown.id, 'dropdown-values').subscribe({
       next: () => {
         Swal.fire('Approved!', 'Dropdown approved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/dropdown-list'], { queryParams: { tabName: 'approved' } }));
+          .then(() => this.router.navigate(['/admin/dynamic-field-options-inquiry'], { queryParams: { tabName: 'approved' } }));
       },
       error: err => console.error('Approve failed', err)
     });

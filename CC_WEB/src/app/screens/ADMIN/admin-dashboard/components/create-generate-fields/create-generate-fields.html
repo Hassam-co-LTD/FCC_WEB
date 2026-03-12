@@ -13,8 +13,7 @@
   <!-- =========================
        Field Form Container
   ========================== -->
-    <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeField.recordStatus === 'A'}">
-
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeField.recordStatus === 'A'}">
 
     <!-- Section Header -->
     <div class="section-header" (click)="toggle()">
@@ -50,9 +49,9 @@
           </div>
 
           <div class="field-group">
-            <h4>Field Type</h4>
+            <h4>Input Type</h4>
             <mat-form-field appearance="outline" class="full">
-              <mat-label>Field Type</mat-label>
+              <mat-label>Input Type</mat-label>
               <mat-select formControlName="fieldType" [disabled]="isReadOnly()" panelClass="white-dropdown">
                 <mat-option value="text">Text</mat-option>
                 <mat-option value="number">Number</mat-option>
@@ -76,32 +75,112 @@
           </div>
         </div>
 
-      </ng-container>
+        <!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
+      <!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
+<!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
+<div *ngIf="fieldForm.get('fieldType')?.value === 'select' && options.length > 0"
+     class="options-section"
+     formArrayName="options"
+     style="margin-top: 32px; padding: 16px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fafafa;">
+
+  <h3 style="margin-bottom: 16px; font-weight: 600; color: #0b4eb3;">
+    Dropdown Options (Max 5)
+  </h3>
+
+  <div *ngFor="let opt of options.controls; let i = index"
+       [formGroupName]="i"
+       class="option-row"
+       style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 12px;">
+
+    <!-- Option ID -->
+    <div class="field-group" style="flex: 0 0 120px; min-width: 120px;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <input matInput formControlName="fieldId" placeholder="Option ID" [readonly]="isReadOnly()" />
+      </mat-form-field>
     </div>
+
+    <!-- Option Value -->
+    <div class="field-group" style="flex: 1 1 200px; min-width: 150px;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <input matInput formControlName="value" placeholder="Value" [readonly]="isReadOnly()" />
+      </mat-form-field>
+    </div>
+
+    <!-- Option Text -->
+    <div class="field-group" style="flex: 1 1 200px; min-width: 150px;">
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <input matInput formControlName="text" placeholder="Text" [readonly]="isReadOnly()" />
+      </mat-form-field>
+    </div>
+
+    <!-- Remove Button -->
+    <div class="field-group" style="flex: 0 0 auto;">
+      <button mat-icon-button color="warn" type="button"
+              (click)="removeOption(i)"
+              [disabled]="isReadOnly() || options.length === 1">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+
   </div>
 
-  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+  <!-- Add Option Button -->
+  <div class="form-actions" style="margin-top: 16px; text-align: right;">
+    <button mat-flat-button type="button" color="primary"
+            (click)="addOption()"
+            [disabled]="options.length >= 5 || isReadOnly()">
+      Add Option
+    </button>
+  </div>
+
+
+
+</div>  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
   <div class="customer-actions">
+    <!-- ... your existing buttons here ... -->
+     <!-- ================= FORM ACTION BUTTONS ================= -->
+<div class="customer-actions" *ngIf="storeField.recordStatus !== 'A'">
 
-    <!-- ---------------- New Field ---------------- -->
-    <ng-container *ngIf="!storeField || !storeField.recordStatus">
-      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-      <button class="btn-save" [disabled]="!fieldForm.valid" (click)="onSave()">Save</button>
-    </ng-container>
+  <!-- Back -->
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    (click)="onBack()">
+    Back
+  </button>
 
-    <!-- ---------------- Edit Mode: Draft ---------------- -->
-    <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'I'">
-      <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update" [disabled]="!fieldForm.dirty || !fieldForm.valid" (click)="update(storeField.id)">Update</button>
-      <button class="btn-submit" [disabled]="!fieldForm.valid" (click)="submit()">Submit</button>
-    </ng-container>
+  <!-- Save Draft -->
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="onSave()"
+    *ngIf="!isReadOnly()">
+    Save Draft
+  </button>
 
-    <!-- ---------------- Edit Mode: Submitted ---------------- -->
-    <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'S'">
-      <button class="btn-reject" (click)="reject(storeField.id)">Reject</button>
-      <button class="btn-approve" (click)="approve(storeField.id)">Approve</button>
-    </ng-container>
+  <!-- Submit -->
+  <button
+    mat-flat-button
+    color="accent"
+    type="button"
+    (click)="submit()"
+    *ngIf="!isReadOnly()">
+    Submit
+  </button>
 
+  <!-- Update -->
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="update(storeField.id)"
+    *ngIf="isEditMode && !isReadOnly()">
+    Update
+  </button>
+
+</div>
   </div>
 
   <!-- ---------------- APPROVED VIEW ---------------- -->
@@ -117,6 +196,11 @@
       <div class="info-item"><span class="key">Label:</span> <span class="value">{{ storeField.label }}</span></div>
       <div class="info-item"><span class="key">Field Type:</span> <span class="value">{{ storeField.fieldType }}</span></div>
       <div class="info-item"><span class="key">Screen:</span> <span class="value">{{ storeField.screen }}</span></div>
+      <div *ngIf="storeField.fieldType==='select' && storeField.options?.length">
+        <div class="info-item" *ngFor="let o of storeField.options">
+          <span class="key">Option:</span> <span class="value">{{ o.value }} → {{ o.label }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -125,4 +209,5 @@
     <button class="btn-update" (click)="approve(storeField.id)">Amend</button>
   </div>
 
-</div>
+      </ng-container>
+    </div>

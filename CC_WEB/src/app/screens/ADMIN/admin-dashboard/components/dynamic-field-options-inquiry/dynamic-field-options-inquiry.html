@@ -117,9 +117,9 @@
                 <th>Option ID</th>
                 <th>Label</th>
                 <th>Screen</th>
-                <th>Type</th>
+                <th>DropDown</th>
                 <th>Values</th>
-                <th>Status</th>
+                
                 <th>Created On</th>
                 <th>Updated On</th>
               </tr>
@@ -130,25 +130,25 @@
               <tr *ngFor="let o of storeFilteredApprovedOptions; trackBy: trackById">
 
                 <td>
-                  <a [routerLink]="['/admin/dynamic-field-options-inquiry', o.id]">
+                  <a [routerLink]="['/admin/edit-field', o.id]">
                     {{ o.id }}
                   </a>
                 </td>
 
                 <td>{{ o.label }}</td>
                 <td>{{ o.screen }}</td>
-                <td>{{ o.type }}</td>
+                <td>{{ o.dropDown }}</td>
 
                 <!-- VALUES -->
                 <td>
                   <span *ngFor="let v of o.values; let i = index">
-                    {{ v.label }} ({{ v.value }})
+                    {{ '{ value:'+ v.value }} {{'label:'+v.label+'}'}}
                     <span *ngIf="i < o.values.length - 1">, </span>
                   </span>
                 </td>
 
                 <td>
-                  <span class="status {{ o.status }}">{{ o.status }}</span>
+                  <span class="status {{ o.recordStatus }}">{{ o.status }}</span>
                 </td>
 
                 <td>{{ o.createdOn | date:'short' }}</td>
@@ -201,9 +201,9 @@
                 <th>Option ID</th>
                 <th>Label</th>
                 <th>Screen</th>
-                <th>Type</th>
+                <th>DropDown</th>
                 <th>Values</th>
-                <th>Status</th>
+                
                 <th>Created On</th>
                 <th>Updated On</th>
               </tr>
@@ -214,14 +214,14 @@
               <tr *ngFor="let o of storeFilteredSubmittedOptions; trackBy: trackById">
 
                 <td>
-                  <a [routerLink]="['/admin/dynamic-field-options-inquiry', o.id]">
+                  <a [routerLink]="['/admin/edit-field', o.id]">
                     {{ o.id }}
                   </a>
                 </td>
 
                 <td>{{ o.label }}</td>
                 <td>{{ o.screen }}</td>
-                <td>{{ o.type }}</td>
+                <td>{{ o.dropDown }}</td>
 
                 <!-- VALUES -->
                 <td>

@@ -416,3 +416,19 @@ input[matInput] {
     }
   }
 }
+
+
+.option-row {
+  display: flex;
+  flex-wrap: wrap; /* wrap on smaller screens */
+  // gap: $gap-default; /* same spacing as other fields */
+}
+
+.field-group.half {
+  flex: 1 1 45%; /* half width on large screens, shrink if needed */
+  min-width: 150px; /* ensures small screens don't break layout */
+}
+
+.field-group.remove-btn {
+  flex: 0 0 auto; /* button stays fixed width */
+}
