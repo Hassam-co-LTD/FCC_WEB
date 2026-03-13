@@ -60,6 +60,9 @@
       } else if(companyType == "C" && CustomerType == "A"){ {
           this.router.navigate(['/customer-user']);
       }
+       
+      }
+      else if(companyType == "C" && CustomerType == "U"){
         this.router.navigate(['/dashboard']);
       }
     }
@@ -92,7 +95,7 @@
         });
 
         
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/dashboard']);
         
       },
 

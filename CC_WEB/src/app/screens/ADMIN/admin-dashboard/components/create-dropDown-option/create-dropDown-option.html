@@ -1,0 +1,108 @@
+<!-- ========================= 
+     CREATE DYNAMIC DROPDOWN OPTION PAGE
+========================= -->
+<div class="create-customer-page">
+
+  <!-- =========================
+       Page Header
+  ========================== -->
+  <div class="page-header">
+    <h1>Create Dynamic Dropdown Option</h1>
+  </div>
+
+  <!-- =========================
+       Form Container
+  ========================== -->
+  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeDropDown.recordStatus === 'A'}">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggle()">
+      <h2>Dropdown Option Details</h2>
+      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </div>
+
+    <!-- Collapsible Form -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="dropdownForm">
+
+      <ng-container *ngIf="isOpen">
+
+        <!-- ---------------- FORM GRID ---------------- -->
+        <div class="form-grid form-grid-large">
+
+          <!-- Option ID (readonly, auto-generated) -->
+          
+
+          <!-- Name (required) -->
+          <div class="field-group">
+            <h4>Name</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput formControlName="name" placeholder="Enter Option Name" [readonly]="isReadOnly()" />
+            </mat-form-field>
+          </div>
+
+          <!-- Description (optional) -->
+          <div class="field-group">
+            <h4>Description</h4>
+            <mat-form-field appearance="outline" class="full">
+              <textarea matInput formControlName="description" placeholder="Enter Description" rows="3" [readonly]="isReadOnly()"></textarea>
+            </mat-form-field>
+          </div>
+
+        </div> <!-- ✅ form-grid CLOSED -->
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- =========================
+       ACTION BUTTONS
+  ========================== -->
+  <div class="customer-actions">
+
+    <!-- New -->
+    <ng-container *ngIf="!storeDropDown || !storeDropDown.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+      <button class="btn-save" [disabled]="!storeDropDown.valid" (click)="onSave()">Save</button>
+    </ng-container>
+
+    <!-- Draft -->
+    <ng-container *ngIf="isEditMode && storeDropDown?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update"
+              [disabled]="!storeDropDown.dirty || !storeDropDown.valid"
+              (click)="update(storeDropDown.id)">
+        Update
+      </button>
+      <button class="btn-submit" [disabled]="!storeDropDown.valid" (click)="submit()">Submit</button>
+    </ng-container>
+
+    <!-- Submitted -->
+    <ng-container *ngIf="isEditMode && storeDropDown?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeDropDown.id)">Reject</button>
+      <button class="btn-approve" (click)="approve(storeDropDown.id)">Approve</button>
+    </ng-container>
+
+  </div>
+
+  <!-- ---------------- APPROVED VIEW ---------------- -->
+  <div class="approved-container" [ngClass]="{'hide-when-approved': storeDropDown?.recordStatus !== 'A'}">
+
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Dropdown Option Details</h3>
+    </div>
+
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Option ID:</span> <span class="value">{{ storeDropDown.id }}</span></div>
+      <div class="info-item"><span class="key">Field ID:</span> <span class="value">{{ storeDropDown.fieldId }}</span></div>
+      <div class="info-item"><span class="key">Name:</span> <span class="value">{{ storeDropDown.name }}</span></div>
+      <div class="info-item"><span class="key">Description:</span> <span class="value">{{ storeDropDown.description }}</span></div>
+    </div>
+  </div>
+
+  <div class="approved-actions" *ngIf="storeDropDown?.recordStatus === 'A'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button class="btn-update" (click)="reject(storeDropDown.id)">Amend</button>
+  </div>
+
+</div>

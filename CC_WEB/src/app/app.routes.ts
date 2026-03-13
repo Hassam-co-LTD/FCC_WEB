@@ -202,15 +202,20 @@ export const routes: Routes = [
 
 },
 {
-    path: 'create-dynamic-field-options',
+    path: 'create-dropdown-option',
     loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-dynamic-field-options/create-dynamic-field-options').then((m) => m.CreateDynamicFieldOptions)
+        import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
 },
 {
   
-    path: 'dynamic-field-options-inquiry',
+    path: 'dynamic-dropdown-option-inquiry',
     loadComponent: () =>
-         import('./screens/ADMIN/admin-dashboard/components/dynamic-field-options-inquiry/dynamic-field-options-inquiry').then((m) => m.DynamicFieldOptionsInquiry)
+         import('./screens/ADMIN/admin-dashboard/components/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then((m) => m.DynamicDropdownOptionInquiry)
+},
+{
+    path: 'edit-dropdown-option/:id',
+    loadComponent: () =>
+        import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
 },
 // ========Acounts========
 {

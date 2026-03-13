@@ -211,15 +211,27 @@ toggleMenu(item: MenuItem) {
       },
 
       {
-        label: 'Currency',
-        icon: 'currency_exchange',
-        route: '/admin/currency',
+        label: 'Dropdown Option',
+        icon: 'list_alt',
+        route: '/admin/create-dropdown-option',
         open: false,
         children: [
-          { label: 'Create New', route: '/admin/create-currency' },
-          { label: 'Inquiry', route: '/admin/currency-inquiry' }
+          { label: 'Create New', route: '/admin/create-dropdown-option' },
+          { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
         ]
       },
+      {
+    label: 'Dynamic Field Options',
+    icon: 'list_alt', // for configuring dropdown values
+    route: '/admin/create-dynamic-field-options',
+    open: false,
+    children: [
+      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
+      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
+    ]
+  },
+  
+
      {
   label: 'Account Types',
   icon: 'account_balance_wallet', // Angular Material Icon
@@ -290,18 +302,7 @@ toggleMenu(item: MenuItem) {
   },
   
 
-  // {
-  //   label: 'Dynamic Field Options',
-  //   icon: 'list_alt', // for configuring dropdown values
-  //   route: '/admin/create-dynamic-field-options',
-  //   open: false,
-  //   children: [
-  //     { label: 'Create New', route: '/admin/create-dynamic-field-options' },
-  //     { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
-  //   ]
-  // },
   
-
   { label: 'Users', icon: 'person', route: '/users' },
   { label: 'Logout', icon: 'logout', route: '/login' }
 
@@ -336,8 +337,9 @@ toggleMenu(item: MenuItem) {
 
          else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
+
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        // { label: 'Search', icon: 'search', route: '/Search-by-id' },
+        { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
           icon: 'article',

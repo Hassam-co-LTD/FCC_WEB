@@ -665,8 +665,8 @@ getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFi
   findByRecordStatusAndScreenAndDropDown(recordStatus: string, screen: string, dropDown: string): Observable<any[]> {
     const params = new HttpParams()
       .set('recordStatus', recordStatus)
-      .set('screen', screen)
-      .set('dropDown', dropDown);
+      .set('screen',screen)
+      .set('dropDown',dropDown);
     return this.http.get<any[]>(`${this.baseUrl}dropdown-values/search`, { params });
   }
  

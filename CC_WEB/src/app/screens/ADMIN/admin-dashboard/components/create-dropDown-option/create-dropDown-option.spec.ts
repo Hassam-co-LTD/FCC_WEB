@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateDynamicFieldOptions } from './create-dynamic-field-options';
+import { CreateDynamicFieldOptions } from './create-dropDown-option';
 
 describe('CreateDynamicFieldOptions', () => {
   let component: CreateDynamicFieldOptions;
