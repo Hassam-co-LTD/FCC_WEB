@@ -361,20 +361,20 @@ export class ApiService {
     const companyId = sessionStorage.getItem('companyId') || '';
     const headers = new HttpHeaders({ companyid: companyId });
     return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}undertaking_lc/status/${status}`,
+      `${this.baseUrl}/undertaking_lc/status/${status}`,
       { headers }
     ).pipe(catchError(this.handleError));
   }
 
   getUndertakingRecordsByStatus(status: string): Observable<RecordListDTO[]> {
     return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}undertaking_lc/records/${status}`
+      `${this.baseUrl}/undertaking_lc/records/${status}`
     ).pipe(catchError(this.handleError));
   }
 
   getUndertakingByTnxId(tnxId: string): Observable<UndertakingResponseDTO> {
     return this.http.get<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/${tnxId}`
+      `${this.baseUrl}/undertaking_lc/${tnxId}`
     ).pipe(catchError(this.handleError));
   }
 
@@ -385,7 +385,7 @@ export class ApiService {
       companyid: companyId
     });
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/save`,
+      `${this.baseUrl}/undertaking_lc/save`,
       dto,
       { headers }
     ).pipe(catchError(this.handleError));
@@ -405,7 +405,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   submitUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/submit/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/submit/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -413,7 +413,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   approveUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/approve/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/approve/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -422,7 +422,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   rejectUndertaking(tnxId: string, rejectionReason: string): Observable<UndertakingResponseDTO> {
     const body = { rejectionReason };
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/rejectReason/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/rejectReason/${tnxId}`,
       body,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -430,7 +430,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   updateRejectedUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.put<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/updateRejected/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/updateRejected/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -448,7 +448,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
     console.log('Sending to Backend -> companyid:', companyId);
 
     return this.http.post<TransferDTO>(
-      `${this.baseUrl}transfers/save`,
+      `${this.baseUrl}/transfers/save`,
       data,
       { headers }
     ).pipe(catchError(this.handleError));
@@ -458,32 +458,32 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
     const headers = new HttpHeaders({
       'companyid': companyId
     });
-    return this.http.get<TransferDTO[]>(`${this.baseUrl}transfers/status/${status}`, { headers })
+    return this.http.get<TransferDTO[]>(`${this.baseUrl}/transfers/status/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
   getTransferRecordsByStatus(status: string): Observable<RecordsListTransferDTO[]> {
-    return this.http.get<RecordsListTransferDTO[]>(`${this.baseUrl}transfers/records/${status}`)
+    return this.http.get<RecordsListTransferDTO[]>(`${this.baseUrl}/transfers/records/${status}`)
       .pipe(catchError(this.handleError));
   }
 
   getTransferByTnxId(tnxId: string): Observable<TransferDTO> {
-    return this.http.get<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`)
+    return this.http.get<TransferDTO>(`${this.baseUrl}/transfers/${tnxId}`)
       .pipe(catchError(this.handleError));
   }
 
   updateTransferDraft(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`, data)
+    return this.http.put<TransferDTO>(`${this.baseUrl}/transfers/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
   submitTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/submit/${tnxId}`, data)
+    return this.http.post<TransferDTO>(`${this.baseUrl}/transfers/submit/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
   approveTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/approve/${tnxId}`, data)
+    return this.http.post<TransferDTO>(`${this.baseUrl}/transfers/approve/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
@@ -491,7 +491,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
     const body = { rejectionReason: reason };
     return this.http.post<TransferDTO>(
-      `${this.baseUrl}transfers/rejectReason/${tnxId}`,
+      `${this.baseUrl}/transfers/rejectReason/${tnxId}`,
       body
     ).pipe(
       catchError(this.handleError)
@@ -499,7 +499,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   }
 
   updateRejectedTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/updateRejected/${tnxId}`, data)
+    return this.http.put<TransferDTO>(`${this.baseUrl}/transfers/updateRejected/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 

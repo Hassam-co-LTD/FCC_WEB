@@ -118,7 +118,11 @@ export const routes: Routes = [
                 data: {
                     title: 'Welcome to Export LC',
                     description: 'Manage all Export LC activities here.',
-                },
+                    createRoute: '/export-screen',
+                    templateRoute: '/export-screen?mode=template',
+                    existingRoute: '/Search-by-id',
+                    uploadRoute: '/export-screen?mode=upload'
+                }
             },
 
 
@@ -168,7 +172,11 @@ export const routes: Routes = [
                         .then((m) => m.WelcomeScreen),
                 data: {
                     title: 'Welcome to Shipping Guarantee',
-                    description: 'Manage all Shipping Guarantee activities here.'
+                    description: 'Manage all Shipping Guarantee activities here.',
+                    createRoute: '/shipping-guarantee',
+                    templateRoute: '/shipping-guarantee?mode=template',
+                    existingRoute: '/shipping-guarantee/inquiries-records',
+                    uploadRoute: '/shipping-guarantee?mode=upload'
                 }
             },
             {
@@ -225,6 +233,10 @@ export const routes: Routes = [
                 data: {
                     title: 'Welcome to Export Collection',
                     description: 'Manage all Export Collection related activities here.',
+                    createRoute: '/export-collection',
+                    templateRoute: '/export-collection?mode=template',
+                    existingRoute: '/export-collection/inquiries-records',
+                    uploadRoute: '/export-collection?mode=upload'
                 },
             },
             {
@@ -338,6 +350,10 @@ export const routes: Routes = [
                     title: 'Welcome to Undertaking Issuance',
                     description:
                         'Manage all Undertaking Issuance related activities here.',
+                    createRoute: '/undertaking-issuance',
+                    templateRoute: '/undertaking-issuance?mode=template',
+                    existingRoute: '/undertaking-issuance/inquiries-records',
+                    uploadRoute: '/undertaking-issuance?mode=upload'
                 },
             },
             {
@@ -392,13 +408,16 @@ export const routes: Routes = [
             {
                 path: 'import-welcome',
                 loadComponent: () =>
-                    import('./shared/welcome-screen/welcome-screen').then(
-                        (m) => m.WelcomeScreen
-                    ),
+                    import('./shared/welcome-screen/welcome-screen')
+                        .then((m) => m.WelcomeScreen),
                 data: {
                     title: 'Welcome to Import LC',
                     description: 'Manage all Import LC related activities here.',
-                },
+                    createRoute: '/import-screen',
+                    templateRoute: '/import-screen?mode=template',
+                    existingRoute: '/import-screen/inquiries',
+                    uploadRoute: '/import-screen?mode=upload'
+                }
             },
 
             // Import Amend Route
@@ -408,15 +427,6 @@ export const routes: Routes = [
                     import(
                         './screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import/amend'
                     ).then((m) => m.AmendScreen),
-            },
-
-            // Import Pending-Records Route
-            {
-                path: 'import-screen/pending-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records'
-                    ).then((m) => m.EnquiriesOfRecords),
             },
 
             // Import submitted-Records Route

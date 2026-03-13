@@ -20,7 +20,7 @@ export interface UndertakingTransaction {
 })
 export class UndertakingIssuanceService {
 
-  private readonly BASE_URL = 'http://localhost:8084/api/v1/undertaking_lc';
+  private readonly BASE_URL = 'http://hassam:8050/settlementsystem/api/v1/undertaking_lc';
 
   private transactionsSubject$ = new BehaviorSubject<UndertakingTransaction[]>([]);
   public transactionsStream$ = this.transactionsSubject$.asObservable();

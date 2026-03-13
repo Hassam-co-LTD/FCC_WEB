@@ -5,10 +5,13 @@
 
         <h4>Create From</h4>
         <div class="btn-row">
-            <button mat-stroked-button color="primary">Create</button>
-            <button mat-stroked-button color="primary">Template</button>
-            <button mat-stroked-button color="primary">Existing LC</button>
-            <button mat-stroked-button color="primary">Upload</button>
+            <button mat-stroked-button color="primary" (click)="navigate(createRoute)">Create</button>
+
+            <button mat-stroked-button color="primary" (click)="navigate(templateRoute)">Template</button>
+
+            <button mat-stroked-button color="primary" (click)="navigate(existingRoute)">Existing LC</button>
+
+            <button mat-stroked-button color="primary" (click)="navigate(uploadRoute)">Upload</button>
         </div>
     </div>
 </div>
