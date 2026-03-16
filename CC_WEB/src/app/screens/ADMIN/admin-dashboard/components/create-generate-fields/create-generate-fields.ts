@@ -213,4 +213,16 @@ export class CreateGenerateFields implements OnInit {
     });
   }
 
+  //------------- Dropdown options for select type -------------
+  
+LoadDropDowns(): void {
+  this.api.getDatalist('dynamic-dropdown').subscribe({
+    next: res => {
+      this.allDropDowns = res;
+      console.log('All Dropdowns:', res);
+    },
+    error: err => console.error('Load all dropdowns failed', err)
+  });
+}
+
 }

@@ -80,9 +80,9 @@
       userStatus: this.userStatus
     }, 'clientUsers').subscribe({
 
-      next: (res) => {
+     next: (res) => {
 
-         sessionStorage.setItem("userData", JSON.stringify(res));
+  sessionStorage.setItem("userData", JSON.stringify(res));
 
   const companyType = this.auth.getCompanyType();
   const customerType = this.auth.getUserCategory();
@@ -97,11 +97,10 @@
     this.router.navigate(['/customer-user']);
   }
   else if (companyType === 'C' && customerType === 'U') {
-          this.router.navigate(['/dashboard']);
+    this.router.navigate(['/dashboard']);
   }
-        
-      },
 
+},
       error: (err) => {
         console.error('Login failed:', err);
 

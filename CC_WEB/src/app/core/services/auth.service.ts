@@ -12,13 +12,13 @@ export class AuthService {
   }
 
   /** Dummy login for testing */
-  login(userId: string, companyId: string, password: string): boolean { 
+ login(userId: string, companyId: string, password: string): boolean {
 
-    if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
-        (userId === 'user' && companyId === 'ABC' && password === 'user') || 
-        (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
+  if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
+      (userId === 'user' && companyId === 'ABC' && password === 'user') || 
+      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
 
-      if (this.isBrowser()) {
+    if (this.isBrowser()) {
 
       const role = userId === 'admin' ? 'A' : 'U';
 
@@ -30,15 +30,15 @@ export class AuthService {
       };
 
       sessionStorage.setItem('userData', JSON.stringify(userData));
-        sessionStorage.setItem('token', 'dummy-token');
+      sessionStorage.setItem('token', 'dummy-token');
 
-      }
-
-      return true;
     }
 
-    return false;
+    return true;
   }
+
+  return false;
+}
 
   /** Logout */
   logout() {
