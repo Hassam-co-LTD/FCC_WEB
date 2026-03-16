@@ -64,6 +64,14 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "host": "hassam",
+            "allowedHosts": [
+              "hassam",
+              "Lovekumar",
+              "localhost"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "CC_WEB:build:production"

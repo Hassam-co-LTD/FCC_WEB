@@ -1,157 +1,276 @@
-<div class="preview-page" *ngIf="form">
-  <div class="header-strip">
-    <h2 class="page-title">Export Collection Review</h2>
-  </div>
+<div class="preview-page" *ngIf="ExportCollectionForm">
+
+  <h2 class="page-title">Preview</h2>
 
   <div class="preview-container">
-    
+
+    <!-- ============================== -->
+    <!-- ROW 1 → GENERAL + DRAWER      -->
+    <!-- ============================== -->
     <div class="preview-row">
+
+      <!-- GENERAL DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">General Details</h3>
         <div class="preview-grid">
-          <div class="preview-label">Collection Type</div>
-          <div class="preview-value">{{ getVal('generaldetails.collectionType') }}</div>
-          
-          <div class="preview-label">Customer Ref</div>
-          <div class="preview-value">{{ getVal('generaldetails.customerReference') }}</div>
-          
-          <div class="preview-label">Drawee Ref</div>
-          <div class="preview-value">{{ getVal('generaldetails.draweeReference') }}</div>
+
+          <div class="preview-item">
+            <div class="preview-label">Collection Type</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.collectionType }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Customer Reference</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.customerReference }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Drawee Reference</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.draweeReference }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
 
-      <mat-card class="preview-card">
-        <h3 class="section-title">Bank Details</h3>
-        <div class="preview-grid">
-          <div class="preview-label">Remitting Bank</div>
-          <div class="preview-value">{{ getVal('bankdetails.remittingBankName') }}</div>
-          
-          <div class="preview-label">Principal Acc</div>
-          <div class="preview-value">{{ getVal('bankdetails.principalAccount') }}</div>
-          
-          <div class="preview-label">Presenting Bank</div>
-          <div class="preview-value">{{ getVal('bankdetails.presentingBankName') }}</div>
-          
-          <div class="preview-label">Collecting Swift</div>
-          <div class="preview-value">{{ getVal('bankdetails.collectingSwiftCode') }}</div>
-        </div>
-      </mat-card>
-    </div>
-
-    <div class="preview-row">
+      <!-- DRAWER DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">Drawer Details</h3>
         <div class="preview-grid">
-          <div class="preview-label">Name</div>
-          <div class="preview-value">{{ getVal('DrawerDraweeDetails.drawerName') }}</div>
-          
-          <div class="preview-label">Address</div>
-          <div class="preview-value">
-            {{ getVal('DrawerDraweeDetails.drawerAddress1') }}<br>
-            {{ getVal('DrawerDraweeDetails.drawerAddress2') !== '—' ? getVal('DrawerDraweeDetails.drawerAddress2') : '' }}
+
+          <div class="preview-item">
+            <div class="preview-label">Drawer Name</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.drawerName }}
+            </div>
           </div>
+
+          <div class="preview-item full-width">
+            <div class="preview-label">Address</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.drawerAddress1 }}<br>
+              {{ ExportCollectionForm.value.drawerAddress2 }}<br>
+              {{ ExportCollectionForm.value.drawerAddress3 }}<br>
+              {{ ExportCollectionForm.value.drawerAddress4 }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
 
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 2 → DRAWE + BANK          -->
+    <!-- ============================== -->
+    <div class="preview-row">
+
+      <!-- DRAWE DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">Drawee Details</h3>
         <div class="preview-grid">
-          <div class="preview-label">Name</div>
-          <div class="preview-value">{{ getVal('DrawerDraweeDetails.draweeName') }}</div>
-          
-          <div class="preview-label">Address</div>
-          <div class="preview-value">
-            {{ getVal('DrawerDraweeDetails.draweeAddress1') }}<br>
-            {{ getVal('DrawerDraweeDetails.draweeAddress2') !== '—' ? getVal('DrawerDraweeDetails.draweeAddress2') : '' }}
+
+          <div class="preview-item">
+            <div class="preview-label">Drawee Name</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.draweeName }}
+            </div>
           </div>
+
+          <div class="preview-item full-width">
+            <div class="preview-label">Address</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.draweeAddress1 }}<br>
+              {{ ExportCollectionForm.value.draweeAddress2 }}<br>
+              {{ ExportCollectionForm.value.draweeAddress3 }}<br>
+              {{ ExportCollectionForm.value.draweeAddress4 }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
+
+      <!-- BANK DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Bank Details</h3>
+        <div class="preview-grid">
+
+          <div class="preview-item">
+            <div class="preview-label">Remitting Bank</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.remittingBankName }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Presenting Bank</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.presentingBankName }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Collecting Bank</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.collectingBankName }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">SWIFT Code</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.swiftCode }}
+            </div>
+          </div>
+
+        </div>
+      </mat-card>
+
     </div>
 
+    <!-- ============================== -->
+    <!-- ROW 3 → PAYMENT + SHIPPING    -->
+    <!-- ============================== -->
     <div class="preview-row">
+
+      <!-- PAYMENT -->
       <mat-card class="preview-card">
-        <h3 class="section-title">Payment & Amount</h3>
+        <h3 class="section-title">Payment Details</h3>
         <div class="preview-grid">
-          <div class="preview-label">Amount</div>
-          <div class="preview-value" style="font-weight: 700; color: #0d47a1;">
-            {{ formatCurrency(getVal('paymentamount.amount')) }} {{ getVal('paymentamount.currency') }}
+
+          <div class="preview-item">
+            <div class="preview-label">Currency</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.currency }}
+            </div>
           </div>
-          
-          <div class="preview-label">Payment Type</div>
-          <div class="preview-value">{{ getVal('paymentamount.paymentType') }}</div>
-          
-          <div class="preview-label">Tenor</div>
-          <div class="preview-value">{{ getVal('paymentamount.tenor') }}</div>
+
+          <div class="preview-item">
+            <div class="preview-label">Amount</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.amount | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Payment Type</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.paymentType }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Tenor</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.tenor }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
 
+      <!-- SHIPPING -->
       <mat-card class="preview-card">
-        <h3 class="section-title">Shipment Details</h3>
+        <h3 class="section-title">Shipping Details</h3>
         <div class="preview-grid">
-          <div class="preview-label">Method</div>
-          <div class="preview-value">{{ getVal('shippingdetails.shippingMethod') }}</div>
-          
-          <div class="preview-label">Route</div>
-          <div class="preview-value">{{ getVal('shippingdetails.shippingFrom') }} to {{ getVal('shippingdetails.shippingTo') }}</div>
-          
-          <div class="preview-label">Incoterms</div>
-          <div class="preview-value">{{ getVal('shippingdetails.incoterms') }}</div>
+
+          <div class="preview-item">
+            <div class="preview-label">Method</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.shippingMethod }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Route</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.shippingFrom }} →
+              {{ ExportCollectionForm.value.shippingTo }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Incoterms</div>
+            <div class="preview-value">
+              {{ ExportCollectionForm.value.incoterms }}
+            </div>
+          </div>
+
         </div>
       </mat-card>
+
     </div>
 
+    <!-- ============================== -->
+    <!-- ROW 4 → INSTRUCTIONS          -->
+    <!-- ============================== -->
     <mat-card class="preview-card full-width">
-      <h3 class="section-title">Collection Instruction</h3>
+      <h3 class="section-title">Collection Instructions</h3>
+
       <div class="preview-grid">
-        <div class="preview-label">Advice Payment By</div>
-        <div class="preview-value">{{ getVal('adviceCharges.advicePaymentBy') }}</div>
-        
-        <div class="preview-label">Reason of Refusal</div>
-        <div class="preview-value">{{ getVal('adviceCharges.adviceReasonRefusal') }}</div>
-        
-        <div class="preview-label">Opening Charges</div>
-        <div class="preview-value">{{ getVal('adviceCharges.openingCharges') | titlecase }}</div>
 
-        <div class="preview-label">Instructions</div>
-        <div class="preview-value">
-          <div class="actionss" style="flex-wrap: wrap; margin-top: 5px;">
-            <span class="status-tag" *ngIf="form.get('adviceCharges.waiveCharges')?.value">Waive Charges</span>
-            <span class="status-tag" *ngIf="form.get('adviceCharges.protestNonPayment')?.value">Protest Non-Payment</span>
-            <span class="status-tag" *ngIf="form.get('adviceCharges.acceptanceDeferred')?.value">Acceptance Deferred</span>
+        <div class="preview-item">
+          <div class="preview-label">Opening Charges</div>
+          <div class="preview-value">
+            {{ ExportCollectionForm.value.openingCharges }}
           </div>
         </div>
+
+        <div class="preview-item">
+          <div class="preview-label">Outside Country Charges</div>
+          <div class="preview-value">
+            {{ ExportCollectionForm.value.outsideCountryCharges }}
+          </div>
+        </div>
+
+        <div class="preview-item full-width">
+          <div class="preview-label">Special Instructions</div>
+          <div class="preview-value">
+            <div class="actionss" style="flex-wrap: wrap; margin-top: 5px;">
+              <span class="status-tag" *ngIf="ExportCollectionForm.value.waiveAllChargesIfRefusedByDrawee">
+                Waive Charges
+              </span>
+              <span class="status-tag" *ngIf="ExportCollectionForm.value.protestInCaseOfNonPayment">
+                Protest Non-Payment
+              </span>
+              <span class="status-tag" *ngIf="ExportCollectionForm.value.acceptanceMayBeDeferredPendingArrival">
+                Acceptance Deferred
+              </span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </mat-card>
 
-    <mat-card class="preview-card full-width">
-      <h3 class="section-title">Attachments & Documents</h3>
-      <div class="attachment-list" *ngIf="getUploadedFiles().length > 0; else noDocs">
-        <div class="attachment-grid header">
-          <div style="padding-left: 10px;">Type</div>
-          <div>File Name</div>
-          <div>Date</div>
-          <div>Status</div>
-          <div>Actions</div>
-        </div>
-        <div class="attachment-grid" *ngFor="let doc of getUploadedFiles()">
-          <div style="padding-left: 10px;">
-            <mat-icon [class.pdf-icon]="doc.name?.includes('pdf')" class="image-icon">description</mat-icon>
-          </div>
-          <div class="preview-value" style="font-weight: 500;">{{ doc.name || doc.fileName || 'Document' }}</div>
-          <div class="preview-value">{{ (doc.date | date:'mediumDate') || '—' }}</div>
-          <div class="preview-value">{{ doc.type || 'Standard' }}</div>
-          <div class="actionss">
-            <mat-icon class="action-icon">download</mat-icon>
-            <mat-icon class="action-icon">visibility</mat-icon>
-          </div>
-        </div>
-      </div>
-      <ng-template #noDocs><p class="no-data" style="padding: 20px; text-align: center;">No documents attached.</p></ng-template>
-    </mat-card>
   </div>
+</div>
 
-  <div class="actions">
-    <button mat-stroked-button (click)="backToForm()">BACK TO EDIT</button>
-    <button mat-flat-button color="primary" (click)="submit()">SUBMIT COLLECTION</button>
-  </div>
+<div class="actions">
+
+  <!-- ALWAYS -->
+  <button mat-stroked-button (click)="back()">Back</button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+
+    <button mat-flat-button color="primary" (click)="submit()" *ngIf="currentTx?.status === 'I'">
+      Submit
+    </button>
+
+    <button mat-flat-button color="warn" (click)="rejectTransaction()" *ngIf="currentTx?.status === 'S'">
+      Reject
+    </button>
+
+    <button mat-flat-button color="primary" (click)="approveTransaction()" *ngIf="currentTx?.status === 'S'">
+      Approve
+    </button>
+
+  </ng-container>
+
 </div>

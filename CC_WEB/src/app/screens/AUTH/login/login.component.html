@@ -11,32 +11,23 @@
       <input placeholder="Enter Company ID" matInput [(ngModel)]="companyId" type="text" required />
     </mat-form-field>
 
-<mat-form-field appearance="outline" class="full-width">
-  <mat-label>Password</mat-label>
-  <input 
-    matInput 
-    placeholder="Enter Password" 
-    [(ngModel)]="password" 
-    [type]="hidePassword ? 'password' : 'text'" 
-    required 
-    autocomplete="new-password" 
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
-  />
-  <!-- Custom eye icon -->
-  <button mat-icon-button matSuffix matTooltip="Show / Hide Password" type="button" (click)="togglePassword()"
-    [attr.aria-label]="'Toggle password visibility'">
-    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-  </button>
-</mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input placeholder="Enter Password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="password"
+        type="password" required />
+      <button mat-icon-button matSuffix matTooltip="Show / Hide Password" type="button" (click)="togglePassword()"
+        [attr.aria-label]="'Toggle password visibility'">
+        <mat-icon>
+          {{ hidePassword ? 'visibility_off' : 'visibility' }}
+        </mat-icon></button>
+    </mat-form-field>
 
 
     <button mat-flat-button color="primary" class="full-width" type="submit" (click)="loginn()" (click)="login()">Login</button>
 
-    <p>
+    <!-- <p>
       Don’t have an account?
       <a routerLink="/signup">Sign up</a>
-    </p>
+    </p> -->
   </mat-card>
 </div>

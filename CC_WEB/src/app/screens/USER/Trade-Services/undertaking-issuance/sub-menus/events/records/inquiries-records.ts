@@ -192,7 +192,8 @@ private loadByStatus(): void {
   // --- PAGINATION ---
 
   get totalPages(): number {
-    return Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    return count < 1 ? 1 : count;
   }
 
   get pagedTransactions(): UndertakingTransaction[] {

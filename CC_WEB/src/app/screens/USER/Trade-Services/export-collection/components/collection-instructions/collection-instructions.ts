@@ -26,7 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './collection-instructions.html',
   styleUrls: ['./collection-instructions.scss']
 })
-export class CollectionInstructionsComponent implements OnInit {
+export class CollectionInstructionsComponent {
 
   @Input() form!: FormGroup; // Parent-provided form
   activeSection: string | null = 'adviceCharges';
@@ -35,12 +35,6 @@ export class CollectionInstructionsComponent implements OnInit {
     { value: 'bank', viewValue: 'Bank' },
     { value: 'customer', viewValue: 'Customer' }
   ];
-
-
-  ngOnInit(): void {
-    // ❗ Do NOT create a new form here
-    // The parent must provide a FormGroup with all necessary controls
-  }
 
   toggleSection(section: string) {
     this.activeSection = this.activeSection === section ? null : section;

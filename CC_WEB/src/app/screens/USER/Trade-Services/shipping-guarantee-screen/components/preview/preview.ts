@@ -104,7 +104,7 @@ export class Preview implements OnInit {
   }
   
 back() {
-  this.router.navigate(['/shipping-guarantee/inquiries'])
+  this.router.navigate(['/shipping-guarantee/inquiries-records'])
 }
 
   /** SUBMIT */

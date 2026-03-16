@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,15 +19,10 @@ import { MatSelectModule } from '@angular/material/select';
   templateUrl: './payment-amount.html',
   styleUrls: ['./payment-amount.scss']
 })
-export class PaymentAmountComponent implements OnInit {
+export class PaymentAmountComponent {
   @Input() form!: FormGroup; // Parent form group passed from export-collection
   isOpen = true;
   currencies = ['USD', 'EUR', 'GBP', 'PKR'];
-
-  constructor() {}
-
-  ngOnInit(): void {}
-
   toggle() {
     this.isOpen = !this.isOpen;
   }

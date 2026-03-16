@@ -6,6 +6,7 @@ import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
 import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
+import { ExportCollectionTransaction } from '../models/export-collection';
 
 
 // --- UPDATED INTERFACE FOR UNDERTAKING LC ---
@@ -178,7 +179,7 @@ export class ApiService {
   /* -------------------- IMPORT LC API Methods END -------------------- */
 
   // =================================================================
-  // API Methods For SHIPPING GUARANTEE MODULE END
+  // API Methods For SHIPPING GUARANTEE MODULE START
   // =================================================================
   // Save LC Record (pending record) - status "I"
 
@@ -263,6 +264,97 @@ export class ApiService {
     })
       .pipe(catchError(this.handleError));
   }
+  // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
+
+
+
+
+  // =================================================================
+  // API Methods For EXPORT COLLECTION MODULE START  
+  // =================================================================
+  
+  // Save LC Record (pending record) - status "I"
+  savePendingForExportCollection(data: ExportCollectionTransaction): Observable<ExportCollectionTransaction> {
+    console.log('Saving draft:', data);
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/save`, data,
+      { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------} --- List so using ShippingGuaranteeTransaction[] -> "[]"
+  getRecordTransactionsByStatusForExportCollection(status: String): Observable<ExportCollectionTransaction[]> {
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    })
+    return this.http.get<ExportCollectionTransaction[]>(`${this.baseUrl}/exportcollection/records/${status}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Update draft (pending record) by Tnx ID
+  updatePendingByTnxIdForExportCollection(
+    tnxId: string,
+    payload: ExportCollectionTransaction
+  ): Observable<ExportCollectionTransaction> {
+
+    return this.http
+      .put<ExportCollectionTransaction>(
+        `${this.baseUrl}/exportcollection/${tnxId}`,
+        payload
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  // Submit transaction (status "S") with full data
+
+  submitExportCollectionByTnxId(
+    tnxId: string,
+    data: ExportCollectionTransaction
+  ): Observable<ExportCollectionTransaction> {
+    console.log('Submitting transaction:', tnxId, data);
+    return this.http
+      .post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/submit/${tnxId}`, data, {
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  // Get Transaction by TNX ID for record clicking for READ-ONLY view for approved/rejected records --- NOT a List so not using ShippingGuaranteeTransaction X -> []
+  getTransactionForExportCollectionByTnxId(tnxId: string): Observable<ExportCollectionTransaction> {
+    return this.http.get<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/${tnxId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Approve transaction */
+  approveTransactionForExportCollection(tnxId: string, data: ExportCollectionTransaction): Observable<ExportCollectionTransaction> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/approve/${tnxId}`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+
+
+  /** Reject Reason */
+  rejectTransactionForExportCollection(tnxId: string, reason: string): Observable<ExportCollectionTransaction> {
+    return this.http.post<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/rejectReason/${tnxId}`, { rejectionReason: reason }, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
+  // update-Rejected
+  updateRejectedTransactionForExportCollection(tnxId: string, payload: ExportCollectionTransaction) {
+    return this.http.put<ExportCollectionTransaction>(`${this.baseUrl}/exportcollection/updateRejected/${tnxId}`, payload, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .pipe(catchError(this.handleError));
+  }
   //=================================================================
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
@@ -271,20 +363,20 @@ export class ApiService {
     const companyId = sessionStorage.getItem('companyId') || '';
     const headers = new HttpHeaders({ companyid: companyId });
     return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}undertaking_lc/status/${status}`,
+      `${this.baseUrl}/undertaking_lc/status/${status}`,
       { headers }
     ).pipe(catchError(this.handleError));
   }
 
   getUndertakingRecordsByStatus(status: string): Observable<RecordListDTO[]> {
     return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}undertaking_lc/records/${status}`
+      `${this.baseUrl}/undertaking_lc/records/${status}`
     ).pipe(catchError(this.handleError));
   }
 
   getUndertakingByTnxId(tnxId: string): Observable<UndertakingResponseDTO> {
     return this.http.get<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/${tnxId}`
+      `${this.baseUrl}/undertaking_lc/${tnxId}`
     ).pipe(catchError(this.handleError));
   }
 
@@ -295,7 +387,7 @@ export class ApiService {
       companyid: companyId
     });
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/save`,
+      `${this.baseUrl}/undertaking_lc/save`,
       dto,
       { headers }
     ).pipe(catchError(this.handleError));
@@ -315,7 +407,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   submitUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/submit/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/submit/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -323,7 +415,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   approveUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/approve/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/approve/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -332,7 +424,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   rejectUndertaking(tnxId: string, rejectionReason: string): Observable<UndertakingResponseDTO> {
     const body = { rejectionReason };
     return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/rejectReason/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/rejectReason/${tnxId}`,
       body,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -340,7 +432,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
 
   updateRejectedUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
     return this.http.put<UndertakingResponseDTO>(
-      `${this.baseUrl}undertaking_lc/updateRejected/${tnxId}`,
+      `${this.baseUrl}/undertaking_lc/updateRejected/${tnxId}`,
       dto,
       { headers: { 'Content-Type': 'application/json' } }
     ).pipe(catchError(this.handleError));
@@ -358,7 +450,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
     console.log('Sending to Backend -> companyid:', companyId);
 
     return this.http.post<TransferDTO>(
-      `${this.baseUrl}transfers/save`,
+      `${this.baseUrl}/transfers/save`,
       data,
       { headers }
     ).pipe(catchError(this.handleError));
@@ -368,32 +460,32 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
     const headers = new HttpHeaders({
       'companyid': companyId
     });
-    return this.http.get<TransferDTO[]>(`${this.baseUrl}transfers/status/${status}`, { headers })
+    return this.http.get<TransferDTO[]>(`${this.baseUrl}/transfers/status/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
   getTransferRecordsByStatus(status: string): Observable<RecordsListTransferDTO[]> {
-    return this.http.get<RecordsListTransferDTO[]>(`${this.baseUrl}transfers/records/${status}`)
+    return this.http.get<RecordsListTransferDTO[]>(`${this.baseUrl}/transfers/records/${status}`)
       .pipe(catchError(this.handleError));
   }
 
   getTransferByTnxId(tnxId: string): Observable<TransferDTO> {
-    return this.http.get<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`)
+    return this.http.get<TransferDTO>(`${this.baseUrl}/transfers/${tnxId}`)
       .pipe(catchError(this.handleError));
   }
 
   updateTransferDraft(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/${tnxId}`, data)
+    return this.http.put<TransferDTO>(`${this.baseUrl}/transfers/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
   submitTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/submit/${tnxId}`, data)
+    return this.http.post<TransferDTO>(`${this.baseUrl}/transfers/submit/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
   approveTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.post<TransferDTO>(`${this.baseUrl}transfers/approve/${tnxId}`, data)
+    return this.http.post<TransferDTO>(`${this.baseUrl}/transfers/approve/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
@@ -401,7 +493,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   rejectTransfer(tnxId: string, reason: string): Observable<TransferDTO> {
     const body = { rejectionReason: reason };
     return this.http.post<TransferDTO>(
-      `${this.baseUrl}transfers/rejectReason/${tnxId}`,
+      `${this.baseUrl}/transfers/rejectReason/${tnxId}`,
       body
     ).pipe(
       catchError(this.handleError)
@@ -409,7 +501,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   }
 
   updateRejectedTransfer(tnxId: string, data: TransferDTO): Observable<TransferDTO> {
-    return this.http.put<TransferDTO>(`${this.baseUrl}transfers/updateRejected/${tnxId}`, data)
+    return this.http.put<TransferDTO>(`${this.baseUrl}/transfers/updateRejected/${tnxId}`, data)
       .pipe(catchError(this.handleError));
   }
 
