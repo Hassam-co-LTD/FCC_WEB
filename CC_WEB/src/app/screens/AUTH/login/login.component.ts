@@ -19,7 +19,6 @@
     standalone: true,
     imports: [
       FormsModule,
-      RouterLink,
       MatFormFieldModule,
       MatInputModule,
       MatButtonModule,
@@ -47,10 +46,6 @@
      
       const success = this.auth.login(this.userId, this.companyId, this.password);
 
-      if (!success) {
-        alert('Invalid User ID, Company ID, or Password');
-        return;
-      }
     const  companyType = this.auth.getCompanyType();
   
       const CustomerType = this.auth.getUserCategory();

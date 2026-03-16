@@ -45,30 +45,30 @@
       <ng-template #menuTemplate let-item>
 
         <!-- Parent Menu -->
-         <div class="menu-group" *ngIf="item.children">
+        <div class="menu-group" *ngIf="item.children">
           <button class="menu-btn"
-        [class.active-parent]="isAnyDescendantActive(item)">
+                  [class.active-parent]="isAnyDescendantActive(item)">
 
-  <!-- ICON -->
-  <mat-icon *ngIf="item.icon"
-            (click)="item.route ? goTo(item) : toggleMenu(item)">
-    {{ item.icon }}
-  </mat-icon>
+            <!-- ICON -->
+            <mat-icon *ngIf="item.icon"
+                      (click)="item.route ? goTo(item) : toggleMenu(item)">
+              {{ item.icon }}
+            </mat-icon>
 
-  <!-- LABEL -->
-  <span *ngIf="!isCollapsed()"
-        (click)="item.route ? goTo(item) : toggleMenu(item)">
-    {{ item.label }}
-  </span>
+            <!-- LABEL -->
+            <span *ngIf="!isCollapsed()"
+                  (click)="item.route ? goTo(item) : toggleMenu(item)">
+              {{ item.label }}
+            </span>
 
-  <!-- ARROW -->
-  <mat-icon class="arrow"
-            *ngIf="item.children && !isCollapsed()"
-            (click)="toggleMenu(item); $event.stopPropagation()">
-    {{ item.open ? 'expand_less' : 'expand_more' }}
-  </mat-icon>
+            <!-- ARROW -->
+            <mat-icon class="arrow"
+                      *ngIf="item.children && !isCollapsed()"
+                      (click)="toggleMenu(item); $event.stopPropagation()">
+              {{ item.open ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
 
-</button>
+          </button>
 
           <!-- Submenu -->
           <div class="submenu" [class.open]="item.open && !isCollapsed()">
@@ -76,25 +76,25 @@
 
               <!-- Child WITH nested submenu -->
               <div class="submenu-item" *ngIf="child.children">
-
-                <button class="submenu-btn"
-                        [class.active-child]="isAnyDescendantActive(child)">
-                  <span class="label" (click)="goTo(child); $event.stopPropagation()">
-                    {{ child.label }}
-                  </span>
-                  <mat-icon class="arrow"
-                            (click)="toggleOnlyChildren(child); $event.stopPropagation()">
-                    {{ child.open ? 'expand_less' : 'expand_more' }}
-                  </mat-icon>
-                </button>
+<button class="submenu-btn"
+        [class.active-child]="isAnyDescendantActive(child)"
+        [class.active-leaf]="isChildLinkActive(child)">
+  <span class="label" (click)="goTo(child); $event.stopPropagation()">
+    {{ child.label }}
+  </span>
+  <mat-icon class="arrow"
+            (click)="toggleOnlyChildren(child); $event.stopPropagation()">
+    {{ child.open ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+</button>
 
                 <!-- Nested submenu (grandchild) -->
                 <div class="nested-submenu" [class.open]="child.open">
                   <button *ngFor="let sub of child.children"
-        (click)="onGrandChildClick(sub, $event)"
-        [class.active-leaf]="isExactActive(sub.route)">
-  {{ sub.label }}
-</button>
+                          (click)="onGrandChildClick(sub, $event)"
+                          [class.active-leaf]="isExactActive(sub.route)">
+                    {{ sub.label }}
+                  </button>
                 </div>
 
               </div>
@@ -103,7 +103,7 @@
               <button *ngIf="!child.children"
                       (click)="goTo(child)"
                       class="submenu-leaf"
-                      [class.active-leaf]="isExactActive(child.route)">
+                      [class.active-leaf]="isExactActive(child.route) || isChildLinkActive(child)">
                 {{ child.label }}
               </button>
 

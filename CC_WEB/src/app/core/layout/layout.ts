@@ -714,4 +714,9 @@ onGrandChildClick(sub: any, event: Event) {
 }
 
 
+// Returns true if this child is the current active route
+isChildLinkActive(child: MenuItem): boolean {
+  // Returns true if this child has a route and matches activeRoute
+  return !!child.route && this.activeRoute === child.route;
+}
 }
