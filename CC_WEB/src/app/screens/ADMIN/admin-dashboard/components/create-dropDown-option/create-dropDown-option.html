@@ -62,7 +62,7 @@
     <!-- New -->
     <ng-container *ngIf="!storeDropDown || !storeDropDown.recordStatus">
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-      <button class="btn-save" [disabled]="!storeDropDown.valid" (click)="onSave()">Save</button>
+      <button class="btn-save" [disabled]="!dropdownForm.valid" (click)="onSave()">Save</button>
     </ng-container>
 
     <!-- Draft -->

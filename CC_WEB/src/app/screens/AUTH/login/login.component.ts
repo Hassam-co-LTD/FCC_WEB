@@ -83,19 +83,22 @@
       next: (res) => {
 
          sessionStorage.setItem("userData", JSON.stringify(res));
-         console.log("CustomerType:", this.auth.getUserCategory());
-         console.log("CompanyType:", this.auth.getCompanyType());
-         console.log('Login successful, userData stored in sessionStorage:', sessionStorage.getItem('userData'));
-        Swal.fire({
-          icon: 'success',
-          title: 'Login Successful',
-          text: 'Welcome back!',
-          timer: 1500,
-          showConfirmButton: false
-        });
 
-        
+  const companyType = this.auth.getCompanyType();
+  const customerType = this.auth.getUserCategory();
+
+  console.log("CustomerType:", customerType);
+  console.log("CompanyType:", companyType);
+
+  if (companyType === 'B') {
+    this.router.navigate(['/admin']);
+  }
+  else if (companyType === 'C' && customerType === 'A') {
+    this.router.navigate(['/customer-user']);
+  }
+  else if (companyType === 'C' && customerType === 'U') {
           this.router.navigate(['/dashboard']);
+  }
         
       },
 

@@ -40,6 +40,7 @@ export class CreateDynamicFieldOptions implements OnInit {
 
   dropdownForm!: FormGroup;
   storeDropDown: any = {};
+  allDropDowns: any[] = [];
 
   isEditMode = false;
   isOpen = true;
@@ -55,6 +56,8 @@ export class CreateDynamicFieldOptions implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.loadCustomer();
+  
+  
   }
 
   private buildForm(): void {

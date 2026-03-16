@@ -117,10 +117,21 @@
 
     <div class="field-group" style="flex: 1 1 200px; min-width: 150px;">
       <mat-form-field appearance="outline" style="width: 100%;">
-        <input matInput formControlName="dropDownKey" placeholder="Dropdown Key" [readonly]="isReadOnly()" />
+    <mat-label>Dropdown Options</mat-label>
+    <mat-select
+      formControlName="dropDownIds"
+      [multiple]="true"
+      [disabled]="isReadOnly()"
+    >
+      <mat-option
+        *ngFor="let option of allDropDowns"
+        [value]="option.id"
+      >
+        {{ option.name }}
+      </mat-option>
+    </mat-select>
       </mat-form-field>
     </div>
-
     <!-- Remove Button -->
     <div class="field-group" style="flex: 0 0 auto;">
       <button mat-icon-button color="warn" type="button"

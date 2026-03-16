@@ -51,6 +51,7 @@ export class CreateGenerateFields implements OnInit {
 
   fieldForm!: FormGroup;
   storeField: any = {};
+  allDropDowns: any[] = [];
   isEditMode = false;
   isOpen = true;
   maxOptions = 5;
@@ -66,6 +67,7 @@ export class CreateGenerateFields implements OnInit {
   ngOnInit(): void {
   this.buildForm();
   this.loadField();
+  this.LoadDropDowns();
 
   // Ensure FormArray has at least one option for 'select' type
   if (this.fieldForm.get('fieldType')?.value === 'select' && this.options.length === 0) {
@@ -96,12 +98,12 @@ export class CreateGenerateFields implements OnInit {
     return this.fieldForm.get('options') as FormArray;
   }
 
-  private createOption(fieldId: string , value:string, text:string, dropDownKey: string): FormGroup {
+  private createOption(fieldId: string , value:string, text:string, dropDownKIds: string): FormGroup {
     return this.fb.group({
       fieldId: [fieldId, Validators.required],
       value: [value, Validators.required],
       text: [text, Validators.required],
-      dropDownKey: [dropDownKey] // Optional: can be used for additional logic
+      dropDownIds: [dropDownKIds] // Optional: can be used for additional logic
     });
   }
 

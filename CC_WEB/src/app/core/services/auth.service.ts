@@ -13,18 +13,25 @@ export class AuthService {
 
   /** Dummy login for testing */
   login(userId: string, companyId: string, password: string): boolean { 
+
     if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
         (userId === 'user' && companyId === 'ABC' && password === 'user') || 
         (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
 
       if (this.isBrowser()) {
+
+      const role = userId === 'admin' ? 'A' : 'U';
+
+      const userData = {
+        userId: userId,
+        companyId: companyId,
+        userCategory: role,
+        companyType: companyId === 'NBP' ? 'B' : 'C'
+      };
+
+      sessionStorage.setItem('userData', JSON.stringify(userData));
         sessionStorage.setItem('token', 'dummy-token');
-        sessionStorage.setItem('userId', userId);
-        sessionStorage.setItem('companyId', companyId);
-        // normalize role to uppercase
-        const role = userId === 'admin' ? 'ADMIN' : 'USER';
-        sessionStorage.setItem('role', role);
-        sessionStorage.setItem('userRole', role);
+
       }
 
       return true;
