@@ -51,9 +51,9 @@
       const CustomerType = this.auth.getUserCategory();
   
       if ( companyType == 'B') {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/customer-user']);
       } else if(companyType == "C" && CustomerType == "A"){ {
-          this.router.navigate(['/customer-user']);
+          this.router.navigate(['/admin']);
       }
        
       }
