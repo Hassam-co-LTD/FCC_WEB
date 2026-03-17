@@ -162,7 +162,8 @@ toggleMenu(item: MenuItem) {
 }
  
   loadMenu(role: 'A' | 'U' | null, companyType: 'B' | 'C' | null) {
-    if (companyType === 'B') {
+    
+       if (companyType === 'C' && role === 'A') {
    this.menuItems = [
 
   { label: 'System Features', icon: 'insights', route: '/system-overview' },
@@ -309,8 +310,7 @@ toggleMenu(item: MenuItem) {
 ];
 
          }
-         
-         else if (companyType === 'C' && role === 'A') {
+         else if (companyType === "B"){
             console.log("Loading Customer User Menu",companyType, role);
           this.menuItems = [
 
@@ -339,7 +339,7 @@ toggleMenu(item: MenuItem) {
       this.menuItems = [
 
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        { label: 'Search', icon: 'search', route: '/Search-by-id' },
+        // { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
           icon: 'article',

@@ -1,72 +1,72 @@
-  import { Component } from '@angular/core';
-  import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-  import { Router, RouterLink, RouterModule } from '@angular/router';
- import Swal from 'sweetalert2';
+import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
-  import { MatFormFieldModule } from '@angular/material/form-field';
-  import { MatInputModule } from '@angular/material/input';
-  import { MatButtonModule } from '@angular/material/button';
-  import { MatCardModule } from '@angular/material/card';
-  import { AuthService } from '../../../core/services/auth.service';
-  import { MatIconModule } from "@angular/material/icon";
-  import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from "@angular/material/icon";
+import { MatTooltipModule } from '@angular/material/tooltip';
 
-  // import { AuthService } from '../../services/auth.service';
-  import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ApiService } from '../../../core/services/api.service';
 
-  @Component({
-    selector: 'app-login',
-    standalone: true,
-    imports: [
-      FormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatButtonModule,
-      MatCardModule,
-      ReactiveFormsModule,
-      RouterModule,
-      MatIconModule,
-      MatTooltipModule
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    RouterModule,
+    MatIconModule,
+    MatTooltipModule
   ],
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-  })
-  export class LoginComponent {
-    userId = '';
-    userStatus = 'A';
-    loginId = '';
-    companyId = '';
-    password = '';
-    hidePassword = true;
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+})
+export class LoginComponent {
+  loginId = '';
+  companyId = '';
+  password = '';
+  userStatus = 'A';
+  hidePassword = true;
 
+  constructor(private auth: AuthService, private router: Router, private api: ApiService) {}
 
-    constructor(private auth: AuthService, private router: Router,private api: ApiService) { }
+  togglePassword() {
+    this.hidePassword = !this.hidePassword;
+  }
 
-    login() {
-     
-      const success = this.auth.login(this.userId, this.companyId, this.password);
+  // Unified login function that calls both internal login and API login
+  loginHandler() {
+    // Call the old login() if needed
+    this.login();
 
-    const  companyType = this.auth.getCompanyType();
-  
-      const CustomerType = this.auth.getUserCategory();
-  
-      if ( companyType == 'B') {
-        this.router.navigate(['/customer-user']);
-      } else if(companyType == "C" && CustomerType == "A"){ {
-          this.router.navigate(['/admin']);
-      }
-       
-      }
-      else if(companyType == "C" && CustomerType == "U"){
-        this.router.navigate(['/dashboard']);
-      }
+    // Call the API login
+    this.loginn();
+  }
+
+  // Optional old login function (for local checks)
+  login() {
+    const companyType = this.auth.getCompanyType();
+    const customerType = this.auth.getUserCategory();
+
+    if (companyType === 'B') {
+      this.router.navigate(['/customer-user']);
+    } else if (companyType === 'C' && customerType === 'A') {
+      this.router.navigate(['/admin']);
+    } else if (companyType === 'C' && customerType === 'U') {
+      this.router.navigate(['/dashboard']);
     }
+  }
 
-    togglePassword(){
-      this.hidePassword = !this.hidePassword;
-    }
-
-
+  // API login
   loginn() {
     this.api.userLogin({
       loginId: this.loginId,
@@ -74,37 +74,31 @@
       password: this.password,
       userStatus: this.userStatus
     }, 'clientUsers').subscribe({
+      next: (res) => {
+        sessionStorage.setItem("userData", JSON.stringify(res));
 
-     next: (res) => {
+        const companyType = this.auth.getCompanyType();
+        const customerType = this.auth.getUserCategory();
 
-  sessionStorage.setItem("userData", JSON.stringify(res));
+        console.log("CompanyType:", companyType, "CustomerType:", customerType);
 
-  const companyType = this.auth.getCompanyType();
-  const customerType = this.auth.getUserCategory();
-
-  console.log("CustomerType:", customerType);
-  console.log("CompanyType:", companyType);
-
-  if (companyType === 'B') {
-    this.router.navigate(['/admin']);
-  }
-  else if (companyType === 'C' && customerType === 'A') {
-    this.router.navigate(['/customer-user']);
-  }
-  else if (companyType === 'C' && customerType === 'U') {
-    this.router.navigate(['/dashboard']);
-  }
-
-},
+        if (companyType === 'B') {
+          this.router.navigate(['/customer-user']);
+        } else if (companyType === 'C' && customerType === 'A') {
+          this.router.navigate(['/admin']);
+        } else if (companyType === 'C' && customerType === 'U') {
+          this.router.navigate(['/dashboard']);
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Login Warning',
+            text: 'Unable to determine user type. Please contact support.'
+          });
+        }
+      },
       error: (err) => {
         console.error('Login failed:', err);
-
-        // Extract message safely
-        const errorMessage =
-          err?.error?.message ||
-          err?.error ||
-          'Something went wrong!';
-
+        const errorMessage = err?.error?.message || err?.error || 'Something went wrong!';
         Swal.fire({
           icon: 'error',
           title: 'Login Failed',
@@ -113,6 +107,4 @@
       }
     });
   }
-
-
-  }
+}
