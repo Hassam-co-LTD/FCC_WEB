@@ -337,7 +337,6 @@ toggleMenu(item: MenuItem) {
 
          else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
-
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         // { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
