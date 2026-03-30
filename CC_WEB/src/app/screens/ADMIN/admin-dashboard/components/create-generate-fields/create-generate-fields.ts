@@ -103,7 +103,7 @@ export class CreateGenerateFields implements OnInit {
       fieldId: [fieldId, Validators.required],
       value: [value, Validators.required],
       text: [text, Validators.required],
-      dropDownIds: [dropDownKIds,Validators.required] // Optional: can be used for additional logic
+      dropDownKey: [dropDownKIds,Validators.required] // Optional: can be used for additional logic
     });
   }
 

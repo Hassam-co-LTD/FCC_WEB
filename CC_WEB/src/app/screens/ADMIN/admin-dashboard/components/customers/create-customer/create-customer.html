@@ -166,16 +166,15 @@
           <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
             <input matInput type="date" [formControlName]="field.fieldName" placeholder="{{ field.label || field.fieldName }}" />
           </mat-form-field>
-
-          <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-            <mat-label>{{ field.label || field.fieldName }}</mat-label>
-            <mat-select [formControlName]="field.fieldName">
-              <mat-option value="">Select {{ field.label || field.fieldName }}</mat-option>
-              <ng-container *ngFor="let option of field.options || []">
-                <mat-option [value]="option.value">{{ option.label }}</mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
+<mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+  <mat-label>{{ field.label || field.fieldName }}</mat-label>
+  <mat-select [formControlName]="field.fieldName">
+    <mat-option value="">Select {{ field.label || field.fieldName }}</mat-option>
+    <ng-container *ngFor="let option of field.options || []">
+      <mat-option [value]="option.value">{{ option.text }}</mat-option>
+    </ng-container>
+  </mat-select>
+</mat-form-field>
 
         </div>
       </ng-container>

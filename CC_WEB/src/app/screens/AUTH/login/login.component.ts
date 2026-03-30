@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -9,7 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from "@angular/material/icon";
 import { MatTooltipModule } from '@angular/material/tooltip';
-
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
 
@@ -30,43 +29,46 @@ import { ApiService } from '../../../core/services/api.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+
   loginId = '';
   companyId = '';
   password = '';
   userStatus = 'A';
   hidePassword = true;
 
-  constructor(private auth: AuthService, private router: Router, private api: ApiService) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private api: ApiService
+  ) {}
+
+  // ✅ AUTO REDIRECT IF TOKEN EXISTS
+  ngOnInit() {
+    const token = sessionStorage.getItem('token');
+
+    if (token) {
+      const redirectUrl = this.auth.getRedirectUrl();
+      this.router.navigate([redirectUrl]);
+    }
+  }
 
   togglePassword() {
     this.hidePassword = !this.hidePassword;
   }
 
-  // Unified login function that calls both internal login and API login
+  // ✅ MAIN LOGIN HANDLER
   loginHandler() {
-    // Call the old login() if needed
-    this.login();
-
-    // Call the API login
     this.loginn();
   }
 
-  // Optional old login function (for local checks)
+  // ❌ OLD METHOD NOT NEEDED ANYMORE (can remove later if you want)
   login() {
-    const companyType = this.auth.getCompanyType();
-    const customerType = this.auth.getUserCategory();
-
-    if (companyType === 'B') {
-      this.router.navigate(['/customer-user']);
-    } else if (companyType === 'C' && customerType === 'A') {
-      this.router.navigate(['/admin']);
-    } else if (companyType === 'C' && customerType === 'U') {
-      this.router.navigate(['/dashboard']);
-    }
+    const redirectUrl = this.auth.getRedirectUrl();
+    this.router.navigate([redirectUrl]);
   }
 
-  // API login
+  // ✅ API LOGIN
   loginn() {
     this.api.userLogin({
       loginId: this.loginId,
@@ -74,30 +76,20 @@ export class LoginComponent {
       password: this.password,
       userStatus: this.userStatus
     }, 'clientUsers').subscribe({
-      next: (res) => {
+      next: (res: any) => {
+
+        // ✅ Store token
+        sessionStorage.setItem("token", res.token);
+
+        // ✅ Store user data
         sessionStorage.setItem("userData", JSON.stringify(res));
 
-        const companyType = this.auth.getCompanyType();
-        const customerType = this.auth.getUserCategory();
-
-        console.log("CompanyType:", companyType, "CustomerType:", customerType);
-
-        if (companyType === 'B') {
-          this.router.navigate(['/customer-user']);
-        } else if (companyType === 'C' && customerType === 'A') {
-          this.router.navigate(['/admin']);
-        } else if (companyType === 'C' && customerType === 'U') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Login Warning',
-            text: 'Unable to determine user type. Please contact support.'
-          });
-        }
+        // ✅ Use centralized redirect logic
+        const redirectUrl = this.auth.getRedirectUrl();
+        this.router.navigate([redirectUrl]);
       },
+
       error: (err) => {
-        console.error('Login failed:', err);
         const errorMessage = err?.error?.message || err?.error || 'Something went wrong!';
         Swal.fire({
           icon: 'error',

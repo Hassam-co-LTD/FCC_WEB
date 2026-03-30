@@ -80,6 +80,9 @@ export class AuthService {
     return parsed.userId?.toString() || null;
   }
 
+  getToken(): string | null {
+  return sessionStorage.getItem('token');
+}
   /** Get role (ADMIN / USER) */
   getUserRole(): 'A' | 'U' | null {
     return this.getUserCategory();
@@ -105,4 +108,19 @@ export class AuthService {
     const parsed = JSON.parse(data);
     return parsed.companyType?.toUpperCase() || null;
   }
+
+  getRedirectUrl(): string {
+  const companyType = this.getCompanyType();
+  const userCategory = this.getUserCategory();
+
+  if (companyType === 'B') {
+    return '/customer-user';
+  } else if (companyType === 'C' && userCategory === 'A') {
+    return '/admin';
+  } else if (companyType === 'C' && userCategory === 'U') {
+    return '/dashboard';
+  }
+
+  return '/login';
+}
 }

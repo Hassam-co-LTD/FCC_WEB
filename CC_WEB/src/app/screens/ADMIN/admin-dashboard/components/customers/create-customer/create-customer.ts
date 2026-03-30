@@ -282,9 +282,10 @@ updateCustomer(): void {
 
               if (res.dynamicFields?.length) {
                 res.dynamicFields.forEach((field: any) => {
-                  if (this.dynamicFieldsForm.contains(field.fieldId)) {
-                    this.dynamicFieldsForm.get(field.fieldId)?.setValue(field.value);
-                  }
+                 const fieldDef = this.fields.find(f => f.fieldId === field.fieldId);
+if (fieldDef && this.dynamicFieldsForm.contains(fieldDef.fieldName)) {
+  this.dynamicFieldsForm.get(fieldDef.fieldName)?.setValue(field.value);
+}
                 });
               }
             },
