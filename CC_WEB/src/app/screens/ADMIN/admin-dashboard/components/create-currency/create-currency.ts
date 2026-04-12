@@ -10,9 +10,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; 
+import { MatNativeDateModule } from '@angular/material/core';
 
-import Swal from 'sweetalert2'; 
+import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { ApiService } from '../../../../../core/services/api.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -29,8 +29,7 @@ import { ApiService } from '../../../../../core/services/api.service';
     MatIconModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
+    MatNativeDateModule
   ],
   templateUrl: './create-currency.html',
   styleUrls: ['./create-currency.scss']
@@ -38,10 +37,15 @@ import { ApiService } from '../../../../../core/services/api.service';
 export class CreateCurrency implements OnInit {
 
   currencyForm!: FormGroup;
+  dynamicFieldsForm!: FormGroup;
+
   storeCurrency: any = {};
+  fields: any[] = [];
+  storeDynamicFieldsResponse: any[] = [];
 
   isEditMode = false;
   isOpen = true;
+  isDynamicFieldsOpen = true;
 
   constructor(
     private fb: FormBuilder,
@@ -54,139 +58,152 @@ export class CreateCurrency implements OnInit {
   ngOnInit(): void {
     this.buildForm();
     this.loadCurrency();
+    this.loadDynamicFields();
   }
 
+  // ---------------- FORM BUILD ----------------
   private buildForm(): void {
     this.currencyForm = this.fb.group({
+      currencyId: [''],
       currencyCode: ['', Validators.required],
       currencyDesc: ['', Validators.required],
       currencyMapId: [''],
-      currencyStatus: ['A'],  // default Active
-      recordStatus: ['N'],
-      inputterId: [''],
-      authorizerId: [''],
-      rejectReason: ['']
+      currencyStatus: ['A'],
+      
     });
   }
 
+  // ---------------- LOAD CURRENCY ----------------
   private loadCurrency(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log('Loading currency with ID:', id);
-    if (id) {
-      this.isEditMode = true;
+    if (!id) return;
 
-      this.api.getTnxById(Number(id), "currency").subscribe({
-        next: res => {
-          this.storeCurrency = res;
-          console.log('get Currency By:', res);
-          this.currencyForm.patchValue(res);
-        },
-        error: err => console.error('Load failed', err)
-      });
-    }
-  }
-
-  // ---------------- CREATE ----------------
-  onSave(): void {
-    if (this.currencyForm.invalid) return;
-
-    const payload = this.currencyForm.getRawValue();
-    console.log('Payload to save:', payload);
-    
-    this.api.saveTnx(payload, 'currency').subscribe({
+    this.isEditMode = true;
+    this.api.getTnxById(id, 'currency').subscribe({
       next: res => {
-        console.log("Saved response:", res);
-        Swal.fire('Saved!', 'Currency saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']));
+        this.storeCurrency = res;
+        this.storeDynamicFieldsResponse = res.dynamicFields || [];
+        this.currencyForm.patchValue(res);
+        this.patchDynamicValues();
       },
-      error: err => console.error('Save failed', err)
+      error: err => console.error('Load failed', err)
     });
   }
 
+  // ---------------- LOAD DYNAMIC FIELDS ----------------
+  private loadDynamicFields(): void {
+    this.api.getFieldsByScreenAndStatus('currency', 'A').subscribe({
+      next: res => {
+        this.fields = res;
+        const group: any = {};
+        this.fields.forEach(f => group[f.fieldName] = ['']);
+        this.dynamicFieldsForm = this.fb.group(group);
+        this.patchDynamicValues();
+      },
+      error: err => console.error('Dynamic field load failed', err)
+    });
+  }
+
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (!this.dynamicFieldsForm || !this.fields.length || !this.storeDynamicFieldsResponse.length) return;
+    const patch: any = {};
+    this.storeDynamicFieldsResponse.forEach(saved => {
+      const def = this.fields.find(f => f.fieldId == saved.fieldId);
+      if (def) patch[def.fieldName] = saved.value || '';
+    });
+    this.dynamicFieldsForm.patchValue(patch);
+  }
+
+  // ---------------- SAVE ----------------
+onSave(): void {
+  if (this.currencyForm.invalid) return;
+
+  // Main currency payload
+  const currencyPayload = this.currencyForm.getRawValue();
+
+  // Dynamic fields payload
+  const dynamicFieldsPayload = this.fields?.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
+    currencyId: this.currencyForm.get('currencyId')?.value || null // Include currencyId for updates
+  })) || [];
+
+  // Combine both into one DTO
+  const payload = {
+    ...currencyPayload,
+    dynamicFields: dynamicFieldsPayload
+  };
+
+  console.log('Payload to save:', payload);
+
+  // Single API call
+  this.api.saveTnx(payload, 'currency').subscribe({
+    next: () => {
+      Swal.fire('Saved!', 'Currency and dynamic fields saved successfully', 'success')
+        .then(() => this.router.navigate(['/admin/currency-list']));
+    },
+    error: err => Swal.fire('Error', 'Currency save failed', 'error')
+  });
+}
   // ---------------- UPDATE ----------------
-  update(id: number): void {
+  updateCurrency(): void {
     if (this.currencyForm.invalid) return;
 
-    const payload = this.currencyForm.getRawValue();
+    const currencyCode = this.currencyForm.value.currencyCode;
+    const dynamicPayload = this.fields.map(f => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+    })) || [];
 
-    this.api.updateTnx(payload, 'currency', id).subscribe({
-      next: () => {
-        Swal.fire('Updated!', 'Currency updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']));
-      },
-      error: err => console.error('Update failed', err)
+    const payload = {
+      ...this.currencyForm.getRawValue(),
+      dynamicFields: dynamicPayload,
+      updatedOn: new Date().toISOString().split('.')[0]
+    };
+
+    this.api.updateTnxx(payload, `currency/update/${currencyCode}`).subscribe({
+      next: () => console.log('Currency and dynamic fields updated successfully'),
+      error: err => console.error('Currency update failed', err)
     });
   }
 
-  activate(id: number): void {
-    this.api.setTnxByStatus('A', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'Currency is now Active', 'success')
-          .then(() => this.loadCurrency());
-      },
-      error: err => console.error('Activate failed', err)
+  // ---------------- WORKFLOW ----------------
+  submit(): void {
+    if (!this.storeCurrency?.currencyCode) return;
+
+    this.api.setTnxByStatus('S', this.storeCurrency.currencyCode, 'currency').subscribe({
+      next: () =>
+        Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']))
     });
   }
 
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('I', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'Currency is now Inactive', 'success')
-          .then(() => this.loadCurrency());
-      },
-      error: err => console.error('Deactivate failed', err)
+  approve(): void {
+    if (!this.storeCurrency?.currencyCode) return;
+
+    this.api.setTnxByStatus('A', this.storeCurrency.currencyCode, 'currency').subscribe({
+      next: () =>
+        Swal.fire('Approved!', 'Currency approved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']))
+    });
+  }
+
+  reject(): void {
+    if (!this.storeCurrency?.currencyCode) return;
+
+    this.api.setTnxByStatus('D', this.storeCurrency.currencyCode, 'currency').subscribe({
+      next: () =>
+        Swal.fire('Rejected!', 'Currency rejected successfully', 'success')
+          .then(() => this.router.navigate(['/admin/currency-list']))
     });
   }
 
   // ---------------- UI HELPERS ----------------
-  isReadOnly(): boolean {
-    if (!this.storeCurrency) return true;
-    return false;
-  }
+  toggle(): void { this.isOpen = !this.isOpen; }
+  toggleDynamicFields(): void { this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen; }
 
-  toggle(): void {
-    this.isOpen = !this.isOpen;
-  }
-
-  onBack(): void {
-    this.location.back();
-  }
-
-  onCancel(): void {
-    this.currencyForm.reset();
-  }
-
-  submit(): void {    
-    if (!this.storeCurrency?.currencyCode) return;
-    this.api.setTnxByStatus('S', this.storeCurrency.currencyCode, 'currency').subscribe({
-      next: res => {
-        console.log('Submitted response:', res);
-        Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']));
-      },  
-      error: err => console.error('Submit failed', err)
-    });
-  }
-
-  reject(id: number): void { 
-    if (!this.storeCurrency?.currencyCode) return;
-    this.api.setTnxByStatus('D', this.storeCurrency.currencyCode, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Rejected!', 'Currency rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']));
-      },
-      error: err => console.error('Reject failed', err)
-    });
-  } 
-
-  approve(id: number): void {  
-    if (!this.storeCurrency?.currencyCode) return;    
-    this.api.setTnxByStatus('A', this.storeCurrency.currencyCode, 'currency').subscribe({   
-      next: () => {
-        Swal.fire('Approved!', 'Currency approved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']));
-      },
-      error: err => console.error('Approve failed', err)
-    });
-  } 
+  isReadOnly(): boolean { return this.storeCurrency?.recordStatus === 'A'; }
+  onBack(): void { this.location.back(); }
+  onCancel(): void { this.currencyForm.reset(); }
 }

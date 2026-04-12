@@ -188,7 +188,17 @@ toggleMenu(item: MenuItem) {
           { label: 'Inquiry', route: '/admin/customer-list' }
         ]
       },
-
+      {
+        label:'currency',
+        icon:'currency_exchange',
+        route:'/admin/create-currency',
+        open:false,
+        children:[
+          {label:'Create New', route:'/admin/create-currency'},
+          {label:'Inquiry', route:'/admin/currency-inquiry'}
+        ]
+      }
+,
       {
         label: 'Branch',
         icon: 'account_balance',
@@ -221,16 +231,7 @@ toggleMenu(item: MenuItem) {
           { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
         ]
       },
-      {
-    label: 'Dynamic Field Options',
-    icon: 'list_alt', // for configuring dropdown values
-    route: '/admin/create-dynamic-field-options',
-    open: false,
-    children: [
-      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
-      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
-    ]
-  },
+     
   
 
      {

@@ -69,6 +69,8 @@ export class CreateClientUser implements OnInit {
   allCompanies: any[] = [];
   isEditMode = false;
   isOpen = true;
+
+  
   
  userId = sessionStorage.getItem('userId');
 
@@ -78,6 +80,11 @@ export class CreateClientUser implements OnInit {
   userAssignedRoles: UsersRolesResponseDTO[] = [];
   isRolesOpen = true;
 
+  // ---------- DYNAMIC FIELDS ----------
+dynamicFieldsForm!: FormGroup;
+fields: any[] = [];
+storeDynamicFieldsResponse: any[] = [];
+isDynamicFieldsOpen = true;
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
@@ -99,6 +106,7 @@ UserData = {
     this.loadClientUserDetails(); // ✅ user-details logic replaces old getTnxById
     this.loadCompanies();
     this.fetchAllRoles();
+    this.loadDynamicFields();
   
 
   }
@@ -118,21 +126,30 @@ UserData = {
 
   // ---------------- REPLACED LOGIC ----------------
   private loadClientUserDetails(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      console.log('Loading client user with ID:', id);
-      this.isEditMode = true;
-      this.api.getTnxById(Number(id), "clientUsers").subscribe({
-        next: (data: UserDetails) => {
-          this.storeClientUser = data;
-          this.clientUserForm.patchValue(data);
-          this.fetchAssignedRoles(); // load roles after user details loaded
-          console.log('Fetched client user details:', this.storeClientUser);
-        },
-        error: err => console.error('Error fetching client user details', err)
-      });
-    }
+  const id = this.route.snapshot.paramMap.get('id');
+
+  if (id) {
+    console.log('Loading client user with ID:', id);
+    this.isEditMode = true;
+
+    this.api.getTnxById(Number(id), "clientUsers").subscribe({
+      next: (data: any) => {
+
+        this.storeClientUser = data;
+        this.clientUserForm.patchValue(data);
+
+        // store dynamic fields
+        this.storeDynamicFieldsResponse = data.dynamicFields || [];
+
+        // ⚠️ DO NOT PATCH HERE DIRECTLY
+        // wait until fields are loaded
+
+        this.fetchAssignedRoles();
+      },
+      error: err => console.error('Error fetching client user details', err)
+    });
   }
+}
 
   private loadCompanies(): void {
     this.api.getTnxByStatus('A',"company").subscribe({
@@ -145,33 +162,45 @@ UserData = {
   }
 
   onSave(): void {
-    if (this.clientUserForm.invalid) return;
-    const payload = this.clientUserForm.getRawValue();
-    console.log('Saving client user with payload:', payload);
-    this.api.saveTnx(payload, 'clientUsers').subscribe({
-      next: res => {
-        // sessionStorage.setItem('clientUser', JSON.stringify(res));
-        // console.log('Client User saved successfully in sessions', sessionStorage.getItem('clientUser'));
-        
-        Swal.fire('Saved!', 'Client User saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry']))
-        
-        },
-      error: err => console.error('Save failed', err)
-    });
-  }
- 
-  update(id: number): void {
-    if (this.clientUserForm.invalid) return;
-    const payload = this.clientUserForm.getRawValue();
-    console.log('Update payload:', payload);
-    this.api.updateTnx(payload, 'clientUsers', id).subscribe({
-      next: () => Swal.fire('Updated!', 'Client User updated successfully', 'success')
-        .then(() => this.router.navigate(['/admin/user-client-inquiry'])),
-      error: err => console.error('Update failed', err)
-    });
-  }
+  if (this.clientUserForm.invalid) return;
 
+  const payload = {
+    ...this.clientUserForm.getRawValue(),
+    dynamicFields: this.getDynamicPayload() // ✅ ADD THIS
+  };
+
+  console.log('Saving client user with payload:', payload);
+
+  this.api.saveTnx(payload, 'clientUsers').subscribe({
+    next: res => {
+      Swal.fire('Saved!', 'Client User saved successfully', 'success')
+        .then(() => this.router.navigate(['/admin/user-client-inquiry']))
+    },
+    error: err => console.error('Save failed', err)
+  });
+}
+ 
+ update(id: number): void {
+  if (this.clientUserForm.invalid) return;
+
+  const payload = {
+    ...this.clientUserForm.getRawValue(),
+    dynamicFields: this.getDynamicPayload() // ✅ ADD THIS
+  };
+
+  console.log('Updating the payload payload:', payload);
+
+  this.api.updateTnx(payload, 'clientUsers', id).subscribe({
+    next: (res) => {
+      console.log('Client User updated successfully',res);
+      Swal.fire('Updated!', 'Client User updated successfully', 'success')
+      
+      .then(() => this.router.navigate(['/admin/user-client-inquiry']))
+
+    },
+    error: err => console.error('Update failed', err)
+  });
+}
   activate(id: number): void {
     this.api.setTnxByStatus('Active', id, 'clientUser').subscribe({
       next: () => Swal.fire('Activated!', 'Client User is now Active', 'success')
@@ -300,4 +329,51 @@ UserData = {
   }
 
 
+  // ================= LOAD DYNAMIC FIELDS =================
+private loadDynamicFields(): void {
+  this.api.getFieldsByScreenAndStatus('clientUser', 'A').subscribe({
+    next: (res: any) => {
+      this.fields = res;
+
+      const group: any = {};
+      this.fields.forEach((f: any) => {
+        group[f.fieldId] = ['']; 
+      });
+
+      this.dynamicFieldsForm = this.fb.group(group);
+
+      this.patchDynamicValues();
+    },
+    error: (err: any) => console.error('Dynamic field load failed', err)
+  });
+}
+
+// ================= PATCH DYNAMIC =================
+private patchDynamicValues(): void {
+  if (!this.dynamicFieldsForm || !this.fields?.length || !this.storeDynamicFieldsResponse?.length) return;
+
+  const patch: any = {};
+  this.storeDynamicFieldsResponse.forEach((saved: any) => {
+    const def = this.fields.find((f: any) => f.fieldId == saved.fieldId);
+    if (def) patch[def.fieldId] = saved.value ?? '';
+  });
+
+  this.dynamicFieldsForm.patchValue(patch);
+}
+
+// ================= GET DYNAMIC PAYLOAD =================
+private getDynamicPayload(): any[] {
+  if (!this.fields?.length) return [];
+
+  return this.fields.map(f => ({
+    fieldId: f.fieldId,
+  value: this.dynamicFieldsForm.get(f.fieldId)?.value || '',
+    loginId: this.clientUserForm.get('loginId')?.value || ''
+  }));
+}
+
+// ================= TOGGLE =================
+toggleDynamicFields(): void {
+  this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
+}
 }

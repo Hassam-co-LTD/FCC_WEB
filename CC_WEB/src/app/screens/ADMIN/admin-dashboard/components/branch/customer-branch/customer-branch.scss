@@ -1,22 +1,23 @@
-@use '../../../../../../../styles/theme' as theme;
-
-/* ===========================
-   Section Header
-=========================== */
-.hidden {
+@use "../../../../../../../styles/theme" as theme;
+/* Hide when approved */
+.hide-when-approved {
   display: none !important;
 }
+
+/* =========================
+   Section Header
+=========================== */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: theme.$primary;
   padding: 14px 18px;
-  border-radius: theme.$radius-large;
+  border-radius: 8px;
   cursor: pointer;
-  margin-bottom: theme.$gap-default;
-  color: theme.$text-light;
+  margin-bottom: 10px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: theme.$text-light;
 
   &:hover {
     background: theme.$primary-dark;
@@ -27,38 +28,39 @@
     color: theme.$text-light;
     font-size: 22px;
   }
-
-  h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0;
-  }
 }
 
-/* ===========================
-   Collapsible Content
+/* =========================
+   Collapsible
 =========================== */
 .collapsible {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: all 0.35s ease-in-out;
   transform: translateY(-5px);
+  transition: all 0.35s ease-in-out;
 }
 
 .collapsible.open {
-  max-height: 3000px;
+  max-height: 2000px;
   opacity: 1;
   transform: translateY(0);
-  padding: 15px 12px;
+  padding: 15px 10px;
   background: theme.$light-bg;
-  border-radius: theme.$radius-default;
+  border-radius: 6px;
   border: 1px solid theme.$border-light;
 }
 
-/* ===========================
-   Headings with Vertical Line
+/* =========================
+   Headings
 =========================== */
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: theme.$white;
+}
+
 h4 {
   font-size: 16px;
   margin: 20px 0 10px;
@@ -68,316 +70,349 @@ h4 {
   padding-left: 8px;
 }
 
-/* ===========================
-   Form Grid (2 per row)
+/* =========================
+   Form Layout
 =========================== */
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: theme.$gap-default;
-  margin-bottom: theme.$gap-default;
-
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    label,
-    h4 {
-      font-weight: 500;
-      font-size: 14px;
-      color: theme.$text-dark;
-    }
-
-    input,
-    textarea {
-      padding: 14px 12px;
-      font-size: 14px;
-      border: 1px solid theme.$border-light;
-      border-radius: theme.$radius-default;
-      background: theme.$white;
-      color: theme.$text-dark;
-      transition: border-color 0.3s, box-shadow 0.3s;
-
-      &:focus {
-        outline: none;
-        border-color: theme.$primary;
-        box-shadow: 0 0 0 2px rgba(11, 78, 179, 0.15);
-      }
-
-      &:disabled,
-      &[readonly] {
-        background: theme.$light-bg;
-        color: theme.$text-medium;
-        cursor: not-allowed;
-      }
-    }
-
-    textarea {
-      resize: none;
-      min-height: 60px;
-    }
-
-    /* ===========================
-       Mat-Select / Dropdown
-    ============================ */
-    mat-form-field {
-      width: 100%;
-      font-size: 14px;
-
-      .mat-mdc-select-value,
-      .mat-mdc-select-placeholder {
-        font-size: 14px !important;
-        color: theme.$text-dark !important;
-      }
-    }
-
-    /* Full Width Field */
-    &.full {
-      grid-column: 1 / -1;
-      input, textarea {
-        border-radius: theme.$radius-large;
-        padding: 16px 14px;
-      }
-      mat-form-field {
-        padding: 0;
-      }
-    }
-  }
-}
-
-/* ===========================
-   Branch Dropdown Fields Styling
-=========================== */
-.field-group.city-field mat-form-field.full,
-.field-group mat-form-field.full {
-  min-height: 48px; /* consistent height */
-  padding: 0;
-
-  .mat-form-field-flex {
-    padding: 0 12px;
-    height: 100%;
-    align-items: center;
-    background: transparent;
-  }
-
-  .mat-select-trigger {
-    padding: 0;
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-
-  .mat-select-arrow {
-    top: 50%;
-    transform: translateY(-50%);
-  }
-}
-
-/* ===========================
-   Dropdown Panel Styling
-=========================== */
-.dropdown-panel {
-  ::ng-deep .mat-mdc-select-panel {
-    padding: 0 !important;   /* remove extra padding */
-    margin: 0 !important;
-    border-radius: theme.$radius-default;
-    background: theme.$white !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
-    max-height: 300px;
-    overflow-y: auto;
-
-    .mat-mdc-option {
-      padding: 10px 14px;
-      font-size: 14px;
-      color: theme.$text-dark;
-
-      &:hover,
-      &.mat-mdc-active {
-        background-color: rgba(11,78,179,0.05) !important;
-        color: theme.$text-dark !important;
-      }
-    }
-  }
-}
-
-/* ===========================
-   Form Actions Buttons Styling
-=========================== */
-.form-actions-container {
+.field-group {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-grid,
+.form-grid-responsive {
+  display: grid;
   gap: theme.$gap-default;
-  margin-top: theme.$gap-default;
-
-  button {
-    padding: 12px 20px;
-    font-size: 14px;
-    border-radius: theme.$radius-large;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-
-    &.btn-back {
-      background: theme.$white;
-      color: theme.$primary;
-      border: 1px solid theme.$primary;
-    }
-
-    &.btn-update,
-    &.btn-save {
-      background: theme.$primary;
-      color: theme.$text-light;
-      box-shadow: theme.$button-shadow;
-
-      &:hover {
-        background: theme.$primary-dark;
-      }
-    }
-
-    &.btn-cancel {
-      background: theme.$hover-bg;
-      color: theme.$text-dark;
-      border: 1px solid theme.$border-light;
-    }
-  }
+  margin-bottom: 15px;
 }
 
-/* ===========================
-   Approved Branch Section
-=========================== */
-.approved-container {
-  background: theme.$light-bg;
-  border-radius: theme.$radius-large;
-  padding: theme.$gap-default;
-  border: 1px solid theme.$border-light;
-  margin-top: theme.$gap-default;
-
-  .approved-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: theme.$gap-default;
-
-    .approved-badge {
-      background: theme.$primary;
-      color: theme.$text-light;
-      padding: 4px 10px;
-      border-radius: theme.$radius-default;
-      font-weight: 600;
-    }
-
-    h2 {
-      font-size: 18px;
-      font-weight: 600;
-      color: theme.$text-dark;
-      margin: 0;
-    }
-  }
-
-  .details-grid {
-    display: grid;
-    gap: theme.$gap-default;
-
-    .detail-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: theme.$gap-default;
-
-      .detail-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-
-        .label {
-          font-size: 13px;
-          font-weight: 500;
-          color: theme.$text-medium;
-          border-left: 4px solid theme.$primary; /* vertical line */
-          padding-left: 8px;
-        }
-
-        .value {
-          font-size: 14px;
-          color: theme.$text-dark;
-          font-weight: 600;
-        }
-
-        &.full-width {
-          grid-column: 1 / -1;
-        }
-      }
-    }
-  }
-
-  .approved-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-
-    button {
-      padding: 10px 18px;
-      font-size: 14px;
-      border-radius: theme.$radius-default;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s ease;
-
-      &.btn-back {
-        background: theme.$hover-bg;
-        color: theme.$text-dark;
-        border: 1px solid theme.$border-light;
-      }
-
-      &.btn-edit {
-        background: theme.$primary;
-        color: theme.$text-light;
-        box-shadow: theme.$button-shadow;
-
-        &:hover {
-          background: theme.$primary-dark;
-        }
-      }
-    }
-  }
+/* Responsive columns */
+.form-grid {
+  grid-template-columns: repeat(2, 1fr);
 }
 
-/* ===========================
-   Responsive
-=========================== */
-@media (max-width: 992px) {
-  .form-grid-2 {
+.form-grid-responsive {
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (min-width: 1441px) {
+    grid-template-columns: repeat(3, 1fr); // large screens
+  }
+
+  @media (min-width: 1025px) and (max-width: 1440px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 1024px) {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 768px) {
-  .section-header {
-    padding: 12px 14px;
+/* Alternating Applicant & Beneficiary Box Indicator */
+.form-grid.alternate {
+  padding-left: 10px;
+  border-left: 2px dashed theme.$border-primary;
+  margin-left: 4px;
+}
+
+/* Fields */
+mat-form-field {
+  width: 100%;
+}
+
+/* Toggle */
+mat-slide-toggle {
+  margin: 12px 0;
+  font-weight: 500;
+}
+
+/* Input field styling */
+input[matInput] {
+  font-size: 14px !important;
+  color: theme.$primary-dark;
+}
+
+.mat-mdc-floating-label,
+.mat-mdc-form-field-label {
+  font-size: 14px !important;
+}
+
+::placeholder {
+  color: theme.$primary-dark;
+  opacity: 0.8;
+}
+
+.mdc-text-field {
+  background-color: theme.$white;
+}
+
+/* =========================
+   Customer Form Buttons Outside
+=========================== */
+.customer-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.customer-actions .btn-save,
+.customer-actions .btn-update,
+.customer-actions .btn-back,
+.customer-actions .btn-cancel,
+.customer-actions .btn-submit,
+.customer-actions .btn-approve,
+.customer-actions .btn-reject {
+  background: theme.$primary;
+  color: theme.$text-light;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: theme.$button-shadow;
+
+  &:hover:not(:disabled) {
+    background: theme.$primary-dark;
   }
 
-  h2 {
-    font-size: 18px;
-  }
-
-  h4 {
-    font-size: 14px;
-    margin: 15px 0 8px;
-  }
-
-  .form-actions-container {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
   }
 }
 
-@media (max-width: 480px) {
-  .collapsible.open {
-    padding: 10px 5px;
+/* =========================
+   Approved Customer Container
+=========================== */
+/* Approved container */
+.approved-container {
+  background: theme.$light-bg;
+  border-radius: 8px;
+  border: 1px solid theme.$border-light;
+  padding: 20px 25px;
+  max-width: 1200px;
+  margin: 20px auto;
+  box-shadow: theme.$shadow-primary;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .approved-badge {
+    display: inline-block;
+    background: #28a745; // green for approved
+    color: theme.$text-light;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    align-self: flex-start;
+  }
+
+  .approved-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 columns per row
+    gap: 20px;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: theme.$primary-dark;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* Buttons outside approved container */
+.approved-actions {
+  max-width: 1200px;
+  margin: 0 auto 20px; // center and spacing below
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: theme.$button-shadow;
+    flex: 0 0 auto; // prevent full width
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .approved-container .approved-info {
+    grid-template-columns: 1fr; // stack on small screens
+  }
+
+  .approved-actions {
+    flex-direction: column;
+    gap: 10px;
+
+    button {
+      width: 100%; // full width on mobile
+    }
   }
 
   button {
-    width: 100%;
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: theme.$button-shadow;
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  ng-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================
+   Responsive Adjustments
+=========================== */
+/* =========================
+   Approved Customer Container
+=========================== */
+
+.approved-container {
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 20px auto;
+  box-shadow: theme.$shadow-primary;
+}
+
+/* Header */
+.approved-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+  }
+}
+
+/* Badge — NO GREEN */
+.approved-badge {
+  background: theme.$primary;
+  color: theme.$text-light;
+  padding: 6px 14px;
+  border-radius: theme.$radius-default;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Info list */
+.approved-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* Single row card */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+  background: theme.$light-bg;
+}
+
+.key {
+  font-weight: 600;
+  color: theme.$primary-dark;
+  white-space: nowrap;
+}
+
+.value {
+  color: theme.$primary-dark;
+  text-align: right;
+  word-break: break-word;
+}
+/* Responsive */
+@media (min-width: 1440px) {
+  .info-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    align-items: center;
+  }
+
+  .value {
+    text-align: left;
+  }
+}
+.approved-actions {
+  max-width: 1200px;
+  margin: 16px auto 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 10px 18px;
+    border-radius: theme.$radius-default;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: theme.$button-shadow;
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
   }
 }

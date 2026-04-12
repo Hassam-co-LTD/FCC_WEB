@@ -1,6 +1,3 @@
-<!-- =========================
-     CREATE CURRENCY PAGE
-========================= -->
 <div class="create-customer-page">
 
   <!-- =========================
@@ -11,136 +8,165 @@
   </div>
 
   <!-- =========================
-       Currency Form Container
+       EDITABLE CURRENCY FORM
   ========================== -->
-  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeCurrency?.recordStatus === 'A'}">
+  <ng-container *ngIf="storeCurrency?.recordStatus !== 'A'">
 
-    <!-- Section Header -->
-    <div class="section-header" (click)="toggle()">
-      <h2>Currency General Details</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    <!-- General Details -->
+    <div class="customer-form-wrapper">
+      <div class="section-header" (click)="toggle()">
+        <h2>Currency General Details</h2>
+        <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+
+      <div class="collapsible" [class.open]="isOpen" [formGroup]="currencyForm">
+        <ng-container *ngIf="isOpen">
+          <div class="form-grid">
+
+            <div class="field-group">
+              <h4>CurrencyId</h4>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="currencyId" placeholder="Currency Code" [readonly]="isReadOnly()" />
+              </mat-form-field>
+            </div>
+
+
+            <div class="field-group">
+              <h4>Currency Code</h4>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="currencyCode" placeholder="Currency Code" [readonly]="isReadOnly()" />
+              </mat-form-field>
+            </div>
+
+            <div class="field-group">
+              <h4>Currency Description</h4>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="currencyDesc" placeholder="Currency Description" [readonly]="isReadOnly()" />
+              </mat-form-field>
+            </div>
+
+            <div class="field-group">
+              <h4>Currency Map ID</h4>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="currencyMapId" placeholder="Currency Map ID" [readonly]="isReadOnly()" />
+              </mat-form-field>
+            </div>
+
+            <div class="field-group">
+              <h4>Currency Status</h4>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="currencyStatus" [disabled]="isReadOnly()">
+                  <mat-option value="A">Active</mat-option>
+                  <mat-option value="I">Inactive</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            
     </div>
 
-    <!-- Collapsible Form -->
-    <div class="collapsible" [class.open]="isOpen" [formGroup]="currencyForm">
+    <!-- Dynamic Fields -->
+    <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
+      <div class="section-header" (click)="toggleDynamicFields()">
+        <h2>Currency Additional Fields</h2>
+        <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
 
-      <ng-container *ngIf="isOpen">
-        <!-- ---------------- BASIC DETAILS ---------------- -->
-        <div class="form-grid form-grid-large">
-          <div class="field-group">
-            <h4>Currency Code</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="currencyCode" placeholder="Currency Code" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+      <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+        <div class="form-grid">
+          <ng-container *ngFor="let field of fields">
+            <div class="field-group">
+              <h4>{{ field.label || field.fieldName }}</h4>
 
-          <div class="field-group">
-            <h4>Currency Description</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="currencyDesc" placeholder="Currency Description" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+              <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
+                <input matInput [formControlName]="field.fieldName" />
+              </mat-form-field>
 
-          <div class="field-group">
-            <h4>Currency Map ID</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="currencyMapId" placeholder="Currency Map ID" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+              <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
+                <input matInput type="number" [formControlName]="field.fieldName" />
+              </mat-form-field>
 
-          <div class="field-group">
-            <h4>Currency Status</h4>
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="currencyStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
-                <mat-option value="A">Active</mat-option>
-                <mat-option value="I">Inactive</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
+                <input matInput type="date" [formControlName]="field.fieldName" />
+              </mat-form-field>
 
-          <div class="field-group">
-            <h4>Record Status</h4>
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Record Status</mat-label>
-              <mat-select formControlName="recordStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
-                <mat-option value="N">New</mat-option>
-                <mat-option value="U">Updated</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+                <mat-select [formControlName]="field.fieldName">
+                  <mat-option value="">Select</mat-option>
+                  <mat-option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.text }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+          </ng-container>
         </div>
+      </div>
+    </div>
 
-        <!-- ---------------- AUDIT DETAILS ---------------- -->
-        <div class="form-grid form-grid-large">
-          <div class="field-group">
-            <h4>Inputter ID</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="inputterId" placeholder="Inputter ID" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+    <!-- Action Buttons -->
+    <div class="customer-actions">
 
-          <div class="field-group">
-            <h4>Authorizer ID</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="authorizerId" placeholder="Authorizer ID" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+      <!-- New -->
+      <ng-container *ngIf="!storeCurrency || !storeCurrency.recordStatus">
+        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button class="btn-save" [disabled]="!currencyForm.valid || !dynamicFieldsForm.valid" (click)="onSave()">Save</button>
+      </ng-container>
 
-          <div class="field-group full">
-            <h4>Reject Reason</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="rejectReason" placeholder="Reject Reason" [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+      <!-- Draft -->
+      <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'D'">
+        <button class="btn-back" (click)="onBack()">Back</button>
+        <button class="btn-update" [disabled]="!currencyForm.dirty || !dynamicFieldsForm.dirty" (click)="updateCurrency()">Update</button>
+        <button class="btn-submit" [disabled]="!currencyForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>
+      </ng-container>
+
+      <!-- Submitted -->
+      <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'S'">
+        <button class="btn-reject" (click)="reject()">Reject</button>
+        <button class="btn-approve" (click)="approve()">Approve</button>
+      </ng-container>
+
+    </div>
+  </ng-container>
+
+  <!-- =========================
+       APPROVED CURRENCY DETAILS
+  ========================== -->
+  <div *ngIf="storeCurrency?.recordStatus === 'A'" class="approved-container">
+
+    <!-- Header -->
+    <div class="approved-header">
+      <span class="approved-badge">✔ Approved</span>
+      <h3>Currency Approved Details</h3>
+    </div>
+
+    <!-- Currency Info -->
+    <div class="approved-info">
+      <div class="info-item"><span class="key">Currency Code</span><span class="value">{{ storeCurrency.currencyCode }}</span></div>
+      <div class="info-item"><span class="key">Currency Description</span><span class="value">{{ storeCurrency.currencyDesc }}</span></div>
+      <div class="info-item"><span class="key">Currency Map ID</span><span class="value">{{ storeCurrency.currencyMapId }}</span></div>
+      <div class="info-item"><span class="key">Currency Status</span><span class="value">{{ storeCurrency.currencyStatus }}</span></div>
+      <div class="info-item"><span class="key">Record Status</span><span class="value">{{ storeCurrency.recordStatus }}</span></div>
+      <div class="info-item"><span class="key">Inputter ID</span><span class="value">{{ storeCurrency.inputterId }}</span></div>
+      <div class="info-item"><span class="key">Authorizer ID</span><span class="value">{{ storeCurrency.authorizerId }}</span></div>
+      <div class="info-item"><span class="key">Reject Reason</span><span class="value">{{ storeCurrency.rejectReason }}</span></div>
+
+      <!-- Dynamic Fields -->
+      <div class="info-item" style="grid-column: 1 / -1;" *ngIf="storeCurrency.dynamicFields?.length">
+        <h3 style="margin: 10px 0;">Currency Dynamic Fields</h3>
+      </div>
+      <ng-container *ngIf="storeCurrency.dynamicFields?.length">
+        <div class="info-item" *ngFor="let field of storeCurrency.dynamicFields">
+          <span class="key">{{ field.label || field.fieldName }}</span>
+          <span class="value">{{ field.value }}</span>
         </div>
       </ng-container>
     </div>
+
+    <!-- Actions -->
+    <div class="approved-actions">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" (click)="reject()">Amend</button>
+    </div>
+
   </div>
-
-  <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
-<div class="customer-actions">
-
-  <ng-container *ngIf="!storeCurrency || !storeCurrency.recordStatus">
-    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-    <button class="btn-save" [disabled]="!currencyForm.valid" (click)="onSave()">Save</button>
-  </ng-container>
-
-  <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'D'">
-    <button class="btn-back" (click)="onBack()">Back</button>
-    <button class="btn-update" [disabled]="!currencyForm.dirty || !currencyForm.valid" (click)="update(storeCurrency.currencyCode)">Update</button>
-    <button class="btn-submit" [disabled]="!currencyForm.valid" (click)="submit()">Submit</button>
-  </ng-container>
-
-  <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'S'">
-    <button class="btn-reject" (click)="reject(storeCurrency.currencyCode)">Reject</button>
-    <button class="btn-approve" (click)="approve(storeCurrency.currencyCode)">Approve</button>
-  </ng-container>
-
-</div>
-
- <!-- ---------------- APPROVED VIEW ---------------- -->
-<div class="approved-container" [ngClass]="{'hide-when-approved': storeCurrency?.recordStatus === 'A'}">
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h3>Currency Details</h3>
-  </div>
-
-  <div class="approved-info">
-    <div class="info-item"><span class="key">Currency Code:</span> <span class="value">{{ storeCurrency.currencyCode }}</span></div>
-    <div class="info-item"><span class="key">Currency Description:</span> <span class="value">{{ storeCurrency.currencyDesc }}</span></div>
-    <div class="info-item"><span class="key">Currency Map ID:</span> <span class="value">{{ storeCurrency.currencyMapId }}</span></div>
-    <div class="info-item"><span class="key">Currency Status:</span> <span class="value">{{ storeCurrency.currencyStatus }}</span></div>
-    <div class="info-item"><span class="key">Record Status:</span> <span class="value">{{ storeCurrency.recordStatus }}</span></div>
-    <div class="info-item"><span class="key">Inputter ID:</span> <span class="value">{{ storeCurrency.inputterId }}</span></div>
-    <div class="info-item"><span class="key">Authorizer ID:</span> <span class="value">{{ storeCurrency.authorizerId }}</span></div>
-    <div class="info-item"><span class="key">Reject Reason:</span> <span class="value">{{ storeCurrency.rejectReason }}</span></div>
-  </div>
-</div>
-
-<div class="approved-actions" *ngIf="storeCurrency?.recordStatus === 'A'">
-  <button class="btn-back" (click)="onBack()">Back</button>
-  <button class="btn-update" (click)="approve(storeCurrency.currencyCode)">Amend</button>
-</div>
-
 </div>

@@ -38,7 +38,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
                 <td>{{ c.cityName }}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>
@@ -89,7 +89,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredApprovedCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
                 <td>{{ c.cityName }}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>
@@ -140,7 +140,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.id]">{{ c.cityId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
                 <td>{{ c.cityName}}</td>
                 <td>{{ c.state }}</td>
                 <td>{{ c.country }}</td>

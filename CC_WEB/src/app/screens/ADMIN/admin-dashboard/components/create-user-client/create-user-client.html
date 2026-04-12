@@ -147,6 +147,54 @@
     </section>
   </div>
 
+   <!-- ================= DYNAMIC FIELDS ================= -->
+<div class="customer-form-wrapper dynamic-fields-section"
+     *ngIf="fields?.length && dynamicFieldsForm">
+  <div class="section-header" (click)="toggleDynamicFields()">
+    <h2>Additional Fields</h2>
+    <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+
+    <div class="form-grid">
+      <ng-container *ngFor="let field of fields">
+
+        <div class="field-group">
+          <h4>{{ field.label || field.fieldName }}</h4>
+
+          <!-- TEXT -->
+          <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
+            <input matInput [formControlName]="field.fieldId" />
+          </mat-form-field>
+
+          <!-- NUMBER -->
+          <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
+            <input matInput type="number" [formControlName]="field.fieldId" />
+          </mat-form-field>
+
+          <!-- DATE -->
+          <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
+            <input matInput type="date" [formControlName]="field.fieldId" />
+          </mat-form-field>
+
+          <!-- SELECT -->
+          <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+            <mat-select [formControlName]="field.fieldId">
+              <mat-option value="">Select</mat-option>
+              <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+                {{ opt.text }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+
+      </ng-container>
+    </div>
+
+  </div>
+</div>
    <!-- ---------------- FORM ACTIONS ---------------- -->
     <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
@@ -182,6 +230,33 @@
     </div>
   </div>
 
+  <!-- =========================
+     APPROVED DYNAMIC FIELDS
+========================== -->
+<div class="approved-container"
+     *ngIf="storeClientUser?.recordStatus === 'A' && storeClientUser?.dynamicFields?.length">
+
+  <!-- Header -->
+  <div class="approved-header">
+   
+    <h3>Client User Additional Fields</h3>
+  </div>
+
+  <!-- Dynamic Fields -->
+  <div class="approved-info">
+
+    <ng-container *ngFor="let field of storeClientUser?.dynamicFields">
+
+      <div class="info-item">
+        <span class="key">{{ field.label || field.fieldName }}</span>
+        <span class="value">{{ field.value }}</span>
+      </div>
+
+    </ng-container>
+
+  </div>
+
+</div>
   <div class="approved-actions" *ngIf="storeClientUser?.recordStatus === 'A'">
     <button class="btn-back" (click)="onBack()">Back</button>
     <button class="btn-update" (click)="reject(storeClientUser.id)">Amend</button>

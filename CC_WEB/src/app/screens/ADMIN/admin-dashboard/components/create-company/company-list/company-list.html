@@ -41,7 +41,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftCompany; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-company', c.id]">{{ c.companyId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
                 <td>{{ c.companyName }}</td>
                 <td>{{ c.companyAddress }}</td>
                 <td>{{ c.appUserId }}</td>
@@ -97,7 +97,7 @@
     <tbody>
       <tr *ngFor="let c of storeFilteredApprovedCompany; index as i; trackBy: trackById">
         <td>{{ i + 1 }}</td> <!-- Serial number starts at 1 -->
-        <td><a [routerLink]="['/admin/edit-company', c.id]">{{ c.companyId }}</a></td>
+        <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
         <td>{{ c.companyName }}</td>
         <td>{{ c.companyAddress }}</td>
         <td>{{ c.appUserId || "no AppUserId" }}</td>
@@ -157,7 +157,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedCompany; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-company', c.id]">{{ c.companyId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
                 <td>{{ c.companyName }}</td>
                 <td>{{ c.companyAddress }}</td>
                 <td>{{ c.appUserId || "no AppUserId" }}</td>

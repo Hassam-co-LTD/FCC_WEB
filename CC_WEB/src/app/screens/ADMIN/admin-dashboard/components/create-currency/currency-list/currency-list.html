@@ -5,29 +5,38 @@
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
+
     <!-- ================= Draft Tab ================= -->
     <mat-tab label="Draft ({{ filteredDraftCount }})">
+
       <div class="search-bar">
         <input
           type="text"
           placeholder="Search Currency By Code or Description"
           [(ngModel)]="searchText"
-          (input)="filterDraftTnx(searchText)"
+          (input)="filterDraftCurrencies(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftTnx('')">
+
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterDraftCurrencies('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
+
         <div class="records-summary">
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftTnx && storeFilteredDraftTnx.length > 0; else noDrafts">
+        <div class="table-wrapper"
+             *ngIf="storeFilteredDraftCurrencies?.length; else noDrafts">
+
           <table class="city-table">
             <thead>
               <tr>
+                <th>Currency ID</th>
                 <th>Code</th>
                 <th>Description</th>
                 <th>Map ID</th>
@@ -35,49 +44,71 @@
                 <th>Record Status</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredDraftTnx; trackBy: trackById">
-                <td (click)="updateRouter(c.currencyCode)" class="cid">{{ c.currencyCode }}</td>
+              <tr *ngFor="let c of storeFilteredDraftCurrencies; trackBy: trackById">
+
+                <td (click)="updateRouter(c.currencyId)" class="currencyId">
+                  {{ c.currencyId }}
+                </td>
+
+                <td>{{ c.currencyCode }}</td>
                 <td>{{ c.currencyDesc }}</td>
                 <td>{{ c.currencyMapId }}</td>
+
                 <td>
-                  <span class="status {{ c.currencyStatus }}">{{ c.currencyStatus }}</span>
+                  <span class="status {{ c.currencyStatus }}">
+                    {{ c.currencyStatus }}
+                  </span>
                 </td>
+
                 <td>{{ c.recordStatus }}</td>
+
               </tr>
             </tbody>
           </table>
+
         </div>
 
         <ng-template #noDrafts>
           <p class="no-records">No draft records found.</p>
         </ng-template>
+
       </div>
     </mat-tab>
 
+
     <!-- ================= Approved Tab ================= -->
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
+
       <div class="search-bar">
         <input
           type="text"
           placeholder="Search Currency By Code or Description"
           [(ngModel)]="searchText"
-          (input)="filterApprovedTnx(searchText)"
+          (input)="filterApprovedCurrencies(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedTnx('')">
+
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterApprovedCurrencies('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
+
         <div class="records-summary">
           Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedTnx && storeFilteredApprovedTnx.length > 0; else noApproved">
+        <div class="table-wrapper"
+             *ngIf="storeFilteredApprovedCurrencies?.length; else noApproved">
+
           <table class="city-table">
             <thead>
               <tr>
+                <th>Currency ID</th>
                 <th>Code</th>
                 <th>Description</th>
                 <th>Map ID</th>
@@ -85,49 +116,71 @@
                 <th>Record Status</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedTnx; trackBy: trackById">
-                <td (click)="updateRouter(c.currencyCode)" class="cid">{{ c.currencyCode }}</td>
+              <tr *ngFor="let c of storeFilteredApprovedCurrencies; trackBy: trackById">
+
+                <td (click)="updateRouter(c.currencyId)" class="currencyId">
+                  {{ c.currencyId }}
+                </td>
+
+                <td>{{ c.currencyCode }}</td>
                 <td>{{ c.currencyDesc }}</td>
                 <td>{{ c.currencyMapId }}</td>
+
                 <td>
-                  <span class="status {{ c.currencyStatus }}">{{ c.currencyStatus }}</span>
+                  <span class="status {{ c.currencyStatus }}">
+                    {{ c.currencyStatus }}
+                  </span>
                 </td>
+
                 <td>{{ c.recordStatus }}</td>
+
               </tr>
             </tbody>
           </table>
+
         </div>
 
         <ng-template #noApproved>
           <p class="no-records">No approved records found.</p>
         </ng-template>
+
       </div>
     </mat-tab>
 
+
     <!-- ================= Submitted Tab ================= -->
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+
       <div class="search-bar">
         <input
           type="text"
           placeholder="Search Currency By Code or Description"
           [(ngModel)]="searchText"
-          (input)="filterSubmittedTnx(searchText)"
+          (input)="filterSubmittedCurrencies(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedTnx('')">
+
+        <button *ngIf="searchText"
+                class="clear-btn"
+                (click)="searchText=''; filterSubmittedCurrencies('')">
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
+
         <div class="records-summary">
           Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedTnx && storeFilteredSubmittedTnx.length > 0; else noSubmitted">
+        <div class="table-wrapper"
+             *ngIf="storeFilteredSubmittedCurrencies?.length; else noSubmitted">
+
           <table class="city-table">
             <thead>
               <tr>
+                <th>Currency ID</th>
                 <th>Code</th>
                 <th>Description</th>
                 <th>Map ID</th>
@@ -135,24 +188,38 @@
                 <th>Record Status</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedTnx; trackBy: trackById">
-                <td (click)="updateRouter(c.currencyCode)" class="cid">{{ c.currencyCode }}</td>
+              <tr *ngFor="let c of storeFilteredSubmittedCurrencies; trackBy: trackById">
+
+                <td (click)="updateRouter(c.currencyId)" class="currencyId">
+                  {{ c.currencyId }}
+                </td>
+
+                <td>{{ c.currencyCode }}</td>
                 <td>{{ c.currencyDesc }}</td>
                 <td>{{ c.currencyMapId }}</td>
+
                 <td>
-                  <span class="status {{ c.currencyStatus }}">{{ c.currencyStatus }}</span>
+                  <span class="status {{ c.currencyStatus }}">
+                    {{ c.currencyStatus }}
+                  </span>
                 </td>
+
                 <td>{{ c.recordStatus }}</td>
+
               </tr>
             </tbody>
           </table>
+
         </div>
 
         <ng-template #noSubmitted>
           <p class="no-records">No submitted records found.</p>
         </ng-template>
+
       </div>
     </mat-tab>
+
   </mat-tab-group>
 </div>

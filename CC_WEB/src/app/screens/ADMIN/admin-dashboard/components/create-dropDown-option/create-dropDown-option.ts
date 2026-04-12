@@ -119,26 +119,7 @@ export class CreateDynamicFieldOptions implements OnInit {
   }
 
   
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'Dropdown option is now Active', 'success')
-          .then(() => this.loadCustomer());
-      },
-      error: err => console.error('Activate failed', err)
-    });
-  }
-
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'Dropdown option is now Inactive', 'success')
-          .then(() => this.loadCustomer());
-      },
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
+  
   // ---------------- UI HELPERS ----------------
  isReadOnly(): boolean {
   // New city (no storeCity) → editable

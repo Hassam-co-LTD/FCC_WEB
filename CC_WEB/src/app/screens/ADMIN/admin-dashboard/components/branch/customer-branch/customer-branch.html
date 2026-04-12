@@ -1,3 +1,4 @@
+<!-- Branch Form (Draft / Edit) -->
 <div class="branch-container" [ngClass]="{'hidden': storeBranch?.status === 'A'}">
 
   <!-- Toggle Header -->
@@ -9,31 +10,46 @@
   <!-- Collapsible Form -->
   <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
 
-    <div class="form-grid-2">
+    <div class="form-grid">
+
+      <!-- Branch Id -->
+
+      <div class="field-group">
+        <h4>Branch Id</h4>
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="branchId" placeholder="Branch Id"  />
+        </mat-form-field  >
+
+      </div>
 
       <!-- Branch Code -->
       <div class="field-group">
         <h4>Branch Code</h4>
-        <input type="text" formControlName="branchCode" placeholder="Enter Branch Code">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="branchCode" placeholder="Enter Branch Code">
+        </mat-form-field>
       </div>
 
       <!-- Branch Name -->
       <div class="field-group">
         <h4>Branch Name</h4>
-        <input type="text" formControlName="branchName" placeholder="Enter Branch Name">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="branchName" placeholder="Enter Branch Name">
+        </mat-form-field>
       </div>
 
       <!-- Contact Person -->
       <div class="field-group">
         <h4>Contact Person</h4>
-        <input type="text" formControlName="contactPerson" placeholder="Enter Contact Person">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="contactPerson" placeholder="Enter Contact Person">
+        </mat-form-field>
       </div>
 
       <!-- City -->
-      <div class="field-group city-field">
+      <div class="field-group">
         <h4>City</h4>
         <mat-form-field appearance="outline" class="full">
-          <mat-label>City</mat-label>
           <mat-select formControlName="cityId" panelClass="dropdown-panel">
             <mat-option *ngFor="let item of storeCities" [value]="item.id">
               {{ item.cityName }}
@@ -45,61 +61,119 @@
       <!-- Contact Number -->
       <div class="field-group">
         <h4>Contact Number</h4>
-        <input type="text" formControlName="contactNo" placeholder="Enter Contact Number">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="contactNo" placeholder="Enter Contact Number">
+        </mat-form-field>
       </div>
 
       <!-- Swift Address -->
       <div class="field-group">
         <h4>Swift Address</h4>
-        <input type="text" formControlName="swiftAddress" placeholder="Enter Swift Address">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="swiftAddress" placeholder="Enter Swift Address">
+        </mat-form-field>
       </div>
 
       <!-- Email Address -->
       <div class="field-group">
         <h4>Email Address</h4>
-        <input type="email" formControlName="emailAddress" placeholder="Enter Email Address">
+        <mat-form-field appearance="outline">
+          <input matInput type="email" formControlName="emailAddress" placeholder="Enter Email Address">
+        </mat-form-field>
       </div>
 
       <!-- Local Currency -->
       <div class="field-group">
         <h4>Local Currency</h4>
-        <input type="text" formControlName="localCurrency" placeholder="Enter Local Currency">
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="localCurrency" placeholder="Enter Local Currency">
+        </mat-form-field>
+      </div>
+
+
+      
+      <div class="field-group">
+        <h4>branch status</h4>
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="branchStatus" placeholder="Enter Local Currency">
+        </mat-form-field>
       </div>
 
       <!-- Branch Address (full width) -->
       <div class="field-group full">
         <h4>Branch Address</h4>
-        <textarea formControlName="branchAddress" rows="3" placeholder="Enter Branch Address"></textarea>
+        <mat-form-field appearance="outline" class="full">
+          <textarea matInput formControlName="branchAddress" rows="3" placeholder="Enter Branch Address"></textarea>
+        </mat-form-field>
       </div>
 
     </div>
 
+    <!-- ================= DYNAMIC FIELDS (CITY STYLE) ================= -->
+    <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
+      <div class="section-header" (click)="toggleDynamicFields()">
+        <h2>Branch Additional Fields</h2>
+        <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+
+      <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+        <div class="form-grid">
+          <ng-container *ngFor="let field of fields">
+
+            <div class="field-group">
+              <h4>{{ field.label || field.fieldName }}</h4>
+
+              <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
+                <input matInput [formControlName]="field.fieldName" />
+              </mat-form-field>
+
+              <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
+                <input matInput type="number" [formControlName]="field.fieldName" />
+              </mat-form-field>
+
+              <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
+                <input matInput type="date" [formControlName]="field.fieldName" />
+              </mat-form-field>
+
+              <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
+                <mat-select [formControlName]="field.fieldName">
+                  <mat-option value="">Select</mat-option>
+                  <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+                    {{ opt.text }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
+
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
     <!-- Form Actions -->
     <div class="customer-actions">
-  <!-- ---------------- New Customer ---------------- -->
-  <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
-    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-    <button class="btn-save" [disabled]="!branchForm.valid" (click)="onSave()">Save</button>
-  </ng-container>
+      <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
+        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+        <button class="btn-save" [disabled]="!branchForm.valid || !dynamicFieldsForm.valid" (click)="onSave()">Save</button>
+      </ng-container>
 
-  <!-- ---------------- Edit Mode: Draft ---------------- -->
-  <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'I'">
-    <button class="btn-back" (click)="onBack()">Back</button>
-    <button class="btn-update" [disabled]="!branchForm.dirty || !branchForm.valid" (click)="update(storeBranch.id)">Update</button>
-    <button class="btn-submit" [disabled]="!branchForm.valid" (click)="submit()">Submit</button>
-  </ng-container>
-  <!-- ---------------- Edit Mode: Submitted ---------------- -->
-  <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'S'">
-    <button class="btn-reject" (click)="reject(storeBranch.id)">Reject</button>
-    <button class="btn-approve" (click)="approve(storeBranch.id)">Approve</button>
-  </ng-container>
-</div>
+      <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'I'">
+        <button class="btn-back" (click)="onBack()">Back</button>
+        <button class="btn-update" [disabled]="!branchForm.dirty || !dynamicFieldsForm.dirty" (click)="update(storeBranch.id)">Update</button>
+        <button class="btn-submit" [disabled]="!branchForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>
+      </ng-container>
 
+      <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'S'">
+        <button class="btn-reject" (click)="reject(storeBranch.id)">Reject</button>
+        <button class="btn-approve" (click)="approve(storeBranch.id)">Approve</button>
+      </ng-container>
+    </div>
 
   </div>
 </div>
 
-<!-- Approved Branch -->
+<!-- ================= APPROVED BRANCH ================= -->
 <div *ngIf="storeBranch?.status === 'A'" class="approved-container">
 
   <div class="approved-header">
@@ -147,9 +221,19 @@
         <span class="label">Local Currency</span>
         <span class="value">{{ storeBranch.localCurrency }}</span>
       </div>
+
+      
       <div class="detail-item">
         <span class="label">City</span>
-        <span class="value">{{ storeBranch.cityMaster?.cityName }}</span>
+        <span class="value">{{ storeBranch.cityMaster?.cityId }}</span>
+      </div>
+    </div>
+
+    <!-- Dynamic Fields Display -->
+    <div class="detail-row" *ngIf="storeBranch.dynamicFields?.length">
+      <div class="detail-item full-width" *ngFor="let field of storeBranch.dynamicFields">
+        <span class="label">{{ field.label || field.fieldName }}</span>
+        <span class="value">{{ field.value }}</span>
       </div>
     </div>
 

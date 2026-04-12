@@ -10,18 +10,18 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
+import { MatNativeDateModule } from '@angular/material/core';
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 
 @Component({
-  selector: 'app-customer-profile',
+  selector: 'app-customer-branch',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -30,9 +30,6 @@ import { ApiService } from '../../../../../../core/services/api.service';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule,
-
-    
   ],
   templateUrl: './customer-branch.html',
   styleUrls: ['./customer-branch.scss']
@@ -40,11 +37,16 @@ import { ApiService } from '../../../../../../core/services/api.service';
 export class CustomerBranch implements OnInit {
 
   branchForm!: FormGroup;
+  dynamicFieldsForm!: FormGroup;
+
   storeBranch: any = {};
   storeCities: any[] = [];
+  fields: any[] = [];
+  storeDynamicFieldsResponse: any[] = [];
 
   isEditMode = false;
   isOpen = true;
+  isDynamicFieldsOpen = true;
 
   constructor(
     private fb: FormBuilder,
@@ -58,170 +60,198 @@ export class CustomerBranch implements OnInit {
     this.buildForm();
     this.loadBranch();
     this.getAllCities();
+    this.loadDynamicFields();
   }
 
+  // ================= FORM =================
   private buildForm(): void {
-  this.branchForm = this.fb.group({
-    branchCode: [''],
-    branchName: [''],
-    branchAddress: [''],
-    swiftAddress: [''],
-    emailAddress: [''],
-    localCurrency: [''],
-    status: [''],        // D / A / S
-    recordStatus: [''],  // optional
-    cityId: [''],        // CityMaster reference (ID)
-    contactPerson: [''],
-    contactNo: ['']
-  });
-}
-
-
-  private loadBranch(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loading branch with ID:', id);
-     if (!isNaN(id)) {
-      this.isEditMode = true;
-
-      this.api.getTnxById(id,"branch").subscribe({
-        next: res => {
-          this.storeBranch = res;
-          console.log('get Branch By:', res);
-          this.branchForm.patchValue(res);
-        },
-        error: err => console.error('Load failed', err)
-      });
-    }
-  }
-
-  // ---------------- CREATE ----------------
-  onSave(): void {
-    if (this.branchForm.invalid) return;
-
-    const payload = this.branchForm.getRawValue();
-    console.log('Payload to save:', payload);
-    
-    this.api.saveTnx(payload, 'branch').subscribe({
-      next: res => {
-        console.log("Saved response:", res);
-        Swal.fire('Saved!', 'Branch saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/branch-list'], { queryParams: { tabName: 'Draft' } } ));
-      },
-      error: err => console.error('Save failed', err)
+    this.branchForm = this.fb.group({
+      branchId: [''],
+      branchCode: ['', Validators.required],
+      branchName: ['', Validators.required],
+      branchAddress: [''],
+      swiftAddress: [''],
+      emailAddress: ['', Validators.email],
+      localCurrency: [''],
+      branchStatus: [''],
+      contactPerson: [''],
+      cityId: [null, Validators.required],
+      contactNo: ['']
     });
   }
 
-  // ---------------- UPDATE ----------------
+  // ================= LOAD BRANCH =================
+  private loadBranch(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    this.isEditMode = true;
+
+    this.api.getTnxById(id, 'branch').subscribe({
+      next: (res: any) => {
+        console.log('Loaded Branch:', res);
+        this.storeBranch = res;
+        console.log("storeBranch", this.storeBranch);
+        this.storeDynamicFieldsResponse = res.dynamicFields || [];
+        this.branchForm.patchValue(res);
+        this.patchDynamicValues();
+      },
+      error: (err: any) => console.error('Load failed', err)
+    });
+  }
+
+  // ================= LOAD DYNAMIC FIELDS =================
+  private loadDynamicFields(): void {
+    this.api.getFieldsByScreenAndStatus('branch', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Branch Dynamic Fields:', res);
+        this.fields = res;
+
+        const group: any = {};
+        this.fields.forEach((f: any) => {
+          group[f.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+        this.patchDynamicValues();
+      },
+      error: (err: any) => console.error('Dynamic field load failed', err)
+    });
+  }
+
+  // ================= PATCH DYNAMIC =================
+  private patchDynamicValues(): void {
+    if (!this.dynamicFieldsForm || !this.fields?.length || !this.storeDynamicFieldsResponse?.length) return;
+
+    const patch: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((saved: any) => {
+      const def = this.fields.find((f: any) => f.fieldId == saved.fieldId);
+      if (def) patch[def.fieldName] = saved.value || '';
+    });
+
+    this.dynamicFieldsForm.patchValue(patch);
+  }
+
+  // ================= SAVE =================
+onSave(): void {
+  if (this.branchForm.invalid) return;
+
+  // 🔹 Prepare dynamic fields (matches DTO)
+  const dynamicPayload = this.fields?.map(f => ({
+     // Use existing ID or 0 for new
+     branchId: this.branchForm.value.branchId || 0,
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+  })) || [];
+
+  // 🔹 Create FULL payload (matches BranchMasterRequestDto)
+  const branchPayload = {
+    ...this.branchForm.getRawValue(),
+    dynamicFields: dynamicPayload,
+    createdOn: new Date().toISOString().split('.')[0]
+  };
+
+  console.log('Sending DTO payload:', branchPayload);
+
+  // 🔹 SINGLE API CALL
+  this.api.saveTnx(branchPayload, 'branch').subscribe({
+    next: (res: any) => {
+      console.log('Branch + Dynamic saved:', res);
+
+      Swal.fire('Saved!', 'Branch saved successfully', 'success')
+        .then(() => {
+          this.router.navigate(['/admin/branch-list'], {
+            queryParams: { tabName: 'Draft' }
+          });
+        });
+    },
+    error: (err: any) => {
+      console.error('Save failed', err);
+      Swal.fire('Error', 'Branch save failed', 'error');
+    }
+  });
+}
+  // ================= UPDATE =================
   update(id:number): void {
     if (this.branchForm.invalid) return;
 
-    const payload = this.branchForm.getRawValue();
+    const branchId = this.branchForm.value.branchId;
 
-    this.api.updateTnx(payload, 'branch',id).subscribe({
-      next: () => {
-        Swal.fire('Updated!', 'Branch updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/create-branch', id]));
-      },
-      error: err => console.error('Update failed', err)
+    const dynamicPayload = this.fields?.map(f => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+    })) || [];
+
+    const branchPayload = {
+      ...this.branchForm.getRawValue(),
+      dynamicFields: dynamicPayload,
+      updatedOn: new Date().toISOString().split('.')[0]
+    };
+
+    this.api.updateTnxx(branchPayload, `branch/update/${branchId}`).subscribe({
+      next: () => console.log('Branch updated successfully'),
+      error: (err) => console.error('Branch update failed', err)
     });
   }
 
-  
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'Branch is now Active', 'success')
-          .then(() => this.loadBranch());
-      },
-      error: err => console.error('Activate failed', err)
-    });
-  }
-
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'Branch is now Inactive', 'success')
-          .then(() => this.loadBranch());
-      },
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
-  // ---------------- UI HELPERS ----------------
- isReadOnly(): boolean {
-  // New branch (no storeBranch) → editable
-  if (!this.storeBranch) {
-    return false;
-  }
-
-  // Existing branch:
-  // - Draft (D) → editable
-  // - Submitted (S), Approved (A) → read-only
-  return this.storeBranch.status !== 'D';
-} 
-
-
-
-  toggle(): void {
-    this.isOpen = !this.isOpen;
-  }
-
-  onBack(): void {
-    this.location.back();
-  }
-
-  onCancel(): void {
-    this.branchForm .reset();
-  }
-  submit() {    
+  // ================= WORKFLOW =================
+  submit(): void {
     if (!this.storeBranch?.id) return;
+
     this.api.setTnxByStatus('S', this.storeBranch.id, 'branch').subscribe({
-      next: (res) => {
-        console.log('Submited response:', res);
+      next: () =>
         Swal.fire('Submitted!', 'Branch submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/branch-list'],{ queryParams: { tabName: 'submitted' } }));
-      },  
-      error: err => console.error('Submit failed', err)
+          .then(() =>
+            this.router.navigate(['/admin/branch-list'], {
+              queryParams: { tabName: 'submitted' }
+            })
+          )
     });
   }
 
- 
-
-
-  reject(id:number): void { 
-    if (!this.storeBranch?.id) return;
-    this.api.setTnxByStatus('I', this.storeBranch.id, 'branch').subscribe({
-      next: () => {
+  reject(id: number): void {
+    this.api.setTnxByStatus('I', id, 'branch').subscribe({
+      next: () =>
         Swal.fire('Rejected!', 'Branch rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/branch-list'],{ queryParams: { tabName: 'Rejected' } }));
-      },
-      error: err => console.error('Reject failed', err)
+          .then(() =>
+            this.router.navigate(['/admin/branch-list'], {
+              queryParams: { tabName: 'Rejected' }
+            })
+          )
     });
-  } 
+  }
 
   approve(id: number): void {
-  if (!this.storeBranch?.id) return;
+    this.api.setTnxByStatus('A', id, 'branch').subscribe({
+      next: () =>
+        Swal.fire('Approved!', 'Branch approved successfully', 'success')
+          .then(() =>
+            this.router.navigate(['/admin/branch-list'], {
+              queryParams: { tabName: 'approved' }
+            })
+          )
+    });
+  }
 
-  this.api.setTnxByStatus('A', this.storeBranch.id, 'branch').subscribe({
-    next: () => {
-      Swal.fire('Approved!', 'Branch approved successfully', 'success')
-        .then(() => 
-          this.router.navigate(['/admin/branch-list'], { queryParams: { tabName: 'approved' } })
-        );
-    },
-    error: err => console.error('Approve failed', err)
-  });
-}
-// get All Cities for dropdown
-getAllCities(): void {
- this.api.getTnxByStatus('A',"city").subscribe({
-  next: res => {
-    this.storeCities = res;
-    console.log('Active cities for dropdown:', res);
-    console.log('All cities:', res);
-  },
-  error: err => console.error('Failed to load cities', err)
+  // ================= UTIL =================
+  getAllCities(): void {
+    this.api.getTnxByStatus('A', 'city/getApprovedCities').subscribe({
+      next: res => this.storeCities = res,
+      error: err => console.error('Failed to load cities', err)
+    });
+  }
 
-})
-}
+  toggle(): void { this.isOpen = !this.isOpen; }
+  toggleDynamicFields(): void { this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen; }
+
+  onBack(): void { this.location.back(); }
+  onCancel(): void {
+    this.branchForm.reset();
+    this.dynamicFieldsForm?.reset();
+  }
+
+  isReadOnly(): boolean {
+    return this.storeBranch?.recordStatus === 'A';
+  }
 }

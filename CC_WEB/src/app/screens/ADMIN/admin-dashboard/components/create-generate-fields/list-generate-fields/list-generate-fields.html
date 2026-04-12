@@ -55,7 +55,7 @@
               <tr *ngFor="let f of storeFilteredDraftFields; trackBy: trackById">
                 <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
                 <td>{{ f.fieldName }}</td>
-                <td>{{ f.label }}</td>
+                <td>{{ f.label }}</td>w
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
                 <td *ngIf="f.fieldType === 'select'">

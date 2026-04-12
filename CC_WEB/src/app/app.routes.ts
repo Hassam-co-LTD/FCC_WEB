@@ -119,7 +119,7 @@ export const routes: Routes = [
                     
                 } ,
                 {
-                    path:'currency-list',
+                    path:'currency-inquiry',
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m)=> m.CurrencyList)
                     
