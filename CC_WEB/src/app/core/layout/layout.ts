@@ -316,7 +316,7 @@ toggleMenu(item: MenuItem) {
           this.menuItems = [
 
               {
-  label: 'CustomerUser',
+  label: 'Bank User',
   icon: 'dashboard',
   route: '/customer-user',
   open: false,

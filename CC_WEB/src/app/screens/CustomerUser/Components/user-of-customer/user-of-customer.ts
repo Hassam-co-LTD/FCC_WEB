@@ -106,6 +106,7 @@ UserData = {
   private buildClientUserForm(): void {
     this.clientUserForm = this.fb.group({
       loginId: [this.userId, Validators.required],
+      userName: ['', Validators.required],
       password: ['', Validators.required],
       userCategory: [''],
       companyId: [ sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).companyId : '', Validators.required],
@@ -222,7 +223,7 @@ UserData = {
   fetchAllRoles(): void {
     this.api.getTnxByStatus('A',"roles").subscribe({
       next: (roles: RoleMasterResponseDTO[]) => {
-        this.userRoles = roles.filter(r => r.roleDest === 'CUSTOMER'); // Only BANK roles for client users
+        this.userRoles = roles.filter(r => r.roleDest === 'B'); // Only BANK roles for client users
         console.log('Fetched all roles:', this.userRoles);
         this.fetchAssignedRoles();
       },

@@ -5,8 +5,10 @@
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
+
     <!-- ================= Draft Tab ================= -->
     <mat-tab label="Draft ({{ filteredDraftCount }})">
+
       <div class="search-bar">
         <input
           type="text"
@@ -31,9 +33,7 @@
                 <th>Company ID</th>
                 <th>Company Name</th>
                 <th>Company Address</th>
-                <th>AppUserId</th>
-                <th>company Status</th>
-
+                <th>Company Status</th>
                 <th>Company Type</th>
                 <th>Created On</th>
                 <th>Updated On</th>
@@ -41,10 +41,13 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftCompany; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
+                <td>
+                  <a [routerLink]="['/admin/edit-company', c.companyId]">
+                    {{ c.companyId }}
+                  </a>
+                </td>
                 <td>{{ c.companyName }}</td>
                 <td>{{ c.companyAddress }}</td>
-                <td>{{ c.appUserId }}</td>
                 <td><span class="status {{ c.companyStatus }}">{{ c.companyStatus }}</span></td>
                 <td>{{ c.companyType }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
@@ -62,6 +65,7 @@
 
     <!-- ================= Approved Tab ================= -->
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
+
       <div class="search-bar">
         <input
           type="text"
@@ -79,41 +83,36 @@
           Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
         </div>
 
-      <div class="table-wrapper" *ngIf="storeFilteredApprovedCompany?.length; else noApproved">
-  <table class="customer-table">
-    <thead>
-      <tr>
-        <th>#</th> <!-- Serial Number Column -->
-        <th>Company ID</th>
-        <th>Company Name</th>
-        <th>Company Address</th>
-        <th>AppUserId</th>
-        <th>Company Status</th>
-        <th>Company Type</th>
-        <th>Created On</th>
-        <th>Updated On</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let c of storeFilteredApprovedCompany; index as i; trackBy: trackById">
-        <td>{{ i + 1 }}</td> <!-- Serial number starts at 1 -->
-        <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
-        <td>{{ c.companyName }}</td>
-        <td>{{ c.companyAddress }}</td>
-        <td>{{ c.appUserId || "no AppUserId" }}</td>
-        <td>{{ c.companyType }}</td>
-        <td><span class="status {{ c.companyStatus }}">{{ c.companyStatus }}</span></td>
-        
-        <td>{{ c.createdOn | date:'short' }}</td>
-        <td>{{ c.updatedOn | date:'short' }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<ng-template #noApproved>
-  <p>No approved companies found.</p>
-</ng-template>
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedCompany?.length; else noApproved">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Company ID</th>
+                <th>Company Name</th>
+                <th>Company Address</th>
+                <th>Company Status</th>
+                <th>Company Type</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of storeFilteredApprovedCompany; trackBy: trackById">
+                <td>
+                  <a [routerLink]="['/admin/edit-company', c.companyId]">
+                    {{ c.companyId }}
+                  </a>
+                </td>
+                <td>{{ c.companyName }}</td>
+                <td>{{ c.companyAddress }}</td>
+                <td><span class="status {{ c.companyStatus }}">{{ c.companyStatus }}</span></td>
+                <td>{{ c.companyType }}</td>
+                <td>{{ c.createdOn | date:'short' }}</td>
+                <td>{{ c.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <ng-template #noApproved>
           <p class="no-records">No approved records found.</p>
@@ -123,10 +122,11 @@
 
     <!-- ================= Submitted Tab ================= -->
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search Company By ID, Name, Email, or Legal ID" 
+          placeholder="Search Company By ID, Name, Email, or Legal ID"
           [(ngModel)]="searchText"
           (input)="filterSubmittedCompany(searchText)"
         />
@@ -147,9 +147,7 @@
                 <th>Company ID</th>
                 <th>Company Name</th>
                 <th>Company Address</th>
-                <th>AppUserId</th>
                 <th>Company Status</th>
-               
                 <th>Company Type</th>
                 <th>Created On</th>
                 <th>Updated On</th>
@@ -157,12 +155,15 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedCompany; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-company', c.companyId]">{{ c.companyId }}</a></td>
+                <td>
+                  <a [routerLink]="['/admin/edit-company', c.companyId]">
+                    {{ c.companyId }}
+                  </a>
+                </td>
                 <td>{{ c.companyName }}</td>
                 <td>{{ c.companyAddress }}</td>
-                <td>{{ c.appUserId || "no AppUserId" }}</td>
                 <td><span class="status {{ c.companyStatus }}">{{ c.companyStatus }}</span></td>
-                <td>{{ c.companyType }}</td>   
+                <td>{{ c.companyType }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
               </tr>
@@ -174,6 +175,8 @@
           <p class="no-records">No submitted records found.</p>
         </ng-template>
       </div>
+
     </mat-tab>
+
   </mat-tab-group>
 </div>
