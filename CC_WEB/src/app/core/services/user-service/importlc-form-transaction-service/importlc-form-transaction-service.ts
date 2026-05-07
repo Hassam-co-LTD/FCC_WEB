@@ -20,10 +20,6 @@ export class ImportlcFormTransactionService {
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
     this.isBrowser = isPlatformBrowser(platformId);
-
-    // if (this.isBrowser) {
-    //   // this.loadFromStorage();
-    // }
   }
 
   /* ================= addOrUpdateTransaction ================= */
@@ -58,23 +54,4 @@ export class ImportlcFormTransactionService {
     this.currentTransaction = tx;
     this.viewMode = readOnly ? 'readonly' : 'submit';
   }
-  /* ================= STORAGE ================= */
-
-  // private persist(transactions: ImportLcTransaction[]) {
-  //   if (!this.isBrowser) return;
-  //   // localStorage.setItem(this.STORAGE_KEY, JSON.stringify(transactions));
-  // }
-
-  // private loadFromStorage() {
-  //   // const stored = localStorage.getItem(this.STORAGE_KEY);
-  //   if (!stored) return;
-
-  //   const parsed: ImportLcTransaction[] = JSON.parse(stored).map((t: any) => ({
-  //     ...t,
-  //     createdOn: t.createdOn ? new Date(t.createdOn) : undefined,
-  //     updatedOn: t.updatedOn ? new Date(t.updatedOn) : undefined,
-  //   }));
-
-  //   this.savetransactions$.next(parsed);
-  // }
 }

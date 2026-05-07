@@ -80,4 +80,5 @@ export interface ImportLcTransaction {
     companyId?: string;
     createdOn?: Date;
     updatedOn?: Date;
+    eventType?: string;
 }

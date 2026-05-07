@@ -105,4 +105,19 @@ export class AuthService {
     const parsed = JSON.parse(data);
     return parsed.companyType?.toUpperCase() || null;
   }
+
+  setUserCategory(value: 'A' | 'U') {
+    if (!this.isBrowser()) return;
+    const data = sessionStorage.getItem('userData');
+    const parsed = data ? JSON.parse(data) : {};
+    parsed.userCategory = value;
+    sessionStorage.setItem('userData', JSON.stringify(parsed));
+  }
+  setCompanyType(value: 'B' | 'C') {
+    if (!this.isBrowser()) return;
+    const data = sessionStorage.getItem('userData');
+    const parsed = data ? JSON.parse(data) : {};
+    parsed.companyType = value;
+    sessionStorage.setItem('userData', JSON.stringify(parsed));
+  }
 }

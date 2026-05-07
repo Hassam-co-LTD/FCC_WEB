@@ -355,7 +355,7 @@ toggleMenu(item: MenuItem) {
               open: false,
               children: [
                 { label: 'Create', route: '/import-screen' },
-                { label: 'Amend', route: '/import-screen/amend' },
+                { label: 'Amend', route: '/import-screen/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/import-screen/inquiries' },
               ]
             },

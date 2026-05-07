@@ -12,11 +12,11 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
     },
-    {
-        path: 'signup',
-        loadComponent: () =>
-            import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
-    },
+    // {
+    //     path: 'signup',
+    //     loadComponent: () =>
+    //         import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
+    // },
 
     // Protected routes (with layout)
     {
@@ -330,7 +330,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'U' },
                 loadComponent: () =>
-                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
@@ -640,7 +640,16 @@ export const routes: Routes = [
             {
                 path: 'import-screen/amend',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import/amend').then(m => m.AmendScreen),
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            },
+
+            // Import Amend Route
+            {
+                path: 'import-screen/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
             },
 
             // Dynamic TNX ID route
@@ -648,6 +657,12 @@ export const routes: Routes = [
                 path: 'import-screen/:tnxId',
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
+            },
+
+            {
+                path: 'import-screen/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
             },
 
             // Base import screen
@@ -669,15 +684,6 @@ export const routes: Routes = [
                     existingRoute: '/import-screen/inquiries',
                     uploadRoute: '/import-screen?mode=upload'
                 }
-            },
-
-            // Import Amend Route
-            {
-                path: 'import-screen/amend',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import/amend'
-                    ).then((m) => m.AmendScreen),
             },
 
             // Import submitted-Records Route

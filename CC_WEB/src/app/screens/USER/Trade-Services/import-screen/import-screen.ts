@@ -345,6 +345,7 @@ export class ImportScreen implements OnInit {
     }
     const payload = {
       ...this.flattenForm(), // merge current form data
+      event:'CRE',
       tnxId: this.tnxId,
     }
     this.api.submitTransaction(tnxId, payload).subscribe({

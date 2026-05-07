@@ -36,6 +36,7 @@ export class LoginComponent {
   password = '';
   userStatus = 'A';
   hidePassword = true;
+  isDummyLogin=true;
 
   constructor(private auth: AuthService, private router: Router, private api: ApiService) {}
 
@@ -45,29 +46,56 @@ export class LoginComponent {
 
   // Unified login function that calls both internal login and API login
   loginHandler() {
-    // Call the old login() if needed
-    this.login();
 
+    if (this.isDummyLogin) {
+      this.loginn();
+    }else{
     // Call the API login
-    this.loginn();
-  }
-
-  // Optional old login function (for local checks)
-  login() {
-    const companyType = this.auth.getCompanyType();
-    const customerType = this.auth.getUserCategory();
-
-    if (companyType === 'B') {
-      this.router.navigate(['/customer-user']);
-    } else if (companyType === 'C' && customerType === 'A') {
-      this.router.navigate(['/admin']);
-    } else if (companyType === 'C' && customerType === 'U') {
-      this.router.navigate(['/dashboard']);
+     this.login();
     }
   }
 
-  // API login
+
   loginn() {
+    // ✅ Dummy credentials
+    const DUMMY_LOGIN_ID = 'test';
+    const DUMMY_PASSWORD = 'test';
+
+    if (this.loginId === DUMMY_LOGIN_ID && this.password === DUMMY_PASSWORD) {
+
+      // ✅ Mock user object (same structure as API response)
+      const dummyUser = {
+        loginId: this.loginId,
+        companyId: 'T_C',
+        companyType: 'C',   // C = Company
+        userCategory: 'U',  // U = Normal User
+        userStatus: 'A'
+      };
+
+      // ✅ Store user data so AuthService works
+      sessionStorage.setItem('userData', JSON.stringify(dummyUser));
+
+      // ✅ Navigate directly to dashboard
+      this.router.navigate(['/dashboard']);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Dummy Login Successful',
+        text: 'Welcome to Dashboard (Bypassed API)',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid Credentials',
+        text: 'Use admin / admin123 for dummy login'
+      });
+    }
+  }
+  // API login
+  login() {
     this.api.userLogin({
       loginId: this.loginId,
       companyId: this.companyId,
