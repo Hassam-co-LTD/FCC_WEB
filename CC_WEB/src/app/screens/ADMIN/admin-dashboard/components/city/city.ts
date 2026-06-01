@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatCard } from '@angular/material/card';
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
@@ -29,7 +30,8 @@ MatRadioModule,
 MatIconModule,
 MatButtonModule,
 MatDatepickerModule,
-MatNativeDateModule
+MatNativeDateModule,
+MatCard
 ],
 templateUrl: './city.html',
 styleUrls: ['./city.scss']
@@ -119,46 +121,40 @@ this.dynamicFieldsForm.patchValue(patch);
 // ================= SAVE =================
 // ================= SAVE CITY =================
 onSave(): void {
-  if (this.cityForm.invalid) return;
 
-  const cityPayload = this.cityForm.getRawValue(); // Only city fields
-  const cityId = cityPayload.cityId;
+  if (this.cityForm.invalid || this.dynamicFieldsForm.invalid) return;
 
-  // 1️⃣ Save City Data
-  this.api.saveTnx(cityPayload, 'city').subscribe({
+  // 1️⃣ City data
+  const cityData = this.cityForm.getRawValue();
+
+  // 2️⃣ Dynamic fields
+  const dynamicFields = this.fields.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
+    cityId:this.cityForm.value.cityId
+  }));
+
+  // 3️⃣ FINAL COMBINED PAYLOAD
+  const payload = {
+    ...cityData,
+    dynamicFields: dynamicFields
+  };
+
+  console.log("Final Payload:", payload);
+  
+  // 4️⃣ SINGLE API CALL
+  this.api.saveTnx(payload, 'city').subscribe({
     next: (res: any) => {
       console.log('City saved:', res);
-      Swal.fire('Saved!', 'City saved successfully', 'success')
-        .then(() => {
-          // 2️⃣ Save Dynamic Fields separately
-          this.saveDynamicFields(cityId);
-        });
+
+      Swal.fire('Saved!', 'City saved successfully', 'success');
     },
     error: (err: any) => {
-      console.error('City save failed', err);
+      console.error('Save failed', err);
       Swal.fire('Error', 'City save failed', 'error');
     }
   });
 }
-
-// ================= SAVE DYNAMIC FIELDS =================
-private saveDynamicFields(cityId: string): void {
-  if (!this.fields?.length) return;
-
-  const dynamicPayload = this.fields.map(f => ({
-    fieldId: f.fieldId,
-    value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
-    cityId: cityId
-  }));
-
-  console.log("sending playload of dynamic Fields", dynamicPayload);
-  this.api.saveTnx(dynamicPayload, 'city').subscribe({
-    
-    next: () => console.log('Dynamic fields saved', dynamicPayload),
-    error: (err) => console.error('Dynamic fields save failed', err)
-  });
-}
-
 // ================= UPDATE CITY =================
 updateCity(): void {
   if (this.cityForm.invalid) return;

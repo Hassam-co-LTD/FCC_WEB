@@ -5,6 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
+
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
     FormsModule,
     MatTabsModule,
     MatIconModule,
+    RouterLink
   ],
   templateUrl: './currency-list.html',
   styleUrls: ['./currency-list.scss']
@@ -68,6 +70,7 @@ export class CurrencyList implements OnInit {
       next: res => {
         this.draftCurrencies = res;
         this.storeFilteredDraftCurrencies = [...res];
+        console.log("draft currency ", this.storeFilteredDraftCurrencies)
       },
       error: err => console.error('Error fetching draft currencies', err)
     });
@@ -88,6 +91,7 @@ export class CurrencyList implements OnInit {
       next: res => {
         this.submittedCurrencies = res;
         this.storeFilteredSubmittedCurrencies = [...res];
+        console.log("submitted records ",this.storeFilteredSubmittedCurrencies)
       },
       error: err => console.error('Error fetching submitted currencies', err)
     });

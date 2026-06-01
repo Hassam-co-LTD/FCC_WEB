@@ -3,9 +3,45 @@
   <!-- =========================
        Page Header
   ========================== -->
-  <div class="page-header">
-    <h1>Create Currency</h1>
+<header class="dossier-header">
+
+  <div class="status-strip active"></div>
+
+  <div class="header-content">
+
+    <div class="identity-block">
+
+      <div class="avatar-circle">
+        {{ storeCurrency?.currencyCode?.trim()?.charAt(0)?.toUpperCase() || 'C' }}
+      </div>
+
+      <div class="text-group">
+
+        <h1 class="customer-name">
+          {{ storeCurrency.currencyCode | uppercase }}
+        </h1>
+
+        <span class="customer-id">
+          Currency Ref:
+          <code>{{ storeCurrency.currencyId }}</code>
+        </span>
+
+      </div>
+
+    </div>
+
+    <div class="badge-group">
+
+      <span class="status-badge" data-status="ACTIVE">
+        {{ storeCurrency.currencyStatus === 'A' ? 'APPROVED' : storeCurrency.currencyStatus }}
+      </span>
+
+    </div>
+
   </div>
+
+</header>
+
 
   <!-- =========================
        EDITABLE CURRENCY FORM
@@ -113,7 +149,7 @@
       </ng-container>
 
       <!-- Draft -->
-      <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'D'">
+      <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'I'">
         <button class="btn-back" (click)="onBack()">Back</button>
         <button class="btn-update" [disabled]="!currencyForm.dirty || !dynamicFieldsForm.dirty" (click)="updateCurrency()">Update</button>
         <button class="btn-submit" [disabled]="!currencyForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>

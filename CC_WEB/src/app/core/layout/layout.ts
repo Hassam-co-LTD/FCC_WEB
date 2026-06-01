@@ -166,8 +166,8 @@ toggleMenu(item: MenuItem) {
        if (companyType === 'C' && role === 'A') {
    this.menuItems = [
 
-  { label: 'System Features', icon: 'insights', route: '/system-overview' },
-  { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
+  // { label: 'System Features', icon: 'insights', route: '/system-overview' },
+  // { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
 
   // ================================
   // MASTER DATA CATEGORY
@@ -311,31 +311,37 @@ toggleMenu(item: MenuItem) {
 ];
 
          }
-         else if (companyType === "B"){
-            console.log("Loading Customer User Menu",companyType, role);
-          this.menuItems = [
+ else if (companyType === "B") {
+  console.log("Loading Customer User Menu", companyType, role);
 
-              {
-  label: 'Bank User',
-  icon: 'dashboard',
-  route: '/customer-user',
-  open: false,
-  children: [
+  this.menuItems = [
     {
-      label: 'Create New',
-      route: '/customer-user/create-customer-user'
+      label: 'Bank User',
+      icon: 'dashboard',
+      route: '/customer-user',
+      open: false,
+      children: [
+        {
+          label: 'Create New',
+          route: '/customer-user/create-customer-user'
+        },
+        {
+          label: 'Inquiry',
+          route: '/customer-user/inquiry'
+        }
+      ]
     },
+
+    // ✅ ADD THIS
     {
-      label: 'Inquiry',
-      route: '/customer-user/inquiry'
+      label: 'Logout',
+      icon: 'logout',
+      
     }
-  ]
+  ];
 }
   
                 
-          ]
-         }
-
          else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },

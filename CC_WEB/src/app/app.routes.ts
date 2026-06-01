@@ -125,6 +125,12 @@ export const routes: Routes = [
                     
                 },
                 {
+                    path:'edit-currency/:id',
+                    loadComponent:()=> 
+                        import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m)=> m.CreateCurrency )
+                    
+                } ,
+                {
                     path:'create-client-user',
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
@@ -240,7 +246,7 @@ export const routes: Routes = [
 {
     path:'create-account-types',
     loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
     
 }
  
@@ -248,7 +254,7 @@ export const routes: Routes = [
 {
     path:'edit-account-types/:id',
     loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
     
 },
 {

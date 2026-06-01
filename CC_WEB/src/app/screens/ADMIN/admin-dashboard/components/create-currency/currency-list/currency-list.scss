@@ -4,7 +4,7 @@
 /* ===========================
    Container & Header
 =========================== */
-.customer-status-container {
+.city-status-container {
   padding: theme.$gap-default;
 
   .page-title {
@@ -37,8 +37,7 @@
 
     &:focus {
       border-color: theme.$primary;
- box-shadow: 0 0 0 2px rgba(theme.$primary, 0.1);
-
+      box-shadow: 0 0 0 2px rgba(theme.$primary, 0.1);
     }
   }
 
@@ -46,6 +45,7 @@
     border: none;
     background: transparent;
     cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,20 +67,28 @@
 .tab-content {
   margin-bottom: 16px;
 
+  .records-summary {
+    font-size: 0.82rem;
+    color: theme.$text-medium;
+    margin-bottom: 10px;
+  }
+
   .table-wrapper {
     background: theme.$white;
     border-radius: theme.$radius-large;
     border: 1px solid theme.$border-light;
+
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 }
 
 /* ===========================
-   Tables
+   Currency Table
 =========================== */
-.customer-table {
+.city-table {
   width: 100%;
   min-width: 1200px;
   border-collapse: collapse;
@@ -93,10 +101,12 @@
       font-size: 0.75rem;
       font-weight: 600;
       color: theme.$text-dark;
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
+
       text-align: center;
+      white-space: nowrap;
+
+      user-select: none;
+      cursor: pointer;
 
       &:hover {
         background: color.scale(theme.$primary-light, $lightness: -4%);
@@ -118,20 +128,22 @@
       padding: 8px 10px;
       font-size: 0.8rem;
       color: theme.$text-medium;
-      white-space: nowrap;
+
       text-align: center;
       vertical-align: middle;
+      white-space: nowrap;
     }
   }
 }
 
 /* ===========================
-   Clickable CustomerId
+   Clickable Currency ID
 =========================== */
-.cid {
+.currencyId {
   color: theme.$primary;
   cursor: pointer;
-  font-weight: 500;
+
+  font-weight: 600;
   text-decoration: underline;
 
   &:hover {
@@ -145,12 +157,17 @@
 =========================== */
 .status {
   padding: 3px 10px;
+
   border-radius: 12px;
+
   font-size: 11px;
   font-weight: 600;
+
   text-transform: uppercase;
+
   display: inline-block;
   min-width: 70px;
+
   text-align: center;
 
   &.Draft {
@@ -170,17 +187,18 @@
 }
 
 /* ===========================
-   No Records Message
+   No Records
 =========================== */
 .no-records {
   text-align: center;
   padding: 30px;
+
   font-size: 0.85rem;
   color: theme.$text-medium;
 }
 
 /* ===========================
-   Angular Material Tabs Styling
+   Angular Material Tabs
 =========================== */
 mat-tab-group {
   margin-bottom: 16px;
@@ -204,22 +222,23 @@ mat-tab-group {
    Responsive
 =========================== */
 @media (max-width: 1024px) {
-  .customer-table {
+  .city-table {
     min-width: 900px;
   }
 }
 
 @media (max-width: 768px) {
+
   .search-bar {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .customer-table {
+  .city-table {
     min-width: 600px;
 
     td,
-    .cid {
+    .currencyId {
       font-size: 0.75rem;
       padding: 6px 8px;
     }

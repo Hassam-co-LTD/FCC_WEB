@@ -1,42 +1,56 @@
-<h2 mat-dialog-title style="color: #08408f; font-weight: 600; border-left: 4px solid #0b4eb3; padding-left: 12px; display: flex; justify-content: space-between;">
+<h2 mat-dialog-title
+    style="color: #08408f; font-weight: 600; border-left: 4px solid #0b4eb3; padding-left: 12px; display: flex; justify-content: space-between;">
+
   Add Account for {{ customerName }}
+
 </h2>
 
 <mat-dialog-content [formGroup]="AccountsForm" class="create-customer-popup">
-  <!-- Collapsible Form -->
+
+  <!-- ================= MAIN FORM ================= -->
   <div class="customer-form-wrapper">
+
     <div class="section-header" (click)="toggle()">
       <h3 class="section-title">Create Account for Customer</h3>
       <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
     </div>
 
     <div class="collapsible" [class.open]="isOpen">
+
       <ng-container *ngIf="isOpen">
+
         <div class="form-grid form-grid-large">
+
+          <!-- Account No -->
           <div class="field-group">
             <h4>Account No</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="accountNo" placeholder="Account No" />
+              <input matInput formControlName="accountNo" placeholder="Account No" />
             </mat-form-field>
           </div>
 
+          <!-- IBAN -->
           <div class="field-group">
             <h4>IBAN</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="iban" placeholder="IBAN" />
+              <input matInput formControlName="iban" placeholder="IBAN" />
             </mat-form-field>
           </div>
 
+          <!-- Account Type -->
           <div class="field-group">
-  <h4>Account Type</h4>
-  <mat-form-field appearance="outline" class="full">
-    <mat-select formControlName="accountType" placeholder="Select Account Type">
-      <mat-option *ngFor="let acc of approvedAccountTypes" [value]="acc.typeName">
-        {{ acc.typeName }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
+            <h4>Account Type</h4>
+            <mat-form-field appearance="outline" class="full">
+              <mat-select formControlName="accountType">
+                <mat-option *ngFor="let acc of approvedAccountTypes"
+                            [value]="acc.typeName">
+                  {{ acc.typeName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Account Title -->
           <div class="field-group">
             <h4>Account Title</h4>
             <mat-form-field appearance="outline" class="full">
@@ -44,36 +58,120 @@
             </mat-form-field>
           </div>
 
+          <!-- Account Status -->
           <div class="field-group">
             <h4>Account Status</h4>
             <mat-form-field appearance="outline" class="full">
-              <mat-select formControlName="accountStatus" placeholder="Select Account Status">
-                <mat-option value="ACTIVE">Active</mat-option>
-                <mat-option value="INACTIVE">Inactive</mat-option>
+              <mat-select formControlName="accountStatus">
+                <mat-option value="A">Active</mat-option>
+                <mat-option value="I">Inactive</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
-          
+          <!-- Company -->
           <div class="field-group">
             <h4>Company</h4>
             <mat-form-field appearance="outline" class="full">
-              <mat-label>Select Company</mat-label>
-              <mat-select formControlName="companyId" panelClass="white-dropdown">
-                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
+              <mat-select formControlName="companyId">
+                <mat-option *ngFor="let company of allCompanies"
+                            [value]="company.id">
                   {{ company.companyName }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-           
-        </div>
-      </ng-container>
-    </div>
-  </div>
-</mat-dialog-content>
 
+        </div>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+
+ <!-- ================= DYNAMIC FIELDS ================= -->
+<div class="customer-form-wrapper dynamic-fields-section"
+     *ngIf="fields?.length">
+
+  <div class="section-header" (click)="toggleDynamicFields()">
+    <h2>Account Additional Fields</h2>
+    <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
+  <div class="collapsible"
+       [class.open]="isDynamicFieldsOpen"
+       [formGroup]="dynamicFieldsForm">
+
+    <div class="form-grid">
+
+      <ng-container *ngFor="let field of fields">
+
+        <div class="field-group">
+
+          <h4>{{ field.label || field.fieldName }}</h4>
+
+          <!-- ================= TEXT ================= -->
+          <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline" class="full">
+            <input matInput
+                   [formControlName]="field.fieldName"
+                   [placeholder]="field.label || field.fieldName" />
+          </mat-form-field>
+
+          <!-- ================= NUMBER ================= -->
+          <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline" class="full">
+            <input matInput
+                   type="number"
+                   [formControlName]="field.fieldName"
+                   [placeholder]="field.label || field.fieldName" />
+          </mat-form-field>
+
+          <!-- ================= DATE ================= -->
+          <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline" class="full">
+            <input matInput
+                   type="date"
+                   [formControlName]="field.fieldName"
+                   [placeholder]="field.label || field.fieldName" />
+          </mat-form-field>
+
+          <!-- ================= SELECT ================= -->
+          <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline" class="full">
+
+            <mat-label>{{ field.label || field.fieldName }}</mat-label>
+
+            <mat-select [formControlName]="field.fieldName">
+
+              <mat-option value="">
+                Select {{ field.label || field.fieldName }}
+              </mat-option>
+
+              <ng-container *ngFor="let option of field.options || []">
+                <mat-option [value]="option.value">
+                  {{ option.text }}
+                </mat-option>
+              </ng-container>
+
+            </mat-select>
+
+          </mat-form-field>
+
+        </div>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+
+</div></mat-dialog-content>
+
+<!-- ================= ACTIONS ================= -->
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button color="primary" [disabled]="!AccountsForm.valid" (click)="onSave()">Add</button>
+
+  <button mat-button color="primary"
+          [disabled]="!AccountsForm.valid"
+          (click)="onSave()">
+    Add
+  </button>
 </mat-dialog-actions>

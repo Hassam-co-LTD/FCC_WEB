@@ -1,5 +1,35 @@
 <!-- Branch Form (Draft / Edit) -->
-<div class="branch-container" [ngClass]="{'hidden': storeBranch?.status === 'A'}">
+ <div class="badge-group">
+
+  <span class="status-badge"
+
+    [ngClass]="{
+      'create': !storeBranch?.recordStatus,
+      'draft': storeBranch?.recordStatus === 'I',
+      'submitted': storeBranch?.recordStatus === 'S',
+      'approved': storeBranch?.recordStatus === 'A'
+    }">
+
+    <mat-icon>
+      {{
+        !storeBranch?.recordStatus ? 'add_circle' :
+        storeBranch?.recordStatus === 'I' ? 'edit_note' :
+        storeBranch?.recordStatus === 'S' ? 'hourglass_top' :
+        'verified'
+      }}
+    </mat-icon>
+
+    {{
+      !storeBranch?.recordStatus ? 'Create' :
+      storeBranch?.recordStatus === 'I' ? 'Draft' :
+      storeBranch?.recordStatus === 'S' ? 'Submitted' :
+      'Approved'
+    }}
+
+  </span>
+
+</div>
+<div class="branch-container" [ngClass]="{'hide-when-approved': storeBranch?.recordStatus === 'A'}">
 
   <!-- Toggle Header -->
   <div class="section-header" (click)="isOpen = !isOpen">
@@ -250,3 +280,219 @@
     <button class="btn-edit" (click)="reject(storeBranch.id)">Amend</button>
   </div>
 </div>
+
+<!-- ======================================================
+     APPROVED BRANCH DOSSIER SECTION
+====================================================== -->
+<section class="dossier-container"
+  [ngClass]="{'hide-when-approved': storeBranch?.recordStatus !== 'A'}">
+
+  <!-- ================= HEADER ================= -->
+  <header class="dossier-header">
+
+    <div class="status-strip active"></div>
+
+    <div class="header-content">
+
+      <div class="identity-block">
+
+        <div class="avatar-circle">
+          {{ storeBranch?.branchName?.trim()?.charAt(0)?.toUpperCase() || 'B' }}
+        </div>
+
+        <div class="text-group">
+          <h1 class="customer-name">
+            {{ storeBranch.branchName | titlecase }}
+          </h1>
+
+          <span class="customer-id">
+            Branch Ref:
+            <code>{{ storeBranch.branchId }}</code>
+          </span>
+        </div>
+
+      </div>
+
+      <div class="badge-group">
+
+        <span class="status-badge" data-status="ACTIVE">
+          APPROVED
+        </span>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ================= CORE INFO ================= -->
+  <div class="dossier-grid">
+
+    <mat-card class="info-card">
+
+      <div class="card-title">
+        <mat-icon>account_balance</mat-icon>
+        <span>Branch Information</span>
+      </div>
+
+      <div class="data-grid">
+
+        <div class="data-item">
+          <label>Branch Code</label>
+          <span class="value val-mono">
+            {{ storeBranch.branchCode }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Branch Name</label>
+          <span class="value">
+            {{ storeBranch.branchName }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Contact Person</label>
+          <span class="value">
+            {{ storeBranch.contactPerson }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Contact Number</label>
+          <span class="value">
+            {{ storeBranch.contactNo }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Email Address</label>
+          <span class="value">
+            {{ storeBranch.emailAddress }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Swift Address</label>
+          <span class="value val-mono">
+            {{ storeBranch.swiftAddress }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Local Currency</label>
+          <span class="value">
+            {{ storeBranch.localCurrency }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Branch Status</label>
+          <span class="value">
+            {{ storeBranch.branchStatus }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>City</label>
+          <span class="value">
+            {{ storeBranch.cityName }}
+          </span>
+        </div>
+
+        <div class="data-item">
+          <label>Record Status</label>
+          <span class="value">
+            {{ storeBranch.recordStatus }}
+          </span>
+        </div>
+
+        <div class="data-item full-width">
+          <label>Branch Address</label>
+          <span class="value">
+            {{ storeBranch.branchAddress }}
+          </span>
+        </div>
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <!-- ================= DYNAMIC FIELDS ================= -->
+  <section class="dynamic-fields-section"
+    *ngIf="storeBranch.dynamicFields?.length">
+
+    <div class="section-title">
+
+      <mat-icon>analytics</mat-icon>
+
+      <span>Additional Branch Attributes</span>
+
+      <span class="count-pill">
+        {{ storeBranch.dynamicFields.length }} Fields
+      </span>
+
+    </div>
+
+    <div class="additional-grid">
+
+      <div class="additional-card"
+        *ngFor="let field of storeBranch.dynamicFields">
+
+        <div class="field-label">
+          {{ field.label || field.fieldName }}
+        </div>
+
+        <div class="field-value">
+          {{ field.value || '—' }}
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="dossier-footer">
+
+    <div class="audit-info">
+
+      <mat-icon>history</mat-icon>
+
+      <span>
+        Last Updated:
+        <strong>
+          {{ storeBranch.updatedOn | date:'medium' }}
+        </strong>
+      </span>
+
+    </div>
+
+    <div class="footer-actions">
+
+      <button mat-stroked-button
+        color="primary"
+        (click)="onBack()">
+
+        <mat-icon>arrow_back</mat-icon>
+        Back
+
+      </button>
+
+      <button mat-flat-button
+        color="warn"
+        (click)="reject(storeBranch.id)">
+
+        <mat-icon>edit</mat-icon>
+        Amend Record
+
+      </button>
+
+    </div>
+
+  </footer>
+
+</section>

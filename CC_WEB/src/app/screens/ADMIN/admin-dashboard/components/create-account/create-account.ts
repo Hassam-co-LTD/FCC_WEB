@@ -44,6 +44,15 @@ export class Accounts implements OnInit {
   approvedAccountTypes:any [] = []
   isEditMode = false;
   isOpen = true;
+  private accountLoaded = false;
+private fieldsLoaded = false;
+
+  // dynamicFIelds
+
+  fields: any[] = [];
+dynamicFieldsForm!: FormGroup;
+isDynamicFieldsOpen = true;
+dynamicReady = false;
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +67,7 @@ export class Accounts implements OnInit {
     this.loadAccounts();
     this.loadCompanies();
     this.loadApprovedAccountTypes()
+      this.loadDynamicFields(); //
   }
 
   private buildForm(): void {
@@ -83,68 +93,123 @@ export class Accounts implements OnInit {
     });
   }
 
-  private loadAccounts(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loading Accounts with ID:', id);
-     if (!isNaN(id)) {
-      this.isEditMode = true;
+ private loadAccounts(): void {
+  const id = Number(this.route.snapshot.paramMap.get('id'));
 
-      this.api.getTnxById(id,"accounts").subscribe({
-        next: res => {
-          this.storeAccounts = res;
-          console.log('get Accounts By:', res);
-          this.AccountsForm.patchValue(res);
-        },
-        error: err => console.error('Load failed', err)
-      });
+  console.log('Loading Accounts with ID:', id);
+
+  if (!isNaN(id)) {
+    this.isEditMode = true;
+
+    this.api.getTnxById(id, "accounts").subscribe({
+      next: res => {
+
+        this.storeAccounts = res;
+
+        this.AccountsForm.patchValue(res);
+
+        this.accountLoaded = true;
+
+        this.tryPatchDynamicFields(); // 🔥 FIX
+
+      },
+      error: err => console.error('Load failed', err)
+    });
+  }
+}
+  private patchDynamicFields(dynamicFields: any[]): void {
+
+  if (!this.dynamicFieldsForm || !this.fields?.length || !dynamicFields?.length) return;
+
+  dynamicFields.forEach(df => {
+
+    const fieldDef = this.fields.find(f => f.fieldId === df.fieldId);
+
+    if (fieldDef) {
+      this.dynamicFieldsForm
+        .get(fieldDef.fieldName)
+        ?.setValue(df.value);
     }
 
-  }
+  });
+}
 
   
   private loadCompanies(): void {
-    this.api.getTnxByStatus('A',"company").subscribe({
-      next: companies =>{
-           this.allCompanies = companies
-           console.log('Fetched companies:', this.allCompanies);
-      } ,
-      error: err => console.error('Error fetching companies', err)
-    });
-  }
+  this.api.getTnxByStatus('A',"company").subscribe({
+    next: companies => {
 
+      this.allCompanies = companies;
+
+      console.log('Fetched companies:', this.allCompanies);
+
+      // 🔥 repatch in edit mode
+      if (this.storeAccounts?.companyId) {
+
+        const selectedCompany = this.allCompanies.find(
+          (c:any) => c.companyId === this.storeAccounts.companyId
+        );
+
+        if (selectedCompany) {
+
+          this.AccountsForm.patchValue({
+            companyId: selectedCompany.id
+          });
+
+        }
+      }
+    },
+    error: err => console.error('Error fetching companies', err)
+  });
+}
   // ---------------- CREATE ----------------
-  onSave(): void {
-    if (this.AccountsForm.invalid) return;
+ onSave(): void {
 
-    const payload = this.AccountsForm.getRawValue();
-    console.log('Payload to save:', payload);
-    
-    this.api.saveTnx(payload, 'accounts').subscribe({
-      next: res => {
-        console.log("Saved response:", res);
-        Swal.fire('Saved!', 'Accounts saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/accounts-list'], { queryParams: { tabName: 'Draft' } } ));
-      },
-      error: err => console.error('Save failed', err)
-    });
-  }
+  if (this.AccountsForm.invalid || this.dynamicFieldsForm.invalid) return;
 
+  const dynamicPayload = this.fields.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+  }));
+
+  const payload = {
+    ...this.AccountsForm.getRawValue(),
+    dynamicFields: dynamicPayload
+  };
+
+  this.api.saveTnx(payload, 'accounts').subscribe({
+    next: res => {
+      Swal.fire('Saved!', 'Accounts saved successfully', 'success')
+        .then(() => this.router.navigate(['/admin/accounts-list']));
+    },
+    error: err => console.error('Save failed', err)
+  });
+}
   // ---------------- UPDATE ----------------
-  update(id:number): void {
-    console.log("updated Account to send",this.AccountsForm.value);
-    if (this.AccountsForm.invalid) return;
+ update(id: number): void {
 
-    const payload = this.AccountsForm.getRawValue();
+  if (this.AccountsForm.invalid) return;
 
-    this.api.updateTnx(payload, 'accounts',id).subscribe({
-      next: () => {
-        Swal.fire('Updated!', 'Accounts updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/edit-accounts', id]));
-      },
-      error: err => console.error('Update failed', err)
-    });
-  }
+  const dynamicPayload = this.fields.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm?.get(f.fieldName)?.value || ''
+  }));
 
+  const payload = {
+    ...this.AccountsForm.getRawValue(),
+    dynamicFields: dynamicPayload
+  };
+ console.log("payload to update " ,payload)
+   
+  this.api.updateTnx(payload, 'accounts', id).subscribe({
+    
+    next: () => {
+      Swal.fire('Updated!', 'Accounts updated successfully', 'success')
+        .then(() => this.router.navigate(['/admin/edit-accounts', id]));
+    },
+    error: err => console.error('Update failed', err)
+  });
+}
   
   activate(id: number): void {
     this.api.setTnxByStatus('Active', id, 'accounts').subscribe({
@@ -233,8 +298,7 @@ export class Accounts implements OnInit {
 }
 
 // delete an account
-
-  deleteAccount(id: number): void {
+deleteAccount(id: number): void {
 
   if (!id) {
     Swal.fire('Warning', 'Invalid account id', 'warning');
@@ -250,29 +314,112 @@ export class Accounts implements OnInit {
     cancelButtonText: 'Cancel'
   }).then((result) => {
 
-    if (result.isConfirmed) {
+    if (!result.isConfirmed) return;
 
-      this.api.deleteAccount(id, 'accounts').subscribe({
-        next: (res: any) => {
+    this.api.deleteAccount(id, 'accounts').subscribe({
 
-          Swal.fire('Deleted', res?.message || 'Account removed successfully', 'success');
+      // ✅ SUCCESS
+      next: (res) => {
+        console.log("delete account response ", res)
+        Swal.fire(
+          'Deleted',
+          'Account removed successfully',
+          'success'
+        ).then(() => {
 
-          // 🔹 Refresh list after delete
-          this.loadAccounts();   // make sure this method reloads accounts
-        },
+          // 🔥 get dynamic custId from selected account
+          const custId = this.storeAccounts?.custId;
 
-        error: (err) => {
+          console.log('Redirecting with custId:', custId);
 
-          const errorMessage = err?.error?.message || 'Failed to delete account';
+          if (custId) {
 
-          Swal.fire('Error', errorMessage, 'error');
-        }
+            this.router.navigate([
+              '/admin/create-customer',
+              custId
+            ]);
+
+          } else {
+
+            // fallback if custId missing
+            this.router.navigate([
+              '/admin/create-customer',
+              this.storeAccounts.custId
+            ]);
+
+          }
+
+        });
+
+      },
+
+      // ❌ ERROR
+      error: (err) => {
+
+        console.log('DELETE ERROR:', err);
+
+        Swal.fire(
+          'Error',
+          err?.error?.message ||
+          err?.message ||
+          'Failed to delete account',
+          'error'
+        );
+
+      }
+
+    });
+
+  });
+}
+// dynamicFields methods 
+
+private loadDynamicFields(): void {
+
+  this.api.getFieldsByScreenAndStatus('Accounts', 'A').subscribe({
+    next: (res: any) => {
+
+      this.fields = res || [];
+
+      const group: any = {};
+
+      this.fields.forEach((f: any) => {
+        group[f.fieldName] = [''];
       });
+
+      this.dynamicFieldsForm = this.fb.group(group);
+
+      this.fieldsLoaded = true;
+
+      this.tryPatchDynamicFields(); // 🔥 FIX
+
+    },
+    error: err => console.error('Dynamic fields error', err)
+  });
+
+}
+private tryPatchDynamicFields(): void {
+
+  if (!this.accountLoaded || !this.fieldsLoaded) return;
+
+  const dynamicFields = this.storeAccounts?.dynamicFields;
+
+  if (!dynamicFields || !dynamicFields.length) return;
+
+  dynamicFields.forEach((df:any) => {
+
+    const fieldDef = this.fields.find(f => f.fieldId === df.fieldId);
+
+    if (fieldDef) {
+
+      this.dynamicFieldsForm
+        .get(fieldDef.fieldName)
+        ?.setValue(df.value);
 
     }
 
   });
+
+  this.dynamicReady = true;
 }
-
-
 }

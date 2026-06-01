@@ -69,34 +69,36 @@ export class LoginComponent implements OnInit {
   }
 
   // ✅ API LOGIN
-  loginn() {
-    this.api.userLogin({
-      loginId: this.loginId,
-      companyId: this.companyId,
-      password: this.password,
-      userStatus: this.userStatus
-    }, 'clientUsers').subscribe({
-      next: (res: any) => {
+loginn() {
+  this.api.userLogin({
+    loginId: this.loginId,
+    companyId: this.companyId,
+    password: this.password,
+    userStatus: this.userStatus
+  }, 'clientUsers').subscribe({
+    next: (res: any) => {
 
-        // ✅ Store token
-        sessionStorage.setItem("token", res.token);
+      console.log("FULL RESPONSE:", res);
 
-        // ✅ Store user data
-        sessionStorage.setItem("userData", JSON.stringify(res));
+      // ✅ FIX: correct path for token
+      sessionStorage.setItem("token", res.body.token);
 
-        // ✅ Use centralized redirect logic
-        const redirectUrl = this.auth.getRedirectUrl();
-        this.router.navigate([redirectUrl]);
-      },
+      // ✅ FIX: store body instead of full response
+      sessionStorage.setItem("userData", JSON.stringify(res.body));
 
-      error: (err) => {
-        const errorMessage = err?.error?.message || err?.error || 'Something went wrong!';
-        Swal.fire({
-          icon: 'error',
-          title: 'Login Failed',
-          text: errorMessage,
-        });
-      }
-    });
-  }
+      // ✅ existing logic unchanged
+      const redirectUrl = this.auth.getRedirectUrl();
+      this.router.navigate([redirectUrl]);
+    },
+
+    error: (err) => {
+      const errorMessage = err?.error?.message || err?.error || 'Something went wrong!';
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: errorMessage,
+      });
+    }
+  });
+}
 }

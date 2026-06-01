@@ -33,41 +33,84 @@
         <div class="table-wrapper"
              *ngIf="storeFilteredDraftCurrencies?.length; else noDrafts">
 
-          <table class="city-table">
-            <thead>
-              <tr>
-                <th>Currency ID</th>
-                <th>Code</th>
-                <th>Description</th>
-                <th>Map ID</th>
-                <th>Status</th>
-                <th>Record Status</th>
-              </tr>
-            </thead>
+<table class="city-table">
 
-            <tbody>
-              <tr *ngFor="let c of storeFilteredDraftCurrencies; trackBy: trackById">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Currency ID</th>
+      <th>Code</th>
+      <th>Description</th>
+      <th>Map ID</th>
+      <th>Status</th>
+      <th>Record Status</th>
+      <th>Created By</th>
+      <th>Updated By</th>
+      <th>Authorized By</th>
+      <th>Created On</th>
+      <th>Updated On</th>
+      <th>Authorized On</th>
+    </tr>
+  </thead>
 
-                <td (click)="updateRouter(c.currencyId)" class="currencyId">
-                  {{ c.currencyId }}
-                </td>
+  <tbody>
 
-                <td>{{ c.currencyCode }}</td>
-                <td>{{ c.currencyDesc }}</td>
-                <td>{{ c.currencyMapId }}</td>
+    <tr *ngFor="let c of storeFilteredDraftCurrencies; trackBy: trackById">
 
-                <td>
-                  <span class="status {{ c.currencyStatus }}">
-                    {{ c.currencyStatus }}
-                  </span>
-                </td>
+      <!-- ID -->
+      <td>{{ c.id }}</td>
 
-                <td>{{ c.recordStatus }}</td>
+      <!-- Currency ID -->
+          <td><a [routerLink]="['/admin/edit-currency', c.currencyId]">{{ c.currencyId }}</a></td>
 
-              </tr>
-            </tbody>
-          </table>
+      <!-- Code -->
+      <td>{{ c.currencyCode }}</td>
 
+      <!-- Description -->
+      <td>{{ c.currencyDesc }}</td>
+
+      <!-- Map ID -->
+      <td>{{ c.currencyMapId }}</td>
+
+      <!-- Currency Status -->
+      <td>
+        <span class="status {{ c.currencyStatus }}">
+          {{ c.currencyStatus }}
+        </span>
+      </td>
+
+      <!-- Record Status -->
+      <td>{{ c.recordStatus }}</td>
+
+      <!-- Created By -->
+      <td>{{ c.createdBy || '-' }}</td>
+
+      <!-- Updated By -->
+      <td>{{ c.updatedBy || '-' }}</td>
+
+      <!-- Authorized By -->
+      <td>{{ c.authorizedBy || '-' }}</td>
+
+      <!-- Created On -->
+      <td>
+        {{ c.createdOn | date:'medium' }}
+      </td>
+
+      <!-- Updated On -->
+      <td>
+        {{ c.updatedOn | date:'medium' }}
+      </td>
+
+      <!-- Authorized On -->
+      <td>
+        {{ c.authorizedOn ? (c.authorizedOn | date:'medium') : '-' }}
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
         </div>
 
         <ng-template #noDrafts>
@@ -105,41 +148,86 @@
         <div class="table-wrapper"
              *ngIf="storeFilteredApprovedCurrencies?.length; else noApproved">
 
-          <table class="city-table">
-            <thead>
-              <tr>
-                <th>Currency ID</th>
-                <th>Code</th>
-                <th>Description</th>
-                <th>Map ID</th>
-                <th>Status</th>
-                <th>Record Status</th>
-              </tr>
-            </thead>
+        <table class="city-table">
 
-            <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedCurrencies; trackBy: trackById">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Currency ID</th>
+      <th>Code</th>
+      <th>Description</th>
+      <th>Map ID</th>
+      <th>Status</th>
+      <th>Record Status</th>
+      <th>Created By</th>
+      <th>Updated By</th>
+      <th>Authorized By</th>
+      <th>Created On</th>
+      <th>Updated On</th>
+      <th>Authorized On</th>
+    </tr>
+  </thead>
 
-                <td (click)="updateRouter(c.currencyId)" class="currencyId">
-                  {{ c.currencyId }}
-                </td>
+  <tbody>
 
-                <td>{{ c.currencyCode }}</td>
-                <td>{{ c.currencyDesc }}</td>
-                <td>{{ c.currencyMapId }}</td>
+    <tr *ngFor="let c of storeFilteredDraftCurrencies; trackBy: trackById">
 
-                <td>
-                  <span class="status {{ c.currencyStatus }}">
-                    {{ c.currencyStatus }}
-                  </span>
-                </td>
+      <!-- ID -->
+      <td>{{ c.id }}</td>
 
-                <td>{{ c.recordStatus }}</td>
+      <!-- Currency ID -->
+      <td (click)="updateRouter(c.currencyId)" class="currencyId">
+        {{ c.currencyId }}
+      </td>
 
-              </tr>
-            </tbody>
-          </table>
+      <!-- Code -->
+      <td>{{ c.currencyCode }}</td>
 
+      <!-- Description -->
+      <td>{{ c.currencyDesc }}</td>
+
+      <!-- Map ID -->
+      <td>{{ c.currencyMapId }}</td>
+
+      <!-- Currency Status -->
+      <td>
+        <span class="status {{ c.currencyStatus }}">
+          {{ c.currencyStatus }}
+        </span>
+      </td>
+
+      <!-- Record Status -->
+      <td>{{ c.recordStatus }}</td>
+
+      <!-- Created By -->
+      <td>{{ c.createdBy || '-' }}</td>
+
+      <!-- Updated By -->
+      <td>{{ c.updatedBy || '-' }}</td>
+
+      <!-- Authorized By -->
+      <td>{{ c.authorizedBy || '-' }}</td>
+
+      <!-- Created On -->
+      <td>
+        {{ c.createdOn | date:'medium' }}
+      </td>
+
+      <!-- Updated On -->
+      <td>
+        {{ c.updatedOn | date:'medium' }}
+      </td>
+
+      <!-- Authorized On -->
+      <td>
+        {{ c.authorizedOn ? (c.authorizedOn | date:'medium') : '-' }}
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
         </div>
 
         <ng-template #noApproved>
@@ -177,41 +265,86 @@
         <div class="table-wrapper"
              *ngIf="storeFilteredSubmittedCurrencies?.length; else noSubmitted">
 
-          <table class="city-table">
-            <thead>
-              <tr>
-                <th>Currency ID</th>
-                <th>Code</th>
-                <th>Description</th>
-                <th>Map ID</th>
-                <th>Status</th>
-                <th>Record Status</th>
-              </tr>
-            </thead>
+        <table class="city-table">
 
-            <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedCurrencies; trackBy: trackById">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Currency ID</th>
+      <th>Code</th>
+      <th>Description</th>
+      <th>Map ID</th>
+      <th>Status</th>
+      <th>Record Status</th>
+      <th>Created By</th>
+      <th>Updated By</th>
+      <th>Authorized By</th>
+      <th>Created On</th>
+      <th>Updated On</th>
+      <th>Authorized On</th>
+    </tr>
+  </thead>
 
-                <td (click)="updateRouter(c.currencyId)" class="currencyId">
-                  {{ c.currencyId }}
-                </td>
+  <tbody>
 
-                <td>{{ c.currencyCode }}</td>
-                <td>{{ c.currencyDesc }}</td>
-                <td>{{ c.currencyMapId }}</td>
+    <tr *ngFor="let c of storeFilteredDraftCurrencies; trackBy: trackById">
 
-                <td>
-                  <span class="status {{ c.currencyStatus }}">
-                    {{ c.currencyStatus }}
-                  </span>
-                </td>
+      <!-- ID -->
+      <td>{{ c.id }}</td>
 
-                <td>{{ c.recordStatus }}</td>
+      <!-- Currency ID -->
+      <td (click)="updateRouter(c.currencyId)" class="currencyId">
+        {{ c.currencyId }}
+      </td>
 
-              </tr>
-            </tbody>
-          </table>
+      <!-- Code -->
+      <td>{{ c.currencyCode }}</td>
 
+      <!-- Description -->
+      <td>{{ c.currencyDesc }}</td>
+
+      <!-- Map ID -->
+      <td>{{ c.currencyMapId }}</td>
+
+      <!-- Currency Status -->
+      <td>
+        <span class="status {{ c.currencyStatus }}">
+          {{ c.currencyStatus }}
+        </span>
+      </td>
+
+      <!-- Record Status -->
+      <td>{{ c.recordStatus }}</td>
+
+      <!-- Created By -->
+      <td>{{ c.createdBy || '-' }}</td>
+
+      <!-- Updated By -->
+      <td>{{ c.updatedBy || '-' }}</td>
+
+      <!-- Authorized By -->
+      <td>{{ c.authorizedBy || '-' }}</td>
+
+      <!-- Created On -->
+      <td>
+        {{ c.createdOn | date:'medium' }}
+      </td>
+
+      <!-- Updated On -->
+      <td>
+        {{ c.updatedOn | date:'medium' }}
+      </td>
+
+      <!-- Authorized On -->
+      <td>
+        {{ c.authorizedOn ? (c.authorizedOn | date:'medium') : '-' }}
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
         </div>
 
         <ng-template #noSubmitted>

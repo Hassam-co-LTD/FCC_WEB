@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatCard } from '@angular/material/card';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 
@@ -56,7 +57,8 @@ export interface UsersRolesResponseDTO {
     MatIconModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatCard
   ],
   templateUrl: './create-user-client.html',
   styleUrls: ['./create-user-client.scss']
@@ -116,7 +118,7 @@ UserData = {
     this.clientUserForm = this.fb.group({
       loginId: [this.userId, Validators.required],
       userName: ['', Validators.required],
-
+      email:['',Validators.required],
       password: ['', Validators.required],
       userCategory: [''],
       companyId: ["", Validators.required],
@@ -134,7 +136,7 @@ UserData = {
 
     this.api.getTnxById(Number(id), "clientUsers").subscribe({
       next: (data: any) => {
-
+        console.log("loaded data by id ", data)
         this.storeClientUser = data;
         this.clientUserForm.patchValue(data);
 
@@ -173,8 +175,10 @@ UserData = {
 
   this.api.saveTnx(payload, 'clientUsers').subscribe({
     next: res => {
+      
       Swal.fire('Saved!', 'Client User saved successfully', 'success')
         .then(() => this.router.navigate(['/admin/user-client-inquiry']))
+        console.log("saved data ", res)
     },
     error: err => console.error('Save failed', err)
   });
@@ -196,6 +200,7 @@ UserData = {
       Swal.fire('Updated!', 'Client User updated successfully', 'success')
       
       .then(() => this.router.navigate(['/admin/user-client-inquiry']))
+      console.log("data updated successfully ", res)
 
     },
     error: err => console.error('Update failed', err)
@@ -261,7 +266,7 @@ UserData = {
   fetchAllRoles(): void {
     this.api.getTnxByStatus('A',"roles").subscribe({
       next: (roles: RoleMasterResponseDTO[]) => {
-        this.userRoles = roles.filter(r => r.roleDest === 'B'); // Only BANK roles for client users
+        this.userRoles = roles.filter(r => r.roleDest === 'C'); // Only BANK roles for client users
         console.log('Fetched all roles:', this.userRoles);
         this.fetchAssignedRoles();
       },
@@ -375,5 +380,18 @@ private getDynamicPayload(): any[] {
 // ================= TOGGLE =================
 toggleDynamicFields(): void {
   this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
+}
+
+getCompanyName(companyId: any): string {
+
+  const company = this.allCompanies?.find(
+    (c: any) => c.companyId === companyId
+  );
+
+  return company?.companyName || '—';
+}
+
+get hasClientUser(): boolean {
+  return this.storeClientUser && Object.keys(this.storeClientUser).length > 0;
 }
 }

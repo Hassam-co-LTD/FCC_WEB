@@ -416,3 +416,603 @@ input[matInput] {
     }
   }
 }
+
+
+
+.approved-container {
+  background: theme.$light-bg;
+  border-radius: 8px;
+  border: 1px solid theme.$border-light;
+  padding: 20px 25px;
+  max-width: 1200px;
+  margin: 20px auto;
+  box-shadow: theme.$shadow-primary;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .approved-badge {
+    display: inline-block;
+    background: #28a745; // green for approved
+    color: theme.$text-light;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    align-self: flex-start;
+  }
+
+  .approved-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 columns per row
+    gap: 20px;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: theme.$primary-dark;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* Buttons outside approved container */
+.approved-actions {
+  max-width: 1200px;
+  margin: 0 auto 20px; // center and spacing below
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: theme.$button-shadow;
+    flex: 0 0 auto; // prevent full width
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .approved-container .approved-info {
+    grid-template-columns: 1fr; // stack on small screens
+  }
+
+  .approved-actions {
+    flex-direction: column;
+    gap: 10px;
+
+    button {
+      width: 100%; // full width on mobile
+    }
+  }
+
+  button {
+    background: theme.$primary;
+    color: theme.$text-light;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: theme.$button-shadow;
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  ng-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================
+   Responsive Adjustments
+=========================== */
+/* =========================
+   Approved Customer Container
+=========================== */
+
+/* ======================================================
+   ENTERPRISE STATUS BADGE
+   USING ONLY GLOBAL THEME VARIABLES
+====================================================== */
+
+.badge-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ======================================================
+   PROFESSIONAL BANKING STATUS BADGE
+====================================================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-width: 155px;
+  padding: 10px 18px;
+
+  border-radius: 30px;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  border: 1px solid;
+
+  box-shadow: theme.$shadow-primary;
+
+  transition: 0.2s ease-in-out;
+
+  font-family: 'Inter', sans-serif;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  /* =========================================
+     CREATE STATUS
+  ========================================= */
+  &.create {
+    background: theme.$primary-light;
+    color: theme.$primary;
+    border-color: theme.$border-primary;
+  }
+
+  /* =========================================
+     DRAFT STATUS
+  ========================================= */
+  &.draft {
+    background: theme.$hover-bg;
+    color: theme.$primary-dark;
+    border-color: theme.$hover-border;
+  }
+
+  /* =========================================
+     SUBMITTED STATUS
+  ========================================= */
+  &.submitted {
+    background: theme.$screen-bg;
+    color: theme.$primary-dark;
+    border-color: theme.$border-primary;
+  }
+
+  /* =========================================
+     APPROVED STATUS
+  ========================================= */
+  &.approved {
+    background: theme.$primary;
+    color: theme.$text-light;
+    border-color: theme.$primary-dark;
+  }
+}
+
+
+
+.dossier-container {
+  background: theme.$screen-bg;
+  padding: calc(theme.$gap-default * 2);
+  border-radius: theme.$radius-large;
+  font-family: 'Inter', sans-serif;
+  color: theme.$text-dark;
+
+  display: flex;
+  flex-direction: column;
+  gap: calc(theme.$gap-default * 1.5);
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+.dossier-header {
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  overflow: hidden;
+  box-shadow: theme.$shadow-primary;
+
+  .status-strip {
+    height: 4px;
+    width: 100%;
+    background: theme.$border-light;
+
+    &.active {
+      background: theme.$primary;
+    }
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(theme.$gap-default * 1.5);
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: theme.$gap-default;
+    }
+  }
+
+  .identity-block {
+    display: flex;
+    align-items: center;
+    gap: theme.$gap-default;
+  }
+
+  .avatar-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: theme.$radius-default;
+    background: theme.$primary;
+    color: theme.$text-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    box-shadow: theme.$shadow-primary;
+  }
+
+  .text-group {
+
+    .customer-name {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: theme.$primary-dark;
+    }
+
+    .customer-id {
+      margin-top: 4px;
+      display: inline-block;
+      font-size: 0.82rem;
+      color: theme.$text-medium;
+
+      code {
+        background: theme.$primary-light;
+        color: theme.$primary;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: 'Roboto Mono', monospace;
+      }
+    }
+  }
+
+  .status-badge {
+    background: #e7f7ee;
+    color: #0f9d58;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ======================================================
+   GRID / CARD
+====================================================== */
+.dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: theme.$gap-default;
+}
+
+.info-card {
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  padding: calc(theme.$gap-default * 1.5);
+  box-shadow: theme.$shadow-primary;
+}
+
+/* ======================================================
+   CARD TITLE
+====================================================== */
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: calc(theme.$gap-default * 1.2);
+
+  mat-icon {
+    color: theme.$primary;
+  }
+
+  span {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: theme.$primary-dark;
+    letter-spacing: 0.4px;
+  }
+}
+
+/* ======================================================
+   DATA GRID
+====================================================== */
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: theme.$gap-default;
+}
+
+.data-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fafcff;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+  padding: 14px;
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: theme.$text-medium;
+    letter-spacing: 0.4px;
+  }
+
+  .value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    word-break: break-word;
+  }
+
+  .val-mono {
+    font-family: 'Roboto Mono', monospace;
+    color: theme.$primary;
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ======================================================
+   DYNAMIC FIELDS SECTION
+====================================================== */
+.dynamic-fields-section {
+  background: theme.$white;
+  border: 1px dashed theme.$border-primary;
+  border-radius: theme.$radius-large;
+  padding: calc(theme.$gap-default * 1.5);
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: calc(theme.$gap-default * 1.2);
+
+    mat-icon {
+      color: theme.$primary;
+    }
+
+    span {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: theme.$primary-dark;
+    }
+
+    .count-pill {
+      margin-left: auto;
+      background: theme.$primary-light;
+      color: theme.$primary;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+    }
+  }
+}
+
+/* ======================================================
+   ADDITIONAL GRID
+====================================================== */
+.additional-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: theme.$gap-default;
+}
+
+.additional-card {
+  background: #fafcff;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+  padding: 14px;
+  transition: 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: theme.$shadow-primary;
+  }
+
+  .field-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: theme.$text-medium;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .field-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    word-break: break-word;
+  }
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+.dossier-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: theme.$gap-default;
+  border-top: 1px solid theme.$border-light;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: theme.$gap-default;
+  }
+
+  .audit-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: theme.$text-medium;
+    font-size: 0.85rem;
+
+    mat-icon {
+      color: theme.$primary;
+    }
+
+    strong {
+      color: theme.$text-dark;
+    }
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: theme.$gap-default;
+
+    button {
+      min-width: 140px;
+    }
+  }
+}
+
+
+/* ======================================================
+   ENTERPRISE STATUS BADGE
+   USING ONLY GLOBAL THEME VARIABLES
+====================================================== */
+
+.badge-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ======================================================
+   PROFESSIONAL BANKING STATUS BADGE
+====================================================== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-width: 155px;
+  padding: 10px 18px;
+
+  border-radius: 30px;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  border: 1px solid;
+
+  box-shadow: theme.$shadow-primary;
+
+  transition: 0.2s ease-in-out;
+
+  font-family: 'Inter', sans-serif;
+
+  mat-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  /* =========================================
+     CREATE STATUS
+  ========================================= */
+  &.create {
+    background: theme.$primary-light;
+    color: theme.$primary;
+    border-color: theme.$border-primary;
+  }
+
+  /* =========================================
+     DRAFT STATUS
+  ========================================= */
+  &.draft {
+    background: theme.$hover-bg;
+    color: theme.$primary-dark;
+    border-color: theme.$hover-border;
+  }
+
+  /* =========================================
+     SUBMITTED STATUS
+  ========================================= */
+  &.submitted {
+    background: theme.$screen-bg;
+    color: theme.$primary-dark;
+    border-color: theme.$border-primary;
+  }
+
+  /* =========================================
+     APPROVED STATUS
+  ========================================= */
+  &.approved {
+    background: theme.$primary;
+    color: theme.$text-light;
+    border-color: theme.$primary-dark;
+  }
+}
+
+

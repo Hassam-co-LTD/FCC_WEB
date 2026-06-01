@@ -324,3 +324,514 @@ button,
   font-size: 16px;
   color: #777;
 }
+
+
+// approved section 
+
+/* ======================================================
+   APPROVED DOSSIER — ENTERPRISE BANKING UI (FINAL CLEAN)
+====================================================== */
+
+.dossier-premium-view {
+  background: theme.$screen-bg;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-large;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+.dossier-premium-header {
+  background: theme.$white;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-default;
+  box-shadow: theme.$shadow-primary;
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 24px;
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}
+
+/* ======================================================
+   PROFILE IDENTITY
+====================================================== */
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.premium-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: theme.$radius-default;
+  background: theme.$primary;
+  color: theme.$white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: theme.$shadow-primary;
+}
+
+.user-full-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: theme.$primary-dark;
+}
+
+.user-meta {
+  font-size: 12px;
+  color: theme.$text-medium;
+
+  .meta-value {
+    color: theme.$primary;
+    font-weight: 700;
+    padding-left: 6px;
+  }
+}
+
+/* ======================================================
+   STATUS PILL
+====================================================== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &.active {
+    background: rgba(11, 78, 179, 0.12);
+    color: theme.$primary;
+  }
+
+  &.inactive {
+    background: #fdecea;
+    color: #d32f2f;
+  }
+
+  mat-icon {
+    font-size: 16px;
+  }
+}
+
+/* ======================================================
+   GRID LAYOUT
+====================================================== */
+.dossier-content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ======================================================
+   CARD BASE
+====================================================== */
+.premium-card {
+  background: theme.$white;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-default;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: 0.25s ease;
+
+  &:hover {
+    box-shadow: theme.$shadow-primary;
+    transform: translateY(-2px);
+  }
+}
+
+/* ======================================================
+   CARD HEADER
+====================================================== */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    color: theme.$primary;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: theme.$primary-dark;
+  }
+}
+
+/* ======================================================
+   KEY VALUE GRID (IMPORTANT UX SECTION)
+====================================================== */
+.kv-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kv-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  padding: 12px 14px;
+
+  background: theme.$light-bg;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-default;
+
+  label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: theme.$text-medium;
+  }
+
+  .val {
+    font-size: 14px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    word-break: break-word;
+  }
+}
+
+/* ======================================================
+   CATEGORY TAG
+====================================================== */
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 10px;
+  border-radius: 6px;
+
+  background: rgba(11, 78, 179, 0.10);
+  color: theme.$primary;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ======================================================
+   ROLE CHIPS (READ ONLY)
+====================================================== */
+.role-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.role-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #e9f2ff, #f4f8ff);
+  border: 1px solid #cfe0ff;
+
+  font-size: 12px;
+  font-weight: 600;
+  color: theme.$primary;
+
+  transition: 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(11, 78, 179, 0.12);
+  }
+}
+
+/* ======================================================
+   DYNAMIC FIELDS (PROFESSIONAL KEY-VALUE VIEW)
+====================================================== */
+.dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dynamic-item {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  padding: 10px 12px;
+
+  background: theme.$light-bg;
+  border: 1px solid theme.$primary-border;
+  border-radius: theme.$radius-default;
+
+  gap: 12px;
+
+  .key {
+    font-size: 12px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+  }
+
+  .dots {
+    border-bottom: 1px dotted theme.$primary-border;
+    height: 1px;
+    width: 100%;
+  }
+
+  .value {
+    font-size: 13px;
+    font-weight: 500;
+    color: theme.$primary-dark;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 6px;
+
+    .dots {
+      display: none;
+    }
+
+    .value {
+      text-align: left;
+    }
+  }
+}
+
+/* ======================================================
+   EMPTY STATE
+====================================================== */
+.empty-msg {
+  text-align: center;
+  font-size: 13px;
+  color: theme.$text-medium;
+  padding: 10px;
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+.dossier-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding-top: 16px;
+  border-top: 1px solid theme.$primary-border;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.audit-trail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 13px;
+  color: theme.$text-medium;
+}
+
+/* ======================================================
+   BUTTONS (KEEP EXACT THEME STYLE)
+====================================================== */
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-left: 5px;
+}
+
+.btn-primary {
+  background: theme.$primary;
+  color: theme.$white;
+
+  border: none;
+  padding: 10px 18px;
+  border-radius: theme.$radius-default;
+
+  font-weight: 600;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  cursor: pointer;
+
+  &:hover {
+    background: theme.$primary-dark;
+  }
+}
+
+.btn-secondary {
+  background: theme.$white;
+  border: 1px solid theme.$primary-border;
+  color: theme.$primary;
+
+  padding: 10px 18px;
+  border-radius: theme.$radius-default;
+
+  font-weight: 600;
+
+  &:hover {
+    background: theme.$light-bg;
+  }
+}
+
+
+
+/* ======================================================
+   STATUS BADGE HEADER (THEME BASED BANKING STYLE)
+====================================================== */
+
+.badge-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 18px 0 24px 0;
+}
+
+/* =========================
+   BASE BADGE
+========================= */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  border: 1px solid theme.$primary-border;
+
+  background: theme.$white;
+  color: theme.$primary;
+
+  box-shadow: theme.$shadow-primary;
+
+  transition: all 0.25s ease-in-out;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: theme.$primary;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: theme.$button-shadow;
+    background: theme.$light-bg;
+  }
+}
+
+/* =========================
+   CREATE STATE
+========================= */
+.status-badge.create {
+  background: theme.$white;
+  color: theme.$primary;
+  border-color: theme.$primary-border;
+
+  mat-icon {
+    color: theme.$primary;
+  }
+}
+
+/* =========================
+   DRAFT STATE
+========================= */
+.status-badge.draft {
+  background: theme.$white;
+  color: theme.$primary-dark;
+  border-color: theme.$primary-border;
+
+  mat-icon {
+    color: theme.$primary-dark;
+  }
+}
+
+/* =========================
+   SUBMITTED STATE
+========================= */
+.status-badge.submitted {
+  background: theme.$white;
+  color: theme.$primary;
+  border-color: theme.$primary-border;
+
+  mat-icon {
+    color: theme.$primary;
+  }
+}
+
+/* =========================
+   APPROVED STATE
+========================= */
+.status-badge.approved {
+  background: theme.$primary;
+  color: theme.$white;
+  border-color: theme.$primary;
+
+  mat-icon {
+    color: theme.$white;
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .status-badge {
+    font-size: 11px;
+    padding: 8px 14px;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 16px;
+    }
+  }
+}

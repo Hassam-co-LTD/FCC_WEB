@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,17 +11,19 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
+import { MatNativeDateModule } from '@angular/material/core';
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
+import { MatCard } from '@angular/material/card';
+
 @Component({
-  selector: 'app-customer-profile',
+  selector: 'app-account-types',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -29,21 +32,24 @@ import { ApiService } from '../../../../../core/services/api.service';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule,
-
-    
+    MatCard
   ],
   templateUrl: './create-account-types.html',
   styleUrls: ['./create-account-types.scss']
 })
-export class CustomerAccountMaster implements OnInit {
+export class CreateAccountTypes implements OnInit {
 
   accountForm!: FormGroup;
-  storeAccountMaster: any = {};
-  storeCities: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+
+  storeAccount: any = {};
+  fields: any[] = [];
+  storeDynamicFieldsResponse: any[] = [];
+  storeCities = [];
 
   isEditMode = false;
   isOpen = true;
+  isDynamicFieldsOpen = true;
 
   constructor(
     private fb: FormBuilder,
@@ -53,112 +59,179 @@ export class CustomerAccountMaster implements OnInit {
     private location: Location
   ) {}
 
+  // ================= INIT =================
   ngOnInit(): void {
     this.buildForm();
-    this.loadAccountMaster();
+    this.loadDynamicFields();
     this.getAllCities();
   }
 
-  
+  // ================= FORM =================
   private buildForm(): void {
-  this.accountForm = this.fb.group({
-    typeName: [''],        // Account Type Name
-    description: [''],     // Description of the account type
-    accountStatus: [''] // Active / Inactive
-  });
-}
-
-
-  private loadAccountMaster(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loading AccountMaster with ID:', id);
-     if (!isNaN(id)) {
-      this.isEditMode = true;
-
-      this.api.getTnxById(id,"AccountMaster").subscribe({
-        next: res => {
-          this.storeAccountMaster = res;
-          console.log('get AccountMaster By:', res);
-          this.accountForm.patchValue(res);
-        },
-        error: err => console.error('Load failed', err)
-      });
-    }
-  }
-
-  // ---------------- CREATE ----------------
-  onSave(): void {
-    console.log("AccountRequestData ",this.accountForm)
-    if (this.accountForm.invalid) return;
- 
-    const payload = this.accountForm.getRawValue();
-    console.log('Payload to save:', payload);
-    
-    this.api.saveTnx(payload, 'AccountMaster').subscribe({
-      next: res => {
-        console.log("Saved response:", res);
-        Swal.fire('Saved!', 'AccountMaster saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/account-types-inquiry'] ));
-      },
-      error: err => console.error('Save failed', err)
+    this.accountForm = this.fb.group({
+      typeName: ['', Validators.required],
+      description: ['', Validators.required],
+      accountStatus: ['A', Validators.required]
     });
   }
 
-  // ---------------- UPDATE ----------------
-  update(id:number): void {
+  // ================= LOAD DYNAMIC FIELDS =================
+  private loadDynamicFields(): void {
+    this.api.getFieldsByScreenAndStatus('AccountTypes', 'A').subscribe({
+      next: (res: any) => {
+
+        this.fields = res;
+
+        const group: any = {};
+
+        // FIX: use fieldId instead of fieldName
+        this.fields.forEach((f: any) => {
+          group[f.fieldId] = new FormControl('');
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        this.loadAccountMaster();
+      },
+      error: err => console.error('Dynamic field load failed', err)
+    });
+  }
+
+  // ================= LOAD MAIN =================
+  private loadAccountMaster(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) return;
+
+    this.isEditMode = true;
+
+    this.api.getTnxById(id, 'AccountMaster').subscribe({
+      next: (res: any) => {
+
+        this.storeAccount = res;
+        console.log("accout master loaded ", this.storeAccount)
+        this.storeDynamicFieldsResponse = res.dynamicFields || [];
+         
+        this.accountForm.patchValue(res);
+
+        this.patchDynamicValues();
+      },
+      error: err => console.error('Load failed', err)
+    });
+  }
+
+  // ================= PATCH DYNAMIC =================
+  private patchDynamicValues(): void {
+
+    if (!this.dynamicFieldsForm || !this.fields.length) return;
+
+    const patch: any = {};
+
+    // FIX: direct mapping using fieldId
+    this.storeDynamicFieldsResponse.forEach(saved => {
+      patch[saved.fieldId] = saved.value || '';
+    });
+
+    this.dynamicFieldsForm.patchValue(patch);
+  }
+
+  // ================= SAVE =================
+  onSave(): void {
+
+    if (this.accountForm.invalid || this.dynamicFieldsForm.invalid) return;
+
+    const dynamicPayload = this.fields.map(f => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm.get(f.fieldId)?.value || ''
+    }));
+
+    const payload = {
+      ...this.accountForm.getRawValue(),
+      dynamicFields: dynamicPayload
+    };
+
+    this.api.saveTnx(payload, 'AccountMaster').subscribe({
+      next: () => {
+        Swal.fire('Saved!', 'Account Type saved successfully', 'success')
+          .then(() => this.router.navigate(['/admin/account-types-inquiry']));
+      },
+      error: err => Swal.fire('Error', 'Save failed', 'error')
+    });
+  }
+
+  // ================= UPDATE =================
+  update(id: number): void {
+
     if (this.accountForm.invalid) return;
 
-    const payload = this.accountForm.getRawValue();
+    const dynamicPayload = this.fields.map(f => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm.get(f.fieldId)?.value || ''
+    }));
 
-    this.api.updateTnx(payload, 'AccountMaster',id).subscribe({
+    const payload = {
+      ...this.accountForm.getRawValue(),
+      dynamicFields: dynamicPayload
+    };
+
+    this.api.updateTnxx(payload, `AccountMaster/${id}`).subscribe({
       next: () => {
-        Swal.fire('Updated!', 'AccountMaster updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/edity-accounts', id]));
+        Swal.fire('Updated!', 'Account Type updated successfully', 'success')
+          .then(() => this.router.navigate(['/admin/account-types-inquiry']));
       },
       error: err => console.error('Update failed', err)
     });
   }
 
-  
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'AccountMaster is now Active', 'success')
-          .then(() => this.loadAccountMaster());
-      },
-      error: err => console.error('Activate failed', err)
+  // ================= WORKFLOW =================
+  submit(): void {
+    if (!this.storeAccount?.id) return;
+
+    this.api.setTnxByStatus('S', this.storeAccount.id, 'AccountMaster').subscribe({
+      next: () =>
+        Swal.fire('Submitted!', 'Account submitted successfully', 'success')
+          .then(() =>
+            this.router.navigate(['/admin/account-types-inquiry'], {
+              queryParams: { tabName: 'submitted' }
+            })
+          )
     });
   }
 
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'AccountMaster is now Inactive', 'success')
-          .then(() => this.loadAccountMaster());
-      },
-      error: err => console.error('Deactivate failed', err)
+  approve(id: number): void {
+    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
+      next: () =>
+        Swal.fire('Approved!', 'Account approved successfully', 'success')
+          .then(() =>
+            this.router.navigate(['/admin/account-types-inquiry'], {
+              queryParams: { tabName: 'approved' }
+            })
+          )
     });
   }
 
-  // ---------------- UI HELPERS ----------------
- isReadOnly(): boolean {
-  // New AccountMaster (no storeAccountMaster) → editable
-  if (!this.storeAccountMaster) {
-    return true;
+  reject(id: number): void {
+    this.api.setTnxByStatus('I', id, 'AccountMaster').subscribe({
+      next: () =>
+        Swal.fire('Rejected!', 'Account rejected successfully', 'success')
+          .then(() =>
+            this.router.navigate(['/admin/account-types-inquiry'], {
+              queryParams: { tabName: 'rejected' }
+            })
+          )
+    });
   }
 
-  // Existing AccountMaster:
-  // - Draft (D) → editable
-  // - Submitted (S), Approved (A) → read-only
-  // return  → editable
-  // - Submitted (S), Approved (A) → read-only
-  return false;
-} 
-
-
-
+  // ================= UI =================
   toggle(): void {
     this.isOpen = !this.isOpen;
+  }
+
+  toggleDynamicFields(): void {
+    this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
+  }
+
+  isReadOnly(): boolean {
+    return this.storeAccount?.recordStatus === 'A';
   }
 
   onBack(): void {
@@ -166,58 +239,17 @@ export class CustomerAccountMaster implements OnInit {
   }
 
   onCancel(): void {
-    this.accountForm .reset();
-  }
-  submit() {    
-    if (!this.storeAccountMaster?.id) return;
-    this.api.setTnxByStatus('S', this.storeAccountMaster.id, 'AccountMaster').subscribe({
-      next: (res) => {
-        console.log('Submited response:', res);
-        Swal.fire('Submitted!', 'AccountMaster submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/account-types-inquiry'],{ queryParams: { tabName: 'submitted' } }));
-      },  
-      error: err => console.error('Submit failed', err)
-    });
+    this.accountForm.reset();
+    this.dynamicFieldsForm.reset();
   }
 
- 
-
-
-  reject(id:number): void { 
-    if (!this.storeAccountMaster?.id) return;
-    this.api.setTnxByStatus('I', this.storeAccountMaster.id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Rejected!', 'AccountMaster rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/acount-types-inquiry'],{ queryParams: { tabName: 'Rejected' } }));
+  // ================= DROPDOWN =================
+  getAllCities(): void {
+    this.api.getTnxByStatus('A', 'city').subscribe({
+      next: (res: any) => {
+        this.storeCities = res;
       },
-      error: err => console.error('Reject failed', err)
+      error: err => console.error(err)
     });
-  } 
-
-  approve(id: number): void {
-  if (!this.storeAccountMaster?.id) return;
-
-  this.api.setTnxByStatus('A', this.storeAccountMaster.id, 'AccountMaster').subscribe({
-    next: (res) => {
-      console.log("approved transactions ",res)
-      Swal.fire('Approved!', 'AccountMaster approved successfully', 'success')
-        .then(() => 
-          this.router.navigate(['/admin/account-types-inquiry'], { queryParams: { tabName: 'approved' } })
-        );
-    },
-    error: err => console.error('Approve failed', err)
-  });
-}
-// get All Cities for dropdown
-getAllCities(): void {
- this.api.getTnxByStatus('A',"city").subscribe({
-  next: res => {
-    this.storeCities = res;
-    console.log('Active cities for dropdown:', res);
-    console.log('All cities:', res);
-  },
-  error: err => console.error('Failed to load cities', err)
-
-})
-}
+  }
 }

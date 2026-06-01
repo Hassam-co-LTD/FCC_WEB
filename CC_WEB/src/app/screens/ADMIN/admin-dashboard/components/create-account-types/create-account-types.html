@@ -1,152 +1,363 @@
-<!-- =========================
-     CREATE ACCOUNT TYPE PAGE
-========================= -->
+
 <div class="create-customer-page">
 
-  <!-- =========================
-       Page Header
-  ========================== -->
-  <div class="page-header">
-    <h1>Create Account Type</h1>
+  <!-- ================= HEADER STATUS ================= -->
+  <div class="badge-group">
+
+    <span class="status-badge"
+      [ngClass]="{
+        'create': !storeAccount?.recordStatus,
+        'draft': storeAccount?.recordStatus === 'I',
+        'submitted': storeAccount?.recordStatus === 'S',
+        'approved': storeAccount?.recordStatus === 'A'
+      }">
+
+      <mat-icon>
+        {{
+          !storeAccount?.recordStatus ? 'add_circle' :
+          storeAccount?.recordStatus === 'I' ? 'edit_note' :
+          storeAccount?.recordStatus === 'S' ? 'hourglass_top' :
+          'verified'
+        }}
+      </mat-icon>
+
+      {{
+        !storeAccount?.recordStatus ? 'CREATE' :
+        storeAccount?.recordStatus === 'I' ? 'DRAFT' :
+        storeAccount?.recordStatus === 'S' ? 'SUBMITTED' :
+        'APPROVED'
+      }}
+
+    </span>
+
   </div>
 
-  <!-- =========================
-       Form Wrapper (Hidden When Approved)
-  ========================== -->
-  <div class="customer-form-wrapper"
-       [ngClass]="{'hide-when-approved': storeAccountMaster?.recordStatus === 'A'}">
+  <!-- =========================================================
+       EDITABLE SECTION (NON APPROVED)
+  ========================================================== -->
+  <ng-container *ngIf="storeAccount?.recordStatus !== 'A'">
 
-    <!-- Section Header -->
-    <div class="section-header" (click)="toggle()">
-      <h2>Account Type Details</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+    <div class="customer-form-wrapper">
+
+      <!-- SECTION HEADER -->
+      <div class="section-header" (click)="toggle()">
+        <h2>Account Type Details</h2>
+        <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+
+      <!-- FORM -->
+      <div class="collapsible"
+           [class.open]="isOpen"
+           [formGroup]="accountForm">
+
+        <ng-container *ngIf="isOpen">
+
+          <mat-card class="info-card">
+
+            <div class="card-title">
+              <mat-icon>account_balance</mat-icon>
+              <span>Account Type Information</span>
+            </div>
+
+            <div class="data-grid form-grid">
+
+              <!-- TYPE -->
+              <div class="data-item field-group">
+                <label>Account Type</label>
+
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="typeName"
+                         [readonly]="isReadOnly()" />
+                </mat-form-field>
+              </div>
+
+              <!-- DESCRIPTION -->
+              <div class="data-item field-group full-width">
+                <label>Description</label>
+
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="description"
+                         [readonly]="isReadOnly()" />
+                </mat-form-field>
+              </div>
+
+              <!-- STATUS -->
+              <div class="data-item field-group">
+                <label>Status</label>
+
+                <mat-form-field appearance="outline">
+                  <mat-select formControlName="accountStatus"
+                              [disabled]="isReadOnly()">
+
+                    <mat-option value="A">Active</mat-option>
+                    <mat-option value="I">Inactive</mat-option>
+
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </div>
+
+          </mat-card>
+
+        </ng-container>
+
+      </div>
+
+      <!-- ================= DYNAMIC FIELDS ================= -->
+      <div class="section-header" (click)="toggleDynamicFields()">
+        <h2>Dynamic Fields</h2>
+        <mat-icon>
+          {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+
+      <div class="collapsible"
+           [class.open]="isDynamicFieldsOpen"
+           [formGroup]="dynamicFieldsForm">
+
+        <mat-card class="info-card">
+
+          <div class="card-title">
+            <mat-icon>dynamic_form</mat-icon>
+            <span>Additional Account Attributes</span>
+          </div>
+
+          <div class="data-grid form-grid">
+
+            <ng-container *ngFor="let field of fields">
+
+              <div class="data-item field-group">
+
+                <label>
+                  {{ field.label || field.fieldName }}
+                </label>
+
+                <ng-container [ngSwitch]="field.fieldType">
+
+                  <mat-form-field *ngSwitchCase="'text'" appearance="outline">
+                    <input matInput [formControlName]="field.fieldId" />
+                  </mat-form-field>
+
+                  <mat-form-field *ngSwitchCase="'number'" appearance="outline">
+                    <input matInput type="number"
+                           [formControlName]="field.fieldId" />
+                  </mat-form-field>
+
+                  <mat-form-field *ngSwitchCase="'date'" appearance="outline">
+                    <input matInput type="date"
+                           [formControlName]="field.fieldId" />
+                  </mat-form-field>
+
+                  <mat-form-field *ngSwitchCase="'select'" appearance="outline">
+
+                    <mat-select [formControlName]="field.fieldId">
+
+                      <mat-option value="">Select</mat-option>
+
+                      <mat-option *ngFor="let opt of field.options"
+                                  [value]="opt.value">
+                        {{ opt.text }}
+                      </mat-option>
+
+                    </mat-select>
+
+                  </mat-form-field>
+
+                </ng-container>
+
+              </div>
+
+            </ng-container>
+
+          </div>
+
+        </mat-card>
+
+      </div>
+
+      <!-- ================= ACTIONS ================= -->
+      <div class="customer-actions">
+
+        <ng-container *ngIf="!storeAccount?.recordStatus">
+
+          <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+          <button class="btn-save"
+                  [disabled]="!accountForm.valid"
+                  (click)="onSave()">Save</button>
+
+        </ng-container>
+
+        <ng-container *ngIf="storeAccount?.recordStatus === 'I'">
+
+          <button class="btn-back" (click)="onBack()">Back</button>
+          <button class="btn-update"
+                  [disabled]="!accountForm.valid"
+                  (click)="update(storeAccount.id)">Update</button>
+          <button class="btn-submit" (click)="submit()">Submit</button>
+
+        </ng-container>
+
+        <ng-container *ngIf="storeAccount?.recordStatus === 'S'">
+
+          <button class="btn-reject" (click)="reject(storeAccount.id)">Reject</button>
+          <button class="btn-approve" (click)="approve(storeAccount.id)">Approve</button>
+
+        </ng-container>
+
+      </div>
+
     </div>
 
-    <!-- Collapsible Form -->
-    <div class="collapsible"
-         [class.open]="isOpen"
-         [formGroup]="accountForm">
+  </ng-container>
 
-      <ng-container *ngIf="isOpen">
+  <!-- =========================================================
+       APPROVED VIEW (DOSSIER STYLE SAME AS CUSTOMER)
+  ========================================================== -->
+  <section class="dossier-container"
+           *ngIf="storeAccount"
+           [ngClass]="{ 'hide-when-approved': storeAccount?.recordStatus !== 'A' }">
 
-        <div class="form-grid form-grid-large">
+    <!-- HEADER -->
+    <header class="dossier-header">
 
-          <!-- Account Type Name -->
-          <div class="field-group">
-            <h4>Account Type</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput
-                     type="text"
-                     formControlName="typeName"
-                     placeholder="Enter Account Type Name"
-                     [readonly]="isReadOnly()" />
-            </mat-form-field>
+      <div class="status-strip"
+           [class.active]="storeAccount.accountStatus === 'A'"></div>
+
+      <div class="header-content">
+
+        <div class="identity-block">
+
+          <div class="avatar-circle">
+            {{ storeAccount?.typeName?.charAt(0)?.toUpperCase() || '?' }}
           </div>
 
-          <!-- Description -->
-          <div class="field-group full">
-            <h4>Description</h4>
-            <mat-form-field appearance="outline" class="full">
-              <input matInput
-                     type="text"
-                     formControlName="description"
-                     placeholder="Enter Description"
-                     [readonly]="isReadOnly()" />
-            </mat-form-field>
-          </div>
+          <div class="text-group">
 
-          <!-- Account Status -->
-          <div class="field-group">
-            <h4>Status</h4>
-            <mat-form-field appearance="outline" class="full">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="accountStatus"
-                          [disabled]="isReadOnly()"
-                          panelClass="white-dropdown">
-                <mat-option value="A">Active</mat-option>
-                <mat-option value="I">Inactive</mat-option>
-              </mat-select>
-            </mat-form-field>
+            <h1 class="customer-name">
+              {{ storeAccount.typeName }}
+            </h1>
+
+            <span class="customer-id">
+              Ref: <code>{{ storeAccount.id }}</code>
+            </span>
+
           </div>
 
         </div>
 
-      </ng-container>
-    </div>
+        <div class="badge-group">
 
-    <!-- =========================
-         ACTION BUTTONS (Inside Wrapper)
-    ========================== -->
-    <div class="customer-actions">
+          <span class="status-badge"
+                [attr.data-status]="storeAccount.accountStatus">
 
-      <!-- New Mode -->
-      <ng-container *ngIf="!storeAccountMaster || !storeAccountMaster.recordStatus">
-        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="btn-save"
-                [disabled]="!accountForm.valid"
-                (click)="onSave()">Save</button>
-      </ng-container>
+            {{ storeAccount.accountStatus === 'A' ? 'ACTIVE' : 'INACTIVE' }}
 
-      <!-- Edit Mode - Draft -->
-      <ng-container *ngIf="isEditMode && storeAccountMaster?.recordStatus === 'I'">
-        <button class="btn-back" (click)="onBack()">Back</button>
-        <button class="btn-update"
-                [disabled]="!accountForm.dirty || !accountForm.valid"
-                (click)="update(storeAccountMaster.id)">Update</button>
-        <button class="btn-submit"
-                [disabled]="!accountForm.valid"
-                (click)="submit()">Submit</button>
-      </ng-container>
+          </span>
 
-      <!-- Edit Mode - Submitted -->
-      <ng-container *ngIf="isEditMode && storeAccountMaster?.recordStatus === 'S'">
-        <button class="btn-reject"
-                (click)="reject(storeAccountMaster.id)">Reject</button>
-        <button class="btn-approve"
-                (click)="approve(storeAccountMaster.id)">Approve</button>
-      </ng-container>
+        </div>
 
-    </div>
-
-  </div> <!-- END FORM WRAPPER -->
-
-  <!-- =========================
-       Approved View Mode
-  ========================== -->
-  <div class="approved-container"
-       [ngClass]="{'hide-when-approved': storeAccountMaster?.recordStatus !== 'A'}">
-
-    <div class="approved-header">
-      <span class="approved-badge">✔ Approved</span>
-      <h3>Account Type Details</h3>
-    </div>
-
-    <div class="approved-info">
-      <div class="info-item">
-        <span class="key">Account Type:</span>
-        <span class="value">{{ storeAccountMaster.typeName }}</span>
       </div>
 
-      <div class="info-item">
-        <span class="key">Description:</span>
-        <span class="value">{{ storeAccountMaster.description }}</span>
-      </div>
+    </header>
 
-      <div class="info-item">
-        <span class="key">Status:</span>
-        <span class="value">{{ storeAccountMaster.accountStatus }}</span>
-      </div>
+    <!-- CORE INFO -->
+    <div class="dossier-grid">
+
+      <mat-card class="info-card">
+
+        <div class="card-title">
+          <mat-icon>account_balance</mat-icon>
+          <span>Account Type Information</span>
+        </div>
+
+        <div class="data-grid">
+
+          <div class="data-item">
+            <label>Account Type</label>
+            <span class="value">{{ storeAccount.typeName }}</span>
+          </div>
+
+          <div class="data-item">
+            <label>Status</label>
+            <span class="value">
+              {{ storeAccount.accountStatus === 'A' ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+
+          <div class="data-item full-width">
+            <label>Description</label>
+            <span class="value">{{ storeAccount.description || '—' }}</span>
+          </div>
+
+        </div>
+
+      </mat-card>
+
     </div>
 
-    <!-- Approved Actions -->
-    <div class="approved-actions">
-      <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update"
-              (click)="reject(storeAccountMaster.id)">
-        Amend
-      </button>
-    </div>
+    <!-- DYNAMIC FIELDS -->
+    <section class="dynamic-fields-section"
+             *ngIf="fields?.length">
 
-  </div>
+      <div class="section-title">
+        <mat-icon>dynamic_form</mat-icon>
+        <span>Additional Account Attributes</span>
+
+        <span class="count-pill">
+          {{ fields.length }} Fields
+        </span>
+      </div>
+
+      <div class="additional-grid">
+
+        <div class="additional-card"
+             *ngFor="let field of fields">
+
+          <div class="field-label">
+            {{ field.label || field.fieldName }}
+          </div>
+
+          <div class="field-value">
+            {{ dynamicFieldsForm.get(field.fieldId)?.value || '—' }}
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="dossier-footer">
+
+      <div class="audit-info">
+        <mat-icon>history</mat-icon>
+
+        <span>
+          Last Updated:
+          <strong>{{ storeAccount.updatedOn | date:'medium' }}</strong>
+        </span>
+
+      </div>
+
+      <div class="footer-actions">
+
+        <button mat-stroked-button color="primary" (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
+
+        <button mat-flat-button color="warn"
+                (click)="reject(storeAccount.id)">
+          <mat-icon>edit</mat-icon>
+          Amend
+        </button>
+
+      </div>
+
+    </footer>
+
+  </section>
 
 </div>

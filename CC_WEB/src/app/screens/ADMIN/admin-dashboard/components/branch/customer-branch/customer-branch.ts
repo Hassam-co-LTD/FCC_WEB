@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatCard } from '@angular/material/card';
 
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
@@ -30,6 +31,7 @@ import { ApiService } from '../../../../../../core/services/api.service';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatCard
   ],
   templateUrl: './customer-branch.html',
   styleUrls: ['./customer-branch.scss']
@@ -173,28 +175,46 @@ onSave(): void {
   });
 }
   // ================= UPDATE =================
-  update(id:number): void {
-    if (this.branchForm.invalid) return;
+ // ---------------- UPDATE ----------------
+update(id:number): void {
 
-    const branchId = this.branchForm.value.branchId;
+  if (this.branchForm.invalid) return;
 
-    const dynamicPayload = this.fields?.map(f => ({
-      fieldId: f.fieldId,
-      value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
-    })) || [];
+  const branchId = this.branchForm.value.branchId;
 
-    const branchPayload = {
-      ...this.branchForm.getRawValue(),
-      dynamicFields: dynamicPayload,
-      updatedOn: new Date().toISOString().split('.')[0]
-    };
+  const dynamicPayload = this.fields?.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+  })) || [];
 
-    this.api.updateTnxx(branchPayload, `branch/update/${branchId}`).subscribe({
-      next: () => console.log('Branch updated successfully'),
-      error: (err) => console.error('Branch update failed', err)
-    });
-  }
+  const branchPayload = {
+    ...this.branchForm.getRawValue(),
+    dynamicFields: dynamicPayload,
+    updatedOn: new Date().toISOString().split('.')[0]
+  };
 
+  console.log('Payload to update:', branchPayload);
+
+  this.api.updateTnxx(branchPayload, `branch/update/${branchId}`).subscribe({
+
+    next: () => {
+
+      Swal.fire(
+        'Updated!',
+        'Branch and Additional Fields updated successfully',
+        'success'
+      );
+
+      console.log('Branch updated successfully');
+    },
+
+    error: err => {
+      console.error('Branch update failed', err);
+    }
+
+  });
+
+}
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeBranch?.id) return;

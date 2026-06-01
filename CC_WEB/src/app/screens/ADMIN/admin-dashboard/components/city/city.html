@@ -1,10 +1,38 @@
+ <div class="badge-group">
+
+  <span class="status-badge"
+
+    [ngClass]="{
+      'create': !storeCity?.recordStatus,
+      'draft': storeCity?.recordStatus === 'I',
+      'submitted': storeCity?.recordStatus === 'S',
+      'approved': storeCity?.recordStatus === 'A'
+    }">
+
+    <mat-icon>
+      {{
+        !storeCity?.recordStatus ? 'add_circle' :
+        storeCity?.recordStatus === 'I' ? 'edit_note' :
+        storeCity?.recordStatus === 'S' ? 'hourglass_top' :
+        'verified'
+      }}
+    </mat-icon>
+
+    {{
+      !storeCity?.recordStatus ? 'Create' :
+      storeCity?.recordStatus === 'I' ? 'Draft' :
+      storeCity?.recordStatus === 'S' ? 'Submitted' :
+      'Approved'
+    }}
+
+  </span>
+
+</div>
+
 <div class="create-customer-page">
 
   <!-- Header -->
-  <div class="page-header">
-    <h1>Create City</h1>
-  </div>
-
+ 
   <!-- =========================
        EDITABLE CITY FORM
   ========================== -->
@@ -132,59 +160,171 @@
 
   <!-- =========================
        APPROVED CITY SECTION
-  ========================== -->
-  <!-- =========================
-     APPROVED CITY DETAILS
-========================== -->
-<div *ngIf="storeCity?.recordStatus === 'A'" class="approved-container">
+  <section class="dossier-container"
+  [ngClass]="{'hide-when-approved': storeCity?.recordStatus !== 'A'}">
 
-  <!-- Header -->
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h3>City Approved Details</h3>
-  </div>
+  <!-- ================= HEADER ================= -->
+  <header class="dossier-header">
 
-  <!-- City Info -->
-  <div class="approved-info">
-    <div class="info-item">
-      <span class="key">City ID</span>
-      <span class="value">{{ storeCity.cityId }}</span>
-    </div>
+  <div class="status-strip active"></div>
 
-    <div class="info-item">
-      <span class="key">City Name</span>
-      <span class="value">{{ storeCity.cityName }}</span>
-    </div>
+  <div class="header-content">
 
-    <div class="info-item">
-      <span class="key">State</span>
-      <span class="value">{{ storeCity.state }}</span>
-    </div>
+    <div class="identity-block">
 
-    <div class="info-item">
-      <span class="key">Country</span>
-      <span class="value">{{ storeCity.country }}</span>
-    </div>
-
-    <!-- Dynamic Fields Heading -->
-    <div class="info-item" style="grid-column: 1 / -1;">
-      <h3 style="margin: 10px 0;">City Dynamic Fields</h3>
-    </div>
-
-    <!-- Dynamic Fields -->
-    <ng-container *ngIf="storeCity.dynamicFields?.length">
-      <div class="info-item" *ngFor="let field of storeCity.dynamicFields">
-        <span class="key">{{ field.label || field.fieldName }}</span>
-        <span class="value">{{ field.value }}</span>
+      <div class="avatar-circle">
+        {{ storeCity?.cityName?.trim()?.charAt(0)?.toUpperCase() || 'C' }}
       </div>
-    </ng-container>
+
+      <div class="text-group">
+        <h1 class="customer-name">
+          {{ storeCity.cityName | titlecase }}
+        </h1>
+
+        <span class="customer-id">
+          City Ref:
+          <code>{{ storeCity.cityId }}</code>
+        </span>
+      </div>
+
+    </div>
+
+    <div class="badge-group">
+
+      <span class="status-badge" data-status="ACTIVE">
+        APPROVED
+      </span>
+
+    </div>
+
   </div>
 
-  <!-- Actions -->
-  <div class="approved-actions">
-    <button class="btn-back" (click)="onBack()">← Back</button>
-    <button class="btn-edit" (click)="reject(storeCity.id)">Amend</button>
-  </div>
+</header>
+
+<!-- ================= CORE INFO ================= -->
+<div class="dossier-grid">
+
+  <mat-card class="info-card">
+
+    <div class="card-title">
+      <mat-icon>location_city</mat-icon>
+      <span>City Information</span>
+    </div>
+
+    <div class="data-grid">
+
+      <div class="data-item">
+        <label>City ID</label>
+        <span class="value val-mono">
+          {{ storeCity.cityId }}
+        </span>
+      </div>
+
+      <div class="data-item">
+        <label>City Name</label>
+        <span class="value">
+          {{ storeCity.cityName }}
+        </span>
+      </div>
+
+      <div class="data-item">
+        <label>State</label>
+        <span class="value">
+          {{ storeCity.state }}
+        </span>
+      </div>
+
+      <div class="data-item">
+        <label>Country</label>
+        <span class="value">
+          {{ storeCity.country }}
+        </span>
+      </div>
+
+      <div class="data-item">
+        <label>Record Status</label>
+        <span class="value">
+          {{ storeCity.recordStatus }}
+        </span>
+      </div>
+
+    </div>
+
+  </mat-card>
 
 </div>
-</div>
+
+<!-- ================= DYNAMIC FIELDS ================= -->
+<section class="dynamic-fields-section"
+  *ngIf="storeCity.dynamicFields?.length">
+
+  <div class="section-title">
+
+    <mat-icon>analytics</mat-icon>
+
+    <span>Additional City Attributes</span>
+
+    <span class="count-pill">
+      {{ storeCity.dynamicFields.length }} Fields
+    </span>
+
+  </div>
+
+  <div class="additional-grid">
+
+    <div class="additional-card"
+      *ngFor="let field of storeCity.dynamicFields">
+
+      <div class="field-label">
+        {{ field.fieldId }}
+      </div>
+
+      <div class="field-value">
+        {{ field.value || '—' }}
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="dossier-footer">
+
+  <div class="audit-info">
+
+    <mat-icon>history</mat-icon>
+
+    <span>
+      Last Updated:
+      <strong>
+        {{ storeCity.updatedOn | date:'medium' }}
+      </strong>
+    </span>
+
+  </div>
+
+  <div class="footer-actions">
+
+    <button mat-stroked-button
+      color="primary"
+      (click)="onBack()">
+
+      <mat-icon>arrow_back</mat-icon>
+      Back
+
+    </button>
+
+    <button mat-flat-button
+      color="warn"
+      (click)="reject(storeCity.id)">
+
+      <mat-icon>edit</mat-icon>
+      Amend Record
+
+    </button>
+
+  </div>
+
+</footer>

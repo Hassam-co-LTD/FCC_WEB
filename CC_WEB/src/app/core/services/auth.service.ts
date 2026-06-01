@@ -80,7 +80,7 @@ export class AuthService {
     return parsed.userId?.toString() || null;
   }
 
-  getToken(): string | null {
+ getToken(): string | null {
   return sessionStorage.getItem('token');
 }
   /** Get role (ADMIN / USER) */

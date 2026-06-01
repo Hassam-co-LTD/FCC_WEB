@@ -6,9 +6,38 @@
   <!-- =========================
        Page Header
   ========================== -->
-  <div class="page-header">
-    <h1>Create Client User</h1>
+ <!-- ================= PAGE HEADER ================= -->
+  <div class="badge-group">
+
+    <!-- RECORD STATUS -->
+    <span class="status-badge"
+      [ngClass]="{
+        'create': !storeClientUser?.recordStatus,
+        'draft': storeClientUser?.recordStatus === 'I',
+        'submitted': storeClientUser?.recordStatus === 'S',
+        'approved': storeClientUser?.recordStatus === 'A'
+      }">
+
+      <mat-icon>
+        {{
+          !storeClientUser?.recordStatus ? 'add_circle' :
+          storeClientUser?.recordStatus === 'I' ? 'edit_note' :
+          storeClientUser?.recordStatus === 'S' ? 'hourglass_top' :
+          'verified'
+        }}
+      </mat-icon>
+
+      {{
+        !storeClientUser?.recordStatus ? 'CREATE' :
+        storeClientUser?.recordStatus === 'I' ? 'DRAFT' :
+        storeClientUser?.recordStatus === 'S' ? 'SUBMITTED' :
+        'APPROVED'
+      }}
+
+    </span>
+
   </div>
+
 
   <!-- =========================
        Client User Form Container
@@ -42,6 +71,16 @@
               [readonly]="isReadOnly()"  />
             </mat-form-field>
           </div>
+
+
+          <div class="field-group">
+            <h4>email</h4>
+            <mat-form-field appearance="outline" class="full">
+              <input matInput type="text" formControlName="email" placeholder="User email" 
+              [readonly]="isReadOnly()"  />
+            </mat-form-field>
+          </div>
+
 
           <div class="field-group">
             <h4>Password</h4>
@@ -95,8 +134,10 @@
   <!-- =========================
        USER DETAILS + ROLES
   ========================== -->
-  <div class="user-details-roles-container" *ngIf="storeClientUser">
-
+  <div
+  class="user-details-roles-container"
+  *ngIf="hasClientUser"
+  [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
     <!-- ================= ROLES ASSIGNMENT ================= -->
     <section class="card collapsible-card roles-section">
       <div class="card-header" (click)="toggleRoles()">
@@ -127,17 +168,19 @@
         </div>
 
         <!-- Currently Assigned Roles -->
-        <div class="assigned-roles" *ngIf="userAssignedRoles?.length">
-          <p><strong>Currently Assigned Roles:</strong></p>
-          <ul>
-            <li *ngFor="let r of userAssignedRoles">
-              {{ getRoleName(r.roleId) }}
-              <button mat-icon-button color="warn" (click)="deleteRole(r.roleId)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </li>
-          </ul>
-        </div>
+        <div class="assigned-roles" *ngIf="userAssignedRoles && userAssignedRoles.length > 0">
+  <p><strong>Currently Assigned Roles:</strong></p>
+
+  <ul>
+    <li *ngFor="let r of userAssignedRoles">
+      {{ r.roleDesc }}
+      
+      <button mat-icon-button color="warn" (click)="deleteRole(r.roleId)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </li>
+  </ul>
+</div>
 
         <div *ngIf="!userAssignedRoles?.length">
           <p>No roles assigned yet.</p>
@@ -149,7 +192,7 @@
 
    <!-- ================= DYNAMIC FIELDS ================= -->
 <div class="customer-form-wrapper dynamic-fields-section"
-     *ngIf="fields?.length && dynamicFieldsForm">
+     [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
   <div class="section-header" (click)="toggleDynamicFields()">
     <h2>Additional Fields</h2>
     <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
@@ -195,6 +238,7 @@
 
   </div>
 </div>
+<br><br>
    <!-- ---------------- FORM ACTIONS ---------------- -->
     <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
@@ -216,50 +260,222 @@
   </div>
 
   <!-- ---------------- APPROVED VIEW ---------------- -->
-  <div class="approved-container" [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus !== 'A'}">
-    <div class="approved-header">
-      <span class="approved-badge">✔ Approved</span>
-      <h3>Client User Details</h3>
-    </div>
-
-    <div class="approved-info">
-      <div class="info-item"><span class="key">Login ID:</span> <span class="value">{{ storeClientUser?.loginId }}</span></div>
-      <div class="info-item"><span class="key">User Category:</span> <span class="value">{{ storeClientUser?.userCategory }}</span></div>
-      <div class="info-item"><span class="key">Company:</span> <span class="value">{{ storeClientUser?.companyId }}</span></div>
-      <div class="info-item"><span class="key">User Status:</span> <span class="value">{{ storeClientUser?.recordStatus }}</span></div>
-    </div>
-  </div>
-
   <!-- =========================
-     APPROVED DYNAMIC FIELDS
-========================== -->
-<div class="approved-container"
-     *ngIf="storeClientUser?.recordStatus === 'A' && storeClientUser?.dynamicFields?.length">
+     APPROVED VIEW (DOSSIER STYLE)
+========================= -->
+<section class="dossier-premium-view"
+         *ngIf="storeClientUser?.recordStatus === 'A'">
 
-  <!-- Header -->
-  <div class="approved-header">
-   
-    <h3>Client User Additional Fields</h3>
-  </div>
+  <!-- ================= HEADER ================= -->
+  <header class="dossier-premium-header">
+    <div class="header-inner">
 
-  <!-- Dynamic Fields -->
-  <div class="approved-info">
+      <div class="profile-identity">
 
-    <ng-container *ngFor="let field of storeClientUser?.dynamicFields">
+        <div class="premium-avatar">
+          {{ storeClientUser?.userName?.charAt(0)?.toUpperCase() || '?' }}
+        </div>
 
-      <div class="info-item">
-        <span class="key">{{ field.label || field.fieldName }}</span>
-        <span class="value">{{ field.value }}</span>
+        <div>
+          <h1 class="user-full-name">
+            {{ storeClientUser?.userName | titlecase }}
+          </h1>
+
+          <div class="user-meta">
+            Login ID:
+            <span class="meta-value">{{ storeClientUser?.loginId }}</span>
+          </div>
+        </div>
+
       </div>
 
-    </ng-container>
+      <span class="status-pill"
+            [ngClass]="storeClientUser?.userStatus === 'A' ? 'active' : 'inactive'">
+
+        <mat-icon>
+          {{ storeClientUser?.userStatus === 'A' ? 'check_circle' : 'block' }}
+        </mat-icon>
+
+        {{ storeClientUser?.userStatus === 'A' ? 'ACTIVE' : 'INACTIVE' }}
+      </span>
+
+    </div>
+  </header>
+
+  <!-- ================= MAIN GRID ================= -->
+  <div class="dossier-content-grid">
+
+    <!-- ========== USER CORE INFO ========== -->
+    <mat-card class="premium-card">
+
+      <div class="card-title-row">
+        <mat-icon>person</mat-icon>
+        <h3>User Information</h3>
+      </div>
+
+      <div class="kv-grid">
+
+        <div class="kv-pair">
+          <label>User ID</label>
+          <span class="val">{{ storeClientUser?.id }}</span>
+        </div>
+
+        <!-- will display after adding the proper app user ID -->
+        <!-- <div class="kv-pair">
+          <label>App User ID</label>
+          <span class="val">{{ storeClientUser?.appUserId }}</span>
+        </div> -->
+
+        <div class="kv-pair">
+          <label>Login ID</label>
+          <span class="val">{{ storeClientUser?.loginId }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>User Name</label>
+          <span class="val">{{ storeClientUser?.userName }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>User Category</label>
+          <span class="category-tag">
+            {{ storeClientUser?.userCategory === 'A' ? 'ADMIN' : 'USER' }}
+          </span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Company</label>
+          <span class="val">{{ getCompanyName(storeClientUser?.companyId) }}</span>
+        </div>
+
+      </div>
+    </mat-card>
+
+    <!-- ========== AUDIT TRAIL ========== -->
+    <mat-card class="premium-card">
+
+      <div class="card-title-row">
+        <mat-icon>history</mat-icon>
+        <h3>Audit Trail</h3>
+      </div>
+
+      <div class="kv-grid">
+
+        <div class="kv-pair">
+          <label>Created By</label>
+          <span class="val">{{ storeClientUser?.createdBy || '—' }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Updated By</label>
+          <span class="val">{{ storeClientUser?.updatedBy || '—' }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Inputter ID</label>
+          <span class="val">{{ storeClientUser?.inputterId }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Authorizer</label>
+          <span class="val">{{ storeClientUser?.authorizerId || '—' }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Created On</label>
+          <span class="val">{{ storeClientUser?.createdOn | date:'medium' }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Updated On</label>
+          <span class="val">{{ storeClientUser?.updatedOn | date:'medium' }}</span>
+        </div>
+
+        <div class="kv-pair">
+          <label>Inputter Time</label>
+          <span class="val">{{ storeClientUser?.inputterDttm | date:'medium' }}</span>
+        </div>
+
+      </div>
+    </mat-card>
+
+    <!-- ========== ROLES ========== -->
+    <mat-card class="premium-card">
+
+      <div class="card-title-row">
+        <mat-icon>security</mat-icon>
+        <h3>Assigned Roles</h3>
+      </div>
+
+      <div class="role-cloud" *ngIf="userAssignedRoles?.length; else noRoles">
+
+        <span class="role-pill"
+              *ngFor="let role of userAssignedRoles">
+
+          {{ role.roleDesc }}
+
+        </span>
+
+      </div>
+
+      <ng-template #noRoles>
+        <p class="empty-msg">No roles assigned</p>
+      </ng-template>
+
+    </mat-card>
 
   </div>
 
-</div>
-  <div class="approved-actions" *ngIf="storeClientUser?.recordStatus === 'A'">
+  <!-- ========== DYNAMIC FIELDS ========== -->
+  <mat-card class="premium-card full-width"
+            *ngIf="storeClientUser?.dynamicFields?.length">
+
+    <div class="card-title-row">
+      <mat-icon>dynamic_form</mat-icon>
+      <h3>Dynamic Fields</h3>
+    </div>
+
+    <div class="dynamic-list">
+
+      <div class="dynamic-item"
+           *ngFor="let field of storeClientUser?.dynamicFields">
+
+        <span class="key">
+          {{ field.fieldId }}
+        </span>
+
+        <span class="dots"></span>
+
+        <span class="value">
+          {{ field.value }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </mat-card>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="dossier-footer">
+
+    <div class="audit-trail">
+      <mat-icon>update</mat-icon>
+      Last Updated: {{ storeClientUser?.updatedOn | date:'medium' }}
+    </div>
+
+    <div class="btn-group">
+
     <button class="btn-back" (click)="onBack()">Back</button>
-    <button class="btn-update" (click)="reject(storeClientUser.id)">Amend</button>
-  </div>
 
-</div>
+      <button class="btn-primary"
+              (click)="reject(storeClientUser?.id)">
+        <mat-icon>edit</mat-icon>
+        AMEND
+      </button>
+
+    </div>
+
+  </footer>
+
+</section>

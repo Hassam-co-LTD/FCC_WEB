@@ -141,41 +141,55 @@ onSave(): void {
   this.api.saveTnx(payload, 'currency').subscribe({
     next: () => {
       Swal.fire('Saved!', 'Currency and dynamic fields saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/currency-list']));
+        .then(() => this.router.navigate(['/admin/currency-inquiry']));
     },
     error: err => Swal.fire('Error', 'Currency save failed', 'error')
   });
 }
   // ---------------- UPDATE ----------------
   updateCurrency(): void {
-    if (this.currencyForm.invalid) return;
+  if (this.currencyForm.invalid) return;
 
-    const currencyCode = this.currencyForm.value.currencyCode;
-    const dynamicPayload = this.fields.map(f => ({
-      fieldId: f.fieldId,
-      value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
-    })) || [];
+  const dynamicPayload = this.fields.map(f => ({
+    fieldId: f.fieldId,
+    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
+  })) || [];
 
-    const payload = {
-      ...this.currencyForm.getRawValue(),
-      dynamicFields: dynamicPayload,
-      updatedOn: new Date().toISOString().split('.')[0]
-    };
+  const payload = {
+    ...this.currencyForm.getRawValue(),
+    dynamicFields: dynamicPayload,
+    updatedOn: new Date().toISOString().split('.')[0]
+  };
 
-    this.api.updateTnxx(payload, `currency/update/${currencyCode}`).subscribe({
-      next: () => console.log('Currency and dynamic fields updated successfully'),
-      error: err => console.error('Currency update failed', err)
-    });
-  }
+  this.api.updateTnxx(payload, `currency/update/${this.storeCurrency.currencyId}`).subscribe({
+    
+    next: () => {
+      Swal.fire(
+        'Updated!',
+        'Currency and Additional Fields updated successfully',
+        'success'
+      );
+    },
+
+    error: err => {
+      console.error('Currency update failed', err);
+    }
+
+  });
+}
 
   // ---------------- WORKFLOW ----------------
   submit(): void {
     if (!this.storeCurrency?.currencyCode) return;
 
-    this.api.setTnxByStatus('S', this.storeCurrency.currencyCode, 'currency').subscribe({
+    this.api.setTnxByStatus('S', this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']))
+         .then(() =>
+    this.router.navigate(['/admin/city-list'], {
+      queryParams: { tabName: 'submitted' }
+    })
+  )
     });
   }
 

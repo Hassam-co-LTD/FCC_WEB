@@ -57,15 +57,17 @@
           </div>
 
           <!-- Role Destination -->
-          <div class="field-group">
+           <div class="field-group">
             <h4>Role Destination</h4>
             <mat-form-field appearance="outline" class="full">
-              <input
-                matInput
-                type="text"
+              <mat-label>Role Destination</mat-label>
+              <mat-select
                 formControlName="roleDest"
-                placeholder="Role Destination"
-                [readonly]="isReadOnly()" />
+                [disabled]="isReadOnly()"
+                panelClass="white-dropdown">
+                <mat-option value="B">B</mat-option>
+                <mat-option value="C">C</mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
 
