@@ -58,15 +58,15 @@ export class LoginComponent {
 
   loginn() {
     // ✅ Dummy credentials
-    const DUMMY_LOGIN_ID = 'test';
-    const DUMMY_PASSWORD = 'test';
+    const DUMMY_LOGIN_ID = 'NBP01';
+    const DUMMY_PASSWORD = 'NBP';
 
     if (this.loginId === DUMMY_LOGIN_ID && this.password === DUMMY_PASSWORD) {
 
       // ✅ Mock user object (same structure as API response)
       const dummyUser = {
         loginId: this.loginId,
-        companyId: 'T_C',
+        companyId: 'NBP',
         companyType: 'C',   // C = Company
         userCategory: 'U',  // U = Normal User
         userStatus: 'A'
@@ -81,7 +81,7 @@ export class LoginComponent {
       Swal.fire({
         icon: 'success',
         title: 'Dummy Login Successful',
-        text: 'Welcome to Dashboard (Bypassed API)',
+        text: 'Welcome to Dashboard',
         timer: 1500,
         showConfirmButton: false
       });
@@ -90,7 +90,7 @@ export class LoginComponent {
       Swal.fire({
         icon: 'error',
         title: 'Invalid Credentials',
-        text: 'Use admin / admin123 for dummy login'
+        text: 'Use NBP / NBP for dummy login'
       });
     }
   }

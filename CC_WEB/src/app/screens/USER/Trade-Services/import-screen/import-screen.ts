@@ -325,7 +325,8 @@ export class ImportScreen implements OnInit {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
         // this.transactionService.addOrUpdateTransaction(res);
         this.snackBar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/inquiries']), 50);
+        setTimeout(() => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }
+        ), 50);
       },
       error: () => this.snackBar.open('Error saving draft', 'Close', { duration: 3000 })
     });
@@ -418,7 +419,7 @@ export class ImportScreen implements OnInit {
         );
 
         setTimeout(
-          () => this.router.navigate(['/import-screen/inquiries']),
+          () => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }),
           300
         );
       },
@@ -463,6 +464,8 @@ export class ImportScreen implements OnInit {
 
   private navigateBack(tab: string) {
     this.router.navigate(['/import-screen/inquiries'], {
+      relativeTo: this.route,
+      queryParamsHandling: 'merge',
       queryParams: { tab }
     });
   }

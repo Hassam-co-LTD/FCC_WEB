@@ -46,6 +46,9 @@ export class ApiService {
     return `${environment.gatewayUrl}/settlementsystem/api/v1`;
   }
 
+  private get baseeventUrl(): string {
+    return `${environment.gatewayUrl}/settlementsystem/api/import-lc/events`;
+  }
   // Admin/Security System (Login, Roles, Users)
   private get adminBaseUrl(): string {
     return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
@@ -90,16 +93,108 @@ export class ApiService {
 
 
   /* -------------------- API Methods -------------------- */
+
+  // getLatestApprovedEvent(tnxId: string): Observable<ImportLcTransaction> {
+  //   const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+  //   const headers = new HttpHeaders({ companyid: companyId });
+  //   return this.http.get<ImportLcTransaction>(
+  //     `${this.baseeventUrl}/latest/${tnxId}`,
+  //     { headers }
+  //   ).pipe(catchError(this.handleError));
+  // }
+
+  getAmendmentByTnxId(tnxId: string): Observable<ImportLcTransaction> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+
+    // fetches the pending(I) AMD event for this tnxId
+    return this.http.get<ImportLcTransaction>(
+      `${this.baseeventUrl}/amend/${tnxId}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+
   saveamendTransaction(tnxId: string, data: ImportLcTransaction): Observable<ImportLcTransaction> {
     return this.http.put<ImportLcTransaction>(
-      `${this.baseUrl}/importlc/amend/${tnxId}`,
+      `${this.baseeventUrl}/amend/${tnxId}`,
       data,
       {
         headers: { 'Content-Type': 'application/json' }
       }
     ).pipe(catchError(this.handleError));
   }
- 
+
+  // getApprovedLcForAmend() {
+  //   const companyId = sessionStorage.getItem('companyId')
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId ?? ''
+  //   });
+  //   return this.http.get<ImportLcTransaction[]>(
+  //     `${this.baseeventUrl}/amend/live-records`, { headers }
+  //   );
+  // }
+
+  getApprovedLcForAmend() {
+
+    const raw = sessionStorage.getItem('userData');
+
+    const user = raw ? JSON.parse(raw) : null;
+
+    const companyId = user?.companyId ?? '';
+
+    console.log("COMPANY ID =", companyId);
+
+    const headers = new HttpHeaders({
+      companyid: companyId
+    });
+
+    return this.http.get<ImportLcTransaction[]>(
+      `${this.baseeventUrl}/amend/live-records`,
+      { headers }
+    );
+  }
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
+  getAmendRecordTransactionsByStatus(eventLcStatus: string): Observable<ImportLcTransaction[]> {
+    const companyId = sessionStorage.getItem('companyId')
+    const headers = new HttpHeaders({
+      companyid: companyId ?? ''
+    });
+    return this.http.get<ImportLcTransaction[]>(`${this.baseeventUrl}/amend/records/${eventLcStatus}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  submitAmendment(eventRefNo: string, data: ImportLcTransaction): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/submit/${eventRefNo}`,
+      {data},   // ← empty body, backend ignores it
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  approveAmendment(eventRefNo: string, data: ImportLcTransaction): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/approve/${eventRefNo}`,
+      {data},
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  rejectAmendment(eventRefNo: string, reason: string): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/reject/${eventRefNo}`,
+      { rejectionReason: reason },
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+  // -------------------------------------------
   // Save LC Record (pending record) - status "I"
  
   // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {

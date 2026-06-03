@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   ImportlcFormTransactionService,
@@ -46,6 +47,7 @@ export class EnquiriesOfRecords implements OnInit {
     private api: ApiService,
     private transactionService: ImportlcFormTransactionService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -54,7 +56,18 @@ export class EnquiriesOfRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab');
+      if (
+        tab &&
+        this.tabs.some(t => t.key === tab)
+      ) {
+        this.activeTab = tab;
+      }
+
+      this.currentPage = 1;
     this.loadTransactions();
+    });
 
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList;
@@ -109,9 +122,14 @@ export class EnquiriesOfRecords implements OnInit {
   // }
 
   setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadTransactions();
+    // this.activeTab = tab;
+    // this.currentPage = 1;
+    // this.loadTransactions();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   // private loadByStatus(status: string): void {
