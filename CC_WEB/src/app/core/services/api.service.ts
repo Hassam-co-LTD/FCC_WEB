@@ -135,6 +135,17 @@ export class ApiService {
   //   );
   // }
 
+
+  getLiveEventHistory(): Observable<ImportLcTransaction[]> { // same as  getApprovedLcForAmend() just change name to show relevance
+    const raw = sessionStorage.getItem('userData');
+    const companyId = raw ? JSON.parse(raw)?.companyId ?? '' : '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<ImportLcTransaction[]>(
+      `${this.baseeventUrl}/amend/live-records`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
   getApprovedLcForAmend() {
 
     const raw = sessionStorage.getItem('userData');
@@ -163,6 +174,15 @@ export class ApiService {
     });
     return this.http.get<ImportLcTransaction[]>(`${this.baseeventUrl}/amend/records/${eventLcStatus}`, { headers })
       .pipe(catchError(this.handleError));
+  }
+
+  getAmendmentByEventRefNo(eventRefNo: string): Observable<ImportLcTransaction> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<ImportLcTransaction>(
+      `${this.baseeventUrl}/event/${eventRefNo}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
   }
 
   submitAmendment(eventRefNo: string, data: ImportLcTransaction): Observable<any> {
