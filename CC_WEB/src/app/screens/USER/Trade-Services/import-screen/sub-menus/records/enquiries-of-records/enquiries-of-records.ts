@@ -19,13 +19,14 @@ import { ApiService } from '../../../../../../../core/services/api.service';
   styleUrls: ['./enquiries-of-records.scss']
 })
 export class EnquiriesOfRecords implements OnInit {
+  currentPage = 1;
+  itemsPerPage = 10;
   allTransactions: ImportLcTransaction[] = [];
   filteredTransactions: ImportLcTransaction[] = [];
+  showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
-  showAdvanced = false;
-
   tabs = [
     { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
@@ -34,10 +35,6 @@ export class EnquiriesOfRecords implements OnInit {
     { key: 'rejected', label: 'Rejected' },
     // { key: 'response awaited', label: 'Response Awaited'}
   ];
-
-  currentPage = 1;
-  itemsPerPage = 10;
-
   sortColumn: keyof ImportLcTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 

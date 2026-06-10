@@ -146,25 +146,36 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
 
-  getApprovedLcForAmend() {
-
+  // Points to master LC records — one row per LC, no event history
+  getApprovedMasterLcRecords(): Observable<ImportLcTransaction[]> {
     const raw = sessionStorage.getItem('userData');
-
-    const user = raw ? JSON.parse(raw) : null;
-
-    const companyId = user?.companyId ?? '';
-
-    console.log("COMPANY ID =", companyId);
-
-    const headers = new HttpHeaders({
-      companyid: companyId
-    });
-
+    const companyId = raw ? JSON.parse(raw)?.companyId ?? '' : '';
+    const headers = new HttpHeaders({ companyid: companyId });
     return this.http.get<ImportLcTransaction[]>(
-      `${this.baseeventUrl}/amend/live-records`,
+      `${this.baseeventUrl}/amend/live-master-records`,
       { headers }
-    );
+    ).pipe(catchError(this.handleError));
   }
+
+  // getApprovedLcForAmend() {
+
+  //   const raw = sessionStorage.getItem('userData');
+
+  //   const user = raw ? JSON.parse(raw) : null;
+
+  //   const companyId = user?.companyId ?? '';
+
+  //   console.log("COMPANY ID =", companyId);
+
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId
+  //   });
+
+  //   return this.http.get<ImportLcTransaction[]>(
+  //     `${this.baseeventUrl}/amend/live-records`,
+  //     { headers }
+  //   );
+  // }
 
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getAmendRecordTransactionsByStatus(eventLcStatus: string): Observable<ImportLcTransaction[]> {
