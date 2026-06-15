@@ -36,6 +36,7 @@ export class LoginComponent implements OnInit {
   password = '';
   userStatus = 'A';
   hidePassword = true;
+  isDummyLogin=true;
 
   constructor(
     private auth: AuthService,

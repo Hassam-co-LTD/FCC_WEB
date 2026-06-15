@@ -12,11 +12,11 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
     },
-    {
-        path: 'signup',
-        loadComponent: () =>
-            import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
-    },
+    // {
+    //     path: 'signup',
+    //     loadComponent: () =>
+    //         import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
+    // },
 
     // Protected routes (with layout)
     {
@@ -27,7 +27,7 @@ export const routes: Routes = [
             // Admin-Dashboard
             // my routes 
 
-           {
+            {
                 path: "admin",
                 loadComponent: () =>
                     import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
@@ -55,32 +55,27 @@ export const routes: Routes = [
                             import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
                                 .then((m) => m.CreateCustomer),
                     },
-                    
-                {
-                    path:'create-branch',
-                    loadComponent : ()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
-                        .then((m)=> m.CustomerBranch)
+
+                    {
+                        path: 'create-branch',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
+                                .then((m) => m.CustomerBranch)
                     },
                     {
-                    path:'branch-list',
-                    loadComponent : ()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
-                        .then((m)=> m.BranchList)
+                        path: 'branch-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
+                                .then((m) => m.BranchList)
                     },
                     {
-                    path:'branch-inquiry',
-                    loadComponent : ()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
-                        .then((m)=> m.BranchList)
-                    },
-                     {
-                    path:'edit-branch/:id',
-                    loadComponent : ()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
-                        .then((m)=> m.CustomerBranch)
+                        path: 'branch-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
+                                .then((m) => m.BranchList)
                     },
                     {
+<<<<<<< HEAD
                     path:'create-city',
                     loadComponent:()=> 
                         import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
@@ -141,106 +136,31 @@ export const routes: Routes = [
                         loadComponent:()=> 
                             import("./screens/ADMIN/admin-dashboard/components/list-user-client/list-user-client").then((m)=> m.clientUsersList)
                         
+=======
+                        path: 'edit-branch/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
+                                .then((m) => m.CustomerBranch)
+>>>>>>> 986ff8311901f096335f590a69020825305f630b
                     },
-                  {
-                   path:'edit-client-user/:id',
-                    loadComponent:()=>
-                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
-                  },
-                
-                {
-                    path:'create-company',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m)=> m.CreateCompany)
-                    
-                }
-                ,
-                {
-                    path:'company-inquiry',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-company/company-list/company-list").then((m)=> m.CompanyList)
-                },
-                {
-                    path:'edit-company/:id',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m)=> m.CreateCompany)
-                },
-                {
-                    path:'create-role-master',
-                    loadComponent:()=>
-                        import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m)=> m.CreateRoleMaster)
-                },
-                {
-                    path:'role-master-inquiry',
-                    loadComponent:()=>
-                        import("./screens/ADMIN/admin-dashboard/components/role-master-list/role-master-list").then((m)=> m.RoleMasterList)
-                },
-                {
-                    path:'edit-role-master/:id',
-                    loadComponent:()=>
-                        import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m)=> m.CreateRoleMaster)
-                },
-                // showing the user details roles component 
-                {
-                  path:'create-client-user/:id',
-                    loadComponent:()=>
-                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
-                },
-                
-                
-{
-  path: 'create-dynamic-fields',
-  loadComponent: () =>
-    import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
-    .then((m) => m.CreateGenerateFields)
-},
-{
-  path: 'dynamic-field-inquiry',
-  loadComponent: () =>
-    import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
-    .then((m) => m.ListGenerateFields)
-},
-{
-    path: 'edit-field/:id',
-    loadComponent: () =>
-      import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
-      .then((m) => m.CreateGenerateFields)
+                    {
+                        path: 'create-city',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
 
-},
-{
-    path: 'create-dropdown-option',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
-},
-{
-  
-    path: 'dynamic-dropdown-option-inquiry',
-    loadComponent: () =>
-         import('./screens/ADMIN/admin-dashboard/components/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then((m) => m.DynamicDropdownOptionInquiry)
-},
-{
-    path: 'edit-dropdown-option/:id',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
-},
-// ========Acounts========
-{
-    path: 'create-account',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
-},
-{
-    path:'Accounts-inquiry',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
-},
-{
-    path:'edit-accounts/:id',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
-    
-}
+                    },
+                    {
+                        path: 'edit-city/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
+                    }
+                    ,
+                    {
+                        path: 'city-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m) => m.CityList)
 
+<<<<<<< HEAD
 // create-account-types
 ,
 {
@@ -263,22 +183,184 @@ export const routes: Routes = [
         import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) =>m.AccountTypesInquiry )
     
 }
+=======
+                    },
+                    {
+                        path: 'city/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
+
+                    }
+                    ,
+                    {
+                        path: 'city-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m) => m.CityList)
+
+                    }
+                    ,
+                    {
+                        path: 'create-currency',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m) => m.CreateCurrency)
+
+                    },
+                    {
+                        path: 'currency-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m) => m.CurrencyList)
+
+                    },
+                    {
+                        path: 'create-client-user',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+
+                    },
+                    {
+                        path: 'user-client-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/list-user-client/list-user-client").then((m) => m.clientUsersList)
+
+                    },
+                    {
+                        path: 'edit-client-user/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+                    },
+
+                    {
+                        path: 'create-company',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m) => m.CreateCompany)
+
+                    }
+                    ,
+                    {
+                        path: 'company-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/company-list/company-list").then((m) => m.CompanyList)
+                    },
+                    {
+                        path: 'edit-company/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m) => m.CreateCompany)
+                    },
+                    {
+                        path: 'create-role-master',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m) => m.CreateRoleMaster)
+                    },
+                    {
+                        path: 'role-master-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/role-master-list/role-master-list").then((m) => m.RoleMasterList)
+                    },
+                    {
+                        path: 'edit-role-master/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m) => m.CreateRoleMaster)
+                    },
+                    // showing the user details roles component 
+                    {
+                        path: 'create-client-user/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+                    },
 
 
-           
-           
-                    ],
-    
+                    {
+                        path: 'create-dynamic-fields',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
+                    },
+                    {
+                        path: 'dynamic-field-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
+                                .then((m) => m.ListGenerateFields)
+                    },
+                    {
+                        path: 'edit-field/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
 
-             
+                    },
+                    {
+                        path: 'create-dropdown-option',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+                    {
+
+                        path: 'dynamic-dropdown-option-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then((m) => m.DynamicDropdownOptionInquiry)
+                    },
+                    {
+                        path: 'edit-dropdown-option/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+                    // ========Acounts========
+                    {
+                        path: 'create-account',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+                    },
+                    {
+                        path: 'Accounts-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+                    },
+                    {
+                        path: 'edit-accounts/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+
+                    }
+
+                    // create-account-types
+                    ,
+                    {
+                        path: 'create-account-types',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+
+                    }
+
+                    ,
+                    {
+                        path: 'edit-account-types/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+
+                    },
+                    {
+                        path: 'account-types-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) => m.AccountTypesInquiry)
+
+                    }
+
+
+
+
+                ],
+>>>>>>> 986ff8311901f096335f590a69020825305f630b
+
+
+
             },
 
-//  CustomerUser Dashboard
+            //  CustomerUser Dashboard
             {
                 path: 'customer-user',
                 loadComponent: () =>
                     import('./screens/CustomerUser/create-customer/create-customer').then((m) => m.CreateCustomer),
-                children:[
+                children: [
 
                     {
                         path: 'create-customer-user',
@@ -297,17 +379,17 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import('./screens/CustomerUser/Components/user-of-customer-inquiry/user-of-customer-inquiry').then((m) => m.UserOfCustomerInquiry),
                     },
-                    
-                    
+
+
                 ]
 
             }
-                
-        
-  
-,
-            
-            
+
+
+
+            ,
+
+
 
 
             // ==============================
@@ -336,7 +418,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'U' },
                 loadComponent: () =>
-                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
@@ -345,12 +427,15 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/search-transaction-id/search-transaction-id').then((m) => m.SearchTransactionID),
             },
-            // Export Screen
+            // ==============================
+            // EXPORT LC SCREEN
+            // ==============================
             {
-                path: 'export-screen',
+                path: 'export-screen/inquiries-records',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-screen/export-screen')
-                        .then(m => m.ExportScreen)
+                    import(
+                        './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
+                    ).then((m) => m.InquiriesOfRecords),
             },
             {
                 path: 'export-screen/preview',
@@ -363,9 +448,41 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./shared/success/success')
                         .then(m => m.Success)
-            }
-            ,
-
+            },
+            // {
+            //     path: 'export-screen/amend',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend')
+            //             .then((m) => m.Amend),
+            // },
+            {
+                path: 'export-screen/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+            // {
+            //     path: 'export-screen/amend/preview',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/components/preview/preview').then(m => m.PreviewSection),
+            // },
+            {
+                path: 'export-screen/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-screen/export-screen').then(m => m.ExportScreen),
+            },
+            // {
+            //     path: 'export-screen/amend/:tnxId',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend').then(m => m.Amend),
+            // },
+            {
+                path: 'export-screen',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-screen/export-screen')
+                        .then(m => m.ExportScreen)
+            },
             {
                 path: 'exportlc-welcome',
                 loadComponent: () =>
@@ -391,7 +508,7 @@ export const routes: Routes = [
                 path: 'shipping-guarantee/inquiries-records',
                 loadComponent: () =>
                     import(
-                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records'
+                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records'
                     ).then((m) => m.inquiriesRecords),
             },
             {
@@ -408,6 +525,28 @@ export const routes: Routes = [
                         .then((m) => m.Success),
                 data: { title: 'Shipping Guarantee Submitted' }
             },
+            {
+                path: 'shipping-guarantee/amend',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
+                        .then((m) => m.Amend),
+            },
+
+            // Import Amend Route
+            {
+                path: 'shipping-guarantee/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+
+            {
+                path: 'shipping-guarantee/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
+            },
+
 
             // Dynamic TNX ID route
             {
@@ -415,6 +554,13 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
             },
+            
+            {
+                path: 'shipping-guarantee/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
+            },
+            // Base Shipping Guarantee screen
             {
                 path: 'shipping-guarantee',
                 loadComponent: () =>
@@ -436,13 +582,6 @@ export const routes: Routes = [
                     uploadRoute: '/shipping-guarantee?mode=upload'
                 }
             },
-            {
-                path: 'shipping-guarantee/amend',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend/amend')
-                        .then((m) => m.Amend),
-                data: { title: 'Amend Shipping Guarantee' }
-            },
             // ==============================
             // EXPORT COLLECTION
             // ==============================
@@ -450,7 +589,7 @@ export const routes: Routes = [
                 path: 'export-collection/inquiries-records',
                 loadComponent: () =>
                     import(
-                        './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-records'
+                        './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records'
                     ).then((m) => m.inquiriesRecords),
             },
             {
@@ -459,7 +598,6 @@ export const routes: Routes = [
                     import(
                         './screens/USER/Trade-Services/export-collection/components/preview/preview'
                     ).then((m) => m.Preview),
-                data: { title: 'Preview Export Collection' }
             },
             {
                 path: 'export-collection/success',
@@ -469,10 +607,38 @@ export const routes: Routes = [
                 data: { title: 'Export Collection Submitted' }
             },
             {
+                path: 'export-collection/amend',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend')
+                        .then((m) => m.Amend),
+            },
+            // Approved Amend Route
+            {
+                path: 'export-collection/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+
+            {
+                path: 'export-collection/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(m => m.PreviewSection),
+            },
+
+            {
                 path: 'export-collection/:tnxId',
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/export-collection/export-collection').then(m => m.ExportCollection),
             },
+
+            {
+                path: 'export-collection/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(m => m.Amend),
+            },
+
             {
                 path: 'export-collection',
                 loadComponent: () =>
@@ -496,17 +662,58 @@ export const routes: Routes = [
                     uploadRoute: '/export-collection?mode=upload'
                 },
             },
-            {
-                path: 'export-collection/amend',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-collection/sub-menus/event/amend/amend')
-                        .then((m) => m.Amend),
-                data: { title: 'Amend Export Collection' }
-            },
-
             // ==============================
             // UNDERTAKING ISSUANCE 
             // ==============================
+
+            {
+                path: 'undertaking-issuance/inquiries-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records'
+                    ).then((m) => m.inquiriesRecords),
+            },
+            {
+                path: 'undertaking-issuance/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then(
+                        (m) => m.Preview
+                    ),
+            },
+            {
+                path: 'undertaking-issuance/success',
+                loadComponent: () => import('./shared/success/success').then(m => m.Success)
+            },
+            {
+                path: 'undertaking-issuance/amend',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
+                    ).then((m) => m.AmendScreen),
+            },
+            {
+                path: 'undertaking-issuance/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+            {
+                path: 'undertaking-issuance/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview),
+            },
+            {
+                path: 'undertaking-issuance/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then(m => m.RequestUndertaking),
+            },
+
+            {
+                path: 'undertaking-issuance/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(m => m.AmendScreen),
+            },
 
             {
                 path: 'undertaking-issuance',
@@ -561,26 +768,8 @@ export const routes: Routes = [
                 ],
             },
 
-            {
-                path: 'undertaking-issuance/preview',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then(
-                        (m) => m.Preview
-                    ),
 
-            },
 
-            {
-                path: 'undertaking-issuance/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/records/inquiries-records'
-                    ).then((m) => m.inquiriesRecords),
-            },
-            {
-                path: 'undertaking-issuance/success',
-                loadComponent: () => import('./shared/success/success').then(m => m.Success)
-            },
             // Submitted-Records Route
             // {
             //     path: 'undertaking-issuance/submitted-records',
@@ -613,13 +802,6 @@ export const routes: Routes = [
                     uploadRoute: '/undertaking-issuance?mode=upload'
                 },
             },
-            {
-                path: 'undertaking-issuance/amend',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
-                    ).then((m) => m.AmendScreen),
-            },
 
 
             // ==============================
@@ -646,7 +828,22 @@ export const routes: Routes = [
             {
                 path: 'import-screen/amend',
                 loadComponent: () =>
-                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import/amend').then(m => m.AmendScreen),
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            },
+
+            // Import Amend Route
+            {
+                path: 'import-screen/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+
+            {
+                path: 'import-screen/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
             },
 
             // Dynamic TNX ID route
@@ -654,6 +851,12 @@ export const routes: Routes = [
                 path: 'import-screen/:tnxId',
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
+            },
+
+            {
+                path: 'import-screen/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
             },
 
             // Base import screen
@@ -677,15 +880,6 @@ export const routes: Routes = [
                 }
             },
 
-            // Import Amend Route
-            {
-                path: 'import-screen/amend',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import/amend'
-                    ).then((m) => m.AmendScreen),
-            },
-
             // Import submitted-Records Route
 
             // Import approved-Records Route
@@ -699,47 +893,47 @@ export const routes: Routes = [
 
             // Add this to your routes array after other USER services (after import-welcome route)
 
-         // ==============================
-        // PAYMENT SERVICES - MY ACCOUNTS
-        // ==============================
-{
-    path: 'my-accounts',
-    children: [
-        {
-            path: '', // The main form (Create mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
-        },
-        {
-            path: 'transfer/:tnxId', // The main form (Edit/View mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
-        },
-        {
-            path: 'general-details',
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
-        }
-    ]
-},
+            // ==============================
+            // PAYMENT SERVICES - MY ACCOUNTS
+            // ==============================
+            {
+                path: 'my-accounts',
+                children: [
+                    {
+                        path: '', // The main form (Create mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+                    },
+                    {
+                        path: 'transfer/:tnxId', // The main form (Edit/View mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent),
+                    },
+                    {
+                        path: 'general-details',
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails),
+                    }
+                ]
+            },
 
-        // ==============================
-        // PAYMENT SERVICES - IBFT
-        // ==============================
-{
-    path: 'IBFT',
-    children: [
-        {
-            path: '', // The main form (Create mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
-        },
-        {
-            path: 'transfer/:tnxId', // The main form (Edit/View mode)
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
-        },
-        {
-            path: 'general-details',
-            loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(m => m.GeneralDetails),
-        }
-    ]
-},
+            // ==============================
+            // PAYMENT SERVICES - IBFT
+            // ==============================
+            {
+                path: 'IBFT',
+                children: [
+                    {
+                        path: '', // The main form (Create mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
+                    },
+                    {
+                        path: 'transfer/:tnxId', // The main form (Edit/View mode)
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT),
+                    },
+                    {
+                        path: 'general-details',
+                        loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(m => m.GeneralDetails),
+                    }
+                ]
+            },
 
             // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
             // Base fund-transfer screen

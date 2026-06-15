@@ -29,22 +29,58 @@ export class AmountChargeDetails {
   @Input() form!: FormGroup;
   isOpen = true;
   variationType: string = 'percent';
-
+  resultText: string = '';
   currencies = ['USD', 'EUR', 'GBP', 'PKR', 'JPY'];
 
-  constructor() {
+  ngOnInit() {
+    // auto update result whenever form changes
+    this.form.valueChanges.subscribe(() => {
+      this.calculateVariation();
+    });
   }
 
   onVariationTypeChange(value: string) {
     this.variationType = value;
-    // Optionally clear fields when switching type:
+
     this.form.patchValue({
       variationPlus: '',
       variationMinus: ''
     });
+
+    this.calculateVariation();
   }
 
   toggle() {
     this.isOpen = !this.isOpen;
+  }
+
+  calculateVariation() {
+    const amount = Number(this.form.get('amount')?.value) || 0;
+
+    const variationPlus = Number(this.form.get('variationPlus')?.value) || 0;
+    const variationMinus = Number(this.form.get('variationMinus')?.value) || 0;
+
+    let plusValue = 0;
+    let minusValue = 0;
+
+    // ✅ CASE 1: Percentage
+    if (this.variationType === 'percent') {
+      plusValue = (amount * variationPlus) / 100;
+      minusValue = (amount * variationMinus) / 100;
+    }
+
+    // ✅ CASE 2: Fixed Amount
+    else {
+      plusValue = variationPlus;
+      minusValue = variationMinus;
+    }
+
+    const addedAmount = amount + plusValue;
+    const subtractedAmount = amount - minusValue;
+
+    this.resultText =
+      `Original Amount: ${amount}. ` +
+      `After adding variation: ${addedAmount}. ` +
+      `After subtracting variation: ${subtractedAmount}.`;
   }
 }

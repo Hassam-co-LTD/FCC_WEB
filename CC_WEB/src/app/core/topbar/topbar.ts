@@ -8,7 +8,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [MatIconModule, MatMenuModule, MatButtonModule, RouterLink, RouterLinkActive],
+  imports: [MatIconModule, MatMenuModule, MatButtonModule, RouterLink],
   templateUrl: './topbar.html',
   styleUrls: ['./topbar.scss'],
 })

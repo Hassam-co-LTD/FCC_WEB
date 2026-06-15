@@ -164,6 +164,44 @@
     -webkit-overflow-scrolling: touch;
 }
 
+.table-wrapper th.sticky-action{
+    background: theme.$primary-light;
+    position: sticky;
+    right: 0;
+}
+.table-wrapper td.sticky-action {
+    position: sticky;
+    right: 0;
+    max-width: 160px;
+    box-sizing: border-box;
+    background: theme.$white;
+    z-index: 10;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    box-shadow: -6px 0 12px -8px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table-wrapper thead th.sticky-action {
+    z-index: 12;
+}
+
+@media (max-width: 480px) {
+    $mobile-action-width: 120px;
+
+    .table-wrapper {
+        padding-right: $mobile-action-width;
+    }
+
+    .table-wrapper th.sticky-action,
+    .table-wrapper td.sticky-action {
+        width: $mobile-action-width;
+        max-width: $mobile-action-width;
+    }
+}
+
 /* ==============================
    Table
 ================================*/

@@ -59,7 +59,10 @@
     <table>
         <thead>
             <tr>
+                <th *ngIf="activeTab == 'live'">Event Ref No</th>
                 <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th *ngIf="activeTab == 'live'">Event Sequence</th>
+                <th *ngIf="activeTab == 'live'">Event</th>
                 <th (click)="sortBy('createdOn')">Created</th>
                 <th>Product</th>
                 <th>Issuer Reference</th>
@@ -68,14 +71,25 @@
                 <th>Amount</th>
                 <th>Applicant</th>
                 <th>Beneficiary</th>
-                <!-- <th>Status</th> -->
-                <th>Action</th>
+                <th class="sticky-action">Action</th>
             </tr>
         </thead>
 
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <td><a class="tnx-link" (click)="openImportLc(tx)">{{ tx.tnxId }}</a></td>
+                <td *ngIf="activeTab == 'live'">
+                    <a class="tnx-link" (click)="openImportLc(tx)">{{ tx.eventRefNo }}</a>
+                </td>
+                <td>
+                    <a class="tnx-link" *ngIf="activeTab !== 'live'" (click)="openImportLc(tx)">
+                        {{ tx.tnxId }}
+                    </a>
+                    <span *ngIf="activeTab === 'live'">{{ tx.tnxId }}</span>
+                </td>
+                <td *ngIf="activeTab == 'live'">
+                    {{ tx.eventSequence }}
+                </td>
+                <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
                 <td>{{ tx.productType }}</td>
                 <td>{{tx.issuerReference}}</td>
@@ -84,8 +98,7 @@
                 <td>{{ tx.amount }}</td>
                 <td>{{ tx.applicantName }}</td>
                 <td>{{ tx.beneficiaryName }}</td>
-                <!-- <td>{{ tx.status }}</td> -->
-                <td>
+                <td class="sticky-action">
                     <button class="btn-action" (click)="viewTransaction(tx)">
                         <mat-icon>visibility</mat-icon> View
                     </button>

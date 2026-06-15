@@ -123,4 +123,18 @@ export class AuthService {
 
   return '/login';
 }
+  setUserCategory(value: 'A' | 'U') {
+    if (!this.isBrowser()) return;
+    const data = sessionStorage.getItem('userData');
+    const parsed = data ? JSON.parse(data) : {};
+    parsed.userCategory = value;
+    sessionStorage.setItem('userData', JSON.stringify(parsed));
+  }
+  setCompanyType(value: 'B' | 'C') {
+    if (!this.isBrowser()) return;
+    const data = sessionStorage.getItem('userData');
+    const parsed = data ? JSON.parse(data) : {};
+    parsed.companyType = value;
+    sessionStorage.setItem('userData', JSON.stringify(parsed));
+  }
 }

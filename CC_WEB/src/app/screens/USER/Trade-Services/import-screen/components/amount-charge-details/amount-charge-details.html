@@ -13,13 +13,13 @@
         <mat-label>Currency *</mat-label>
         <mat-select formControlName="currency">
           @for (c of currencies; track c) {
-            <mat-option [value]="c">{{ c }}</mat-option>
+          <mat-option [value]="c">{{ c }}</mat-option>
           }
         </mat-select>
         @if (form.get('currency')?.hasError('required')) {
-          <mat-error>
-            Currency is required
-          </mat-error>
+        <mat-error>
+          Currency is required
+        </mat-error>
         }
       </mat-form-field>
 
@@ -27,14 +27,14 @@
         <mat-label>Amount *</mat-label>
         <input matInput formControlName="amount" placeholder="Enter amount" />
         @if (form.get('amount')?.hasError('required')) {
-          <mat-error>
-            Amount is required
-          </mat-error>
+        <mat-error>
+          Amount is required
+        </mat-error>
         }
         @if (form.get('amount')?.hasError('pattern')) {
-          <mat-error>
-            Enter a valid number
-          </mat-error>
+        <mat-error>
+          Enter a valid number
+        </mat-error>
         }
       </mat-form-field>
     </div>
@@ -51,47 +51,51 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Variation (+)</mat-label>
-        <input matInput
-          [placeholder]="variationType === 'percent' ? 'Enter percentage (+)' : 'Enter amount (+)'"
+        <input matInput [placeholder]="variationType === 'percent' ? 'Enter percentage (+)' : 'Enter amount (+)'"
           formControlName="variationPlus" />
-        </mat-form-field>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Variation (-)</mat-label>
-          <input matInput
-            [placeholder]="variationType === 'percent' ? 'Enter percentage (-)' : 'Enter amount (-)'"
-            formControlName="variationMinus" />
-          </mat-form-field>
-        </div>
-
-        <!-- Issuing Bank Charges -->
-        <div class="row radio-section">
-          <label class="radio-label">Issuing Bank Charges:</label>
-          <mat-radio-group formControlName="issuingBankCharges">
-            <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-            <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-          </mat-radio-group>
-        </div>
-
-        <!-- Outside Country Charges -->
-        <div class="row radio-section">
-          <label class="radio-label">Outside Country Charges:</label>
-          <mat-radio-group formControlName="outsideCountryCharges">
-            <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-            <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-          </mat-radio-group>
-        </div>
-
-        <!-- Additional Details -->
-        <div class="row">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Additional Amount Details</mat-label>
-                <textarea matInput formControlName="additionalAmount" placeholder="Additional Amount Covered"
-                    maxlength="140"></textarea>
-                <mat-hint align="end">
-                    {{ form.get('additionalAmount')?.value?.length || 0 }}/140
-                </mat-hint>
-            </mat-form-field>
-        </div>
-      </form>
+      <mat-form-field appearance="outline">
+        <mat-label>Variation (-)</mat-label>
+        <input matInput [placeholder]="variationType === 'percent' ? 'Enter percentage (-)' : 'Enter amount (-)'"
+          formControlName="variationMinus" />
+      </mat-form-field>
     </div>
+
+    <!-- Result OUTPUT -->
+    <div class="result-box" style="margin-top: 20px;">
+      <strong>Calculated Result:</strong>
+      <p>{{ resultText }}</p>
+    </div>
+
+    <!-- Issuing Bank Charges -->
+    <div class="row radio-section">
+      <label class="radio-label">Issuing Bank Charges:</label>
+      <mat-radio-group formControlName="issuingBankCharges">
+        <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+        <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <!-- Outside Country Charges -->
+    <div class="row radio-section">
+      <label class="radio-label">Outside Country Charges:</label>
+      <mat-radio-group formControlName="outsideCountryCharges">
+        <mat-radio-button value="Applicant">Applicant</mat-radio-button>
+        <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Additional Amount Details</mat-label>
+        <textarea matInput formControlName="additionalAmount" placeholder="Additional Amount Covered"
+          maxlength="140"></textarea>
+        <mat-hint align="end">
+          {{ form.get('additionalAmount')?.value?.length || 0 }}/140
+        </mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+</div>

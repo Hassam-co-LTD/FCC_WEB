@@ -16,7 +16,7 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
   open?: boolean;
-   manualOpen?: boolean; //
+  manualOpen?: boolean; //
 }
 
 
@@ -109,28 +109,28 @@ export class LayoutComponent implements OnInit {
     const role = this.authService.getUserCategory();
     const companyType = this.authService.getCompanyType();
     this.loadMenu(role, companyType);
- 
-this.router.events
-  .pipe(filter(event => event instanceof NavigationEnd))
-  .subscribe((event: NavigationEnd) => {
-    const url = event.urlAfterRedirects;
-    this.activeRoute = url;
 
-    if (url.includes('/system-overview')) {
-      this.currentMenu = 'SYSTEM';
-      this.menuItems = this.systemOverviewMenu;
-    } else if (url.includes('/middle-office')) {
-      this.currentMenu = 'MIDDLE';
-      this.menuItems = this.middleOfficeMenu;
-    } else {
-      this.currentMenu = 'DEFAULT';
-      const role = this.authService.getUserCategory();
-      this.loadMenu(role, companyType);
-    }
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        const url = event.urlAfterRedirects;
+        this.activeRoute = url;
 
-    // Open menus according to current route
-    this.updateMenuOpenState(this.menuItems, url);
-  });
+        if (url.includes('/system-overview')) {
+          this.currentMenu = 'SYSTEM';
+          this.menuItems = this.systemOverviewMenu;
+        } else if (url.includes('/middle-office')) {
+          this.currentMenu = 'MIDDLE';
+          this.menuItems = this.middleOfficeMenu;
+        } else {
+          this.currentMenu = 'DEFAULT';
+          const role = this.authService.getUserCategory();
+          this.loadMenu(role, companyType);
+        }
+
+        // Open menus according to current route
+        this.updateMenuOpenState(this.menuItems, url);
+      });
 
 
   }
@@ -146,37 +146,39 @@ this.router.events
   }
 
 
-onParentClick(item: MenuItem) {
-  // Toggle this parent ONLY
-  item.open = !item.open;
+  onParentClick(item: MenuItem) {
+    // Toggle this parent ONLY
+    item.open = !item.open;
 
-  // Ensure all direct children are initially closed when opening
-  if (item.open && item.children) {
-    item.children.forEach(child => child.open = false);
+    // Ensure all direct children are initially closed when opening
+    if (item.open && item.children) {
+      item.children.forEach(child => child.open = false);
+    }
   }
-}
 
-toggleMenu(item: MenuItem) {
-  // Only toggle the clicked parent
-  item.open = !item.open;
-}
- 
+  toggleMenu(item: MenuItem) {
+    // Only toggle the clicked parent
+    item.open = !item.open;
+  }
+
   loadMenu(role: 'A' | 'U' | null, companyType: 'B' | 'C' | null) {
-    
-       if (companyType === 'C' && role === 'A') {
-   this.menuItems = [
 
+    if (companyType === 'C' && role === 'A') {
+      this.menuItems = [
+
+        { label: 'System Features', icon: 'insights', route: '/system-overview' },
+        { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
   // { label: 'System Features', icon: 'insights', route: '/system-overview' },
   // { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
 
-  // ================================
-  // MASTER DATA CATEGORY
-  // ================================
-  {
-    label: 'Master Data',
-    icon: 'storage',
-    open: false,
-    children: [
+        // ================================
+        // MASTER DATA CATEGORY
+        // ================================
+        {
+          label: 'Master Data',
+          icon: 'storage',
+          open: false,
+          children: [
 
       {
         label: 'Customers',
@@ -188,17 +190,7 @@ toggleMenu(item: MenuItem) {
           { label: 'Inquiry', route: '/admin/customer-list' }
         ]
       },
-      {
-        label:'currency',
-        icon:'currency_exchange',
-        route:'/admin/create-currency',
-        open:false,
-        children:[
-          {label:'Create New', route:'/admin/create-currency'},
-          {label:'Inquiry', route:'/admin/currency-inquiry'}
-        ]
-      }
-,
+
       {
         label: 'Branch',
         icon: 'account_balance',
@@ -210,16 +202,16 @@ toggleMenu(item: MenuItem) {
         ]
       },
 
-      {
-        label: 'City',
-        icon: 'location_city',
-        route: '/admin/create-city',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-city' },
-          { label: 'Inquiry', route: '/admin/city-inquiry' }
-        ]
-      },
+            {
+              label: 'City',
+              icon: 'location_city',
+              route: '/admin/create-city',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-city' },
+                { label: 'Inquiry', route: '/admin/city-inquiry' }
+              ]
+            },
 
       {
         label: 'Dropdown Option',
@@ -231,117 +223,120 @@ toggleMenu(item: MenuItem) {
           { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
         ]
       },
-     
-  
-
-     {
-  label: 'Account Types',
-  icon: 'account_balance_wallet', // Angular Material Icon
-  route: '/admin/create-Account-types',
-  open: false,
-  children: [
-    { label: 'Create New', route: '/admin/create-account-types' },
-    { label: 'Inquiry', route: '/admin/account-types-inquiry' }
-  ]
-}
-
-    ]
-  },
-
-  // ================================
-  // ACCESS MANAGEMENT CATEGORY
-  // ================================
-  {
-    label: 'Access Management',
-    icon: 'security',
+      {
+    label: 'Dynamic Field Options',
+    icon: 'list_alt', // for configuring dropdown values
+    route: '/admin/create-dynamic-field-options',
     open: false,
     children: [
-
-      {
-        label: 'Client User',
-        icon: 'person',
-        route: '/admin/client-user',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-client-user' },
-          { label: 'Inquiry', route: '/admin/user-client-inquiry' }
-        ]
-      },
-
-      {
-        label: 'Company',
-        icon: 'apartment',
-        route: '/admin/company',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-company' },
-          { label: 'Inquiry', route: '/admin/company-inquiry' }
-        ]
-      },
-
-      {
-        label: 'Role Master',
-        icon: 'admin_panel_settings',
-        route: '/admin/role',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-role-master' },
-          { label: 'Inquiry', route: '/admin/role-master-inquiry' }
-        ]
-      }
-
-    ]
-  },
-  {
-    label: 'Dynamic Fields',
-    icon: 'add_box', // for creating/generating dynamic fields
-    route: '/admin/create-dynamic-fields',
-    open: false,
-    children: [
-      { label: 'Create New', route: '/admin/create-dynamic-fields' },
-      { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' }
+      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
+      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
     ]
   },
   
 
-  
-  { label: 'Users', icon: 'person', route: '/users' },
-  { label: 'Logout', icon: 'logout', route: '/login' }
+            {
+              label: 'Account Types',
+              icon: 'account_balance_wallet', // Angular Material Icon
+              route: '/admin/create-Account-types',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-account-types' },
+                { label: 'Inquiry', route: '/admin/account-types-inquiry' }
+              ]
+            }
 
-];
+          ]
+        },
 
-         }
- else if (companyType === "B") {
-  console.log("Loading Customer User Menu", companyType, role);
-
-  this.menuItems = [
-    {
-      label: 'Bank User',
-      icon: 'dashboard',
-      route: '/customer-user',
-      open: false,
-      children: [
+        // ================================
+        // ACCESS MANAGEMENT CATEGORY
+        // ================================
         {
-          label: 'Create New',
-          route: '/customer-user/create-customer-user'
+          label: 'Access Management',
+          icon: 'security',
+          open: false,
+          children: [
+
+            {
+              label: 'Client User',
+              icon: 'person',
+              route: '/admin/client-user',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-client-user' },
+                { label: 'Inquiry', route: '/admin/user-client-inquiry' }
+              ]
+            },
+
+            {
+              label: 'Company',
+              icon: 'apartment',
+              route: '/admin/company',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-company' },
+                { label: 'Inquiry', route: '/admin/company-inquiry' }
+              ]
+            },
+
+            {
+              label: 'Role Master',
+              icon: 'admin_panel_settings',
+              route: '/admin/role',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-role-master' },
+                { label: 'Inquiry', route: '/admin/role-master-inquiry' }
+              ]
+            }
+
+          ]
         },
         {
-          label: 'Inquiry',
-          route: '/customer-user/inquiry'
-        }
-      ]
-    },
+          label: 'Dynamic Fields',
+          icon: 'add_box', // for creating/generating dynamic fields
+          route: '/admin/create-dynamic-fields',
+          open: false,
+          children: [
+            { label: 'Create New', route: '/admin/create-dynamic-fields' },
+            { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' }
+          ]
+        },
 
-    // ✅ ADD THIS
+
+
+        { label: 'Users', icon: 'person', route: '/users' },
+        { label: 'Logout', icon: 'logout', route: '/login' }
+
+      ];
+
+         }
+         else if (companyType === "B"){
+            console.log("Loading Customer User Menu",companyType, role);
+          this.menuItems = [
+
+              {
+  label: 'CustomerUser',
+  icon: 'dashboard',
+  route: '/customer-user',
+  open: false,
+  children: [
     {
-      label: 'Logout',
-      icon: 'logout',
-      
+      label: 'Create New',
+      route: '/customer-user/create-customer-user'
+    },
+    {
+      label: 'Inquiry',
+      route: '/customer-user/inquiry'
     }
-  ];
+  ]
 }
   
                 
+          ]
+         }
+
          else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
@@ -362,7 +357,7 @@ toggleMenu(item: MenuItem) {
               open: false,
               children: [
                 { label: 'Create', route: '/import-screen' },
-                { label: 'Amend', route: '/import-screen/amend' },
+                { label: 'Amend', route: '/import-screen/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/import-screen/inquiries' },
               ]
             },
@@ -377,6 +372,8 @@ toggleMenu(item: MenuItem) {
               open: false,
               children: [
                 { label: 'Create', route: '/export-screen' },
+                { label: 'Amend', route: '/export-screen/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/export-screen/inquiries-records' },
               ]
             },
 
@@ -390,7 +387,7 @@ toggleMenu(item: MenuItem) {
               open: false,
               children: [
                 { label: 'Create', route: '/shipping-guarantee' },
-                { label: 'Amend', route: '/shipping-guarantee/amend' },
+                { label: 'Amend', route: '/shipping-guarantee/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/shipping-guarantee/inquiries-records' },
               ]
             },
@@ -405,6 +402,7 @@ toggleMenu(item: MenuItem) {
               open: false,
               children: [
                 { label: 'Create', route: '/export-collection' },
+                { label: 'Amend', route: '/export-collection/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/export-collection/inquiries-records' },
               ]
             },
@@ -420,10 +418,7 @@ toggleMenu(item: MenuItem) {
               children: [
                 { label: 'Create', route: '/undertaking-issuance' },
                 { label: 'Amend', route: '/undertaking-issuance/amend' },
-                // { label: 'Approved-records', route: '/undertaking-issuance/approved-records' },
                 { label: 'Inquiries', route: '/undertaking-issuance/inquiries-records' },
-
-
               ]
             },
 
@@ -435,9 +430,9 @@ toggleMenu(item: MenuItem) {
           icon: 'account_balance_wallet',
           open: false,
           children: [
-            { 
+            {
               label: 'Fund Transfer',
-              route:'/fund-transfer-welcome',
+              route: '/fund-transfer-welcome',
               open: false,
               children: [
                 { label: 'IBFT', route: '/IBFT' },
@@ -486,243 +481,243 @@ toggleMenu(item: MenuItem) {
 
 
   activeRoute: string = '';
-isExactActive(route?: string): boolean {
-  return !!route && this.activeRoute === route;
-}
+  isExactActive(route?: string): boolean {
+    return !!route && this.activeRoute === route;
+  }
 
-isAnyChildActive(item: MenuItem): boolean {
-  return !!item.children?.some(child =>
-    this.activeRoute.startsWith(child.route || '')
-  );
-}
+  isAnyChildActive(item: MenuItem): boolean {
+    return !!item.children?.some(child =>
+      this.activeRoute.startsWith(child.route || '')
+    );
+  }
 
-isAnyGrandChildActive(item: MenuItem): boolean {
-  return !!item.children?.some(child =>
-    child.children?.some(sub =>
-      this.activeRoute.startsWith(sub.route || '')
-    )
-  );
-}
-
-
+  isAnyGrandChildActive(item: MenuItem): boolean {
+    return !!item.children?.some(child =>
+      child.children?.some(sub =>
+        this.activeRoute.startsWith(sub.route || '')
+      )
+    );
+  }
 
 
-/**
- * Returns true if any grandchild (child's child) of the given item is active
- */
 
 
-/**
- * Helper: check if item has any grandchild
- */
-hasGrandChildren(item: MenuItem): boolean {
-  return !!item.children?.some(child => child.children && child.children.length > 0);
-}
+  /**
+   * Returns true if any grandchild (child's child) of the given item is active
+   */
 
 
-/**
- * Automatically open parent/child menus if current route matches
- */
-updateMenuOpenState(items: MenuItem[], url: string) {
-  items.forEach(item => {
+  /**
+   * Helper: check if item has any grandchild
+   */
+  hasGrandChildren(item: MenuItem): boolean {
+    return !!item.children?.some(child => child.children && child.children.length > 0);
+  }
+
+
+  /**
+   * Automatically open parent/child menus if current route matches
+   */
+  updateMenuOpenState(items: MenuItem[], url: string) {
+    items.forEach(item => {
+      if (item.children) {
+        // Respect manualOpen first
+        if (item.manualOpen !== undefined) {
+          item.open = item.manualOpen;
+        } else {
+          // Open parent if any descendant (child or grandchild) is active
+          item.open = this.isAnyDescendantActive(item);
+        }
+
+        item.children.forEach(child => {
+          if (child.children) {
+            if (child.manualOpen !== undefined) {
+              child.open = child.manualOpen;
+            } else {
+              child.open = this.isAnyDescendantActive(child);
+            }
+          }
+        });
+      }
+    });
+  }
+
+
+  // Check if any child or grandchild route is active
+  isAnyDescendantActive(item: MenuItem): boolean {
+    if (!item.children) return false;
+
+    return item.children.some(child =>
+      this.activeRoute === child.route || // exact match
+      (child.children ? this.isAnyDescendantActive(child) : false)
+    );
+  }
+
+
+  /**
+   * Returns true if this item, any child, or any grandchild matches the active route
+   */
+  // Currently active route
+
+  /**
+   * Check if an item (parent/child) is active
+   */
+  /**
+   * Returns true if this item should be highlighted
+   * - Parent active only if direct child is active
+   * - Child active if route matches
+   * - Grandchild active if route matches
+   */
+  /**
+   * Returns true if this item should be highlighted
+   * level: 'parent' | 'child' | 'grandchild'
+   */
+  isActive(item: MenuItem, level: 'parent' | 'child' | 'grandchild' = 'parent'): boolean {
+    if (!item) return false;
+
+    // Exact match
+    if (item.route && this.activeRoute === item.route) return true;
+
     if (item.children) {
-      // Respect manualOpen first
-      if (item.manualOpen !== undefined) {
-        item.open = item.manualOpen;
-      } else {
-        // Open parent if any descendant (child or grandchild) is active
-        item.open = this.isAnyDescendantActive(item);
+      if (level === 'parent') {
+        // Parent is active ONLY if **direct child** matches route
+        return item.children.some(child => child.route === this.activeRoute);
       }
 
-      item.children.forEach(child => {
-        if (child.children) {
-          if (child.manualOpen !== undefined) {
-            child.open = child.manualOpen;
-          } else {
-            child.open = this.isAnyDescendantActive(child);
-          }
-        }
-      });
-    }
-  });
-}
+      if (level === 'child') {
+        // Child is active if its route matches OR any grandchild matches
+        return item.route === this.activeRoute || item.children.some(sub => sub.route === this.activeRoute);
+      }
 
-
-// Check if any child or grandchild route is active
-isAnyDescendantActive(item: MenuItem): boolean {
-  if (!item.children) return false;
-
-  return item.children.some(child =>
-    this.activeRoute === child.route || // exact match
-    (child.children ? this.isAnyDescendantActive(child) : false)
-  );
-}
-
-
-/**
- * Returns true if this item, any child, or any grandchild matches the active route
- */
-// Currently active route
-
-/**
- * Check if an item (parent/child) is active
- */
-/**
- * Returns true if this item should be highlighted
- * - Parent active only if direct child is active
- * - Child active if route matches
- * - Grandchild active if route matches
- */
-/**
- * Returns true if this item should be highlighted
- * level: 'parent' | 'child' | 'grandchild'
- */
-isActive(item: MenuItem, level: 'parent' | 'child' | 'grandchild' = 'parent'): boolean {
-  if (!item) return false;
-
-  // Exact match
-  if (item.route && this.activeRoute === item.route) return true;
-
-  if (item.children) {
-    if (level === 'parent') {
-      // Parent is active ONLY if **direct child** matches route
-      return item.children.some(child => child.route === this.activeRoute);
+      if (level === 'grandchild') {
+        return item.route === this.activeRoute;
+      }
     }
 
-    if (level === 'child') {
-      // Child is active if its route matches OR any grandchild matches
-      return item.route === this.activeRoute || item.children.some(sub => sub.route === this.activeRoute);
-    }
-
-    if (level === 'grandchild') {
-      return item.route === this.activeRoute;
-    }
+    return false;
   }
 
-  return false;
-}
 
+  /**
+   * Child active check (used in template for nested submenu)
+   */
+  isChildActive(item: MenuItem): boolean {
+    if (!item.children) return false;
 
-/**
- * Child active check (used in template for nested submenu)
- */
-isChildActive(item: MenuItem): boolean {
-  if (!item.children) return false;
-
-  return item.children.some(child => child.route === this.activeRoute);
-}
-
-/**
- * Grandchild active check
- */
-isGrandChildActive(item: MenuItem): boolean {
-  if (!item.children) return false;
-
-  return item.children.some(child =>
-    child.children?.some(sub => sub.route === this.activeRoute)
-  );
-}
-
-/**
- * Check if a grandchild is active
- */
-
-toggleMenuu(item: MenuItem) {
-  // Close all sibling parents
-  this.menuItems.forEach(m => {
-    if (m !== item) {
-      this.closeAllChildren(m);  // close their children recursively
-      m.open = false;
-    }
-  });
-
-  // Toggle this item
-  item.open = !item.open;
-
-  // If the parent is being closed, also close all its children
-  if (!item.open) {
-    this.closeAllChildren(item);
+    return item.children.some(child => child.route === this.activeRoute);
   }
-}
 
+  /**
+   * Grandchild active check
+   */
+  isGrandChildActive(item: MenuItem): boolean {
+    if (!item.children) return false;
 
+    return item.children.some(child =>
+      child.children?.some(sub => sub.route === this.activeRoute)
+    );
+  }
 
-// Toggle only this item, do NOT close siblings
-// -----------------------------
-toggleOnlyChildren(item: MenuItem) {
-  // Smooth toggle: do not close children immediately
-  item.open = !item.open;
-}
+  /**
+   * Check if a grandchild is active
+   */
 
-// Recursive close function (you already have)
-closeAllChildren(item: MenuItem) {
-  if (!item.children) return;
-  item.children.forEach(child => {
-    child.open = false;
-    if (child.children) {
-      this.closeAllChildren(child);
-    }
-  });
-}
-// Navigate to route
-goTo(item: MenuItem) {
-  if (!item.route) return;
-
-  this.router.navigateByUrl(item.route).then(() => {
-    // Only highlight active branches; do NOT close other branches
+  toggleMenuu(item: MenuItem) {
+    // Close all sibling parents
     this.menuItems.forEach(m => {
-      this.keepActiveOpen(m); // recursive open only for active path
+      if (m !== item) {
+        this.closeAllChildren(m);  // close their children recursively
+        m.open = false;
+      }
     });
-  });
-}
 
-// Keep parent open if it contains the active route
-keepActiveOpen(item: MenuItem) {
-  if (this.isAnyDescendantActive(item) || this.activeRoute === item.route) {
-    item.open = true; // expand only the active path
-  }
-  if (item.children) {
-    item.children.forEach(child => this.keepActiveOpen(child));
-  }
-}
+    // Toggle this item
+    item.open = !item.open;
 
-closeInactiveChildren(item: MenuItem) {
-  if (!item.children) return;
-
-  item.children.forEach(child => {
-    if (!this.isAnyDescendantActive(child) && this.activeRoute !== child.route) {
-      child.open = false;
+    // If the parent is being closed, also close all its children
+    if (!item.open) {
+      this.closeAllChildren(item);
     }
-    if (child.children) this.closeInactiveChildren(child);
-  });
-}
- 
-onChildClick(child: MenuItem, parent?: MenuItem) {
-  if (child.route) {
-    this.router.navigate([child.route]);
   }
 
-  // Keep parent open — do not toggle or close it
-  if (parent) {
-    parent.open = true;
+
+
+  // Toggle only this item, do NOT close siblings
+  // -----------------------------
+  toggleOnlyChildren(item: MenuItem) {
+    // Smooth toggle: do not close children immediately
+    item.open = !item.open;
   }
 
-  // Only toggle child if it has its own children
-  if (child.children) {
-    child.open = !child.open;
+  // Recursive close function (you already have)
+  closeAllChildren(item: MenuItem) {
+    if (!item.children) return;
+    item.children.forEach(child => {
+      child.open = false;
+      if (child.children) {
+        this.closeAllChildren(child);
+      }
+    });
   }
-}
+  // Navigate to route
+  goTo(item: MenuItem) {
+    if (!item.route) return;
+
+    this.router.navigateByUrl(item.route).then(() => {
+      // Only highlight active branches; do NOT close other branches
+      this.menuItems.forEach(m => {
+        this.keepActiveOpen(m); // recursive open only for active path
+      });
+    });
+  }
+
+  // Keep parent open if it contains the active route
+  keepActiveOpen(item: MenuItem) {
+    if (this.isAnyDescendantActive(item) || this.activeRoute === item.route) {
+      item.open = true; // expand only the active path
+    }
+    if (item.children) {
+      item.children.forEach(child => this.keepActiveOpen(child));
+    }
+  }
+
+  closeInactiveChildren(item: MenuItem) {
+    if (!item.children) return;
+
+    item.children.forEach(child => {
+      if (!this.isAnyDescendantActive(child) && this.activeRoute !== child.route) {
+        child.open = false;
+      }
+      if (child.children) this.closeInactiveChildren(child);
+    });
+  }
+
+  onChildClick(child: MenuItem, parent?: MenuItem) {
+    if (child.route) {
+      this.router.navigate([child.route]);
+    }
+
+    // Keep parent open — do not toggle or close it
+    if (parent) {
+      parent.open = true;
+    }
+
+    // Only toggle child if it has its own children
+    if (child.children) {
+      child.open = !child.open;
+    }
+  }
 
 
-onGrandChildClick(sub: any, event: Event) {
-  event.stopPropagation();
-  this.goTo(sub);
-}
+  onGrandChildClick(sub: any, event: Event) {
+    event.stopPropagation();
+    this.goTo(sub);
+  }
 
 
-// Returns true if this child is the current active route
-isChildLinkActive(child: MenuItem): boolean {
-  // Returns true if this child has a route and matches activeRoute
-  return !!child.route && this.activeRoute === child.route;
-}
+  // Returns true if this child is the current active route
+  isChildLinkActive(child: MenuItem): boolean {
+    // Returns true if this child has a route and matches activeRoute
+    return !!child.route && this.activeRoute === child.route;
+  }
 }

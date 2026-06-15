@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import {
   ImportlcFormTransactionService,
@@ -18,25 +19,22 @@ import { ApiService } from '../../../../../../../core/services/api.service';
   styleUrls: ['./enquiries-of-records.scss']
 })
 export class EnquiriesOfRecords implements OnInit {
+  currentPage = 1;
+  itemsPerPage = 10;
   allTransactions: ImportLcTransaction[] = [];
   filteredTransactions: ImportLcTransaction[] = [];
+  showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
-  showAdvanced = false;
-
   tabs = [
-    // { key: 'live', label: 'Live' },
+    { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
     { key: 'submitted', label: 'Submitted' },
     { key: 'approved', label: 'Approved' },
     { key: 'rejected', label: 'Rejected' },
     // { key: 'response awaited', label: 'Response Awaited'}
   ];
-
-  currentPage = 1;
-  itemsPerPage = 10;
-
   sortColumn: keyof ImportLcTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
@@ -46,6 +44,7 @@ export class EnquiriesOfRecords implements OnInit {
     private api: ApiService,
     private transactionService: ImportlcFormTransactionService,
     private router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -54,7 +53,18 @@ export class EnquiriesOfRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab');
+      if (
+        tab &&
+        this.tabs.some(t => t.key === tab)
+      ) {
+        this.activeTab = tab;
+      }
+
+      this.currentPage = 1;
     this.loadTransactions();
+    });
 
     this.transactionService.transactionsStream$.subscribe(txList => {
       this.allTransactions = txList;
@@ -65,6 +75,23 @@ export class EnquiriesOfRecords implements OnInit {
 
 
   private loadTransactions(): void {
+    if (this.activeTab === 'live') {
+
+      this.api.getLiveEventHistory().subscribe({
+        next: (txList) => {
+          this.allTransactions = txList;
+          this.applyFilters();
+          // this.filteredTransactions = [...txList];
+        },
+        error: () => {
+          this.allTransactions = [];
+          this.filteredTransactions = [];
+        }
+      });
+
+      return;
+    }
+
     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
     this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
@@ -109,9 +136,14 @@ export class EnquiriesOfRecords implements OnInit {
   // }
 
   setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadTransactions();
+    // this.activeTab = tab;
+    // this.currentPage = 1;
+    // this.loadTransactions();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge'
+    });
   }
 
   // private loadByStatus(status: string): void {
@@ -238,6 +270,20 @@ export class EnquiriesOfRecords implements OnInit {
   }
 
   openImportLc(tx: ImportLcTransaction) {
+    if (this.activeTab === 'live') {
+      // Live tab rows are event records — navigate by eventRefNo
+      this.router.navigate(
+        ['/import-screen/amend', tx.tnxId],
+        {
+          queryParams: {
+            mode: 'READ_ONLY',
+            tab: 'live',
+            eventRefNo: tx.eventRefNo ?? ''
+          }
+        }
+      );
+      return;
+    }
     // Store transaction in service for import screen to pick up
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
@@ -252,7 +298,7 @@ export class EnquiriesOfRecords implements OnInit {
   }
 
   trackByTnxId(_: number, tx: ImportLcTransaction): string {
-    return tx.tnxId!;
+    return tx.eventRefNo ?? tx.tnxId!;
   }
 
   private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {

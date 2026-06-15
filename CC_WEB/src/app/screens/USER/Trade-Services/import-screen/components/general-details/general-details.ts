@@ -32,7 +32,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class GeneralDetails {
 
   @Input() form!: FormGroup;
-
+  tomorrow: string = new Date(Date.now() + 86400000)
+    .toISOString()
+    .split('T')[0];
   isOpen = true;
   preview: any = {};
 

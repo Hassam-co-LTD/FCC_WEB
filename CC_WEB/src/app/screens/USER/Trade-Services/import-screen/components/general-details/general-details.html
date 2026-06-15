@@ -38,7 +38,7 @@
     <div class="form-grid-2">
       <mat-form-field appearance="outline">
         <mat-label>Expiry Date *</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="expiryDate"
+        <input matInput [matDatepicker]="picker" formControlName="expiryDate" [min]="tomorrow"
           placeholder="Select expiry date" />
           <mat-datepicker-toggle matSuffix [for]="picker" class="date-toggle"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>

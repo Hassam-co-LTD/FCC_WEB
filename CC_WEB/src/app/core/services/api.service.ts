@@ -39,8 +39,22 @@ export class ApiService {
   // -------------------------------------------------------------
   // CONFIGURATION
   // -------------------------------------------------------------
+  // --- DYNAMIC BASE URL CONFIGURATION ---
+
+  // Settlement System (Trade Finance)
+  private get baseUrl(): string {
+    return `${environment.gatewayUrl}/settlementsystem/api/v1`;
+  }
+
+  private get baseeventUrl(): string {
+    return `${environment.gatewayUrl}/settlementsystem/api/import-lc/events`;
+  }
+  // Admin/Security System (Login, Roles, Users)
+  private get adminBaseUrl(): string {
+    return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
+  }
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
-  private baseUrl = `${environment.apiUrl}`;
+  // private baseUrl = `${environment.apiUrl}`;
   // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) { }
@@ -74,23 +88,179 @@ export class ApiService {
     return throwError(() => new Error(errorMessage));
   }
   /* ------------------------------------- Error Handler END ------------------------------------- */
- 
- 
- 
- 
+
+
+
+
   /* -------------------- API Methods -------------------- */
- 
-  // Save LC Record (pending record) - status "I"
- 
-  savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
-    console.log('Saving draft:', data);
+
+  // getLatestApprovedEvent(tnxId: string): Observable<ImportLcTransaction> {
+  //   const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+  //   const headers = new HttpHeaders({ companyid: companyId });
+  //   return this.http.get<ImportLcTransaction>(
+  //     `${this.baseeventUrl}/latest/${tnxId}`,
+  //     { headers }
+  //   ).pipe(catchError(this.handleError));
+  // }
+
+  getAmendmentByTnxId(tnxId: string): Observable<ImportLcTransaction> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+
+    // fetches the pending(I) AMD event for this tnxId
+    return this.http.get<ImportLcTransaction>(
+      `${this.baseeventUrl}/amend/${tnxId}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+
+  saveamendTransaction(tnxId: string, data: ImportLcTransaction): Observable<ImportLcTransaction> {
+    return this.http.put<ImportLcTransaction>(
+      `${this.baseeventUrl}/amend/${tnxId}`,
+      data,
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    ).pipe(catchError(this.handleError));
+  }
+
+  // getApprovedLcForAmend() {
+  //   const companyId = sessionStorage.getItem('companyId')
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId ?? ''
+  //   });
+  //   return this.http.get<ImportLcTransaction[]>(
+  //     `${this.baseeventUrl}/amend/live-records`, { headers }
+  //   );
+  // }
+
+
+  getLiveEventHistory(): Observable<ImportLcTransaction[]> { // same as  getApprovedLcForAmend() just change name to show relevance
+    const raw = sessionStorage.getItem('userData');
+    const companyId = raw ? JSON.parse(raw)?.companyId ?? '' : '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<ImportLcTransaction[]>(
+      `${this.baseeventUrl}/amend/live-records`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  // Points to master LC records — one row per LC, no event history
+  getApprovedMasterLcRecords(): Observable<ImportLcTransaction[]> {
+    const raw = sessionStorage.getItem('userData');
+    const companyId = raw ? JSON.parse(raw)?.companyId ?? '' : '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<ImportLcTransaction[]>(
+      `${this.baseeventUrl}/amend/live-master-records`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  // getApprovedLcForAmend() {
+
+  //   const raw = sessionStorage.getItem('userData');
+
+  //   const user = raw ? JSON.parse(raw) : null;
+
+  //   const companyId = user?.companyId ?? '';
+
+  //   console.log("COMPANY ID =", companyId);
+
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId
+  //   });
+
+  //   return this.http.get<ImportLcTransaction[]>(
+  //     `${this.baseeventUrl}/amend/live-records`,
+  //     { headers }
+  //   );
+  // }
+
+  // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
+  getAmendRecordTransactionsByStatus(eventLcStatus: string): Observable<ImportLcTransaction[]> {
     const companyId = sessionStorage.getItem('companyId')
     const headers = new HttpHeaders({
       companyid: companyId ?? ''
     });
-    return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/save`, data,
-      { headers })
+    return this.http.get<ImportLcTransaction[]>(`${this.baseeventUrl}/amend/records/${eventLcStatus}`, { headers })
       .pipe(catchError(this.handleError));
+  }
+
+  getAmendmentByEventRefNo(eventRefNo: string): Observable<ImportLcTransaction> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.get<ImportLcTransaction>(
+      `${this.baseeventUrl}/event/${eventRefNo}`,
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  submitAmendment(eventRefNo: string, data: ImportLcTransaction): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/submit/${eventRefNo}`,
+      {data},   // ← empty body, backend ignores it
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  approveAmendment(eventRefNo: string, data: ImportLcTransaction): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/approve/${eventRefNo}`,
+      {data},
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  rejectAmendment(eventRefNo: string, reason: string): Observable<any> {
+    const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
+    const headers = new HttpHeaders({ companyid: companyId });
+    return this.http.post<any>(
+      `${this.baseeventUrl}/amend/reject/${eventRefNo}`,
+      { rejectionReason: reason },
+      { headers }
+    ).pipe(catchError(this.handleError));
+  }
+  // -------------------------------------------
+  // Save LC Record (pending record) - status "I"
+ 
+  // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
+  //   console.log('Saving draft:', data);
+  //   const companyId = sessionStorage.getItem('userData.companyId')
+  //   const headers = new HttpHeaders({
+  //     companyid: companyId ?? ''
+  //   });
+  //   return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/save`, data,
+  //     { headers })
+  //     .pipe(catchError(this.handleError));
+  // }
+
+
+  savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
+    console.log('Saving draft:', data);
+
+    const userDataStr = sessionStorage.getItem('userData');
+
+    let companyId = '';
+
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      companyId = userData.companyId;
+    }
+
+    const headers = new HttpHeaders({
+      companyid: companyId
+    });
+
+    return this.http.post<ImportLcTransaction>(
+      `${this.baseUrl}/importlc/save`,
+      data,
+      { headers }
+    ).pipe(catchError(this.handleError));
   }
  
 
@@ -670,88 +840,88 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   // }
 
 
-  // admin side generic methods
+  // vs side generic methods
 
 // save transaction
 saveTnx(tnx:any,name:String){
-   return this.http.post<any>(`${this.baseUrl}${name}`,tnx)
+   return this.http.post<any>(`${this.adminBaseUrl}${name}`,tnx)
 }
 // get transaction by status
 getTnxByStatus(status:String,Tnx:String){
-   return this.http.get<any>(`${this.baseUrl}${Tnx}/status/${status}`);
+   return this.http.get<any>(`${this.adminBaseUrl}${Tnx}/status/${status}`);
 }
 
 // get transaction by id
 
 getTnxById(id:Number | String,name:String){
-    return this.http.get<any>(`${this.baseUrl}${name}/id/${id}`);
+    return this.http.get<any>(`${this.adminBaseUrl}${name}/id/${id}`);
 }
 getTnxByRolId(id:String,name:String){
-    return this.http.get<any>(`${this.baseUrl}${name}/id/${id}`);
+    return this.http.get<any>(`${this.adminBaseUrl}${name}/id/${id}`);
 }
 // update transaction 
 updateTnx(data:any,name:String,id?:Number){
      console.log("the id ",id);
-    return this.http.put<any>(`${this.baseUrl}${name}/update/${id}`,data);
+    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`,data);
 }
 updateTnxByRoleId(data:any,name:String,id:String){
      console.log("the id ",id);
-    return this.http.put<any>(`${this.baseUrl}${name}/update/${id}`,data);
+    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`,data);
 }
 // set transaction status by id
 setTnxByStatus(status: string, id: Number, name: string) {
   console.log('Setting status:', status, 'for ID:', id, 'on', name);
 
-  const url = `${this.baseUrl}${name}/setStatus/${id}`;
+  const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
   return this.http.put<any>(url, null, { params: { status } }); 
 }
 
 //get list of data
 getDatalist(name:String){
-   return this.http.get<any>(`${this.baseUrl}${name}/list`);
+   return this.http.get<any>(`${this.adminBaseUrl}${name}/list`);
 }
 
 deleteTnx(payload: any, name: string) {
-  return this.http.delete<any>(`${this.baseUrl}${name}`, {
+  return this.http.delete<any>(`${this.adminBaseUrl}${name}`, {
     body: payload
   });
 }
 updateTnxx(payload: any, name: string) {
   console.log("Updating transaction with payload:", payload);
-  return this.http.put<any>(`${this.baseUrl}${name}`, payload);
+  return this.http.put<any>(`${this.adminBaseUrl}${name}`, payload);
 }
 getRolesByUser(userId: Number,name:String): Observable<any> {
-  return this.http.get<any>(`${this.baseUrl}${name}/${userId}`);
+  return this.http.get<any>(`${this.adminBaseUrl}${name}/${userId}`);
 }
 setStatusByRoleId(status: String, id: String, name: String) {
   console.log('Setting status:', status, 'for Role ID:', id, 'on', name);
-  const url = `${this.baseUrl}${name}/setStatus/${id}`;
+  const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
   return this.http.put<any>(url, status);
 
 }
 
 userLogin(payload: any, name: string) {
-  return this.http.post<any>(`${this.baseUrl}${name}/login`, payload);
+  return this.http.post<any>(`${this.adminBaseUrl}${name}/login`, payload);
 }
 
 getCustomerAccounts(custId:String,name:String){
 
-  return this.http.get<any>(`${this.baseUrl}${name}/${custId}`,)
+  return this.http.get<any>(`${this.adminBaseUrl}${name}/${custId}`,)
 }
 
 deleteAccount(id:Number,apiName:String){
- return  this.http.delete<any>(`${this.baseUrl}${apiName}/delete/${id}`)
+ return  this.http.delete<any>(`${this.adminBaseUrl}${apiName}/delete/${id}`)
 }
 
 getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFieldsResponseDto[]> {
-    return this.http.get<DynamicFieldsResponseDto[]>(`${this.baseUrl}dynamic-fields/screen/${screen}/status/${status}`);
+    return this.http.get<DynamicFieldsResponseDto[]>(`${this.adminBaseUrl}dynamic-fields/screen/${screen}/status/${status}`);
 }
 
   getDropdownOptionsByScreenAndType(screen: string, dropdownType: string): Observable<any[]> {
     const params = new HttpParams()
       .set('screen', screen)
       .set('dropdownType', dropdownType);
-    return this.http.get<any[]>(`${this.baseUrl}/dynamic-dropdown-options`, { params });
+    return this.http.get<any[]>(`${this.adminBaseUrl}/dynamic-dropdown-options`, { params });
   }
 
   findByRecordStatusAndScreenAndDropDown(recordStatus: string, screen: string, dropDown: string): Observable<any[]> {
@@ -759,7 +929,7 @@ getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFi
       .set('recordStatus', recordStatus)
       .set('screen',screen)
       .set('dropDown',dropDown);
-    return this.http.get<any[]>(`${this.baseUrl}dropdown-values/search`, { params });
+    return this.http.get<any[]>(`${this.adminBaseUrl}dropdown-values/search`, { params });
   }
  
 
