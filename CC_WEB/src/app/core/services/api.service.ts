@@ -51,7 +51,7 @@ export class ApiService {
   }
   // Admin/Security System (Login, Roles, Users)
   private get adminBaseUrl(): string {
-    return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
+    return `${environment.gatewayUrl}/api/v1/`;
   }
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   // private baseUrl = `${environment.apiUrl}`;
@@ -933,5 +933,35 @@ getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFi
   }
  
 
-        // Implementation to fetch dropdown options based on the provided parameters
+  // forgot user 
+forgotPassword(payload: any) {
+  return this.http.post(
+    'http://localhost:8051/api/v1/clientUsers/forgot-password',
+    payload,
+    { responseType: 'text' }
+  );
+}
+
+resetPassword(payload: { token: string | null; newPassword: string }) {
+  return this.http.post(
+    'http://localhost:8051/api/v1/clientUsers/reset-password',
+    payload,
+    { responseType: 'text' }
+  );
+}
+  
+
+validateResetToken(token: string) {
+  return this.http.get<any>(
+    `${environment.apiUrl}clientUsers/validate-reset-token`,
+    {
+      params: {
+        token: token
+      }
+    }
+  );
+}
+// Implementation to fetch dropdown options based on the provided parameters
+
+
 }

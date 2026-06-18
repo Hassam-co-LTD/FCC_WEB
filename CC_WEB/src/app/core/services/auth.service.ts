@@ -54,16 +54,14 @@ export class AuthService {
   checkAuth(): boolean {
     return !!sessionStorage.getItem('userData');
   }
-
-  /** Get normalized user category (ADMIN / USER) */
+ /** Get normalized user category (ADMIN / USER) */
   getUserCategory(): 'A' | 'U' | null {
     const data = sessionStorage.getItem('userData');
     if (!data) return null;
 
     const parsed = JSON.parse(data);
-    return parsed.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
+    return parsed.body.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
   }
-
   /** Get companyId from sessionStorage */
   getCompanyId(): string | null {
     const data = sessionStorage.getItem('userData');
@@ -103,7 +101,8 @@ export class AuthService {
     console.log("getCompanyType - raw session data:", data);
     if (!data) return null;
     const parsed = JSON.parse(data);
-    return parsed.companyType?.toUpperCase() || null;
+    
+    return parsed.body.companyType?.toUpperCase() || null;
   }
 
   setUserCategory(value: 'A' | 'U') {
