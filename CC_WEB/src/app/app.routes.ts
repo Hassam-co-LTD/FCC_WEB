@@ -12,6 +12,12 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
     },
+     {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./screens/AUTH/login/login.component')
+        .then(m => m.LoginComponent),
+  },
     // {
     //     path: 'signup',
     //     loadComponent: () =>
@@ -75,73 +81,10 @@ export const routes: Routes = [
                                 .then((m) => m.BranchList)
                     },
                     {
-<<<<<<< HEAD
-                    path:'create-city',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
-                    
-                },
-                {
-                  path:'edit-city/:id',
-                  loadComponent:()=> 
-                    import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City)
-                }
-                 ,
-                    {
-                    path:'city-list',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
-                    
-                },
-                   {
-                    path:'city/:id',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/city/city").then((m)=> m.City )
-                    
-                }   
-                ,
-                 {
-                    path:'city-inquiry',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m)=> m.CityList )
-                    
-                } 
-                ,
-                 {
-                    path:'create-currency',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m)=> m.CreateCurrency )
-                    
-                } ,
-                {
-                    path:'currency-inquiry',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m)=> m.CurrencyList)
-                    
-                },
-                {
-                    path:'edit-currency/:id',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m)=> m.CreateCurrency )
-                    
-                } ,
-                {
-                    path:'create-client-user',
-                    loadComponent:()=> 
-                        import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m)=> m.CreateClientUser)
-                    
-                },
-                    {
-                        path:'user-client-inquiry',
-                        loadComponent:()=> 
-                            import("./screens/ADMIN/admin-dashboard/components/list-user-client/list-user-client").then((m)=> m.clientUsersList)
-                        
-=======
                         path: 'edit-branch/:id',
                         loadComponent: () =>
                             import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
                                 .then((m) => m.CustomerBranch)
->>>>>>> 986ff8311901f096335f590a69020825305f630b
                     },
                     {
                         path: 'create-city',
@@ -160,30 +103,6 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m) => m.CityList)
 
-<<<<<<< HEAD
-// create-account-types
-,
-{
-    path:'create-account-types',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
-    
-}
- 
-,
-{
-    path:'edit-account-types/:id',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
-    
-},
-{
-    path:'account-types-inquiry',
-    loadComponent: () =>
-        import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) =>m.AccountTypesInquiry )
-    
-}
-=======
                     },
                     {
                         path: 'city/:id',
@@ -327,7 +246,7 @@ export const routes: Routes = [
                     {
                         path: 'create-account-types',
                         loadComponent: () =>
-                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
 
                     }
 
@@ -335,7 +254,7 @@ export const routes: Routes = [
                     {
                         path: 'edit-account-types/:id',
                         loadComponent: () =>
-                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CustomerAccountMaster)
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
 
                     },
                     {
@@ -349,7 +268,6 @@ export const routes: Routes = [
 
 
                 ],
->>>>>>> 986ff8311901f096335f590a69020825305f630b
 
 
 
@@ -418,7 +336,7 @@ export const routes: Routes = [
                 canActivate: [authGuard],
                 data: { role: 'U' },
                 loadComponent: () =>
-                    import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
+                    import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
             },
 
             // Search Transaction ID
@@ -430,13 +348,13 @@ export const routes: Routes = [
             // ==============================
             // EXPORT LC SCREEN
             // ==============================
-            {
-                path: 'export-screen/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
-                    ).then((m) => m.InquiriesOfRecords),
-            },
+            // {
+            //     path: 'export-screen/inquiries-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
+            //         ).then((m) => m.InquiriesOfRecords),
+            // },
             {
                 path: 'export-screen/preview',
                 loadComponent: () =>
@@ -455,13 +373,13 @@ export const routes: Routes = [
             //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend')
             //             .then((m) => m.Amend),
             // },
-            {
-                path: 'export-screen/approved-inquiry-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-                    ).then((m) => m.ApprovedInquiryRecords),
-            },
+            // {
+            //     path: 'export-screen/approved-inquiry-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+            //         ).then((m) => m.ApprovedInquiryRecords),
+            // },
             // {
             //     path: 'export-screen/amend/preview',
             //     loadComponent: () =>
@@ -504,13 +422,13 @@ export const routes: Routes = [
             // ==============================
             // SHIPPING GUARANTEE
             // ==============================
-            {
-                path: 'shipping-guarantee/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records'
-                    ).then((m) => m.inquiriesRecords),
-            },
+            // {
+            //     path: 'shipping-guarantee/inquiries-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records'
+            //         ).then((m) => m.inquiriesRecords),
+            // },
             {
                 path: 'shipping-guarantee/preview',
                 loadComponent: () =>
@@ -525,27 +443,29 @@ export const routes: Routes = [
                         .then((m) => m.Success),
                 data: { title: 'Shipping Guarantee Submitted' }
             },
-            {
-                path: 'shipping-guarantee/amend',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
-                        .then((m) => m.Amend),
-            },
+            // {
+            //     path: 'shipping-guarantee/amend',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
+            //             .then((m) => m.Amend),
+            // },
 
             // Import Amend Route
-            {
-                path: 'shipping-guarantee/approved-inquiry-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-                    ).then((m) => m.ApprovedInquiryRecords),
-            },
+            // {
+            //     path: 'shipping-guarantee/approved-inquiry-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+            //         ).then((m) => m.ApprovedInquiryRecords),
+            // }
+            // ,
 
-            {
-                path: 'shipping-guarantee/amend/preview',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
-            },
+            // {
+            //     path: 'shipping-guarantee/amend/preview',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
+            // }
+            // ,
 
 
             // Dynamic TNX ID route
@@ -555,11 +475,11 @@ export const routes: Routes = [
                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
             },
             
-            {
-                path: 'shipping-guarantee/amend/:tnxId',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
-            },
+            // {
+            //     path: 'shipping-guarantee/amend/:tnxId',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
+            // },
             // Base Shipping Guarantee screen
             {
                 path: 'shipping-guarantee',
@@ -585,13 +505,13 @@ export const routes: Routes = [
             // ==============================
             // EXPORT COLLECTION
             // ==============================
-            {
-                path: 'export-collection/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records'
-                    ).then((m) => m.inquiriesRecords),
-            },
+            // {
+            //     path: 'export-collection/inquiries-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records'
+            //         ).then((m) => m.inquiriesRecords),
+            // },
             {
                 path: 'export-collection/preview',
                 loadComponent: () =>
@@ -606,26 +526,26 @@ export const routes: Routes = [
                         .then((m) => m.Success),
                 data: { title: 'Export Collection Submitted' }
             },
-            {
-                path: 'export-collection/amend',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend')
-                        .then((m) => m.Amend),
-            },
+            // {
+            //     path: 'export-collection/amend',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend')
+            //             .then((m) => m.Amend),
+            // },
             // Approved Amend Route
-            {
-                path: 'export-collection/approved-inquiry-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-                    ).then((m) => m.ApprovedInquiryRecords),
-            },
+            // {
+            //     path: 'export-collection/approved-inquiry-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+            //         ).then((m) => m.ApprovedInquiryRecords),
+            // },
 
-            {
-                path: 'export-collection/amend/preview',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(m => m.PreviewSection),
-            },
+            // {
+            //     path: 'export-collection/amend/preview',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(m => m.PreviewSection),
+            // },
 
             {
                 path: 'export-collection/:tnxId',
@@ -633,11 +553,11 @@ export const routes: Routes = [
                     import('./screens/USER/Trade-Services/export-collection/export-collection').then(m => m.ExportCollection),
             },
 
-            {
-                path: 'export-collection/amend/:tnxId',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(m => m.Amend),
-            },
+            // {
+            //     path: 'export-collection/amend/:tnxId',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(m => m.Amend),
+            // },
 
             {
                 path: 'export-collection',
@@ -666,13 +586,13 @@ export const routes: Routes = [
             // UNDERTAKING ISSUANCE 
             // ==============================
 
-            {
-                path: 'undertaking-issuance/inquiries-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records'
-                    ).then((m) => m.inquiriesRecords),
-            },
+            // {
+            //     path: 'undertaking-issuance/inquiries-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records'
+            //         ).then((m) => m.inquiriesRecords),
+            // },
             {
                 path: 'undertaking-issuance/preview',
                 loadComponent: () =>
@@ -691,13 +611,13 @@ export const routes: Routes = [
                         './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend'
                     ).then((m) => m.AmendScreen),
             },
-            {
-                path: 'undertaking-issuance/approved-inquiry-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-                    ).then((m) => m.ApprovedInquiryRecords),
-            },
+            // {
+            //     path: 'undertaking-issuance/approved-inquiry-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+            //         ).then((m) => m.ApprovedInquiryRecords),
+            // },
             {
                 path: 'undertaking-issuance/amend/preview',
                 loadComponent: () =>
@@ -825,26 +745,26 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./shared/success/success').then(m => m.Success),
             },
-            {
-                path: 'import-screen/amend',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-            },
+            // {
+            //     path: 'import-screen/amend',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            // },
 
-            // Import Amend Route
-            {
-                path: 'import-screen/approved-inquiry-records',
-                loadComponent: () =>
-                    import(
-                        './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-                    ).then((m) => m.ApprovedInquiryRecords),
-            },
+            // // Import Amend Route
+            // {
+            //     path: 'import-screen/approved-inquiry-records',
+            //     loadComponent: () =>
+            //         import(
+            //             './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+            //         ).then((m) => m.ApprovedInquiryRecords),
+            // },
 
-            {
-                path: 'import-screen/amend/preview',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
-            },
+            // {
+            //     path: 'import-screen/amend/preview',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
+            // },
 
             // Dynamic TNX ID route
             {
@@ -853,11 +773,11 @@ export const routes: Routes = [
                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
             },
 
-            {
-                path: 'import-screen/amend/:tnxId',
-                loadComponent: () =>
-                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-            },
+            // {
+            //     path: 'import-screen/amend/:tnxId',
+            //     loadComponent: () =>
+            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            // },
 
             // Base import screen
             {
