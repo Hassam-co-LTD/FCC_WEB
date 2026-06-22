@@ -1,33 +1,281 @@
 <div class="auth-container">
-  <mat-card>
-    <h2>Login</h2>
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Login Id</mat-label>
-      <input placeholder="Enter User ID" type="text" matInput [(ngModel)]="loginId" required />
-    </mat-form-field>
+  <mat-card class="auth-card">
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Company ID</mat-label>
-      <input placeholder="Enter Company ID" matInput [(ngModel)]="companyId" type="text" required />
-    </mat-form-field>
+    @if (authState === 'LOGIN') {
+      <div class="auth-flow-wrapper">
+        <div class="auth-header">
+          <h2>Secure Login</h2>
+          <p class="auth-subtitle">Access your enterprise dashboard</p>
+        </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Password</mat-label>
-      <input placeholder="Enter Password" [type]="hidePassword ? 'password' : 'text'" matInput [(ngModel)]="password"
-        type="password" required />
-      <button mat-icon-button matSuffix matTooltip="Show / Hide Password" type="button" (click)="togglePassword()"
-        [attr.aria-label]="'Toggle password visibility'">
-        <mat-icon>
-          {{ hidePassword ? 'visibility_off' : 'visibility' }}
-        </mat-icon></button>
-    </mat-form-field>
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Login ID</mat-label>
+            <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
+            <input matInput [(ngModel)]="loginId" placeholder="Enter User ID" autocomplete="username" />
+          </mat-form-field>
 
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Company ID</mat-label>
+            <mat-icon matPrefix class="field-icon">business</mat-icon>
+            <input matInput [(ngModel)]="companyId" placeholder="Enter Company ID" />
+          </mat-form-field>
 
-    <button mat-flat-button color="primary" class="full-width" type="submit" (click)="loginHandler()" >Login</button>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix class="field-icon">lock</mat-icon>
+            <input
+              matInput
+              [type]="hidePassword ? 'password' : 'text'"
+              [(ngModel)]="password"
+              placeholder="Enter Password"
+              autocomplete="current-password"
+            />
+            <button mat-icon-button matSuffix (click)="togglePassword()" type="button" class="visibility-toggle">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
 
-    <!-- <p>
-      Don’t have an account?
-      <a routerLink="/signup">Sign up</a>
-    </p> -->
+        <button mat-flat-button color="primary" class="full-width action-btn" (click)="loginHandler()">
+          Login
+        </button>
+
+        <div class="auth-footer-actions">
+          <p>
+            <a class="interactive-link" (click)="transitionTo('FORGOT_PASSWORD')">Forgot Password?</a>
+          </p>
+        </div>
+      </div>
+    }
+
+    @if (authState === 'FORGOT_PASSWORD') {
+      <div class="auth-flow-wrapper">
+        <div class="auth-header">
+          <h2>Forgot Password</h2>
+          <p class="auth-subtitle">Verify identity to request a secure password reset</p>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Login ID</mat-label>
+            <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
+            <input matInput [(ngModel)]="forgotLoginId" placeholder="Enter Login ID" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Company ID</mat-label>
+            <mat-icon matPrefix class="field-icon">business</mat-icon>
+            <input matInput [(ngModel)]="forgotCompanyId" placeholder="Enter Company ID" />
+          </mat-form-field>
+        </div>
+
+        <button mat-flat-button color="primary" class="full-width action-btn" (click)="sendResetLink()">
+          Send Reset Link
+        </button>
+
+        <div class="auth-footer-actions">
+          <p>
+            <a class="interactive-link navigation-back" (click)="transitionTo('LOGIN')">
+              <mat-icon>arrow_back</mat-icon> Back to Login
+            </a>
+          </p>
+        </div>
+      </div>
+    }
+
+    @if (authState === 'EMAIL_SENT') {
+      <div class="auth-flow-wrapper state-screen">
+        <div class="state-icon-wrapper unique-info-icon">
+          <mat-icon class="state-icon animated-pulse">mark_email_read</mat-icon>
+        </div>
+
+        <h2>Check Your Email</h2>
+        <p class="state-description">We’ve sent a secure password reset link to your verified address:</p>
+
+        <div class="email-box">
+          <mat-icon>alternate_email</mat-icon>
+          <span class="masked-email-text">{{ maskedUser }}</span>
+        </div>
+
+        <p class="state-description tertiary-text">
+          Please check your inbox and follow the secure instructions contained inside.
+        </p>
+
+        <div class="timer-box">
+          <mat-icon>schedule</mat-icon>
+          <span>Link expires in: <strong class="timer-countdown">{{ expiryDisplay }}</strong></span>
+        </div>  
+
+        <button mat-flat-button color="primary" class="full-width action-btn" (click)="transitionTo('FORGOT_PASSWORD')">
+          Back
+        </button>
+
+        <div class="resend-box">
+          <button mat-stroked-button color="primary" class="resend-action-btn"
+                  (click)="resendEmail()" [disabled]="!canResend">
+            <mat-icon>replay</mat-icon> Resend Email
+          </button>
+
+          <p class="resend-status-text">
+            @if (!canResend) {
+              <span class="countdown-active">
+                Resend available in <strong>{{ resendSeconds }}s</strong>
+              </span>
+            } @else {
+              <span class="countdown-ready">
+                You can safely request another link now
+              </span>
+            }
+          </p>
+        </div>
+      </div>
+    }
+
+   @if (authState === 'RESET_PASSWORD') {
+      <div class="auth-flow-wrapper">
+        <div class="auth-header">
+          <h2>Reset Password</h2>
+          <p class="auth-subtitle">Establish a highly secure password credential</p>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width password-field-container">
+            <mat-label>New Password</mat-label>
+            <mat-icon matPrefix class="field-icon">lock_open</mat-icon>
+            <input
+              matInput
+              [type]="hideNewPassword ? 'password' : 'text'"
+              [(ngModel)]="newPassword"
+              name="newPassword"
+              (ngModelChange)="checkPasswordStrength($event)"
+              required
+              autocomplete="new-password"
+            />
+            <button mat-icon-button matSuffix (click)="toggleNewPassword()" type="button" class="visibility-toggle">
+              <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
+
+          <div class="password-requirements-card">
+            <p class="requirements-title">Password Complexity Requirements:</p>
+            <ul class="checklist-grid">
+              <li [class.satisfied]="hasMinLength">
+                <mat-icon class="check-icon">{{ hasMinLength ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <span>Minimum 8 characters length</span>
+              </li>
+              <li [class.satisfied]="hasUppercase">
+                <mat-icon class="check-icon">{{ hasUppercase ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <span>At least one uppercase letter (A-Z)</span>
+              </li>
+              <li [class.satisfied]="hasLowercase">
+                <mat-icon class="check-icon">{{ hasLowercase ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <span>At least one lowercase letter (a-z)</span>
+              </li>
+              <li [class.satisfied]="hasNumber">
+                <mat-icon class="check-icon">{{ hasNumber ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <span>At least one numeric digit (0-9)</span>
+              </li>
+              <li [class.satisfied]="hasSpecialChar">
+                <mat-icon class="check-icon">{{ hasSpecialChar ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <span>Special characters validation (@$!%*?&amp;#)</span>
+              </li>
+            </ul>
+
+            @if (newPassword) {
+              <div class="strength-indicator-wrapper">
+                <div class="strength-bar-container">
+                  <div class="strength-bar-fill" 
+                       [style.width.%]="passwordStrengthProgress" 
+                       [style.background-color]="passwordStrengthColor">
+                  </div>
+                </div>
+                <div class="strength-meta-data">
+                  <span class="label">Security Rating:</span>
+                  <span class="value" [style.color]="passwordStrengthColor">{{ passwordStrength }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Confirm Password</mat-label>
+            <mat-icon matPrefix class="field-icon">gpp_good</mat-icon>
+            <input
+              matInput
+              [type]="hideConfirmPassword ? 'password' : 'text'"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              required
+              autocomplete="new-password"
+            />
+            <button mat-icon-button matSuffix (click)="toggleConfirmPassword()" type="button" class="visibility-toggle">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            
+            @if (confirmPassword && newPassword !== confirmPassword) {
+              <mat-error class="form-level-error">
+                Verification parameters mismatch. Passwords do not match.
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="updatePassword()"
+          [disabled]="!newPassword || !confirmPassword || newPassword !== confirmPassword || isPasswordInvalid">
+          Update Password
+        </button>
+
+        <div class="auth-footer-actions">
+          <p>
+            <a class="interactive-link navigation-back" (click)="transitionTo('LOGIN')">
+              <mat-icon>arrow_back</mat-icon> Back to Login
+            </a>
+          </p>
+        </div>
+      </div>
+    }
+
+    @if (authState === 'EXPIRED') {
+      <div class="auth-flow-wrapper state-screen">
+        <div class="state-icon-wrapper unique-error-icon">
+          <mat-icon class="state-icon">gpp_bad</mat-icon>
+        </div>
+
+        <h2>Link Expired</h2>
+        <p class="state-description text-center">
+          Your dynamic password reset token has expired for strict security and infrastructure compliance rules.
+        </p>
+        <p class="state-description text-center tertiary-text">
+          Please request a brand-new verification link to verify your identity.
+        </p>
+
+        <button mat-flat-button color="primary" class="full-width action-btn" (click)="requestNewLink()">
+          Request New Link
+        </button>
+      </div>
+    }
+
+    @if (authState === 'SUCCESS') {
+      <div class="auth-flow-wrapper state-screen">
+        <div class="state-icon-wrapper unique-success-icon">
+          <mat-icon class="state-icon">check_circle</mat-icon>
+        </div>
+
+        <h2>Update Successful</h2>
+        <p class="state-description text-center">
+          Your platform credentials have been securely refreshed.
+        </p>
+
+        <button mat-flat-button color="primary" class="full-width action-btn" (click)="transitionTo('LOGIN')">
+          Proceed to Secure Sign In
+        </button>
+      </div>
+    }
+
   </mat-card>
 </div>

@@ -1,228 +1,644 @@
 @use '../../../../styles/theme' as theme;
-// eye css 
-/* In your component SCSS or global styles.scss */
-/* Hide Chrome/Edge built-in password reveal */
+
+/* =========================================================================
+   1. BROWSER DECORATOR OVERRIDES
+========================================================================= */
 input::-webkit-password-toggle-button,
 input::-webkit-inner-spin-button,
 input::-webkit-clear-button {
-    display: none !important;
+  display: none !important;
 }
 
-/* Hide IE/Edge old reveal button */
-input::-ms-reveal, input::-ms-clear {
-    display: none !important;
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
 }
 
+/* =========================================================================
+   2. AUTH CONTAINER ROOT LAYOUT
+========================================================================= */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   font-family: 'Poppins', sans-serif;
   position: relative;
   overflow: hidden;
-
-  // 1. Moving Atmospheric Background (Optimized)
-  background: linear-gradient(125deg, #001529, #003366, #001529, #0a2a43);
+  
+  /* Deep Premium Banking Aurora Gradient Layout */
+  background: linear-gradient(135deg, #001124 0%, #002244 40%, #001124 100%);
   background-size: 400% 400%;
-  animation: auroraBackground 15s ease infinite;
+  animation: auroraBackground 20s ease infinite;
 
-  // 2. Corporate Dot Pattern Overlay
+  &::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(24, 144, 255, 0.08) 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+    animation: floatGlow 25s infinite alternate ease-in-out;
+    z-index: 0;
+    pointer-events: none;
+  }
+
   &::after {
     content: "";
     position: absolute;
     inset: 0;
-    opacity: 0.1;
-    background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px);
-    background-size: 30px 30px;
+    opacity: 0.04;
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 24px 24px;
     pointer-events: none;
     z-index: 0;
   }
+}
 
-  // 3. Subtle Animated Mesh (Floating Glows)
-  &::before {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(24, 144, 255, 0.15) 0%, transparent 70%);
-    top: 10%;
-    left: 10%;
-    animation: floatGlow 20s infinite alternate;
-    z-index: 0;
-  }
+/* =========================================================================
+   3. ENTERPRISE AUTH CARD ARCHITECTURE
+========================================================================= */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 3.5rem 3rem !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(20px);
+  border-radius: theme.$radius-default;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.03),
+    0 20px 40px -10px rgba(0, 12, 32, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  box-sizing: border-box;
 
-  mat-card {
-    position: relative;
-    z-index: 1; // Above background patterns
-    width: 100%;
-    max-width: 400px;
-    padding: 3rem 2.5rem;
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-    text-align: center;
+  /* Optimized Performance Entry Scale/Fade CSS */
+  opacity: 0;
+  transform: translateY(15px) scale(0.99);
+  animation: cardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
-    // 4. Smooth Entrance Animation
-    opacity: 0;
-    transform: translateY(20px);
-    animation: cardReveal 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-    animation-delay: 0.2s;
-
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-      transition: all 0.3s ease-in-out;
-    }
-
-    h2 {
-      font-size: 1.75rem;
-      color: theme.$primary;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-      animation: fadeIn 1s ease-out forwards;
-    }
-
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-
-      .full-width {
-        width: 100%;
-      }
-
-      mat-form-field {
-        width: 100%;
-        transition: transform 0.2s ease;
-
-        &:focus-within {
-          transform: scale(1.02);
-        }
-
-        ::ng-deep .mat-mdc-text-field-wrapper {
-          background-color: theme.$light-bg;
-          border-radius: theme.$radius-default;
-        }
-
-        ::ng-deep .mdc-text-field--focused {
-          border-color: theme.$primary;
-        }
-      }
-
-      button {
-        background-color: theme.$primary-btn;
-        color: white;
-        font-weight: 600;
-        border-radius: theme.$radius-default;
-        padding: 0.75rem 0;
-        box-shadow: theme.$button-shadow;
-        transition: all 0.3s ease;
-
-        &:hover {
-          background-color: theme.$primary-btn-hover;
-          transform: translateY(-2px);
-          filter: brightness(1.1);
-        }
-      }
-    }
-
-    p {
-      margin-top: 1.25rem;
-      color: theme.$text-medium;
-      font-size: 0.9rem;
-
-      a {
-        color: theme.$primary;
-        font-weight: 600;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 12px 20px -5px rgba(0, 12, 32, 0.05),
+      0 35px 60px -15px rgba(0, 12, 32, 0.3);
   }
 }
 
-// Add this inside your mat-card { ... } block
-
-.forgot-password-container {
+/* =========================================================================
+   4. STRUCTURED AUTH HEADER COMPONENTS
+========================================================================= */
+.auth-flow-wrapper {
   display: flex;
-  justify-content: flex-end; // Finastra style: link on the right
-  margin-top: -0.5rem; // Bring it closer to the password field
-  margin-bottom: 1rem;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+}
 
-  .forgot-link {
-    font-size: 0.85rem;
+.auth-header {
+  margin-bottom: 2.25rem;
+  
+  h2 {
+    font-size: 1.8rem;
     color: theme.$primary;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
 
-    &:hover {
-      color: theme.$primary-hover;
-      text-decoration: underline;
-      transform: translateX(-2px); // Subtle "nudge" effect
+  .auth-subtitle {
+    font-size: 0.925rem;
+    color: theme.$text-medium;
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+}
+
+/* =========================================================================
+   5. MAT-FORM-FIELD ENHANCEMENTS & PREFIX CUSTOMIZATION
+========================================================================= */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 1.15rem;
+}
+
+.field-icon {
+  color: theme.$text-medium;
+  margin-right: 10px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: color 0.25s ease;
+}
+
+.visibility-toggle {
+  color: theme.$text-medium;
+  opacity: 0.7;
+  &:hover { opacity: 1; }
+}
+
+/* Deep Angular Material DOM Node Structural Overrides */
+mat-form-field {
+  &::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background-color: theme.$light-bg !important;
+      border-radius: theme.$radius-default !important;
+      padding-left: 14px !important;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mat-mdc-form-field-flex {
+      align-items: center !important;
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: rgba(0, 0, 0, 0.08) !important;
+      transition: border-color 0.25s ease, border-width 0.1s ease !important;
+    }
+
+    .mat-mdc-form-field-input-control {
+      font-size: 0.95rem !important;
+      font-weight: 400 !important;
+      color: #1e293b !important;
+    }
+  }
+
+  &:focus-within {
+    .field-icon {
+      color: theme.$primary;
+      opacity: 1;
+    }
+    &::ng-deep .mat-mdc-text-field-wrapper {
+      background-color: #fff !important;
+      box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.05);
+    }
+    &::ng-deep {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: theme.$primary !important;
+        border-width: 1.5px !important;
+      }
     }
   }
 }
 
-// Adjusting the Login button margin to breathe better
-button[type="submit"] {
-  margin-top: 0.5rem !important;
+.form-level-error {
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+  margin-top: 4px !important;
 }
 
-// --- Animation Keyframes ---
+/* =========================================================================
+   6. PREMIUM AUTH ACTION BUTTONS
+========================================================================= */
+button[mat-flat-button].action-btn {
+  background-color: theme.$primary-btn !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.975rem;
+  letter-spacing: 0.01em;
+  border-radius: theme.$radius-default;
+  padding: 1.45rem 0 !important;
+  margin: 0.75rem 0 1rem 0;
+  box-shadow: theme.$button-shadow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  transition: background-color 0.25s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+
+  &:hover:not([disabled]) {
+    background-color: theme.$primary-btn-hover !important;
+    transform: translateY(-1.5px);
+    box-shadow: 0 8px 20px -4px rgba(0, 51, 102, 0.3);
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
+  &[disabled] {
+    background-color: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+  }
+}
+
+/* =========================================================================
+   7. INTERACTIVE NAV-LINKS & ACTIONFOOTER
+========================================================================= */
+.auth-footer-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+  width: 100%;
+  
+  p {
+    margin: 0;
+  }
+}
+
+.interactive-link {
+  color: theme.$primary;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: theme.$primary-hover;
+  }
+
+  &.navigation-back {
+    color: theme.$text-medium;
+    font-weight: 500;
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+    &:hover {
+      color: theme.$primary;
+    }
+  }
+}
+
+/* =========================================================================
+   8. REAL-TIME FINTECH PASSWORD STRENGTH VISUAL INDICATOR SYSTEM
+========================================================================= */
+.password-field-container {
+  margin-bottom: 1.5rem !important;
+}
+
+.strength-indicator-wrapper {
+  margin: 12px 2px 2px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  /* Track background context layer */
+  .strength-bar-container {
+    width: 100%;
+    height: 5px;
+    background-color: #f1f5f9;
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated Core Strength Bar Element */
+  .strength-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 100px;
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
+  }
+
+  /* Structural Metadata Container Layer */
+  .strength-meta-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1;
+
+    .label {
+      color: theme.$text-medium;
+    }
+
+    .value {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+  }
+}
+
+/* =========================================================================
+   9. DIGITAL FLOW SUB-STATE SCREENS (EMAIL SENT, EXPIRED, SUCCESS)
+========================================================================= */
+.state-screen {
+  align-items: center;
+  text-align: center;
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: theme.$primary;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .state-description {
+    font-size: 0.925rem;
+    color: theme.$text-medium;
+    line-height: 1.5;
+    margin: 0 0 1.5rem 0;
+    max-width: 320px;
+
+    &.tertiary-text {
+      font-size: 0.82rem;
+      color: #64748b;
+      margin-top: 1rem;
+      margin-bottom: 1.25rem;
+    }
+  }
+}
+
+/* High Fidelity Status Context Icons Frame Container */
+.state-icon-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+
+  .state-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  &.unique-info-icon {
+    background-color: rgba(14, 116, 144, 0.08);
+    color: #0e7490;
+  }
+
+  &.unique-success-icon {
+    background-color: rgba(22, 163, 74, 0.08);
+    color: #16a34a;
+  }
+
+  &.unique-error-icon {
+    background-color: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+  }
+}
+
+/* High Visibility Masked Box Grid Layout */
+.email-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(14, 116, 144, 0.05);
+  border: 1px solid rgba(14, 116, 144, 0.1);
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  margin: 0.25rem 0 1.5rem 0;
+  width: 100%;
+  box-sizing: border-box;
+  color: #0e7490;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .masked-email-text {
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Compliance Infrastructure Session Clock Timer Box Container */
+.timer-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 100px;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #64748b;
+  }
+
+  .timer-countdown {
+    color: #0f172a;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Resend Domain Framework Wrappers */
+.resend-box {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .resend-action-btn {
+    width: 100%;
+    padding: 1.25rem 0 !important;
+    border-radius: theme.$radius-default;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-color: #cbd5e1 !important;
+    color: theme.$primary !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 0;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover:not([disabled]) {
+      background-color: rgba(0, 51, 102, 0.03) !important;
+      border-color: theme.$primary !important;
+    }
+
+    &[disabled] {
+      color: #94a3b8 !important;
+      border-color: #e2e8f0 !important;
+      cursor: not-allowed;
+    }
+  }
+
+  .resend-status-text {
+    font-size: 0.8rem;
+    margin-top: 0.65rem;
+    font-weight: 400;
+
+    .countdown-active {
+      color: #64748b;
+      strong { color: #334155; font-weight: 600; }
+    }
+
+    .countdown-ready {
+      color: #16a34a;
+      font-weight: 500;
+    }
+  }
+}
+
+/* =========================================================================
+   10. HARDCORE CSS ANIMATION KEYFRAMES
+========================================================================= */
 @keyframes auroraBackground {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @keyframes floatGlow {
-  from {
-    transform: translate(0, 0);
-  }
-
-  to {
-    transform: translate(100px, 50px);
-  }
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(60px, 40px) scale(1.05); }
 }
 
 @keyframes cardReveal {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+@keyframes animatedPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.04); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-/* Responsive Fixes */
+.animated-pulse {
+  animation: animatedPulse 2s infinite ease-in-out;
+}
+
+/* =========================================================================
+   11. STRUCTURAL MOBILE RESPONSIVE MEDIA QUERIES
+========================================================================= */
 @media (max-width: 480px) {
-  .auth-container mat-card {
-    padding: 2rem 1.5rem;
+  .auth-container {
+    padding: 1rem;
+    
+    .auth-card {
+      padding: 2.5rem 1.75rem !important;
+    }
+  }
+
+}
+
+.password-requirements-card {
+  background-color: #f8fafc; // Soft slate gray background
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+
+  .requirements-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin: 0 0 12px 0;
+  }
+
+  .checklist-grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.825rem;
+      color: #94a3b8; // Default grayed out color for unsatisfied rules
+      transition: color 0.2s ease-in-out;
+
+      .check-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #cbd5e1;
+      }
+
+      &.satisfied {
+        color: #0f172a; // Deep contrast active color
+        font-weight: 500;
+
+        .check-icon {
+          color: #22c55e; // Bright green checkmark icon
+        }
+      }
+    }
+  }
+}
+
+.strength-indicator-wrapper {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed #e2e8f0;
+
+  .strength-bar-container {
+    background-color: #e2e8f0;
+    height: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+
+    .strength-bar-fill {
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    }
+  }
+
+  .strength-meta-data {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.775rem;
+
+    .label {
+      color: #64748b;
+    }
+    .value {
+      font-weight: 600;
+    }
   }
 }

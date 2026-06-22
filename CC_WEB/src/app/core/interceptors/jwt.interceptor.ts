@@ -22,11 +22,8 @@ export const jwtInterceptor: HttpInterceptorFn =
           Authorization: `Bearer ${token}`
         }
       });
+      return next.handle(cloned);
     }
-
-    console.log('REQUEST URL:', req.url);
-    console.log('TOKEN:', token);
-    console.log('AUTH HEADER:', modifiedReq.headers.get('Authorization'));
-
-    return next(modifiedReq);
-  };
+    return next.handle(req);
+  }
+}
