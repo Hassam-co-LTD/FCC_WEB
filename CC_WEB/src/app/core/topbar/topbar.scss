@@ -1,325 +1,451 @@
-@use "../../../styles/theme" as theme;
+// topbar.component.scss
+@use 'theme' as *;
+// 👆 adjust path to your actual global variables file
 
 .topbar {
-    height: 60px;
-    background: theme.$white;
-    border-bottom: 1px solid theme.$primary-border;
-    padding: 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between; // keep center & right aligned
-    box-shadow: 0 2px 6px theme.$primary-shadow;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 $gap-default * 1.5;
+  background: $white;
+  border-bottom: 1px solid $border-light;
+  box-shadow: $shadow-primary;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  @media (max-width: 768px) {
+    padding: 0 $gap-default;
+  }
 }
 
-/* Left group — hamburger + title stay close */
+/* ===== Brand ===== */
 .left-group {
-    display: flex;
-    align-items: center;
-    gap: 8px; // small space between icon & text
+  display: flex;
+  align-items: center;
+  gap: $gap-default;
 }
+
 .brand {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .brand-logo {
-    height: 25px;
-    width: auto;
+  height: 36px;
+  width: auto;
+  object-fit: contain;
 }
 
-/* Hamburger icon */
-.menu-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-
-    mat-icon {
-        font-size: 24px;
-        color: theme.$primary-color;
-    }
-}
-
-/* App title */
-.app-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: theme.$primary-color;
-    letter-spacing: 0.3px;
-}
-
-/* ================================
-   NAVIGATION AREA
-================================ */
+/* ===== Center Nav ===== */
 .nav {
-    display: flex;
-    align-items: center;
-    gap: 25px;
+  display: flex;
+  align-items: center;
+  gap: $gap-default * 1.5;
+  flex: 1;
+  justify-content: center;
 
-    a {
-        text-decoration: none;
-        font-size: 14px;
-        color: theme.$text-dark;
-        font-weight: 500;
-        transition: color 0.2s ease, background 0.2s ease;
-        padding: 8px 10px;
-        border-radius: 6px;
+  @media (max-width: 992px) {
+    display: none;
 
-        &:hover {
-            color: theme.$primary-hover;
-            background: theme.$primary-light;
-        }
+    &.open {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: $white;
+      border-bottom: 1px solid $border-light;
+      box-shadow: $shadow-primary;
+      padding: $gap-default;
+      gap: $gap-default;
     }
+  }
 }
 
-/* ================================
-   DROPDOWN
-================================ */
+.nav-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  text-decoration: none;
+  padding: $gap-default * 0.5 $gap-default * 0.75;
+  border-radius: $radius-default;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background: $hover-bg;
+    color: $primary-color;
+  }
+}
+
+/* ===== Trade Services Dropdown ===== */
 .dropdown {
-    position: relative;
+  position: relative;
 }
 
 .menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  padding: $gap-default * 0.5 $gap-default * 0.75;
+  border-radius: $radius-default;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: $hover-bg;
+    color: $primary-color;
+  }
+
+  &.active {
+    background: $primary-light;
+    color: $primary-color;
+
+    mat-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-large;
+  box-shadow: $shadow-primary;
+  list-style: none;
+  margin: 0;
+  padding: $gap-default * 0.5;
+  z-index: 50;
+
+  li {
+    width: 100%;
+  }
+
+  button {
+    width: 100%;
+    text-align: left;
     background: transparent;
     border: none;
     font-size: 14px;
+    color: $text-dark;
+    padding: $gap-default * 0.6 $gap-default * 0.75;
+    border-radius: $radius-default;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: theme.$text-dark;
-    padding: 8px 10px;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
-        color: theme.$primary-hover;
-        background: theme.$primary-light;
+      background: $hover-bg;
+      color: $primary-color;
     }
-
-    mat-icon {
-        transition: transform 0.2s ease;
-    }
-
-    &.active mat-icon {
-        transform: rotate(180deg);
-    }
+  }
 }
 
-/* Dropdown menu */
-.dropdown-menu {
-    position: absolute;
-    top: 38px;
-    left: 0;
-    background: theme.$white;
-    border: 1px solid theme.$dropdown-border;
-    width: 190px;
-    border-radius: 8px;
-    padding: 6px 0;
-    list-style: none;
-    box-shadow: 0 4px 20px rgba(21, 101, 217, 0.15);
-    animation: fadeIn 0.2s ease-in-out;
-    z-index: 1200;
+/* ===== User meta (inline name / last login) ===== */
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.3;
+  padding-left: $gap-default;
+  border-left: 1px solid $border-light;
 
-    button {
-        width: 100%;
-        background: transparent;
-        border: none;
-        text-align: left;
-        font-size: 14px;
-        color: theme.$text-medium;
-        padding: 10px 14px;
-        cursor: pointer;
-        transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
-        font-weight: 400;
-
-        &:hover {
-            background: theme.$dropdown-hover-bg;
-            color: theme.$dropdown-hover-text;
-            border-left: 3px solid theme.$dropdown-hover-text;
-            padding-left: 18px;
-        }
-
-        &.active {
-            background: theme.$primary-light;
-            color: theme.$primary-hover;
-            font-weight: 500;
-        }
-    }
+  @media (max-width: 992px) {
+    border-left: none;
+    padding-left: 0;
+  }
 }
 
-/* ================================
-   RIGHT SECTION
-================================ */
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-dark;
+}
+
+.last-login {
+  font-size: 11px;
+  color: $text-medium;
+}
+
+/* ===== Right Side ===== */
 .right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: $gap-default * 0.5;
+}
+
+.icon-btn {
+  color: $text-medium;
+
+  &:hover {
+    color: $primary-color;
+    background: $hover-bg;
+  }
 }
 
 .profile-btn {
+  display: flex;
+  align-items: center;
+  gap: $gap-default * 0.5;
+  border-radius: $radius-large;
+  padding: $gap-default * 0.4 $gap-default * 0.75;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: $hover-bg;
+  }
+
+  .avatar {
     display: flex;
     align-items: center;
-    color: theme.$text-medium;
-    font-weight: 500;
-    padding: 6px 8px;
-    border-radius: 6px;
-    transition: 0.2s;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $primary-color;
+    color: $white;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+
+    @media (max-width: 576px) {
+      display: none;
+    }
+  }
+
+  mat-icon {
+    color: $text-medium;
+  }
+}
+
+/* ===== Profile Dropdown Menu Items ===== */
+::ng-deep .profile-menu {
+  .mat-mdc-menu-content {
+    padding: $gap-default * 0.5;
+    min-width: 200px;
+  }
+
+  button[mat-menu-item] {
+    border-radius: $radius-default;
+    font-size: 14px;
+    color: $text-dark;
+
+    mat-icon {
+      color: $text-medium;
+      margin-right: $gap-default * 0.5;
+    }
 
     &:hover {
-        background: theme.$dropdown-hover-bg;
-        color: theme.$primary-hover;
+      background: $hover-bg;
+      color: $primary-color;
+
+      mat-icon {
+        color: $primary-color;
+      }
     }
+  }
+
+  .logout-item {
+    color: $danger;
+
+    mat-icon {
+      color: $danger;
+    }
+
+    &:hover {
+      background: rgba(211, 47, 47, 0.08);
+      color: $danger;
+
+      mat-icon {
+        color: $danger;
+      }
+    }
+  }
+
+  mat-divider {
+    margin: $gap-default * 0.3 0;
+  }
 }
 
-/* ================================
-   ANIMATION
-================================ */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
+::ng-deep .profile-menu {
+  // ...existing rules...
+
+  .menu-link-item {
+    display: flex;
+    align-items: center;
+    gap: $gap-default * 0.5;
+    padding: $gap-default * 0.6 $gap-default * 0.75;
+    font-size: 14px;
+    color: $primary-color;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: $radius-default;
+
+    mat-icon {
+      color: $primary-color;
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    &:hover {
+      text-decoration: underline;
+      background: $hover-bg;
     }
+  }
 }
 
-/* ================================
-   RESPONSIVE DESIGN
-================================ */
+// Append only — nothing above this is touched.
 
-/* 🟦 Tablets (<=1024px) */
-@media (max-width: 1024px) {
-    .nav {
-        gap: 16px;
+::ng-deep .profile-menu {
 
-        a,
-        .menu-btn {
-            font-size: 13px;
-            padding: 6px 8px;
-        }
+  .mat-mdc-menu-content {
+    padding: $gap-default * 0.5;
+    min-width: 240px;
+
+    @media (max-width: 576px) {
+      min-width: 200px;
+    }
+  }
+
+  /* ===== Header block: avatar + name + role ===== */
+  .menu-header {
+    display: flex;
+    align-items: center;
+    gap: $gap-default * 0.6;
+    padding: $gap-default * 0.6 $gap-default * 0.5;
+    border-radius: $radius-default;
+    background: $primary-light;
+    margin-bottom: $gap-default * 0.3;
+  }
+
+  .menu-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: $primary-color;
+    color: $white;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .menu-header-text {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .menu-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .menu-role {
+    font-size: 11px;
+    color: $text-medium;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ===== Menu rows (hoverable links) ===== */
+  .menu-row {
+    display: flex;
+    align-items: center;
+    gap: $gap-default * 0.6;
+    border-radius: $radius-default;
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-dark;
+    transition: background-color 0.18s ease, color 0.18s ease, padding-left 0.18s ease;
+
+    mat-icon {
+      color: $text-medium;
+      font-size: 19px;
+      height: 19px;
+      width: 19px;
+      transition: color 0.18s ease;
     }
 
-    .app-title {
-        font-size: 16px;
-    }
-}
+    &:hover {
+      background: $hover-bg;
+      color: $primary-color;
+      padding-left: $gap-default * 0.85;
 
-/* 🟨 Mobile Navigation (<=768px) */
-@media (max-width: 768px) {
-    .topbar {
-        flex-wrap: wrap;
-        height: auto;
-        padding: 10px 16px;
+      mat-icon {
+        color: $primary-color;
+      }
     }
 
-    .nav {
-        width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
-        background: #fff;
-        border-top: 1px solid theme.$primary-border;
-        margin-top: 10px;
-        padding: 10px 0;
-        display: none; // hidden by default
-        animation: fadeIn 0.25s ease-in-out;
+    &:focus-visible {
+      outline: 2px solid $primary-border;
+      outline-offset: -2px;
+    }
+  }
 
-        &.open {
-            display: flex;
-        }
+  .logout-item {
+    color: $danger;
 
-        a,
-        .menu-btn {
-            width: 100%;
-            text-align: left;
-            padding: 10px 16px;
-            border-radius: 0;
-        }
+    mat-icon {
+      color: $danger;
     }
 
-    /* Add hamburger icon */
-    .menu-toggle {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 1.6rem;
-        cursor: pointer;
-        color: theme.$primary-color;
+    &:hover {
+      background: rgba(211, 47, 47, 0.08);
+      color: $danger;
+
+      mat-icon {
+        color: $danger;
+      }
+    }
+  }
+
+  mat-divider {
+    margin: $gap-default * 0.35 0;
+  }
+
+  /* ===== Responsive tweak ===== */
+  @media (max-width: 480px) {
+    .menu-header {
+      padding: $gap-default * 0.5 $gap-default * 0.4;
     }
 
-    .right {
-        margin-left: auto;
+    .menu-row {
+      font-size: 13px;
+      padding: $gap-default * 0.45 $gap-default * 0.5;
     }
-}
-
-/* 🟥 Small Screens (<=480px) */
-@media (max-width: 480px) {
-    .app-title {
-        font-size: 15px;
-    }
-
-    .right {
-        gap: 4px;
-
-        button {
-            mat-icon {
-                font-size: 20px;
-            }
-        }
-
-        .profile-btn {
-            span.name {
-                display: none; // hide name on very small screens
-            }
-        }
-    }
-
-    .dropdown-menu {
-        width: 160px;
-        font-size: 13px;
-    }
-}
-
-/* 🔹 Username */
-/* ================================
-   Topbar – User Identity Section
-   Banking Professional Style
-================================ */
-
-/* Username */
-.nav span:not(.last-login) {
-  display: inline-flex;
-  align-items: center;
-  color: theme.$text-dark;
-  font-size: 14px;
-  font-weight: 600;
-  margin-left: theme.$gap-default;
-  padding: 6px 12px;
-  background: theme.$primary-light;
-  border: 1px solid theme.$primary-border;
-  border-radius: theme.$radius-default;
-  letter-spacing: 0.2px;
-}
-
-/* Last Good Login */
-.nav .last-login {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 10px;
-  font-size: 12px;
-  font-weight: 500;
-  color: theme.$text-medium;
-  padding: 6px 10px;
-  background: theme.$light-bg;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-default;
+  }
 }

@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { MatDivider } from '@angular/material/divider';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [MatIconModule, MatMenuModule, MatButtonModule, RouterLink],
+  imports: [MatIconModule, MatMenuModule, MatButtonModule,MatDivider,RouterLink],
   templateUrl: './topbar.html',
   styleUrls: ['./topbar.scss'],
 })
@@ -18,7 +17,7 @@ export class TopbarComponent {
   menuVisible = false;
 
 
-  constructor() { }
+  constructor(private router:Router) { }
        userData = sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!) : null;
        userName = this.userData?.userName || 'User';
         lastGoodLogin = this.userData?.lastGoodLogin ? new Date(this.userData.lastGoodLogin).toLocaleString() : 'N/A';
@@ -35,4 +34,8 @@ export class TopbarComponent {
   //   this.menuVisible = !this.menuVisible;
   // }
 
+  goToChangePassword(): void {
+  this.router.navigate(['/admin/user-change-password']);
+}
+  
 }

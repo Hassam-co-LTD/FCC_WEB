@@ -303,7 +303,19 @@ export class LayoutComponent implements OnInit {
             { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' }
           ]
         },
-
+        {
+  label: 'Security',
+  icon: 'security',
+  route: '/admin/security',
+  open: false,
+  children: [
+    {
+      label: 'Change Password',
+      route: '/admin/change-password'
+    }
+  ]
+}
+,
 
 
         { label: 'Users', icon: 'person', route: '/users' },

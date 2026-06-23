@@ -1,23 +1,27 @@
-import { Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class JwtInterceptor implements HttpInterceptor {
+export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      
-      const cloned = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      return next.handle(cloned);
+  const userDataString = sessionStorage.getItem('userData');
+
+  let token: string | null = null;
+
+  if (userDataString) {
+    try {
+      const userData = JSON.parse(userDataString);
+      token = userData?.body?.token;
+    } catch (e) {
+      console.error('Invalid userData in sessionStorage', e);
     }
-    return next.handle(req);
   }
-}
+
+  if (token) {
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  return next(req);
+};

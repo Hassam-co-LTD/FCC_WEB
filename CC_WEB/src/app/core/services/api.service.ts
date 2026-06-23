@@ -961,6 +961,14 @@ validateResetToken(token: string) {
     }
   );
 }
+// user change password 
+
+changePassword(payload: any,sign:String) {
+  return this.http.post(
+    `${environment.apiUrl}clientUsers/${sign}`,
+    payload
+  );
+}
 // Implementation to fetch dropdown options based on the provided parameters
 
 

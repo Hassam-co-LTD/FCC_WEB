@@ -250,15 +250,17 @@ button[mat-flat-button].action-btn {
 ========================================================================= */
 .auth-footer-actions {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 0.25rem; // Space between the links
   margin-top: 0.5rem;
   width: 100%;
-  
+
   p {
     margin: 0;
   }
 }
-
 .interactive-link {
   color: theme.$primary;
   font-weight: 600;
