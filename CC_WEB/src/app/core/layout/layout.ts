@@ -289,7 +289,23 @@ export class LayoutComponent implements OnInit {
                 { label: 'Create New', route: '/admin/create-role-master' },
                 { label: 'Inquiry', route: '/admin/role-master-inquiry' }
               ]
-            }
+            },
+            {
+  label: 'Permission Master',
+  icon: 'verified_user',
+  route: '/admin/permission',
+  open: false,
+  children: [
+    {
+      label: 'Create New',
+      route: '/admin/create-permission'
+    },
+    {
+      label: 'Inquiry',
+      route: '/admin/permission-master-inquiry'
+    }
+  ]
+}
 
           ]
         },

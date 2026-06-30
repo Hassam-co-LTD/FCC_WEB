@@ -124,6 +124,30 @@
               </mat-select>
             </mat-form-field>
           </div>
+
+          
+          <div class="field-group">
+  <h4>Permission</h4>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Select Permission</mat-label>
+
+    <mat-select
+      formControlName="permissionId"
+      [disabled]="isReadOnly()">
+
+      <mat-option
+        *ngFor="let permission of approvedPermissions"
+        [value]="permission.id">
+
+        {{ permission.permissionName }}
+
+      </mat-option>
+
+    </mat-select>
+
+  </mat-form-field>
+</div>
           
         </div>
       </ng-container>
@@ -230,6 +254,8 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
+
+
 
         </div>
 

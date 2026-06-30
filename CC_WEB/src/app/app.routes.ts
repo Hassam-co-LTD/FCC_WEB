@@ -282,6 +282,29 @@ export const routes: Routes = [
 
                   },
 
+                  // ================= Permission Master =================
+
+{
+  path: 'create-permission',
+  loadComponent: () =>
+    import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+      .then(m => m.PermissionMaster)
+},
+
+{
+  path: 'edit-permission/:id',
+  loadComponent: () =>
+    import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+      .then(m => m.PermissionMaster)
+},
+
+{
+  path: 'permission-master-inquiry',
+  loadComponent: () =>
+    import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry')
+      .then(m => m.RoleMasterList)
+},
+
 
                   
 

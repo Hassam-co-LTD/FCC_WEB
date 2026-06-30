@@ -81,7 +81,6 @@ export class CreateClientUser implements OnInit {
   selectedRoleIds: string[] = [];
   userAssignedRoles: UsersRolesResponseDTO[] = [];
   isRolesOpen = true;
-
   // ---------- DYNAMIC FIELDS ----------
 dynamicFieldsForm!: FormGroup;
 fields: any[] = [];
@@ -109,7 +108,7 @@ UserData = {
     this.loadCompanies();
     this.fetchAllRoles();
     this.loadDynamicFields();
-  
+    this.fetchAllPermissions();
 
   }
 
@@ -122,7 +121,8 @@ UserData = {
       password: ['', Validators.required],
       userCategory: [''],
       companyId: ["", Validators.required],
-      userStatus: ['']
+      userStatus: [''],
+      permissionId: [[]] // Initialize as an empty array
     });
   }
 
@@ -136,7 +136,8 @@ UserData = {
 
     this.api.getTnxById(Number(id), "clientUsers").subscribe({
       next: (data: any) => {
-        console.log("loaded data by id ", data)
+        console.log("fetched user by id " ,id, data)
+        
         this.storeClientUser = data;
         this.clientUserForm.patchValue(data);
 
@@ -148,7 +149,7 @@ UserData = {
 
         this.fetchAssignedRoles();
       },
-      error: err => console.error('Error fetching client user details', err)
+      error: err => console.error('Error fetching client user detailsss', err)
     });
   }
 }
@@ -206,21 +207,7 @@ UserData = {
     error: err => console.error('Update failed', err)
   });
 }
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Activated!', 'Client User is now Active', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Activate failed', err)
-    });
-  }
-
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Deactivated!', 'Client User is now Inactive', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
+  
 
  isReadOnly(): boolean {
   return false;
@@ -393,5 +380,20 @@ getCompanyName(companyId: any): string {
 
 get hasClientUser(): boolean {
   return this.storeClientUser && Object.keys(this.storeClientUser).length > 0;
+}
+
+approvedPermissions: any[] = [];
+
+fetchAllPermissions(): void {
+  this.api.getTnxByStatus('A', 'Permissions').subscribe({
+    next: (permissions: any[]) => {
+      this.approvedPermissions = permissions;
+
+      console.log('Fetched approved permissions:', this.approvedPermissions);
+    },
+    error: err => {
+      console.error('Error fetching permissions', err);
+    }
+  });
 }
 }

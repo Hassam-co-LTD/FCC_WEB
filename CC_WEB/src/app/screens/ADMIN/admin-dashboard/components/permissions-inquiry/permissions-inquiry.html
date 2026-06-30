@@ -1,0 +1,273 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Permission Master Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterDraftPermissions(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftPermissions('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredDraftPermissions.length > 0; else noDrafts">
+
+          <table class="customer-table">
+
+            <thead>
+              <tr>
+                <th>Permission ID</th>
+                <th>Permission Name</th>
+                <th>Module Name</th>
+                <th>Description</th>
+                <th>Permission Status</th>
+                <th>Record Status</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let p of storeFilteredDraftPermissions; trackBy: trackByPermissionId">
+
+                <td>
+                  <a [routerLink]="['/admin/edit-permission',p.permissionId]">
+                    {{ p.permissionId }}
+                  </a>
+                </td>
+
+                <td>{{ p.permissionName }}</td>
+                <td>{{ p.moduleName }}</td>
+                <td>{{ p.description }}</td>
+
+                <td>
+                  <span class="status {{ p.permissionStatus }}">
+                    {{ p.permissionStatus }}
+                  </span>
+                </td>
+
+                <td>{{ p.recordStatus }}</td>
+                <td>{{ p.createdBy }}</td>
+                <td>{{ p.createdOn | date:'short' }}</td>
+                <td>{{ p.updatedBy }}</td>
+                <td>{{ p.updatedOn | date:'short' }}</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft permissions found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedPermissions(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedPermissions('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredApprovedPermissions.length > 0; else noApproved">
+
+          <table class="customer-table">
+
+            <thead>
+              <tr>
+                <th>Permission ID</th>
+                <th>Permission Name</th>
+                <th>Module Name</th>
+                <th>Description</th>
+                <th>Permission Status</th>
+                <th>Record Status</th>
+                <th>Authorizer</th>
+                <th>Authorized On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let p of storeFilteredApprovedPermissions; trackBy: trackByPermissionId">
+
+                <td>
+                  <a [routerLink]="['/admin/edit-permission', p.permissionId]">
+                    {{ p.permissionId }}
+                  </a>
+                </td>
+
+                <td>{{ p.permissionName }}</td>
+                <td>{{ p.moduleName }}</td>
+                <td>{{ p.description }}</td>
+
+                <td>
+                  <span class="status {{ p.permissionStatus }}">
+                    {{ p.permissionStatus }}
+                  </span>
+                </td>
+
+                <td>{{ p.recordStatus }}</td>
+                <td>{{ p.authorizerId }}</td>
+                <td>{{ p.authorizerDttm | date:'short' }}</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved permissions found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedPermissions(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedPermissions('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredSubmittedPermissions.length > 0; else noSubmitted">
+
+          <table class="customer-table">
+
+            <thead>
+              <tr>
+                <th>Permission ID</th>
+                <th>Permission Name</th>
+                <th>Module Name</th>
+                <th>Description</th>
+                <th>Inputter</th>
+                <th>Submitted On</th>
+                <th>Permission Status</th>
+                <th>Record Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr
+                *ngFor="let p of storeFilteredSubmittedPermissions; trackBy: trackByPermissionId">
+
+                <td>
+                  <a [routerLink]="['/admin/edit-permission', p.permissionId]">
+                    {{ p.permissionId }}
+                  </a>
+                </td>
+
+                <td>{{ p.permissionName }}</td>
+                <td>{{ p.moduleName }}</td>
+                <td>{{ p.description }}</td>
+
+                <td>{{ p.inputterId }}</td>
+                <td>{{ p.inputterDttm | date:'short' }}</td>
+
+                <td>
+                  <span class="status {{ p.permissionStatus }}">
+                    {{ p.permissionStatus }}
+                  </span>
+                </td>
+
+                <td>{{ p.recordStatus }}</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted permissions found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+  </mat-tab-group>
+
+</div>
