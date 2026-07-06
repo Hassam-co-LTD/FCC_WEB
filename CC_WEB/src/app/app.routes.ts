@@ -267,20 +267,20 @@ export const routes: Routes = [
                   , 
 
                 //   admin password change 
-                  {
-                    path:'change-password',
-  loadComponent: () =>
-                            import('./screens/AUTH/login/change-password/change-password').then((m) => m.ChangePasswordComponent)
+//                   {
+//                     path:'change-password',
+//   loadComponent: () =>
+//                             import('./screens/AUTH/login/change-password/change-password').then((m) => m.ChangePasswordComponent)
 
-                  },
+//                   },
 
-                //   user password change 
-  {
-                    path:'user-change-password',
-  loadComponent: () =>
-                            import('./screens/AUTH/login/user-password-change/user-password-change').then((m) => m.UserPasswordChange)
+//                 //   user password change 
+//   {
+//                     path:'user-change-password',
+//   loadComponent: () =>
+//                             import('./screens/AUTH/login/user-password-change/user-password-change').then((m) => m.UserPasswordChange)
 
-                  },
+//                   },
 
                   // ================= Permission Master =================
 

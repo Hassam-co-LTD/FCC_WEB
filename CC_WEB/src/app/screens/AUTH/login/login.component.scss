@@ -102,6 +102,8 @@ input::-ms-clear {
 
 .auth-header {
   margin-bottom: 2.25rem;
+  text-align: center;
+  font-family: poppins;
   
   h2 {
     font-size: 1.8rem;
@@ -115,8 +117,9 @@ input::-ms-clear {
     font-size: 0.925rem;
     color: theme.$text-medium;
     margin: 0;
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.4;
+    font-style: poppins;
   }
 }
 
