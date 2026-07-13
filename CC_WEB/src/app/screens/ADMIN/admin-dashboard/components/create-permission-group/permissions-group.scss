@@ -1,0 +1,607 @@
+@use '../../../../../../styles/theme' as theme;
+
+
+/* =========================
+   Hide Sections
+========================= */
+
+.hide-when-approved {
+  display: none !important;
+}
+
+
+
+/* =========================
+   Section Header
+========================= */
+
+.section-header {
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background: theme.$primary;
+
+  padding: 14px 18px;
+
+  border-radius: theme.$radius-default;
+
+  cursor: pointer;
+
+  margin-bottom: 10px;
+
+  color: theme.$text-light;
+
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+
+
+
+  &:hover {
+
+    background: theme.$primary-dark;
+
+    box-shadow: theme.$shadow-primary;
+
+  }
+
+
+
+  h2 {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    color: theme.$white;
+
+  }
+
+
+
+  mat-icon {
+
+    color: theme.$text-light;
+
+    font-size: 22px;
+
+  }
+
+}
+
+
+
+/* =========================
+   Collapsible Form
+========================= */
+
+.collapsible {
+
+  max-height: 0;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  transform: translateY(-5px);
+
+  transition: all 0.35s ease-in-out;
+
+}
+
+
+
+.collapsible.open {
+
+  max-height: 2000px;
+
+  opacity: 1;
+
+  transform: translateY(0);
+
+  padding: 15px 10px;
+
+  background: theme.$light-bg;
+
+  border-radius: theme.$radius-default;
+
+  border: 1px solid theme.$border-light;
+
+}
+
+
+
+
+
+/* =========================
+   Field Headings
+========================= */
+
+h4 {
+
+  font-size: 16px;
+
+  margin: 20px 0 10px;
+
+  font-weight: 600;
+
+  color: theme.$primary-dark;
+
+  border-left: 4px solid theme.$primary;
+
+  padding-left: 8px;
+
+}
+
+
+
+
+
+/* =========================
+   Form Grid
+========================= */
+
+
+.field-group {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+
+}
+
+
+
+.form-grid {
+
+  display: grid;
+
+  gap: theme.$gap-default;
+
+  margin-bottom: 15px;
+
+}
+
+
+
+/*
+  Permission form large layout
+*/
+
+.form-grid-large {
+
+  grid-template-columns: repeat(2, 1fr);
+
+
+  @media(max-width:1024px){
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+
+
+
+
+/* =========================
+   Angular Material Fields
+========================= */
+
+
+mat-form-field {
+
+  width: 100%;
+
+}
+
+
+
+input[matInput],
+textarea[matInput] {
+
+  font-size: 14px !important;
+
+  color: theme.$primary-dark;
+
+}
+
+
+
+.mat-mdc-floating-label {
+
+  font-size: 14px !important;
+
+}
+
+
+
+::placeholder {
+
+  color: theme.$primary-dark;
+
+  opacity: 0.8;
+
+}
+
+
+
+.mdc-text-field {
+
+  background-color: theme.$white;
+
+}
+
+
+
+
+
+/* =========================
+   Action Buttons
+========================= */
+
+
+.customer-actions,
+.approved-actions {
+
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 20px;
+
+
+}
+
+
+
+.customer-actions button,
+.approved-actions button {
+
+
+  background: theme.$primary;
+
+  color: theme.$text-light;
+
+  padding: 10px 18px;
+
+  border-radius: theme.$radius-default;
+
+  font-weight: 500;
+
+  border: none;
+
+  cursor: pointer;
+
+  box-shadow: theme.$button-shadow;
+
+
+  transition:
+
+    background 0.3s ease,
+
+    box-shadow 0.3s ease;
+
+
+
+  &:hover:not(:disabled){
+
+    background: theme.$primary-dark;
+
+  }
+
+
+
+  &:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    box-shadow:none;
+
+  }
+
+
+}
+
+
+
+
+
+/* =========================
+   Approved Container
+========================= */
+
+
+.approved-container {
+
+
+  background: theme.$white;
+
+
+  border:1px solid theme.$border-light;
+
+
+  border-radius: theme.$radius-large;
+
+
+  padding:24px;
+
+
+  max-width:1200px;
+
+
+  margin:20px auto;
+
+
+  box-shadow:theme.$shadow-primary;
+
+
+}
+
+
+
+
+
+/* =========================
+   Approved Header
+========================= */
+
+
+.approved-header {
+
+
+  display:flex;
+
+
+  align-items:center;
+
+
+  gap:12px;
+
+
+  margin-bottom:20px;
+
+
+
+  h3 {
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:theme.$primary-dark;
+
+  }
+
+
+}
+
+
+
+
+
+/* =========================
+   Approved Badge
+========================= */
+
+
+.approved-badge {
+
+
+  background:theme.$primary;
+
+
+  color:theme.$text-light;
+
+
+  padding:6px 14px;
+
+
+  border-radius:theme.$radius-default;
+
+
+  font-size:13px;
+
+
+  font-weight:600;
+
+
+}
+
+
+
+
+
+/* =========================
+   Approved Information
+========================= */
+
+
+.approved-info {
+
+
+  display:grid;
+
+
+  grid-template-columns:1fr;
+
+
+  gap:14px;
+
+
+}
+
+
+
+
+
+.info-item {
+
+
+  display:flex;
+
+
+  justify-content:space-between;
+
+
+  align-items:center;
+
+
+  gap:12px;
+
+
+  padding:12px 16px;
+
+
+  border:1px solid theme.$border-light;
+
+
+  border-radius:theme.$radius-default;
+
+
+  background:theme.$light-bg;
+
+
+}
+
+
+
+
+
+.key {
+
+
+  font-weight:600;
+
+
+  color:theme.$primary-dark;
+
+
+  white-space:nowrap;
+
+
+}
+
+
+
+
+
+.value {
+
+
+  color:theme.$primary-dark;
+
+
+  text-align:right;
+
+
+  word-break:break-word;
+
+
+}
+
+
+
+
+
+
+
+/* =========================
+   Responsive
+========================= */
+
+
+@media(max-width:768px){
+
+
+  .customer-actions,
+  .approved-actions {
+
+
+    flex-direction:column;
+
+
+    button {
+
+      width:100%;
+
+    }
+
+
+  }
+
+
+
+
+
+  .approved-header {
+
+
+    flex-direction:column;
+
+
+    align-items:flex-start;
+
+
+  }
+
+
+
+
+
+  .info-item {
+
+
+    flex-direction:column;
+
+
+    align-items:flex-start;
+
+
+  }
+
+
+
+
+  .value {
+
+
+    text-align:left;
+
+  }
+
+
+}
+
+
+
+
+
+
+@media(min-width:1440px){
+
+
+  .form-grid-large {
+
+
+    grid-template-columns:repeat(3,1fr);
+
+
+  }
+
+
+}

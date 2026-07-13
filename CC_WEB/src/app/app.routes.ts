@@ -306,7 +306,31 @@ export const routes: Routes = [
 },
 
 
+
                   
+// permissions master group
+
+{
+  path: 'create-permission-group',
+  loadComponent: () =>
+    import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
+      .then(m => m.PermissionGroup)
+},
+
+{
+  path: 'edit-permission-group/:id',
+  loadComponent: () =>
+    import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
+      .then(m => m.PermissionGroup)
+},
+
+{
+  path: 'permission-master-inquiry-group',
+  loadComponent: () =>
+    import('./screens/admin/admin-dashboard/components/permissions-groups-inquiry/permissions-groups-inquiry')
+      .then(m => m.PermissionsGroupsInquiry)
+},
+
 
 
                 ],
@@ -315,7 +339,10 @@ export const routes: Routes = [
 
             },
 
-            //  CustomerUser Dashboard
+
+            
+
+            //  Bank Dashboard
             {
                 path: 'customer-user',
                 loadComponent: () =>

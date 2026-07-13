@@ -306,6 +306,23 @@ export class LayoutComponent implements OnInit {
     }
   ]
 }
+,
+{
+  label: 'Permission Group',
+  icon: 'group',
+  route: '/admin/permission-group',
+  open: false,
+  children: [
+    {
+      label: 'Create New',
+      route: '/admin/create-permission-group'
+    },
+    {
+      label: 'Inquiry',
+      route: '/admin/permission-group-inquiry'
+    }
+  ]
+}
 
           ]
         },

@@ -972,6 +972,10 @@ changePassword(payload: any,sign:String) {
     payload
   );
 }
+
+getAllTnx(name:String){
+  return this.http.get<any>(`${this.adminBaseUrl}${name}`);
+}
 // Implementation to fetch dropdown options based on the provided parameters
 
 
