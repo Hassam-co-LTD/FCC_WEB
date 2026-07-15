@@ -1,1 +1,320 @@
-<p>permissions-groups-inquiry works!</p>
+<div class="customer-status-container">
+  <h2 class="page-title">Permission Master Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterDraftPermissionsGroup(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftPermissionsGroup('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredDraftPermissionsGroup.length > 0; else noDrafts">
+
+          <table class="customer-table">
+
+           <thead>
+    <tr>
+        <th>Permission Group ID</th>
+        <th>Permission Group Name</th>
+        <th>Description</th>
+        <th>Permission Group Status</th>
+        <th>Record Status</th>
+        <th>Created By</th>
+        <th>Created On</th>
+        <th>Updated By</th>
+        <th>Updated On</th>
+        <th>Inputter ID</th>
+        <th>Inputter Date</th>
+        <th>Authorizer ID</th>
+        <th>Authorizer Date</th>
+    </tr>
+</thead>
+           <tbody>
+
+<tr
+    *ngFor="let p of storeFilteredDraftPermissionsGroup; trackBy: trackByPermissionId">
+
+    <td>
+        <a [routerLink]="['/admin/edit-permission-group', p.id]">
+            {{ p.permissionGroupId }}
+        </a>
+    </td>
+
+    <td>{{ p.permissionGroupName }}</td>
+
+    <td>{{ p.description }}</td>
+
+    <td>
+        <span class="status {{ p.permissionGroupStatus }}">
+            {{ p.permissionGroupStatus }}
+        </span>
+    </td>
+
+    <td>{{ p.recordStatus }}</td>
+
+    <td>{{ p.createdBy }}</td>
+
+    <td>{{ p.createdOn | date:'short' }}</td>
+
+    <td>{{ p.updatedBy }}</td>
+
+    <td>{{ p.updatedOn | date:'short' }}</td>
+
+    <td>{{ p.inputterId }}</td>
+
+    <td>{{ p.inputterDttm | date:'short' }}</td>
+
+    <td>{{ p.authorizerId }}</td>
+
+    <td>{{ p.authorizerDttm | date:'short' }}</td>
+
+</tr>
+
+</tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft permissionsGroup found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+    <!-- ================= Approved Tab ================= -->
+
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedPermissionsGroup(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedPermissionsGroup('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredApprovedPermissionsGroup.length > 0; else noApproved">
+
+          <table class="customer-table">
+
+        <thead>
+    <tr>
+        <th>Permission Group ID</th>
+        <th>Permission Group Name</th>
+        <th>Description</th>
+        <th>Permission Group Status</th>
+        <th>Record Status</th>
+        <th>Created By</th>
+        <th>Created On</th>
+        <th>Updated By</th>
+        <th>Updated On</th>
+        <th>Inputter ID</th>
+        <th>Inputter Date</th>
+        <th>Authorizer ID</th>
+        <th>Authorizer Date</th>
+    </tr>
+</thead>
+           <tbody>
+
+<tr
+    *ngFor="let p of storeFilteredDraftPermissionsGroup; trackBy: trackByPermissionId">
+
+    <td>
+        <a [routerLink]="['/admin/edit-permission-group', p.id]">
+            {{ p.permissionGroupId }}
+        </a>
+    </td>
+
+    <td>{{ p.permissionGroupName }}</td>
+
+    <td>{{ p.description }}</td>
+
+    <td>
+        <span class="status {{ p.permissionGroupStatus }}">
+            {{ p.permissionGroupStatus }}
+        </span>
+    </td>
+
+    <td>{{ p.recordStatus }}</td>
+
+    <td>{{ p.createdBy }}</td>
+
+    <td>{{ p.createdOn | date:'short' }}</td>
+
+    <td>{{ p.updatedBy }}</td>
+
+    <td>{{ p.updatedOn | date:'short' }}</td>
+
+    <td>{{ p.inputterId }}</td>
+
+    <td>{{ p.inputterDttm | date:'short' }}</td>
+
+    <td>{{ p.authorizerId }}</td>
+
+    <td>{{ p.authorizerDttm | date:'short' }}</td>
+
+</tr>
+
+</tbody>
+          </table>
+
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved permissionsGroup found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+    <!-- ================= Submitted Tab ================= -->
+
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search by Permission ID, Permission Name, Module Name"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedPermissionsGroup(searchText)"
+        />
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedPermissionsGroup('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredSubmittedPermissionsGroup.length > 0; else noSubmitted">
+
+          <table class="customer-table">
+
+        <thead>
+    <tr>
+        <th>Permission Group ID</th>
+        <th>Permission Group Name</th>
+        <th>Description</th>
+        <th>Permission Group Status</th>
+        <th>Record Status</th>
+        <th>Created By</th>
+        <th>Created On</th>
+        <th>Updated By</th>
+        <th>Updated On</th>
+        <th>Inputter ID</th>
+        <th>Inputter Date</th>
+        <th>Authorizer ID</th>
+        <th>Authorizer Date</th>
+    </tr>
+</thead>
+        <tbody>
+
+<tr
+    *ngFor="let p of storeFilteredDraftPermissionsGroup; trackBy: trackByPermissionId">
+
+    <td>
+        <a [routerLink]="['/admin/edit-permission-group', p.id]">
+            {{ p.permissionGroupId }}
+        </a>
+    </td>
+
+    <td>{{ p.permissionGroupName }}</td>
+
+    <td>{{ p.description }}</td>
+
+    <td>
+        <span class="status {{ p.permissionGroupStatus }}">
+            {{ p.permissionGroupStatus }}
+        </span>
+    </td>
+
+    <td>{{ p.recordStatus }}</td>
+
+    <td>{{ p.createdBy }}</td>
+
+    <td>{{ p.createdOn | date:'short' }}</td>
+
+    <td>{{ p.updatedBy }}</td>
+
+    <td>{{ p.updatedOn | date:'short' }}</td>
+
+    <td>{{ p.inputterId }}</td>
+
+    <td>{{ p.inputterDttm | date:'short' }}</td>
+
+    <td>{{ p.authorizerId }}</td>
+
+    <td>{{ p.authorizerDttm | date:'short' }}</td>
+
+</tr>
+
+</tbody>
+          </table>
+
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted permissionsGroup found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+  </mat-tab-group>
+
+</div>

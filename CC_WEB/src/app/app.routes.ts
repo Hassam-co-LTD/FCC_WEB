@@ -324,12 +324,16 @@ export const routes: Routes = [
       .then(m => m.PermissionGroup)
 },
 
+
 {
-  path: 'permission-master-inquiry-group',
+  path: 'permission-group-inquiry',
   loadComponent: () =>
-    import('./screens/admin/admin-dashboard/components/permissions-groups-inquiry/permissions-groups-inquiry')
+    import('./screens/ADMIN/admin-dashboard/components/permissions-groups-inquiry/permissions-groups-inquiry')
       .then(m => m.PermissionsGroupsInquiry)
 },
+
+// Permission group inquiry
+// permission-group-inquiry
 
 
 

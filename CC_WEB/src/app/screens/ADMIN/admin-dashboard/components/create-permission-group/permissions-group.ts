@@ -142,10 +142,10 @@ export class PermissionGroup implements OnInit {
 
       ],
 
-       permissionId: [
-      '',
-      Validators.required
-    ],
+     permissionIds: [
+    [],
+    Validators.required
+  ],
 
 
 
@@ -302,9 +302,12 @@ export class PermissionGroup implements OnInit {
     .subscribe({
 
 
-      next:()=>{
+      next:(res)=>{
 
-
+        console.log(
+          'Saved Response:',
+          res
+        );
         Swal.fire(
 
           'Saved!',
@@ -318,7 +321,7 @@ export class PermissionGroup implements OnInit {
 
 
           this.router.navigate(
-            ['/admin/permission-master-inquiry']
+            ['/admin/permission-group-inquiry']
           );
 
 
@@ -546,22 +549,52 @@ export class PermissionGroup implements OnInit {
   // =========================
 
 
-  submit():void {
+submit(): void {
 
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'Do you want to submit this Permission Group?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Submit',
+    cancelButtonText: 'Cancel',
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33'
+  }).then((result) => {
 
-    this.changeStatus(
+    if (result.isConfirmed) {
 
-      'S',
+      this.api.setTnxByStatus(
+        'S',
+         this.storePermissionGroup.id,
+        'PermissionsGroup'
+      ).subscribe({
 
-      'Submitted!',
+        next: (response) => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Permission Group submitted successfully.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+        },
 
-      'Permission group submitted successfully'
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error?.error?.message || 'Failed to submit Permission Group.'
+          });
+        }
 
-    );
+      });
 
+    }
 
-  }
+  });
 
+}
 
 
 

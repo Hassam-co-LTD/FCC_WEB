@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
+import { PermissionGroup } from '../create-permission-group/permissions-group';
 
 export interface UserDetails {
   id: number;
@@ -122,7 +123,7 @@ UserData = {
       userCategory: [''],
       companyId: ["", Validators.required],
       userStatus: [''],
-      permissionId: [[]] // Initialize as an empty array
+      permissionGroupId: [[]] // Initialize as an empty array
     });
   }
 
@@ -381,15 +382,13 @@ getCompanyName(companyId: any): string {
 get hasClientUser(): boolean {
   return this.storeClientUser && Object.keys(this.storeClientUser).length > 0;
 }
-
-approvedPermissions: any[] = [];
-
+approvedPermissionGroups:any[]=[];
 fetchAllPermissions(): void {
-  this.api.getTnxByStatus('A', 'Permissions').subscribe({
+  this.api.getTnxByStatus('I', 'PermissionsGroup').subscribe({
     next: (permissions: any[]) => {
-      this.approvedPermissions = permissions;
+      this.approvedPermissionGroups = permissions;
 
-      console.log('Fetched approved permissions:', this.approvedPermissions);
+      console.log('Fetched approved permissions:', this.approvedPermissionGroups);
     },
     error: err => {
       console.error('Error fetching permissions', err);

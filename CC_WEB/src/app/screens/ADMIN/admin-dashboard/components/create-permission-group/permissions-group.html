@@ -3,338 +3,164 @@
 ========================= -->
 
 <div class="create-customer-page">
-
-
   <!-- PAGE HEADER -->
 
   <div class="page-header">
     <h1>Create Permission Group</h1>
   </div>
 
-
-
   <!-- CREATE / EDIT FORM -->
 
-  <div class="customer-form-wrapper"
-       [ngClass]="{
+  <div
+    class="customer-form-wrapper"
+    [ngClass]="{
           'hide-when-approved': storePermissionGroup?.recordStatus === 'A'
-       }">
-
-
+       }"
+  >
     <!-- SECTION HEADER -->
 
-    <div class="section-header"
-         (click)="toggle()">
+    <div class="section-header" (click)="toggle()">
+      <h2>Permission Group General Details</h2>
 
-      <h2>
-        Permission Group General Details
-      </h2>
-
-      <mat-icon>
-        {{ isOpen ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
-
+      <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
     </div>
-
-
-
 
     <!-- FORM -->
 
-    <div class="collapsible"
-         [class.open]="isOpen"
-         [formGroup]="permissionsFormGroup">
-
-
+    <div
+      class="collapsible"
+      [class.open]="isOpen"
+      [formGroup]="permissionsFormGroup"
+    >
       <ng-container *ngIf="isOpen">
-
-
         <div class="form-grid form-grid-large">
-
-
           <!-- ID -->
 
           <div class="field-group">
-
-            <h4>
-              Permission Group ID
-            </h4>
-
+            <h4>Permission Group ID</h4>
 
             <mat-form-field appearance="outline">
-
               <input
                 matInput
                 formControlName="permissionGroupId"
                 placeholder="Permission Group ID"
-                [readonly]="isReadOnly()" />
-
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
-
-
           </div>
-
-
-
-
 
           <!-- NAME -->
 
           <div class="field-group">
-
-
-            <h4>
-              Permission Group Name
-            </h4>
-
+            <h4>Permission Group Name</h4>
 
             <mat-form-field appearance="outline">
-
-
               <input
                 matInput
                 formControlName="permissionGroupName"
                 placeholder="Permission Group Name"
-                [readonly]="isReadOnly()" />
-
-
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
-
-
           </div>
 
+          <!-- select  Permissions  -->
 
-
-
-<!-- select  Permissions  -->
-
-<!-- =========================
+          <!-- =========================
      PERMISSIONS DROPDOWN
 ========================= -->
 
-<div class="field-group">
-
-
-  <h4>
-    Permission
-  </h4>
-
-
+          <div class="field-group">
+  <h4>Permission</h4>
 
   <mat-form-field appearance="outline">
-
-
-    <mat-label>
-      Select Permission
-    </mat-label>
-
-
+    <mat-label>Select Permissions</mat-label>
 
     <mat-select
-
-      formControlName="permissionId"
-
-      [disabled]="isReadOnly()">
-
-
+      formControlName="permissionIds"
+      multiple
+      [disabled]="isReadOnly()"
+    >
 
       <mat-option
-
         *ngFor="let permission of storePermissionGroups"
-
-        [value]="permission.permissionId">
-
-
-        {{permission.permissionName}}
-
-
+        [value]="permission.id"
+      >
+        {{ permission.permissionName }}
       </mat-option>
-
-
 
     </mat-select>
 
-
-
   </mat-form-field>
-
-
-
 </div>
-
-
-
-
           <!-- STATUS -->
 
           <div class="field-group">
-
-
-            <h4>
-              Permission Group Status
-            </h4>
-
+            <h4>Permission Group Status</h4>
 
             <mat-form-field appearance="outline">
-
-
-              <mat-label>
-                Permission Status
-              </mat-label>
-
+              <mat-label> Permission Status </mat-label>
 
               <mat-select
                 formControlName="permissionGroupStatus"
-                [disabled]="isReadOnly()">
+                [disabled]="isReadOnly()"
+              >
+                <mat-option value="A"> Active </mat-option>
 
-
-
-                <mat-option value="A">
-                  Active
-                </mat-option>
-
-
-
-                <mat-option value="I">
-                  Inactive
-                </mat-option>
-
-
-
+                <mat-option value="I"> Inactive </mat-option>
               </mat-select>
-
-
             </mat-form-field>
-
-
           </div>
-
-
-
         </div>
-
-
-
-
-
 
         <!-- DESCRIPTION -->
 
-
         <div class="form-grid form-grid-large">
-
-
           <div class="field-group">
-
-
-            <h4>
-              Description
-            </h4>
-
+            <h4>Description</h4>
 
             <mat-form-field appearance="outline">
-
-
               <textarea
                 matInput
                 rows="3"
                 formControlName="description"
                 placeholder="Description"
-                [readonly]="isReadOnly()">
+                [readonly]="isReadOnly()"
+              >
               </textarea>
-
-
             </mat-form-field>
-
-
           </div>
-
-
         </div>
-
-
-
       </ng-container>
-
-
     </div>
-
-
-
   </div>
-
-
-
-
-
-
 
   <!-- ACTION BUTTONS -->
 
-
   <div class="customer-actions">
-
-
-
     <!-- NEW -->
 
-
-    <ng-container
-      *ngIf="!isEditMode">
-
-
-
-      <button
-        class="btn-cancel"
-        (click)="onCancel()">
-
-        Cancel
-
-      </button>
-
-
+    <ng-container *ngIf="!isEditMode">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
 
       <button
         class="btn-save"
         [disabled]="permissionsFormGroup.invalid"
-        (click)="onSave()">
-
+        (click)="onSave()"
+      >
         Save
-
       </button>
-
-
-
     </ng-container>
 
-
-
-
-
-
-
-
     <!-- DRAFT -->
-
 
     <ng-container
       *ngIf="
       isEditMode &&
       storePermissionGroup?.recordStatus === 'I'
-      ">
-
-
-
-      <button
-        class="btn-back"
-        (click)="onBack()">
-
-        Back
-
-      </button>
-
-
-
+      "
+    >
+      <button class="btn-back" (click)="onBack()">Back</button>
 
       <button
         class="btn-update"
@@ -342,289 +168,106 @@
           permissionsFormGroup.invalid ||
           !permissionsFormGroup.dirty
         "
-        (click)="update(storePermissionGroup?.permissionGroupId)">
-
-
+        (click)="update(storePermissionGroup?.id)"
+      >
         Update
-
-
       </button>
-
-
-
 
       <button
         class="btn-submit"
         [disabled]="permissionsFormGroup.invalid"
-        (click)="submit()">
-
-
+        (click)="submit()"
+      >
         Submit
-
-
       </button>
-
-
-
     </ng-container>
 
-
-
-
-
-
-
-
     <!-- SUBMITTED -->
-
 
     <ng-container
       *ngIf="
       isEditMode &&
       storePermissionGroup?.recordStatus === 'S'
-      ">
+      "
+    >
+      <button class="btn-reject" (click)="reject()">Reject</button>
 
-
-      <button
-        class="btn-reject"
-        (click)="reject()">
-
-        Reject
-
-      </button>
-
-
-
-
-      <button
-        class="btn-approve"
-        (click)="approve()">
-
-        Approve
-
-      </button>
-
-
-
+      <button class="btn-approve" (click)="approve()">Approve</button>
     </ng-container>
-
-
-
   </div>
-
-
 </div>
-
-
-
-
-
-
-
 
 <!-- =========================
      APPROVED VIEW
 ========================= -->
 
-
-<div class="approved-container"
-
-[ngClass]="{
+<div
+  class="approved-container"
+  [ngClass]="{
 'hide-when-approved':
 storePermissionGroup?.recordStatus !== 'A'
-}">
+}"
+>
+  <div class="approved-header">
+    <span class="approved-badge"> ✔ Approved </span>
 
+    <h3>Permission Group Details</h3>
+  </div>
 
+  <div class="approved-info">
+    <div class="info-item">
+      <span class="key"> Permission Group ID: </span>
 
-<div class="approved-header">
+      <span class="value"> {{storePermissionGroup?.permissionGroupId}} </span>
+    </div>
 
+    <div class="info-item">
+      <span class="key"> Permission Group Name: </span>
 
-<span class="approved-badge">
+      <span class="value"> {{storePermissionGroup?.permissionGroupName}} </span>
+    </div>
 
-✔ Approved
+    <div class="info-item">
+      <span class="key"> Module Name: </span>
 
-</span>
+      <span class="value"> {{storePermissionGroup?.moduleName}} </span>
+    </div>
 
+    <div class="info-item">
+      <span class="key"> Description: </span>
 
-<h3>
-Permission Group Details
-</h3>
+      <span class="value"> {{storePermissionGroup?.description}} </span>
+    </div>
 
+    <div class="info-item">
+      <span class="key"> Permission Status: </span>
 
+      <span class="value">
+        {{storePermissionGroup?.permissionGroupStatus === 'A' ? 'Active' :
+        'Inactive'}}
+      </span>
+    </div>
+
+    <div class="info-item">
+      <span class="key"> Record Status: </span>
+
+      <span class="value"> {{storePermissionGroup?.recordStatus}} </span>
+    </div>
+  </div>
 </div>
-
-
-
-
-
-
-<div class="approved-info">
-
-
-
-
-
-<div class="info-item">
-
-<span class="key">
-Permission Group ID:
-</span>
-
-
-<span class="value">
-{{storePermissionGroup?.permissionGroupId}}
-</span>
-
-
-</div>
-
-
-
-
-
-
-<div class="info-item">
-
-<span class="key">
-Permission Group Name:
-</span>
-
-
-<span class="value">
-{{storePermissionGroup?.permissionGroupName}}
-</span>
-
-
-</div>
-
-
-
-
-
-
-<div class="info-item">
-
-<span class="key">
-Module Name:
-</span>
-
-
-<span class="value">
-{{storePermissionGroup?.moduleName}}
-</span>
-
-
-</div>
-
-
-
-
-
-
-<div class="info-item">
-
-<span class="key">
-Description:
-</span>
-
-
-<span class="value">
-{{storePermissionGroup?.description}}
-</span>
-
-
-</div>
-
-
-
-
-
-
-<div class="info-item">
-
-<span class="key">
-Permission Status:
-</span>
-
-
-<span class="value">
-
-
-{{storePermissionGroup?.permissionGroupStatus === 'A'
-? 'Active'
-: 'Inactive'}}
-
-
-</span>
-
-
-</div>
-
-
-
-
-
-
-
-<div class="info-item">
-
-
-<span class="key">
-Record Status:
-</span>
-
-
-<span class="value">
-{{storePermissionGroup?.recordStatus}}
-</span>
-
-
-</div>
-
-
-
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <!-- APPROVED ACTIONS -->
 
+<div
+  class="approved-actions"
+  *ngIf="storePermissionGroup?.recordStatus === 'A'"
+>
+  <button class="btn-back" (click)="onBack()">Back</button>
 
-<div class="approved-actions"
-
-*ngIf="storePermissionGroup?.recordStatus === 'A'">
-
-
-<button
-class="btn-back"
-(click)="onBack()">
-
-Back
-
-</button>
-
-
-
-<button
-class="btn-update"
-(click)="amend(storePermissionGroup?.permissionGroupId)">
-
-Amend
-
-</button>
-
-
-
+  <button
+    class="btn-update"
+    (click)="amend(storePermissionGroup?.permissionGroupId)"
+  >
+    Amend
+  </button>
 </div>
