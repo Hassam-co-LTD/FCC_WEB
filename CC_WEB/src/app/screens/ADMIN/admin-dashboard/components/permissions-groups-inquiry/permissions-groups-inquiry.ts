@@ -1,11 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
-import { ApiService } from '../../../../../core/services/api.service';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { ApiService } from '../../../../../core/services/api.service';
+
+/** * Strongly-typed interface representing the Permission Group records * displayed inside the table rows and targeted by the filters. */
+export interface PermissionGroupRow {
+  id: string | number;
+  permissionGroupId: string;
+  permissionGroupName: string;
+  permissionGroupStatus: string;
+  recordStatus: string;
+  description?: string;
+  moduleName?: string;
+  createdBy?: string;
+  createdOn?: string | Date;
+  updatedBy?: string;
+  updatedOn?: string | Date;
+  inputterId?: string;
+  inputterDttm?: string | Date;
+  authorizerId?: string;
+  authorizerDttm?: string | Date;
+}
 
 @Component({
   selector: 'app-role-master-list',
@@ -15,36 +34,50 @@ import { RouterLink } from '@angular/router';
     CommonModule,
     FormsModule,
     MatIconModule,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './permissions-groups-inquiry.html',
-  styleUrls: ['./permissions-groups-inquiry.scss']
+  styleUrls: ['./permissions-groups-inquiry.scss'],
 })
-export class  PermissionsGroupsInquiry implements OnInit {
+export class PermissionsGroupsInquiry implements OnInit, OnDestroy {
+  // =========================
+  // CLASS PROPERTIES
+  // =========================
+  public selectedTabIndex = 0;
+  public searchText = '';
 
-  // ================== Tabs ==================
-  selectedTabIndex: number = 0;
+  // Data Lists
+  public draftPermissionsGroup: PermissionGroupRow[] = [];
+  public approvedPermissionsGroup: PermissionGroupRow[] = [];
+  public submittedPermissionsGroup: PermissionGroupRow[] = [];
 
-  // ================== Data ==================
-  draftPermissionsGroup: any[] = [];
-  approvedPermissionsGroup: any[] = [];
-  submittedPermissionsGroup: any[] = [];
+  public storeFilteredDraftPermissionsGroup: PermissionGroupRow[] = [];
+  public storeFilteredApprovedPermissionsGroup: PermissionGroupRow[] = [];
+  public storeFilteredSubmittedPermissionsGroup: PermissionGroupRow[] = [];
 
-  storeFilteredDraftPermissionsGroup: any[] = [];
-  storeFilteredApprovedPermissionsGroup: any[] = [];
-  storeFilteredSubmittedPermissionsGroup: any[] = [];
+  // Constants
+  private readonly TXN_PERMISSIONS_GROUP = 'PermissionsGroup';
+  private readonly STATUS_DRAFT = 'I';
+  private readonly STATUS_APPROVED = 'A';
+  private readonly STATUS_SUBMITTED = 'S';
 
-  searchText: string = '';
+  // Subscriptions
+  private routeSubscription!: Subscription;
 
+  // =========================
+  // CONSTRUCTOR
+  // =========================
   constructor(
-    private api: ApiService,
-    private router: Router,
-    private route: ActivatedRoute
+    private readonly api: ApiService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
-  // ================== Init ==================
-  ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+  // =========================
+  // LIFECYCLE HOOKS
+  // =========================
+  public ngOnInit(): void {
+    this.routeSubscription = this.route.queryParams.subscribe((params) => {
       const tab = params['tabName'];
 
       if (tab === 'approved') {
@@ -60,110 +93,142 @@ export class  PermissionsGroupsInquiry implements OnInit {
     });
   }
 
-  // ================== Tab Change ==================
-  onTabChange(index: number) {
+  public ngOnDestroy(): void {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  // =========================
+  // PRIVATE HELPER METHODS
+  // =========================
+  /** * Filters records across the keys specified in the search placeholder * (Permission ID, Permission Name, and Module Name). */
+  private filterList(originalList: PermissionGroupRow[], search: string): PermissionGroupRow[] {
+    if (!search) {
+      return [...originalList];
+    }
+    const value = search.toLowerCase();
+    return originalList.filter((item) => {
+      return (
+        item.permissionGroupId?.toLowerCase().includes(value) ||
+        item.permissionGroupName?.toLowerCase().includes(value) ||
+        item.moduleName?.toLowerCase().includes(value) ||
+        item.description?.toLowerCase().includes(value)
+      );
+    });
+  }
+
+  // =========================
+  // DATA LOADING
+  // =========================
+  public loadDraftPermissionsGroup(): void {
+    this.api.getTnxByStatus(this.STATUS_DRAFT, this.TXN_PERMISSIONS_GROUP).subscribe({
+      next: (res: any) => {
+        const data = (res as PermissionGroupRow[]) || [];
+        this.draftPermissionsGroup = data;
+        this.storeFilteredDraftPermissionsGroup = [...data];
+      },
+      error: (err: unknown) => {
+        console.error('Error fetching draft PermissionsGroup', err);
+      },
+    });
+  }
+
+  public loadApprovedPermissionsGroup(): void {
+    this.api.getTnxByStatus(this.STATUS_APPROVED, this.TXN_PERMISSIONS_GROUP).subscribe({
+      next: (res: any) => {
+        const data = (res as PermissionGroupRow[]) || [];
+        this.approvedPermissionsGroup = data;
+        this.storeFilteredApprovedPermissionsGroup = [...data];
+      },
+      error: (err: unknown) => {
+        console.error('Error fetching approved PermissionsGroup', err);
+      },
+    });
+  }
+
+  public loadSubmittedPermissionsGroup(): void {
+    this.api.getTnxByStatus(this.STATUS_SUBMITTED, this.TXN_PERMISSIONS_GROUP).subscribe({
+      next: (res: any) => {
+        const data = (res as PermissionGroupRow[]) || [];
+        this.submittedPermissionsGroup = data;
+        this.storeFilteredSubmittedPermissionsGroup = [...data];
+      },
+      error: (err: unknown) => {
+        console.error('Error fetching submitted PermissionsGroup', err);
+      },
+    });
+  }
+
+  // =========================
+  // TABS & INTERACTION METHODS
+  // =========================
+  public onTabChange(index: number): void {
     this.selectedTabIndex = index;
     this.searchText = '';
 
-    if (index === 0 && !this.draftPermissionsGroup.length) this.loadDraftPermissionsGroup();
-    else if (index === 1 && !this.approvedPermissionsGroup.length) this.loadApprovedPermissionsGroup();
-    else if (index === 2 && !this.submittedPermissionsGroup.length) this.loadSubmittedPermissionsGroup();
-  }
-
-  // ================== Load PermissionsGroup ==================
-  loadDraftPermissionsGroup() {
-    
-    this.api.getTnxByStatus('I', 'PermissionsGroup').subscribe({
-      next: res => {
-        this.draftPermissionsGroup = res;
-        this.storeFilteredDraftPermissionsGroup = [...res];
-        console.log('Draft PermissionsGroup', res);
-      },
-      error: err => console.error('Error fetching draft PermissionsGroup', err)
-    });
-  }
-
-  loadApprovedPermissionsGroup() {
-    this.api.getTnxByStatus('A', 'PermissionsGroup').subscribe({
-      next: res => {
-        this.approvedPermissionsGroup = res;
-        this.storeFilteredApprovedPermissionsGroup = [...res];
-        console.log('Approved PermissionsGroup', res);
-      },
-      error: err => console.error('Error fetching approved PermissionsGroup', err)
-    });
-  }
-
-  loadSubmittedPermissionsGroup() {
-    this.api.getTnxByStatus('S', 'PermissionsGroup').subscribe({
-      next: res => {
-        this.submittedPermissionsGroup = res;
-        this.storeFilteredSubmittedPermissionsGroup = [...res];
-        console.log('Submitted PermissionsGroup', res);
-      },
-      error: err => console.error('Error fetching submitted PermissionsGroup', err)
-    });
-  }
-
-  // ================== Filters ==================
-  filterDraftPermissionsGroup(search: string): void {
-    if (!search) {
-      this.storeFilteredDraftPermissionsGroup = [...this.draftPermissionsGroup];
-      return;
+    if (index === 0 && !this.draftPermissionsGroup.length) {
+      this.loadDraftPermissionsGroup();
+    } else if (index === 1 && !this.approvedPermissionsGroup.length) {
+      this.loadApprovedPermissionsGroup();
+    } else if (index === 2 && !this.submittedPermissionsGroup.length) {
+      this.loadSubmittedPermissionsGroup();
     }
-
-    const value = search.toLowerCase();
-    this.storeFilteredDraftPermissionsGroup = this.draftPermissionsGroup.filter(r =>
-      r.roleId?.toLowerCase().includes(value) ||
-      r.roleDesc?.toLowerCase().includes(value) ||
-      r.roleDest?.toLowerCase().includes(value)
-    );
   }
 
-  filterApprovedPermissionsGroup(search: string): void {
-    if (!search) {
-      this.storeFilteredApprovedPermissionsGroup = [...this.approvedPermissionsGroup];
-      return;
-    }
-
-    const value = search.toLowerCase();
-    this.storeFilteredApprovedPermissionsGroup = this.approvedPermissionsGroup.filter(r =>
-      r.roleId?.toLowerCase().includes(value) ||
-      r.roleDesc?.toLowerCase().includes(value) ||
-      r.roleDest?.toLowerCase().includes(value)
-    );
+  // =========================
+  // FILTER METHODS (HTML Bound)
+  // =========================
+  public filterDraftPermissionsGroup(search: string): void {
+    this.storeFilteredDraftPermissionsGroup = this.filterList(this.draftPermissionsGroup, search);
   }
 
-  filterSubmittedPermissionsGroup(search: string): void {
-    if (!search) {
-      this.storeFilteredSubmittedPermissionsGroup = [...this.submittedPermissionsGroup];
-      return;
-    }
-
-    const value = search.toLowerCase();
-    this.storeFilteredSubmittedPermissionsGroup = this.submittedPermissionsGroup.filter(r =>
-      r.roleId?.toLowerCase().includes(value) ||
-      r.roleDesc?.toLowerCase().includes(value) ||
-      r.roleDest?.toLowerCase().includes(value)
-    );
+  public filterApprovedPermissionsGroup(search: string): void {
+    this.storeFilteredApprovedPermissionsGroup = this.filterList(this.approvedPermissionsGroup, search);
   }
 
-  // ================== Navigation ==================
-  updateRouter(role: any) {
-    return this.router.navigate(['/admin/create-role', role.roleId]);
+  public filterSubmittedPermissionsGroup(search: string): void {
+    this.storeFilteredSubmittedPermissionsGroup = this.filterList(this.submittedPermissionsGroup, search);
   }
 
-  // ================== Track By ==================
-  trackByPermissionId(index: number, item: any) {
-    return item.roleId;
+  // =========================
+  // NAVIGATION METHODS
+  // =========================
+  public updateRouter(role: PermissionGroupRow): Promise<boolean> {
+    return this.router.navigate(['/admin/create-role', role.permissionGroupId]);
   }
 
-  // ================== Counts ==================
-  get draftCount(): number { return this.draftPermissionsGroup.length; }
-  get approvedCount(): number { return this.approvedPermissionsGroup.length; }
-  get submittedCount(): number { return this.submittedPermissionsGroup.length; }
+  // =========================
+  // UTILITY & TRACK BY
+  // =========================
+  public trackByPermissionId(index: number, item: PermissionGroupRow): string | number {
+    return item.id;
+  }
 
-  get filteredDraftCount(): number { return this.storeFilteredDraftPermissionsGroup.length; }
-  get filteredApprovedCount(): number { return this.storeFilteredApprovedPermissionsGroup.length; }
-  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedPermissionsGroup.length; }
+  // =========================
+  // GETTERS & COUNTS
+  // =========================
+  public get draftCount(): number {
+    return this.draftPermissionsGroup.length;
+  }
+
+  public get approvedCount(): number {
+    return this.approvedPermissionsGroup.length;
+  }
+
+  public get submittedCount(): number {
+    return this.submittedPermissionsGroup.length;
+  }
+
+  public get filteredDraftCount(): number {
+    return this.storeFilteredDraftPermissionsGroup.length;
+  }
+
+  public get filteredApprovedCount(): number {
+    return this.storeFilteredApprovedPermissionsGroup.length;
+  }
+
+  public get filteredSubmittedCount(): number {
+    return this.storeFilteredSubmittedPermissionsGroup.length;
+  }
 }

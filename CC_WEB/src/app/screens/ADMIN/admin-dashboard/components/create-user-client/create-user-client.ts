@@ -109,7 +109,7 @@ UserData = {
     this.loadCompanies();
     this.fetchAllRoles();
     this.loadDynamicFields();
-    this.fetchAllPermissions();
+    this.fetchAllGroupPermissions();
 
   }
 
@@ -382,17 +382,17 @@ getCompanyName(companyId: any): string {
 get hasClientUser(): boolean {
   return this.storeClientUser && Object.keys(this.storeClientUser).length > 0;
 }
-approvedPermissionGroups:any[]=[];
-fetchAllPermissions(): void {
-  this.api.getTnxByStatus('I', 'PermissionsGroup').subscribe({
-    next: (permissions: any[]) => {
-      this.approvedPermissionGroups = permissions;
 
-      console.log('Fetched approved permissions:', this.approvedPermissionGroups);
+storePermissoinGroups: any[] = [];
+fetchAllGroupPermissions(): void { 
+  this.api.getTnxByStatus('A', 'PermissionsGroup').subscribe({
+    next: (res: any) => {
+      this.storePermissoinGroups = res || [];
+      console.log('Fetched all permission groups:', this.storePermissoinGroups);
     },
-    error: err => {
-      console.error('Error fetching permissions', err);
-    }
+    error: err => console.error('Error fetching permission groups', err)
   });
 }
+
+
 }
