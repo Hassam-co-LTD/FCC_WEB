@@ -1,0 +1,114 @@
+<div class="page-header">
+    <div class="title">
+        <h2>{{ activeTab | titlecase }} Undertaking Records</h2>
+        <p>Manage and track all Undertaking {{ activeTab }} transactions</p>
+    </div>
+</div>
+
+<div class="search-system">
+    <div class="search-input-group">
+        <input type="text" 
+               placeholder="Search by TNX ID, Beneficiary, Bank, Currency" 
+               [(ngModel)]="searchQuery"
+               (input)="applyFilters()" />
+
+        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </div>
+
+    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+        <mat-icon>tune</mat-icon> Advanced
+    </button>
+</div>
+
+<div class="advanced-search" *ngIf="showAdvanced">
+    <div class="field">
+        <label>Currency</label>
+        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" placeholder="e.g. USD" />
+    </div>
+</div>
+
+<div class="ui-tabs">
+    <div class="tab" *ngFor="let tab of tabs" 
+         [class.active]="activeTab === tab.key" 
+         (click)="setActiveTab(tab.key)">
+        {{ tab.label }}
+    </div>
+</div>
+
+<div class="filter-row">
+    <div class="results-summary">
+        Showing <strong>{{ pagedTransactions.length }}</strong> 
+        of <strong>{{ filteredTransactions.length }}</strong> 
+        {{ activeTab }} records
+    </div>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
+                <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
+                <th>Product</th>
+                <th>Issuer Ref</th>
+                <th>Expiry Date</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Applicant</th>
+                <th>Beneficiary</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
+                <td>
+                    <a class="tnx-link" (click)="openUndertaking(tx)">
+                        {{ tx.channelReference }}
+                    </a>
+                </td>
+                
+                <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
+                <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
+                <td>{{ tx.formData.bankForm?.issuerReference || '-' }}</td>
+                <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
+                <td>{{ tx.formData.undertakingDetails?.currency }}</td>
+                <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
+                <td>{{ tx.formData.applicantBeneficiary?.applicantName }}</td>
+                <td>{{ tx.formData.applicantBeneficiary?.beneficiaryName }}</td>
+                
+                <td class="text-center actions-cell">
+                    <ng-container *ngIf="isDraft(tx)">
+                        <button class="btn-action view" (click)="viewOnly(tx)" matTooltip="Preview Draft">
+                            <mat-icon>visibility</mat-icon> View
+                        </button>
+                    </ng-container>
+
+                    <ng-container *ngIf="!isDraft(tx)">
+                        <button class="btn-action view" (click)="openUndertaking(tx)">
+                            <mat-icon>visibility</mat-icon> View
+                        </button>
+                    </ng-container>
+                </td>
+            </tr>
+
+            <tr *ngIf="pagedTransactions.length === 0">
+                <td colspan="10" class="no-records">
+                    <div class="empty-state">
+                        <mat-icon>search_off</mat-icon>
+                        <p>No {{ activeTab }} Undertaking records found.</p>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="filteredTransactions.length > 0">
+        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+    </div>
+</div>

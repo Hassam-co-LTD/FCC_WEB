@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+
+.error-page {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at top right, #dbeafe 0%, transparent 35%),
+        radial-gradient(circle at bottom left, #e0f2fe 0%, transparent 35%),
+        #f8fafc;
+
+    font-family: "Segoe UI", sans-serif;
+}
+
+.error-box {
+    width: 520px;
+    background: rgba(255, 255, 255, .88);
+
+    backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(203, 213, 225, .8);
+
+    border-radius: 18px;
+
+    padding: 55px;
+
+    text-align: center;
+
+    box-shadow:
+        0 25px 60px rgba(15, 23, 42, .08);
+
+    animation: slideUp .5s ease;
+}
+
+.error-code {
+
+    font-size: 110px;
+    font-weight: 700;
+
+    color: transparent;
+
+    background: linear-gradient(135deg, #2563eb, #38bdf8);
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    letter-spacing: 4px;
+}
+
+.divider {
+
+    width: 80px;
+    height: 4px;
+
+    margin: 10px auto 25px;
+
+    border-radius: 20px;
+
+    background: linear-gradient(to right, #2563eb, #38bdf8);
+
+}
+
+h2 {
+
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 30px;
+
+    font-weight: 600;
+
+}
+
+p {
+
+    margin: 20px 0 35px;
+
+    color: #64748b;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+
+}
+
+button {
+
+    padding: 12px 30px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .25s ease;
+}
+
+button:hover {
+
+    background: #1d4ed8;
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 12px 30px rgba(37, 99, 235, .25);
+
+}
+
+@keyframes slideUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(35px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}

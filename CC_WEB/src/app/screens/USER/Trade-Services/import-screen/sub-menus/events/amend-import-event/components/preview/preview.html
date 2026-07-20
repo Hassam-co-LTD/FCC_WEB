@@ -1,0 +1,315 @@
+<div class="preview-page" *ngIf="importForm">
+
+<!-- ...existing code... -->
+<h2 class="page-title">Preview</h2>
+
+<!-- Enhanced preview meta (Event / Event Ref No / Sequence) -->
+<div class="preview-meta">
+  <div class="meta-left">
+    <div class="event-badge" [ngClass]="{
+        'badge-amd': (currentTx?.eventType === 'AMD'),
+        'badge-cre': (currentTx?.eventType === 'CRE'),
+        'badge-other': !(currentTx?.eventType)
+      }">
+      <mat-icon class="event-icon">event</mat-icon>
+      <div class="event-info">
+        <div class="event-label">Event</div>
+        <div class="event-value">{{ currentTx?.eventType || '—' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meta-right">
+    <div class="meta-card">
+      <div class="meta-title">Event Ref No</div>
+      <div class="meta-value">
+        <span class="ref-text">{{ currentTx?.eventRefNo || '—' }}</span>
+        <mat-icon class="meta-icon" aria-hidden="true" title="Reference">assignment</mat-icon>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="preview-container">
+
+    <!-- ============================== -->
+    <!-- ROW 1 → GENERAL + APPLICANT   -->
+    <!-- ============================== -->
+    <div class="preview-row">
+
+      <!-- GENERAL DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">General Details</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Product Type</div>
+            <div class="preview-value">{{ importForm.value.productType }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Expiry Date</div>
+            <div class="preview-value">{{ importForm.value.expiryDate }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Place of Expiry</div>
+            <div class="preview-value">{{ importForm.value.placeOfExpiry }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- APPLICANT / BENEFICIARY -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Applicant / Beneficiary</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Applicant Name</div>
+            <div class="preview-value">{{ importForm.value.applicantName }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Name</div>
+            <div class="preview-value">{{ importForm.value.beneficiaryName }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Country</div>
+            <div class="preview-value">{{ importForm.value.beneficiaryCountry }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 2 → BANK + AMOUNT         -->
+    <!-- ============================== -->
+    <div class="preview-row">
+
+      <!-- BANK DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Bank Details</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Issuing Bank</div>
+            <div class="preview-value">{{ importForm.value.issuingBankName }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Issuer Reference</div>
+            <div class="preview-value">{{ importForm.value.issuerReference }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Advising Bank</div>
+            <div class="preview-value">{{ importForm.value.advisingBankName }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Advise Through Bank</div>
+            <div class="preview-value">{{ importForm.value.adviseThroughBankName }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- AMOUNT & CHARGES -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Amount & Charges</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Currency</div>
+            <div class="preview-value">{{ importForm.value.currency }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Amount</div>
+            <div class="preview-value">
+              {{ importForm.value.amount | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Additional Amount</div>
+            <div class="preview-value">
+              {{ importForm.value.additionalAmount | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Variation</div>
+            <div class="preview-value">
+              {{ importForm.value.variationType }}
+              (+{{ importForm.value.variationPlus }} / -{{ importForm.value.variationMinus }})
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 3 → PAYMENT + SHIPMENT    -->
+    <!-- ============================== -->
+    <div class="preview-row">
+
+      <!-- PAYMENT DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Payment Details</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Credit Available With</div>
+            <div class="preview-value">{{ importForm.value.creditAvailableWith }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Bank Name</div>
+            <div class="preview-value">{{ importForm.value.bankName }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Credit Available By</div>
+            <div class="preview-value">{{ importForm.value.creditAvailableBy }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Draft At</div>
+            <div class="preview-value">{{ importForm.value.paymentDraftAt }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- SHIPMENT DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Shipment Details</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">From</div>
+            <div class="preview-value">{{ importForm.value.shipmentFrom }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">To</div>
+            <div class="preview-value">{{ importForm.value.shipmentTo }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Last Shipment Date</div>
+            <div class="preview-value">{{ importForm.value.lastShipmentDate }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Partial Shipment</div>
+            <div class="preview-value">
+              {{ importForm.value.partialShipment ? 'Yes' : 'No' }}
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 4 → NARRATIVE + INSTRUCT  -->
+    <!-- ============================== -->
+    <div class="preview-row">
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Narrative</h3>
+        <div class="preview-grid">
+          <div class="preview-item full-width">
+            <div class="preview-label">Description of Goods</div>
+            <div class="preview-value">{{ importForm.value.descriptionOfGoods }}</div>
+          </div>
+
+          <div class="preview-item full-width">
+            <div class="preview-label">Documents Required</div>
+            <div class="preview-value">{{ importForm.value.documentsRequired }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+      <mat-card class="preview-card">
+        <h3 class="section-title">Instructions to Bank</h3>
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Principal Account</div>
+            <div class="preview-value">{{ importForm.value.principalAccount }}</div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Fee Account</div>
+            <div class="preview-value">{{ importForm.value.feeAccount }}</div>
+          </div>
+
+          <div class="preview-item full-width">
+            <div class="preview-label">Other Instructions</div>
+            <div class="preview-value">{{ importForm.value.otherInstructions }}</div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ============================== -->
+    <!-- ROW 5 → ATTACHMENTS           -->
+    <!-- ============================== -->
+    <mat-card class="preview-card full-width">
+      <h3 class="section-title">Attachments</h3>
+
+      <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
+        <div class="preview-attachments-container">
+          <div class="attachment-grid header">
+            <div>Type</div>
+            <div>Title</div>
+            <div>File Name</div>
+            <div>Size</div>
+            <div>Actions</div>
+          </div>
+
+          <div class="attachment-grid"
+            *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex">
+            <div>
+              <mat-icon *ngIf="f.value.type?.includes('pdf')">picture_as_pdf</mat-icon>
+              <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
+            </div>
+            <div>{{ f.value.title }}</div>
+            <div>{{ f.value.fileName }}</div>
+            <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+            <div>
+              <mat-icon (click)="downloadFile(i)">download</mat-icon>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noAttachments>
+        <p>No attachments uploaded.</p>
+      </ng-template>
+    </mat-card>
+
+  </div>
+</div>
+
+<div class="actions">
+
+  <!-- ALWAYS -->
+  <button mat-stroked-button (click)="back()">Back</button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+
+    <button mat-flat-button color="primary" (click)="submitLc()" *ngIf="currentTx?.status === 'I'">
+      Submit
+    </button>
+
+    <button mat-flat-button color="warn" (click)="rejectTransaction()" *ngIf="currentTx?.status === 'S'">
+      Reject
+    </button>
+
+    <button mat-flat-button color="primary" (click)="approveTransaction()" *ngIf="currentTx?.status === 'S'">
+      Approve
+    </button>
+
+  </ng-container>
+
+</div>

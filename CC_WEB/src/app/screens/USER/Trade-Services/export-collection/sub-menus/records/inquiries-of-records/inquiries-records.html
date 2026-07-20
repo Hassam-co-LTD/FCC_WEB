@@ -1,0 +1,94 @@
+<div class="page-header">
+    <div class="title">
+        <h2>{{ activeTab | titlecase }} Export Collection Records</h2>
+        <p>Manage and track all Export Collection {{ activeTab }} transactions</p>
+    </div>
+</div>
+
+<!-- ================= SEARCH ================= -->
+<div class="search-system">
+    <div class="search-input-group">
+        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
+            (input)="applyFilters()" />
+
+        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </div>
+
+    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+        <mat-icon>tune</mat-icon> Advanced
+    </button>
+</div>
+
+<!-- ================= ADVANCED SEARCH ================= -->
+<div class="advanced-search" *ngIf="showAdvanced">
+    <div class="field">
+        <label>Currency</label>
+        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+    </div>
+</div>
+
+
+<!-- ================= TABS ================= -->
+<div class="ui-tabs">
+    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
+        {{ tab.label }}
+    </div>
+</div>
+
+
+<div class="filter-row">
+    <div class="results-summary">
+        Showing <strong>{{ pagedTransactions.length }}</strong> 
+        of <strong>{{ filteredTransactions.length }}</strong> 
+        {{ activeTab }} records
+    </div>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th (click)="sortBy('createdOn')">Created</th>
+                <th>Issuer Reference</th>
+                <th>Currency</th>
+                <th>Amount</th>
+                <th>Drawer</th>
+                <th>Drawee</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
+                <td><a class="tnx-link" (click)="openExportCollection(tx)">{{ tx.tnxId }}</a></td>
+                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+                <td>{{tx.issuerReference}}</td>
+                <td>{{ tx.currency }}</td>
+                <td>{{ tx.amount }}</td>
+                <td>{{ tx.drawerName }}</td>
+                <td>{{ tx.draweeName }}</td>
+                <!-- <td>{{ tx.status }}</td> -->
+                <td>
+                    <button class="btn-action" (click)="viewTransaction(tx)">
+                        <mat-icon>visibility</mat-icon> View
+                    </button>
+                </td>
+            </tr>
+        
+            <tr *ngIf="pagedTransactions.length === 0">
+                <td colspan="20" class="no-records">
+                    No {{ activeTab }} Export Collection records found
+                </td>
+            </tr>
+        
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+    </div>
+</div>
