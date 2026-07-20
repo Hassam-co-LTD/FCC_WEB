@@ -168,8 +168,8 @@ export class LayoutComponent implements OnInit {
 
         { label: 'System Features', icon: 'insights', route: '/system-overview' },
         { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
-  // { label: 'System Features', icon: 'insights', route: '/system-overview' },
-  // { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
+        // { label: 'System Features', icon: 'insights', route: '/system-overview' },
+        // { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
 
         // ================================
         // MASTER DATA CATEGORY
@@ -180,27 +180,27 @@ export class LayoutComponent implements OnInit {
           open: false,
           children: [
 
-      {
-        label: 'Customers',
-        icon: 'group',
-        route: '/admin',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-customer' },
-          { label: 'Inquiry', route: '/admin/customer-list' }
-        ]
-      },
+            {
+              label: 'Customers',
+              icon: 'group',
+              route: '/admin',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-customer' },
+                { label: 'Inquiry', route: '/admin/customer-list' }
+              ]
+            },
 
-      {
-        label: 'Branch',
-        icon: 'account_balance',
-        route: '/admin/branches',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-branch' },
-          { label: 'Inquiry', route: '/admin/branch-inquiry' }
-        ]
-      },
+            {
+              label: 'Branch',
+              icon: 'account_balance',
+              route: '/admin/branches',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-branch' },
+                { label: 'Inquiry', route: '/admin/branch-inquiry' }
+              ]
+            },
 
             {
               label: 'City',
@@ -213,27 +213,27 @@ export class LayoutComponent implements OnInit {
               ]
             },
 
-      {
-        label: 'Dropdown Option',
-        icon: 'list_alt',
-        route: '/admin/create-dropdown-option',
-        open: false,
-        children: [
-          { label: 'Create New', route: '/admin/create-dropdown-option' },
-          { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
-        ]
-      },
-      {
-    label: 'Dynamic Field Options',
-    icon: 'list_alt', // for configuring dropdown values
-    route: '/admin/create-dynamic-field-options',
-    open: false,
-    children: [
-      { label: 'Create New', route: '/admin/create-dynamic-field-options' },
-      { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
-    ]
-  },
-  
+            {
+              label: 'Dropdown Option',
+              icon: 'list_alt',
+              route: '/admin/create-dropdown-option',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-dropdown-option' },
+                { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
+              ]
+            },
+            {
+              label: 'Dynamic Field Options',
+              icon: 'list_alt', // for configuring dropdown values
+              route: '/admin/create-dynamic-field-options',
+              open: false,
+              children: [
+                { label: 'Create New', route: '/admin/create-dynamic-field-options' },
+                { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
+              ]
+            },
+
 
             {
               label: 'Account Types',
@@ -291,21 +291,21 @@ export class LayoutComponent implements OnInit {
               ]
             },
             {
-  label: 'Permission Master',
-  icon: 'verified_user',
-  route: '/admin/permission',
-  open: false,
-  children: [
-    {
-      label: 'Create New',
-      route: '/admin/create-permission'
-    },
-    {
-      label: 'Inquiry',
-      route: '/admin/permission-master-inquiry'
-    }
-  ]
-}
+              label: 'Permission Master',
+              icon: 'verified_user',
+              route: '/admin/permission',
+              open: false,
+              children: [
+                {
+                  label: 'Create New',
+                  route: '/admin/create-permission'
+                },
+                {
+                  label: 'Inquiry',
+                  route: '/admin/permission-master-inquiry'
+                }
+              ]
+            }
 
           ]
         },
@@ -320,52 +320,48 @@ export class LayoutComponent implements OnInit {
           ]
         },
         {
-  label: 'Security',
-  icon: 'security',
-  route: '/admin/security',
-  open: false,
-  children: [
-    {
-      label: 'Change Password',
-      route: '/admin/change-password'
-    }
-  ]
-}
-,
-
-
+          label: 'Security',
+          icon: 'security',
+          route: '/admin/security',
+          open: false,
+          children: [
+            {
+              label: 'Change Password',
+              route: '/admin/change-password'
+            }
+          ]
+        }
+        ,
         { label: 'Users', icon: 'person', route: '/users' },
         { label: 'Logout', icon: 'logout', route: '/login' }
-
       ];
-
-         }
-         else if (companyType === "B"){
-            console.log("Loading Customer User Menu",companyType, role);
-          this.menuItems = [
-
-              {
-  label: 'CustomerUser',
-  icon: 'dashboard',
-  route: '/customer-user',
-  open: false,
-  children: [
-    {
-      label: 'Create New',
-      route: '/customer-user/create-customer-user'
-    },
-    {
-      label: 'Inquiry',
-      route: '/customer-user/inquiry'
     }
-  ]
-}
-  
-                
-          ]
-         }
+    else if (companyType === "B") {
+      console.log("Loading Customer User Menu", companyType, role);
+      this.menuItems = [
 
-         else if (companyType === 'C' && role === 'U') {
+        {
+          label: 'CustomerUser',
+          icon: 'dashboard',
+          route: '/customer-user',
+          open: false,
+          children: [
+            {
+              label: 'Create New',
+              route: '/customer-user/create-customer-user'
+            },
+            {
+              label: 'Inquiry',
+              route: '/customer-user/inquiry'
+            }
+          ]
+        }
+
+
+      ]
+    }
+
+    else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         // { label: 'Search', icon: 'search', route: '/Search-by-id' },

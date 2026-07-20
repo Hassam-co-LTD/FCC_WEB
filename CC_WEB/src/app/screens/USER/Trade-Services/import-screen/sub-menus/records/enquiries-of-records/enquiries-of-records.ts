@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -38,17 +38,15 @@ export class EnquiriesOfRecords implements OnInit {
   sortColumn: keyof ImportLcTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
-  private isBrowser: boolean;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(
     private api: ApiService,
     private transactionService: ImportlcFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) platformId: Object,
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+  ) {}
 
   ngOnInit(): void {
     if (!this.isBrowser) return;

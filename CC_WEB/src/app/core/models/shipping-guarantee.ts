@@ -17,11 +17,15 @@ export interface ShippingGuaranteeTransaction{
     applicantName?: string;
     applicantAddress1?: string;
     applicantAddress2?: string;
+    applicantAddress3?: string;
+    applicantAddress4?: string;
     applicantCountry?: string;
     // Beneficiary
     beneficiaryName?: string;
     beneficiaryAddress1?: string;
     beneficiaryAddress2?: string;
+    beneficiaryAddress3?: string;
+    beneficiaryAddress4?: string;
     beneficiaryCountry?: string;
 
     bankName?: string;
@@ -41,11 +45,14 @@ export interface ShippingGuaranteeTransaction{
         fileName: string;
         file: string | Blob;
     }[];
-    
+    rejectionReason?: string;
     // System fields
     status?: string; // "I", "S", "A"
     tnxId?: string;
     companyId?: string;
     createdOn?: Date;
     updatedOn?: Date;
+    eventType?: string;
+    eventRefNo?: string;
+    eventSequence?: number;
 }

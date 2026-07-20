@@ -55,12 +55,25 @@ export class AuthService {
     return !!sessionStorage.getItem('userData');
   }
  /** Get normalized user category (ADMIN / USER) */
+  // getUserCategory(): 'A' | 'U' | null {
+  //   const data = sessionStorage.getItem('userData');
+  //   if (!data) return null;
+
+  //   const parsed = JSON.parse(data);
+  //   return parsed.body.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
+  // }
+
   getUserCategory(): 'A' | 'U' | null {
     const data = sessionStorage.getItem('userData');
     if (!data) return null;
 
     const parsed = JSON.parse(data);
-    return parsed.body.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
+
+    const userCategory = parsed.body?.userCategory ?? parsed.userCategory;
+
+    if (!userCategory) return null;
+
+    return userCategory.toUpperCase() === 'A' ? 'A' : 'U';
   }
   /** Get companyId from sessionStorage */
   getCompanyId(): string | null {
@@ -99,13 +112,22 @@ export class AuthService {
   canReject(): boolean {
     return this.canApprove();
   }
+  // getCompanyType(): 'B' | 'C' | null {
+  //   const data = sessionStorage.getItem('userData');
+  //   console.log("getCompanyType - raw session data:", data);
+  //   if (!data) return null;
+  //   const parsed = JSON.parse(data);
+    
+  //   return parsed.body.companyType?.toUpperCase() || null;
+  // }
+
   getCompanyType(): 'B' | 'C' | null {
     const data = sessionStorage.getItem('userData');
-    console.log("getCompanyType - raw session data:", data);
     if (!data) return null;
+
     const parsed = JSON.parse(data);
-    
-    return parsed.body.companyType?.toUpperCase() || null;
+
+    return (parsed.body?.companyType ?? parsed.companyType)?.toUpperCase() || null;
   }
 
   getRedirectUrl(): string {

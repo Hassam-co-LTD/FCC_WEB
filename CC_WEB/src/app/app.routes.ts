@@ -12,29 +12,27 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
     },
-     {
-    path: 'reset-password',
-    loadComponent: () =>
-      import('./screens/AUTH/login/login.component')
-        .then(m => m.LoginComponent),
-  },
-    // {
-    //     path: 'signup',
-    //     loadComponent: () =>
-    //         import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
-    // },
+    {
+        path: 'reset-password',
+        loadComponent: () =>
+            import('./screens/AUTH/login/login.component')
+                .then(m => m.LoginComponent),
+    },
 
     // Protected routes (with layout)
     {
         path: '',
         component: LayoutComponent,
         canActivate: [authGuard],
+        // Admin-Dashboard
+        // my routes
         children: [
-            // Admin-Dashboard
-            // my routes 
-
             {
                 path: "admin",
+                canActivate: [authGuard],
+                data: {
+                    role: 'A'
+                },
                 loadComponent: () =>
                     import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
                 children: [
@@ -262,57 +260,30 @@ export const routes: Routes = [
                         loadComponent: () =>
                             import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) => m.AccountTypesInquiry)
 
-                    }
+                    },
+                    // ================= Permission Master =================
 
-                  , 
+                    {
+                        path: 'create-permission',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+                                .then(m => m.PermissionMaster)
+                    },
 
-                //   admin password change 
-//                   {
-//                     path:'change-password',
-//   loadComponent: () =>
-//                             import('./screens/AUTH/login/change-password/change-password').then((m) => m.ChangePasswordComponent)
+                    {
+                        path: 'edit-permission/:id',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+                                .then(m => m.PermissionMaster)
+                    },
 
-//                   },
-
-//                 //   user password change 
-//   {
-//                     path:'user-change-password',
-//   loadComponent: () =>
-//                             import('./screens/AUTH/login/user-password-change/user-password-change').then((m) => m.UserPasswordChange)
-
-//                   },
-
-                  // ================= Permission Master =================
-
-{
-  path: 'create-permission',
-  loadComponent: () =>
-    import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
-      .then(m => m.PermissionMaster)
-},
-
-{
-  path: 'edit-permission/:id',
-  loadComponent: () =>
-    import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
-      .then(m => m.PermissionMaster)
-},
-
-{
-  path: 'permission-master-inquiry',
-  loadComponent: () =>
-    import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry')
-      .then(m => m.RoleMasterList)
-},
-
-
-                  
-
-
+                    {
+                        path: 'permission-master-inquiry',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry')
+                                .then(m => m.RoleMasterList)
+                    },
                 ],
-
-
-
             },
 
             //  CustomerUser Dashboard
@@ -342,15 +313,9 @@ export const routes: Routes = [
 
 
                 ],
-            
-
-            }
 
 
-
-            ,
-
-
+            },
 
 
             // ==============================
@@ -391,13 +356,13 @@ export const routes: Routes = [
             // ==============================
             // EXPORT LC SCREEN
             // ==============================
-            // {
-            //     path: 'export-screen/inquiries-records',
-            //     loadComponent: () =>
-            //         import(
-            //             './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
-            //         ).then((m) => m.InquiriesOfRecords),
-            // },
+            {
+                path: 'export-screen/inquiries-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
+                    ).then((m) => m.InquiriesOfRecords),
+            },
             {
                 path: 'export-screen/preview',
                 loadComponent: () =>
@@ -413,16 +378,16 @@ export const routes: Routes = [
             // {
             //     path: 'export-screen/amend',
             //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend')
-            //             .then((m) => m.Amend),
+            //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/AmendScreen')
+            //             .then((m) => m.AmendScreen),
             // },
-            // {
-            //     path: 'export-screen/approved-inquiry-records',
-            //     loadComponent: () =>
-            //         import(
-            //             './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-            //         ).then((m) => m.ApprovedInquiryRecords),
-            // },
+            {
+                path: 'export-screen/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
             // {
             //     path: 'export-screen/amend/preview',
             //     loadComponent: () =>
@@ -465,50 +430,46 @@ export const routes: Routes = [
             // ==============================
             // SHIPPING GUARANTEE
             // ==============================
-            // {
-            //     path: 'shipping-guarantee/inquiries-records',
-            //     loadComponent: () =>
-            //         import(
-            //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records'
-            //         ).then((m) => m.inquiriesRecords),
-            // },
+
+            // Static routes first
+            {
+                path: 'shipping-guarantee/inquiries-records',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records')
+                        .then(m => m.inquiriesRecords),
+            },
             {
                 path: 'shipping-guarantee/preview',
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview')
                         .then((m) => m.Preview),
-                data: { title: 'Preview Shipping Guarantee' }
             },
             {
                 path: 'shipping-guarantee/success',
                 loadComponent: () =>
                     import('./shared/success/success')
                         .then((m) => m.Success),
-                data: { title: 'Shipping Guarantee Submitted' }
             },
-            // {
-            //     path: 'shipping-guarantee/amend',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
-            //             .then((m) => m.Amend),
-            // },
+            {
+                path: 'shipping-guarantee/amend',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
+                        .then((m) => m.Amend),
+            },
 
             // Import Amend Route
-            // {
-            //     path: 'shipping-guarantee/approved-inquiry-records',
-            //     loadComponent: () =>
-            //         import(
-            //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-            //         ).then((m) => m.ApprovedInquiryRecords),
-            // }
-            // ,
-
-            // {
-            //     path: 'shipping-guarantee/amend/preview',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
-            // }
-            // ,
+            {
+                path: 'shipping-guarantee/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
+            {
+                path: 'shipping-guarantee/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
+            },
 
 
             // Dynamic TNX ID route
@@ -517,12 +478,12 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
             },
-            
-            // {
-            //     path: 'shipping-guarantee/amend/:tnxId',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
-            // },
+
+            {
+                path: 'shipping-guarantee/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
+            },
             // Base Shipping Guarantee screen
             {
                 path: 'shipping-guarantee',
@@ -788,26 +749,26 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./shared/success/success').then(m => m.Success),
             },
-            // {
-            //     path: 'import-screen/amend',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-            // },
+            {
+                path: 'import-screen/amend',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            },
 
             // // Import Amend Route
-            // {
-            //     path: 'import-screen/approved-inquiry-records',
-            //     loadComponent: () =>
-            //         import(
-            //             './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-            //         ).then((m) => m.ApprovedInquiryRecords),
-            // },
+            {
+                path: 'import-screen/approved-inquiry-records',
+                loadComponent: () =>
+                    import(
+                        './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
+                    ).then((m) => m.ApprovedInquiryRecords),
+            },
 
-            // {
-            //     path: 'import-screen/amend/preview',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
-            // },
+            {
+                path: 'import-screen/amend/preview',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
+            },
 
             // Dynamic TNX ID route
             {
@@ -816,11 +777,11 @@ export const routes: Routes = [
                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
             },
 
-            // {
-            //     path: 'import-screen/amend/:tnxId',
-            //     loadComponent: () =>
-            //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-            // },
+            {
+                path: 'import-screen/amend/:tnxId',
+                loadComponent: () =>
+                    import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
+            },
 
             // Base import screen
             {
@@ -941,7 +902,10 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],
     },
-
-    // Wildcard redirect
-    { path: '**', redirectTo: 'login' },
+    {
+        path: '**',
+        loadComponent: () =>
+            import('./screens/AUTH/page-not-found/page-not-found')
+                .then(m => m.PageNotFound)
+    },
 ];

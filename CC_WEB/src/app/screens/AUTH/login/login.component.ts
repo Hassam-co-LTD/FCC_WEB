@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   password = '';
   userStatus = 'A';
   hidePassword = true;
-  isDummyLogin = false;
+  isDummyLogin = true;
 
   // =========================
   // RESET PASSWORD - FORGOT FLOW STATE
@@ -187,17 +187,23 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private loginDummy(): void {
-    const DUMMY_LOGIN_ID = 'NBP01';
-    const DUMMY_PASSWORD = 'NBP';
+    console.log('Dummy login called');
 
-    if (this.loginId === DUMMY_LOGIN_ID && this.password === DUMMY_PASSWORD) {
-      const dummyUser = { loginId: this.loginId, companyId: 'NBP', companyType: 'C', userCategory: 'U', userStatus: 'A' };
-      sessionStorage.setItem('userData', JSON.stringify(dummyUser));
-      this.router.navigate(['/dashboard']);
-      Swal.fire({ icon: 'success', title: 'Welcome', text: 'Dummy login verified.', timer: 1500, showConfirmButton: false });
-    } else {
-      Swal.fire({ icon: 'error', title: 'Invalid Credentials', text: 'Use NBP01 / NBP for dummy configuration access.' });
-    }
+    const dummyUser = {
+      loginId: 'NBP01',
+      companyId: 'NBP',
+      companyType: 'C',
+      userCategory: 'U',
+      userStatus: 'A'
+    };
+
+    sessionStorage.setItem('userData', JSON.stringify(dummyUser));
+
+    console.log('Before navigation');
+
+    this.router.navigate(['/dashboard']).then(result => {
+      console.log('Navigation Result:', result);
+    });
   }
 
   private loginApi(): void {

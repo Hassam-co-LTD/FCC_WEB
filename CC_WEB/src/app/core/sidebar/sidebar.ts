@@ -46,7 +46,7 @@ export class Sidebar implements AfterViewInit, OnChanges {
     return this.collapsed;
   }
 
-  /** 🔥 AUTO SCROLL ACTIVE ITEM INTO VIEW (Browser only) */
+  /** AUTO SCROLL ACTIVE ITEM INTO VIEW (Browser only) */
   private scrollActiveIntoView() {
     if (!isPlatformBrowser(this.platformId)) return;
     if (!this.stepItems) return;
