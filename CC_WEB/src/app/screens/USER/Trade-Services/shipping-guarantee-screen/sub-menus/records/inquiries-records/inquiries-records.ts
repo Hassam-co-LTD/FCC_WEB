@@ -144,7 +144,7 @@ export class inquiriesRecords implements OnInit {
 
     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
-    this.api.getRecordTransactionsByStatusForShippingGuarantee(backendStatus).subscribe({
+    this.api.getRecordTransactionsByStatusSg(backendStatus).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
         this.applyFilters();
@@ -278,7 +278,7 @@ export class inquiriesRecords implements OnInit {
  viewTransaction(tx: ShippingGuaranteeTransaction): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-   this.api.getTransactionForShippingGuaranteeByTnxId(tx.tnxId!).subscribe({
+   this.api.getTransactionSgByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
         this.router.navigate(['/shipping-guarantee/preview']);

@@ -3,14 +3,14 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
 // CHILD COMPONENTS
-import { GeneralDetails } from "../../events/amend-export-collection-event/components/general-details/general-details";
-import { DrawerDraweeDetails } from "../../events/amend-export-collection-event/components/drawer-drawee-details/drawer-drawee-details";
-import { BankDetailsComponent } from "../../events/amend-export-collection-event/components/bank-details/bank-details";
-import { ShippingDetailsComponent } from "../../events/amend-export-collection-event/components/shipping-details/shipping-details";
-import { PaymentAmountComponent } from "../../events/amend-export-collection-event/components/payment-amount/payment-amount";
-import { CollectionInstructionsComponent } from "../../events/amend-export-collection-event/components/collection-instructions/collection-instructions";
-import { License } from "../../events/amend-export-collection-event/components/license/license";
-import { AttachmentsDocuments } from "../../events/amend-export-collection-event/components/attachments-documents/attachments-documents";
+import { GeneralDetails } from "./components/general-details/general-details";
+import { DrawerDraweeDetails } from "./components/drawer-drawee-details/drawer-drawee-details";
+import { BankDetailsComponent } from "./components/bank-details/bank-details";
+import { ShippingDetailsComponent } from "./components/shipping-details/shipping-details";
+import { PaymentAmountComponent } from "./components/payment-amount/payment-amount";
+import { CollectionInstructionsComponent } from "./components/collection-instructions/collection-instructions";
+import { License } from "./components/license/license";
+import { AttachmentsDocuments } from "./components/attachments-documents/attachments-documents";
 // import { PreviewSection } from "../amend/components/preview/preview";
 import { Sidebar } from "../../../../../../../core/sidebar/sidebar";
 import { Router } from '@angular/router';

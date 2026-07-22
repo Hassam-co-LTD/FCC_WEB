@@ -364,88 +364,82 @@ export class LayoutComponent implements OnInit {
     else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
-        // { label: 'Search', icon: 'search', route: '/Search-by-id' },
         {
           label: 'Trade Services',
-          icon: 'article',
+          icon: 'group',
+          route: '/dashboard/Trade-Services',
           open: false,
           children: [
-
 
             // -------------------------
             // IMPORT LC
             // -------------------------
             {
               label: 'Import LC',
-              route: '/import-welcome',
+              route: '/dashboard/Trade-Services/import-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/import-screen' },
-                { label: 'Amend', route: '/import-screen/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/import-screen/inquiries' },
+                { label: 'Create', route: '/dashboard/Trade-Services/import-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/import-screen/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
               ]
             },
-
 
             // -------------------------
             // EXPORT LC
             // -------------------------
             {
               label: 'Export LC',
-              route: '/exportlc-welcome',
+              route: '/dashboard/Trade-Services/exportlc-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/export-screen' },
-                { label: 'Amend', route: '/export-screen/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/export-screen/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
               ]
             },
-
 
             // -------------------------
             // SHIPPING GUARANTEE
             // -------------------------
             {
               label: 'Shipping Guarantee',
-              route: '/shipping-welcome',
+              route: '/dashboard/Trade-Services/shipping-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/shipping-guarantee' },
-                { label: 'Amend', route: '/shipping-guarantee/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/shipping-guarantee/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/shipping-guarantee' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records' },
               ]
             },
-
 
             // -------------------------
             // EXPORT COLLECTION
             // -------------------------
             {
               label: 'Export Collection',
-              route: '/export-collection-welcome',
+              route: '/dashboard/Trade-Services/export-collection-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/export-collection' },
-                { label: 'Amend', route: '/export-collection/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/export-collection/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/export-collection' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-collection/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-collection/inquiries-records' },
               ]
             },
-
 
             // -------------------------
             // UNDERTAKING ISSUANCE
             // -------------------------
             {
               label: 'Undertaking Issuance',
-              route: '/undertaking-welcome',
+              route: '/dashboard/Trade-Services/undertaking-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/undertaking-issuance' },
-                { label: 'Amend', route: '/undertaking-issuance/amend' },
-                { label: 'Inquiries', route: '/undertaking-issuance/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/undertaking-issuance' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records' },
               ]
             },
-
 
           ],
         },
@@ -456,18 +450,15 @@ export class LayoutComponent implements OnInit {
           children: [
             {
               label: 'Fund Transfer',
-              route: '/fund-transfer-welcome',
+              route: '/dashboard/fund-transfer-welcome',
               open: false,
               children: [
-                { label: 'IBFT', route: '/IBFT' },
-                { label: 'With-In Bank', route: '/fund-transfer/with-in' },
-                { label: 'My Accounts', route: '/my-accounts' },
-                { label: 'Inquiries', route: 'fund-transfer/fund-transfer-records' },
+                { label: 'IBFT', route: '/dashboard/IBFT' },
+                { label: 'With-In Bank', route: '/dashboard/fund-transfer/with-in' },
+                { label: 'My Accounts', route: '/dashboard/my-accounts' },
+                { label: 'Inquiries', route: '/dashboard/fund-transfer/fund-transfer-records' },
               ]
             },
-            // {
-            //   label: 'Bulk Transfer',
-            // }
           ],
         },
         {
@@ -475,8 +466,8 @@ export class LayoutComponent implements OnInit {
           icon: 'person',
           open: false,
           children: [
-            { label: 'Add Beneficiary', route: '/undertaking-issuance' },
-            { label: 'Inquiries', route: '/import-screen/inquiries' },
+            { label: 'Add Beneficiary', route: '/dashboard/Trade-Services/undertaking-issuance' },
+            { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
           ],
         },
         {

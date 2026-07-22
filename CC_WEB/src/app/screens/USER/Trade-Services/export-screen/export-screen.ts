@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
-import { GeneralDetails } from '../../../USER/Trade-Services/export-screen/components/general-details/general-details';
+import { GeneralDetails } from './components/general-details/general-details';
 import { Upload } from './components/upload/upload';
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../core/sidebar/sidebar';

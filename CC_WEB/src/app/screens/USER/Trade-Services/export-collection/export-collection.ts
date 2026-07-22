@@ -3,14 +3,14 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormArray } from '@angular/forms';
 
 // CHILD COMPONENTS
-import { GeneralDetails } from "../../../USER/Trade-Services/export-collection/components/general-details/general-details";
-import { DrawerDraweeDetails } from "../../../USER/Trade-Services/export-collection/components/drawer-drawee-details/drawer-drawee-details";
-import { BankDetailsComponent } from '../../../USER/Trade-Services//export-collection/components/bank-details/bank-details';
-import { ShippingDetailsComponent } from '../../../USER/Trade-Services/export-collection/components/shipping-details/shipping-details';
-import { PaymentAmountComponent } from '../../../USER/Trade-Services/export-collection/components/payment-amount/payment-amount';
-import { CollectionInstructionsComponent } from '../../../USER/Trade-Services/export-collection/components/collection-instructions/collection-instructions';
-import { License } from "../../../USER/Trade-Services/export-collection/components/license/license";
-import { AttachmentsDocuments } from "../../../USER/Trade-Services/export-collection/components/attachments-documents/attachments-documents";
+import { GeneralDetails } from "./components/general-details/general-details";
+import { DrawerDraweeDetails } from "./components/drawer-drawee-details/drawer-drawee-details";
+import { BankDetailsComponent } from './components/bank-details/bank-details';
+import { ShippingDetailsComponent } from './components/shipping-details/shipping-details';
+import { PaymentAmountComponent } from './components/payment-amount/payment-amount';
+import { CollectionInstructionsComponent } from './components/collection-instructions/collection-instructions';
+import { License } from "./components/license/license";
+import { AttachmentsDocuments } from "./components/attachments-documents/attachments-documents";
 import { Sidebar } from "../../../../core/sidebar/sidebar";
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';

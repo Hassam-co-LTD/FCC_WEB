@@ -26,7 +26,7 @@ export class AuthService {
         userId: userId,
         companyId: companyId,
         userCategory: role,
-        companyType: companyId === 'NBP' ? 'B' : 'C'
+        companyType: companyId === 'NBP' ? 'B' : 'U'
       };
 
       sessionStorage.setItem('userData', JSON.stringify(userData));

@@ -117,7 +117,7 @@ back() {
       return;
     }
 
-    this.api.submitShippingGuaranteeByTnxId(tnxId, this.currentTx!).subscribe({
+    this.api.submitSgByTnxId(tnxId, this.currentTx!).subscribe({
       next: (res) => {
         this.router.navigate(['/shipping-guarantee/success'], {
           state: { transaction: res }
@@ -132,7 +132,7 @@ back() {
   approveTransaction(): void {
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveTransactionForShippingGuarantee(this.currentTx.tnxId, this.currentTx).subscribe({
+    this.api.approveTransactionSg(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
         this.router.navigate(['/shipping-guarantee/success'], { state: { transaction: res } });
@@ -164,7 +164,7 @@ back() {
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-      this.api.rejectTransactionForShippingGuarantee(tnxId, reason ).subscribe({
+      this.api.rejectTransactionSg(tnxId, reason ).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
           this.router.navigate(['/shipping-guarantee/success'], { state: { transaction: res } });

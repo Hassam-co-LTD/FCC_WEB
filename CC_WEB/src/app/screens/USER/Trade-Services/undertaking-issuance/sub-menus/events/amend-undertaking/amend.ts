@@ -8,17 +8,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 // Reuse same components
-import { GeneralDetails } from '../amend-undertaking/components/general-details/general-details';
-import { ApplicantBeneficiary } from '../amend-undertaking/components/applicant-beneficiary/applicant-beneficiary';
-import { BankDetails } from '../amend-undertaking/components/bank-details/bank-details';
-import { AmountChargeDetails } from '../amend-undertaking/components/amount-charge-details/amount-charge-details';
-import { PaymentDetails } from '../amend-undertaking/components/payment-details/payment-details';
-import { ShipmentDetails } from '../amend-undertaking/components/shipment-details/shipment-details';
-import { NarrativeDetails } from '../amend-undertaking/components/narrative-details/narrative-details';
-import { Licenses } from '../amend-undertaking/components/licenses/licenses';
-import { InstructionToBank } from '../amend-undertaking/components/instruction-to-bank/instruction-to-bank';
-import { Attachments } from '../amend-undertaking/components/attachments/attachments';
-import { Preview } from '../amend-undertaking/components/preview/preview';
+import { GeneralDetails } from './components/general-details/general-details';
+import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
+import { BankDetails } from './components/bank-details/bank-details';
+import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
+import { PaymentDetails } from './components/payment-details/payment-details';
+import { ShipmentDetails } from './components/shipment-details/shipment-details';
+import { NarrativeDetails } from './components/narrative-details/narrative-details';
+import { Licenses } from './components/licenses/licenses';
+import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
+import { Attachments } from './components/attachments/attachments';
+import { Preview } from './components/preview/preview';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 
 @Component({

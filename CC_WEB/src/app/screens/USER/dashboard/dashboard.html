@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard-container" *ngIf="isHome">
   <!-- HEADER SECTION -->
   <div class="dashboard-header">
     <div class="header-left">
@@ -17,10 +17,11 @@
         <mat-icon>add</mat-icon>
         New Transaction
       </button>
-      <button mat-stroked-button class="action-btn" routerLink="/Search-by-id">
-        <mat-icon>search</mat-icon>
-        Search
-      </button>
+<!-- Search button -->
+<button mat-stroked-button class="action-btn" routerLink="/dashboard/search-by-id">
+  <mat-icon>search</mat-icon>
+  Search
+</button>
     </div>
   </div>
 
@@ -63,7 +64,8 @@
     <h2 class="section-title">Quick Access</h2>
     <div class="access-grid">
       <!-- Import LC -->
-      <div class="access-card" routerLink="/import-welcome">
+      <!-- <div class="access-card" routerLink="/import-welcome"> -->
+        <div class="access-card" routerLink="/dashboard/Trade-Services/import-welcome">
         <div class="access-icon import">
           <mat-icon>import_export</mat-icon>
         </div>
@@ -78,7 +80,8 @@
       </div>
 
       <!-- Export Collection -->
-      <div class="access-card" routerLink="/export-collection-welcome">
+      <!-- <div class="access-card" routerLink="/export-collection-welcome"> -->
+        <div class="access-card" routerLink="/dashboard/Trade-Services/export-collection-welcome">
         <div class="access-icon export">
           <mat-icon>upload_file</mat-icon>
         </div>
@@ -93,7 +96,8 @@
       </div>
 
       <!-- Undertaking Issuance -->
-      <div class="access-card" routerLink="/undertaking-welcome">
+      <!-- <div class="access-card" routerLink="/undertaking-welcome"> -->
+        <div class="access-card" routerLink="/dashboard/Trade-Services/undertaking-welcome">
         <div class="access-icon undertaking">
           <mat-icon>description</mat-icon>
         </div>
@@ -108,7 +112,8 @@
       </div>
 
       <!-- Shipping Guarantee -->
-      <div class="access-card" routerLink="/shipping-welcome">
+      <!-- <div class="access-card" routerLink="/shipping-welcome"> -->
+        <div class="access-card" routerLink="/dashboard/Trade-Services/shipping-welcome">
         <div class="access-icon shipping">
           <mat-icon>local_shipping</mat-icon>
         </div>
@@ -128,7 +133,8 @@
   <div class="activity-section">
     <div class="activity-header">
       <h2>Recent Activity</h2>
-      <button mat-button routerLink="/Search-by-id">View All Activity</button>
+      <!-- View All Activity -->
+      <button mat-button routerLink="/dashboard/search-by-id">View All Activity</button>
     </div>
     
     <div class="activity-list">
@@ -189,7 +195,6 @@
       }
     </div>
   </div>
-
   <!-- SYSTEM STATUS -->
   <!-- <div class="system-status">
     <div class="status-item">
@@ -217,3 +222,6 @@
     </div>
   </div> -->
 </div>
+
+
+<router-outlet></router-outlet>

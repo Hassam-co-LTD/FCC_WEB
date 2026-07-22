@@ -353,29 +353,49 @@ export class ApiService {
   // =================================================================
   // Save LC Record (pending record) - status "I"
 
-  savePendingShippingGuarantee(data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
+  savePendingSg(data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
     console.log('Saving draft:', data);
-    const companyId = sessionStorage.getItem('companyId')
+
+    const userDataStr = sessionStorage.getItem('userData');
+
+    let companyId = '';
+
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      companyId = userData.companyId;
+    }
+
     const headers = new HttpHeaders({
-      companyid: companyId ?? ''
+      companyid: companyId
     });
+
     return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/save`, data,
       { headers })
       .pipe(catchError(this.handleError));
   }
 
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------} --- List so using ShippingGuaranteeTransaction[] -> "[]"
-  getRecordTransactionsByStatusForShippingGuarantee(status: String): Observable<ShippingGuaranteeTransaction[]> {
-    const companyId = sessionStorage.getItem('companyId')
+  getRecordTransactionsByStatusSg(status: String): Observable<ShippingGuaranteeTransaction[]> {
+
+    const userDataStr = sessionStorage.getItem('userData');
+
+    let companyId = '';
+
+    if (userDataStr) {
+      const userData = JSON.parse(userDataStr);
+      companyId = userData.companyId;
+    }
+
     const headers = new HttpHeaders({
-      companyid: companyId ?? ''
-    })
+      companyid: companyId
+    });
+
     return this.http.get<ShippingGuaranteeTransaction[]>(`${this.baseUrl}/shippingguarantee/records/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
 
   // Update draft (pending record) by Tnx ID
-  updatePendingByTnxIdForShippingGuarantee(
+  updatePendingByTnxIdSg(
     tnxId: string,
     payload: ShippingGuaranteeTransaction
   ): Observable<ShippingGuaranteeTransaction> {
@@ -390,7 +410,7 @@ export class ApiService {
 
   // Submit transaction (status "S") with full data
 
-  submitShippingGuaranteeByTnxId(
+  submitSgByTnxId(
     tnxId: string,
     data: ShippingGuaranteeTransaction
   ): Observable<ShippingGuaranteeTransaction> {
@@ -403,7 +423,7 @@ export class ApiService {
   }
 
   // Get Transaction by TNX ID for record clicking for READ-ONLY view for approved/rejected records --- NOT a List so not using ShippingGuaranteeTransaction X -> []
-  getTransactionForShippingGuaranteeByTnxId(tnxId: string): Observable<ShippingGuaranteeTransaction> {
+  getTransactionSgByTnxId(tnxId: string): Observable<ShippingGuaranteeTransaction> {
     return this.http.get<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/${tnxId}`, {
       headers: { 'Content-Type': 'application/json' }
     })
@@ -411,7 +431,7 @@ export class ApiService {
   }
 
   /** Approve transaction */
-  approveTransactionForShippingGuarantee(tnxId: string, data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
+  approveTransactionSg(tnxId: string, data: ShippingGuaranteeTransaction): Observable<ShippingGuaranteeTransaction> {
     console.log('Approving transaction ID:', tnxId);
     return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/approve/${tnxId}`, data, {
       headers: { 'Content-Type': 'application/json' }
@@ -421,14 +441,14 @@ export class ApiService {
 
 
   /** Reject Reason */
-  rejectTransactionForShippingGuarantee(tnxId: string, reason: string): Observable<ShippingGuaranteeTransaction> {
+  rejectTransactionSg(tnxId: string, reason: string): Observable<ShippingGuaranteeTransaction> {
     return this.http.post<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/rejectReason/${tnxId}`, { rejectionReason: reason }, {
       headers: { 'Content-Type': 'application/json' }
     })
       .pipe(catchError(this.handleError));
   }
   // update-Rejected
-  updateRejectedTransactionForShippingGuarantee(tnxId: string, payload: ShippingGuaranteeTransaction) {
+  updateRejectedTransactionSg(tnxId: string, payload: ShippingGuaranteeTransaction) {
     return this.http.put<ShippingGuaranteeTransaction>(`${this.baseUrl}/shippingguarantee/updateRejected/${tnxId}`, payload, {
       headers: { 'Content-Type': 'application/json' }
     })

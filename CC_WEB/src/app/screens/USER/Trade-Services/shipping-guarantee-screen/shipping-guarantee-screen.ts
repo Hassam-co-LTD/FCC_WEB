@@ -154,7 +154,7 @@ export class ShippingGuarantee implements OnInit {
 
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
-    this.api.getTransactionForShippingGuaranteeByTnxId(tnxId).subscribe({
+    this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: tx => {
         this.currentTx = tx;
         this.patchForm(tx);
@@ -239,7 +239,7 @@ export class ShippingGuarantee implements OnInit {
     const payload = this.flattenForm();
     console.log("Payload before saving draft:", payload);
 
-    this.api.savePendingShippingGuarantee(payload).subscribe({
+    this.api.savePendingSg(payload).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
         this.snackbar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
         setTimeout(() => this.router.navigate(['/shipping-guarantee/inquiries-records']), 50);
@@ -263,7 +263,7 @@ export class ShippingGuarantee implements OnInit {
       event: 'CRE',
       tnxId: this.tnxId,
     }
-    this.api.submitShippingGuaranteeByTnxId(tnxId, payload).subscribe({
+    this.api.submitSgByTnxId(tnxId, payload).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
         this.router.navigate(['/shipping-guarantee/success'], {
@@ -304,7 +304,7 @@ export class ShippingGuarantee implements OnInit {
       console.error('TNX ID is missing!');
       return;
     }
-    this.api.updatePendingByTnxIdForShippingGuarantee(payload.tnxId!, payload).subscribe({
+    this.api.updatePendingByTnxIdSg(payload.tnxId!, payload).subscribe({
       next: (res) => {
         // this.transactionService.addOrUpdateTransaction(res);
         this.snackbar.open(
@@ -341,7 +341,7 @@ export class ShippingGuarantee implements OnInit {
 
 
   approve(): void {
-    this.api.approveTransactionForShippingGuarantee(this.currentTx.tnxId!, this.currentTx).subscribe({
+    this.api.approveTransactionSg(this.currentTx.tnxId!, this.currentTx).subscribe({
       next: () => this.navigateBack('approved'),
       error: () => this.snackbar.open('Approval failed', 'Close', { duration: 3000 })
     });
@@ -354,7 +354,7 @@ export class ShippingGuarantee implements OnInit {
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
 
-      this.api.rejectTransactionForShippingGuarantee(this.currentTx.tnxId!, reason).subscribe({
+      this.api.rejectTransactionSg(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
           this.snackbar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
           this.navigateBack('rejected'); // send user to rejected tab
@@ -390,7 +390,7 @@ export class ShippingGuarantee implements OnInit {
     const payload = this.flattenForm(); // flatten form values
     payload.tnxId = this.currentTx.tnxId;
 
-    this.api.updateRejectedTransactionForShippingGuarantee(payload.tnxId, payload).subscribe({
+    this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
       next: (res) => {
         this.snackbar.open(
           `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,

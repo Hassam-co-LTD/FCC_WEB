@@ -6,10 +6,11 @@ import {
   ElementRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter } from 'rxjs';
 /* ================= CARD TYPES ================= */
 type CardFormat = 'number' | 'currency';
 
@@ -41,6 +42,7 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   /* ================= HEADER ================= */
   userName = 'User';
+  isHome = true;
   isSyncing = false;
   lastUpdated = new Date();
 
@@ -141,10 +143,18 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   /* ================= SYSTEM ================= */
   systemStatus: 'online' | 'degraded' | 'offline' = 'online';
+  constructor(private router: Router) { }
+
 
   /* ================= LIFECYCLE ================= */
   ngOnInit(): void {
     this.loadDashboard();
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        this.isHome = e.urlAfterRedirects === '/dashboard';
+      });    this.isHome = this.router.url === '/dashboard';
+
   }
 
   ngAfterViewInit(): void {
