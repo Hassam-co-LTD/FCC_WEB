@@ -51,7 +51,7 @@ export class Preview {
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
-      this.router.navigate(['/import-screen/amend']);
+      this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/amend']);
       return;
     }
     this.viewMode = this.transactionService.getViewMode();
@@ -141,7 +141,7 @@ export class Preview {
   }
 
   back() {
-    this.router.navigate(['/import-screen/approved-inquiry-records'])
+    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'])
   }
 
   submitLc(): void {
@@ -155,7 +155,7 @@ export class Preview {
 
     this.api.submitAmendment(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/import-screen/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { transaction: res }
         });
       },
@@ -171,7 +171,7 @@ export class Preview {
     this.api.approveAmendment(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
       },
       error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
     });
@@ -192,7 +192,7 @@ export class Preview {
         this.api.rejectAmendment(tnxId, reason ).subscribe({
           next: (res) => {
             this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-            this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+            this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
           },
           error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
         });

@@ -158,14 +158,14 @@ export class inquiriesRecords implements OnInit {
 
   // --- DATA LOADING ---
   setActiveTab(tab: string): void {
-    // this.activeTab = tab;
-    // this.currentPage = 1;
-    // this.loadTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.loadTransactions();
   }
   // --- FILTERING ---
 
@@ -281,11 +281,11 @@ export class inquiriesRecords implements OnInit {
    this.api.getTransactionSgByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/shipping-guarantee/preview']);
+       this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/shipping-guarantee/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
       }
     });
   }
@@ -294,7 +294,7 @@ export class inquiriesRecords implements OnInit {
     if (this.activeTab === 'live') {
       // Live tab rows are event records — navigate by eventRefNo
       this.router.navigate(
-        ['/shipping-guarantee/amend', tx.tnxId],
+        ['/dashboard/Trade-Services/shipping-guarantee/amend', tx.tnxId],
         {
           queryParams: {
             mode: 'READ_ONLY',
@@ -309,7 +309,7 @@ export class inquiriesRecords implements OnInit {
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
-    this.router.navigate(['/shipping-guarantee', tx.tnxId], {
+    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee', tx.tnxId], {
       state: {
         transaction: tx,
         // showUpdateSubmit: true // flag to show buttons

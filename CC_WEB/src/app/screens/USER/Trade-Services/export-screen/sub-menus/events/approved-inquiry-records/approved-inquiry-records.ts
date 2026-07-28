@@ -135,16 +135,16 @@ export class ApprovedInquiryRecords implements OnInit {
   //   this.applyFilters();
   // }
 
-  setActiveTab(tab: string): void {
-    // this.activeTab = tab;
-    // this.currentPage = 1;
-    // this.loadTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+ setActiveTab(tab: string): void {
+  if (this.activeTab === tab) {
+    return;
   }
+ 
+  this.activeTab = tab;
+  this.currentPage = 1;
+ 
+  this.loadTransactions();
+}
 
   // private loadByStatus(status: string): void {
   //   const backendStatus = this.mapTabToBackendStatus(status);

@@ -58,7 +58,7 @@ export class Preview implements OnInit {
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
-      this.router.navigate(['/import-screen']);
+      this.router.navigate(['/dashboard/Trade-Services/import-screen']);
       return;
     }
     this.viewMode = this.transactionService.getViewMode();
@@ -136,7 +136,7 @@ export class Preview implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/import-screen/inquiries'])
+    this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'])
   }
 
   /** SUBMIT */
@@ -151,7 +151,7 @@ export class Preview implements OnInit {
 
     this.api.submitTransaction(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/import-screen/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], {
           state: { transaction: res }
         });
       },
@@ -167,7 +167,7 @@ export class Preview implements OnInit {
     this.api.approveTransaction(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], { state: { transaction: res } });
       },
       error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
     });
@@ -199,7 +199,7 @@ export class Preview implements OnInit {
       this.api.rejectTransaction(tnxId, reason ).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+          this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], { state: { transaction: res } });
         },
         error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
       });

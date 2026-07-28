@@ -1,6 +1,5 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { FormGroup } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
 
@@ -13,14 +12,7 @@ export class ImportlcFormTransactionService {
   private currentTransaction: ImportLcTransaction | null = null;
   private savetransactions$ = new BehaviorSubject<ImportLcTransaction[]>([]);
   transactionsStream$ = this.savetransactions$.asObservable();
-  private readOnly = true;
   private viewMode: 'submit' | 'readonly' = 'submit';
-
-  private isBrowser: boolean;
-
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
 
   /* ================= addOrUpdateTransaction ================= */
   addOrUpdateTransaction(tx: ImportLcTransaction): void {

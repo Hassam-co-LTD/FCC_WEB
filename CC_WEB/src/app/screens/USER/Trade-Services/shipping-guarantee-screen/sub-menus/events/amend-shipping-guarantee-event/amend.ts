@@ -176,7 +176,7 @@ export class Amend implements OnInit{
         },
         error: () => {
           this.snackBar.open('Event snapshot not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/shipping-guarantee/inquiries-records']);
+          this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']);
         }
       });
       return;
@@ -218,7 +218,7 @@ export class Amend implements OnInit{
             },
             error: () => {
               this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-              this.router.navigate(['/shipping-guarantee/inquiries-records']);
+              this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']);
             }
           });
         }
@@ -274,7 +274,7 @@ export class Amend implements OnInit{
         },
         error: () => {
           this.snackBar.open('Amendment not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/shipping-guarantee/inquiries-records']);
+          this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']);
         }
       });
       return;
@@ -323,7 +323,7 @@ export class Amend implements OnInit{
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/shipping-guarantee/inquiries-records']);
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']);
       }
     });
   }
@@ -397,7 +397,7 @@ export class Amend implements OnInit{
           `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
           { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/shipping-guarantee/approved-inquiry-records']), 50
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records']), 50
         );
       },
       error: () => {
@@ -424,14 +424,14 @@ export class Amend implements OnInit{
 
     this.api.submitAmendment(eventRefNo, payload).subscribe({
       next: (res) => {
-        this.router.navigate(['/shipping-guarantee/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { source: 'IMPORT_LC_AMD', transaction: res }
         });
         this.snackBar.open(
           `Amendment Submitted (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
           { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/shipping-guarantee/approved-inquiry-records']), 50
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records']), 50
         );
       },
       error: () => this.snackBar.open('Error submitting amendment', 'Close', { duration: 3000 })
@@ -482,7 +482,7 @@ export class Amend implements OnInit{
     this.api.approveAmendment(eventRefNo, payload).subscribe({
       next: () => {
         this.snackBar.open('Amendment approved. Live LC updated.', 'Close', { duration: 3000 });
-        setTimeout(() => this.router.navigate(['/shipping-guarantee/inquiries-records']), 50
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']), 50
         );
       },
       error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
@@ -511,7 +511,7 @@ export class Amend implements OnInit{
 
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/shipping-guarantee/approved-inquiry-records'], {
+    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'], {
       queryParams: { tab }
     });
   }
@@ -534,9 +534,7 @@ export class Amend implements OnInit{
         );
 
         // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/shipping-guarantee/inquiries-records'], {
-          queryParams: { tab: 'pending' }
-        });
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'],);
       },
       error: () => {
         this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });

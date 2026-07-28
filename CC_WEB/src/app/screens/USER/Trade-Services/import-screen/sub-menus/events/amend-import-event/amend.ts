@@ -412,7 +412,7 @@ export class AmendScreen implements OnInit {
         },
         error: () => {
           this.snackBar.open('Event snapshot not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/import-screen/inquiries']);
+          this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
         }
       });
       return;
@@ -455,7 +455,7 @@ export class AmendScreen implements OnInit {
             },
             error: () => {
               this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-              this.router.navigate(['/import-screen/inquiries']);
+              this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
             }
           });
         }
@@ -511,7 +511,7 @@ export class AmendScreen implements OnInit {
         },
         error: () => {
           this.snackBar.open('Amendment not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/import-screen/inquiries']);
+          this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
         }
       });
       return;
@@ -560,7 +560,7 @@ export class AmendScreen implements OnInit {
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/inquiries']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
       }
     });
   }
@@ -701,7 +701,7 @@ export class AmendScreen implements OnInit {
           `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
           { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/approved-inquiry-records']),50 
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records']),50 
         );
       },
       error: () => {
@@ -730,14 +730,14 @@ export class AmendScreen implements OnInit {
 
     this.api.submitAmendment(eventRefNo,payload).subscribe({
       next: (res) => {
-        this.router.navigate(['/import-screen/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], {
           state: { source: 'IMPORT_LC_AMD', transaction: res }
         });
         this.snackBar.open(
           `Amendment Submitted (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
           { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/approved-inquiry-records']), 50
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records']), 50
         );
       },
       error: () => this.snackBar.open('Error submitting amendment', 'Close', { duration: 3000 })
@@ -826,7 +826,7 @@ export class AmendScreen implements OnInit {
     this.api.approveAmendment(eventRefNo, payload).subscribe({
       next: () => {
         this.snackBar.open('Amendment approved. Live LC updated.', 'Close', { duration: 3000 });
-        setTimeout(() => this.router.navigate(['/import-screen/inquiries']), 50
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']), 50
         );
       },
       error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
@@ -859,7 +859,7 @@ export class AmendScreen implements OnInit {
   // }
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/import-screen/approved-inquiry-records'], {
+    this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records'], {
       queryParams: { tab }
     });
   }
@@ -882,9 +882,7 @@ export class AmendScreen implements OnInit {
         );
 
         // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/import-screen/inquiries'], {
-          queryParams: { tab: 'pending' }
-        });
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],);
       },
       error: () => {
         this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });

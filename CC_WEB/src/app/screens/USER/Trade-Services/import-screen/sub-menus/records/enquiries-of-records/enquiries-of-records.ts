@@ -133,16 +133,28 @@ export class EnquiriesOfRecords implements OnInit {
   //   this.applyFilters();
   // }
 
-  setActiveTab(tab: string): void {
+//  setActiveTab(tab: string): void {
     // this.activeTab = tab;
     // this.currentPage = 1;
     // this.loadTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+  //  this.router.navigate([], {
+    //  relativeTo: this.route,
+     // queryParams: { tab },
+     // queryParamsHandling: 'merge'
+   // });
+  //}
+  setActiveTab(tab: string): void {
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.loadTransactions();
   }
+
+
 
   // private loadByStatus(status: string): void {
   //   const backendStatus = this.mapTabToBackendStatus(status);
@@ -258,11 +270,11 @@ export class EnquiriesOfRecords implements OnInit {
     this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/preview']);
       }
     });
   }
@@ -271,7 +283,7 @@ export class EnquiriesOfRecords implements OnInit {
     if (this.activeTab === 'live') {
       // Live tab rows are event records — navigate by eventRefNo
       this.router.navigate(
-        ['/import-screen/amend', tx.tnxId],
+        ['/dashboard/Trade-Services/import-screen/amend', tx.tnxId],
         {
           queryParams: {
             mode: 'READ_ONLY',
@@ -286,7 +298,7 @@ export class EnquiriesOfRecords implements OnInit {
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
-    this.router.navigate(['/import-screen', tx.tnxId], {
+    this.router.navigate(['/dashboard/Trade-Services/import-screen', tx.tnxId], {
       state: {
         transaction: tx,
         // showUpdateSubmit: true // flag to show buttons

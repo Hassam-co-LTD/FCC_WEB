@@ -180,14 +180,14 @@ export class ApprovedInquiryRecords {
     this.applyFilters();
   }
   setActiveTab(tab: string): void {
-    // this.activeTab = tab;
-    // this.currentPage = 1;
-    // this.loadApprovedTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.loadApprovedTransactions();
   }
 
   // simple sorting helper
@@ -223,18 +223,18 @@ export class ApprovedInquiryRecords {
     this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/amend/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/amend/preview']);
       }
     });
   }
 
   openApprovedAmendTransaction(tx: ImportLcTransaction): void {
     this.router.navigate(
-      ['/import-screen/amend', tx.tnxId],
+      ['/dashboard/Trade-Services/import-screen/amend', tx.tnxId],
       {
         queryParams: {
           mode: 'EDIT',

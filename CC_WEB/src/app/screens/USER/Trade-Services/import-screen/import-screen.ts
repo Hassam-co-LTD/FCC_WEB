@@ -255,7 +255,7 @@ export class ImportScreen implements OnInit {
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/inquiries']);
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
       }
     });
   }
@@ -325,7 +325,7 @@ export class ImportScreen implements OnInit {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
         // this.transactionService.addOrUpdateTransaction(res);
         this.snackBar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],
         ), 50);
       },
       error: () => this.snackBar.open('Error saving draft', 'Close', { duration: 3000 })
@@ -352,7 +352,7 @@ export class ImportScreen implements OnInit {
     this.api.submitTransaction(tnxId, payload).subscribe({
       next: (res: ImportLcTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
-        this.router.navigate(['/import-screen/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], {
           state: { source: 'IMPORT_LC', transaction: res }
         });
       },
@@ -419,7 +419,7 @@ export class ImportScreen implements OnInit {
         );
 
         setTimeout(
-          () => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }),
+          () => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],),
           300
         );
       },
@@ -463,7 +463,7 @@ export class ImportScreen implements OnInit {
   // }
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/import-screen/inquiries'], {
+    this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'], {
       relativeTo: this.route,
       queryParamsHandling: 'merge',
       queryParams: { tab }
@@ -488,9 +488,7 @@ export class ImportScreen implements OnInit {
         );
 
         // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/import-screen/inquiries'], {
-          queryParams: { tab: 'pending' }
-        });
+        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],);
       },
       error: () => {
         this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });

@@ -49,7 +49,7 @@ export class Preview implements OnInit {
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
-      this.router.navigate(['/shipping-guarantee']);
+      this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee']);
       return;
     }
     this.viewMode = this.transactionService.getViewMode();
@@ -104,7 +104,7 @@ export class Preview implements OnInit {
   }
   
 back() {
-  this.router.navigate(['/shipping-guarantee/inquiries-records'])
+  this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'])
 }
 
   /** SUBMIT */
@@ -119,7 +119,7 @@ back() {
 
     this.api.submitSgByTnxId(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/shipping-guarantee/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { transaction: res }
         });
       },
@@ -135,7 +135,7 @@ back() {
     this.api.approveTransactionSg(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/shipping-guarantee/success'], { state: { transaction: res } });
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
       },
       error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
     });
@@ -167,7 +167,7 @@ back() {
       this.api.rejectTransactionSg(tnxId, reason ).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/shipping-guarantee/success'], { state: { transaction: res } });
+          this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
         },
         error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
       });

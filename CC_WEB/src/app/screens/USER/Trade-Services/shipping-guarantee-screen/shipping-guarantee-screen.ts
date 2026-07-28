@@ -189,7 +189,7 @@ export class ShippingGuarantee implements OnInit {
       },
       error: () => {
         this.snackbar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/shipping-guarantee/inquiries-records']);
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']);
       }
     });
   }
@@ -242,7 +242,7 @@ export class ShippingGuarantee implements OnInit {
     this.api.savePendingSg(payload).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
         this.snackbar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/shipping-guarantee/inquiries-records']), 50);
+        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']), 50);
       },
       error: () => this.snackbar.open('Error saving draft', 'Close', { duration: 3000 })
     });
@@ -266,7 +266,7 @@ export class ShippingGuarantee implements OnInit {
     this.api.submitSgByTnxId(tnxId, payload).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
-        this.router.navigate(['/shipping-guarantee/success'], {
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { source: 'SHIPPING_GUARANTEE', transaction: res }
         });
       },
@@ -314,7 +314,7 @@ export class ShippingGuarantee implements OnInit {
         );
 
         setTimeout(
-          () => this.router.navigate(['/shipping-guarantee/inquiries-records']),
+          () => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']),
           300
         );
       },
@@ -323,22 +323,6 @@ export class ShippingGuarantee implements OnInit {
       }
     });
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   approve(): void {
     this.api.approveTransactionSg(this.currentTx.tnxId!, this.currentTx).subscribe({
@@ -374,7 +358,7 @@ export class ShippingGuarantee implements OnInit {
   // }
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/shipping-guarantee/inquiries-records'], {
+    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'], {
       relativeTo: this.route,
       queryParamsHandling: 'merge',
       queryParams: { tab }
@@ -399,7 +383,7 @@ export class ShippingGuarantee implements OnInit {
         );
 
         // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/shipping-guarantee/inquiries-records'], {
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'], {
           queryParams: { tab: 'pending' }
         });
       },
