@@ -436,7 +436,7 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create', route: '/dashboard/Trade-Services/undertaking-issuance' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/amend' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records' },
               ]
             },

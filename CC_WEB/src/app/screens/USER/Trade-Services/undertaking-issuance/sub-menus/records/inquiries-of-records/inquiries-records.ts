@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser, DecimalPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,6 +39,7 @@ export class inquiriesRecords implements OnInit {
 
   // Tabs Configuration
   tabs = [
+    { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },     // Drafts (Input)
     { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
     { key: 'approved', label: 'Approved' },   // Final (View Only)
@@ -53,15 +54,15 @@ export class inquiriesRecords implements OnInit {
   sortColumn: string = 'lastUpdated';
   sortDirection: 'desc' | 'asc' = 'desc';
 
-  private isBrowser: boolean;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(
     private transactionService: UndertakingIssuanceService,
     private router: Router,
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) platformId: Object,
+    
   ) {
-    this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit(): void {

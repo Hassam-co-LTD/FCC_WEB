@@ -416,36 +416,23 @@ export const routes: Routes = [
                             },
 
                             // ---------- UNDERTAKING ISSUANCE ----------
-                            { path: 'undertaking-issuance/preview', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then((m) => m.Preview) },
-                            { path: 'undertaking-issuance/success', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
-                            { path: 'undertaking-issuance/amend', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then((m) => m.AmendScreen) },
-                            { path: 'undertaking-issuance/amend/preview', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview) },
+                            { path: 'undertaking-issuance/inquiries-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records').then(m => m.inquiriesRecords) },
+                            { path: 'undertaking-issuance/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then((m) => m.Preview) },
+                            { path: 'undertaking-issuance/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+                            { path: 'undertaking-issuance/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then((m) => m.AmendScreen) },
+                            { path: 'undertaking-issuance/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+                            { path: 'undertaking-issuance/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview) },
                             {
-
                                 matcher: transactionIdMatcher,
-
                                 loadComponent: () =>
-
                                     import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance')
-
                                         .then(m => m.UndertakingIssuance)
-
                             },
-                            { path: 'undertaking-issuance/amend/:tnxId', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(m => m.AmendScreen) },
-                            { path: 'undertaking-issuance', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance) },
-                            {
-                                path: 'undertaking-issuance/request-undertaking',
-                                loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then((m) => m.RequestUndertaking),
-                                children: [
-                                    { path: 'general-details', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/general-details/general-details').then((m) => m.generalDetails) },
-                                    { path: 'beneficiary-details', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/application-beneficiary/application-beneficiary').then((m) => m.ApplicationBeneficiary) },
-                                    { path: 'bank-details', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/bank-details/bank-details').then((m) => m.BankDetails) },
-                                    { path: 'undertaking-details', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/undertaking-details/undertaking-details').then((m) => m.UndertakingDetails) },
-                                    { path: 'instruction-bank', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/instructions-bank/instructions-bank').then((m) => m.InstructionsBank) },
-                                ],
-                            },
+                            { path: 'undertaking-issuance/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(m => m.AmendScreen) },
+                            { path: 'undertaking-issuance', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance) },
                             {
                                 path: 'undertaking-welcome',
+                                pathMatch: 'full',
                                 loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
                                 data: {
                                     title: 'Welcome to Undertaking Issuance',
@@ -456,7 +443,7 @@ export const routes: Routes = [
                                     uploadRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=upload'
                                 },
                             },
-
+                            
                             // ---------- IMPORT LC ----------
                             { path: 'import-screen/inquiries', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(m => m.EnquiriesOfRecords) },
                             { path: 'import-screen/preview', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(m => m.Preview) },

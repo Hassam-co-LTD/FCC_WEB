@@ -52,7 +52,6 @@
                 <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
                 <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
                 <th>Product</th>
-                <th>Issuer Ref</th>
                 <th>Expiry Date</th>
                 <th>Currency</th>
                 <th>Amount</th>
@@ -72,7 +71,6 @@
                 
                 <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
                 <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
-                <td>{{ tx.formData.bankForm?.issuerReference || '-' }}</td>
                 <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
                 <td>{{ tx.formData.undertakingDetails?.currency }}</td>
                 <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
@@ -97,7 +95,6 @@
             <tr *ngIf="pagedTransactions.length === 0">
                 <td colspan="10" class="no-records">
                     <div class="empty-state">
-                        <mat-icon>search_off</mat-icon>
                         <p>No {{ activeTab }} Undertaking records found.</p>
                     </div>
                 </td>

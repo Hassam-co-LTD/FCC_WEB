@@ -303,29 +303,9 @@ tbody {
 /* ================= NO RECORDS / EMPTY STATE ================= */
 .no-records {
     text-align: center;
-    padding: 40px 20px;
-    
-    .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-
-        mat-icon {
-            font-size: 48px;
-            height: 48px;
-            width: 48px;
-            color: #cbd5e1; // Light Grey
-        }
-
-        p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: theme.$text-medium;
-            font-weight: 500;
-        }
-    }
+    padding: 30px;
+    font-size: 0.85rem;
+    color: theme.$text-medium;
 }
 
 /* ================= PAGINATION ================= */
