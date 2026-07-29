@@ -9,11 +9,28 @@ import { finalize } from 'rxjs';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { CommonModule } from '@angular/common';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
+import { ApplicantBeneficiary } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/applicant-beneficiary/applicant-beneficiary';
+import { GeneralDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/general-details/general-details';
+import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/instruction-to-bank/instruction-to-bank';
+import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
+import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
+
 
 @Component({
   selector: 'app-amend',
-  imports: [FormsModule, CommonModule, MatDialogModule,
-    Sidebar],
+  imports: [
+    FormsModule,
+    CommonModule,
+    MatDialogModule,
+    RouterOutlet,
+    Sidebar,
+    GeneralDetails,
+    ApplicantBeneficiary,
+    BankDetails,
+    InstructionToBank,
+    Attachments
+  ],
+  standalone: true,
   templateUrl: './amend.html',
   styleUrl: './amend.scss',
 })
@@ -167,7 +184,7 @@ export class Amend implements OnInit{
     // ────────────────────────────────────────────────────────────────────────
     if (this.eventRefNo) {
       this.isHistoricalView = true;
-      this.api.getAmendmentByEventRefNo(this.eventRefNo).subscribe({
+      this.api.getAmendmentByEventRefNoSg(this.eventRefNo).subscribe({
         next: (event) => {
           this.currentTx = event;
           this.screenMode = 'APPROVED';
@@ -189,7 +206,7 @@ export class Amend implements OnInit{
     if (this.sourceTab === 'live') {
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxId(tnxId).subscribe({
+      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
         next: (event) => {
           // Existing AMD draft found — load it
           this.currentTx = event;
@@ -208,7 +225,7 @@ export class Amend implements OnInit{
         error: () => {
           // No existing AMD draft — load master LC data to pre-populate form
           // The AMD event will only be created when user clicks Save
-          this.api.getTransactionByTnxId(tnxId).subscribe({
+          this.api.getTransactionSgByTnxId(tnxId).subscribe({
             next: (tx) => {
               // Only store tnxId on currentTx — no eventRefNo exists yet
               this.currentTx = { tnxId: tx.tnxId } as ShippingGuaranteeTransaction;
@@ -240,7 +257,7 @@ export class Amend implements OnInit{
     if (isAmendmentTab) {
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxId(tnxId).subscribe({
+      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
@@ -284,7 +301,7 @@ export class Amend implements OnInit{
     // Master LC (Enquiries non-live tabs with eventType=CRE or unset)
     // ────────────────────────────────────────────────────────────────────────
     this.isHistoricalView = false;
-    this.api.getTransactionByTnxId(tnxId).subscribe({
+    this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
@@ -385,7 +402,7 @@ export class Amend implements OnInit{
       return;
     }
 
-    this.api.saveamendTransaction(tnxId, payload).pipe(
+    this.api.saveAmendTransactionSg(tnxId, payload).pipe(
       finalize(() => this.isSaving = false)
     ).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
@@ -422,7 +439,7 @@ export class Amend implements OnInit{
       tnxId: this.tnxId,
     }
 
-    this.api.submitAmendment(eventRefNo, payload).subscribe({
+    this.api.submitAmendmentSg(eventRefNo, payload).subscribe({
       next: (res) => {
         this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { source: 'IMPORT_LC_AMD', transaction: res }
@@ -479,7 +496,7 @@ export class Amend implements OnInit{
       event: 'AMD',
       tnxId: this.tnxId,
     }
-    this.api.approveAmendment(eventRefNo, payload).subscribe({
+    this.api.approveAmendmentSg(eventRefNo, payload).subscribe({
       next: () => {
         this.snackBar.open('Amendment approved. Live LC updated.', 'Close', { duration: 3000 });
         setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records']), 50
@@ -499,7 +516,7 @@ export class Amend implements OnInit{
     const dialogRef = this.dialog.open(RejectDialogComponent, { width: '400px' });
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return;
-      this.api.rejectAmendment(eventRefNo, reason).subscribe({
+      this.api.rejectAmendmentSg(eventRefNo, reason).subscribe({
         next: () => {
           this.snackBar.open('Amendment rejected. Live LC unchanged.', 'Close', { duration: 3000 });
           this.navigateBack('rejected');
@@ -525,7 +542,7 @@ export class Amend implements OnInit{
     const payload = this.flattenForm(); // flatten form values
     payload.tnxId = this.currentTx.tnxId;
 
-    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
+    this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
       next: (res) => {
         this.snackBar.open(
           `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,

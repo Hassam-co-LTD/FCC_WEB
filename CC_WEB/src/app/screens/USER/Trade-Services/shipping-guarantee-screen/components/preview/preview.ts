@@ -75,11 +75,15 @@ export class Preview implements OnInit {
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
+      applicantAddress3: [this.currentTx!.applicantAddress3],
+      applicantAddress4: [this.currentTx!.applicantAddress4],
       applicantCountry: [this.currentTx!.applicantCountry],
 
       beneficiaryName: [this.currentTx!.beneficiaryName],
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
       beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
+      beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
       beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
       bankName: [this.currentTx!.bankName],

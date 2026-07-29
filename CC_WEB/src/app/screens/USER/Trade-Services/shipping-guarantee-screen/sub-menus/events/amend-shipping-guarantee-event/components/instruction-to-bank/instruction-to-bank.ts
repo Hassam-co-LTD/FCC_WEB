@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -20,11 +20,11 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./instruction-to-bank.scss']
 })
 export class InstructionToBank {
-  @Input() form!: FormGroup;
   isOpen = true;
-  constructor() {
+  @Input() form!: FormGroup;
 
-  }
+  // Dropdown lists
+  principalAccounts = ['Account 1', 'Account 2', 'Account 3'];
 
   toggle() {
     this.isOpen = !this.isOpen;

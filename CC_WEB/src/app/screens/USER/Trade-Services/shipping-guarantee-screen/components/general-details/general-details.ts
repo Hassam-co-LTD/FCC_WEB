@@ -28,7 +28,6 @@ import { MatOption } from '@angular/material/select';
   styleUrls: ['./general-details.scss'],
 })
 export class GeneralDetails{
-
   isOpen = true;
   @Input() form!: FormGroup;
 

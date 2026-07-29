@@ -11,9 +11,9 @@
     padding: 14px 18px;
     border-radius: 8px;
     cursor: pointer;
-    color: theme.$text-light;
     margin-bottom: 10px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
 
     &:hover {
         background: theme.$primary-dark;
@@ -23,16 +23,11 @@
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
-        transition: transform 0.3s ease;
-    }
-
-    &.open mat-icon {
-        transform: rotate(180deg);
     }
 }
 
 /* ===========================
-   Collapsible Container
+   Collapsible
 =========================== */
 .collapsible {
     max-height: 0;
@@ -43,18 +38,16 @@
 }
 
 .collapsible.open {
-    max-height: 2000px;
+    max-height: 1500px;
     opacity: 1;
     transform: translateY(0);
-    padding: 20px;
+    padding: 15px 10px;
     background: theme.$light-bg;
-    border-radius: 8px;
+    border-radius: 6px;
     border: 1px solid theme.$border-light;
 }
 
-/* ===========================
-   Titles
-=========================== */
+/* Headings */
 h2 {
     font-size: 20px;
     font-weight: 600;
@@ -64,7 +57,7 @@ h2 {
 
 h4 {
     font-size: 16px;
-    margin: 20px 0 12px;
+    margin: 20px 0 10px;
     font-weight: 600;
     color: theme.$primary-dark;
     border-left: 4px solid theme.$primary;
@@ -72,38 +65,59 @@ h4 {
 }
 
 /* ===========================
-   Form Layout
+   Form
 =========================== */
-.form-grid {
+.details-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid-2.unequal {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    /* Currency smaller, Amount bigger */
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.form-grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
+    align-items: start;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 mat-form-field {
     width: 100%;
 }
 
-.note-text {
-    font-size: 13px;
-    color: #666;
-    font-style: italic;
-    margin-bottom: 20px;
+.full {
+    width: 100%;
 }
 
-.btn-row-bottom {
+/* ===========================
+   Actions
+=========================== */
+.actions {
+    margin-top: 10px;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 30px;
+    gap: 12px;
 }
 
 button[mat-flat-button] {
     background: theme.$primary !important;
     color: theme.$text-light !important;
-    border-radius: 6px;
     box-shadow: theme.$button-shadow;
+    border-radius: 6px;
 
     &:hover {
         background: theme.$primary-dark !important;
@@ -111,33 +125,19 @@ button[mat-flat-button] {
 }
 
 /* ===========================
-   Responsive Adjustments
+   Responsive
 =========================== */
-
-/* Tablets ≤992px */
-@media (max-width: 992px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        /* stack fields vertically */
-    }
-
-    h4 {
-        font-size: 15px;
-    }
-}
-
-/* Mobile ≤480px */
 @media (max-width: 480px) {
     .collapsible.open {
-        padding: 12px;
+        padding: 10px 6px;
     }
 
-    h4 {
-        font-size: 14px;
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     button[mat-flat-button] {
-        font-size: 14px;
-        padding: 8px 12px;
+        width: 100%;
     }
 }

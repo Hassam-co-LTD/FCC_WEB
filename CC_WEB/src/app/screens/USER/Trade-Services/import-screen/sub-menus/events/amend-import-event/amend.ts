@@ -41,7 +41,8 @@ import { finalize } from 'rxjs';
     Attachments,
     MatDialogModule,
     Sidebar,
-    RouterOutlet,],
+    RouterOutlet
+  ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss']
 })

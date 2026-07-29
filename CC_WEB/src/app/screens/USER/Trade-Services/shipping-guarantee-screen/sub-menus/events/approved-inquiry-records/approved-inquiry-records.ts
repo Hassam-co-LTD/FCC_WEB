@@ -21,7 +21,7 @@ export class ApprovedInquiryRecords implements OnInit {
   showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
-  activeTab = 'pending';
+  activeTab = 'live';
   tabs = [
     { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
@@ -56,7 +56,7 @@ export class ApprovedInquiryRecords implements OnInit {
       }
 
       this.currentPage = 1;
-      this.loadTransactions();
+      this.loadApprovedTransactions();
     });
 
     this.transactionService.transactionsStream$.subscribe(txList => {
@@ -67,10 +67,10 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
 
-  private loadTransactions(): void {
+  private loadApprovedTransactions(): void {
     if (this.activeTab === 'live') {
 
-      this.api.getLiveEventHistory().subscribe({
+      this.api.getApprovedMasterSgRecords().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
           this.applyFilters();
@@ -87,7 +87,7 @@ export class ApprovedInquiryRecords implements OnInit {
 
     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
-    this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
+    this.api.getAmendRecordTransactionsByStatusSg(backendStatus).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
         this.applyFilters();
@@ -99,7 +99,15 @@ export class ApprovedInquiryRecords implements OnInit {
     });
   }
 
+  get totalPages(): number {
+    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    return count < 1 ? 1 : count;
+  }
 
+  get pagedTransactions(): ShippingGuaranteeTransaction[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+  }
 
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
@@ -121,62 +129,6 @@ export class ApprovedInquiryRecords implements OnInit {
 
     this.applySorting(filtered);
   }
-
-  // setActiveTab(tab: string): void {
-  //   this.activeTab = tab;
-  //   this.applyFilters();
-  // }
-
-  setActiveTab(tab: string): void {
-    if (this.activeTab === tab) {
-      return;
-    }
-
-    this.activeTab = tab;
-    this.currentPage = 1;
-
-    this.loadTransactions();
-  }
-
-  // private loadByStatus(status: string): void {
-  //   const backendStatus = this.mapTabToBackendStatus(status);
-  //   this.api.getTransactionsByStatus(backendStatus).subscribe({
-  //     next: (txList) => {
-  //       this.allTransactions = txList;
-  //       this.filteredTransactions = txList;
-  //     },
-  //     error: () => {
-  //       this.allTransactions = [];
-  //       this.filteredTransactions = [];
-  //     }
-  //   });
-  // }
-
-
-  // getTabCount(tabKey: string): number {
-  //   return this.allTransactions.filter(tx => this.mapStatusToTab(tx.status!) === tabKey).length;
-  // }
-
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.applyFilters();
-  }
-
-  // clearCurrency(): void {
-  //   this.currencyFilter = '';
-  //   this.applyFilters();
-  // }
-
-  sortBy(column: typeof this.sortColumn): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = 'asc';
-    }
-    this.applyFilters();
-  }
-
   private applySorting(source: ShippingGuaranteeTransaction[] = this.allTransactions): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
@@ -212,7 +164,6 @@ export class ApprovedInquiryRecords implements OnInit {
     this.currentPage = 1;
   }
 
-
   private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
     switch (column) {
       case 'tnxId': return tx.tnxId;
@@ -224,15 +175,45 @@ export class ApprovedInquiryRecords implements OnInit {
     }
   }
 
-  get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-    return count < 1 ? 1 : count;
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.applyFilters();
   }
 
-  get pagedTransactions(): ShippingGuaranteeTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+  setActiveTab(tab: string): void {
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.loadApprovedTransactions();
   }
+
+
+    // simple sorting helper
+    toggleSort(column: keyof ShippingGuaranteeTransaction): void {
+      if (this.sortColumn === column) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortColumn = column;
+        this.sortDirection = 'asc';
+      }
+      this.applySort();
+    }
+  
+    private applySort(): void {
+      const dir = this.sortDirection === 'asc' ? 1 : -1;
+      this.filteredTransactions.sort((a, b) => {
+        const va: any = a[this.sortColumn] ?? '';
+        const vb: any = b[this.sortColumn] ?? '';
+        if (va < vb) return -1 * dir;
+        if (va > vb) return 1 * dir;
+        return 0;
+      });
+    }
 
   previousPage(): void {
     if (this.currentPage > 1) this.currentPage--;
@@ -249,59 +230,35 @@ export class ApprovedInquiryRecords implements OnInit {
   viewTransaction(tx: ShippingGuaranteeTransaction): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-    this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
+    this.api.getAmendmentByTnxIdSg(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/amend/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/amend/preview']);
       }
     });
   }
 
-  openSG(tx: ShippingGuaranteeTransaction) {
-    if (this.activeTab === 'live') {
-      // Live tab rows are event records — navigate by eventRefNo
+  openApprovedAmendTransactionSG(tx: ShippingGuaranteeTransaction): void {
       this.router.navigate(
         ['/dashboard/Trade-Services/shipping-guarantee/amend', tx.tnxId],
         {
           queryParams: {
-            mode: 'READ_ONLY',
-            tab: 'live',
-            eventRefNo: tx.eventRefNo ?? ''
+            mode: 'EDIT',
+            tab: this.activeTab,
+            eventType: this.activeTab === 'live' ? 'AMD' : (tx.eventType ?? 'AMD'),
+            // Only pass eventRefNo for non-live tabs (for navigating to a specific event)
+            ...(this.activeTab !== 'live' && { eventRefNo: tx.eventRefNo ?? '' })
           }
         }
       );
-      return;
     }
-    // Store transaction in service for import screen to pick up
-    // this.transactionService.setCurrentTransaction(tx);
-    const mode = this.resolveScreenMode(this.activeTab);
-    // Navigate to import screen
-    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee', tx.tnxId], {
-      state: {
-        transaction: tx,
-        // showUpdateSubmit: true // flag to show buttons
-        mode: mode
-      }
-    });
-  }
 
   trackByTnxId(_: number, tx: ShippingGuaranteeTransaction): string {
-    return tx.eventRefNo ?? tx.tnxId!;
-  }
-
-  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
-    switch (tab) {
-      case 'pending':
-        return 'EDIT';
-      case 'submitted':
-        return 'APPROVAL';
-      default:
-        return 'READ_ONLY';
-    }
+    return tx.tnxId!;
   }
 
   private mapTabToBackendStatus(tab: string): string {

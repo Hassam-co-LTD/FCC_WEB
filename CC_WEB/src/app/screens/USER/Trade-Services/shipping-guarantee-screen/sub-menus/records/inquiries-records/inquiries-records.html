@@ -56,6 +56,7 @@
                 <th *ngIf="activeTab == 'live'">Event</th>
                 <th (click)="sortBy('createdOn')">Created</th>
                 <th>Issuer Reference</th>
+                <th>Amount</th>
                 <th>Expiry Date</th>
                 <th>Customer Reference</th>
                 <th>Bill Of Lading</th>
@@ -80,6 +81,7 @@
                 <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
                 <td>{{tx.issuerReference}}</td>
+                <td>{{tx.amount}}</td>
                 <td>{{ tx.expiryDate }}</td>
                 <td>{{ tx.customerReference }}</td>
                 <td>{{ tx.billoflading }}</td>

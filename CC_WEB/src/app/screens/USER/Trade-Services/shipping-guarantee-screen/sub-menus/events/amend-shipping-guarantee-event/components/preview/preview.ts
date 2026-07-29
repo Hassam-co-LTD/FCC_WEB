@@ -3,15 +3,15 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { ImportLcTransaction } from '../../../../../../../../../core/models/import-lc';
 import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
-import { ImportlcFormTransactionService } from '../../../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
+import { ShippingGuaranteeTransaction } from '../../../../../../../../../core/models/shipping-guarantee';
+import { ShippingGuaranteeFormTransactionService } from '../../../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 
 @Component({
   selector: 'app-preview',
@@ -21,29 +21,26 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
   standalone: true,
 })
 export class Preview {
-  @Input() transaction!: ImportLcTransaction;
-  viewMode: 'submit' | 'readonly' = 'submit';
-  importForm!: FormGroup;
-
-  isOpen = true;
-  viewerOpen = false;
-  viewerContent: SafeResourceUrl | null = null;
-  isImage = false;
-  isPdf = false;
-
-  currentTx: ImportLcTransaction | null = null;
-
-  // pageName1 = 'Update';
-  // pageName2 = 'Submit';
-
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private api: ApiService,
-    private dialog: MatDialog,
-    private transactionService: ImportlcFormTransactionService
-  ) { }
+   @Input() transaction!: ShippingGuaranteeTransaction;
+   viewMode: 'submit' | 'readonly' = 'submit';
+ 
+   ShippingGuaranteeForm!: FormGroup;
+ 
+   isOpen = true;
+   viewerOpen = false;
+   viewerContent: SafeResourceUrl | null = null;
+   isImage = false;
+   isPdf = false;
+   currentTx: ShippingGuaranteeTransaction | null = null;
+ 
+   constructor(
+     private fb: FormBuilder,
+     private router: Router,
+     private snackBar: MatSnackBar,
+     private api: ApiService,
+     private dialog: MatDialog,
+     private transactionService: ShippingGuaranteeFormTransactionService
+   ) { }
   ngOnInit(): void {
     this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
       ||
@@ -71,80 +68,62 @@ export class Preview {
   }
 
   private initForm(): void {
-    this.importForm = this.fb.group({
+    this.ShippingGuaranteeForm = this.fb.group({
       id: [this.currentTx!.id],
       tnxId: [this.currentTx!.tnxId],
       status: [this.currentTx!.status],
       createdOn: [this.currentTx!.createdOn],
+      // createdBy: [this.currentTx!.createdBy],
 
-      productType: [this.currentTx!.productType],
-      modeOfTransmission: [this.currentTx!.modeOfTransmission],
       expiryDate: [this.currentTx!.expiryDate],
-      placeOfExpiry: [this.currentTx!.placeOfExpiry],
+      beneficiaryReference: [this.currentTx!.beneficiaryReference],
+      customerReference: [this.currentTx!.customerReference],
+      billoflading: [this.currentTx!.billoflading],
+      modeOfShipment: [this.currentTx!.modeOfShipment],
+      shippingDetails: [this.currentTx!.shippingDetails],
+      description: [this.currentTx!.description],
 
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
       applicantAddress3: [this.currentTx!.applicantAddress3],
+      applicantAddress4: [this.currentTx!.applicantAddress4],
+      applicantCountry: [this.currentTx!.applicantCountry],
 
       beneficiaryName: [this.currentTx!.beneficiaryName],
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
       beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
       beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
       beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
-      issuingBankName: [this.currentTx!.issuingBankName],
+      bankName: [this.currentTx!.bankName],
       issuerReference: [this.currentTx!.issuerReference],
-      advisingBankName: [this.currentTx!.advisingBankName],
-      adviseThroughBankName: [this.currentTx!.adviseThroughBankName],
-
       currency: [this.currentTx!.currency],
       amount: [this.currentTx!.amount],
-      additionalAmount: [this.currentTx!.additionalAmount],
-      variationType: [this.currentTx!.variationType],
-      variationPlus: [this.currentTx!.variationPlus],
-      variationMinus: [this.currentTx!.variationMinus],
-
-      creditAvailableWith: [this.currentTx!.creditAvailableWith],
-      bankName: [this.currentTx!.bankName],
-      creditAvailableBy: [this.currentTx!.creditAvailableBy],
-      paymentDraftAt: [this.currentTx!.paymentDraftAt],
-
-      shipmentFrom: [this.currentTx!.shipmentFrom],
-      shipmentTo: [this.currentTx!.shipmentTo],
-      placeOfLoading: [this.currentTx!.placeOfLoading],
-      placeOfDischarge: [this.currentTx!.placeOfDischarge],
-      lastShipmentDate: [this.currentTx!.lastShipmentDate],
-      shipmentPeriodNarrative: [this.currentTx!.shipmentPeriodNarrative],
-      partialShipment: [this.currentTx!.partialShipment],
-      transhipment: [this.currentTx!.transhipment],
-
-      descriptionOfGoods: [this.currentTx!.descriptionOfGoods],
-      documentsRequired: [this.currentTx!.documentsRequired],
-      additionalInstructions: [this.currentTx!.additionalInstructions],
-      otherInstructions: [this.currentTx!.otherInstructions],
 
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
+      otherInstructions: [this.currentTx!.otherInstructions],
 
       attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
-
     // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
-      this.importForm.disable({ emitEvent: false });
+      this.ShippingGuaranteeForm.disable({ emitEvent: false });
     }
   }
 
+
   get attachmentsArray(): FormArray {
-    return this.importForm.get('attachments') as FormArray;
+    return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
 
   back() {
     this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'])
   }
 
-  submitLc(): void {
+  submit(): void {
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
@@ -153,7 +132,7 @@ export class Preview {
       return;
     }
 
-    this.api.submitAmendment(tnxId, this.currentTx!).subscribe({
+    this.api.submitAmendmentSg(tnxId, this.currentTx!).subscribe({
       next: (res) => {
         this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
           state: { transaction: res }
@@ -168,7 +147,7 @@ export class Preview {
   approveTransaction(): void {
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveAmendment(this.currentTx.tnxId, this.currentTx).subscribe({
+    this.api.approveAmendmentSg(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
         this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
@@ -189,7 +168,7 @@ export class Preview {
   
       dialogRef.afterClosed().subscribe((reason: string | undefined) => {
         if (!reason) return; // user cancelled
-        this.api.rejectAmendment(tnxId, reason ).subscribe({
+        this.api.rejectAmendmentSg(tnxId, reason ).subscribe({
           next: (res) => {
             this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
             this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });

@@ -347,7 +347,7 @@ export const routes: Routes = [
                                         .then(m => m.ExportScreen)
 
                             }
- ,
+                            ,
                             { path: 'export-screen', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/export-screen').then(m => m.ExportScreen) },
                             {
                                 path: 'exportlc-welcome',
@@ -364,7 +364,6 @@ export const routes: Routes = [
 
                             // ---------- SHIPPING GUARANTEE ----------
                             { path: 'shipping-guarantee/inquiries-records', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records').then(m => m.inquiriesRecords) },
-
                             { path: 'shipping-guarantee/preview', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview').then((m) => m.Preview) },
                             { path: 'shipping-guarantee/success', loadComponent: () => import('./shared/success/success').then((m) => m.Success) },
                             { path: 'shipping-guarantee/amend', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then((m) => m.Amend) },
@@ -376,18 +375,10 @@ export const routes: Routes = [
                                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
                             },
                             {
-
-                                matcher: transactionIdMatcher,
-
-                                loadComponent: () =>
-
-                                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen')
-
-                                        .then(m => m.ShippingGuarantee)
-
+                                matcher: transactionIdMatcher,loadComponent: () =>import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee)
                             },
                             { path: 'shipping-guarantee/amend/:tnxId', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend) },
-                            { path: 'shipping-guarantee', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee), data: { title: 'Shipping Guarantee' } },
+                            { path: 'shipping-guarantee', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee)},
                             {
                                 path: 'shipping-welcome',
                                 loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
@@ -404,16 +395,11 @@ export const routes: Routes = [
                             // ---------- EXPORT COLLECTION ----------
                             { path: 'export-collection/preview', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then((m) => m.Preview) },
                             { path: 'export-collection/success', loadComponent: () => import('./shared/success/success').then((m) => m.Success), data: { title: 'Export Collection Submitted' } },
-                           {
-
+                            {
                                 matcher: transactionIdMatcher,
-
                                 loadComponent: () =>
-
-                                    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen')
-
-                                        .then(m => m.ShippingGuarantee)
-
+                                    import('./screens/USER/Trade-Services/export-collection/export-collection')
+                                        .then(m => m.ExportCollection)
                             },
                             { path: 'export-collection', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/export-collection').then((m) => m.ExportCollection), data: { title: 'Export Collection' } },
                             {
@@ -484,15 +470,7 @@ export const routes: Routes = [
                                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
                             },
                             {
-
-                                matcher: transactionIdMatcher,
-
-                                loadComponent: () =>
-
-                                    import('./screens/USER/Trade-Services/import-screen/import-screen')
-
-                                        .then(m => m.ImportScreen)
-
+                                matcher: transactionIdMatcher,loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen)
                             },
                             { path: 'import-screen/amend/:tnxId', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
                             { path: 'import-screen', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen) },

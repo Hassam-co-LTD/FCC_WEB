@@ -40,7 +40,7 @@ export class inquiriesRecords implements OnInit {
 
   // Tabs Configuration
   tabs = [
-    {key: 'Live', label: 'Live'},
+    {key: 'live', label: 'Live'},
     { key: 'pending', label: 'Pending' },     // Drafts (Input)
     { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
     { key: 'approved', label: 'Approved' },   // Final (View Only)
@@ -127,7 +127,7 @@ export class inquiriesRecords implements OnInit {
     if (this.activeTab === 'live') {
 
       // this.api.getLiveEventHistoryForShippingGuarantee().subscribe({
-        this.api.getLiveEventHistory().subscribe({
+        this.api.getLiveEventHistorySg().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
           this.applyFilters();

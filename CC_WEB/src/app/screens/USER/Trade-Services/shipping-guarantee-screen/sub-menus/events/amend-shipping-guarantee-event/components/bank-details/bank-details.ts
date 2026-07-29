@@ -27,25 +27,13 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './bank-details.scss',
 })
 export class BankDetails {
-
-  selectedTab = 0;
   isOpen = true;
+  currencies = ['USD', 'EUR', 'GBP', 'PKR', 'JPY'];
+  @Input() form!: FormGroup;
 
-  @Input() form!: FormGroup;  
 
-  bankList: string[] = [
-    'National Bank Of Pakistan (NBP)',
-    'Habib Bank Limited (HBL)',
-    'United Bank Limited (UBL)',
-    'MCB Bank',
-    'Standard Chartered Bank',
-    'Bank Alfalah'
-  ];
-
-  constructor() {}
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
-
 }

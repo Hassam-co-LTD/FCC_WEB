@@ -4,23 +4,29 @@
 
     <div class="content">
         <div class="scroll-area">
-            <!-- <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
+
+            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
             <hr class="section-divider" />
 
-            <section id="section-1"><app-applicant-beneficiary
-                    [form]="applicantBeneficiaryForm"></app-applicant-beneficiary>
+            <section id="section-1"><app-applicant-beneficiary [form]="applicantBeneficiaryForm"></app-applicant-beneficiary>
             </section>
             <hr class="section-divider" />
 
             <section id="section-2"><app-bank-details [form]="issuingbankForm"></app-bank-details></section>
             <hr class="section-divider" />
 
-            <section id="section-3"><app-instructions [form]="instructionForm"></app-instructions></section>
+            <section id="section-3"><app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank></section>
             <hr class="section-divider" />
 
             <section id="section-4">
                 <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
-            </section> -->
+            </section>
+
+            <hr class="section-divider" />
+
+            <section id="section-5">
+                <router-outlet></router-outlet>
+            </section>
 
             <!-- Footer Buttons -->
             <div class="actions">
