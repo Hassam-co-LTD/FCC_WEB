@@ -314,14 +314,14 @@ export const routes: Routes = [
   path: 'create-permission-group',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
-      .then(m => m.PermissionGroup)
+      .then(m => m.CreatePermissionGroup)
 },
 
 {
   path: 'edit-permission-group/:id',
   loadComponent: () =>
     import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
-      .then(m => m.PermissionGroup)
+      .then(m => m.CreatePermissionGroup)
 },
 
 

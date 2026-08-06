@@ -14,7 +14,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
-import { PermissionGroup } from '../create-permission-group/permissions-group';
 
 export interface UserDetails {
   id: number;
