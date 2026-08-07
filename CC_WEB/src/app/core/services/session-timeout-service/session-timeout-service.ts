@@ -8,7 +8,7 @@ export class SessionTimeoutService {
 
   private timeoutId: any;
 
-private timeoutDuration = 5 * 60 * 1000; // 5 minutes
+private timeoutDuration = 6 * 60 * 1000; // 5 minutes
 
 
   constructor(
@@ -56,9 +56,7 @@ private timeoutDuration = 5 * 60 * 1000; // 5 minutes
 
     clearTimeout(this.timeoutId);
 
-
     this.timeoutId = setTimeout(() => {
-
 
       this.logoutUser();
 
@@ -80,11 +78,7 @@ private timeoutDuration = 5 * 60 * 1000; // 5 minutes
 
 
     this.ngZone.run(() => {
-
-
       this.authService.logout();
-
-
     });
 
 
