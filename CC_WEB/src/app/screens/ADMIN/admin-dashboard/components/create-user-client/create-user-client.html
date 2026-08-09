@@ -14,7 +14,7 @@
       [ngClass]="{
         'create': !storeClientUser?.recordStatus,
         'draft': storeClientUser?.recordStatus === 'I',
-        'submitted': storeClientUser?.recordStatus === 'S',
+        'submitted': storeClientUser?.recordStatus === 'I',
         'approved': storeClientUser?.recordStatus === 'A'
       }">
 
@@ -270,7 +270,7 @@
     <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
       <button class="btn-update" [disabled]="!clientUserForm.dirty || !clientUserForm.valid" (click)="update(storeClientUser.id)">Update</button>
-      <button class="btn-submit" [disabled]="!clientUserForm.valid" (click)="submit()">Submit</button>
+      <button class="btn-submit"  (click)="submit()">Submit</button>
     </ng-container>
   <div class="customer-actions">
     <ng-container *ngIf="!storeClientUser || !storeClientUser.userStatus">

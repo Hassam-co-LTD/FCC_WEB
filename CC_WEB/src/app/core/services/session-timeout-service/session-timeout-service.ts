@@ -10,7 +10,6 @@ export class SessionTimeoutService {
 
 private timeoutDuration = 6 * 60 * 1000; // 5 minutes
 
-
   constructor(
     private ngZone: NgZone,
     private authService: AuthService
