@@ -10,7 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { ImportLcTransaction } from "../../../../../../core/models/import-lc";
-import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 

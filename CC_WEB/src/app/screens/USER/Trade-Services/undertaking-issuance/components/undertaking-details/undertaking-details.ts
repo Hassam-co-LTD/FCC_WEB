@@ -14,7 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
   selector: 'app-undertaking-details',
   standalone: true,
   imports: [
-    
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatRadioModule,
@@ -23,7 +23,6 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule,
     MatIconModule,
     MatButtonModule,
-    ReactiveFormsModule,
 ],
   templateUrl: './undertaking-details.html',
   styleUrls: ['./undertaking-details.scss']

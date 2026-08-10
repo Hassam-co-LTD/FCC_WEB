@@ -4,38 +4,16 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
 import { TransferDTO, RecordsListTransferDTO, AccountsMaster, AccountAccessPolicyDTO } from '../models/my-accounts';
-import { RecordListDTO, UndertakingRequestDTO, UndertakingResponseDTO, UndertakingFormModel } from '../models/undertaking-lc';import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
+import { UndertakingGuarantee } from '../models/undertaking-lc';
+import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
 
-
-// --- UPDATED INTERFACE FOR UNDERTAKING LC ---
-export interface UndertakingLc {
-  id?: number | string;
-  tnxId?: string;
-  channelReference?: string; // e.g. UND-2025-001
-  status?: string;
- 
-  // Flat fields for Table View
-  productType?: string;
-  applicantName?: string;
-  beneficiaryName?: string;
-  undertakingAmount?: number;
-  currency?: string;
-  expiryDate?: string;
- 
-  // The Nested Form Data
-  formData?: any;
- 
-  // Flexible key for any extra props
-  [key: string]: any;
-}
- 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
- 
+
   // -------------------------------------------------------------
   // CONFIGURATION
   // -------------------------------------------------------------
@@ -52,21 +30,30 @@ export class ApiService {
   private get baseSgEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/shippingguarantee/events`;
   }
+  
+  private get baseUtgEventUrl(): string {
+    return `${environment.gatewayUrl}/settlementsystem/api/utg/events`;
+  }
+
 
   // Admin/Security System (Login, Roles, Users)
   private get adminBaseUrl(): string {
     return `${environment.gatewayUrl}/api/v1/`;
+  }
+
+  private get loginBaseUrl(): string {
+    return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
   // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
   // private baseUrl = `${environment.apiUrl}`;
   // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) { }
- 
+
   /* ------------------------------------- Error Handler ------------------------------------- */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unexpected error occurred. Please try again later.';
- 
+
     if (error.error instanceof ErrorEvent) {
       // Client-side / network error
       console.error('Client-side error:', error.error.message);
@@ -77,7 +64,7 @@ export class ApiService {
         `Backend error [${error.status}]:`,
         error.error
       );
- 
+
       if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.status === 0) {
@@ -88,7 +75,7 @@ export class ApiService {
         errorMessage = 'Internal server error.';
       }
     }
- 
+
     return throwError(() => new Error(errorMessage));
   }
   /* ------------------------------------- Helper methods ------------------------------------- */
@@ -122,7 +109,7 @@ export class ApiService {
 
   /* -------------------- API Methods -------------------- */
   // Save LC Record (pending record) - status "I"
- 
+
   // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
   //   console.log('Saving draft:', data);
   //   const companyId = sessionStorage.getItem('userData.companyId')
@@ -142,7 +129,7 @@ export class ApiService {
       { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
- 
+
 
   // Get full transactions by status
   // getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
@@ -164,7 +151,7 @@ export class ApiService {
       { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
- 
+
   // getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
   //   return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`)
   //     .pipe(catchError(this.handleError));
@@ -177,9 +164,9 @@ export class ApiService {
       .put<ImportLcTransaction>(`${this.baseUrl}/importlc/${payload.tnxId}`, payload)
       .pipe(catchError(this.handleError));
   }
- 
+
   // Submit transaction (status "S") with full data
- 
+
   submitTransaction(
     tnxId: string,
     data: ImportLcTransaction
@@ -191,7 +178,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get Transaction by TNX ID for READ-ONLY view for approved/rejected records
   getTransactionByTnxId(tnxId: string): Observable<ImportLcTransaction> {
     return this.http.get<ImportLcTransaction>(`${this.baseUrl}/importlc/${tnxId}`, {
@@ -199,7 +186,7 @@ export class ApiService {
     })
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Approve transaction */
   approveTransaction(tnxId: string, data: ImportLcTransaction): Observable<ImportLcTransaction> {
     console.log('Approving transaction ID:', tnxId);
@@ -208,8 +195,8 @@ export class ApiService {
     })
       .pipe(catchError(this.handleError));
   }
- 
- 
+
+
   /** Reject Reason */
   rejectTransaction(tnxId: string, reason: string): Observable<ImportLcTransaction> {
     return this.http.post<ImportLcTransaction>(`${this.baseUrl}/importlc/rejectReason/${tnxId}`, { rejectionReason: reason }, {
@@ -341,7 +328,7 @@ export class ApiService {
   }
 
   /* -------------------- IMPORT LC API Methods END -------------------- */
-  
+
   // =================================================================
   // API Methods For SHIPPING GUARANTEE MODULE START
   // =================================================================
@@ -361,12 +348,12 @@ export class ApiService {
       `${this.baseUrl}/shippingguarantee/records/${status}`,
       { headers: this.headers }
     ).pipe(catchError(this.handleError));
-  } 
-    // Update draft (pending record) by Tnx ID
-    updatePendingByTnxIdSg(
-      tnxId: string,
-      payload: ShippingGuaranteeTransaction
-    ): Observable<ShippingGuaranteeTransaction> {
+  }
+  // Update draft (pending record) by Tnx ID
+  updatePendingByTnxIdSg(
+    tnxId: string,
+    payload: ShippingGuaranteeTransaction
+  ): Observable<ShippingGuaranteeTransaction> {
 
     return this.http
       .put<ShippingGuaranteeTransaction>(
@@ -495,7 +482,7 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
 
-  
+
   // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
 
 
@@ -504,7 +491,7 @@ export class ApiService {
   // =================================================================
   // API Methods For EXPORT COLLECTION MODULE START  
   // =================================================================
-  
+
   // Save LC Record (pending record) - status "I"
   savePendingForExportCollection(data: ExportCollectionTransaction): Observable<ExportCollectionTransaction> {
     return this.http.post<ExportCollectionTransaction>(
@@ -586,83 +573,164 @@ export class ApiService {
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
 
-  getUndertakingByStatus(status: string): Observable<RecordListDTO[]> {
-    return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}/undertaking_lc/status/${status}`,
+
+  saveUndertakingPending(data: UndertakingGuarantee): Observable<UndertakingGuarantee> {
+    return this.http.post<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/save`,
+      data,
+      {
+        headers: this.headers.set('Content-Type', 'application/json')
+      }
+    ).pipe(catchError(this.handleError));
+  }
+
+
+  getUndertakingRecordTransactionsByStatus(status: string): Observable<UndertakingGuarantee[]> {
+    return this.http.get<UndertakingGuarantee[]>(
+      `${this.baseUrl}/utg/records/${status}`,
+      {headers: this.headers}
+    ).pipe(catchError(this.handleError));
+  }
+
+
+
+  updateUndertakingPendingByTnxId(
+    payload: UndertakingGuarantee
+  ): Observable<UndertakingGuarantee> {
+    console.log('Payload before update:', payload);
+    return this.http
+    .put<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/${payload.tnxId}`,
+      payload,
+    ).pipe(catchError(this.handleError));
+  }
+
+  submitUndertaking(
+    tnxId: string,
+    data: UndertakingGuarantee): Observable<UndertakingGuarantee> {
+    console.log('Submitting transaction:', tnxId, data);
+    return this.http.post<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/submit/${tnxId}`,
+      data,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
+  }
+
+
+  getUndertakingByTnxId(tnxId: string): Observable<UndertakingGuarantee> {
+    return this.http.get<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/${tnxId}`, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+
+  approveUndertaking(tnxId: string, data: UndertakingGuarantee): Observable<UndertakingGuarantee> {
+    console.log('Approving transaction ID:', tnxId);
+    return this.http.post<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/approve/${tnxId}`,
+      data,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
+  }
+
+
+  rejectUndertaking(tnxId: string, reason: string): Observable<UndertakingGuarantee> {
+    return this.http.post<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/rejectReason/${tnxId}`,
+      {rejectionReason: reason},
+      { headers: { 'Content-Type': 'application/json' } 
+    })
+    .pipe(catchError(this.handleError));
+  }
+
+  updateRejectedUndertaking(tnxId: string, payload: UndertakingGuarantee) {
+    return this.http.put<UndertakingGuarantee>(
+      `${this.baseUrl}/utg/updateRejected/${tnxId}`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    ).pipe(catchError(this.handleError));
+  }
+
+  // getUndertakingByStatus(status: string): Observable<UndertakingGuarantee[]> {
+  //   return this.http.get<UndertakingGuarantee[]>(
+  //     `${this.baseUrl}/undertaking_lc/status/${status}`,
+  //     { headers: this.headers }
+  //   ).pipe(catchError(this.handleError));
+  // }
+
+
+  /* -------------------- UNDERTAKING GUARANTEE AMENDMENT API Methods  -------------------- */
+
+  getUtgAmendmentByTnxId(tnxId: string): Observable<UndertakingGuarantee> {
+    return this.http.get<UndertakingGuarantee>(
+      `${this.baseUtgEventUrl}/amend/${tnxId}`,
       { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
-
-  getUndertakingRecordsByStatus(status: string): Observable<RecordListDTO[]> {
-    return this.http.get<RecordListDTO[]>(
-      `${this.baseUrl}/undertaking_lc/records/${status}`
-    ).pipe(catchError(this.handleError));
-  }
-
-  getUndertakingByTnxId(tnxId: string): Observable<UndertakingResponseDTO> {
-    return this.http.get<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/${tnxId}`
-    ).pipe(catchError(this.handleError));
-  }
-
-  saveUndertakingDraft(dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
-    return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/save`,
-      dto,
+  saveUtgAmendTransaction(tnxId: string, data: UndertakingGuarantee): Observable<UndertakingGuarantee> {
+    return this.http.put<UndertakingGuarantee>(
+      `${this.baseUtgEventUrl}/amend/${tnxId}`,
+      data,
       {
-        headers: this.headers.set('Content-Type', 'application/json')
+        headers: { 'Content-Type': 'application/json' }
       }
     ).pipe(catchError(this.handleError));
   }
 
-  updateUndertakingDraft(
-    tnxId: string,
-    dto: UndertakingRequestDTO
-  ): Observable<UndertakingResponseDTO> {
-
-    return this.http.put<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/update-draft/${tnxId}`,
-      dto,
-      {
-        headers: this.headers.set('Content-Type', 'application/json')
-      }
+  getUtgLiveEventHistory(): Observable<UndertakingGuarantee[]> {
+    return this.http.get<UndertakingGuarantee[]>(
+      `${this.baseUtgEventUrl}/amend/live-records`,
+      { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
-  submitUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
-    return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/submit/${tnxId}`,
-      dto,
-      { headers: { 'Content-Type': 'application/json' } }
+  getApprovedUtgMasterLcRecords(): Observable<UndertakingGuarantee[]> {
+    return this.http.get<UndertakingGuarantee[]>(
+      `${this.baseUtgEventUrl}/amend/live-master-records`,
+      { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
-  approveUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
-    return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/approve/${tnxId}`,
-      dto,
-      { headers: { 'Content-Type': 'application/json' } }
+  getUtgAmendRecordsByStatus(eventGuaranteeStatus: string): Observable<UndertakingGuarantee[]> {
+    return this.http.get<UndertakingGuarantee[]>(
+      `${this.baseUtgEventUrl}/amend/records/${eventGuaranteeStatus}`,
+      { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
-  rejectUndertaking(tnxId: string, rejectionReason: string): Observable<UndertakingResponseDTO> {
-    const body = { rejectionReason };
-    return this.http.post<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/rejectReason/${tnxId}`,
-      body,
-      { headers: { 'Content-Type': 'application/json' } }
+  getUtgAmendmentByEventRefNo(eventRefNo: string): Observable<UndertakingGuarantee> {
+    return this.http.get<UndertakingGuarantee>(
+      `${this.baseUtgEventUrl}/event/${eventRefNo}`,
+      { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
-  updateRejectedUndertaking(tnxId: string, dto: UndertakingRequestDTO): Observable<UndertakingResponseDTO> {
-    return this.http.put<UndertakingResponseDTO>(
-      `${this.baseUrl}/undertaking_lc/updateRejected/${tnxId}`,
-      dto,
-      { headers: { 'Content-Type': 'application/json' } }
+  submitUtgAmendment(eventRefNo: string, data: UndertakingGuarantee): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUtgEventUrl}/amend/submit/${eventRefNo}`,
+      { data },
+      { headers: this.headers }
     ).pipe(catchError(this.handleError));
   }
 
+  approveUtgAmendment(eventRefNo: string, data: UndertakingGuarantee): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUtgEventUrl}/amend/approve/${eventRefNo}`,
+      { data },
+      { headers: this.headers }
+    ).pipe(catchError(this.handleError));
+  }
+
+  rejectUtgAmendment(eventRefNo: string, reason: string): Observable<any> {
+    return this.http.post<any>(
+      `${this.baseUtgEventUrl}/amend/reject/${eventRefNo}`,
+      { rejectionReason: reason },
+      { headers: this.headers }
+    ).pipe(catchError(this.handleError));
+  }
   // =================================================================
   // TRANSFERS API Methods
   // =================================================================
@@ -897,83 +965,83 @@ export class ApiService {
 
   // vs side generic methods
 
-// save transaction
-saveTnx(tnx:any,name:String){
-   return this.http.post<any>(`${this.adminBaseUrl}${name}`,tnx)
-}
-// get transaction by status
-getTnxByStatus(status:String,Tnx:String){
-   return this.http.get<any>(`${this.adminBaseUrl}${Tnx}/status/${status}`);
-}
+  // save transaction
+  saveTnx(tnx: any, name: String) {
+    return this.http.post<any>(`${this.adminBaseUrl}${name}`, tnx)
+  }
+  // get transaction by status
+  getTnxByStatus(status: String, Tnx: String) {
+    return this.http.get<any>(`${this.adminBaseUrl}${Tnx}/status/${status}`);
+  }
 
-// get transaction by id
+  // get transaction by id
 
-getTnxById(id:Number | String,name:String){
+  getTnxById(id: Number | String, name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}/id/${id}`);
-}
-getTnxByRolId(id:String,name:String){
+  }
+  getTnxByRolId(id: String, name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}/id/${id}`);
-}
-// update transaction 
-updateTnx(data:any,name:String,id?:Number){
-     console.log("the id ",id);
-    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`,data);
-}
-updateTnxByRoleId(data:any,name:String,id:String){
-     console.log("the id ",id);
-    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`,data);
-}
-// set transaction status by id
-setTnxByStatus(status: string, id: number | string, name: string) {
-  console.log('Setting status:', status, 'for ID:', id, 'on', name);
+  }
+  // update transaction 
+  updateTnx(data: any, name: String, id?: Number) {
+    console.log("the id ", id);
+    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`, data);
+  }
+  updateTnxByRoleId(data: any, name: String, id: String) {
+    console.log("the id ", id);
+    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`, data);
+  }
+  // set transaction status by id
+  setTnxByStatus(status: string, id: number | string, name: string) {
+    console.log('Setting status:', status, 'for ID:', id, 'on', name);
 
-  const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
+    const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
 
-  return this.http.put<any>(url, null, {
-    params: { status }
-  });
-}
+    return this.http.put<any>(url, null, {
+      params: { status }
+    });
+  }
 
-//get list of data
-getDatalist(name:String){
-   return this.http.get<any>(`${this.adminBaseUrl}${name}/list`);
-}
+  //get list of data
+  getDatalist(name: String) {
+    return this.http.get<any>(`${this.adminBaseUrl}${name}/list`);
+  }
 
-deleteTnx(payload: any, name: string) {
-  return this.http.delete<any>(`${this.adminBaseUrl}${name}`, {
-    body: payload
-  });
-}
-updateTnxx(payload: any, name: string) {
-  console.log("Updating transaction with payload:", payload);
-  return this.http.put<any>(`${this.adminBaseUrl}${name}`, payload);
-}
-getRolesByUser(userId: Number,name:String): Observable<any> {
-  return this.http.get<any>(`${this.adminBaseUrl}${name}/${userId}`);
-}
-setStatusByRoleId(status: String, id: String, name: String) {
-  console.log('Setting status:', status, 'for Role ID:', id, 'on', name);
-  const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
-  return this.http.put<any>(url, status);
+  deleteTnx(payload: any, name: string) {
+    return this.http.delete<any>(`${this.adminBaseUrl}${name}`, {
+      body: payload
+    });
+  }
+  updateTnxx(payload: any, name: string) {
+    console.log("Updating transaction with payload:", payload);
+    return this.http.put<any>(`${this.adminBaseUrl}${name}`, payload);
+  }
+  getRolesByUser(userId: Number, name: String): Observable<any> {
+    return this.http.get<any>(`${this.adminBaseUrl}${name}/${userId}`);
+  }
+  setStatusByRoleId(status: String, id: String, name: String) {
+    console.log('Setting status:', status, 'for Role ID:', id, 'on', name);
+    const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
+    return this.http.put<any>(url, status);
 
-}
+  }
 
-userLogin(payload: any, name: string) {
-  return this.http.post<any>(`${this.adminBaseUrl}${name}/login`, payload);
-}
+  userLogin(payload: any, name: string) {
+    return this.http.post<any>(`${this.loginBaseUrl}${name}/login`, payload);
+  }
 
-getCustomerAccounts(custId:String,name:String){
+  getCustomerAccounts(custId: String, name: String) {
 
-  return this.http.get<any>(`${this.adminBaseUrl}${name}/${custId}`,)
-}
+    return this.http.get<any>(`${this.adminBaseUrl}${name}/${custId}`,)
+  }
 
-deleteAccount(id:Number,apiName:String){
- return  this.http.delete<any>(`${this.adminBaseUrl}${apiName}/delete/${id}`)
-}
+  deleteAccount(id: Number, apiName: String) {
+    return this.http.delete<any>(`${this.adminBaseUrl}${apiName}/delete/${id}`)
+  }
 
-getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFieldsResponseDto[]> {
+  getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFieldsResponseDto[]> {
     return this.http.get<DynamicFieldsResponseDto[]>(`${this.adminBaseUrl}dynamic-fields/screen/${screen}/status/${status}`);
-}
+  }
 
   getDropdownOptionsByScreenAndType(screen: string, dropdownType: string): Observable<any[]> {
     const params = new HttpParams()
@@ -985,49 +1053,65 @@ getFieldsByScreenAndStatus(screen: string, status: string): Observable<DynamicFi
   findByRecordStatusAndScreenAndDropDown(recordStatus: string, screen: string, dropDown: string): Observable<any[]> {
     const params = new HttpParams()
       .set('recordStatus', recordStatus)
-      .set('screen',screen)
-      .set('dropDown',dropDown);
+      .set('screen', screen)
+      .set('dropDown', dropDown);
     return this.http.get<any[]>(`${this.adminBaseUrl}dropdown-values/search`, { params });
   }
- 
+
 
   // forgot user 
-forgotPassword(payload: any) {
-  return this.http.post(
-    'http://localhost:8051/api/v1/clientUsers/forgot-password',
-    payload,
-    { responseType: 'text' }
-  );
-}
+  forgotPassword(payload: any) {
+    return this.http.post(
+      'http://localhost:8051/api/v1/clientUsers/forgot-password',
+      payload,
+      { responseType: 'text' }
+    );
+  }
 
-resetPassword(payload: { token: string | null; newPassword: string }) {
-  return this.http.post(
-    'http://localhost:8051/api/v1/clientUsers/reset-password',
-    payload,
-    { responseType: 'text' }
-  );
-}
-  
+  resetPassword(payload: { token: string | null; newPassword: string }) {
+    return this.http.post(
+      'http://localhost:8051/api/v1/clientUsers/reset-password',
+      payload,
+      { responseType: 'text' }
+    );
+  }
 
-validateResetToken(token: string) {
-  return this.http.get<any>(
-    `${environment.apiUrl}clientUsers/validate-reset-token`,
-    {
-      params: {
-        token: token
+
+  validateResetToken(token: string) {
+    return this.http.get<any>(
+      `${environment.apiUrl}clientUsers/validate-reset-token`,
+      {
+        params: {
+          token: token
+        }
       }
-    }
-  );
-}
-// user change password 
+    );
+  }
+  // user change password 
 
-changePassword(payload: any,sign:String) {
-  return this.http.post(
-    `${environment.apiUrl}clientUsers/${sign}`,
-    payload
+  changePassword(payload: any, sign: String) {
+    return this.http.post(
+      `${environment.apiUrl}clientUsers/${sign}`,
+      payload
+    );
+  }
+  // Implementation to fetch dropdown options based on the provided parameters
+ 
+refreshToken() {
+ 
+  const refreshToken =
+      sessionStorage.getItem("refreshToken");
+ 
+  return this.http.post<any>(
+      environment.gatewayUrl +
+      '/api/v1/auth/refresh-token',
+      {
+        refreshToken
+      }
   );
+ 
 }
-// Implementation to fetch dropdown options based on the provided parameters
+
 
 
 }

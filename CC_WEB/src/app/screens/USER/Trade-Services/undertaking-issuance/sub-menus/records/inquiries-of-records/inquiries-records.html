@@ -49,46 +49,49 @@
     <table>
         <thead>
             <tr>
-                <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
-                <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
+                <th *ngIf="activeTab == 'live'">Event Ref No</th>
+                <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th *ngIf="activeTab == 'live'">Event Sequence</th>
+                <th *ngIf="activeTab == 'live'">Event</th>
+                <th (click)="sortBy('createdOn')">Created</th>
                 <th>Product</th>
+                <th>Issuer Reference</th>
                 <th>Expiry Date</th>
                 <th>Currency</th>
-                <th>Amount</th>
+                <th>Undertaking Amount</th>
                 <th>Applicant</th>
                 <th>Beneficiary</th>
-                <th class="text-center">Action</th>
+                <th class="sticky-action">Action</th>
             </tr>
         </thead>
 
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <td>
-                    <a class="tnx-link" (click)="openUndertaking(tx)">
-                        {{ tx.channelReference }}
-                    </a>
+                <td *ngIf="activeTab == 'live'">
+                    <a class="tnx-link" (click)="openUtg(tx)">{{ tx.eventRefNo }}</a>
                 </td>
-                
-                <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.currency }}</td>
-                <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.applicantName }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.beneficiaryName }}</td>
-                
-                <td class="text-center actions-cell">
-                    <ng-container *ngIf="isDraft(tx)">
-                        <button class="btn-action view" (click)="viewOnly(tx)" matTooltip="Preview Draft">
-                            <mat-icon>visibility</mat-icon> View
-                        </button>
-                    </ng-container>
-
-                    <ng-container *ngIf="!isDraft(tx)">
-                        <button class="btn-action view" (click)="openUndertaking(tx)">
-                            <mat-icon>visibility</mat-icon> View
-                        </button>
-                    </ng-container>
+                <td>
+                    <a class="tnx-link" *ngIf="activeTab !== 'live'" (click)="openUtg(tx)">
+                        {{ tx.tnxId }}
+                    </a>
+                    <span *ngIf="activeTab === 'live'">{{ tx.tnxId }}</span>
+                </td>
+                <td *ngIf="activeTab == 'live'">
+                    {{ tx.eventSequence }}
+                </td>
+                <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
+                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+                <td>{{ tx.productType }}</td>
+                <td>{{tx.issuerReference}}</td>
+                <td>{{ tx.expiryDate }}</td>
+                <td>{{ tx.currency }}</td>
+                <td>{{ tx.undertakingAmount }}</td>
+                <td>{{ tx.applicantName }}</td>
+                <td>{{ tx.beneficiaryName }}</td>
+                <td class="sticky-action">
+                    <button class="btn-action" (click)="viewTransaction(tx)">
+                        <mat-icon>visibility</mat-icon> View
+                    </button>
                 </td>
             </tr>
 

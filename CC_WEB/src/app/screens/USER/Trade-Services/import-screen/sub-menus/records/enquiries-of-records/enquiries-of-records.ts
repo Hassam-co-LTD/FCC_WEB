@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, OnInit, inject } from '@angular/core';
+import { Component, PLATFORM_ID, OnInit, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';

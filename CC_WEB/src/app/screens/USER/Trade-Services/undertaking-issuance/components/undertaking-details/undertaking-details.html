@@ -104,14 +104,14 @@
 
     <!-- EXTENSION TYPE -->
     <h4>Extension Date</h4>
-    <mat-radio-group formControlName="BasicExtensionType">
+    <mat-radio-group formControlName="basicExtensionType">
         <mat-radio-button value="regular">Regular</mat-radio-button>
         <mat-radio-button value="rolling">Rolling</mat-radio-button>
     </mat-radio-group>
 
     <!-- INCREASE / DECREASE -->
     <h4>Increase / Decrease Amount</h4>
-    <mat-radio-group formControlName="IncreaseDecreaseType">
+    <mat-radio-group formControlName="increaseDecreaseType">
         <mat-radio-button value="regular">Regular</mat-radio-button>
         <mat-radio-button value="irregular">Irregular</mat-radio-button>
     </mat-radio-group>
@@ -153,7 +153,7 @@
 
         <mat-form-field appearance="outline">
             <mat-label>Contract Narrative</mat-label>
-            <input matInput formControlName="contractReference" />
+            <input matInput formControlName="contractNarrative" />
         </mat-form-field>
     </div>
 
@@ -173,7 +173,7 @@
     <div class="form-grid">
         <mat-form-field appearance="outline">
             <mat-label>Governing Laws</mat-label>
-            <mat-select formControlName="governinglawsType">
+            <mat-select formControlName="governingLawsType">
                 <mat-option value="pk">Pakistan</mat-option>
                 <mat-option value="in">India</mat-option>
                 <mat-option value="ae">UAE</mat-option>
@@ -183,7 +183,7 @@
 
         <mat-form-field appearance="outline">
             <mat-label>Country Subdivision</mat-label>
-            <input matInput formControlName="subdivision" />
+            <input matInput formControlName="countrySubdivision" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
@@ -193,7 +193,7 @@
     </div>
 
     <!-- DEMAND INDICATOR -->
-    <mat-radio-group formControlName="DemandOption">
+    <mat-radio-group formControlName="demandOption">
         <mat-radio-button value="multipleDemandnot">Multiple demand not permitted</mat-radio-button>
         <mat-radio-button value="multiplepartialDemandnot">Multiple & partial demands not permitted</mat-radio-button>
         <mat-radio-button value="partialDemand">Partial demands permitted</mat-radio-button>
@@ -226,12 +226,12 @@
     <!-- TEXT FIELDS -->
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Text of Undertaking</mat-label>
-        <textarea matInput rows="1" formControlName="textofundertakingInfo"></textarea>
+        <textarea matInput rows="1" formControlName="textOfUndertakingInfo"></textarea>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Underlying Transaction Details*</mat-label>
-        <textarea matInput rows="2" formControlName="underlyingtransactionInfo"></textarea>
+        <textarea matInput rows="2" formControlName="underlyingTransactionInfo"></textarea>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">

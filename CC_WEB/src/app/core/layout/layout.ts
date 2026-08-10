@@ -388,16 +388,16 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             // EXPORT LC
             // -------------------------
-            {
-              label: 'Export LC',
-              route: '/dashboard/Trade-Services/exportlc-welcome',
-              open: false,
-              children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/amend' },
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
-              ]
-            },
+            // {
+            //   label: 'Export LC',
+            //   route: '/dashboard/Trade-Services/exportlc-welcome',
+            //   open: false,
+            //   children: [
+            //     { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
+            //     { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/amend' },
+            //     { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
+            //   ]
+            // },
 
             // -------------------------
             // SHIPPING GUARANTEE

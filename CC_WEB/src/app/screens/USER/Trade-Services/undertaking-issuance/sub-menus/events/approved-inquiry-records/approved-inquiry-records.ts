@@ -1,11 +1,13 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 import { ApiService } from "../../../../../../../core/services/api.service";
 import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { UndertakingGuarantee } from '../../../../../../../core/models/undertaking-lc';
+import { UndertakingIssuanceService } from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-approved-inquiry-records',
@@ -16,8 +18,8 @@ import { ImportlcFormTransactionService } from '../../../../../../../core/servic
 export class ApprovedInquiryRecords {
   currentPage = 1;
   itemsPerPage = 10;
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
+  allTransactions: UndertakingGuarantee[] = [];
+  filteredTransactions: UndertakingGuarantee[] = [];
   showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
@@ -30,36 +32,41 @@ export class ApprovedInquiryRecords {
     { key: 'rejected', label: 'Rejected' },
     // { key: 'response awaited', label: 'Response Awaited'}
   ];
-  sortColumn: keyof ImportLcTransaction = 'createdOn';
+  sortColumn: keyof UndertakingGuarantee = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
-  private isBrowser: boolean;
-
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
   constructor(
     private api: ApiService,
-    private transactionService: ImportlcFormTransactionService,
+    private transactionService: UndertakingIssuanceService,
     private router: Router,
-    @Inject(PLATFORM_ID) platformId: Object,
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+    private route: ActivatedRoute,
+  ) {}
 
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-    this.initializeScreen();
-  }
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab');
+      if (
+        tab &&
+        this.tabs.some(t => t.key === tab)
+      ) {
+        this.activeTab = tab;
+      }
 
-  private initializeScreen(): void {
-    this.loadApprovedTransactions();
+      this.currentPage = 1;
+      this.loadApprovedTransactions();
+  });
   }
-
   private loadApprovedTransactions(): void {
     if (this.activeTab === 'live') {
 
-      this.api.getLiveEventHistory().subscribe({
+      this.api.getApprovedUtgMasterLcRecords().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
-          this.filteredTransactions = [...txList];
+          this.applyFilters();
+          // this.filteredTransactions = [...txList];
         },
         error: () => {
           this.allTransactions = [];
@@ -70,11 +77,12 @@ export class ApprovedInquiryRecords {
       return;
     }
     const backend =  this.mapTabToBackendStatus(this.activeTab)
-    this.api.getAmendRecordTransactionsByStatus(backend).subscribe({
+    this.api.getUtgAmendRecordsByStatus(backend).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
-        this.filteredTransactions = [...this.allTransactions];
-        this.currentPage = 1;
+        // this.filteredTransactions = [...this.allTransactions];
+        // this.currentPage = 1;
+        this.applyFilters();
       },
       error: () => {
         this.allTransactions = [];
@@ -83,7 +91,7 @@ export class ApprovedInquiryRecords {
     });
   }
 
-  get pagedTransactions(): ImportLcTransaction[] {
+  get pagedTransactions(): UndertakingGuarantee[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -102,7 +110,6 @@ export class ApprovedInquiryRecords {
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
         tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.issuingBankName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
 
       const matchesCurrency =
@@ -114,7 +121,7 @@ export class ApprovedInquiryRecords {
     this.applySorting(filtered);
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
+  private applySorting(source: UndertakingGuarantee[] = this.allTransactions): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
@@ -149,11 +156,11 @@ export class ApprovedInquiryRecords {
     this.currentPage = 1;
   }
 
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
+  private resolveColumn(tx: UndertakingGuarantee, column: string): any {
     switch (column) {
       case 'tnxId': return tx.tnxId;
       case 'currency': return tx.currency;
-      case 'amount': return tx.amount;
+      case 'undertakingAmount': return tx.undertakingAmount;
       case 'expiryDate': return tx.expiryDate;
       case 'createdOn': return tx.createdOn;
       default: return null;
@@ -164,13 +171,18 @@ export class ApprovedInquiryRecords {
     this.applyFilters();
   }
   setActiveTab(tab: string): void {
+    if (this.activeTab === tab) {
+      return;
+    }
+
     this.activeTab = tab;
     this.currentPage = 1;
+
     this.loadApprovedTransactions();
   }
 
   // simple sorting helper
-  toggleSort(column: keyof ImportLcTransaction): void {
+  toggleSort(column: keyof UndertakingGuarantee): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -191,36 +203,37 @@ export class ApprovedInquiryRecords {
     });
   }
 
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  trackByTnxId(_: number, tx: UndertakingGuarantee): string {
     return tx.tnxId!;
   }
 
 
-  viewTransaction(tx: ImportLcTransaction): void {
+  viewTransaction(tx: UndertakingGuarantee): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-    this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
+    this.api.getUtgAmendmentByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/amend/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/amend/preview']);
       }
     });
   }
 
-  openApprovedAmendTransaction(tx: ImportLcTransaction): void {
+  openApprovedAmendTransaction(tx: UndertakingGuarantee): void {
     // Navigate to import screen
     this.router.navigate(
-      ['/import-screen/amend', tx.tnxId],
+      ['/dashboard/Trade-Services/undertaking-issuance/amend', tx.tnxId],
       {
         queryParams: {
           mode: 'EDIT',
-          tab: this.activeTab,           // pass current tab
-         eventType: tx.eventType ?? '', // pass event type from the record
-         eventRefNo: tx.eventRefNo ?? ''
+          tab: this.activeTab,
+          eventType: this.activeTab === 'live' ? 'AMD' : (tx.eventType ?? 'AMD'),
+          // Only pass eventRefNo for non-live tabs (for navigating to a specific event)
+          ...(this.activeTab !== 'live' && { eventRefNo: tx.eventRefNo ?? '' })
         }
       }
     );

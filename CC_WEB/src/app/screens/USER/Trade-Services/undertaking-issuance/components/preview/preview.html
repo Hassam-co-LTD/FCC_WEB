@@ -1,4 +1,4 @@
-<div class="preview-page" *ngIf="formData">
+<div class="preview-page" *ngIf="undertakingForm">
 
   <h2 class="page-title">Preview Undertaking</h2>
 
@@ -10,22 +10,22 @@
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Product Type</div>
-            <div class="preview-value">{{ getVal('generalDetails', 'productType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.productType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Mode of Transmission</div>
-            <div class="preview-value">{{ getVal('generalDetails', 'modeOfTransmission') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.modeOfTransmission }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Form of Undertaking</div>
-            <div class="preview-value">{{ getVal('generalDetails', 'formOfUndertaking') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.formOfUndertaking }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Purpose</div>
-            <div class="preview-value">{{ getVal('generalDetails', 'purpose') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.purpose }}</div>
           </div>
         </div>
       </mat-card>
@@ -35,25 +35,27 @@
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Applicant Name</div>
-            <div class="preview-value">{{ getVal('applicantBeneficiary', 'applicantName') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.applicantName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Applicant Address</div>
             <div class="preview-value">
-              {{ getVal('applicantBeneficiary', 'applicantAddress1') }}<br>
-              {{ getVal('applicantBeneficiary', 'applicantAddress2') }}
+              {{ undertakingForm.value.applicantAddress1 }}<br>
+              {{ undertakingForm.value.applicantAddress2 }}<br>
+              {{ undertakingForm.value.applicantAddress3 }}<br>
+              {{ undertakingForm.value.applicantAddress4 }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Name</div>
-            <div class="preview-value">{{ getVal('applicantBeneficiary', 'beneficiaryName') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.beneficiaryName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Country</div>
-            <div class="preview-value">{{ getVal('applicantBeneficiary', 'beneficiaryCountry') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.beneficiaryCountry }}</div>
           </div>
         </div>
       </mat-card>
@@ -65,32 +67,32 @@
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Issuance Type</div>
-            <div class="preview-value">{{ getVal('bankForm', 'issuanceType') || 'N/A' }}</div>
+            <div class="preview-value">{{ undertakingForm.value.issuanceType || 'N/A' }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Recipient Bank</div>
-            <div class="preview-value">{{ getVal('bankForm', 'recipientBankName') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.recipientBankName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Issuer Reference</div>
-            <div class="preview-value">{{ getVal('bankForm', 'issuerReference') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.issuerReference }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Selected Bank</div>
-            <div class="preview-value">{{ getVal('bankForm', 'bankName') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.bankName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">SWIFT</div>
-            <div class="preview-value">{{ getVal('bankForm', 'swift') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.swiftcode }}</div>
           </div>
           
            <div class="preview-item">
             <div class="preview-label">Bank Country</div>
-            <div class="preview-value">{{ getVal('bankForm', 'country') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.bankCountry }}</div>
           </div>
         </div>
       </mat-card>
@@ -101,32 +103,32 @@
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Delivery Type</div>
-            <div class="preview-value">{{ getVal('instructions', 'deliveryType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.deliveryType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Delivery Mode</div>
-            <div class="preview-value">{{ getVal('instructions', 'deliveryMode') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.deliveryMode }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Delivery To</div>
-            <div class="preview-value">{{ getVal('instructions', 'deliveryTo') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.deliveryTo }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Principal Account</div>
-            <div class="preview-value">{{ getVal('instructions', 'principalAccount') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.principalAccount }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Fee Account</div>
-            <div class="preview-value">{{ getVal('instructions', 'feeAccount') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.feeAccount }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Other Instructions</div>
-            <div class="preview-value pre-wrap">{{ getVal('instructions', 'otherInstructions') }}</div>
+            <div class="preview-value pre-wrap">{{ undertakingForm.value.otherInstructions }}</div>
           </div>
         </div>
       </mat-card>
@@ -140,42 +142,42 @@
         <div class="preview-grid four-col">
           <div class="preview-item">
             <div class="preview-label">Undertaking Type</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'typeOfUndertaking') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.typeOfUndertaking }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Effective Date</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'effectiveOption') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.effectiveOption }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Expiry Type</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'expiryType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.expiryType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Expiry Date</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'expiryDate') | date:'mediumDate' }}</div>
+            <div class="preview-value">{{ undertakingForm.value.expiryDate | date:'mediumDate' }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Currency</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'currency') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.currency }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Amount</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'undertakingAmount') | number:'1.2-2' }}</div>
+            <div class="preview-value">{{ undertakingForm.value.undertakingAmount | number:'1.2-2' }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Tolerance (+)</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'variationPlus') }}%</div>
+            <div class="preview-value">{{ undertakingForm.value.variationPlus }}%</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Tolerance (-)</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'variationMinus') }}%</div>
+            <div class="preview-value">{{ undertakingForm.value.variationMinus }}%</div>
           </div>
         </div>
 
@@ -185,27 +187,27 @@
         <div class="preview-grid four-col">
           <div class="preview-item">
             <div class="preview-label">Issuance Charges</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'issuanceCharges') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.issuanceCharges }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Correspondent Charges</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'correspondentCharges') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.correspondentCharges }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Extension Type</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'basicExtensionType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.basicExtensionType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Increase/Decrease</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'increaseDecreaseType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.increaseDecreaseType }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Supplementary Info (Amount)</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'supplementaryInfo') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.supplementaryInfo }}</div>
           </div>
         </div>
 
@@ -215,32 +217,32 @@
         <div class="preview-grid four-col">
           <div class="preview-item">
             <div class="preview-label">Contract Type</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'contractType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.contractType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Contract Date</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'contractDate') | date:'mediumDate' }}</div>
+            <div class="preview-value">{{ undertakingForm.value.contractDate | date:'mediumDate' }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Contract Currency</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'contractCurrency') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.contractCurrency }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Contract Amount</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'contractAmount') | number:'1.2-2' }}</div>
+            <div class="preview-value">{{ undertakingForm.value.contractAmount | number:'1.2-2' }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">% Covered</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'percentageCovered') }}%</div>
+            <div class="preview-value">{{ undertakingForm.value.percentageCovered }}%</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Contract Narrative</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'contractReference') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.contractNarrative }}</div>
           </div>
         </div>
 
@@ -250,22 +252,22 @@
         <div class="preview-grid four-col">
           <div class="preview-item">
             <div class="preview-label">Applicable Rules</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'applicableRules') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.applicableRules }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Governing Laws</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'governingLawsType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.governingLawsType }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Subdivision</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'subdivision') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.subdivision }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Jurisdiction</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'jurisdiction') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.jurisdiction }}</div>
           </div>
         </div>
 
@@ -275,17 +277,17 @@
         <div class="preview-grid four-col">
           <div class="preview-item">
             <div class="preview-label">Demand Indicator</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'demandOption') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.demandOption }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Text Standard</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'tsOption') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.tsOption }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Language</div>
-            <div class="preview-value">{{ getVal('undertakingDetails', 'languageType') }}</div>
+            <div class="preview-value">{{ undertakingForm.value.languageType }}</div>
           </div>
         </div>
 
@@ -295,17 +297,17 @@
         <div class="preview-grid">
           <div class="preview-item full-width">
             <div class="preview-label">Text of Undertaking</div>
-            <div class="preview-value pre-wrap">{{ getVal('undertakingDetails', 'textOfUndertakingInfo') }}</div>
+            <div class="preview-value pre-wrap">{{ undertakingForm.value.textOfUndertakingInfo }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Underlying Transaction Details</div>
-            <div class="preview-value pre-wrap">{{ getVal('undertakingDetails', 'underlyingTransactionInfo') }}</div>
+            <div class="preview-value pre-wrap">{{ undertakingForm.value.underlyingTransactionInfo }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Presentation Instruction</div>
-            <div class="preview-value pre-wrap">{{ getVal('undertakingDetails', 'presentationInfo') }}</div>
+            <div class="preview-value pre-wrap">{{ undertakingForm.value.presentationInfo }}</div>
           </div>
         </div>
 
@@ -317,7 +319,7 @@
       <mat-card class="preview-card full-width">
         <h3 class="section-title">Attachments</h3>
 
-        <ng-container *ngIf="attachments.length > 0; else noAttachments">
+        <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
           <div class="preview-attachments-container">
             <div class="attachment-grid header">
               <div>Type</div>
@@ -326,16 +328,16 @@
               <div>Actions</div>
             </div>
 
-            <div class="attachment-grid" *ngFor="let f of attachments; let i = index">
+            <div class="attachment-grid" *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex">
               <div>
-                <mat-icon *ngIf="f.type?.includes('pdf')">picture_as_pdf</mat-icon>
-                <mat-icon *ngIf="f.type?.includes('image')">image</mat-icon>
-                <mat-icon *ngIf="!f.type?.includes('image') && !f.type?.includes('pdf')">insert_drive_file</mat-icon>
+                <mat-icon *ngIf="f.value.type?.includes('pdf')">picture_as_pdf</mat-icon>
+                <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
+                <mat-icon *ngIf="!f.value.type?.includes('image') && !f.value.type?.includes('pdf')">insert_drive_file</mat-icon>
               </div>
 
-              <div>{{ f.fileName }}</div>
+              <div>{{ f.value.fileName }}</div>
 
-              <div>{{ (f.size / 1024) | number:'1.0-2' }} KB</div>
+              <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
 
               <div>
                 <mat-icon class="action-icon" (click)="downloadFile(i)">download</mat-icon>
@@ -355,18 +357,25 @@
 </div>
 
 <div class="actions">
-  <button mat-stroked-button (click)="close()">Back</button>
 
-  <ng-container *ngIf="statusChar === 's'">
-    <button mat-flat-button color="primary" (click)="reject()">Reject</button>
-    <button mat-flat-button color="primary" (click)="approve()">Approve</button>
+  <!-- ALWAYS -->
+  <button mat-stroked-button (click)="back()">Back</button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+
+    <button mat-flat-button color="primary" (click)="submitForm()" *ngIf="currentTx?.status === 'I'">
+      Submit
+    </button>
+
+    <button mat-flat-button color="warn" (click)="rejectTransaction()" *ngIf="currentTx?.status === 'S'">
+      Reject
+    </button>
+
+    <button mat-flat-button color="primary" (click)="approveTransaction()" *ngIf="currentTx?.status === 'S'">
+      Approve
+    </button>
+
   </ng-container>
 
-  <!-- <ng-container *ngIf="statusChar === 'a'">
-    <button mat-flat-button color="accent" (click)="amend()">Amend</button>
-  </ng-container> -->
-
-  <ng-container *ngIf="statusChar === 'r'">
-    <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
-  </ng-container>
 </div>

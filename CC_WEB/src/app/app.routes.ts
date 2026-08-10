@@ -375,10 +375,10 @@ export const routes: Routes = [
                                     import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee),
                             },
                             {
-                                matcher: transactionIdMatcher,loadComponent: () =>import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee)
+                                matcher: transactionIdMatcher, loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee)
                             },
                             { path: 'shipping-guarantee/amend/:tnxId', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend) },
-                            { path: 'shipping-guarantee', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee)},
+                            { path: 'shipping-guarantee', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee) },
                             {
                                 path: 'shipping-welcome',
                                 loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
@@ -423,6 +423,11 @@ export const routes: Routes = [
                             { path: 'undertaking-issuance/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
                             { path: 'undertaking-issuance/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview) },
                             {
+                                path: 'undertaking-issuance/:tnxId',
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(m => m.UndertakingIssuance),
+                            },
+                            {
                                 matcher: transactionIdMatcher,
                                 loadComponent: () =>
                                     import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance')
@@ -443,7 +448,7 @@ export const routes: Routes = [
                                     uploadRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=upload'
                                 },
                             },
-                            
+
                             // ---------- IMPORT LC ----------
                             { path: 'import-screen/inquiries', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(m => m.EnquiriesOfRecords) },
                             { path: 'import-screen/preview', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(m => m.Preview) },
@@ -457,7 +462,7 @@ export const routes: Routes = [
                                     import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
                             },
                             {
-                                matcher: transactionIdMatcher,loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen)
+                                matcher: transactionIdMatcher, loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen)
                             },
                             { path: 'import-screen/amend/:tnxId', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
                             { path: 'import-screen', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen) },
