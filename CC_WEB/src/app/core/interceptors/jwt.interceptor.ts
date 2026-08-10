@@ -131,7 +131,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
           return http.post<any>(
 
-            'http://localhost:8051/api/v1/auth/refresh-token',
+            'http://localhost:8056/api/v1/auth/refresh-token',
 
             {
               refreshToken: refreshToken
