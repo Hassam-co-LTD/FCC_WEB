@@ -7,10 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
   standalone: true,
   imports: [MatButtonModule],
   templateUrl: './welcome-screen.html',
-  styleUrls: ['./welcome-screen.scss']
+  styleUrls: ['./welcome-screen.scss'],
 })
 export class WelcomeScreen {
-
   title = '';
   description = '';
 
@@ -19,16 +18,19 @@ export class WelcomeScreen {
   existingRoute = '';
   uploadRoute = '';
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {
     const data = this.route.snapshot.data;
 
     this.title = data['title'] || 'Welcome';
     this.description = data['description'] || '';
 
     this.createRoute = data['createRoute'];
-    this.templateRoute = data['templateRoute'];
+    // this.templateRoute = data['templateRoute'];
     this.existingRoute = data['existingRoute'];
-    this.uploadRoute = data['uploadRoute'];
+    // this.uploadRoute = data['uploadRoute'];
   }
 
   navigate(path: string) {

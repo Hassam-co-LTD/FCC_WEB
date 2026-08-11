@@ -46,7 +46,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     Attachments,
     MatDialogModule,
     Sidebar,
-    RouterOutlet,
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss']

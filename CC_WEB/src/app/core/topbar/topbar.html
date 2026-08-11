@@ -22,7 +22,7 @@
       @if (menuOpen) {
       <ul class="dropdown-menu">
         <li><button [routerLink]="['/dashboard/Trade-Services/import-welcome']" (click)="closeMenu()">Import LC</button></li>
-        <li><button [routerLink]="['/dashboard/Trade-Services/exportlc-welcome']" (click)="closeMenu()">Export LC</button></li>
+        <!-- <li><button [routerLink]="['/dashboard/Trade-Services/exportlc-welcome']" (click)="closeMenu()">Export LC</button></li> -->
         <li><button [routerLink]="['/dashboard/Trade-Services/shipping-welcome']" (click)="closeMenu()">Shipping Guarantee</button></li>
         <li><button [routerLink]="['/dashboard/Trade-Services/export-collection']" (click)="closeMenu()">Export Collection</button></li>
         <li><button [routerLink]="['/dashboard/Trade-Services/undertaking-welcome']" (click)="closeMenu()">Undertaking Guarantee</button></li>
@@ -62,7 +62,7 @@
 
       <mat-divider></mat-divider>
 
-      <button mat-menu-item class="menu-row">
+      <!-- <button mat-menu-item class="menu-row">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>
@@ -70,7 +70,7 @@
       <button mat-menu-item class="menu-row">
         <mat-icon>settings</mat-icon>
         <span>Settings</span>
-      </button>
+      </button> -->
 
       <button mat-menu-item class="menu-row" (click)="goToChangePassword()">
         <mat-icon>lock</mat-icon>
