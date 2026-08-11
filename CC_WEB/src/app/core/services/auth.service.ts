@@ -1,12 +1,15 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject,NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+ import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-
+  private router = inject(Router)
+  private ngZone = inject(NgZone)
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
@@ -41,15 +44,83 @@ export class AuthService {
 }
 
   /** Logout */
-  logout() {
-    if (this.isBrowser()) {
-      sessionStorage.clear();
-      localStorage.clear();
-    } else {
-      console.log("You are on the server");
-    }
+ 
+logout(): void {
+
+  if (this.isBrowser()) {
+
+
+    console.log("========== LOGOUT START ==========");
+
+
+    // Clear authentication data
+    sessionStorage.removeItem('token');
+
+    sessionStorage.removeItem('refreshToken');
+
+    sessionStorage.removeItem('userData');
+
+
+    // Clear all stored session data
+    sessionStorage.clear();
+
+    localStorage.clear();
+
+
+
+    console.log("Session storage cleared");
+
+
+
+    this.ngZone.run(() => {
+
+
+      Swal.fire({
+
+        icon: 'warning',
+
+        title: 'Session Expired',
+
+        text: 'Your session has expired due to inactivity. Please login again.',
+
+        confirmButtonText: 'Login Again',
+
+        allowOutsideClick: false,
+
+        allowEscapeKey: false
+
+
+      }).then(() => {
+
+
+        console.log(
+          "Redirecting to login..."
+        );
+
+
+        this.router.navigate([
+          '/login'
+        ]);
+
+
+      });
+
+
+    });
+
+
+
+  } else {
+
+
+    console.log(
+      "You are on the server"
+    );
+
+
   }
 
+}
   /** Check if user is logged in (sessionStorage contains backend userData) */
   checkAuth(): boolean {
     return !!sessionStorage.getItem('userData');
