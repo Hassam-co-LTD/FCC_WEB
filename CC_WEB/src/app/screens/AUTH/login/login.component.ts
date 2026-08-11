@@ -14,6 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // Core Application Service Providers
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
+import { SessionTimeoutService } from '../../../core/services/session-timeout-service/session-timeout-service';
 
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState = 'LOGIN' | 'FORGOT_PASSWORD' | 'EMAIL_SENT' | 'RESET_PASSWORD' | 'EXPIRED' | 'SUCCESS';
@@ -91,7 +92,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private auth: AuthService,
     protected router: Router,
     private api: ApiService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sessionTimeOut:SessionTimeoutService
   ) {}
 
   /**
@@ -206,34 +208,124 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  private loginApi(): void {
-    this.api.userLogin({
-      loginId: this.loginId,
-      companyId: this.companyId,
-      password: this.password,
-      userStatus: this.userStatus
-    }, 'clientUsers').subscribe({
-      next: (res) => {
-        sessionStorage.setItem('userData', JSON.stringify(res));
-        const companyType = this.auth.getCompanyType();
-        const customerType = this.auth.getUserCategory();
+   loginApi(): void {
 
-        if (companyType === 'B') {
-          this.router.navigate(['/customer-user']);
-        } else if (companyType === 'C' && customerType === 'A') {
-          this.router.navigate(['/admin']);
-        } else if (companyType === 'C' && customerType === 'U') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          Swal.fire({ icon: 'warning', title: 'Login Warning', text: 'Undefined user category. Contact system support hierarchy.' });
-        }
-      },
-      error: (err) => {
-        Swal.fire({ icon: 'error', title: 'Authentication Failed', text: err?.error?.message || 'Invalid enterprise access configurations.' });
+  this.api.userLogin({
+    loginId: this.loginId,
+    companyId: this.companyId,
+    password: this.password,
+    userStatus: this.userStatus
+
+  }, 'clientUsers')
+
+  .subscribe({
+
+    next: (res) => {
+
+  
+      console.log(res.body);
+      console.log(res.headers)
+      const loginData = res.body;
+      // Save user information
+      sessionStorage.setItem(
+        'userData',
+        JSON.stringify(loginData)
+      );
+
+
+
+      // Save JWT
+      sessionStorage.setItem(
+        'token',
+        loginData.token
+      );
+
+
+
+      // Save Refresh Token
+      sessionStorage.setItem(
+        'refreshToken',
+        loginData.refreshToken
+      );
+
+
+
+      // START SESSION TIMEOUT WATCHER
+      this.sessionTimeOut.startWatching();
+
+      const companyType = this.auth.getCompanyType();
+
+      const customerType = this.auth.getUserCategory();
+
+
+
+      if (companyType === 'B') {
+
+
+        this.router.navigate([
+          '/customer-user'
+        ]);
+
+
+      } else if (
+          companyType === 'C' &&
+          customerType === 'A'
+      ) {
+
+
+        this.router.navigate([
+          '/admin'
+        ]);
+
+
+      } else if (
+          companyType === 'C' &&
+          customerType === 'U'
+      ) {
+
+
+        this.router.navigate([
+          '/dashboard'
+        ]);
+
+
+      } else {
+
+
+        Swal.fire({
+
+          icon: 'warning',
+          title: 'Login Warning',
+          text: 'Undefined user category. Contact system support hierarchy.'
+
+        });
+
+
       }
-    });
-  }
 
+
+    },
+
+
+    error: (err) => {
+
+
+      Swal.fire({
+
+        icon: 'error',
+        title: 'Authentication Failed',
+        text:
+          err?.error?.message ||
+          'Invalid enterprise access configurations.'
+
+      });
+
+
+    }
+
+  });
+
+}
   sendResetLink(): void {
     if (!this.forgotLoginId || !this.forgotCompanyId) {
       Swal.fire({ icon: 'warning', title: 'Missing Identity Parameters', text: 'Login ID and Company ID are required.' });

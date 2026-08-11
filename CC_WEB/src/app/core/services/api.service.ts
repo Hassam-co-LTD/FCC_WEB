@@ -992,7 +992,34 @@ changePassword(payload: any,sign:String) {
     payload
   );
 }
+
+getAllTnx(name:String){
+  return this.http.get<any>(`${this.adminBaseUrl}${name}`);
+}
 // Implementation to fetch dropdown options based on the provided parameters
 
+// Implementation to fetch dropdown options based on the provided parameters
 
+importCustomers(formData: FormData) {
+  return this.http.post(
+    `${environment.apiUrl}customer/import`,
+    formData
+  );
+}
+
+
+refreshToken() {
+
+  const refreshToken =
+      sessionStorage.getItem("refreshToken");
+
+  return this.http.post<any>(
+      environment.gatewayUrl +
+      '/api/v1/auth/refresh-token',
+      {
+        refreshToken
+      }
+  );
+
+}
 }
