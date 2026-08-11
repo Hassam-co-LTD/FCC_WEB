@@ -1079,20 +1079,20 @@ export class ApiService {
 
   validateResetToken(token: string) {
     return this.http.get<any>(
-      `${environment.apiUrl}clientUsers/validate-reset-token`,
+      `${environment.gatewayUrl}/api/v1/clientUsers/validate-reset-token`,
       {
         params: {
-          token: token
-        }
-      }
+          token: token,
+        },
+      },
     );
   }
   // user change password 
 
 changePassword(payload: any,sign:String) {
   return this.http.post(
-    `${environment.apiUrl}clientUsers/${sign}`,
-    payload
+    `${environment.gatewayUrl}/api/v1/clientUsers/${sign}`,
+    payload,
   );
 }
 
@@ -1105,8 +1105,8 @@ getAllTnx(name:String){
 
 importCustomers(formData: FormData) {
   return this.http.post(
-    `${environment.apiUrl}customer/import`,
-    formData
+    `${environment.gatewayUrl}/api/v1/customer/import`,
+    formData,
   );
 }
 

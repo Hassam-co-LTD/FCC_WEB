@@ -1,1 +1,575 @@
+<!-- =====================================================
+     TRADE SERVICES HOME
+====================================================== -->
+
+<div
+  class="trade-dashboard-container"
+  *ngIf="isHome"
+>
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <div class="trade-header">
+
+    <div class="trade-header-left">
+
+      <div class="trade-title-icon">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+
+      <div>
+
+        <h1>Trade Services</h1>
+
+        <p>
+          Manage and monitor your trade finance operations
+        </p>
+
+        <span
+          class="sync-indicator"
+          [class.syncing]="isSyncing"
+          (click)="refreshDashboard()"
+        >
+
+          <mat-icon>
+            {{ isSyncing ? 'sync' : 'check_circle' }}
+          </mat-icon>
+
+          {{ isSyncing ? 'Syncing...' : 'Synced' }}
+
+          <small>
+            {{ lastUpdated | date:'shortTime' }}
+          </small>
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="trade-header-actions">
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="newTransaction()"
+      >
+
+        <mat-icon>add</mat-icon>
+
+        New Transaction
+
+      </button>
+
+
+      <button
+        mat-stroked-button
+        routerLink="/dashboard/search-by-id"
+      >
+
+        <mat-icon>search</mat-icon>
+
+        Search
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       OVERVIEW
+  ====================================================== -->
+
+  <section class="overview-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>Trade Services Overview</h2>
+
+        <p>
+          Current transaction activity across trade services
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="overview-grid">
+
+
+      <!-- TOTAL -->
+
+      <div class="overview-card">
+
+        <div class="overview-icon primary">
+
+          <mat-icon>
+            receipt_long
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>Total Transactions</span>
+
+          <strong>
+            {{ overview.total | number }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- PENDING -->
+
+      <div class="overview-card">
+
+        <div class="overview-icon pending">
+
+          <mat-icon>
+            hourglass_empty
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>Pending</span>
+
+          <strong>
+            {{ overview.pending | number }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- COMPLETED -->
+
+      <div class="overview-card">
+
+        <div class="overview-icon completed">
+
+          <mat-icon>
+            check_circle
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>Completed</span>
+
+          <strong>
+            {{ overview.completed | number }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- REJECTED -->
+
+      <div class="overview-card">
+
+        <div class="overview-icon rejected">
+
+          <mat-icon>
+            warning
+          </mat-icon>
+
+        </div>
+
+        <div>
+
+          <span>Rejected</span>
+
+          <strong>
+            {{ overview.rejected | number }}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       SERVICES
+  ====================================================== -->
+
+  <section class="services-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>Service Activity</h2>
+
+        <p>
+          Transaction activity by trade service
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="services-grid">
+
+      @for (service of services; track service.id) {
+
+        <div
+          class="service-card"
+          (click)="openService(service)"
+        >
+
+          <div
+            class="service-icon"
+            [class]="service.cssClass"
+          >
+
+            <mat-icon>
+              {{ service.icon }}
+            </mat-icon>
+
+          </div>
+
+
+          <div class="service-main">
+
+            <div class="service-title-row">
+
+              <h3>
+                {{ service.title }}
+              </h3>
+
+              <mat-icon>
+                arrow_forward
+              </mat-icon>
+
+            </div>
+
+
+            <p>
+              {{ service.description }}
+            </p>
+
+
+            <div class="service-total">
+
+              <span>
+                {{ service.total | number }}
+              </span>
+
+              <small>
+                total transactions
+              </small>
+
+            </div>
+
+
+            <div class="service-stats">
+
+              <div>
+
+                <span class="stat-dot pending"></span>
+
+                <span>Pending</span>
+
+                <strong>
+                  {{ service.pending }}
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span class="stat-dot completed"></span>
+
+                <span>Completed</span>
+
+                <strong>
+                  {{ service.completed }}
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span class="stat-dot rejected"></span>
+
+                <span>Rejected</span>
+
+                <strong>
+                  {{ service.rejected }}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       PENDING ACTIONS
+  ====================================================== -->
+
+  <section class="pending-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>Pending Actions</h2>
+
+        <p>
+          Transactions that require your attention
+        </p>
+
+      </div>
+
+
+      <button
+        mat-button
+        color="primary"
+        routerLink="/dashboard/search-by-id"
+      >
+
+        View All
+
+        <mat-icon>
+          arrow_forward
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <div class="pending-table">
+
+      <div class="table-row table-header">
+
+        <span>Reference</span>
+
+        <span>Service</span>
+
+        <span>Description</span>
+
+        <span>Status</span>
+
+        <span>Date</span>
+
+        <span>Action</span>
+
+      </div>
+
+
+      @for (action of pendingActions; track action.id) {
+
+        <div class="table-row">
+
+          <span class="reference">
+            {{ action.reference }}
+          </span>
+
+          <span>
+            {{ action.service }}
+          </span>
+
+          <span>
+            {{ action.description }}
+          </span>
+
+          <span>
+
+            <span class="action-status">
+              {{ action.status }}
+            </span>
+
+          </span>
+
+          <span>
+            {{ action.date | date:'MMM d, yyyy' }}
+          </span>
+
+          <span>
+
+            <button
+              mat-icon-button
+              [routerLink]="action.route"
+              matTooltip="View Transaction"
+            >
+
+              <mat-icon>
+                visibility
+              </mat-icon>
+
+            </button>
+
+          </span>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       RECENT ACTIVITY
+  ====================================================== -->
+
+  <section class="recent-section">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h2>Recent Trade Activity</h2>
+
+        <p>
+          Latest activity across your trade services
+        </p>
+
+      </div>
+
+
+      <button
+        mat-button
+        color="primary"
+        routerLink="/dashboard/search-by-id"
+      >
+
+        View All Activity
+
+        <mat-icon>
+          arrow_forward
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <div class="recent-list">
+
+      @for (activity of recentActivity; track activity.id) {
+
+        <div class="recent-item">
+
+          <div class="recent-icon">
+
+            <mat-icon>
+              {{ getActivityIcon(activity.type) }}
+            </mat-icon>
+
+          </div>
+
+
+          <div class="recent-content">
+
+            <div class="recent-title">
+
+              {{ activity.title }}
+
+              <span
+                class="recent-status"
+                [class.completed]="activity.status === 'Completed'"
+                [class.pending]="activity.status === 'Pending'"
+                [class.review]="activity.status === 'Under Review'"
+              >
+
+                {{ activity.status }}
+
+              </span>
+
+            </div>
+
+
+            <div class="recent-meta">
+
+              <span class="reference">
+                {{ activity.reference }}
+              </span>
+
+              <span>
+                {{ activity.date | date:'MMM d, h:mm a' }}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="recent-amount">
+
+            <strong>
+
+              {{
+                activity.amount
+                  | currency:activity.currency:'symbol':'1.2-2'
+              }}
+
+            </strong>
+
+
+            <button
+              mat-icon-button
+              [routerLink]="activity.route"
+              matTooltip="View Details"
+            >
+
+              <mat-icon>
+                arrow_forward
+              </mat-icon>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<!-- =====================================================
+     CHILD ROUTES
+====================================================== -->
+
 <router-outlet></router-outlet>
