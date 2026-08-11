@@ -1,15 +1,17 @@
 <header class="topbar">
-
   <!-- Group hamburger + title -->
   <div class="left-group">
     <div class="brand" routerLink="/dashboard">
-      <img src="/branding/infotech-logo.jpg" alt="Infotech" class="brand-logo" />
+      <img
+        src="/branding/infotech-logo.jpg"
+        alt="Infotech"
+        class="brand-logo"
+      />
     </div>
   </div>
 
   <!-- Center Navigation -->
   <nav class="nav" [class.open]="menuVisible">
-
     <a routerLink="/dashboard" class="nav-link">Dashboard</a>
 
     <!-- Trade Services Dropdown -->
@@ -21,11 +23,39 @@
 
       @if (menuOpen) {
       <ul class="dropdown-menu">
-        <li><button [routerLink]="['/dashboard/Trade-Services/import-welcome']" (click)="closeMenu()">Import LC</button></li>
+        <li>
+          <button
+            [routerLink]="['/dashboard/Trade-Services/import-welcome']"
+            (click)="closeMenu()"
+          >
+            Import LC
+          </button>
+        </li>
         <!-- <li><button [routerLink]="['/dashboard/Trade-Services/exportlc-welcome']" (click)="closeMenu()">Export LC</button></li> -->
-        <li><button [routerLink]="['/dashboard/Trade-Services/shipping-welcome']" (click)="closeMenu()">Shipping Guarantee</button></li>
-        <li><button [routerLink]="['/dashboard/Trade-Services/export-collection']" (click)="closeMenu()">Export Collection</button></li>
-        <li><button [routerLink]="['/dashboard/Trade-Services/undertaking-welcome']" (click)="closeMenu()">Undertaking Guarantee</button></li>
+        <li>
+          <button
+            [routerLink]="['/dashboard/Trade-Services/shipping-welcome']"
+            (click)="closeMenu()"
+          >
+            Shipping Guarantee
+          </button>
+        </li>
+        <li>
+          <button
+            [routerLink]="['/dashboard/Trade-Services/export-collection']"
+            (click)="closeMenu()"
+          >
+            Export Collection
+          </button>
+        </li>
+        <li>
+          <button
+            [routerLink]="['/dashboard/Trade-Services/undertaking-welcome']"
+            (click)="closeMenu()"
+          >
+            Undertaking Guarantee
+          </button>
+        </li>
       </ul>
       }
     </div>
@@ -34,12 +64,10 @@
       <span class="user-name">{{ userName }}</span>
       <span class="last-login">Last login: {{ lastGoodLogin }}</span>
     </div>
-
   </nav>
 
   <!-- Right User Menu -->
   <div class="right">
-
     <button mat-icon-button class="icon-btn" aria-label="Notifications">
       <mat-icon>notifications</mat-icon>
     </button>
@@ -51,7 +79,6 @@
     </button>
 
     <mat-menu #userMenu="matMenu" class="profile-menu" xPosition="before">
-
       <div class="menu-header">
         <span class="menu-avatar">{{ Name.charAt(0) }}</span>
         <div class="menu-header-text">
@@ -83,9 +110,6 @@
         <mat-icon>logout</mat-icon>
         <span>Logout</span>
       </button>
-
     </mat-menu>
-
   </div>
-
 </header>
