@@ -75,16 +75,24 @@ export class Preview implements OnInit {
       modeOfTransmission: [this.currentTx!.modeOfTransmission], 
       expiryDate: [this.currentTx!.expiryDate],
       placeOfExpiry: [this.currentTx!.placeOfExpiry],
+        featureIrrevocable: [this.currentTx!.featureIrrevocable],
+        featureRevolving: [this.currentTx!.featureRevolving],
+        featureTransferable: [this.currentTx!.featureTransferable],
+        applicableRules: [this.currentTx!.applicableRules],
+        confirmationInstruction: [this.currentTx!.confirmationInstruction],
 
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
       applicantAddress3: [this.currentTx!.applicantAddress3],
-
+      applicantAddress4: [this.currentTx!.applicantAddress4],
+      applicantCountry: [this.currentTx!.applicantCountry],
+      
       beneficiaryName: [this.currentTx!.beneficiaryName],
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
       beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
       beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
       beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
       issuingBankName: [this.currentTx!.issuingBankName],
@@ -94,10 +102,12 @@ export class Preview implements OnInit {
 
       currency: [this.currentTx!.currency],
       amount: [this.currentTx!.amount],
-      additionalAmount: [this.currentTx!.additionalAmount],
       variationType: [this.currentTx!.variationType],
       variationPlus: [this.currentTx!.variationPlus],
       variationMinus: [this.currentTx!.variationMinus],
+      issuingBankCharges: [this.currentTx!.issuingBankCharges],
+      outsideCountryCharges: [this.currentTx!.outsideCountryCharges],
+      additionalAmount: [this.currentTx!.additionalAmount],
 
       creditAvailableWith: [this.currentTx!.creditAvailableWith],
       bankName: [this.currentTx!.bankName],
@@ -116,11 +126,11 @@ export class Preview implements OnInit {
       descriptionOfGoods: [this.currentTx!.descriptionOfGoods],
       documentsRequired: [this.currentTx!.documentsRequired],
       additionalInstructions: [this.currentTx!.additionalInstructions],
-      otherInstructions: [this.currentTx!.otherInstructions],
-
+      otherDetails: [this.currentTx!.otherDetails],
+      
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
-
+      otherInstructions: [this.currentTx!.otherInstructions],
       attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 

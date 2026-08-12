@@ -229,10 +229,6 @@ export class TradeServices implements OnInit {
     }, 1000);
   }
 
-  newTransaction(): void {
-    console.log('New trade transaction');
-  }
-
   openService(service: any): void {
     if (service.route) {
       this.router.navigateByUrl(service.route);

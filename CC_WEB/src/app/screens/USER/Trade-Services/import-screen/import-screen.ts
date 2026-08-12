@@ -160,7 +160,6 @@ export class ImportScreen implements OnInit {
         issuerReference: [''],
         advisingBankName: [''],
         adviseThroughBankName: [''],
-        bankName: ['']
       }),
       amountChargeForm: this.fb.group({
         currency: [''],
