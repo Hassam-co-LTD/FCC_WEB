@@ -14,8 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // Core Application Service Providers
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
-import { SessionTimeoutService } from '../../../core/services/session-timeout-service/session-timeout-service';
-
+import { SessionTimeoutService } from '../../../core/services/admin-service/session-timeout-service/session-timeout-service';
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState = 'LOGIN' | 'FORGOT_PASSWORD' | 'EMAIL_SENT' | 'RESET_PASSWORD' | 'EXPIRED' | 'SUCCESS';
 

@@ -947,7 +947,7 @@ forgotPassword(payload: any) {
 
 resetPassword(payload: { token: string | null; newPassword: string }) {
   return this.http.post(
-    'http://localhost:8051/api/v1/clientUsers/reset-password',
+    `${environment.gatewayUrl}/api/v1/clientUsers/reset-password`,
     payload,
     { responseType: 'text' }
   );
@@ -956,7 +956,7 @@ resetPassword(payload: { token: string | null; newPassword: string }) {
 
 validateResetToken(token: string) {
   return this.http.get<any>(
-    `${environment.apiUrl}clientUsers/validate-reset-token`,
+    `${environment.gatewayUrl}/api/v1/clientUsers/validate-reset-token`,
     {
       params: {
         token: token
@@ -968,7 +968,7 @@ validateResetToken(token: string) {
 
 changePassword(payload: any,sign:String) {
   return this.http.post(
-    `${environment.apiUrl}clientUsers/${sign}`,
+    `${environment.gatewayUrl}/api/v1/clientUsers/${sign}`,
     payload
   );
 }
@@ -982,7 +982,7 @@ getAllTnx(name:String){
 
 importCustomers(formData: FormData) {
   return this.http.post(
-    `${environment.apiUrl}customer/import`,
+    `${environment.gatewayUrl}/api/v1/customer/import`,
     formData
   );
 }

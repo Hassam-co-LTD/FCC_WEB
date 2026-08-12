@@ -1,0 +1,99 @@
+<!-- =========================
+       DYNAMIC CUSTOMER FIELDS
+  ========================== -->
+  <div class="customer-form-wrapper dynamic-fields-section"
+       [formGroup]="form">
+
+    <!-- Section Header -->
+    <div class="section-header" (click)="toggleDynamicFields()">
+      <h2>Customer Additional Fields</h2>
+      <mat-icon>
+        {{ isOpen ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+
+    <!-- Dynamic Fields -->
+    <div class="collapsible"
+         [class.open]="isOpen"
+         [formGroup]="form">
+
+      <div class="form-grid">
+
+        <ng-container *ngFor="let field of fields">
+
+          <div class="field-group">
+
+            <h4>{{ field.label || field.fieldName }}</h4>
+
+            <!-- Text -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'text'"
+              appearance="outline">
+
+              <input
+                matInput
+                [formControlName]="field.fieldName"
+                placeholder="{{ field.label || field.fieldName }}" />
+
+            </mat-form-field>
+
+            <!-- Number -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'number'"
+              appearance="outline">
+
+              <input
+                matInput
+                type="number"
+                [formControlName]="field.fieldName"
+                placeholder="{{ field.label || field.fieldName }}" />
+
+            </mat-form-field>
+
+            <!-- Date -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'date'"
+              appearance="outline">
+
+              <input
+                matInput
+                type="date"
+                [formControlName]="field.fieldName"
+                placeholder="{{ field.label || field.fieldName }}" />
+
+            </mat-form-field>
+
+            <!-- Select -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'select'"
+              appearance="outline">
+
+              <mat-label>
+                {{ field.label || field.fieldName }}
+              </mat-label>
+
+              <mat-select [formControlName]="field.fieldName">
+
+                <mat-option value="">
+                  Select {{ field.label || field.fieldName }}
+                </mat-option>
+
+                <ng-container *ngFor="let option of field.options || []">
+                  <mat-option [value]="option.value">
+                    {{ option.text }}
+                  </mat-option>
+                </ng-container>
+
+              </mat-select>
+
+            </mat-form-field>
+
+          </div>
+
+        </ng-container>
+
+      </div>
+
+    </div>
+
+  </div>

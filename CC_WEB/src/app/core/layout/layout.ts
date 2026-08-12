@@ -386,87 +386,83 @@ export class LayoutComponent implements OnInit {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         // { label: 'Search', icon: 'search', route: '/Search-by-id' },
+       
         {
           label: 'Trade Services',
-          icon: 'article',
+          icon: 'group',
+          route: '/dashboard/Trade-Services',
           open: false,
           children: [
-
 
             // -------------------------
             // IMPORT LC
             // -------------------------
             {
               label: 'Import LC',
-              route: '/import-welcome',
+              route: '/dashboard/Trade-Services/import-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/import-screen' },
-                { label: 'Amend', route: '/import-screen/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/import-screen/inquiries' },
+                { label: 'Create', route: '/dashboard/Trade-Services/import-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/import-screen/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
               ]
             },
-
 
             // -------------------------
             // EXPORT LC
             // -------------------------
             {
               label: 'Export LC',
-              route: '/exportlc-welcome',
+              route: '/dashboard/Trade-Services/exportlc-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/export-screen' },
-                { label: 'Amend', route: '/export-screen/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/export-screen/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
               ]
             },
-
 
             // -------------------------
             // SHIPPING GUARANTEE
             // -------------------------
             {
               label: 'Shipping Guarantee',
-              route: '/shipping-welcome',
+              route: '/dashboard/Trade-Services/shipping-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/shipping-guarantee' },
-                { label: 'Amend', route: '/shipping-guarantee/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/shipping-guarantee/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/shipping-guarantee' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records' },
               ]
             },
-
 
             // -------------------------
             // EXPORT COLLECTION
             // -------------------------
             {
               label: 'Export Collection',
-              route: '/export-collection-welcome',
+              route: '/dashboard/Trade-Services/export-collection-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/export-collection' },
-                { label: 'Amend', route: '/export-collection/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/export-collection/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/export-collection' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-collection/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-collection/inquiries-records' },
               ]
             },
-
 
             // -------------------------
             // UNDERTAKING ISSUANCE
             // -------------------------
             {
               label: 'Undertaking Issuance',
-              route: '/undertaking-welcome',
+              route: '/dashboard/Trade-Services/undertaking-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/undertaking-issuance' },
-                { label: 'Amend', route: '/undertaking-issuance/amend' },
-                { label: 'Inquiries', route: '/undertaking-issuance/inquiries-records' },
+                { label: 'Create', route: '/dashboard/Trade-Services/undertaking-issuance' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records' },
               ]
             },
-
 
           ],
         },
@@ -500,6 +496,54 @@ export class LayoutComponent implements OnInit {
             { label: 'Inquiries', route: '/import-screen/inquiries' },
           ],
         },
+
+        // Generate Dynamic Fields 
+        {
+  label: 'Generate Fields',
+  icon: 'dynamic_form',
+  open: false,
+  children: [
+
+    // -------------------------
+    // DYNAMIC FIELDS
+    // -------------------------
+    {
+      label: 'Dynamic Fields',
+      route: '/dynamic-fields',
+      open: false,
+      children: [
+        {
+          label: 'Create',
+          route: '/dynamic-fields/create'
+        },
+        {
+          label: 'Inquiries',
+          route: '/dynamic-fields/inquiries'
+        }
+      ]
+    },
+
+    // -------------------------
+    // DYNAMIC OPTIONS
+    // -------------------------
+    {
+      label: 'Dynamic Options',
+      route: '/dynamic-options',
+      open: false,
+      children: [
+        {
+          label: 'Create',
+          route: '/dynamic-dropdowns/create'
+        },
+        {
+          label: 'Inquiries',
+          route: '/dynamic-dropdowns-inque/inquiries'
+        }
+      ]
+    }
+
+  ]
+},
         {
           label: 'Logout',
           icon: 'logout',

@@ -1,22 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
-import { GeneralDetails } from "./components/general-details/general-details";
-import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
+import { GeneralDetails } from './components/general-details/general-details';
+import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from './components/bank-details/bank-details';
 import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
 import { PaymentDetails } from './components/payment-details/payment-details';
 import { ShipmentDetails } from './components/shipment-details/shipment-details';
 import { NarrativeDetails } from './components/narrative-details/narrative-details';
-import { Licenses } from "./components/licenses/licenses";
-import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
-import { Attachments } from "./components/attachments/attachments";
-import { Sidebar } from "../../../../core/sidebar/sidebar";
+import { Licenses } from './components/licenses/licenses';
+import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
+import { Attachments } from './components/attachments/attachments';
+import { Sidebar } from '../../../../core/sidebar/sidebar';
 
 import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
@@ -25,7 +31,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 
 @Component({
   selector: 'app-import-lc',
@@ -47,9 +53,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     Sidebar,
     RouterOutlet,
+    DynamicFields
   ],
   templateUrl: './import-screen.html',
-  styleUrls: ['./import-screen.scss']
+  styleUrls: ['./import-screen.scss'],
 })
 export class ImportScreen implements OnInit {
   currentStep = 0;
@@ -64,16 +71,16 @@ export class ImportScreen implements OnInit {
   companyId = '';
 
   importSteps = [
-    { label: "General Details" },
-    { label: "Applicant Details" },
-    { label: "Bank Details" },
-    { label: "Amount & Charges" },
-    { label: "Payment Details" },
-    { label: "Shipment Details" },
-    { label: "Narrative Details" },
-    { label: "Licenses" },
-    { label: "Instructions to Bank" },
-    { label: "Attachments" }
+    { label: 'General Details' },
+    { label: 'Applicant Details' },
+    { label: 'Bank Details' },
+    { label: 'Amount & Charges' },
+    { label: 'Payment Details' },
+    { label: 'Shipment Details' },
+    { label: 'Narrative Details' },
+    { label: 'Licenses' },
+    { label: 'Instructions to Bank' },
+    { label: 'Attachments' },
   ];
 
   constructor(
@@ -84,8 +91,7 @@ export class ImportScreen implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
-    private authservice: AuthService
-
+    private authservice: AuthService,
   ) {
     this.buildForm();
   }
@@ -94,16 +100,18 @@ export class ImportScreen implements OnInit {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
             }
           });
         },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-      sections.forEach(section => observer.observe(section));
+      sections.forEach((section) => observer.observe(section));
     }, 200);
 
     const navState = history.state;
@@ -118,7 +126,7 @@ export class ImportScreen implements OnInit {
     console.log('TNX ID from route:', this.tnxId);
     // const txFromState = history.state.transaction;
     // console.log('Transaction from state:', txFromState);
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const tnxId = params.get('tnxId');
       if (tnxId) {
         this.enterEditMode(tnxId);
@@ -126,6 +134,10 @@ export class ImportScreen implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // load dynamic fields for the current screen and status
+
+    this.loadDynamicFields();
   }
 
   private buildForm(): void {
@@ -140,7 +152,7 @@ export class ImportScreen implements OnInit {
         featureRevolving: [false],
         featureTransferable: [false],
         applicableRules: ['EUCP'],
-        confirmationInstruction: ['confirm']
+        confirmationInstruction: ['confirm'],
       }),
       applicantForm: this.fb.group({
         applicantName: [''],
@@ -154,14 +166,14 @@ export class ImportScreen implements OnInit {
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
         beneficiaryAddress4: [''],
-        beneficiaryCountry: ['']
+        beneficiaryCountry: [''],
       }),
       bankForm: this.fb.group({
         issuingBankName: [''],
         issuerReference: [''],
         advisingBankName: [''],
         adviseThroughBankName: [''],
-        bankName: ['']
+        bankName: [''],
       }),
       amountChargeForm: this.fb.group({
         currency: [''],
@@ -171,13 +183,13 @@ export class ImportScreen implements OnInit {
         variationMinus: [''],
         issuingBankCharges: ['Applicant'],
         outsideCountryCharges: ['Beneficiary'],
-        additionalAmount: ['']
+        additionalAmount: [''],
       }),
       paymentDetailsForm: this.fb.group({
         creditAvailableWith: [''],
         bankName: [''],
         creditAvailableBy: ['Payment'],
-        paymentDraftAt: ['Sight']
+        paymentDraftAt: ['Sight'],
       }),
       shipmentForm: this.fb.group({
         shipmentFrom: [''],
@@ -187,20 +199,20 @@ export class ImportScreen implements OnInit {
         lastShipmentDate: [''],
         shipmentPeriodNarrative: [''],
         partialShipment: ['Allowed'],
-        transhipment: ['Not Allowed']
+        transhipment: ['Not Allowed'],
       }),
       narrativeForm: this.fb.group({
         descriptionOfGoods: [''],
         documentsRequired: [''],
         additionalInstructions: [''],
-        otherDetails: ['']
+        otherDetails: [''],
       }),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
-        otherInstructions: ['']
+        otherInstructions: [''],
       }),
-      attachments: this.fb.array([])
+      attachments: this.fb.array([]),
     });
   }
 
@@ -215,7 +227,7 @@ export class ImportScreen implements OnInit {
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
     this.api.getTransactionByTnxId(tnxId).subscribe({
-      next: tx => {
+      next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
 
@@ -254,21 +266,41 @@ export class ImportScreen implements OnInit {
         }
       },
       error: () => {
-        this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
+        this.snackBar.open('Transaction not found', 'Close', {
+          duration: 3000,
+        });
         this.router.navigate(['/import-screen/inquiries']);
-      }
+      },
     });
   }
-  // Safe getters for html form access of the specific form groups 
-  get generalDetailsForm(): FormGroup { return this.importForm.get('generalDetails') as FormGroup; }
-  get applicantForm(): FormGroup { return this.importForm.get('applicantForm') as FormGroup; }
-  get bankForm(): FormGroup { return this.importForm.get('bankForm') as FormGroup; }
-  get amountChargeForm(): FormGroup { return this.importForm.get('amountChargeForm') as FormGroup; }
-  get paymentDetailsForm(): FormGroup { return this.importForm.get('paymentDetailsForm') as FormGroup; }
-  get shipmentForm(): FormGroup { return this.importForm.get('shipmentForm') as FormGroup; }
-  get narrativeForm(): FormGroup { return this.importForm.get('narrativeForm') as FormGroup; }
-  get instructionForm(): FormGroup { return this.importForm.get('instructionForm') as FormGroup; }
-  get attachmentsArray(): FormArray { return this.importForm.get('attachments') as FormArray; }
+  // Safe getters for html form access of the specific form groups
+  get generalDetailsForm(): FormGroup {
+    return this.importForm.get('generalDetails') as FormGroup;
+  }
+  get applicantForm(): FormGroup {
+    return this.importForm.get('applicantForm') as FormGroup;
+  }
+  get bankForm(): FormGroup {
+    return this.importForm.get('bankForm') as FormGroup;
+  }
+  get amountChargeForm(): FormGroup {
+    return this.importForm.get('amountChargeForm') as FormGroup;
+  }
+  get paymentDetailsForm(): FormGroup {
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
+  }
+  get shipmentForm(): FormGroup {
+    return this.importForm.get('shipmentForm') as FormGroup;
+  }
+  get narrativeForm(): FormGroup {
+    return this.importForm.get('narrativeForm') as FormGroup;
+  }
+  get instructionForm(): FormGroup {
+    return this.importForm.get('instructionForm') as FormGroup;
+  }
+  get attachmentsArray(): FormArray {
+    return this.importForm.get('attachments') as FormArray;
+  }
 
   private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
@@ -279,7 +311,7 @@ export class ImportScreen implements OnInit {
       paymentDetailsForm: tx,
       shipmentForm: tx,
       narrativeForm: tx,
-      instructionForm: tx
+      instructionForm: tx,
     });
   }
 
@@ -304,63 +336,84 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
-      attachments: this.importForm.value.attachments
+      attachments: this.importForm.value.attachments,
     };
   }
-
 
   saveForm(): void {
     if (this.importForm.invalid) {
       this.importForm.markAllAsTouched();
-      this.snackBar.open('Please complete all required fields before saving.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Please complete all required fields before saving.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
 
     // Flatten nested form groups into single object
     const payload = this.flattenForm();
-    console.log("Payload before saving draft:", payload);
+    console.log('Payload before saving draft:', payload);
 
     this.api.savePending(payload).subscribe({
       next: (res: ImportLcTransaction) => {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
         // this.transactionService.addOrUpdateTransaction(res);
-        this.snackBar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }
-        ), 50);
+        this.snackBar.open(
+          `Draft saved successfully (TNX ID: ${res.tnxId})`,
+          'Close',
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
+            this.router.navigate(['/import-screen/inquiries'], {
+              queryParams: { tab: 'pending' },
+            }),
+          50,
+        );
       },
-      error: () => this.snackBar.open('Error saving draft', 'Close', { duration: 3000 })
+      error: () =>
+        this.snackBar.open('Error saving draft', 'Close', { duration: 3000 }),
     });
   }
-
 
   submitLc(): void {
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
     if (!tnxId) {
-      this.snackBar.open('Transaction ID not found. Please save the draft first.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Transaction ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
     if (!companyId) {
-      this.snackBar.open('Company ID not found. Please save the draft first.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Company ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
     const payload = {
       ...this.flattenForm(), // merge current form data
-      event:'CRE',
+      event: 'CRE',
       tnxId: this.tnxId,
-    }
+    };
     this.api.submitTransaction(tnxId, payload).subscribe({
       next: (res: ImportLcTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
         this.router.navigate(['/import-screen/success'], {
-          state: { source: 'IMPORT_LC', transaction: res }
+          state: { source: 'IMPORT_LC', transaction: res },
         });
       },
       error: () => {
-        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-
   }
 
   back() {
@@ -370,18 +423,24 @@ export class ImportScreen implements OnInit {
   updateAttachments(files: File[]) {
     const arr = this.importForm.get('attachments') as FormArray;
     arr.clear();
-    files.forEach(file => arr.push(this.fb.group({
-      title: file.name.replace(/\.[^/.]+$/, ""),
-      fileName: file.name,
-      size: file.size,
-      type: file.type,
-      file: file
-    })));
+    files.forEach((file) =>
+      arr.push(
+        this.fb.group({
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
   }
 
   update(): void {
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -415,29 +474,37 @@ export class ImportScreen implements OnInit {
         this.snackBar.open(
           `Data successfully updated (${res.tnxId})`,
           'Close',
-          { duration: 3000 }
+          { duration: 3000 },
         );
 
         setTimeout(
-          () => this.router.navigate(['/import-screen/inquiries'], { queryParams: { tab: 'pending' } }),
-          300
+          () =>
+            this.router.navigate(['/import-screen/inquiries'], {
+              queryParams: { tab: 'pending' },
+            }),
+          300,
         );
       },
       error: () => {
-        this.snackBar.open('Error updating transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Error updating transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
   approve(): void {
-    this.api.approveTransaction(this.currentTx.tnxId!, this.currentTx).subscribe({
-      next: () => this.navigateBack('approved'),
-      error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
-    });
+    this.api
+      .approveTransaction(this.currentTx.tnxId!, this.currentTx)
+      .subscribe({
+        next: () => this.navigateBack('approved'),
+        error: () =>
+          this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
+      });
   }
   openReject(): void {
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px'
+      width: '400px',
     });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
@@ -445,12 +512,16 @@ export class ImportScreen implements OnInit {
 
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
           this.navigateBack('rejected'); // send user to rejected tab
         },
         error: () => {
-          this.snackBar.open('Failed to reject transaction', 'Close', { duration: 3000 });
-        }
+          this.snackBar.open('Failed to reject transaction', 'Close', {
+            duration: 3000,
+          });
+        },
       });
     });
   }
@@ -466,13 +537,15 @@ export class ImportScreen implements OnInit {
     this.router.navigate(['/import-screen/inquiries'], {
       relativeTo: this.route,
       queryParamsHandling: 'merge',
-      queryParams: { tab }
+      queryParams: { tab },
     });
   }
 
   updateRejected(): void {
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -484,18 +557,78 @@ export class ImportScreen implements OnInit {
         this.snackBar.open(
           `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
           'Close',
-          { duration: 3000 }
+          { duration: 3000 },
         );
 
         // Navigate back to inquiries with Pending tab
         this.router.navigate(['/import-screen/inquiries'], {
-          queryParams: { tab: 'pending' }
+          queryParams: { tab: 'pending' },
         });
       },
       error: () => {
-        this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Failed to update rejected transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
+
+
+  // ---------------- DYNAMIC FIELDS ----------------
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ImportLc screen with status A...');
+    this.api.getFieldsByScreenAndStatus('ImportLc', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
 }

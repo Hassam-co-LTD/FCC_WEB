@@ -21,6 +21,17 @@
         <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
       </section>
 
+      <!-- Dynamic Fields -->
+
+      <ng-container *ngIf="fields?.length">
+        <app-dynamic-fields
+          [form]="dynamicFieldsForm"
+          [fields]="fields"
+          [isOpen]="isDynamicFieldsOpen"
+        >
+        </app-dynamic-fields>
+      </ng-container>
+
       <!-- Footer Buttons -->
       <div class="actions">
 

@@ -22,7 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { CommonModule } from '@angular/common';
-
+import {DynamicFields} from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-export-collection',
   standalone: true,
@@ -39,6 +39,7 @@ import { CommonModule } from '@angular/common';
     AttachmentsDocuments,
     Sidebar,
     RouterModule,
+    DynamicFields
 ],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss']
@@ -113,6 +114,9 @@ export class ExportCollection implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // Dynamic Fields function calling
+    this.loadDynamicFields();
   }
 
     // -----------------------------
@@ -482,4 +486,69 @@ saveForm(): void {
         }
       });
     }
+
+
+
+
+
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ExportCollection screen with status A...');
+    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+        
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+
+
 }

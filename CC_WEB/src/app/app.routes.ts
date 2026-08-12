@@ -968,6 +968,46 @@ export const routes: Routes = [
                     ).then((m) => m.InquiryOfFundtransferRecords),
             },
 
+
+            // User side Generate Fields Routes 
+
+            {
+                        path: 'dynamic-fields/create',
+                        loadComponent: () =>
+                            import('./screens/USER/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
+                    },
+                    {
+                        path: 'dynamic-fields/inquiries',
+                        loadComponent: () =>
+                            import('./screens/USER/create-generate-fields/list-generate-fields/list-generate-fields')
+                                .then((m) => m.ListGenerateFields)
+                    },
+                    {
+                        path: 'dynamic-fields/:id',
+                        loadComponent: () =>
+                            import('./screens/USER/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
+
+                    },
+                    {
+                        path: 'dynamic-dropdowns/create',
+                        loadComponent: () =>
+                            import('./screens/USER/create-generate-fields/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+                    {
+
+                        path: 'dynamic-dropdowns-inque/inquiries',
+                        loadComponent: () =>
+                            import('./screens/USER/create-generate-fields/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then((m) => m.DynamicDropdownOptionInquiry)
+                    },
+                    {
+                        path: 'dynamic-dropdowns/create/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+            
+
             // Default child redirect
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         ],

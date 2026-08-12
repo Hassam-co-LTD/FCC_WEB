@@ -16,7 +16,7 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../core/servic
 import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import {DynamicFields} from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-shipping-guarantee',
   standalone: true,
@@ -29,6 +29,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatDialogModule,
     Attachments,
     Sidebar,
+    DynamicFields
   ],
   templateUrl: './shipping-guarantee-screen.html',
   styleUrls: ['./shipping-guarantee-screen.scss']
@@ -101,6 +102,9 @@ export class ShippingGuarantee implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // Dynamic Fields function calling
+    this.loadDynamicFields();
   }
 
   private buildForm(): void{
@@ -419,4 +423,62 @@ export class ShippingGuarantee implements OnInit {
         }
       });
     }
+
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ExportCollection screen with status A...');
+    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+        
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+
 }
