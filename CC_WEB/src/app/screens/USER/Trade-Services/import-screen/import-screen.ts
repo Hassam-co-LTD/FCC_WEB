@@ -11,7 +11,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-
 import { GeneralDetails } from './components/general-details/general-details';
 import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from './components/bank-details/bank-details';
@@ -81,6 +80,7 @@ export class ImportScreen implements OnInit {
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' },
   ];
 
   constructor(
@@ -213,6 +213,8 @@ export class ImportScreen implements OnInit {
         otherInstructions: [''],
       }),
       attachments: this.fb.array([]),
+      // ameen dynamic fields code here
+      dynamicFields: this.importForm?.get('dynamicFields') || this.fb.group({}), // Initialize dynamicFields as an empty FormGroup
     });
   }
 
@@ -298,6 +300,9 @@ export class ImportScreen implements OnInit {
   get instructionForm(): FormGroup {
     return this.importForm.get('instructionForm') as FormGroup;
   }
+  get dynamicFieldsForm(): FormGroup {
+    return this.importForm.get('dynamicFields') as FormGroup;
+  }
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
   }
@@ -312,6 +317,7 @@ export class ImportScreen implements OnInit {
       shipmentForm: tx,
       narrativeForm: tx,
       instructionForm: tx,
+      dynamicFields: tx,
     });
   }
 
@@ -337,6 +343,8 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
       attachments: this.importForm.value.attachments,
+      // Ameen DynamicField code here
+      dynamicFields: this.importForm.value.dynamicFields, // Include dynamic fields in the payload
     };
   }
 
@@ -350,9 +358,21 @@ export class ImportScreen implements OnInit {
       );
       return;
     }
+    // my dynamic fields code start here 
+    const formValues = this.dynamicFieldsForm.value;
+    const dynamicFields = this.fields.map((f: any) => ({
+      fieldId: f.fieldId,
+      value: formValues[f.fieldName],
+  
+    }));
+
 
     // Flatten nested form groups into single object
-    const payload = this.flattenForm();
+    const payload = {
+      ...this.flattenForm(),
+      dynamicFields: dynamicFields, // Include dynamic fields in the payload
+    };
+    // ends here 
     console.log('Payload before saving draft:', payload);
 
     this.api.savePending(payload).subscribe({
@@ -533,6 +553,7 @@ export class ImportScreen implements OnInit {
   //   });
   // }
 
+
   private navigateBack(tab: string) {
     this.router.navigate(['/import-screen/inquiries'], {
       relativeTo: this.route,
@@ -578,7 +599,6 @@ export class ImportScreen implements OnInit {
   // ---------------- DYNAMIC FIELDS ----------------
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
@@ -595,7 +615,7 @@ export class ImportScreen implements OnInit {
           group[field.fieldName] = [''];
         });
 
-        this.dynamicFieldsForm = this.fb.group(group);
+        this.importForm.setControl('dynamicFields', this.fb.group(group));
 
         // patch values if customer already loaded
         this.patchDynamicValues();
@@ -609,7 +629,7 @@ export class ImportScreen implements OnInit {
 
   private patchDynamicValues(): void {
     if (
-      !this.dynamicFieldsForm ||
+      !this.importForm.get('dynamicFields') ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
     )
@@ -629,6 +649,6 @@ export class ImportScreen implements OnInit {
 
     console.log('Dynamic patch object:', patchObj);
 
-    this.dynamicFieldsForm.patchValue(patchObj);
+    this.importForm.get('dynamicFields')?.patchValue(patchObj);
   }
 }
