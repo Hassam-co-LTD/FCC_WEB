@@ -44,6 +44,6 @@ __screenshots__/
 Thumbs.db
 
 # user panel ignore
-/src/app/screens/USER/
-/src/app/screens/AUTH/
+# /src/app/screens/USER/
+# /src/app/screens/AUTH/
 

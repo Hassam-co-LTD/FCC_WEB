@@ -22,7 +22,6 @@ import { Licenses } from './components/licenses/licenses';
 import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../core/sidebar/sidebar';
-
 import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
 import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
@@ -593,9 +592,6 @@ export class ImportScreen implements OnInit {
       },
     });
   }
-
-
-
   // ---------------- DYNAMIC FIELDS ----------------
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];

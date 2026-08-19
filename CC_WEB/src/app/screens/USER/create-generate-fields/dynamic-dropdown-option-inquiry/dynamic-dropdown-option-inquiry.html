@@ -1,0 +1,214 @@
+<div class="customer-status-container">
+  <h2 class="page-title">Dropdown Option Records</h2>
+
+  <mat-tab-group
+    [selectedIndex]="selectedTabIndex"
+    (selectedIndexChange)="onTabChange($event)"
+  >
+
+    <!-- ================= Draft Tab ================= -->
+    <mat-tab label="Draft ({{ filteredDraftCount }})">
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search Option By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterDraftDropDown(searchText)"
+        />
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftDropDown('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <div class="records-summary">
+          Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredDraftDropDown?.length; else noDrafts">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Option ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let d of storeFilteredDraftDropDown; trackBy: trackById">
+                <td>
+                  <a [routerLink]="['/admin/edit-dropdown-option/', d.id]">
+                    {{ d.id }}
+                  </a>
+                </td>
+                <td>{{ d.name }}</td>
+                <td>{{ d.description }}</td>
+                <td>{{ d.createdOn | date:'short' }}</td>
+                <td>{{ d.updatedOn | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noDrafts>
+          <p class="no-records">No draft dropdown options found.</p>
+        </ng-template>
+      </div>
+    </mat-tab>
+
+
+    <!-- ================= Approved Tab ================= -->
+    <mat-tab label="Approved ({{ filteredApprovedCount }})">
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Search Option By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterApprovedDropDown(searchText)"
+        />
+
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedDropDown('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredApprovedDropDown?.length; else noApproved">
+
+          <table class="customer-table">
+
+            <thead>
+              <tr>
+                <th>Option ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let d of storeFilteredApprovedDropDown; trackBy: trackById">
+
+                <td>
+                  <a [routerLink]="['/admin/edit-dropdown-option/', d.id]">
+                    {{ d.id }}
+                  </a>
+                </td>
+
+                <td>{{ d.name }}</td>
+                <td>{{ d.description }}</td>
+
+                <td>
+                  <span class="status {{ d.recordStatus }}">
+                    {{ d.recordStatus }}
+                  </span>
+                </td>
+
+                <td>{{ d.createdOn | date:'short' }}</td>
+                <td>{{ d.updatedOn | date:'short' }}</td>
+
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noApproved>
+          <p class="no-records">No approved dropdown options found.</p>
+        </ng-template>
+
+      </div>
+    </mat-tab>
+
+
+    <!-- ================= Submitted Tab ================= -->
+    <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
+
+      <div class="search-bar">
+
+        <input
+          type="text"
+          placeholder="Search Option By ID or Name"
+          [(ngModel)]="searchText"
+          (input)="filterSubmittedDropDown(searchText)"
+        />
+
+        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedDropDown('')">
+          <mat-icon>clear</mat-icon>
+        </button>
+
+      </div>
+
+      <div class="tab-content">
+
+        <div class="records-summary">
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+        </div>
+
+        <div class="table-wrapper" *ngIf="storeFilteredSubmittedDropDown?.length; else noSubmitted">
+
+          <table class="customer-table">
+
+            <thead>
+              <tr>
+                <th>Option ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created On</th>
+                <th>Updated On</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let d of storeFilteredSubmittedDropDown; trackBy: trackById">
+
+                <td>
+                  <a [routerLink]="['/admin/edit-dropdown-option/', d.id]">
+                    {{ d.id }}
+                  </a>
+                </td>
+
+                <td>{{ d.name }}</td>
+                <td>{{ d.description }}</td>
+
+                <td>
+                  <span class="status {{ d.recordStatus }}">
+                    {{ d.recordStatus }}
+                  </span>
+                </td>
+
+                <td>{{ d.createdOn | date:'short' }}</td>
+                <td>{{ d.updatedOn | date:'short' }}</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noSubmitted>
+          <p class="no-records">No submitted dropdown options found.</p>
+        </ng-template>
+
+      </div>
+
+    </mat-tab>
+
+  </mat-tab-group>
+</div>
