@@ -1,3 +1,4 @@
+<!-- ================= HEADER ================= -->
 <div class="page-header">
     <div class="title">
         <h2>{{ activeTab | titlecase }} Undertaking Records</h2>
@@ -5,110 +6,473 @@
     </div>
 </div>
 
+
+<!-- ================= SEARCH ================= -->
 <div class="search-system">
     <div class="search-input-group">
-        <input type="text" 
-               placeholder="Search by TNX ID, Beneficiary, Bank, Currency" 
-               [(ngModel)]="searchQuery"
-               (input)="applyFilters()" />
+        <input
+            type="text"
+            placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+        />
 
-        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+        <button
+            *ngIf="searchQuery"
+            class="clear-btn"
+            (click)="clearSearch()"
+        >
             <mat-icon>clear</mat-icon>
         </button>
     </div>
 
-    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
-        <mat-icon>tune</mat-icon> Advanced
+    <button
+        class="advanced-toggle"
+        (click)="showAdvanced = !showAdvanced"
+    >
+        <mat-icon>tune</mat-icon>
+        Advanced
     </button>
 </div>
 
-<div class="advanced-search" *ngIf="showAdvanced">
+
+<!-- ================= ADVANCED SEARCH ================= -->
+<div
+    class="advanced-search"
+    *ngIf="showAdvanced"
+>
     <div class="field">
         <label>Currency</label>
-        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" placeholder="e.g. USD" />
+
+        <input
+            type="text"
+            [(ngModel)]="currencyFilter"
+            (input)="applyFilters()"
+            placeholder="e.g. USD"
+        />
     </div>
 </div>
 
+
+<!-- ================= TABS ================= -->
 <div class="ui-tabs">
-    <div class="tab" *ngFor="let tab of tabs" 
-         [class.active]="activeTab === tab.key" 
-         (click)="setActiveTab(tab.key)">
+
+    <div
+        class="tab"
+        *ngFor="let tab of tabs"
+        [class.active]="activeTab === tab.key"
+        (click)="setActiveTab(tab.key)"
+    >
         {{ tab.label }}
     </div>
+
 </div>
 
+
+<!-- ================= RESULTS SUMMARY ================= -->
 <div class="filter-row">
+
     <div class="results-summary">
-        Showing <strong>{{ pagedTransactions.length }}</strong> 
-        of <strong>{{ filteredTransactions.length }}</strong> 
+
+        Showing
+        <strong>
+            {{ pagedTransactions.length }}
+        </strong>
+
+        of
+
+        <strong>
+            {{ filteredTransactions.length }}
+        </strong>
+
         {{ activeTab }} records
+
     </div>
+
 </div>
 
+
+<!-- ================= TABLE ================= -->
 <div class="table-wrapper">
+
     <table>
+
+        <!-- ================= TABLE HEADER ================= -->
         <thead>
+
             <tr>
-                <th (click)="sortBy('channelReference')" class="sortable">TNX ID</th>
-                <th (click)="sortBy('lastUpdated')" class="sortable">Creation Date</th>
-                <th>Product</th>
-                <th>Issuer Ref</th>
-                <th>Expiry Date</th>
-                <th>Currency</th>
-                <th>Amount</th>
-                <th>Applicant</th>
-                <th>Beneficiary</th>
-                <th class="text-center">Action</th>
+
+                <!-- TNX ID -->
+                <th
+                    (click)="sortBy('channelReference')"
+                    class="sortable"
+                >
+                    TNX ID
+                </th>
+
+
+                <!-- CREATION DATE -->
+                <th
+                    (click)="sortBy('lastUpdated')"
+                    class="sortable"
+                >
+                    Creation Date
+                </th>
+
+
+                <!-- PRODUCT -->
+                <th>
+                    Product
+                </th>
+
+
+                <!-- ISSUER REFERENCE -->
+                <!-- <th> -->
+                    <!-- Issuer Ref -->
+                <!-- </th> -->
+
+
+                <!-- EXPIRY DATE -->
+                <th>
+                    Expiry Date
+                </th>
+
+
+                <!-- CURRENCY -->
+                <th>
+                    Currency
+                </th>
+
+
+                <!-- AMOUNT -->
+                <th>
+                    Amount
+                </th>
+
+
+                <!-- APPLICANT -->
+                <th>
+                    Applicant
+                </th>
+
+
+                <!-- BENEFICIARY -->
+                <th>
+                    Beneficiary
+                </th>
+
+
+                <!-- ACTION -->
+                <th class="text-center">
+                    Action
+                </th>
+
             </tr>
+
         </thead>
 
+
+        <!-- ================= TABLE BODY ================= -->
         <tbody>
-            <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
+
+            <tr
+                *ngFor="
+                    let tx of pagedTransactions;
+                    trackBy: trackByTnxId
+                "
+            >
+
+                <!-- ================= TNX ID ================= -->
                 <td>
-                    <a class="tnx-link" (click)="openUndertaking(tx)">
+
+                    <!-- LIVE TAB -->
+                    <a
+                        *ngIf="activeTab === 'live'"
+                        class="tnx-link"
+                        (click)="openUndertaking(tx)"
+                    >
                         {{ tx.channelReference }}
                     </a>
+
+
+                    <!-- NORMAL TABS -->
+                    <a
+                        *ngIf="activeTab !== 'live'"
+                        class="tnx-link"
+                        (click)="openUndertaking(tx)"
+                    >
+                        {{ tx.channelReference }}
+                    </a>
+
                 </td>
-                
-                <td>{{ tx.lastUpdated | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.generalDetails?.productType || 'Undertaking' }}</td>
-                <td>{{ tx.formData.bankForm?.issuerReference || '-' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.expiryDate | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.formData.undertakingDetails?.currency }}</td>
-                <td>{{ tx.formData.undertakingDetails?.undertakingAmount | number:'1.2-2' }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.applicantName }}</td>
-                <td>{{ tx.formData.applicantBeneficiary?.beneficiaryName }}</td>
-                
+
+
+                <!-- ================= CREATION DATE ================= -->
+                <td>
+
+                    {{ tx.lastUpdated | date:'yyyy-MM-dd' }}
+
+                </td>
+
+
+                <!-- ================= PRODUCT ================= -->
+                <td>
+
+                    {{ tx.formData.generalDetails?.productType || 'Undertaking' }}
+
+                </td>
+
+
+                <!-- ================= ISSUER REF ================= -->
+                <!-- <td> -->
+
+                    <!-- {{ tx.formData.bankForm?.issuerReference || '-' }} -->
+
+                <!-- </td> -->
+
+
+                <!-- ================= EXPIRY DATE ================= -->
+                <td>
+
+                    {{
+                        tx.formData.undertakingDetails?.expiryDate
+                        | date:'yyyy-MM-dd'
+                    }}
+
+                </td>
+
+
+                <!-- ================= CURRENCY ================= -->
+                <td>
+
+                    {{ tx.formData.undertakingDetails?.currency }}
+
+                </td>
+
+
+                <!-- ================= AMOUNT ================= -->
+                <td>
+
+                    {{
+                        tx.formData.undertakingDetails?.undertakingAmount
+                        | number:'1.2-2'
+                    }}
+
+                </td>
+
+
+                <!-- ================= APPLICANT ================= -->
+                <td>
+
+                    {{ tx.formData.applicantBeneficiary?.applicantName }}
+
+                </td>
+
+
+                <!-- ================= BENEFICIARY ================= -->
+                <td>
+
+                    {{ tx.formData.applicantBeneficiary?.beneficiaryName }}
+
+                </td>
+
+
+                <!-- ================= ACTION ================= -->
                 <td class="text-center actions-cell">
-                    <ng-container *ngIf="isDraft(tx)">
-                        <button class="btn-action view" (click)="viewOnly(tx)" matTooltip="Preview Draft">
-                            <mat-icon>visibility</mat-icon> View
+
+
+                    <!-- ================================================= -->
+                    <!-- LIVE TAB -->
+                    <!-- ================================================= -->
+
+                    <ng-container
+                        *ngIf="activeTab === 'live'"
+                    >
+
+                        <button
+                            class="btn-action view"
+                            (click)="openUndertaking(tx)"
+                            matTooltip="View Live Event"
+                        >
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                            View
+
                         </button>
+
                     </ng-container>
 
-                    <ng-container *ngIf="!isDraft(tx)">
-                        <button class="btn-action view" (click)="openUndertaking(tx)">
-                            <mat-icon>visibility</mat-icon> View
+
+                    <!-- ================================================= -->
+                    <!-- PENDING TAB -->
+                    <!-- ================================================= -->
+
+                    <ng-container
+                        *ngIf="activeTab === 'pending'"
+                    >
+
+                        <button
+                            class="btn-action view"
+                            (click)="viewOnly(tx)"
+                            matTooltip="Preview Draft"
+                        >
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                            View
+
                         </button>
+
                     </ng-container>
+
+
+                    <!-- ================================================= -->
+                    <!-- SUBMITTED TAB -->
+                    <!-- ================================================= -->
+
+                    <ng-container
+                        *ngIf="activeTab === 'submitted'"
+                    >
+
+                        <button
+                            class="btn-action view"
+                            (click)="openUndertaking(tx)"
+                            matTooltip="View Submitted Undertaking"
+                        >
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                            View
+
+                        </button>
+
+                    </ng-container>
+
+
+                    <!-- ================================================= -->
+                    <!-- APPROVED TAB -->
+                    <!-- ================================================= -->
+
+                    <ng-container
+                        *ngIf="activeTab === 'approved'"
+                    >
+
+                        <button
+                            class="btn-action view"
+                            (click)="openUndertaking(tx)"
+                            matTooltip="View Approved Undertaking"
+                        >
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                            View
+
+                        </button>
+
+                    </ng-container>
+
+
+                    <!-- ================================================= -->
+                    <!-- REJECTED TAB -->
+                    <!-- ================================================= -->
+
+                    <ng-container
+                        *ngIf="activeTab === 'rejected'"
+                    >
+
+                        <button
+                            class="btn-action view"
+                            (click)="openUndertaking(tx)"
+                            matTooltip="View Rejected Undertaking"
+                        >
+
+                            <mat-icon>
+                                visibility
+                            </mat-icon>
+
+                            View
+
+                        </button>
+
+                    </ng-container>
+
+
                 </td>
+
             </tr>
 
-            <tr *ngIf="pagedTransactions.length === 0">
-                <td colspan="10" class="no-records">
+
+            <!-- ================= NO RECORDS ================= -->
+            <tr
+                *ngIf="pagedTransactions.length === 0"
+            >
+
+                <td
+                    colspan="10"
+                    class="no-records"
+                >
+
                     <div class="empty-state">
-                        <mat-icon>search_off</mat-icon>
-                        <p>No {{ activeTab }} Undertaking records found.</p>
+
+                    
+                        <p>
+                            No {{ activeTab }} Undertaking records found.
+                        </p>
+
                     </div>
+
                 </td>
+
             </tr>
 
         </tbody>
+
     </table>
 
-    <div class="pagination" *ngIf="filteredTransactions.length > 0">
-        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+
+    <!-- ================= PAGINATION ================= -->
+    <div
+        class="pagination"
+        *ngIf="filteredTransactions.length > 0"
+    >
+
+        <button
+            class="btn-pagination"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1"
+        >
+            ‹
+        </button>
+
+
+        <span>
+
+            Page
+            {{ currentPage }}
+            of
+            {{ totalPages }}
+
+        </span>
+
+
+        <button
+            class="btn-pagination"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+        >
+            ›
+
+        </button>
+
     </div>
+
 </div>

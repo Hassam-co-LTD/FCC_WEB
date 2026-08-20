@@ -1,80 +1,131 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import {
+  CommonModule,
+  isPlatformBrowser,
+  DecimalPipe,
+  DatePipe,
+  TitleCasePipe
+} from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
-import { ApiService } from "../../../../../../../core/services/api.service";
-import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+
+import { Router, ActivatedRoute } from '@angular/router';
+
+import {
+  UndertakingIssuanceService,
+  UndertakingTransaction
+} from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-approved-inquiry-records',
-  imports: [CommonModule, MatIconModule, FormsModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    FormsModule,
+    DecimalPipe,
+    DatePipe,
+    TitleCasePipe
+  ],
   templateUrl: './approved-inquiry-records.html',
-  styleUrls: ['./approved-inquiry-records.scss'],
+  styleUrls: ['./approved-inquiry-records.scss']
 })
-export class ApprovedInquiryRecords {
-  currentPage = 1;
-  itemsPerPage = 10;
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
-  showAdvanced = false;
+export class ApprovedInquiryRecords implements OnInit {
+
+  // =========================
+  // STATE
+  // =========================
+
+  allTransactions: UndertakingTransaction[] = [];
+  filteredTransactions: UndertakingTransaction[] = [];
+
+  // =========================
+  // FILTERS
+  // =========================
+
   searchQuery = '';
   currencyFilter = '';
-  activeTab = 'live';
+  activeTab = 'pending';
+  showAdvanced = false;
+
+  // =========================
+  // TABS
+  // =========================
+
   tabs = [
     { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
     { key: 'submitted', label: 'Submitted' },
     { key: 'approved', label: 'Approved' },
-    { key: 'rejected', label: 'Rejected' },
-    // { key: 'response awaited', label: 'Response Awaited'}
+    { key: 'rejected', label: 'Rejected' }
   ];
-  sortColumn: keyof ImportLcTransaction = 'createdOn';
-  sortDirection: 'asc' | 'desc' = 'desc';
+
+  // =========================
+  // PAGINATION
+  // =========================
+
+  currentPage = 1;
+  itemsPerPage = 10;
+
+  // =========================
+  // SORTING
+  // =========================
+
+  sortColumn: string = 'lastUpdated';
+  sortDirection: 'desc' | 'asc' = 'desc';
+
   private isBrowser: boolean;
 
   constructor(
-    private api: ApiService,
-    private transactionService: ImportlcFormTransactionService,
+    private transactionService: UndertakingIssuanceService,
     private router: Router,
-    @Inject(PLATFORM_ID) platformId: Object,
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  // =========================
+  // INITIALIZATION
+  // =========================
 
   ngOnInit(): void {
-    if (!this.isBrowser) return;
-    this.initializeScreen();
-  }
 
-  private initializeScreen(): void {
-    this.loadApprovedTransactions();
-  }
-
-  private loadApprovedTransactions(): void {
-    if (this.activeTab === 'live') {
-
-      this.api.getLiveEventHistory().subscribe({
-        next: (txList) => {
-          this.allTransactions = txList;
-          this.filteredTransactions = [...txList];
-        },
-        error: () => {
-          this.allTransactions = [];
-          this.filteredTransactions = [];
-        }
-      });
-
+    if (!this.isBrowser) {
       return;
     }
-    const backend =  this.mapTabToBackendStatus(this.activeTab)
-    this.api.getAmendRecordTransactionsByStatus(backend).subscribe({
+
+    // Allow deep-linking into a specific tab, e.g. after Save/Submit/Approve/Reject
+    this.route.queryParamMap.subscribe(params => {
+      const tab = params.get('tab');
+      if (tab && tab !== this.activeTab) {
+        this.activeTab = tab;
+      }
+    });
+
+    this.loadByStatus();
+
+    this.transactionService.transactionsStream$.subscribe(txList => {
+      this.allTransactions = txList;
+      this.filterBySearchOnly();
+    });
+  }
+
+  // =========================
+  // LOAD TRANSACTIONS
+  // =========================
+
+  private loadByStatus(): void {
+    this.transactionService.refreshTransactions(this.activeTab).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
-        this.filteredTransactions = [...this.allTransactions];
         this.currentPage = 1;
+        this.filterBySearchOnly();
       },
       error: () => {
         this.allTransactions = [];
@@ -83,147 +134,140 @@ export class ApprovedInquiryRecords {
     });
   }
 
-  get pagedTransactions(): ImportLcTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+  // =========================
+  // TAB SWITCHING
+  // =========================
+
+  setActiveTab(tab: string): void {
+
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.allTransactions = [];
+    this.filteredTransactions = [];
+
+    this.loadByStatus();
   }
 
-  get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-    return count < 1 ? 1 : count;
-  }
+  // =========================
+  // SEARCH + FILTER
+  // =========================
+
   applyFilters(): void {
+    this.currentPage = 1;
+    this.filterBySearchOnly();
+  }
+
+  private filterBySearchOnly(): void {
+
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
 
-    const filtered = this.allTransactions.filter(tx => {
+    let temp = [...this.allTransactions];
+
+    temp = temp.filter(tx => {
+
+      const data = tx.formData || {};
+
+      const benName = data.applicantBeneficiary?.beneficiaryName || '';
+      const appName = data.applicantBeneficiary?.applicantName || '';
+      const cur = data.undertakingDetails?.currency || '';
+      const issuerRef = data.bankForm?.issuerReference || '';
+      const displayId = tx.channelReference || '';
 
       const matchesSearch =
         !query ||
-        tx.tnxId?.toLowerCase().includes(query) ||
-        tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.issuingBankName?.toLowerCase().includes(query) ||
-        tx.currency?.toLowerCase().includes(query);
+        displayId.toLowerCase().includes(query) ||
+        issuerRef.toLowerCase().includes(query) ||
+        benName.toLowerCase().includes(query) ||
+        appName.toLowerCase().includes(query) ||
+        cur.toLowerCase().includes(query);
 
-      const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+      const matchesCurrency = !currency || cur.toLowerCase() === currency;
 
       return matchesSearch && matchesCurrency;
     });
 
-    this.applySorting(filtered);
+    this.applySorting(temp);
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
-    const sorted = [...source].sort((a, b) => {
-      let aVal = this.resolveColumn(a, this.sortColumn);
-      let bVal = this.resolveColumn(b, this.sortColumn);
-
-      // Handle null or undefined
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
-
-      // Handle Dates
-      if (aVal instanceof Date && bVal instanceof Date) {
-        return this.sortDirection === 'asc'
-          ? aVal.getTime() - bVal.getTime()
-          : bVal.getTime() - aVal.getTime();
-      }
-
-      // Handle numbers
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc'
-          ? aVal - bVal
-          : bVal - aVal;
-      }
-
-      // Everything else: convert to string and use localeCompare
-      const aStr = String(aVal);
-      const bStr = String(bVal);
-      return this.sortDirection === 'asc'
-        ? aStr.localeCompare(bStr)
-        : bStr.localeCompare(aStr);
-    });
-
-    this.filteredTransactions = sorted;
-    this.currentPage = 1;
-  }
-
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
-    switch (column) {
-      case 'tnxId': return tx.tnxId;
-      case 'currency': return tx.currency;
-      case 'amount': return tx.amount;
-      case 'expiryDate': return tx.expiryDate;
-      case 'createdOn': return tx.createdOn;
-      default: return null;
-    }
-  }
   clearSearch(): void {
     this.searchQuery = '';
     this.applyFilters();
   }
-  setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadApprovedTransactions();
-  }
 
-  // simple sorting helper
-  toggleSort(column: keyof ImportLcTransaction): void {
+  // =========================
+  // SORTING
+  // =========================
+
+  sortBy(column: string): void {
+
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
       this.sortColumn = column;
       this.sortDirection = 'asc';
     }
-    this.applySort();
+
+    this.applyFilters();
   }
 
-  private applySort(): void {
-    const dir = this.sortDirection === 'asc' ? 1 : -1;
-    this.filteredTransactions.sort((a, b) => {
-      const va: any = a[this.sortColumn] ?? '';
-      const vb: any = b[this.sortColumn] ?? '';
-      if (va < vb) return -1 * dir;
-      if (va > vb) return 1 * dir;
-      return 0;
+  private applySorting(source: UndertakingTransaction[]): void {
+
+    this.filteredTransactions = [...source].sort((a, b) => {
+
+      const aVal = this.resolveColumn(a, this.sortColumn);
+      const bVal = this.resolveColumn(b, this.sortColumn);
+
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      if (aVal instanceof Date && bVal instanceof Date) {
+        return this.sortDirection === 'asc'
+          ? aVal.getTime() - bVal.getTime()
+          : bVal.getTime() - aVal.getTime();
+      }
+
+      return this.sortDirection === 'asc'
+        ? String(aVal).localeCompare(String(bVal))
+        : String(bVal).localeCompare(String(aVal));
     });
   }
 
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
-    return tx.tnxId!;
+  private resolveColumn(tx: UndertakingTransaction, column: string): any {
+
+    const data = tx.formData || {};
+
+    switch (column) {
+      case 'channelReference':
+        return tx.channelReference;
+      case 'lastUpdated':
+        return new Date(tx.lastUpdated);
+      case 'currency':
+        return data.undertakingDetails?.currency;
+      case 'amount':
+        return data.undertakingDetails?.undertakingAmount;
+      default:
+        return null;
+    }
   }
 
+  // =========================
+  // PAGINATION
+  // =========================
 
-  viewTransaction(tx: ImportLcTransaction): void {
-    const readOnly = ['A', 'R'].includes(tx.status!);
-
-    this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
-      next: (freshTx) => {
-        this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
-      },
-      error: () => {
-        this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
-      }
-    });
+  get totalPages(): number {
+    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    return count < 1 ? 1 : count;
   }
 
-  openApprovedAmendTransaction(tx: ImportLcTransaction): void {
-    // Navigate to import screen
-    this.router.navigate(
-      ['/import-screen/amend', tx.tnxId],
-      {
-        queryParams: {
-          mode: 'EDIT',
-          tab: this.activeTab,           // pass current tab
-         eventType: tx.eventType ?? '', // pass event type from the record
-         eventRefNo: tx.eventRefNo ?? ''
-        }
-      }
-    );
+  get pagedTransactions(): UndertakingTransaction[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
 
   previousPage(): void {
@@ -234,19 +278,63 @@ export class ApprovedInquiryRecords {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  private mapTabToBackendStatus(tab: string): string {
-    switch (tab) {
-      case 'pending':
-        return 'i';
-      case 'submitted':
-        return 's';
-      case 'approved':
-        return 'a';
-      case 'rejected':
-        return 'r';
-      default:
-        return 'i';
+  // =========================
+  // ROW ACTIONS
+  // =========================
+
+  /**
+   * TNX ID link — mirrors Import LC's openApprovedAmendTransaction: routes into
+   * the editable Amend screen, carrying tab/eventType/eventRefNo so the Amend
+   * screen's footer-button logic (Save/Submit/Approve-Reject/Update) resolves.
+   */
+  openApprovedAmendTransaction(tx: UndertakingTransaction): void {
+
+    const identifier = tx.tnxId || tx.id;
+
+    if (this.activeTab === 'live') {
+      this.router.navigate(
+        ['/undertaking-issuance/amend', identifier],
+        {
+          queryParams: {
+            tab: 'live',
+            eventRefNo: tx.eventRefNo ?? ''
+          }
+        }
+      );
+      return;
     }
+
+    this.router.navigate(
+      ['/undertaking-issuance/amend', identifier],
+      {
+        queryParams: {
+          tab: this.activeTab,
+          eventType: tx.eventType ?? ''
+        }
+      }
+    );
   }
 
+  /** "View" button — always opens the read-only preview, regardless of tab. */
+  viewTransaction(tx: UndertakingTransaction): void {
+    const identifier = tx.tnxId || tx.id;
+
+    this.router.navigate(
+      ['/undertaking-issuance/preview'],
+      {
+        queryParams: {
+          transactionId: identifier,
+          mode: 'view'
+        }
+      }
+    );
+  }
+
+  // =========================
+  // TRACK BY
+  // =========================
+
+  trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
+    return tx.tnxId || tx.id;
+  }
 }

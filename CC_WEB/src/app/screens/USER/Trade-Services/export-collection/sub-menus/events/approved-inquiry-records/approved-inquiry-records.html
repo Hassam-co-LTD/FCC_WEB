@@ -52,7 +52,7 @@
         <strong>{{ pagedTransactions.length }}</strong>
         of
         <strong>{{ filteredTransactions.length }}</strong>
-        approved records
+        approved export collection records
     </div>
 </div>
 
@@ -61,19 +61,17 @@
         <thead>
             <tr>
                 <th (click)="toggleSort('tnxId')">TNX ID</th>
-                <th>Event</th>
-                <!-- <th *ngIf="activeTab !== 'live'">Event Ref No</th>
-                <th *ngIf="activeTab !== 'live'">Event Sequence</th> -->
-                <th>Event Ref No</th>
-                <th>Event Sequence</th>
+                <th *ngIf="activeTab !== 'live'">Event</th>
+                <th *ngIf="activeTab !== 'live'">Event Ref No</th>
+                <th *ngIf="activeTab !== 'live'">Event Sequence</th>
+                <!-- <th>Event Ref No</th>
+                <th>Event Sequence</th> -->
                 <th>Created</th>
-                <th>Product</th>
                 <th>Issuer Reference</th>
-                <th>Expiry Date</th>
                 <th>Currency</th>
                 <th>Amount</th>
-                <th>Applicant</th>
-                <th>Beneficiary</th>
+                <th>Drawer</th>
+                <th>Drawee</th>
                 <th class="sticky-action">Action</th>
             </tr>
         </thead>
@@ -81,27 +79,25 @@
         <tbody>
             <tr *ngFor="let tx of pagedTransactions;">
                 <td><a class="tnx-link" (click)="openApprovedAmendTransaction(tx)">{{ tx.tnxId }}</a></td>
-                <td>{{ tx.eventType }}</td>
-                <!-- <td *ngIf="activeTab !== 'live'">
+                <td *ngIf="activeTab !== 'live'">{{ tx.eventType }}</td>
+                <td *ngIf="activeTab !== 'live'">
                     {{ tx.eventRefNo }}
                 </td>
                 <td *ngIf="activeTab !== 'live'">
                     {{ tx.eventSequence }}
-                </td> -->
-                <td>
+                </td>
+                <!-- <td>
                     {{ tx.eventRefNo }}
                 </td>
                 <td>
                     {{ tx.eventSequence }}
-                </td>
+                </td> -->
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.productType }}</td>
                 <td>{{tx.issuerReference}}</td>
-                <td>{{ tx.expiryDate }}</td>
                 <td>{{ tx.currency }}</td>
                 <td>{{ tx.amount }}</td>
-                <td>{{ tx.applicantName }}</td>
-                <td>{{ tx.beneficiaryName }}</td>
+                <td>{{ tx.drawerName }}</td>
+                <td>{{ tx.draweeName }}</td>
                 <td class="sticky-action">
                     <button class="btn-action" (click)="viewTransaction(tx)">
                         <mat-icon>visibility</mat-icon> View
@@ -111,7 +107,7 @@
 
             <tr *ngIf="pagedTransactions.length === 0">
                 <td colspan="20" class="no-records">
-                    No Approved Import LC records found
+                    No Approved Export Collection records found
                 </td>
             </tr>
 

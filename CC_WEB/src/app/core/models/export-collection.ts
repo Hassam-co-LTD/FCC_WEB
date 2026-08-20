@@ -6,6 +6,9 @@ export interface ExportCollectionTransaction{
     companyId?: string;
     createdOn?: Date;
     updatedOn?: Date;
+    eventRefNo?: string;
+    eventType?: string;
+    eventSequence?: string;
 
     collectionType?: string;
     customerReference?: string;
@@ -49,12 +52,14 @@ export interface ExportCollectionTransaction{
     shippingTo?: string;
     shipmentDate?: Date;
     applicableRule?: string;
-    incoterms?: string;
+    
 
     advicePaymentBy?: string;
     adviceAcceptanceAndDueDateBy?: Date;
     adviceReasonOfRefusalBy?: string;
 
+    incotermsRules?: string;
+    incoterms?: string;
     waiveAllChargesIfRefusedByDrawee?: Boolean;
     protestInCaseOfNonPayment?: Boolean;
     protestInCaseOfNonAcceptance?: Boolean;
@@ -65,8 +70,7 @@ export interface ExportCollectionTransaction{
     outsideCountryCharges?: ChargeBearer;
     referTo?: string;
 }
-
-enum ChargeBearer{
-    "DRAWEE",
-    "DRAWER"
+enum ChargeBearer {
+    DRAWEE = 'DRAWEE',
+    DRAWER = 'DRAWER'   
 }

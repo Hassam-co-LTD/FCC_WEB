@@ -6,6 +6,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ExportCollectionFormTransactionService {
+
+  
+  
   private currentTransaction: ExportCollectionTransaction | null = null;
   private savetransactions$ = new BehaviorSubject<ExportCollectionTransaction[]>([]);
     transactionsStream$ = this.savetransactions$.asObservable();

@@ -25,6 +25,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { UrlMatcher, UrlSegment } from '@angular/router';
 
 
 @Component({
@@ -90,43 +91,111 @@ export class ImportScreen implements OnInit {
     this.buildForm();
   }
 
-  ngOnInit() {
-    setTimeout(() => {
-      const sections = document.querySelectorAll('section');
-      const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
-            }
-          });
-        },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
-      );
-      sections.forEach(section => observer.observe(section));
-    }, 200);
 
-    const navState = history.state;
 
-    if (navState?.mode) {
-      this.screenMode = navState.mode;
+  private setupScrollSpy(): void {
+  setTimeout(() => {
+
+    const scrollArea = document.querySelector('.scroll-area') as HTMLElement;
+
+    if (!scrollArea) {
+      return;
     }
 
-    this.companyId = this.authservice.getCompanyId() || '';
-    console.log('Company ID from route:', this.companyId);
-    this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
-    console.log('TNX ID from route:', this.tnxId);
-    // const txFromState = history.state.transaction;
-    // console.log('Transaction from state:', txFromState);
-    this.route.paramMap.subscribe(params => {
-      const tnxId = params.get('tnxId');
-      if (tnxId) {
-        this.enterEditMode(tnxId);
-      } else {
-        this.enterCreateMode();
+    scrollArea.addEventListener('scroll', () => {
+
+      const sections = Array.from(
+        scrollArea.querySelectorAll('section[id^="section-"]')
+      ) as HTMLElement[];
+
+      const scrollTop = scrollArea.scrollTop;
+
+      // This controls when the next sidebar item becomes active
+      const activationOffset = 120;
+
+      let activeIndex = 0;
+
+      for (let i = 0; i < sections.length; i++) {
+
+        if (sections[i].offsetTop <= scrollTop + activationOffset) {
+          activeIndex = i;
+        } else {
+          break;
+        }
+
+      }
+
+      this.currentStep = activeIndex;
+
+    });
+
+  }, 300);
+}
+ngOnInit(): void {
+  const navState = history.state;
+
+  if (navState?.mode) {
+    this.screenMode = navState.mode;
+  }
+
+  this.companyId = this.authservice.getCompanyId() || '';
+  this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
+
+  setTimeout(() => {
+  const scrollArea = document.querySelector('.scroll-area') as HTMLElement;
+
+  const sections = Array.from(
+    document.querySelectorAll(
+      '.scroll-area > section[id^="section-"]:not(#section-10)'
+    )
+  ) as HTMLElement[];
+
+  if (!scrollArea || sections.length === 0) {
+    return;
+  }
+
+  const updateActiveStep = () => {
+    const containerRect = scrollArea.getBoundingClientRect();
+
+    // Position where we consider a section to be "active"
+    const targetPosition = containerRect.top + 20;
+
+    let closestIndex = 0;
+    let smallestDistance = Infinity;
+
+    sections.forEach((section, index) => {
+      const sectionRect = section.getBoundingClientRect();
+
+      // Distance between section's top and target position
+      const distance = Math.abs(
+        sectionRect.top - targetPosition
+      );
+
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        closestIndex = index;
       }
     });
-  }
+
+    this.currentStep = closestIndex;
+  };
+
+  scrollArea.addEventListener('scroll', updateActiveStep);
+
+  // Initial active section
+  updateActiveStep();
+}, 300);
+
+  this.route.paramMap.subscribe(params => {
+    const tnxId = params.get('tnxId');
+
+    if (tnxId) {
+      this.enterEditMode(tnxId);
+    } else {
+      this.enterCreateMode();
+    }
+  });
+}
 
   private buildForm(): void {
     // Always initialize the form to avoid null bindings
@@ -255,7 +324,7 @@ export class ImportScreen implements OnInit {
       },
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/inquiries']);
+        this.router.navigate(['/page-not-found']);
       }
     });
   }

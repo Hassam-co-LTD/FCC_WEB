@@ -1,12 +1,11 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ExportCollectionTransaction } from '../../../../../../../core/models/export-collection';
 import { ApiService } from "../../../../../../../core/services/api.service";
-import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-
+import{ExportCollectionFormTransactionService} from '../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 @Component({
   selector: 'app-approved-inquiry-records',
   imports: [CommonModule, MatIconModule, FormsModule],
@@ -16,8 +15,8 @@ import { ImportlcFormTransactionService } from '../../../../../../../core/servic
 export class ApprovedInquiryRecords {
   currentPage = 1;
   itemsPerPage = 10;
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
+  allTransactions: ExportCollectionTransaction[] = [];
+  filteredTransactions: ExportCollectionTransaction[] = [];
   showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
@@ -30,36 +29,56 @@ export class ApprovedInquiryRecords {
     { key: 'rejected', label: 'Rejected' },
     // { key: 'response awaited', label: 'Response Awaited'}
   ];
-  sortColumn: keyof ImportLcTransaction = 'createdOn';
+  sortColumn: keyof ExportCollectionTransaction = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
-  private isBrowser: boolean;
+
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(
     private api: ApiService,
-    private transactionService: ImportlcFormTransactionService,
+    private transactionService: ExportCollectionFormTransactionService,
     private router: Router,
-    @Inject(PLATFORM_ID) platformId: Object,
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+    private route: ActivatedRoute,
+  ) {}
+/*
+ngOnInit(): void {
+  if (!this.isBrowser) return;
 
+  this.loadApprovedTransactions();
 
-  ngOnInit(): void {
-    if (!this.isBrowser) return;
-    this.initializeScreen();
-  }
+  this.transactionService.transactionsStream$.subscribe(txList => {
+    this.allTransactions = txList;
+    this.applyFilters();
+  });
+}*/
 
-  private initializeScreen(): void {
+ngOnInit(): void {
+  if (!this.isBrowser) return;
+
+  this.route.queryParamMap.subscribe(params => {
+    const tab = params.get('tab');
+    if (tab && this.tabs.some(t => t.key === tab)) {
+      this.activeTab = tab;
+    }
     this.loadApprovedTransactions();
-  }
+  });
+
+  this.transactionService.transactionsStream$.subscribe(txList => {
+    this.allTransactions = txList;
+    this.applyFilters();
+  });
+}
+
 
   private loadApprovedTransactions(): void {
     if (this.activeTab === 'live') {
 
-      this.api.getLiveEventHistory().subscribe({
+      this.api.getApprovedMasterLcRecordsExportCollection().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
-          this.filteredTransactions = [...txList];
+          this.applyFilters();
+          // this.filteredTransactions = [...txList];
         },
         error: () => {
           this.allTransactions = [];
@@ -70,11 +89,12 @@ export class ApprovedInquiryRecords {
       return;
     }
     const backend =  this.mapTabToBackendStatus(this.activeTab)
-    this.api.getAmendRecordTransactionsByStatus(backend).subscribe({
+    this.api.getAmendRecordTransactionsByStatusExportCollection(backend).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
-        this.filteredTransactions = [...this.allTransactions];
-        this.currentPage = 1;
+        // this.filteredTransactions = [...this.allTransactions];
+        // this.currentPage = 1;
+        this.applyFilters();
       },
       error: () => {
         this.allTransactions = [];
@@ -83,7 +103,7 @@ export class ApprovedInquiryRecords {
     });
   }
 
-  get pagedTransactions(): ImportLcTransaction[] {
+  get pagedTransactions(): ExportCollectionTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -101,8 +121,7 @@ export class ApprovedInquiryRecords {
       const matchesSearch =
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
-        tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.issuingBankName?.toLowerCase().includes(query) ||
+       
         tx.currency?.toLowerCase().includes(query);
 
       const matchesCurrency =
@@ -114,7 +133,7 @@ export class ApprovedInquiryRecords {
     this.applySorting(filtered);
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
+  private applySorting(source: ExportCollectionTransaction[] = this.allTransactions): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
@@ -149,12 +168,11 @@ export class ApprovedInquiryRecords {
     this.currentPage = 1;
   }
 
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
+  private resolveColumn(tx: ExportCollectionTransaction, column: string): any {
     switch (column) {
       case 'tnxId': return tx.tnxId;
       case 'currency': return tx.currency;
       case 'amount': return tx.amount;
-      case 'expiryDate': return tx.expiryDate;
       case 'createdOn': return tx.createdOn;
       default: return null;
     }
@@ -164,13 +182,20 @@ export class ApprovedInquiryRecords {
     this.applyFilters();
   }
   setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadApprovedTransactions();
+  if (this.activeTab === tab) {
+    return;
   }
+ 
+  this.activeTab = tab;
+  this.currentPage = 1;
+
+  
+
+  this.loadApprovedTransactions();
+}
 
   // simple sorting helper
-  toggleSort(column: keyof ImportLcTransaction): void {
+  toggleSort(column: keyof ExportCollectionTransaction): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -191,41 +216,40 @@ export class ApprovedInquiryRecords {
     });
   }
 
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  trackByTnxId(_: number, tx: ExportCollectionTransaction): string {
     return tx.tnxId!;
   }
 
 
-  viewTransaction(tx: ImportLcTransaction): void {
+  viewTransaction(tx: ExportCollectionTransaction): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-    this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
+    this.api.getAmendmentByTnxIdExportCollection(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['dashboard/Trade-Services/export-collection/amend/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/amend/preview']);
+        this.router.navigate(['dashboard/Trade-Services/export-collection/amend/preview']);
       }
     });
   }
 
-  openApprovedAmendTransaction(tx: ImportLcTransaction): void {
-    // Navigate to import screen
+  openApprovedAmendTransaction(tx: ExportCollectionTransaction): void {
     this.router.navigate(
-      ['/import-screen/amend', tx.tnxId],
+      ['dashboard/Trade-Services/export-collection/amend', tx.tnxId],
       {
         queryParams: {
           mode: 'EDIT',
-          tab: this.activeTab,           // pass current tab
-         eventType: tx.eventType ?? '', // pass event type from the record
-         eventRefNo: tx.eventRefNo ?? ''
+          tab: this.activeTab,
+          eventType: this.activeTab === 'live' ? 'AMD' : (tx.eventType ?? 'AMD'),
+          // Only pass eventRefNo for non-live tabs (for navigating to a specific event)
+          ...(this.activeTab !== 'live' && { eventRefNo: tx.eventRefNo ?? '' })
         }
       }
     );
   }
-
   previousPage(): void {
     if (this.currentPage > 1) this.currentPage--;
   }

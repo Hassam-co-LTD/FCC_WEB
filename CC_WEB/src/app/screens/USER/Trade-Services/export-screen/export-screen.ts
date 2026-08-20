@@ -144,22 +144,44 @@ export class ExportScreen implements AfterViewInit {
   // =======================
   // Step scroll tracking
   // =======================
-  ngAfterViewInit() {
-    setTimeout(() => {
-      const sections = document.querySelectorAll('section');
-      const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
-            }
-          });
-        },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
-      );
-      sections.forEach(section => observer.observe(section));
-    }, 200);
-  }
+  ngAfterViewInit(): void {
+  setTimeout(() => {
+    const scrollArea = document.querySelector('.scroll-area') as HTMLElement;
+
+    const sections = Array.from(
+      document.querySelectorAll(
+        '.scroll-area > section[id^="section-"]:not(#section-3)'
+      )
+    ) as HTMLElement[];
+
+    if (!scrollArea || sections.length === 0) {
+      return;
+    }
+
+    const updateActiveStep = () => {
+      const containerTop = scrollArea.getBoundingClientRect().top;
+
+      let activeIndex = 0;
+
+      sections.forEach((section, index) => {
+        const sectionTop = section.getBoundingClientRect().top;
+
+        if (sectionTop <= containerTop + 50) {
+          activeIndex = index;
+        }
+      });
+
+      this.currentStep = activeIndex;
+    };
+
+    scrollArea.addEventListener('scroll', updateActiveStep);
+
+    // Set correct active step when page initially loads
+    updateActiveStep();
+  }, 300);
+}
+
+
 
   scrollToSection(index: number) {
     this.currentStep = index;

@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedService } from '../../../../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
+import{RouterModule} from '@angular/router';
 
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule,RouterModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })

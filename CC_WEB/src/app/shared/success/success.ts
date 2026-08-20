@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-
+ 
 @Component({
   selector: 'app-success',
   templateUrl: './success.html',
@@ -11,80 +11,85 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, MatButtonModule],
 })
 export class Success implements OnInit {
-
+ 
   tnxId = '';
   reference = '';
-
+ 
   pageName1 = 'Go to Listing';
   pageName2 = 'Create New';
-
+ 
   listingRoute = '';
   createRoute = '';
-
+ 
   constructor(private router: Router) {
-
+ 
     const state = history.state as any;
-
+ 
     if (!state || !state.source) {
       console.warn('No navigation state found on Success page');
       this.router.navigate(['/dashboard']);
       return;
     }
-
-
+ 
+ 
     this.tnxId = state.tnxId || state.transaction?.tnxId || '';
     this.reference =
       state.channelReference || state.transaction?.channelReference || '';
-
+ 
     switch (state.source) {
-
+ 
       case 'IMPORT_LC':
-        this.listingRoute = 'import-screen/inquiries';
-        this.createRoute = 'import-screen';
+        this.listingRoute = '/dashboard/Trade-Services/import-screen/inquiries';
+        this.createRoute = '/dashboard/Trade-Services/import-screen';
         break;
-
+ 
       case 'UNDERTAKING_ISSUANCE':
-        this.listingRoute = 'undertaking-issuance/inquiries-records';
-        this.createRoute = 'undertaking-issuance/request-undertaking/general-details';
+        this.listingRoute = '/dashboard/Trade-Services/undertaking-issuance/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/undertaking-issuance';
         break;
-
+ 
       case 'SHIPPING_GUARANTEE':
-        this.listingRoute = 'shipping-guarantee/inquiries-records';
-        this.createRoute = 'shipping-guarantee';
+        this.listingRoute = '/dashboard/Trade-Services/shipping-guarantee/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/shipping-guarantee';
         break;
-
+ 
       case 'EXPORT_COLLECTION':
-        this.listingRoute = 'export-collection/inquiries-records';
-        this.createRoute = 'export-collection';
+        this.listingRoute = '/dashboard/Trade-Services/export-collection/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/export-collection';
         break;
-
+ 
+      case 'EXPORT_LC':
+        this.listingRoute = '/dashboard/Trade-Services/export-screen/inquiries-of-records';
+        this.createRoute = '/dashboard/Trade-Services/export-screen';
+        break;
+ 
       default:
         this.listingRoute = 'dashboard';
         this.createRoute = 'dashboard';
     }
-
+ 
     // Explicit overrides (still supported)
     if (state.routes) {
       this.listingRoute = state.routes.listingRoute || this.listingRoute;
       this.createRoute = state.routes.createRoute || this.createRoute;
     }
-
+ 
     if (state.labels) {
       this.pageName1 = state.labels.listingLabel || this.pageName1;
       this.pageName2 = state.labels.createLabel || this.pageName2;
     }
   }
-
+ 
   ngOnInit(): void {
     if (!this.tnxId && !this.reference) {
       console.warn('Success page accessed without transaction context');
     }
   }
-
+ 
   goToListing(): void {
     this.router.navigate([this.listingRoute]);
   }
-
+ 
   createNew(): void {
     this.router.navigate([this.createRoute]);
   }

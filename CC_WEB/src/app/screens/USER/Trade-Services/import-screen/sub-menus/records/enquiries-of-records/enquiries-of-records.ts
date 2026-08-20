@@ -48,28 +48,16 @@ export class EnquiriesOfRecords implements OnInit {
     private route: ActivatedRoute,
   ) {}
 
-  ngOnInit(): void {
-    if (!this.isBrowser) return;
+ ngOnInit(): void {
+  if (!this.isBrowser) return;
 
-    this.route.queryParamMap.subscribe(params => {
-      const tab = params.get('tab');
-      if (
-        tab &&
-        this.tabs.some(t => t.key === tab)
-      ) {
-        this.activeTab = tab;
-      }
+  this.loadTransactions();
 
-      this.currentPage = 1;
-    this.loadTransactions();
-    });
-
-    this.transactionService.transactionsStream$.subscribe(txList => {
-      this.allTransactions = txList;
-      this.applyFilters();
-    }
-  );
-  }
+  this.transactionService.transactionsStream$.subscribe(txList => {
+    this.allTransactions = txList;
+    this.applyFilters();
+  });
+}
 
 
   private loadTransactions(): void {
@@ -133,16 +121,16 @@ export class EnquiriesOfRecords implements OnInit {
   //   this.applyFilters();
   // }
 
-  setActiveTab(tab: string): void {
-    // this.activeTab = tab;
-    // this.currentPage = 1;
-    // this.loadTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+ setActiveTab(tab: string): void {
+  if (this.activeTab === tab) {
+    return;
   }
+
+  this.activeTab = tab;
+  this.currentPage = 1;
+
+  this.loadTransactions();
+}
 
   // private loadByStatus(status: string): void {
   //   const backendStatus = this.mapTabToBackendStatus(status);

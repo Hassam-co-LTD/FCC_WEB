@@ -1,105 +1,84 @@
-import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import { CommonModule, isPlatformBrowser, DatePipe, TitleCasePipe } from '@angular/common';
+import { Component, Inject, PLATFORM_ID, OnInit, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-// SERVICES
+import {ExportCollectionFormTransactionService} from '../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
+
+import { ExportCollectionTransaction } from "../../../../../../../core/models/export-collection";
 import { ApiService } from '../../../../../../../core/services/api.service';
-import { ExportCollectionTransaction } from '../../../../../../../core/models/export-collection';
-import { ExportCollectionFormTransactionService } from '../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
-
 @Component({
   selector: 'app-inquiries-records',
   standalone: true,
-  imports: [
-    CommonModule, 
-    MatIconModule, 
-    MatButtonModule,
-    MatTooltipModule,
-    FormsModule,
-    DatePipe,
-    TitleCasePipe
-  ],
+  imports: [CommonModule, MatIconModule, FormsModule],
   templateUrl: './inquiries-records.html',
   styleUrls: ['./inquiries-records.scss']
 })
-export class inquiriesRecords implements OnInit {
-  
-  // State
+export class InquiriesRecords implements OnInit {
+  currentPage = 1;
+  itemsPerPage = 10;
   allTransactions: ExportCollectionTransaction[] = [];
   filteredTransactions: ExportCollectionTransaction[] = [];
-  
-  // Filters
+  showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
-  showAdvanced = false;
-
-  // Tabs Configuration
   tabs = [
-    { key: 'pending', label: 'Pending' },     // Drafts (Input)
-    { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
-    { key: 'approved', label: 'Approved' },   // Final (View Only)
-    { key: 'rejected', label: 'Rejected' }    // Correction (Edit)
+    { key: 'live', label: 'Live' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'submitted', label: 'Submitted' },
+    { key: 'approved', label: 'Approved' },
+    { key: 'rejected', label: 'Rejected' },
+    // { key: 'response awaited', label: 'Response Awaited'}
   ];
-
-  // Pagination
-  currentPage = 1;
-  itemsPerPage = 10;
-
-  // Sorting
   sortColumn: keyof ExportCollectionTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
-  private isBrowser: boolean;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(
-     private api: ApiService,
+    private api: ApiService,
     private transactionService: ExportCollectionFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) platformId: Object,
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+  ) {}
 
-  // ngOnInit(): void {
-  //   if (!this.isBrowser) return;
+ ngOnInit(): void {
+  if (!this.isBrowser) return;
 
-  //   // 1. Check URL for tab preference
-  //   this.route.queryParams.subscribe(params => {
-  //       if(params['tab']) {
-  //           this.activeTab = params['tab'];
-  //       }
-  //       // Initial Load (Backend Filtered)
-  //       this.loadByStatus();
-  //   });
+  this.loadTransactions();
 
-  //   // 2. Subscribe to stream updates (Real-time updates)
-  //   this.transactionService.transactionsStream$.subscribe(txList => {
-  //     this.allTransactions = txList; 
-  //     // Filter ONLY by search/sort locally (Status is done by backend)
-  //     this.filterBySearchOnly(); 
-  //   });
-  // }
-  ngOnInit(): void {
-    if (!this.isBrowser) return;
+  this.transactionService.transactionsStream$.subscribe(txList => {
+    this.allTransactions = txList;
+    this.applyFilters();
+  });
+}
 
-    this.loadTransactions();
 
-    this.transactionService.transactionsStream$.subscribe(txList => {
-      this.allTransactions = txList;
-      this.applyFilters();
-    }
-    );
-  }
   private loadTransactions(): void {
+    if (this.activeTab === 'live') {
+
+      this.api.getLiveEventHistoryExportCollection().subscribe({
+        next: (txList) => {
+          this.allTransactions = txList;
+          this.applyFilters();
+          // this.filteredTransactions = [...txList];
+        },
+        error: () => {
+          this.allTransactions = [];
+          this.filteredTransactions = [];
+        }
+      });
+
+      return;
+    }
+
     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
-    this.api.getRecordTransactionsByStatusForExportCollection(backendStatus).subscribe({
+    this.api.getRecordTransactionsByStatusExportCollection(backendStatus).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
         this.applyFilters();
@@ -110,15 +89,8 @@ export class inquiriesRecords implements OnInit {
       }
     });
   }
-  // --- DATA LOADING ---
 
-  setActiveTab(tab: string): void {
-    this.activeTab = tab;
-    this.currentPage = 1;
-    this.loadTransactions();
-  }
 
-  // --- FILTERING ---
 
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
@@ -129,7 +101,7 @@ export class inquiriesRecords implements OnInit {
       const matchesSearch =
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
-        tx.draweeName?.toLowerCase().includes(query) ||
+        
         tx.currency?.toLowerCase().includes(query);
 
       const matchesCurrency =
@@ -140,13 +112,51 @@ export class inquiriesRecords implements OnInit {
 
     this.applySorting(filtered);
   }
-  
+
+  // setActiveTab(tab: string): void {
+  //   this.activeTab = tab;
+  //   this.applyFilters();
+  // }
+
+ setActiveTab(tab: string): void {
+  if (this.activeTab === tab) {
+    return;
+  }
+
+  this.activeTab = tab;
+  this.currentPage = 1;
+
+  this.loadTransactions();
+}
+
+  // private loadByStatus(status: string): void {
+  //   const backendStatus = this.mapTabToBackendStatus(status);
+  //   this.api.getTransactionsByStatus(backendStatus).subscribe({
+  //     next: (txList) => {
+  //       this.allTransactions = txList;
+  //       this.filteredTransactions = txList;
+  //     },
+  //     error: () => {
+  //       this.allTransactions = [];
+  //       this.filteredTransactions = [];
+  //     }
+  //   });
+  // }
+
+
+  // getTabCount(tabKey: string): number {
+  //   return this.allTransactions.filter(tx => this.mapStatusToTab(tx.status!) === tabKey).length;
+  // }
+
   clearSearch(): void {
     this.searchQuery = '';
     this.applyFilters();
   }
 
-  // --- SORTING ---
+  // clearCurrency(): void {
+  //   this.currencyFilter = '';
+  //   this.applyFilters();
+  // }
 
   sortBy(column: typeof this.sortColumn): void {
     if (this.sortColumn === column) {
@@ -193,6 +203,7 @@ export class inquiriesRecords implements OnInit {
     this.currentPage = 1;
   }
 
+
   private resolveColumn(tx: ExportCollectionTransaction, column: string): any {
     switch (column) {
       case 'tnxId': return tx.tnxId;
@@ -203,12 +214,11 @@ export class inquiriesRecords implements OnInit {
     }
   }
 
-  // --- PAGINATION ---
-
   get totalPages(): number {
     const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
     return count < 1 ? 1 : count;
   }
+  
   get pagedTransactions(): ExportCollectionTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
@@ -222,39 +232,55 @@ export class inquiriesRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
 
-  // --- NAVIGATION ACTIONS ---
-
+  // viewTransaction(tx: ImportLcTransaction): void {
+  //   this.transactionService.setCurrentTransaction(tx, true);
+  //   this.router.navigate(['/import-screen/preview']);
+  // }
   viewTransaction(tx: ExportCollectionTransaction): void {
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-   this.api.getTransactionForExportCollectionByTnxId(tx.tnxId!).subscribe({
+    this.api.getTransactionByTnxIdExportCollection(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/export-collection/preview']);
+        this.router.navigate(['dashboard/Trade-Services/export-collection/preview']);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/export-collection/preview']);
+        this.router.navigate(['dashboard/Trade-Services/export-collection/preview']);
       }
     });
   }
 
   openExportCollection(tx: ExportCollectionTransaction) {
+    if (this.activeTab === 'live') {
+      // Live tab rows are event records — navigate by eventRefNo
+      this.router.navigate(
+        ['dashboard/Trade-Services/export-collection/amend', tx.tnxId],
+        {
+          queryParams: {
+            mode: 'READ_ONLY',
+            tab: 'live',
+            eventRefNo: tx.eventRefNo ?? ''
+          }
+        }
+      );
+      return;
+    }
     // Store transaction in service for import screen to pick up
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
-    this.router.navigate(['/export-collection', tx.tnxId], {
+    this.router.navigate(['dashboard/Trade-Services/export-collection', tx.tnxId], {
       state: {
         transaction: tx,
         // showUpdateSubmit: true // flag to show buttons
-        mode: mode
+        mode : mode
       }
     });
   }
-  
+
   trackByTnxId(_: number, tx: ExportCollectionTransaction): string {
-    return tx.tnxId!;
+    return tx.eventRefNo ?? tx.tnxId!;
   }
 
   private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
@@ -282,5 +308,6 @@ export class inquiriesRecords implements OnInit {
         return 'i';
     }
   }
+
 
 }

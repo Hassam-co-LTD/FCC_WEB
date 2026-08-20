@@ -1,3 +1,5 @@
+/*
+
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
@@ -311,6 +313,8 @@ export const routes: Routes = [
                     // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
                     // Export Collection, Undertaking Issuance ONLY
                     // ==============================
+
+                    /*
                     {
                         path: 'Trade-Services',
                         loadComponent: () => import('./screens/USER/Trade-Services/Trade-Services').then((m) => m.TradeServices),
@@ -472,4 +476,705 @@ export const routes: Routes = [
             import('./screens/AUTH/page-not-found/page-not-found')
                 .then(m => m.PageNotFound)
     },
+
+    
 ]
+
+{
+    path: 'Trade-Services',
+    loadComponent: () => import('./screens/USER/Trade-Services/Trade-Services').then((m) => m.TradeServices),
+    children: [
+        // ---------- EXPORT LC ----------
+        { path: 'export-screen/inquiries', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records').then(m => m.InquiriesOfRecords) },
+        { path: 'export-screen/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(m => m.ExportPreview) },
+        { path: 'export-screen/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+        { path: 'export-screen/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/export-screen').then(m => m.ExportScreen) },
+        { path: 'export-screen', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/export-screen').then(m => m.ExportScreen) },
+        {
+            path: 'exportlc-welcome',
+            pathMatch: 'full',
+            loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+            data: {
+                title: 'Welcome to Export LC',
+                description: 'Manage all Export LC activities here.',
+                createRoute: '/dashboard/Trade-Services/export-screen',
+                templateRoute: '/dashboard/Trade-Services/export-screen?mode=template',
+                existingRoute: '/dashboard/Trade-Services/export-screen/inquiries',
+                uploadRoute: '/dashboard/Trade-Services/export-screen?mode=upload'
+            }
+        },
+
+        // ---------- SHIPPING GUARANTEE ----------
+        { path: 'shipping-guarantee/inquiries-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records').then(m => m.inquiriesRecords) },
+        { path: 'shipping-guarantee/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview').then((m) => m.Preview) },
+        { path: 'shipping-guarantee/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then((m) => m.Success) },
+        { path: 'shipping-guarantee/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then((m) => m.Amend) },
+        { path: 'shipping-guarantee/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+        { path: 'shipping-guarantee/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview) },
+        { path: 'shipping-guarantee/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(m => m.ShippingGuarantee) },
+        { path: 'shipping-guarantee/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend) },
+        { path: 'shipping-guarantee', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee), data: { title: 'Shipping Guarantee' } },
+        {
+            path: 'shipping-welcome',
+            pathMatch: 'full',
+            loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+            data: {
+                title: 'Welcome to Shipping Guarantee',
+                description: 'Manage all Shipping Guarantee activities here.',
+                createRoute: '/dashboard/Trade-Services/shipping-guarantee',
+                templateRoute: '/dashboard/Trade-Services/shipping-guarantee?mode=template',
+                existingRoute: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+                uploadRoute: '/dashboard/Trade-Services/shipping-guarantee?mode=upload'
+            }
+        },
+
+        // ---------- EXPORT COLLECTION ----------
+        { path: 'export-collection/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then((m) => m.Preview) },
+        { path: 'export-collection/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then((m) => m.Success), data: { title: 'Export Collection Submitted' } },
+        { path: 'export-collection/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/export-collection').then(m => m.ExportCollection) },
+        { path: 'export-collection', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/export-collection').then((m) => m.ExportCollection), data: { title: 'Export Collection' } },
+        {
+            path: 'export-collection-welcome',
+            pathMatch: 'full',
+            loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+            data: {
+                title: 'Welcome to Export Collection',
+                description: 'Manage all Export Collection related activities here.',
+                createRoute: '/dashboard/Trade-Services/export-collection',
+                templateRoute: '/dashboard/Trade-Services/export-collection?mode=template',
+                existingRoute: '/dashboard/Trade-Services/export-collection/inquiries-records',
+                uploadRoute: '/dashboard/Trade-Services/export-collection?mode=upload'
+            },
+        },
+
+        // ---------- UNDERTAKING ISSUANCE ----------
+        { path: 'undertaking-issuance/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then((m) => m.Preview) },
+        { path: 'undertaking-issuance/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+        { path: 'undertaking-issuance/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then((m) => m.AmendScreen) },
+        { path: 'undertaking-issuance/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview) },
+        { path: 'undertaking-issuance/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then(m => m.RequestUndertaking) },
+        { path: 'undertaking-issuance/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(m => m.AmendScreen) },
+        { path: 'undertaking-issuance', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance) },
+        {
+            path: 'undertaking-issuance/request-undertaking',
+            loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then((m) => m.RequestUndertaking),
+            // ⚠️ NOT pathMatch:'full' — this one HAS children below, so leave it as prefix match
+            children: [
+                { path: 'general-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/general-details/general-details').then((m) => m.generalDetails) },
+                { path: 'beneficiary-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/application-beneficiary/application-beneficiary').then((m) => m.ApplicationBeneficiary) },
+                { path: 'bank-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/bank-details/bank-details').then((m) => m.BankDetails) },
+                { path: 'undertaking-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/undertaking-details/undertaking-details').then((m) => m.UndertakingDetails) },
+                { path: 'instruction-bank', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/instructions-bank/instructions-bank').then((m) => m.InstructionsBank) },
+            ],
+        },
+        {
+            path: 'undertaking-welcome',
+            pathMatch: 'full',
+            loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+            data: {
+                title: 'Welcome to Undertaking Issuance',
+                description: 'Manage all Undertaking Issuance related activities here.',
+                createRoute: '/dashboard/Trade-Services/undertaking-issuance',
+                templateRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=template',
+                existingRoute: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+                uploadRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=upload'
+            },
+        },
+
+        // ---------- IMPORT LC ----------
+        { path: 'import-screen/inquiries', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(m => m.EnquiriesOfRecords) },
+        { path: 'import-screen/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(m => m.Preview) },
+        { path: 'import-screen/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+        { path: 'import-screen/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
+        { path: 'import-screen/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+        { path: 'import-screen/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview) },
+        { path: 'import-screen/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen) },
+        { path: 'import-screen/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
+        { path: 'import-screen', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen) },
+        {
+            path: 'import-welcome',
+            pathMatch: 'full',
+            loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+            data: {
+                title: 'Welcome to Import LC',
+                description: 'Manage all Import LC related activities here.',
+                createRoute: '/dashboard/Trade-Services/import-screen',
+                templateRoute: '/dashboard/Trade-Services/import-screen?mode=template',
+                existingRoute: '/dashboard/Trade-Services/import-screen/inquiries',
+                uploadRoute: '/dashboard/Trade-Services/import-screen?mode=upload'
+            }
+        },
+
+        // ---------- LOCAL WILDCARD (catches any invalid Trade-Services sub-path) ----------
+        {
+            path: '**',
+            loadComponent: () =>
+                import('./screens/AUTH/page-not-found/page-not-found').then(m => m.PageNotFound)
+        }
+    ]
+}]}
+        ]},
+    
+    
+    {
+            path: '**',
+            loadComponent: () =>
+                import('./screens/AUTH/page-not-found/page-not-found').then(m => m.PageNotFound)
+        }
+    ]
+    */
+
+    import { Routes } from '@angular/router';
+import { LayoutComponent } from './core/layout/layout';
+import { authGuard } from './core/guards/auth-guard';
+    import { UrlMatcher, UrlSegment } from '@angular/router';
+
+export const transactionIdMatcher: UrlMatcher = (
+  segments: UrlSegment[]
+) => {
+  if (
+    segments.length === 2 &&
+    segments[0].path === 'import-screen' &&
+    /^\d+$/.test(segments[1].path)
+  ) {
+    return {
+      consumed: segments
+    };
+  }
+
+  return null;
+};
+
+export const routes: Routes = [
+    // Default redirect
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+
+    // Auth routes
+    {
+        path: 'login',
+        loadComponent: () =>
+            import('./screens/AUTH/login/login.component').then((m) => m.LoginComponent),
+    },
+    {
+        path: 'reset-password',
+        loadComponent: () =>
+            import('./screens/AUTH/login/login.component')
+                .then(m => m.LoginComponent),
+    },
+
+    // Protected routes (with layout)
+    {
+        path: '',
+        component: LayoutComponent,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: "admin",
+                canActivate: [authGuard],
+                canActivateChild: [authGuard],
+                data: {
+                    role: 'A',
+                    companyType: 'C'
+                },
+                loadComponent: () =>
+                    import("./screens/ADMIN/admin-dashboard/admin-dashboard").then((m) => m.AdminComponent),
+                children: [
+                    {
+                        path: "create-customer",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
+                                .then((m) => m.CreateCustomer),
+                    },
+                    {
+                        path: "users",
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/users/users').then((m) => m.Users)
+                    },
+                    {
+                        path: "customer-list",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/customers/customer-list/customer-list").then((m) => m.CustomerList)
+                    },
+                    {
+                        path: "create-customer/:id",
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/customers/create-customer/create-customer")
+                                .then((m) => m.CreateCustomer),
+                    },
+                    {
+                        path: 'create-branch',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
+                                .then((m) => m.CustomerBranch)
+                    },
+                    {
+                        path: 'branch-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
+                                .then((m) => m.BranchList)
+                    },
+                    {
+                        path: 'branch-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/branch-list/branch-list")
+                                .then((m) => m.BranchList)
+                    },
+                    {
+                        path: 'edit-branch/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/branch/customer-branch/customer-branch")
+                                .then((m) => m.CustomerBranch)
+                    },
+                    {
+                        path: 'create-city',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
+                    },
+                    {
+                        path: 'edit-city/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
+                    },
+                    {
+                        path: 'city-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m) => m.CityList)
+                    },
+                    {
+                        path: 'city/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city").then((m) => m.City)
+                    },
+                    {
+                        path: 'city-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/city/city-list/city-list").then((m) => m.CityList)
+                    },
+                    {
+                        path: 'create-currency',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-currency/create-currency").then((m) => m.CreateCurrency)
+                    },
+                    {
+                        path: 'currency-list',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list").then((m) => m.CurrencyList)
+                    },
+                    {
+                        path: 'create-client-user',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+                    },
+                    {
+                        path: 'user-client-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/list-user-client/list-user-client").then((m) => m.clientUsersList)
+                    },
+                    {
+                        path: 'edit-client-user/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+                    },
+                    {
+                        path: 'create-company',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m) => m.CreateCompany)
+                    },
+                    {
+                        path: 'company-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/company-list/company-list").then((m) => m.CompanyList)
+                    },
+                    {
+                        path: 'edit-company/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-company/create-company").then((m) => m.CreateCompany)
+                    },
+                    {
+                        path: 'create-role-master',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m) => m.CreateRoleMaster)
+                    },
+                    {
+                        path: 'role-master-inquiry',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/role-master-list/role-master-list").then((m) => m.RoleMasterList)
+                    },
+                    {
+                        path: 'edit-role-master/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-role-master/create-role-master").then((m) => m.CreateRoleMaster)
+                    },
+                    {
+                        path: 'create-client-user/:id',
+                        loadComponent: () =>
+                            import("./screens/ADMIN/admin-dashboard/components/create-user-client/create-user-client").then((m) => m.CreateClientUser)
+                    },
+                    {
+                        path: 'create-dynamic-fields',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
+                    },
+                    {
+                        path: 'dynamic-field-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/list-generate-fields/list-generate-fields')
+                                .then((m) => m.ListGenerateFields)
+                    },
+                    {
+                        path: 'edit-field/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields')
+                                .then((m) => m.CreateGenerateFields)
+                    },
+                    {
+                        path: 'create-dropdown-option',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+                    {
+                        path: 'dynamic-dropdown-option-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then((m) => m.DynamicDropdownOptionInquiry)
+                    },
+                    {
+                        path: 'edit-dropdown-option/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then((m) => m.CreateDynamicFieldOptions)
+                    },
+                    // ========Accounts========
+                    {
+                        path: 'create-account',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+                    },
+                    {
+                        path: 'Accounts-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+                    },
+                    {
+                        path: 'edit-accounts/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then((m) => m.Accounts)
+                    },
+                    {
+                        path: 'create-account-types',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
+                    },
+                    {
+                        path: 'edit-account-types/:id',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/create-account-types/create-account-types').then((m) => m.CreateAccountTypes)
+                    },
+                    {
+                        path: 'account-types-inquiry',
+                        loadComponent: () =>
+                            import('./screens/ADMIN/admin-dashboard/components/account-types-inquiry/account-types-inquiry').then((m) => m.AccountTypesInquiry)
+                    },
+                    // ================= Permission Master =================
+                    {
+                        path: 'create-permission',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+                                .then(m => m.PermissionMaster)
+                    },
+                    {
+                        path: 'edit-permission/:id',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permission-master/permission-master')
+                                .then(m => m.PermissionMaster)
+                    },
+                    {
+                        path: 'permission-master-inquiry',
+                        loadComponent: () =>
+                            import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry')
+                                .then(m => m.RoleMasterList)
+                    },
+                ],
+            },
+
+            //  CustomerUser Dashboard
+            {
+                path: 'customer-user',
+                canActivate: [authGuard],
+                canActivateChild: [authGuard],
+                data: { companyType: 'B' },
+                loadComponent: () =>
+                    import('./screens/CustomerUser/create-customer/create-customer').then((m) => m.CreateCustomer),
+                children: [
+                    {
+                        path: 'create-customer-user',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer/user-of-customer').then((m) => m.UserOfCustomer),
+                    },
+                    {
+                        path: 'edit-customer-user/:id',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer/user-of-customer').then((m) => m.UserOfCustomer),
+                    },
+                    {
+                        path: 'inquiry',
+                        loadComponent: () =>
+                            import('./screens/CustomerUser/Components/user-of-customer-inquiry/user-of-customer-inquiry').then((m) => m.UserOfCustomerInquiry),
+                    },
+                ],
+            },
+
+            {
+                path: 'system-overview',
+                canActivate: [authGuard],
+                data: { role: 'A', companyType: 'C' },
+                loadComponent: () => import('./screens/ADMIN/system-overview/system-overview').then((m) => m.SystemOverview),
+            },
+            {
+                path: 'middle-office',
+                canActivate: [authGuard],
+                data: { role: 'A', companyType: 'C' },
+                loadComponent: () => import('./screens/ADMIN/middle-office/middle-office').then((m) => m.MiddleOffice),
+            },
+
+            // ==============================
+            // DASHBOARD (role: U)
+            // ==============================
+            {
+                path: 'dashboard',
+                canActivate: [authGuard],
+                canActivateChild: [authGuard],
+                data: { role: 'U', companyType: 'C' },
+                loadComponent: () => import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
+                children: [
+
+                    {
+                        path: 'search-by-id',
+                        pathMatch: 'full',
+                        loadComponent: () => import('./screens/USER/search-transaction-id/search-transaction-id').then(m => m.SearchTransactionID),
+                    },
+
+                    // ==============================
+                    // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
+                    // Export Collection, Undertaking Issuance ONLY
+                    // ==============================
+                    {
+                        path: 'Trade-Services',
+                        loadComponent: () => import('./screens/USER/Trade-Services/Trade-Services').then((m) => m.TradeServices),
+                        children: [
+                            // ---------- EXPORT LC ----------
+                            { path: 'export-screen/inquiries', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records').then(m => m.InquiriesOfRecords) },
+                            { path: 'export-screen/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(m => m.ExportPreview) },
+                            { path: 'export-screen/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+                            {
+  matcher: transactionIdMatcher,
+  loadComponent: () =>
+    import('./screens/USER/Trade-Services/export-screen/export-screen')
+      .then(m => m.ExportScreen)
+},
+                            { path: 'export-screen', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-screen/export-screen').then(m => m.ExportScreen) },
+                            {
+                                path: 'exportlc-welcome',
+                                pathMatch: 'full',
+                                loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                                data: {
+                                    title: 'Welcome to Export LC',
+                                    description: 'Manage all Export LC activities here.',
+                                    createRoute: '/dashboard/Trade-Services/export-screen',
+                                    templateRoute: '/dashboard/Trade-Services/export-screen?mode=template',
+                                    existingRoute: '/dashboard/Trade-Services/export-screen/inquiries',
+                                    uploadRoute: '/dashboard/Trade-Services/export-screen?mode=upload'
+                                }
+                            },
+
+                            // ---------- SHIPPING GUARANTEE ----------
+                            { path: 'shipping-guarantee/inquiries-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records').then(m => m.inquiriesRecords) },
+                            { path: 'shipping-guarantee/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview').then((m) => m.Preview) },
+                            { path: 'shipping-guarantee/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then((m) => m.Success) },
+                            { path: 'shipping-guarantee/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then((m) => m.Amend) },
+                            { path: 'shipping-guarantee/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+                            { path: 'shipping-guarantee/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview) },
+                          { matcher: transactionIdMatcher,
+  loadComponent: () =>
+    import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen')
+      .then(m => m.ShippingGuarantee)
+},
+                            { path: 'shipping-guarantee/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend) },
+                            { path: 'shipping-guarantee', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then((m) => m.ShippingGuarantee), data: { title: 'Shipping Guarantee' } },
+                            {
+                                path: 'shipping-welcome',
+                                pathMatch: 'full',
+                                loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                                data: {
+                                    title: 'Welcome to Shipping Guarantee',
+                                    description: 'Manage all Shipping Guarantee activities here.',
+                                    createRoute: '/dashboard/Trade-Services/shipping-guarantee',
+                                    templateRoute: '/dashboard/Trade-Services/shipping-guarantee?mode=template',
+                                    existingRoute: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+                                    uploadRoute: '/dashboard/Trade-Services/shipping-guarantee?mode=upload'
+                                }
+                            },
+
+                            // ---------- EXPORT COLLECTION ----------
+                           { path: 'export-collection/inquiries-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records').then(m => m.InquiriesRecords) },
+                            { path: 'export-collection/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then((m) => m.Preview) },
+                            { path: 'export-collection/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+                            { path: 'export-collection/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then((m) => m.Amend) },
+                            { path: 'export-collection/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+                            { path: 'export-collection/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(m => m.PreviewSection) },
+                            {
+                                path: 'export-collection/:tnxId',
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/export-collection/export-collection').then(m => m.ExportCollection),
+                            },
+                            {
+                                matcher: transactionIdMatcher,
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/export-collection/export-collection')
+                                        .then(m => m.ExportCollection)
+                            },
+                            { path: 'export-collection/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(m => m.Amend) },
+                            { path: 'export-collection', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/export-collection/export-collection').then((m) => m.ExportCollection) },
+                            {
+                                path: 'export-collection-welcome',
+                                pathMatch: 'full',
+                                loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                                data: {
+                                    title: 'Welcome to Export Collection',
+                                    description: 'Manage all Export Collection related activities here.',
+                                    createRoute: '/dashboard/Trade-Services/export-collection',
+                                    templateRoute: '/dashboard/Trade-Services/export-collection?mode=template',
+                                    existingRoute: '/dashboard/Trade-Services/export-collection/inquiries-records',
+                                    uploadRoute: '/dashboard/Trade-Services/export-collection?mode=upload'
+                                },
+                            },
+ 
+
+                            // ---------- UNDERTAKING ISSUANCE ----------
+                            { path: 'undertaking-issuance/inquiries-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records').then(m => m.inquiriesRecords) },
+                            { path: 'undertaking-issuance/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then((m) => m.Preview) },
+                            { path: 'undertaking-issuance/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+                            { path: 'undertaking-issuance/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then((m) => m.AmendScreen) },
+                            { path: 'undertaking-issuance/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+                            { path: 'undertaking-issuance/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(m => m.Preview) },
+                            {
+                                path: 'undertaking-issuance/:tnxId',
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(m => m.UndertakingIssuance),
+                            },
+                            {
+                                matcher: transactionIdMatcher,
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance')
+                                        .then(m => m.UndertakingIssuance)
+                            },
+                            { path: 'undertaking-issuance/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(m => m.AmendScreen) },
+                            { path: 'undertaking-issuance', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then((m) => m.UndertakingIssuance) },
+                            {
+                                path: 'undertaking-welcome',
+                                pathMatch: 'full',
+                                loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                                data: {
+                                    title: 'Welcome to Undertaking Issuance',
+                                    description: 'Manage all Undertaking Issuance related activities here.',
+                                    createRoute: '/dashboard/Trade-Services/undertaking-issuance',
+                                    templateRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=template',
+                                    existingRoute: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+                                    uploadRoute: '/dashboard/Trade-Services/undertaking-issuance?mode=upload'
+                                },
+                            },
+ 
+
+                            // ---------- IMPORT LC ----------
+                            { path: 'import-screen/inquiries', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(m => m.EnquiriesOfRecords) },
+                            { path: 'import-screen/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(m => m.Preview) },
+                            { path: 'import-screen/success', pathMatch: 'full', loadComponent: () => import('./shared/success/success').then(m => m.Success) },
+                            { path: 'import-screen/amend', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
+                            { path: 'import-screen/approved-inquiry-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then((m) => m.ApprovedInquiryRecords) },
+                               {
+                                path: 'import-screen/:tnxId',
+                                loadComponent: () =>
+                                    import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen),
+                            },
+                            { path: 'import-screen/amend/preview', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview) },
+                           {
+  matcher: transactionIdMatcher,
+  loadComponent: () =>
+    import('./screens/USER/Trade-Services/import-screen/import-screen')
+      .then(m => m.ImportScreen)
+} ,
+                            { path: 'import-screen/amend/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen) },
+                            { path: 'import-screen', pathMatch: 'full', loadComponent: () => import('./screens/USER/Trade-Services/import-screen/import-screen').then(m => m.ImportScreen) },
+                            {
+                                path: 'import-welcome',
+                              //  pathMatch: 'full',
+                                loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                                data: {
+                                    title: 'Welcome to Import LC',
+                                    description: 'Manage all Import LC related activities here.',
+                                    createRoute: '/dashboard/Trade-Services/import-screen',
+                                    templateRoute: '/dashboard/Trade-Services/import-screen?mode=template',
+                                    existingRoute: '/dashboard/Trade-Services/import-screen/inquiries',
+                                    uploadRoute: '/dashboard/Trade-Services/import-screen?mode=upload'
+                                }
+                            },
+
+                            // ---------- LOCAL WILDCARD for anything invalid under Trade-Services ----------
+                          /*  {
+                                path: '**',
+                                loadComponent: () =>
+                                    import('./screens/AUTH/page-not-found/page-not-found').then(m => m.PageNotFound)
+                            }*/
+                        ]
+                    },
+
+                    // ==============================
+                    // PAYMENT SERVICES — sibling of Trade Services, not nested inside it
+                    // ==============================
+                    {
+                        path: 'my-accounts',
+                        children: [
+                            { path: '', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent) },
+                            { path: 'transfer/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(m => m.MyAccountsComponent) },
+                            { path: 'general-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(m => m.GeneralDetails) }
+                        ]
+                    },
+                    {
+                        path: 'IBFT',
+                        children: [
+                            { path: '', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT) },
+                            { path: 'transfer/:tnxId', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(m => m.IBFT) },
+                            { path: 'general-details', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(m => m.GeneralDetails) }
+                        ]
+                    },
+                    {
+                        path: 'fund-transfer-welcome',
+                        pathMatch: 'full',
+                        loadComponent: () => import('./shared/welcome-screen/welcome-screen').then((m) => m.WelcomeScreen),
+                        data: { title: 'Welcome to Fund Transfer', description: 'Manage all activities related FUND TRANSFER here.' },
+                    },
+                    { path: 'fund-transfer/with-in', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then((m) => m.ThirdPartyTransfer) },
+                    { path: 'fund-transfer/ibft', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then((m) => m.ThirdPartyTransfer) },
+                    { path: 'fund-transfer/fund-transfer-records', pathMatch: 'full', loadComponent: () => import('./screens/USER/Payment-Services/FundTransfer/sub-menus/records/inquiry-of-fundtransfer-records/inquiry-of-fundtransfer-records').then((m) => m.InquiryOfFundtransferRecords) },
+
+                    // ---------- LOCAL WILDCARD for anything invalid directly under /dashboard ----------
+                   /* {
+                        path: '**',
+                        loadComponent: () =>
+                            import('./screens/AUTH/page-not-found/page-not-found').then(m => m.PageNotFound)
+                    }*/
+                ]
+            },
+
+            // Default child redirect for '/'
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+        ]
+    },
+
+    // Top-level wildcard — catches anything not matched anywhere above
+    {
+        path: '**',
+        loadComponent: () =>
+            import('./screens/AUTH/page-not-found/page-not-found')
+                .then(m => m.PageNotFound)
+    }
+];

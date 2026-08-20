@@ -50,7 +50,13 @@
     <table>
         <thead>
             <tr>
+               
+
+
+                <th *ngIf="activeTab == 'live'">Event Ref No</th>
                 <th (click)="sortBy('tnxId')">TNX ID</th>
+                <th *ngIf="activeTab == 'live'">Event Sequence</th>
+                <th *ngIf="activeTab == 'live'">Event</th>
                 <th (click)="sortBy('createdOn')">Created</th>
                 <th>Issuer Reference</th>
                 <th>Currency</th>
@@ -62,7 +68,19 @@
         </thead>
         <tbody>
             <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <td><a class="tnx-link" (click)="openExportCollection(tx)">{{ tx.tnxId }}</a></td>
+                <td *ngIf="activeTab == 'live'">
+                    <a class="tnx-link" (click)="openExportCollection(tx)">{{ tx.eventRefNo }}</a>
+                </td>
+                <td>
+                    <a class="tnx-link" *ngIf="activeTab !== 'live'" (click)="openExportCollection(tx)">
+                        {{ tx.tnxId }}
+                    </a>
+                    <span *ngIf="activeTab === 'live'">{{ tx.tnxId }}</span>
+                </td>
+                <td *ngIf="activeTab == 'live'">
+                    {{ tx.eventSequence }}
+                </td>
+                <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
                 <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
                 <td>{{tx.issuerReference}}</td>
                 <td>{{ tx.currency }}</td>
@@ -82,11 +100,13 @@
                     No {{ activeTab }} Export Collection records found
                 </td>
             </tr>
+
+            
         
         </tbody>
     </table>
 
-    <div class="pagination">
+        <div class="pagination" *ngIf="filteredTransactions.length > 0">
         <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
         <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>

@@ -127,7 +127,7 @@ export class Preview implements OnInit {
 }
 
   back() {
-    this.router.navigate(['/export-collection/inquiries-records'])
+    this.router.navigate(['/dashboard/Trade-Services/export-collection/inquiries-records'])
   }
 
   /** SUBMIT */
@@ -140,9 +140,9 @@ export class Preview implements OnInit {
       return;
     }
 
-    this.api.submitExportCollectionByTnxId(tnxId, this.currentTx!).subscribe({
+    this.api.approveTransactionExportCollection(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/export-collection/success'], {
+        this.router.navigate(['dashboard/Trade-Services/export-collection/success'], {
           state: { transaction: res }
         });
       },
@@ -156,10 +156,10 @@ export class Preview implements OnInit {
   approveTransaction(): void {
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveTransactionForExportCollection(this.currentTx.tnxId, this.currentTx).subscribe({
+    this.api.approveTransactionExportCollection(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/export-collection/success'], { state: { transaction: res } });
+        this.router.navigate(['dashboard/Trade-Services/export-collection/success'], { state: { transaction: res } });
       },
       error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
     });
@@ -178,10 +178,10 @@ rejectTransaction(): void {
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-      this.api.rejectTransactionForExportCollection(tnxId, reason ).subscribe({
+      this.api.rejectTransactionExportCollection(tnxId, reason ).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/export-collection/success'], { state: { transaction: res } });
+          this.router.navigate(['dashboard/Trade-Services/export-collection/success'], { state: { transaction: res } });
         },
         error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
       });

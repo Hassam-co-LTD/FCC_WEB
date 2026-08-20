@@ -34,7 +34,7 @@
       <div class="form-grid-2">
         <mat-form-field appearance="outline" class="full">
           <mat-label>Remitting Bank *</mat-label>
-          <mat-select formControlName="remittingBank">
+          <mat-select formControlName="remittingBankName">
             <mat-option value="">Select Bank</mat-option>
             @for (b of bankList; track b) {
               <mat-option [value]="b">{{ b }}</mat-option>
@@ -43,7 +43,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">
           <mat-label>Issuer Reference *</mat-label>
-          <input matInput formControlName="remittingIssuerRef" placeholder="Enter issuer reference" />
+          <input matInput formControlName="issuerReference" placeholder="Enter issuer reference" />
         </mat-form-field>
         <mat-form-field appearance="outline" class="full">
           <mat-label>Principal Account *</mat-label>

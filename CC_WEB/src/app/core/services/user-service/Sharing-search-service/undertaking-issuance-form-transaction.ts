@@ -8,11 +8,14 @@ import { RecordListDTO, UndertakingResponseDTO } from '../../../models/undertaki
 export interface UndertakingTransaction {
   id: string | number;         // Database PK
   channelReference: string;    // Display Ref
-  tnxId?: string;             // Unique String ID (e.g., UND260212000001)
+  tnxId?: string;              // Unique String ID (e.g., UND260212000001)
   status: string;
   lastUpdated: Date;
   formData: any;
   companyId?: string;
+  eventRefNo?: string;         // identifies an AMD amendment event, distinct from the master tnxId
+  eventType?: string;          // e.g. 'CRE' | 'AMD' — needed for the non-live tab columns
+  eventSequence?: string | number; // needed for the non-live tab columns
 }
 
 @Injectable({
@@ -20,7 +23,7 @@ export interface UndertakingTransaction {
 })
 export class UndertakingIssuanceService {
 
-  private readonly BASE_URL = 'http://hassam:8050/settlementsystem/api/v1/undertaking_lc';
+  private readonly BASE_URL = 'http://localhost:8050/settlementsystem/api/v1/undertaking_lc';;
 
   private transactionsSubject$ = new BehaviorSubject<UndertakingTransaction[]>([]);
   public transactionsStream$ = this.transactionsSubject$.asObservable();
@@ -28,7 +31,7 @@ export class UndertakingIssuanceService {
 
   constructor(private http: HttpClient) { }
 
-  // ================= READ OPERATIONS =================
+  // ================= READ OPERATIONS (master record) =================
 
   refreshTransactions(tab: string = 'pending'): Observable<UndertakingTransaction[]> {
     const companyId = sessionStorage.getItem('companyId') || '';
@@ -52,7 +55,15 @@ export class UndertakingIssuanceService {
     );
   }
 
-  // ================= WRITE OPERATIONS =================
+  /**
+   * Alias for the Amend screen, which calls it getTransactionByTnxId to mirror
+   * the Import LC AmendScreen naming. Backend already keys by tnxId — same call.
+   */
+  getTransactionByTnxId(tnxId: string): Observable<UndertakingTransaction> {
+    return this.getTransactionById(tnxId);
+  }
+
+  // ================= WRITE OPERATIONS (master record) =================
 
   /**
    * First Save: Sends data to generate a tnxId
@@ -73,10 +84,7 @@ export class UndertakingIssuanceService {
    * Update: Uses tnxId in the URL path
    */
   updateDraft(formData: any): Observable<UndertakingTransaction> {
-    // 1. Extract tnxId to match @PathVariable in Java
     const tnxId = formData.tnxId;
-
-    // 2. Transform form data to match UndertakingRequestDTO
     const payload = this.transformToBackendDTO(formData, formData.id);
 
     const headers = new HttpHeaders({
@@ -84,7 +92,6 @@ export class UndertakingIssuanceService {
       'companyid': sessionStorage.getItem('companyId') || 'ABC'
     });
 
-    // 3. Match Controller: BASE_URL + /update-draft/ + tnxId
     return this.http.put<UndertakingResponseDTO>(
       `${this.BASE_URL}/update-draft/${tnxId}`,
       payload,
@@ -93,11 +100,11 @@ export class UndertakingIssuanceService {
       map(updated => this.mapToFrontend(updated)),
       tap(updatedTx => this.updateLocalState(updatedTx)),
       catchError(err => {
-        // Pass the backend error (ErrorResponse) up to the component
         return throwError(() => err);
       })
     );
   }
+
   submitTransaction(tnxId: string | number, formData?: any): Observable<UndertakingTransaction> {
     const payload = formData ? this.transformToBackendDTO(formData, formData.id) : {};
     return this.http.post<UndertakingResponseDTO>(`${this.BASE_URL}/submit/${tnxId}`, payload).pipe(
@@ -117,9 +124,85 @@ export class UndertakingIssuanceService {
   }
 
   rejectUndertaking(tnxId: string | number, reason: string): Observable<UndertakingTransaction> {
-    // Backend expects an UndertakingRequestDTO, so we wrap the reason in an object
     const body = { rejectionReason: reason };
     return this.http.post<UndertakingResponseDTO>(`${this.BASE_URL}/rejectReason/${tnxId}`, body).pipe(
+      map(updated => this.mapToFrontend(updated)),
+      tap(updatedTx => this.updateLocalState(updatedTx)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  /**
+   * Used by UndertakingAmendScreen when a REJECTED master/draft is edited and
+   * pushed back to Pending. Reuses the same update-draft endpoint as updateDraft() —
+   * split out only so the Amend screen's call reads clearly. Merge these back into
+   * one method if the backend never needs to distinguish the two cases.
+   */
+  updateRejectedTransaction(tnxId: string, formData: any): Observable<UndertakingTransaction> {
+    return this.updateDraft({ ...formData, tnxId });
+  }
+
+  // ================= AMENDMENT (AMD) LIFECYCLE =================
+  // ⚠️ ASSUMED ENDPOINTS — these do not exist on the backend yet as far as I can
+  // verify. They follow the same URL conventions as the methods above
+  // (BASE_URL + verb + /{id}), but need a matching Spring controller before
+  // they'll work. Confirm/adjust paths once the backend amendment resource exists.
+  //
+  // Expected shape, mirroring Import LC's amendment sub-resource:
+  //   GET  /amend/event/{eventRefNo}   -> historical AMD snapshot (read-only)
+  //   GET  /amend/{tnxId}              -> in-progress AMD draft for a master tnxId
+  //   PUT  /amend/{tnxId}              -> save/update AMD draft (creates eventRefNo on first save)
+  //   POST /amend/submit/{eventRefNo}  -> submit AMD draft for approval
+  //   POST /amend/approve/{eventRefNo} -> approve AMD, apply to live master record
+  //   POST /amend/reject/{eventRefNo}  -> reject AMD, master record unchanged
+
+  getAmendmentByEventRefNo(eventRefNo: string): Observable<UndertakingTransaction> {
+    return this.http.get<UndertakingResponseDTO>(`${this.BASE_URL}/amend/event/${eventRefNo}`).pipe(
+      map(data => this.mapToFrontend(data)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  getAmendmentByTnxId(tnxId: string): Observable<UndertakingTransaction> {
+    return this.http.get<UndertakingResponseDTO>(`${this.BASE_URL}/amend/${tnxId}`).pipe(
+      map(data => this.mapToFrontend(data)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  saveAmendTransaction(tnxId: string, formData: any): Observable<UndertakingTransaction> {
+    const companyId = sessionStorage.getItem('companyId') || '';
+    const payload = this.transformToBackendDTO(formData, formData.id);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', companyid: companyId });
+
+    return this.http.put<UndertakingResponseDTO>(`${this.BASE_URL}/amend/${tnxId}`, payload, { headers }).pipe(
+      map(saved => this.mapToFrontend(saved)),
+      tap(savedTx => this.updateLocalState(savedTx)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  submitAmendment(eventRefNo: string, formData: any): Observable<UndertakingTransaction> {
+    const payload = this.transformToBackendDTO(formData, formData.id);
+    return this.http.post<UndertakingResponseDTO>(`${this.BASE_URL}/amend/submit/${eventRefNo}`, payload).pipe(
+      map(updated => this.mapToFrontend(updated)),
+      tap(updatedTx => this.updateLocalState(updatedTx)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  approveAmendment(eventRefNo: string, formData: any): Observable<UndertakingTransaction> {
+    const payload = this.transformToBackendDTO(formData, formData.id);
+    return this.http.post<UndertakingResponseDTO>(`${this.BASE_URL}/amend/approve/${eventRefNo}`, payload).pipe(
+      map(updated => this.mapToFrontend(updated)),
+      tap(updatedTx => this.updateLocalState(updatedTx)),
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  rejectAmendment(eventRefNo: string, reason: string): Observable<UndertakingTransaction> {
+    const body = { rejectionReason: reason };
+    return this.http.post<UndertakingResponseDTO>(`${this.BASE_URL}/amend/reject/${eventRefNo}`, body).pipe(
       map(updated => this.mapToFrontend(updated)),
       tap(updatedTx => this.updateLocalState(updatedTx)),
       catchError(err => this.handleError(err))
@@ -142,7 +225,6 @@ export class UndertakingIssuanceService {
   }
 
   private handleError(error: any) {
-    // Pull error message from backend if available
     const msg = error.error?.message || error.message || 'Server Error';
     return throwError(() => new Error(msg));
   }
@@ -154,6 +236,9 @@ export class UndertakingIssuanceService {
       tnxId: backendData.tnxId,
       status: backendData.status || 'I',
       lastUpdated: backendData.updatedOn ? new Date(backendData.updatedOn) : new Date(),
+      eventRefNo: backendData.eventRefNo,
+      eventType: backendData.eventType,
+      eventSequence: backendData.eventSequence,
       formData: this.transformToAngularForm(backendData)
     };
   }
@@ -165,6 +250,9 @@ export class UndertakingIssuanceService {
       id: backendData.id,
       tnxId: backendData.tnxId,
       status: backendData.status,
+      eventRefNo: backendData.eventRefNo,
+      eventType: backendData.eventType,
+      eventSequence: backendData.eventSequence,
       generalDetails: {
         productType: backendData.productType,
         modeOfTransmission: backendData.modeOfTransmission,
@@ -239,7 +327,6 @@ export class UndertakingIssuanceService {
   private transformToBackendDTO(form: any, id?: string | number | null): any {
     if (!form) return {};
 
-    // GUARD: Ensure 'id' in JSON is a number or null, never 'ABC'
     const rawId = id || form.id;
     const finalId = (rawId && !isNaN(Number(rawId))) ? Number(rawId) : null;
 
@@ -253,6 +340,7 @@ export class UndertakingIssuanceService {
     return {
       id: finalId,
       status: form.status,
+      eventRefNo: form.eventRefNo,
       productType: val(gen.productType),
       modeOfTransmission: val(gen.modeOfTransmission),
       formOfUndertaking: val(gen.formOfUndertaking),

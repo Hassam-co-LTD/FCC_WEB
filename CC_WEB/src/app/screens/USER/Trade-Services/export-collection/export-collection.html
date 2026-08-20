@@ -7,28 +7,28 @@
     <div class="scroll-area">
 
       <!-- SECTIONS -->
-      <section id="section-0"> <app-general-details [form]="generalDetailsForm"></app-general-details></section>
+      <section id="section-0"> <app-general-details [form]="generalDetails"></app-general-details></section>
       <hr class="section-divider" />
 
-      <section id="section-1"><app-drawer-drawee-details [form]="DrawerDraweeDetailsForm"></app-drawer-drawee-details></section>
+      <section id="section-1"><app-drawer-drawee-details [form]="DrawerDraweeDetails"></app-drawer-drawee-details></section>
       <hr class="section-divider" />
 
-      <section id="section-2"><app-bank-details [form]="bankDetailsForm"></app-bank-details></section>
+      <section id="section-2"><app-bank-details [form]="bankDetails"></app-bank-details></section>
       <hr class="section-divider" />
 
-      <section id="section-3"><app-payment-amount [form]="paymentAmountForm"></app-payment-amount></section>
+      <section id="section-3"><app-payment-amount [form]="PaymentAndAmount"></app-payment-amount></section>
       <hr class="section-divider" />
 
-      <section id="section-4"><app-shipping-details [form]="shippingDetailsForm"></app-shipping-details></section>
+      <section id="section-4"><app-shipping-details [form]="ShipmentDetails"></app-shipping-details></section>
       <hr class="section-divider" />
 
-      <section id="section-5"><app-collection-instructions [form]="collectionInstructionsForm"></app-collection-instructions></section>
+      <section id="section-5"><app-collection-instructions [form]="CollectionInstruction"></app-collection-instructions></section>
       <hr class="section-divider" />
 
       <section id="section-6"><app-license></app-license></section>
       <hr class="section-divider" />
 
-      <section id="section-7"><app-attachments-documents [attachmentsForm]="attachmentsForm"></app-attachments-documents>
+      <section id="section-7"><app-attachments-documents (filesChange)="updateAttachments($event)"></app-attachments-documents>
       </section>
       <!-- Footer Buttons -->
       <div class="actions">
