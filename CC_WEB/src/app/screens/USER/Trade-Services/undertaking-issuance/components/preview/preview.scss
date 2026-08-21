@@ -1,53 +1,97 @@
 @use '../../../../../../../styles/theme' as theme;
 
-/* ================================
+
+/* =========================================================
    PAGE WRAPPER
-================================ */
+========================================================= */
+
 .preview-page {
+  width: 100%;
+  box-sizing: border-box;
+
   background: theme.$light-bg;
+
   padding: 32px;
+
   border-radius: theme.$radius-large;
   border: 1px solid theme.$border-light;
+
   box-shadow: theme.$shadow-primary;
 }
 
-/* ================================
+
+/* =========================================================
    PAGE TITLE
-================================ */
+========================================================= */
+
 .page-title {
+  margin: 0 0 28px;
+
+  padding-bottom: 10px;
+
   font-size: 26px;
   font-weight: 700;
-  margin-bottom: 28px;
+
   color: theme.$primary;
+
   border-bottom: 2px solid theme.$border-light;
-  padding-bottom: 10px;
 }
 
-/* ================================
-   LAYOUT
-================================ */
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
 .preview-container {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
 
-.preview-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  width: 100%;
+
   gap: 24px;
 }
 
-/* ================================
+
+/* =========================================================
+   ROW
+========================================================= */
+
+.preview-row {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  gap: 24px;
+
+  width: 100%;
+
+  align-items: stretch;
+}
+
+
+/* =========================================================
    CARD
-================================ */
+========================================================= */
+
 .preview-card {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
   background: theme.$white;
+
   padding: 22px;
+
   border-radius: theme.$radius-large;
+
   border: 1px solid theme.$border-light;
+
   box-shadow: theme.$shadow-primary;
-  transition: all 0.2s ease;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     border-color: theme.$border-primary;
@@ -55,146 +99,415 @@
   }
 
   &.full-width {
-    grid-column: 1 / 3;
+    grid-column: 1 / -1;
   }
 }
 
-/* ================================
-   SECTION TITLES
-================================ */
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
 .section-title {
+  margin: 0 0 18px;
+
+  padding-bottom: 8px;
+
   font-size: 18px;
   font-weight: 600;
+
   color: theme.$primary-dark;
-  margin-bottom: 18px;
-  padding-bottom: 8px;
+
   border-bottom: 1px solid theme.$border-light;
 }
 
-/* ================================
-   GRID SYSTEM
-================================ */
+
+/* =========================================================
+   NORMAL FIELD GRID
+========================================================= */
+
 .preview-grid {
   display: grid;
-  grid-template-columns: 180px 1fr;
-  column-gap: 28px;
-  row-gap: 12px;
 
-  &.four-col {
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 20px;
-  }
+  /*
+   * Fixed label column + flexible value column.
+   * minmax(0, 1fr) prevents long values from
+   * expanding the card.
+   */
+  grid-template-columns:
+    180px
+    minmax(0, 1fr);
+
+  column-gap: 28px;
+  row-gap: 14px;
+
+  width: 100%;
+
+  min-width: 0;
 }
 
+
+/* =========================================================
+   FOUR COLUMN GRID
+   Used by Undertaking Details
+========================================================= */
+
+.preview-grid.four-col {
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  column-gap: 24px;
+  row-gap: 20px;
+
+  align-items: start;
+}
+
+
+/* =========================================================
+   FIELD ITEM
+========================================================= */
+
 .preview-item {
+  min-width: 0;
+
+  box-sizing: border-box;
+
   &.full-width {
     grid-column: 1 / -1;
   }
 }
 
+
+/* =========================================================
+   LABEL
+========================================================= */
+
 .preview-label {
+  display: block;
+
+  margin-bottom: 4px;
+
   font-size: 14px;
   font-weight: 500;
+
+  line-height: 1.4;
+
   color: theme.$text-dark;
 }
 
+
+/* =========================================================
+   VALUE
+========================================================= */
+
 .preview-value {
+  display: block;
+
+  min-width: 0;
+
   font-size: 13px;
-  color: theme.$text-medium;
+
   line-height: 1.5;
+
+  color: theme.$text-medium;
+
+  /*
+   * Critical for long:
+   * - account numbers
+   * - references
+   * - addresses
+   * - narratives
+   */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   &.pre-wrap {
     white-space: pre-wrap;
   }
 }
 
-/* ================================
+
+/* =========================================================
+   LONG TEXT / NARRATIVE
+========================================================= */
+
+.preview-item.full-width .preview-value {
+  width: 100%;
+}
+
+
+/* =========================================================
    DIVIDER
-================================ */
+========================================================= */
+
 .spacer {
+  width: 100%;
+
   margin: 26px 0;
 }
 
-/* ================================
+
+/* =========================================================
    ATTACHMENTS
-================================ */
+========================================================= */
+
 .preview-attachments-container {
+  width: 100%;
+
   margin-top: 10px;
+
+  overflow-x: auto;
 }
+
+
+/* =========================================================
+   ATTACHMENT TABLE
+========================================================= */
 
 .attachment-grid {
   display: grid;
-  grid-template-columns: 70px 1fr 120px 80px;
+
+  /*
+   * Type | File Name | Size | Actions
+   */
+  grid-template-columns:
+    70px
+    minmax(0, 1fr)
+    120px
+    80px;
+
   align-items: center;
-  padding: 10px 0;
+
+  width: 100%;
+
+  min-width: 500px;
+
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
   border-bottom: 1px solid theme.$border-light;
+
   font-size: 14px;
+
+  column-gap: 12px;
 
   &.header {
     font-weight: 600;
+
     background: theme.$hover-bg;
+
     border-bottom: 2px solid theme.$border-primary;
   }
 }
 
+
+/* =========================================================
+   ATTACHMENT ICON
+========================================================= */
+
 .action-icon {
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     color: theme.$primary-hover;
+
     transform: scale(1.1);
   }
 }
 
+
+/* =========================================================
+   EMPTY ATTACHMENTS
+========================================================= */
+
 .empty-text {
-  margin-top: 14px;
+  margin: 14px 0 0;
+
   color: theme.$text-medium;
+
   font-style: italic;
 }
 
-/* ================================
+
+/* =========================================================
    ACTION BUTTONS
-================================ */
+========================================================= */
+
 .actions {
-  margin-top: 35px;
   display: flex;
+
   justify-content: flex-end;
+  align-items: center;
+
   gap: 14px;
+
+  margin-top: 30px;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
+
+/* =========================================================
+   TABLET
+========================================================= */
+
 @media (max-width: 1080px) {
-  .preview-row {
-    grid-template-columns: 1fr;
+
+  .preview-page {
+    padding: 26px;
   }
+
+
+  /*
+   * Cards become one per row.
+   */
+  .preview-row {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 20px;
+  }
+
 
   .preview-card.full-width {
-    grid-column: 1 / 2;
+    grid-column: 1 / -1;
   }
 
+
+  /*
+   * Normal fields
+   */
   .preview-grid {
-    grid-template-columns: 150px 1fr;
+    grid-template-columns:
+      150px
+      minmax(0, 1fr);
   }
 
+
+  /*
+   * Undertaking Details
+   */
   .preview-grid.four-col {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    column-gap: 24px;
+    row-gap: 18px;
   }
 }
 
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
 @media (max-width: 767px) {
+
   .preview-page {
     padding: 20px;
   }
 
+
+  .page-title {
+    font-size: 23px;
+
+    margin-bottom: 22px;
+  }
+
+
+  .preview-container {
+    gap: 18px;
+  }
+
+
+  .preview-row {
+    grid-template-columns: 1fr;
+
+    gap: 18px;
+  }
+
+
+  .preview-card {
+    padding: 18px;
+  }
+
+
+  .section-title {
+    font-size: 17px;
+  }
+
+
+  /*
+   * Normal fields become vertical.
+   */
   .preview-grid {
     grid-template-columns: 1fr;
+
+    row-gap: 10px;
   }
+
+
+  /*
+   * Four-column sections become one column.
+   */
+  .preview-grid.four-col {
+    grid-template-columns: 1fr;
+
+    row-gap: 14px;
+  }
+
+
+  .preview-label {
+    font-size: 13px;
+  }
+
+
+  .preview-value {
+    font-size: 13px;
+  }
+
+
+  /*
+   * Slight separation between fields on mobile.
+   */
+  .preview-item {
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid
+      rgba(13, 71, 161, 0.07);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+
+  /*
+   * Don't show separator weirdly on
+   * full-width narrative fields.
+   */
+  .preview-item.full-width {
+    border-bottom: none;
+  }
+
 
   .actions {
     flex-direction: column;
+
     align-items: stretch;
+
+    gap: 10px;
+  }
+
+
+  .actions button {
+    width: 100%;
+  }
+
+
+  .attachment-grid {
+    min-width: 500px;
   }
 }

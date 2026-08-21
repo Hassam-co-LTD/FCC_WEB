@@ -1,111 +1,57 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
 
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-attachments-documents',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIconModule, MatButtonModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './attachments-documents.html',
-  styleUrls: ['./attachments-documents.scss']
+  styleUrls: ['./attachments-documents.scss'],
 })
-export class AttachmentsDocuments implements OnInit {
-
-  @Input() attachmentsForm!: FormGroup;
+export class AttachmentsDocuments {
   isOpen = true;
-  uploadedFiles: File[] = [];
-
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    // initialize attachments FormArray if not present
-    if (!this.attachmentsForm.get('attachments')) {
-      this.attachmentsForm.addControl('attachments', this.fb.array([]));
-    }
-    if (!this.attachmentsForm.get('documents')) {
-      this.attachmentsForm.addControl('documents', this.fb.array([]));
-    }
-  }
-
-  get attachmentsArray(): FormArray {
-    return this.attachmentsForm.get('attachments') as FormArray;
-  }
-
-  get documents(): FormArray {
-    return this.attachmentsForm.get('documents') as FormArray;
-  }
+  files: File[] = [];
+  @Output() filesChange = new EventEmitter<File[]>();
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
 
-  /** ================= Upload Files ================= */
-  onFileSelected(event: any) {
-    const files = Array.from(event.target.files) as File[];
-    this.addFiles(files);
-  }
-
-  onFileDropped(event: any) {
-    event.preventDefault();
-    const files = Array.from(event.dataTransfer.files) as File[];
-    this.addFiles(files);
-  }
-
-  onDragOver(event: any) {
+  onDragOver(event: DragEvent) {
     event.preventDefault();
   }
 
-  private addFiles(files: File[]) {
-    files.forEach(file => {
-      // skip duplicate files
-      if (!this.uploadedFiles.find(f => f.name === file.name)) {
-        this.uploadedFiles.push(file);
+  onFileDropped(event: DragEvent) {
+    event.preventDefault();
+    const droppedFiles: File[] = Array.from(event.dataTransfer?.files || []);
+    this.handleFiles(droppedFiles);
+  }
 
-        this.attachmentsArray.push(this.fb.group({
-          file,
-          fileName: file.name,
-          type: file.type,
-          size: file.size,
-          title: file.name
-        }));
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+    const selectedFiles: File[] = Array.from(input.files);
+    this.handleFiles(selectedFiles);
+  }
+  handleFiles(newFiles: File[]) {
+    for (let file of newFiles) {
+      if (this.files.length >= 5) {
+        alert('Maximum 5 files allowed.');
+        break;
       }
-    });
+      if (file.size > 1 * 1024 * 1024) {
+        alert(`${file.name} exceeds 1 MB limit.`);
+        continue;
+      }
+      this.files.push(file);
+    }
+
+    this.filesChange.emit(this.files);
   }
 
   removeFile(index: number) {
-    this.uploadedFiles.splice(index, 1);
-    this.attachmentsArray.removeAt(index);
+    this.files.splice(index, 1);
+    this.filesChange.emit(this.files);
   }
-
-  /** ================= Document FormArray ================= */
-  addDocument() {
-    const docGroup = this.fb.group({
-      type: ['', Validators.required],
-      attachment: ["attachments", Validators.required],  // store as {file, fileName, type, size}
-      date: ['', Validators.required]
-    });
-    this.documents.push(docGroup);
-  }
-
-  removeDocument(index: number) {
-    this.documents.removeAt(index);
-  }
-
-  selectAttachment(docIndex: number) {
-    const file = this.uploadedFiles[docIndex];
-    if (file) {
-      this.documents.at(docIndex).patchValue({
-        attachment: {
-          file,
-          fileName: file.name,
-          type: file.type,
-          size: file.size,
-          title: file.name
-        }
-      });
-    }
-  }
-
 }

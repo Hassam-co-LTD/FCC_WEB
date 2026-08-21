@@ -17,7 +17,7 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../../../../..
   selector: 'app-preview',
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
-  imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule, MatDialogModule],
+  imports: [CommonModule, MatIcon, MatCard, HttpClientModule, MatDialogModule],
   standalone: true,
 })
 export class Preview {

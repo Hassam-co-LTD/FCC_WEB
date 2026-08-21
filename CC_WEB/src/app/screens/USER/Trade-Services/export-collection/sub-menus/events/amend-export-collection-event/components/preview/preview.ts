@@ -1,19 +1,24 @@
 import { Component, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedService } from '../../../../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, RouterModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
 export class PreviewSection {
-
   @Input() form!: FormGroup;
   isOpen = true;
   currentStep: any;
@@ -21,7 +26,7 @@ export class PreviewSection {
   constructor(
     private dataService: SharedService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -34,12 +39,16 @@ export class PreviewSection {
         bankdetails: this.fb.group(data.bankdetails || {}),
         paymentamount: this.fb.group(data.paymentamount || {}),
         shippingdetails: this.fb.group(data.shippingdetails || {}),
-        collectioninstructions: this.fb.group(data.collectioninstructions || {}),
-        license: this.fb.group({ attachments: this.fb.array(data.attachments?.attachments || []) }),
+        collectioninstructions: this.fb.group(
+          data.collectioninstructions || {},
+        ),
+        license: this.fb.group({
+          attachments: this.fb.array(data.attachments?.attachments || []),
+        }),
         attachments: this.fb.group({
           attachments: this.fb.array(data.attachments?.attachments || []),
-          documents: this.fb.array(data.attachments?.documents || [])
-        })
+          documents: this.fb.array(data.attachments?.documents || []),
+        }),
       });
     }
   }
@@ -51,12 +60,17 @@ export class PreviewSection {
 
   // ✅ Correct Attachments Getter
   get attachmentsArray(): FormArray {
-    return (this.form.get('attachments.attachments') as FormArray) || new FormArray([]);
+    return (
+      (this.form.get('attachments.attachments') as FormArray) ||
+      new FormArray([])
+    );
   }
 
   // ✅ Correct Documents Getter
   get documentsArray(): FormArray {
-    return (this.form.get('attachments.documents') as FormArray) || new FormArray([]);
+    return (
+      (this.form.get('attachments.documents') as FormArray) || new FormArray([])
+    );
   }
 
   // Back Button
@@ -65,12 +79,12 @@ export class PreviewSection {
   }
 
   // Submit Button
-submit() {
-  console.log('Submitted Data:', this.form.value);
+  submit() {
+    console.log('Submitted Data:', this.form.value);
 
-  // Navigate to success page
-//  this.router.navigate(['/preview/app-success']);
-}
+    // Navigate to success page
+    //  this.router.navigate(['/preview/app-success']);
+  }
 
   // File Download
   downloadFile(file: any) {
@@ -88,7 +102,7 @@ submit() {
   formatLabel(field: string): string {
     return field
       .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, str => str.toUpperCase());
+      .replace(/^./, (str) => str.toUpperCase());
   }
 
   // Helper: Format Values
@@ -97,5 +111,4 @@ submit() {
     if (value === false) return 'No';
     return value ?? '—';
   }
-
 }

@@ -2,58 +2,61 @@
   <h2 class="page-title">Preview</h2>
 
   <div class="preview-container">
-    <!-- ============================== -->
-    <!-- ROW 1 → GENERAL + APPLICANT   -->
-    <!-- ============================== -->
+    <!-- =================================================
+         ROW 1 → GENERAL + APPLICANT / BENEFICIARY
+    ================================================== -->
     <div class="preview-row">
       <!-- GENERAL DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">General Details</h3>
+
         <div class="preview-grid">
-          
           <div class="preview-item">
             <div class="preview-label">Expiry Date</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.expiryDate }}
+              {{ ShippingGuaranteeForm.value.expiryDate || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Reference</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.beneficiaryReference }}
+              {{ ShippingGuaranteeForm.value.beneficiaryReference || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Customer Reference</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.customerReference }}
+              {{ ShippingGuaranteeForm.value.customerReference || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Bill Of Lading</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.billoflading }}
+              {{ ShippingGuaranteeForm.value.billoflading || '—' }}
             </div>
           </div>
+
           <div class="preview-item">
             <div class="preview-label">Mode Of Shipment</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.modeOfShipment }}
+              {{ ShippingGuaranteeForm.value.modeOfShipment || '—' }}
             </div>
           </div>
+
           <div class="preview-item">
             <div class="preview-label">Shipping Details</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.shippingDetails }}
+              {{ ShippingGuaranteeForm.value.shippingDetails || '—' }}
             </div>
           </div>
-          <div class="preview-item">
+
+          <div class="preview-item full-width">
             <div class="preview-label">Description</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.description }}
+              {{ ShippingGuaranteeForm.value.description || '—' }}
             </div>
           </div>
         </div>
@@ -62,11 +65,12 @@
       <!-- APPLICANT / BENEFICIARY -->
       <mat-card class="preview-card">
         <h3 class="section-title">Applicant / Beneficiary</h3>
+
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Applicant Name</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.applicantName }}
+              {{ ShippingGuaranteeForm.value.applicantName || '—' }}
             </div>
           </div>
 
@@ -83,14 +87,14 @@
           <div class="preview-item">
             <div class="preview-label">Applicant Country</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.applicantCountry }}
+              {{ ShippingGuaranteeForm.value.applicantCountry || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Name</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.beneficiaryName }}
+              {{ ShippingGuaranteeForm.value.beneficiaryName || '—' }}
             </div>
           </div>
 
@@ -107,32 +111,33 @@
           <div class="preview-item">
             <div class="preview-label">Beneficiary Country</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.beneficiaryCountry }}
+              {{ ShippingGuaranteeForm.value.beneficiaryCountry || '—' }}
             </div>
           </div>
         </div>
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 2 → BANK + AMOUNT         -->
-    <!-- ============================== -->
-    <div class="preview-row">
+    <!-- =================================================
+         ROW 2 → BANK + AMOUNT + INSTRUCTIONS
+    ================================================== -->
+    <div class="preview-row three-column-row">
       <!-- BANK DETAILS -->
       <mat-card class="preview-card">
         <h3 class="section-title">Bank Details</h3>
+
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Bank Name</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.bankName }}
+              {{ ShippingGuaranteeForm.value.bankName || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Issuer Reference</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.issuerReference }}
+              {{ ShippingGuaranteeForm.value.issuerReference || '—' }}
             </div>
           </div>
         </div>
@@ -141,11 +146,12 @@
       <!-- AMOUNT & CHARGES -->
       <mat-card class="preview-card">
         <h3 class="section-title">Amount & Charges</h3>
+
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Currency</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.currency }}
+              {{ ShippingGuaranteeForm.value.currency || '—' }}
             </div>
           </div>
 
@@ -158,41 +164,44 @@
         </div>
       </mat-card>
 
+      <!-- INSTRUCTIONS TO BANK -->
       <mat-card class="preview-card">
         <h3 class="section-title">Instructions to Bank</h3>
+
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Principal Account</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.principalAccount }}
+              {{ ShippingGuaranteeForm.value.principalAccount || '—' }}
             </div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Fee Account</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.feeAccount }}
+              {{ ShippingGuaranteeForm.value.feeAccount || '—' }}
             </div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Other Instructions</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.otherInstructions }}
+              {{ ShippingGuaranteeForm.value.otherInstructions || '—' }}
             </div>
           </div>
         </div>
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 5 → ATTACHMENTS           -->
-    <!-- ============================== -->
+    <!-- =================================================
+         ROW 3 → ATTACHMENTS
+    ================================================== -->
     <mat-card class="preview-card full-width">
       <h3 class="section-title">Attachments</h3>
 
       <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
         <div class="preview-attachments-container">
+          <!-- HEADER -->
           <div class="attachment-grid header">
             <div>Type</div>
             <div>Title</div>
@@ -201,28 +210,45 @@
             <div>Actions</div>
           </div>
 
+          <!-- FILES -->
           <div
             class="attachment-grid"
-            *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex"
+            *ngFor="
+              let f of attachmentsArray.controls;
+              let i = index;
+              trackBy: trackByIndex
+            "
           >
             <div>
-              <mat-icon *ngIf="f.value.type?.includes('pdf')"
-                >picture_as_pdf</mat-icon
+              <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">
+                picture_as_pdf
+              </mat-icon>
+
+              <mat-icon
+                *ngIf="f.value.type?.includes('image')"
+                class="image-icon"
               >
-              <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
+                image
+              </mat-icon>
             </div>
-            <div>{{ f.value.title }}</div>
-            <div>{{ f.value.fileName }}</div>
+
+            <div>{{ f.value.title || '—' }}</div>
+
+            <div>{{ f.value.fileName || '—' }}</div>
+
             <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+
             <div>
-              <mat-icon (click)="downloadFile(i)">download</mat-icon>
+              <mat-icon class="action-icon" (click)="downloadFile(i)">
+                download
+              </mat-icon>
             </div>
           </div>
         </div>
       </ng-container>
 
       <ng-template #noAttachments>
-        <p>No attachments uploaded.</p>
+        <p class="no-attachments">No attachments uploaded.</p>
       </ng-template>
     </mat-card>
   </div>

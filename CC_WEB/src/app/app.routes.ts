@@ -567,7 +567,16 @@ export const routes: Routes = [
 
               // ---------- EXPORT COLLECTION ----------
               {
+                path: 'export-collection/inquiries-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records').then(
+                    (m) => m.InquiriesRecords,
+                  ),
+              },
+              {
                 path: 'export-collection/preview',
+                pathMatch: 'full',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then(
                     (m) => m.Preview,
@@ -575,9 +584,40 @@ export const routes: Routes = [
               },
               {
                 path: 'export-collection/success',
+                pathMatch: 'full',
                 loadComponent: () =>
                   import('./shared/success/success').then((m) => m.Success),
-                data: { title: 'Export Collection Submitted' },
+              },
+              {
+                path: 'export-collection/amend',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
+                path: 'export-collection/approved-inquiry-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'export-collection/amend/preview',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(
+                    (m) => m.PreviewSection,
+                  ),
+              },
+              {
+                path: 'export-collection/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
+                    (m) => m.ExportCollection,
+                  ),
               },
               {
                 matcher: transactionIdMatcher,
@@ -587,15 +627,24 @@ export const routes: Routes = [
                   ),
               },
               {
+                path: 'export-collection/amend/:tnxId',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
                 path: 'export-collection',
+                pathMatch: 'full',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-collection/export-collection').then(
                     (m) => m.ExportCollection,
                   ),
-                data: { title: 'Export Collection' },
               },
               {
                 path: 'export-collection-welcome',
+                pathMatch: 'full',
                 loadComponent: () =>
                   import('./shared/welcome-screen/welcome-screen').then(
                     (m) => m.WelcomeScreen,

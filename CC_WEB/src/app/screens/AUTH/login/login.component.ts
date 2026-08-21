@@ -221,6 +221,19 @@ export class LoginComponent implements OnInit, OnDestroy {
           console.log(res.body);
           console.log(res.headers);
           const loginData = res.body;
+
+
+          // Save Permission Group Name
+sessionStorage.setItem(
+  'permissionGroupName',
+  loginData.permissionGroupName
+);
+ 
+sessionStorage.setItem(
+  'permissionNames',
+  JSON.stringify(loginData.permissionNames)
+);
+ 
           // Save user information
           sessionStorage.setItem('userData', JSON.stringify(loginData));
 

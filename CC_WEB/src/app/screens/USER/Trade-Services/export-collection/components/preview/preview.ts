@@ -1,11 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormBuilder, ReactiveFormsModule, FormArray } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  ReactiveFormsModule,
+  FormArray,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { SharedService } from '../../../../../../core/services/user-service/shared-form-service/shared-service'
+import { SharedService } from '../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { ExportCollectionTransaction } from '../../../../../../core/models/export-collection';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ExportCollectionFormTransactionService } from '../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
@@ -17,9 +22,15 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
 @Component({
   selector: 'app-export-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+  ],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
 })
 export class Preview implements OnInit {
   @Input() transaction!: ExportCollectionTransaction;
@@ -40,12 +51,12 @@ export class Preview implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: ExportCollectionFormTransactionService
-  ) { }
+    private transactionService: ExportCollectionFormTransactionService,
+  ) {}
 
   ngOnInit(): void {
-    this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
-      ||
+    this.currentTx =
+      this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
@@ -57,7 +68,7 @@ export class Preview implements OnInit {
     this.initForm();
   }
 
-    // Reconstruct form structure to match your HTML paths
+  // Reconstruct form structure to match your HTML paths
   private initForm(): void {
     this.ExportCollectionForm = this.fb.group({
       id: [this.currentTx!.id],
@@ -68,8 +79,8 @@ export class Preview implements OnInit {
       collectionType: [this.currentTx!.collectionType],
       customerReference: [this.currentTx!.customerReference],
       draweeReference: [this.currentTx!.draweeReference],
-    
-       drawerName: [this.currentTx!.drawerName],
+
+      drawerName: [this.currentTx!.drawerName],
       drawerAddress1: [this.currentTx!.drawerAddress1],
       drawerAddress2: [this.currentTx!.drawerAddress2],
       drawerAddress3: [this.currentTx!.drawerAddress3],
@@ -108,26 +119,38 @@ export class Preview implements OnInit {
       incoterms: [this.currentTx!.incoterms],
 
       advicePaymentBy: [this.currentTx!.advicePaymentBy],
-      adviceAcceptanceAndDueDateBy: [this.currentTx!.adviceAcceptanceAndDueDateBy],
+      adviceAcceptanceAndDueDateBy: [
+        this.currentTx!.adviceAcceptanceAndDueDateBy,
+      ],
       adviceReasonOfRefusalBy: [this.currentTx!.adviceReasonOfRefusalBy],
       openingCharges: [this.currentTx!.openingCharges],
       outsideCountryCharges: [this.currentTx!.outsideCountryCharges],
-      waiveAllChargesIfRefusedByDrawee: [this.currentTx!.waiveAllChargesIfRefusedByDrawee],
+      waiveAllChargesIfRefusedByDrawee: [
+        this.currentTx!.waiveAllChargesIfRefusedByDrawee,
+      ],
       protestInCaseOfNonPayment: [this.currentTx!.protestInCaseOfNonPayment],
-      protestInCaseOfNonAcceptance: [this.currentTx!.protestInCaseOfNonAcceptance],
-      acceptanceMayBeDeferredPendingArrival: [this.currentTx!.acceptanceMayBeDeferredPendingArrival],
-      warehouseOrInsureGoodsIfNecessary: [this.currentTx!.warehouseOrInsureGoodsIfNecessary],
-      referTo: [this.currentTx!.referTo]
+      protestInCaseOfNonAcceptance: [
+        this.currentTx!.protestInCaseOfNonAcceptance,
+      ],
+      acceptanceMayBeDeferredPendingArrival: [
+        this.currentTx!.acceptanceMayBeDeferredPendingArrival,
+      ],
+      warehouseOrInsureGoodsIfNecessary: [
+        this.currentTx!.warehouseOrInsureGoodsIfNecessary,
+      ],
+      referTo: [this.currentTx!.referTo],
     });
-  
-  // 🔒 Read-only mode (Success page)
-  if(this.viewMode === 'readonly') {
-  this.ExportCollectionForm.disable({ emitEvent: false });
-}
-}
+
+    // 🔒 Read-only mode (Success page)
+    if (this.viewMode === 'readonly') {
+      this.ExportCollectionForm.disable({ emitEvent: false });
+    }
+  }
 
   back() {
-    this.router.navigate(['/export-collection/inquiries-records'])
+    this.router.navigate([
+      '/dashboard/Trade-Services/export-collection/inquiries-records',
+    ]);
   }
 
   /** SUBMIT */
@@ -140,59 +163,81 @@ export class Preview implements OnInit {
       return;
     }
 
-    this.api.submitExportCollectionByTnxId(tnxId, this.currentTx!).subscribe({
-      next: (res) => {
-        this.router.navigate(['/export-collection/success'], {
-          state: { transaction: res }
-        });
-      },
-      error: () => {
-        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
-      }
-    });
-  } 
-
+    this.api
+      .approveTransactionExportCollection(tnxId, this.currentTx!)
+      .subscribe({
+        next: (res) => {
+          this.router.navigate(
+            ['dashboard/Trade-Services/export-collection/success'],
+            {
+              state: { transaction: res },
+            },
+          );
+        },
+        error: () => {
+          this.snackBar.open('Error submitting transaction', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
+  }
 
   approveTransaction(): void {
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveTransactionForExportCollection(this.currentTx.tnxId, this.currentTx).subscribe({
-      next: (res) => {
-        this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/export-collection/success'], { state: { transaction: res } });
-      },
-      error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
-    });
+    this.api
+      .approveTransactionExportCollection(this.currentTx.tnxId, this.currentTx)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction approved', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['dashboard/Trade-Services/export-collection/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error approving transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
 
-
-rejectTransaction(): void {
+  rejectTransaction(): void {
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
+      width: '400px',
+      hasBackdrop: true, // ensure overlay backdrop
       backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
-      panelClass: 'custom-dialog-container'     // white dialog box 
-       });
+      panelClass: 'custom-dialog-container', // white dialog box
+    });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-      this.api.rejectTransactionForExportCollection(tnxId, reason ).subscribe({
+      this.api.rejectTransactionExportCollection(tnxId, reason).subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/export-collection/success'], { state: { transaction: res } });
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['dashboard/Trade-Services/export-collection/success'],
+            { state: { transaction: res } },
+          );
         },
-        error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+        error: () =>
+          this.snackBar.open('Error rejecting transaction', 'Close', {
+            duration: 3000,
+          }),
       });
     });
   }
 
-
   get attachmentsArray(): FormArray {
     return this.ExportCollectionForm.get('attachments') as FormArray;
   }
-
 
   downloadFile(index: number) {
     const currentTx = this.attachmentsArray.at(index)?.value;
@@ -222,7 +267,7 @@ rejectTransaction(): void {
       return;
     }
 
-    console.error("Unsupported file format", file);
+    console.error('Unsupported file format', file);
   }
 
   private triggerDownload(url: string, fileName: string) {
@@ -235,5 +280,4 @@ rejectTransaction(): void {
   trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }
-
 }

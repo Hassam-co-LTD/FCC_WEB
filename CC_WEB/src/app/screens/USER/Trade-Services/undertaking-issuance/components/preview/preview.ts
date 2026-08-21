@@ -27,7 +27,6 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
     MatCardModule, 
     MatButtonModule, 
     DecimalPipe,
-    DatePipe,
     MatDividerModule
   ],
   templateUrl: './preview.html',
