@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
-
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 
@@ -54,7 +54,8 @@ private fb: FormBuilder,
 private api: ApiService,
 private router: Router,
 private route: ActivatedRoute,
-private location: Location
+private location: Location,
+private authService: AuthService
 ) {}
 
 ngOnInit(): void {
@@ -70,6 +71,7 @@ cityId: [''],
 cityName: ['', Validators.required],
 state: ['', Validators.required],
 country: ['', Validators.required],
+createdBy:[this.authService.getUserName() || '', Validators.required]
 });
 }
 
@@ -170,7 +172,7 @@ updateCity(): void {
   const cityPayload = {
     ...this.cityForm.getRawValue(),
     dynamicFields: dynamicPayload,
-    updatedOn: new Date().toISOString().split('.')[0] // format: 2026-04-07T15:30:00
+    updatedBy: this.authService.getUserName() || ''
   };
 
   // 2️⃣ Send single update request
@@ -183,7 +185,12 @@ updateCity(): void {
 submit(): void {
 if (!this.storeCity?.id) return;
 
-this.api.setTnxByStatus('S', this.storeCity.id, 'city').subscribe({
+const payload = {
+  recordStatus: 'S',
+  inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+};
+
+this.api.setTnxByStatus(payload, this.storeCity.id, 'city').subscribe({
 next: () =>
 Swal.fire('Submitted!', 'City submitted successfully', 'success')
   .then(() =>
@@ -195,7 +202,12 @@ Swal.fire('Submitted!', 'City submitted successfully', 'success')
 }
 
 reject(id: number): void {
-this.api.setTnxByStatus('I', id, 'city').subscribe({
+if (!this.storeCity?.id) return;
+const payload = {
+  recordStatus: 'I',
+  inputterId: ""
+};
+this.api.setTnxByStatus(payload, id, 'city').subscribe({
 next: () =>
 Swal.fire('Rejected!', 'City rejected successfully', 'success')
   .then(() =>
@@ -207,7 +219,11 @@ Swal.fire('Rejected!', 'City rejected successfully', 'success')
 }
 
 approve(id: number): void {
-this.api.setTnxByStatus('A', id, 'city').subscribe({
+const payload = {
+  recordStatus: 'A',
+  authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+};
+this.api.setTnxByStatus(payload, id, 'city').subscribe({
 next: () =>
 Swal.fire('Approved!', 'City approved successfully', 'success')
   .then(() =>

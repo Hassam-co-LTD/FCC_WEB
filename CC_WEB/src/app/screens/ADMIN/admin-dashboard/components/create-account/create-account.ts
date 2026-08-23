@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // or MatMomentDateModule if using Moment
-
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 @Component({
@@ -59,7 +59,8 @@ dynamicReady = false;
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +79,8 @@ dynamicReady = false;
     accountType: ['', Validators.required],
     accountTitle: ['', Validators.required],
     accountStatus: ['', Validators.required],
-    companyId:['',Validators.required]
+    companyId:['',Validators.required],
+    createdBy: this.authService.getUserName() || '',
     });
   }
 
@@ -197,6 +199,7 @@ dynamicReady = false;
 
   const payload = {
     ...this.AccountsForm.getRawValue(),
+    updatedBy: this.authService.getUserName() || '',
     dynamicFields: dynamicPayload
   };
  console.log("payload to update " ,payload)
@@ -211,26 +214,7 @@ dynamicReady = false;
   });
 }
   
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'accounts').subscribe({
-      next: () => {
-        Swal.fire('Activated!', 'Accounts is now Active', 'success')
-          .then(() => this.loadAccounts());
-      },
-      error: err => console.error('Activate failed', err)
-    });
-  }
-
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'accounts').subscribe({
-      next: () => {
-        Swal.fire('Deactivated!', 'Accounts is now Inactive', 'success')
-          .then(() => this.loadAccounts());
-      },
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
+  
   // ---------------- UI HELPERS ----------------
  isReadOnly(): boolean {
   // New customer (no storeCustomer) → editable
@@ -259,7 +243,11 @@ dynamicReady = false;
   }
   submit() {    
     if (!this.storeAccounts?.id) return;
-    this.api.setTnxByStatus('S', this.storeAccounts.id, 'accounts').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
       next: (res) => {
         console.log('Submited response:', res);
         Swal.fire('Submitted!', 'Accounts submitted successfully', 'success')
@@ -274,7 +262,11 @@ dynamicReady = false;
 
   reject(id:number): void { 
     if (!this.storeAccounts?.id) return;
-    this.api.setTnxByStatus('I', this.storeAccounts.id, 'accounts').subscribe({
+    const payload = {
+      recordStatus: 'R',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
       next: () => {
         Swal.fire('Rejected!', 'Accounts rejected successfully', 'success')
           .then(() => this.router.navigate(['/admin/accounts-inquiry', this.storeAccounts.id],{ queryParams: { tabName: 'Rejected' } }));
@@ -285,8 +277,11 @@ dynamicReady = false;
 
   approve(id: number): void {
   if (!this.storeAccounts?.id) return;
-
-  this.api.setTnxByStatus('A', this.storeAccounts.id, 'accounts').subscribe({
+  const payload = {
+    recordStatus : 'A',
+    authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+  };
+  this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
     next: () => {
       Swal.fire('Approved!', 'Accounts approved successfully', 'success')
         .then(() => 

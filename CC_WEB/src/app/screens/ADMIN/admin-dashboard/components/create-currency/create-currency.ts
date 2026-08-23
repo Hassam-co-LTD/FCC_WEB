@@ -11,10 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import {AuthService} from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
-
 @Component({
   selector: 'app-currency-profile',
   standalone: true,
@@ -52,7 +51,9 @@ export class CreateCurrency implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService,
+  
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +70,7 @@ export class CreateCurrency implements OnInit {
       currencyDesc: ['', Validators.required],
       currencyMapId: [''],
       currencyStatus: ['A'],
-      
+      createdBy: [this.authService.getUserName() || '']
     });
   }
 
@@ -149,7 +150,7 @@ onSave(): void {
   // ---------------- UPDATE ----------------
   updateCurrency(): void {
   if (this.currencyForm.invalid) return;
-
+   
   const dynamicPayload = this.fields.map(f => ({
     fieldId: f.fieldId,
     value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
@@ -158,7 +159,7 @@ onSave(): void {
   const payload = {
     ...this.currencyForm.getRawValue(),
     dynamicFields: dynamicPayload,
-    updatedOn: new Date().toISOString().split('.')[0]
+    updatedBy: this.authService.getUserName() || ''
   };
 
   this.api.updateTnxx(payload, `currency/update/${this.storeCurrency.currencyId}`).subscribe({
@@ -181,8 +182,11 @@ onSave(): void {
   // ---------------- WORKFLOW ----------------
   submit(): void {
     if (!this.storeCurrency?.currencyCode) return;
-
-    this.api.setTnxByStatus('S', this.storeCurrency.id, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
          .then(() =>
@@ -195,8 +199,11 @@ onSave(): void {
 
   approve(): void {
     if (!this.storeCurrency?.currencyCode) return;
-
-    this.api.setTnxByStatus('A', this.storeCurrency.currencyCode, 'currency').subscribe({
+  const payload = {
+     recordStatus: 'A', 
+     inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+  }
+    this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Currency approved successfully', 'success')
           .then(() => this.router.navigate(['/admin/currency-list']))
@@ -205,8 +212,11 @@ onSave(): void {
 
   reject(): void {
     if (!this.storeCurrency?.currencyCode) return;
-
-    this.api.setTnxByStatus('D', this.storeCurrency.currencyCode, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      inputterId: ""
+    }
+    this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Rejected!', 'Currency rejected successfully', 'success')
           .then(() => this.router.navigate(['/admin/currency-list']))

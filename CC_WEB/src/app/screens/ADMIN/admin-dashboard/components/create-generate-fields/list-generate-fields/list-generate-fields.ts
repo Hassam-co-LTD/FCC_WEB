@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, provideCloudinaryLoader } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
-
+import { AuthService } from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -31,7 +31,8 @@ export class ListGenerateFields implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -118,7 +119,12 @@ export class ListGenerateFields implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'dynamic-fields').subscribe({
+    if (!id) return;
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field submitted successfully', 'success');
         this.loadDraftFields();
@@ -129,7 +135,12 @@ export class ListGenerateFields implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'dynamic-fields').subscribe({
+    if (!id) return;
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field approved successfully', 'success');
         this.loadSubmittedFields();
@@ -140,7 +151,12 @@ export class ListGenerateFields implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'dynamic-fields').subscribe({
+    if (!id) return;
+    const payload = {
+      recordStatus: 'I',
+      inputterId: ""
+    };
+    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Field rejected successfully', 'success');
         this.loadSubmittedFields();
@@ -150,7 +166,12 @@ export class ListGenerateFields implements OnInit {
   }
 
   editApprovedField(id: number) {
-    this.api.setTnxByStatus('D', id, 'dynamic-fields').subscribe({
+    if (!id) return;
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved field moved to Draft for editing', 'success');
         this.loadDraftFields();

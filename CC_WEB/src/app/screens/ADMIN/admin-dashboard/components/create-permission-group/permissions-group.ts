@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 @Component({
@@ -47,7 +47,8 @@ export class CreatePermissionGroup implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService  
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +67,8 @@ private buildForm(): void {
 
     permissionIds: [[], Validators.required],
 
-    permissionGroupStatus: ['A', Validators.required]
+    permissionGroupStatus: ['A', Validators.required],
+    createdBy: [this.authService.getUserName() || '', Validators.required], 
 
   });
 }
@@ -187,11 +189,12 @@ private buildForm(): void {
 
   submit(): void {
 
-    this.api.setTnxByStatus(
-      'S',
-      this.storePermissionGroup.id,
-      'PermissionsGroup'
-    )
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+
+    this.api.setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
     .subscribe({
 
       next: () => {
@@ -212,10 +215,13 @@ private buildForm(): void {
   reject(id: Number): void {
 
     if (!this.storePermissionGroup?.permissionGroupId) return;
-
+    const payload = {
+      recordStatus: 'I',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
 
     this.api.setTnxByStatus(
-      'I',
+      payload,
       this.storePermissionGroup.permissionGroupId,
       'PermissionGroup'
     )
@@ -241,11 +247,12 @@ private buildForm(): void {
     if (!this.storePermissionGroup?.permissionGroupId) return;
 
 
-    this.api.setTnxByStatus(
-      'A',
-      this.storePermissionGroup.id,
-      'PermissionsGroup'
-    )
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+
+    this.api.setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
     .subscribe({
 
       next: () => {
@@ -266,10 +273,13 @@ private buildForm(): void {
   amend(permissionGroupId: String): void {
 
     if (!this.storePermissionGroup?.permissionGroupId) return;
-
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
 
     this.api.setTnxByStatus(
-      'I',
+      payload,
       this.storePermissionGroup.permissionGroupId,
       'PermissionGroup'
     )

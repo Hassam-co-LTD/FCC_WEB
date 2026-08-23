@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
+import {AuthService} from '../../../../../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-customer-list',
@@ -31,7 +32,8 @@ export class CompanyList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +124,11 @@ export class CompanyList implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'company').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'company').subscribe({
       next: (res) => {
         console.log('Submit response:', res);
         Swal.fire('Success', 'Company submitted successfully', 'success');
@@ -134,7 +140,11 @@ export class CompanyList implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'company').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'company').subscribe({
       next: () => {
         Swal.fire('Success', 'Company approved successfully', 'success');
         this.loadSubmittedCompany();
@@ -145,7 +155,11 @@ export class CompanyList implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'company').subscribe({
+    const payload = {
+      recordStatus: 'R',
+      inputterId: ""
+    };
+    this.api.setTnxByStatus(payload, id, 'company').subscribe({
       next: () => {
         Swal.fire('Success', 'Company rejected successfully', 'success');
         this.loadSubmittedCompany();
@@ -156,8 +170,13 @@ export class CompanyList implements OnInit {
 
   /** ================== Edit Approved Customer ================== */
   editApprovedCustomer(id: number) {
+    if (!id) return;
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
     // Move approved company back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'company').subscribe({
+    this.api.setTnxByStatus(payload, id, 'company').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved company moved to Draft for editing', 'success');
         // Reload all tabs

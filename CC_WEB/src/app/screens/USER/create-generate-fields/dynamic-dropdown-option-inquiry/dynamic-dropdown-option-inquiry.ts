@@ -5,7 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute } from '@angular/router';
 import {ApiService} from '../../../../core/services/api.service';
-
+import { AuthService } from '../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
 @Component({
@@ -32,7 +32,8 @@ export class DynamicDropdownOptionInquiry implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -120,7 +121,12 @@ export class DynamicDropdownOptionInquiry implements OnInit {
   // ================== Actions ==================
   
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'dynamic-dropdown').subscribe({
+    
+    const payload = {
+      recordStatus: 'S',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };
+    this.api.setTnxByStatus(payload , id, 'dynamic-dropdown').subscribe({
       next: () => {
         Swal.fire('Success', 'Dropdown option submitted successfully', 'success');
         this.loadDraftCity();
@@ -131,7 +137,11 @@ export class DynamicDropdownOptionInquiry implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'dynamic-dropdown').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };  
+    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
       next: () => {
         Swal.fire('Success', 'Dropdown option approved successfully', 'success');
         this.loadSubmittedCity();
@@ -142,7 +152,11 @@ export class DynamicDropdownOptionInquiry implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'dynamic-dropdown').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
       next: () => {
         Swal.fire('Success', 'Dropdown option rejected successfully', 'success');
         this.loadSubmittedCity();
@@ -154,7 +168,11 @@ export class DynamicDropdownOptionInquiry implements OnInit {
   /** ================== Edit Approved Customer ================== */
   editApprovedCity(id: number) {
     // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'dynamic-dropdown').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved dropdown option moved to Draft for editing', 'success');
         // Reload all tabs

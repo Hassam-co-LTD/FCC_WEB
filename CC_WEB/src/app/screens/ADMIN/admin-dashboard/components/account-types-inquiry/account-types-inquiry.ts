@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../../core/services/auth.service';
 @Component({
   selector: 'app-AccountMaster-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class AccountTypesInquiry implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +124,12 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'AccountMaster').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      
+      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () => {
         Swal.fire('Success', 'AccountMaster submitted successfully', 'success');
         this.loadDraftAccountTypes();
@@ -133,7 +140,12 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
+    const payload = {
+       recordStatus:'A',
+       
+      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () => {
         Swal.fire('Success', 'AccountMaster approved successfully', 'success');
         this.loadSubmittedAccountTypes();
@@ -144,7 +156,11 @@ export class AccountTypesInquiry implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'AccountMaster').subscribe({
+    const payload = {
+       recordStatus:'I',
+       inputterId:''
+    }
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () => {
         Swal.fire('Success', 'AccountMaster rejected successfully', 'success');
         this.loadSubmittedAccountTypes();
@@ -155,8 +171,14 @@ export class AccountTypesInquiry implements OnInit {
 
   /** ================== Edit Approved AccountMaster ================== */
   editApprovedAccountMaster(id: number) {
+    const payload = {
+      recordStatus:'A',
+      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`,
+      inputterId:''
+    }
+
     // Move approved AccountMaster back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'AccountMaster').subscribe({
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved AccountMaster moved to Draft for editing', 'success');
         // Reload all tabs

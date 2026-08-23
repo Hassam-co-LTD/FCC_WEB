@@ -14,7 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
-
+import { AuthService } from '../../../../../core/services/auth.service';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -91,7 +91,8 @@ isDynamicFieldsOpen = true;
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService:AuthService
   ) {}
 
 UserData = {  
@@ -122,7 +123,9 @@ UserData = {
     userCategory: [''],
     companyId: ['', Validators.required],
     userStatus: [''],
-    permissionGroupId: [null, Validators.required]
+    permissionGroupId: [null, Validators.required],
+    createdBy: [this.authService.getUserName() || ''],
+
   });
 }
 
@@ -259,7 +262,11 @@ UserData = {
 
   submit(): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('S', this.storeClientUser.id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeClientUser.id, 'clientUsers').subscribe({
       next: (res) => {
         console.log('Client User submitted successfully',res);
         Swal.fire('Submitted!', 'Client User submitted successfully', 'success')
@@ -273,7 +280,11 @@ UserData = {
 
   reject(id: number): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'R',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'clientUsers').subscribe({
       next: () => Swal.fire('Rejected!', 'Client User rejected successfully', 'success')
         .then(() => this.router.navigate(['/admin/user-client-inquiry'], { queryParams: { tabName: "rejected" } } )),
       error: err => console.error('Reject failed', err)
@@ -282,7 +293,11 @@ UserData = {
 
   approve(id: number): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('A', id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'clientUsers').subscribe({
       next: () => Swal.fire('Approved!', 'Client User approved successfully', 'success')
         .then(() => this.router.navigate(['/admin/user-client-inquiry'], { queryParams: { tabName: "approved" } } )),
       error: err => console.error('Approve failed', err)

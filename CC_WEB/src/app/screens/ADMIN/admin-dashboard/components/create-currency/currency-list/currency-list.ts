@@ -5,7 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
-
+import {AuthService} from '../../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -39,7 +39,8 @@ export class CurrencyList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   // ================== Init ==================
@@ -153,7 +154,11 @@ export class CurrencyList implements OnInit {
 
   // ================== Status Actions ==================
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
       next: () => {
         Swal.fire('Success', 'Currency submitted successfully', 'success');
         this.loadDraftCurrencies();
@@ -164,7 +169,11 @@ export class CurrencyList implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
       next: () => {
         Swal.fire('Success', 'Currency approved successfully', 'success');
         this.loadSubmittedCurrencies();
@@ -175,7 +184,11 @@ export class CurrencyList implements OnInit {
   }
 
   reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'R',
+      inputterId: ""
+    };
+    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
       next: () => {
         Swal.fire('Success', 'Currency rejected successfully', 'success');
         this.loadSubmittedCurrencies();
@@ -185,7 +198,11 @@ export class CurrencyList implements OnInit {
   }
 
   editApprovedCurrency(id: number) {
-    this.api.setTnxByStatus('D', id, 'currency').subscribe({
+    const payload = {
+      recordStatus: 'D',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
       next: () => {
         Swal.fire('Success', 'Moved to Draft for editing', 'success');
         this.loadDraftCurrencies();

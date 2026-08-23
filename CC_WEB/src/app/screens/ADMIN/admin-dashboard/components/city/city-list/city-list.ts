@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import {AuthService} from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class CityList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -119,7 +121,12 @@ export class CityList implements OnInit {
   // ================== Actions ==================
   
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'city').subscribe({
+    if(!id) null
+    const payload = {
+      recordStatus :'S',
+      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'city').subscribe({
       next: () => {
         Swal.fire('Success', 'City submitted successfully', 'success');
         this.loadDraftCity();
@@ -130,7 +137,12 @@ export class CityList implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'city').subscribe({
+    if(!id) null
+    const payload = {
+      recordStatus:'A',
+      authorizerId:`${this.authService.getLoginId()} + ${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'city').subscribe({
       next: () => {
         Swal.fire('Success', 'City approved successfully', 'success');
         this.loadSubmittedCity();
@@ -141,7 +153,12 @@ export class CityList implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'city').subscribe({
+    if(!id) null
+    const payload = {
+       recordStatus : 'I',
+       inputterId :''
+    }
+    this.api.setTnxByStatus(payload, id, 'city').subscribe({
       next: () => {
         Swal.fire('Success', 'City rejected successfully', 'success');
         this.loadSubmittedCity();
@@ -152,8 +169,15 @@ export class CityList implements OnInit {
 
   /** ================== Edit Approved Customer ================== */
   editApprovedCity(id: number) {
+
+    if(!id) null
+
+    const payload = {
+      recordStatus : 'A',
+      authorizerId : `${this.authService.getLoginId()} + ${this.authService.getCompanyId()}` 
+    }
     // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'city').subscribe({
+    this.api.setTnxByStatus(payload, id, 'city').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved city moved to Draft for editing', 'success');
         // Reload all tabs

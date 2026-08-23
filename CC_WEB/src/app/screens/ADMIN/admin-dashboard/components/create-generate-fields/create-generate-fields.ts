@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import {AuthService}  from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 
@@ -61,7 +61,8 @@ export class CreateGenerateFields implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +91,7 @@ export class CreateGenerateFields implements OnInit {
       label: ['', Validators.required],
       fieldType: ['', Validators.required],
       screen: ['', Validators.required],
+      createdBy: [this.authService.getUserName() || '', Validators.required],
       options: this.fb.array([]) // <-- FormArray starts empty, populate later
     });
   }
@@ -174,7 +176,10 @@ export class CreateGenerateFields implements OnInit {
 
   update(id: number): void {
     if (this.fieldForm.invalid) return;
-    const payload = this.fieldForm.getRawValue();
+    const payload ={
+     ...this.fieldForm.getRawValue(),
+     updatedBy: this.authService.getUserName() || ''
+    }
     console.log('Updating payload:', payload);
     this.api.updateTnx(payload, 'dynamic-fields', id).subscribe({
       next: (res)=>{ 
@@ -188,7 +193,11 @@ export class CreateGenerateFields implements OnInit {
 
   submit(): void {
     if (!this.storeField?.id) return;
-    this.api.setTnxByStatus('S', this.storeField.id, 'dynamic-fields').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
       next: () => Swal.fire('submitted!', 'Dynamic Field submitted', 'success')
         .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Submitted' } })),
       error: err => Swal.fire('Error', 'Submit failed', 'error')
@@ -197,7 +206,11 @@ export class CreateGenerateFields implements OnInit {
 
   reject(id: number): void {
     if (!this.storeField?.id) return;
-    this.api.setTnxByStatus('I', this.storeField.id, 'dynamic-fields').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      inputterId: ""
+    };
+    this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
       next: () => Swal.fire('Rejected!', 'Field rejected', 'success')
         .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Draft' } })),
       error: err => Swal.fire('Error', 'Rejection failed', 'error')
@@ -206,7 +219,11 @@ export class CreateGenerateFields implements OnInit {
 
   approve(id: number): void {
     if (!this.storeField?.id) return;
-    this.api.setTnxByStatus('A', this.storeField.id, 'dynamic-fields').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
       next: () => Swal.fire('Approved!', 'Field approved', 'success')
         .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Approved' } })),
       error: err => Swal.fire('Error', 'Approval failed', 'error')

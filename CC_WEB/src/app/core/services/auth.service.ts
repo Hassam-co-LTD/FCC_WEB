@@ -229,4 +229,20 @@ logout(): void {
     parsed.companyType = value;
     sessionStorage.setItem('userData', JSON.stringify(parsed));
   }
+
+  // get userName()
+  getUserName(): string | null {
+    const data = sessionStorage.getItem('userData');
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    return parsed.userName || null;
+  }
+
+  //  get LoginId()
+  getLoginId(): string | null {
+    const data = sessionStorage.getItem('userData');
+    if (!data) return null;
+    const parsed = JSON.parse(data);
+    return parsed.loginId || null;
+  }
 }

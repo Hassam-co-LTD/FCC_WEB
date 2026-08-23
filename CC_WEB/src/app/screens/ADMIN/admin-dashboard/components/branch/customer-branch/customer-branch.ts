@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCard } from '@angular/material/card';
-
+import { AuthService } from '../../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 
@@ -55,7 +55,8 @@ export class CustomerBranch implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -78,7 +79,8 @@ export class CustomerBranch implements OnInit {
       branchStatus: [''],
       contactPerson: [''],
       cityId: [null, Validators.required],
-      contactNo: ['']
+      contactNo: [''],
+      createdBy:[this.authService.getUserName()]
     });
   }
 
@@ -189,6 +191,7 @@ update(id:number): void {
 
   const branchPayload = {
     ...this.branchForm.getRawValue(),
+    updatedBy:this.authService.getUserName(),
     dynamicFields: dynamicPayload,
     updatedOn: new Date().toISOString().split('.')[0]
   };
@@ -218,8 +221,11 @@ update(id:number): void {
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeBranch?.id) return;
-
-    this.api.setTnxByStatus('S', this.storeBranch.id, 'branch').subscribe({
+    const payload  = {
+      recordStatus : 'S',
+      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, this.storeBranch.id, 'branch').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Branch submitted successfully', 'success')
           .then(() =>
@@ -231,7 +237,12 @@ update(id:number): void {
   }
 
   reject(id: number): void {
-    this.api.setTnxByStatus('I', id, 'branch').subscribe({
+ 
+   const payload = {
+    recordStatus : 'I',
+    inputterId: '',
+   }   
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () =>
         Swal.fire('Rejected!', 'Branch rejected successfully', 'success')
           .then(() =>
@@ -243,7 +254,12 @@ update(id:number): void {
   }
 
   approve(id: number): void {
-    this.api.setTnxByStatus('A', id, 'branch').subscribe({
+    const payload = {
+       recordStatus : 'S',
+       
+      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Branch approved successfully', 'success')
           .then(() =>

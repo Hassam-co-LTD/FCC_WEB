@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import  {AuthService}  from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 @Component({
@@ -46,7 +46,8 @@ export class PermissionMaster implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -60,7 +61,8 @@ export class PermissionMaster implements OnInit {
     permissionName: ['', Validators.required],
     moduleName: ['', Validators.required],
     description: [''],
-    permissionStatus: ['A', Validators.required]
+    permissionStatus: ['A', Validators.required],
+    createdBy: [this.authService.getUserName() || ''],
     // recordStatus will be handled by the backend (default 'I')
   });
 }
@@ -117,8 +119,11 @@ export class PermissionMaster implements OnInit {
   // ---------------- UPDATE ----------------
   update(id: Number): void {
     if (this.permissionForm.invalid) return;
-    const payload = this.permissionForm.getRawValue();
-
+    const payload = {
+      ...this.permissionForm.getRawValue(),
+      updatedBy: this.authService.getUserName() || '',
+    }
+    
     this.api.updateTnx(payload, 'Permissions', id).subscribe({
       next: () => {
         Swal.fire('Updated!', 'Permission updated successfully', 'success')
@@ -149,7 +154,12 @@ export class PermissionMaster implements OnInit {
   }
 
   submit(): void {
-    this.api.setTnxByStatus('S', this.storePermission.permissionId, 'Permissions').subscribe({
+    if(!this.storePermission?.permissionId) return;
+    const payload = {
+      recordStatus: 'S',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
+    };
+    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
       next: (res) => {
         console.log('Submit response:', res);
         Swal.fire('Submitted!', 'Permission submitted successfully', 'success')
@@ -162,7 +172,12 @@ export class PermissionMaster implements OnInit {
   reject(id: Number): void {
     if (!this.storePermission?.PermissionId) return;
 
-    this.api.setTnxByStatus('I', this.storePermission.permissionId, 'Permissions').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
+    };
+
+    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
       next: () => {
         Swal.fire('Rejected!', 'Permission rejected successfully', 'success')
           .then(() => this.router.navigate(['/admin/permission-master-inquiry']));
@@ -174,7 +189,12 @@ export class PermissionMaster implements OnInit {
   approve(): void {
     if (!this.storePermission?.permissionId) return;
 
-    this.api.setTnxByStatus('A', this.storePermission.permissionId, 'Permissions').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
+    };
+
+    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
       next: () => {
         Swal.fire('Approved!', 'Permission approved successfully', 'success')
           .then(() => this.router.navigate(['/admin/permission-master-inquiry']));
@@ -184,7 +204,11 @@ export class PermissionMaster implements OnInit {
   }
   amend(PermissionId: String): void {
     if (!this.storePermission?.PermissionId) return;
-    this.api.setTnxByStatus('I', this.storePermission.permissionId, 'Permissions').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
+    };
+    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
       next: () => {
         Swal.fire('Amended!', 'Permission moved to Draft for amendment', 'success')
           .then(() => this.router.navigate(['/admin/permission-master-inquiry']));

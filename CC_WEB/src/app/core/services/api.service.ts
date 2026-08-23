@@ -869,14 +869,29 @@ updateTnxByRoleId(data:any,name:String,id:String){
     return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`,data);
 }
 // set transaction status by id
-setTnxByStatus(status: string, id: number | string, name: string) {
-  console.log('Setting status:', status, 'for ID:', id, 'on', name);
+setTnxByStatus(
+  payload: {
+    recordStatus: string;
+    inputterId?: string;
+    authorizerId?: string;
+  },
+  id: number | string,
+  name: string
+) {
+  console.log(
+    'Setting status:',
+    payload.recordStatus,
+    'for ID:',
+    id,
+    'on',
+    name,
+    'with payload:',
+    payload
+  );
 
   const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
 
-  return this.http.put<any>(url, null, {
-    params: { status }
-  });
+  return this.http.put<any>(url, payload);
 }
 
 //get list of data

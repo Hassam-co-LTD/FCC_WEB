@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class BranchList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -122,7 +124,12 @@ export class BranchList implements OnInit {
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'branch').subscribe({
+     const payload = {
+      recordStatus  : 'S',
+      
+      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+     }
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () => {
         Swal.fire('Success', 'Branch submitted successfully', 'success');
         this.loadDraftBranches();
@@ -133,7 +140,13 @@ export class BranchList implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'branch').subscribe({
+    const payload = {
+      recordStatus : 'A',
+      
+      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+
+    }
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () => {
         Swal.fire('Success', 'Branch approved successfully', 'success');
         this.loadSubmittedBranches();
@@ -144,7 +157,11 @@ export class BranchList implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'branch').subscribe({
+    const payload = {
+      recordStatus:'I',
+      inputterId:''
+    }
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () => {
         Swal.fire('Success', 'Branch rejected successfully', 'success');
         this.loadSubmittedBranches();
@@ -155,8 +172,13 @@ export class BranchList implements OnInit {
 
   /** ================== Edit Approved Branch ================== */
   editApprovedBranch(id: number) {
+   const  payload  = {
+    recordStatus:'A',
+    
+      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+   }
     // Move approved branch back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'branch').subscribe({
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved branch moved to Draft for editing', 'success');
         // Reload all tabs

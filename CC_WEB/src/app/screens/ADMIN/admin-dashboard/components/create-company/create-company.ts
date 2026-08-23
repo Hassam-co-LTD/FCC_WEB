@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import {AuthService} from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 
@@ -52,7 +52,8 @@ export class CreateCompany implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +69,8 @@ export class CreateCompany implements OnInit {
       companyName: ['', Validators.required],
       companyAddress: ['', Validators.required],
       companyStatus: ['A', Validators.required],
-      companyType: ['', Validators.required]
+      companyType: ['', Validators.required],
+      createdBy: [this.authService.getUserName() || '', Validators.required]
     });
   }
 
@@ -176,7 +178,7 @@ update(id: number): void {
   const payload = {
     ...this.companyForm.getRawValue(),
     dynamicFields: dynamicPayload,
-    updatedOn: new Date().toISOString().split('.')[0] // YYYY-MM-DDTHH:MM:SS
+    updatedBy: this.authService.getUserName() || ''
   };
 
   this.api.updateTnxx(payload, `company/update/${this.storeCompany.companyId}`).subscribe({
@@ -193,7 +195,10 @@ update(id: number): void {
   // ================= WORKFLOW =================
   submit(): void {
   if (!this.storeCompany?.companyId) return;
-
+  const payload = {
+    recordStatus: 'S',
+    inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+  };
   Swal.fire({
     title: 'Are you sure?',
     text: 'Do you want to submit this company?',
@@ -209,7 +214,7 @@ update(id: number): void {
         didOpen: () => Swal.showLoading()
       });
 
-      this.api.setTnxByStatus('S', this.storeCompany.companyId, 'company').subscribe({
+      this.api.setTnxByStatus(payload, this.storeCompany.companyId, 'company').subscribe({
         next: () => {
           Swal.fire('Submitted!', 'Company submitted successfully', 'success')
             .then(() => this.router.navigate(['/admin/company-inquiry'], { queryParams: { tabName: 'submitted' } }));
@@ -225,7 +230,10 @@ update(id: number): void {
 
 reject(storeCompanyId:String): void {
   if (!this.storeCompany?.companyId) return;
-
+  const payload = {
+    recordStatus: 'I',
+    inputerrId:""
+  }
   Swal.fire({
     title: 'Are you sure?',
     text: 'Do you want to reject this company?',
@@ -241,7 +249,7 @@ reject(storeCompanyId:String): void {
         didOpen: () => Swal.showLoading()
       });
 
-      this.api.setTnxByStatus('I', this.storeCompany.companyId, 'company').subscribe({
+      this.api.setTnxByStatus(payload, this.storeCompany.companyId, 'company').subscribe({
         next: () => {
           Swal.fire('Rejected!', 'Company rejected successfully', 'success')
             .then(() => this.router.navigate(['/admin/company-inquiry'], { queryParams: { tabName: 'rejected' } }));
@@ -257,7 +265,10 @@ reject(storeCompanyId:String): void {
 
 approve(companyId:String): void {
   if (!this.storeCompany?.companyId) return;
-
+  const payload  = {
+    recordStatus: 'A',
+    authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+  }
   Swal.fire({
    
   }).then((result) => {
@@ -268,7 +279,7 @@ approve(companyId:String): void {
         didOpen: () => Swal.showLoading()
       });
 
-      this.api.setTnxByStatus('A', this.storeCompany.companyId, 'company').subscribe({
+      this.api.setTnxByStatus(payload, this.storeCompany.companyId, 'company').subscribe({
         next: () => {
           Swal.fire('Approved!', 'Company approved successfully', 'success')
             .then(() => this.router.navigate(['/admin/company-inquiry'], { queryParams: { tabName: 'approved' } }));

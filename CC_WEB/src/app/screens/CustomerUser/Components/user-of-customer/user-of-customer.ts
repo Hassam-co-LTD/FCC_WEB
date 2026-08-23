@@ -13,6 +13,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/api.service';
+import { AuthService } from '../../../../core/services/auth.service';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -82,7 +83,8 @@ export class UserOfCustomer implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
 UserData = {  
@@ -110,7 +112,8 @@ UserData = {
       password: ['', Validators.required],
       userCategory: [''],
       companyId: [ sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).companyId : '', Validators.required],
-      userStatus: ['']
+      userStatus: [''],
+      createdBy:[this.authService.getUserName() || ''],
     });
   }
 
@@ -152,7 +155,10 @@ UserData = {
  
   update(id: number): void {
     if (this.clientUserForm.invalid) return;
-    const payload = this.clientUserForm.getRawValue();
+    const payload = {
+      ...this.clientUserForm.getRawValue(),
+      updatedBy: this.authService.getUserName() || ''
+    };
     console.log('Update payload:', payload);
     this.api.updateTnx(payload, 'clientUsers', id).subscribe({
       next: () => Swal.fire('Updated!', 'Client User updated successfully', 'success')
@@ -161,22 +167,9 @@ UserData = {
     });
   }
 
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Activated!', 'Client User is now Active', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Activate failed', err)
-    });
-  }
+  
 
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Deactivated!', 'Client User is now Inactive', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
+  
  isReadOnly(): boolean {
   return false;
 }
@@ -189,7 +182,11 @@ UserData = {
 
   submit(): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('S', this.storeClientUser.id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'S',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    }
+    this.api.setTnxByStatus(payload, this.storeClientUser.id, 'clientUsers').subscribe({
       next: (res) => {
         console.log('Client User submitted successfully',res);
         Swal.fire('Submitted!', 'Client User submitted successfully', 'success')
@@ -203,7 +200,11 @@ UserData = {
 
   reject(id: number): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'clientUsers').subscribe({
       next: () => Swal.fire('Rejected!', 'Client User rejected successfully', 'success')
         .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "rejected" } } )),
       error: err => console.error('Reject failed', err)
@@ -212,7 +213,11 @@ UserData = {
 
   approve(id: number): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('A', id, 'clientUsers').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'clientUsers').subscribe({
       next: () => Swal.fire('Approved!', 'Client User approved successfully', 'success')
         .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "approved" } } )),
       error: err => console.error('Approve failed', err)

@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 import { MatCard } from '@angular/material/card';
@@ -56,7 +56,8 @@ export class CreateAccountTypes implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   // ================= INIT =================
@@ -71,7 +72,8 @@ export class CreateAccountTypes implements OnInit {
     this.accountForm = this.fb.group({
       typeName: ['', Validators.required],
       description: ['', Validators.required],
-      accountStatus: ['A', Validators.required]
+      accountStatus: ['A', Validators.required],
+      createdBy: this.authService.getUserName() || ''
     });
   }
 
@@ -170,6 +172,7 @@ export class CreateAccountTypes implements OnInit {
 
     const payload = {
       ...this.accountForm.getRawValue(),
+      updatedBy: this.authService.getUserName() || '',
       dynamicFields: dynamicPayload
     };
 
@@ -185,8 +188,11 @@ export class CreateAccountTypes implements OnInit {
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeAccount?.id) return;
-
-    this.api.setTnxByStatus('S', this.storeAccount.id, 'AccountMaster').subscribe({
+    const payload  = {
+      recordStatus: 'S',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, this.storeAccount.id, 'AccountMaster').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Account submitted successfully', 'success')
           .then(() =>
@@ -198,7 +204,11 @@ export class CreateAccountTypes implements OnInit {
   }
 
   approve(id: number): void {
-    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
+    const payload = {
+      recordStatus: 'A',
+      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    };
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Account approved successfully', 'success')
           .then(() =>
@@ -210,7 +220,11 @@ export class CreateAccountTypes implements OnInit {
   }
 
   reject(id: number): void {
-    this.api.setTnxByStatus('I', id, 'AccountMaster').subscribe({
+    const payload  = {
+      recordStatus: 'I',
+      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
+    }
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () =>
         Swal.fire('Rejected!', 'Account rejected successfully', 'success')
           .then(() =>

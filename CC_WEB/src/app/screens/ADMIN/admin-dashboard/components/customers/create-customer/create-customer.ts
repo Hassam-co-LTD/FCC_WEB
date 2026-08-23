@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
 import { MatCard } from '@angular/material/card';
-
+import { AuthService } from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-profile',
   standalone: true,
@@ -64,6 +64,7 @@ export class CreateCustomer implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +92,8 @@ export class CreateCustomer implements OnInit {
       address1: [''],
       address2: [''],
       address3: [''],
+      createdBy: [this.authService.getUserName() || ''],
+      
     });
   }
 
@@ -244,12 +247,11 @@ export class CreateCustomer implements OnInit {
     // =========================================
     const payload = {
       ...this.customerForm.getRawValue(),
-
+      updatedBy: this.authService.getUserName(),
       dynamicFields,
     };
 
     console.log('Before Updating Customer:', payload);
-
     // =========================================
     // SINGLE UPDATE API
     // =========================================
@@ -390,26 +392,41 @@ export class CreateCustomer implements OnInit {
   // ---------------- WORKFLOW ----------------
 
   submit(): void {
-    if (!this.storeCustomer?.id) return;
+  if (!this.storeCustomer?.id) return;
 
-    this.api.setTnxByStatus('S', this.storeCustomer.id, 'customer').subscribe({
-      next: () =>
-        Swal.fire(
-          'Submitted!',
-          'Customer submitted successfully',
-          'success',
-        ).then(() =>
-          this.router.navigate(['/admin/customer-list'], {
-            queryParams: { tabName: 'submitted' },
-          }),
-        ),
+  const inputterId =
+    `${this.authService.getUserId()}+${this.authService.getUserName()}`;
 
-      error: (err: any) => console.error('Submit failed', err),
-    });
-  }
+  const payload = {
+    recordStatus: 'S',
+    inputterId: inputterId,
+  };
 
+  this.api.setTnxByStatus(
+    payload,
+    this.storeCustomer.id,
+    'customer'
+  ).subscribe({
+    next: () =>
+      Swal.fire(
+        'Submitted!',
+        'Customer submitted successfully',
+        'success',
+      ).then(() =>
+        this.router.navigate(['/admin/customer-list'], {
+          queryParams: { tabName: 'submitted' },
+        }),
+      ),
+
+    error: (err: any) => console.error('Submit failed', err),
+  });
+}
   reject(id: number): void {
-    this.api.setTnxByStatus('I', id, 'customer').subscribe({
+    const payload = {
+      recordStatus: 'I',
+      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
+    };
+    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
       next: () =>
         Swal.fire(
           'Rejected!',
@@ -425,9 +442,19 @@ export class CreateCustomer implements OnInit {
     });
   }
   approve(id: number): void {
-    console.log('🚀 Approve clicked with ID:', id);
+  if (!this.storeCustomer?.id) return;
 
-    this.api.setTnxByStatus('A', id, 'customer').subscribe({
+  const authorizerId =
+    `${this.authService.getUserId()}+${this.authService.getUserName()}`;
+
+  const payload = {
+    recordStatus: 'S',
+    authorizerId: authorizerId,
+  };
+
+    console.log('🚀 Approve clicked with ID:', id);
+       
+    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
       next: (res: any) => {
         console.log('✅ Approve API Response:', res);
 
