@@ -80,7 +80,7 @@ dynamicReady = false;
     accountTitle: ['', Validators.required],
     accountStatus: ['', Validators.required],
     companyId:['',Validators.required],
-    createdBy: this.authService.getUserName() || '',
+    createdBy: this.authService.getLoginId() || '',
     });
   }
 
@@ -199,7 +199,7 @@ dynamicReady = false;
 
   const payload = {
     ...this.AccountsForm.getRawValue(),
-    updatedBy: this.authService.getUserName() || '',
+    updatedBy: this.authService.getLoginId() || '',
     dynamicFields: dynamicPayload
   };
  console.log("payload to update " ,payload)
@@ -243,10 +243,7 @@ dynamicReady = false;
   }
   submit() {    
     if (!this.storeAccounts?.id) return;
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
+    const payload = this.authService.getSubmitPayload()
     this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
       next: (res) => {
         console.log('Submited response:', res);
@@ -260,27 +257,106 @@ dynamicReady = false;
  
 
 
-  reject(id:number): void { 
-    if (!this.storeAccounts?.id) return;
-    const payload = {
-      recordStatus: 'R',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
-      next: () => {
-        Swal.fire('Rejected!', 'Accounts rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/accounts-inquiry', this.storeAccounts.id],{ queryParams: { tabName: 'Rejected' } }));
-      },
-      error: err => console.error('Reject failed', err)
-    });
-  } 
-
+  reject(id: number): void {
+    
+      if (!id) return;
+    
+      Swal.fire({
+        title: 'Reject Transaction',
+        input: 'textarea',
+        inputLabel: 'Reject Reason',
+        inputPlaceholder: 'Please enter the reason for rejection...',
+        inputAttributes: {
+          'aria-label': 'Reject reason'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+    
+        preConfirm: (reason) => {
+    
+          if (!reason || !reason.trim()) {
+    
+            Swal.showValidationMessage(
+              'Reject reason is required'
+            );
+    
+            return false;
+          }
+    
+          return reason.trim();
+        }
+    
+      }).then((result) => {
+    
+        if (!result.isConfirmed) {
+          return;
+        }
+    
+        const rejectReason = result.value;
+    
+        // =========================
+        // CREATE REJECT PAYLOAD
+        // =========================
+    
+        const payload =
+          this.authService.getRejectPayload(rejectReason);
+    
+        console.log('Reject ID:', id);
+        console.log('Reject Payload:', payload);
+    
+        // =========================
+        // CALL API
+        // =========================
+    
+        this.api.setTnxByStatus(
+          payload,
+          id,
+          'customer'
+        ).subscribe({
+    
+          next: (res: any) => {
+    
+            console.log('Reject successful:', res);
+    
+            Swal.fire(
+              'Rejected!',
+              res?.message || 'Account rejected successfully',
+              'success'
+            ).then(() => {
+    
+              this.router.navigate(
+                ['/admin/customer-list'],
+                {
+                  queryParams: {
+                    tabName: 'rejected'
+                  }
+                }
+              );
+    
+            });
+    
+          },
+    
+          error: (err: any) => {
+    
+            console.error('Reject failed:', err);
+    
+            Swal.fire(
+              'Error',
+              err?.error?.message || 'Reject failed',
+              'error'
+            );
+    
+          }
+    
+        });
+    
+      });
+    }
   approve(id: number): void {
   if (!this.storeAccounts?.id) return;
-  const payload = {
-    recordStatus : 'A',
-    authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  };
+  const payload = this.authService.getApprovePayload()
   this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
     next: () => {
       Swal.fire('Approved!', 'Accounts approved successfully', 'success')

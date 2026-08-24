@@ -73,6 +73,7 @@ export class CreateCustomer implements OnInit {
     this.loadCompanies();
     this.loadDynamicFields();
     this.loadDropdownOptions();
+    console.log("customer loaded")
   }
 
   // ---------------- FORM ----------------
@@ -92,7 +93,7 @@ export class CreateCustomer implements OnInit {
       address1: [''],
       address2: [''],
       address3: [''],
-      createdBy: [this.authService.getUserName() || ''],
+      createdBy:[this.authService.getLoginId()],
       
     });
   }
@@ -247,7 +248,7 @@ export class CreateCustomer implements OnInit {
     // =========================================
     const payload = {
       ...this.customerForm.getRawValue(),
-      updatedBy: this.authService.getUserName(),
+      updatedBy: this.authService.getLoginId(),
       dynamicFields,
     };
 
@@ -391,95 +392,253 @@ export class CreateCustomer implements OnInit {
 
   // ---------------- WORKFLOW ----------------
 
-  submit(): void {
+ submit(): void {
   if (!this.storeCustomer?.id) return;
 
-  const inputterId =
-    `${this.authService.getUserId()}+${this.authService.getUserName()}`;
+   let payload = this.authService.getSubmitPayload()
+  
+   console.log("payload laoded from submmit method", payload)
 
-  const payload = {
-    recordStatus: 'S',
-    inputterId: inputterId,
-  };
-
+  // =========================
+  // SUBMIT API
+  // =========================
   this.api.setTnxByStatus(
     payload,
     this.storeCustomer.id,
     'customer'
   ).subscribe({
-    next: () =>
+    next: (res: any) => {
+
+      console.log('Customer submitted successfully:', res);
+
       Swal.fire(
         'Submitted!',
         'Customer submitted successfully',
-        'success',
+        'success'
       ).then(() =>
         this.router.navigate(['/admin/customer-list'], {
-          queryParams: { tabName: 'submitted' },
-        }),
-      ),
+          queryParams: { tabName: 'submitted' }
+        })
+      );
+    },
 
-    error: (err: any) => console.error('Submit failed', err),
+    error: (err: any) => {
+      console.error('Submit failed:', err);
+
+      Swal.fire(
+        'Error',
+        err?.error?.message || 'Submit failed',
+        'error'
+      );
+    }
   });
 }
   reject(id: number): void {
-    const payload = {
-      recordStatus: 'I',
-      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`,
-    };
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: () =>
+
+  if (!id) return;
+
+  Swal.fire({
+    title: 'Reject Transaction',
+    input: 'textarea',
+    inputLabel: 'Reject Reason',
+    inputPlaceholder: 'Please enter the reason for rejection...',
+    inputAttributes: {
+      'aria-label': 'Reject reason'
+    },
+    showCancelButton: true,
+    confirmButtonText: 'Reject',
+    cancelButtonText: 'Cancel',
+
+    preConfirm: (reason) => {
+
+      if (!reason || !reason.trim()) {
+
+        Swal.showValidationMessage(
+          'Reject reason is required'
+        );
+
+        return false;
+      }
+
+      return reason.trim();
+    }
+
+  }).then((result) => {
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const rejectReason = result.value;
+
+    // =========================
+    // CREATE REJECT PAYLOAD
+    // =========================
+
+    const payload =
+      this.authService.getRejectPayload(rejectReason);
+
+    console.log('Reject ID:', id);
+    console.log('Reject Payload:', payload);
+
+    // =========================
+    // CALL API
+    // =========================
+
+    this.api.setTnxByStatus(
+      payload,
+      id,
+      'customer'
+    ).subscribe({
+
+      next: (res: any) => {
+
+        console.log('Reject successful:', res);
+
         Swal.fire(
           'Rejected!',
-          'Customer rejected successfully',
-          'success',
-        ).then(() =>
-          this.router.navigate(['/admin/customer-list'], {
-            queryParams: { tabName: 'Rejected' },
-          }),
-        ),
-
-      error: (err: any) => console.error('Reject failed', err),
-    });
-  }
-  approve(id: number): void {
-  if (!this.storeCustomer?.id) return;
-
-  const authorizerId =
-    `${this.authService.getUserId()}+${this.authService.getUserName()}`;
-
-  const payload = {
-    recordStatus: 'S',
-    authorizerId: authorizerId,
-  };
-
-    console.log('🚀 Approve clicked with ID:', id);
-       
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: (res: any) => {
-        console.log('✅ Approve API Response:', res);
-
-        Swal.fire(
-          'Approved!',
-          res?.message || 'Customer approved successfully',
-          'success',
+          res?.message || 'Customer rejected successfully',
+          'success'
         ).then(() => {
-          console.log('🔁 Navigating to customer list...');
 
-          this.router.navigate(['/admin/customer-list'], {
-            queryParams: { tabName: 'approved' },
-          });
+          this.router.navigate(
+            ['/admin/customer-list'],
+            {
+              queryParams: {
+                tabName: 'rejected'
+              }
+            }
+          );
+
         });
+
       },
 
       error: (err: any) => {
-        console.log('❌ Approve API Error:', err);
-        console.log('❌ Error Body:', err?.error);
-        console.log('❌ Error Message:', err?.message);
 
-        Swal.fire('Error', err?.error?.message || 'Approve failed', 'error');
-      },
+        console.error('Reject failed:', err);
+
+        Swal.fire(
+          'Error',
+          err?.error?.message || 'Reject failed',
+          'error'
+        );
+
+      }
+
     });
-  }
+
+  });
+}
+ approve(id: number): void {
+
+  if (!id) return;
+
+  const payload = this.authService.getApprovePayload();
+
+  console.log('🚀 Approve clicked with ID:', id);
+  console.log('📦 Approve Payload:', payload);
+
+  this.api.setTnxByStatus(
+    payload,
+    id,
+    'customer'
+  ).subscribe({
+
+    next: (res: any) => {
+
+      console.log('✅ Approve API Response:', res);
+
+      Swal.fire(
+        'Approved!',
+        res?.message || 'Customer approved successfully',
+        'success'
+      ).then(() => {
+
+        this.router.navigate(
+          ['/admin/customer-list'],
+          {
+            queryParams: {
+              tabName: 'approved'
+            }
+          }
+        );
+
+      });
+    },
+
+    error: (err: any) => {
+
+      console.log('❌ Approve API Error:', err);
+      console.log('❌ Error Body:', err?.error);
+      console.log('❌ Error Message:', err?.message);
+
+      Swal.fire(
+        'Error',
+        err?.error?.message || 'Approve failed',
+        'error'
+      );
+    }
+  });
+}
+
+
+// ------------ Amend method ...................
+amend(id: number): void {
+
+  if (!id) return;
+
+  const payload = this.authService.getAmendPayload();
+
+  console.log('🚀 Approve clicked with ID:', id);
+  console.log('📦 Approve Payload:', payload);
+
+  this.api.setTnxByStatus(
+    payload,
+    id,
+    'customer'
+  ).subscribe({
+
+    next: (res: any) => {
+
+      console.log('✅ Approve API Response:', res);
+
+      Swal.fire(
+        'Approved!',
+        res?.message || 'Customer approved successfully',
+        'success'
+      ).then(() => {
+
+        this.router.navigate(
+          ['/admin/customer-list'],
+          {
+            queryParams: {
+              tabName: 'approved'
+            }
+          }
+        );
+
+      });
+    },
+
+    error: (err: any) => {
+
+      console.log('❌ Approve API Error:', err);
+      console.log('❌ Error Body:', err?.error);
+      console.log('❌ Error Message:', err?.message);
+
+      Swal.fire(
+        'Error',
+        err?.error?.message || 'Approve failed',
+        'error'
+      );
+    }
+  });
+}
+
+// ....................... Amend .............
+
+
   // ---------------- ACCOUNTS ----------------
 
   openAddAccountDialog(customerId: number, customerName: string): void {

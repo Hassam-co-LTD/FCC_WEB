@@ -157,7 +157,7 @@
 
       <!-- Submitted -->
       <ng-container *ngIf="isEditMode && storeCurrency?.recordStatus === 'S'">
-        <button class="btn-reject" (click)="reject()">Reject</button>
+        <button class="btn-reject" (click)="reject(storeCurrency?.id)">Reject</button>
         <button class="btn-approve" (click)="approve()">Approve</button>
       </ng-container>
 
@@ -201,7 +201,7 @@
     <!-- Actions -->
     <div class="approved-actions">
       <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update" (click)="reject()">Amend</button>
+      <button class="btn-update" (click)="amend(storeCurrency?.id)">Amend</button>
     </div>
 
   </div>

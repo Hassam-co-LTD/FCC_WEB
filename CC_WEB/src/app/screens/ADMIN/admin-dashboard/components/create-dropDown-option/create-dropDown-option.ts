@@ -65,6 +65,7 @@ export class CreateDynamicFieldOptions implements OnInit {
     this.dropdownForm = this.fb.group({     
       name: ['', Validators.required],
       description: ['', Validators.required],
+      createdBy:this.authService.getLoginId()
       
     });
   }
@@ -148,10 +149,7 @@ export class CreateDynamicFieldOptions implements OnInit {
   }
   submit() {     
   if (!this.storeDropDown?.id) return;
-  const payload = {
-    recordStatus: 'S',
-    inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  };
+  const payload =  this.authService.getSubmitPayload()
   this.api.setTnxByStatus(
     payload,
     this.storeDropDown.id,
@@ -178,28 +176,108 @@ export class CreateDynamicFieldOptions implements OnInit {
  
 
 
-  reject(id:number): void { 
-    if (!this.storeDropDown?.id) return;
-    const payload = {
-      recordStatus: 'I',
-      inputterId: ""
-    };
-    this.api.setTnxByStatus(payload, this.storeDropDown.id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Rejected!', 'Dropdown option rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/dynamic-dropdown-option-inquiry'],{ queryParams: { tabName: 'Rejected' } }));
-      },
-      error: err => console.error('Reject failed', err)
-    });
-  } 
+  reject(id: number): void {
+      
+        if (!id) return;
+      
+        Swal.fire({
+          title: 'Reject Transaction',
+          input: 'textarea',
+          inputLabel: 'Reject Reason',
+          inputPlaceholder: 'Please enter the reason for rejection...',
+          inputAttributes: {
+            'aria-label': 'Reject reason'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Reject',
+          cancelButtonText: 'Cancel',
+      
+          preConfirm: (reason) => {
+      
+            if (!reason || !reason.trim()) {
+      
+              Swal.showValidationMessage(
+                'Reject reason is required'
+              );
+      
+              return false;
+            }
+      
+            return reason.trim();
+          }
+      
+        }).then((result) => {
+      
+          if (!result.isConfirmed) {
+            return;
+          }
+      
+          const rejectReason = result.value;
+      
+          // =========================
+          // CREATE REJECT PAYLOAD
+          // =========================
+      
+          const payload =
+            this.authService.getRejectPayload(rejectReason);
+      
+          console.log('Reject ID:', id);
+          console.log('Reject Payload:', payload);
+      
+          // =========================
+          // CALL API
+          // =========================
+      
+          this.api.setTnxByStatus(
+            payload,
+            id,
+            'customer'
+          ).subscribe({
+      
+            next: (res: any) => {
+      
+              console.log('Reject successful:', res);
+      
+              Swal.fire(
+                'Rejected!',
+                res?.message || 'dropDown rejected successfully',
+                'success'
+              ).then(() => {
+      
+                this.router.navigate(
+                  ['/admin/customer-list'],
+                  {
+                    queryParams: {
+                      tabName: 'rejected'
+                    }
+                  }
+                );
+      
+              });
+      
+            },
+      
+            error: (err: any) => {
+      
+              console.error('Reject failed:', err);
+      
+              Swal.fire(
+                'Error',
+                err?.error?.message || 'Reject failed',
+                'error'
+              );
+      
+            }
+      
+          });
+      
+        });
+      }
 
   approve(id: number): void {
   if (!this.storeDropDown?.id) return;
 
-  const payload = {
-    recordStatus: 'A',
-    authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  };
+  const payload = this.authService.getApprovePayload()
 
   this.api.setTnxByStatus(payload, this.storeDropDown.id, 'dynamic-dropdown').subscribe({
     next: () => {
@@ -212,5 +290,20 @@ export class CreateDynamicFieldOptions implements OnInit {
   });
 }
 
+ amend(id: number): void {
+  if (!this.storeDropDown?.id) return;
+
+  const payload = this.authService.getAmendPayload()
+
+  this.api.setTnxByStatus(payload, this.storeDropDown.id, 'dynamic-dropdown').subscribe({
+    next: () => {
+      Swal.fire('Approved!', 'Dropdown option approved successfully', 'success')
+        .then(() => 
+          this.router.navigate(['/admin/dynamic-dropdown-option-inquiry'], { queryParams: { tabName: 'approved' } })
+        );
+    },
+    error: err => console.error('Approve failed', err)
+  });
+}
 
 }

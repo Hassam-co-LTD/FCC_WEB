@@ -123,71 +123,9 @@ export class AccountTypesInquiry implements OnInit {
     this.router.navigate(['/admin/create-AccountMaster/' + AccountMaster.id]);
   }
 
-  submitStatus(id: number) {
-    const payload = {
-      recordStatus: 'S',
-      
-      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
-    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster submitted successfully', 'success');
-        this.loadDraftAccountTypes();
-        this.loadSubmittedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit AccountMaster', 'error')
-    });
-  }
 
-  setApprove(id: number) {
-    const payload = {
-       recordStatus:'A',
-       
-      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
-    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster approved successfully', 'success');
-        this.loadSubmittedAccountTypes();
-        this.loadApprovedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve AccountMaster', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    const payload = {
-       recordStatus:'I',
-       inputterId:''
-    }
-    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster rejected successfully', 'success');
-        this.loadSubmittedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject AccountMaster', 'error')
-    });
-  }
-
-  /** ================== Edit Approved AccountMaster ================== */
-  editApprovedAccountMaster(id: number) {
-    const payload = {
-      recordStatus:'A',
-      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`,
-      inputterId:''
-    }
-
-    // Move approved AccountMaster back to Draft for editing
-    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved AccountMaster moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftAccountTypes();
-        this.loadApprovedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved AccountMaster to draft', 'error')
-    });
-  }
+ 
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

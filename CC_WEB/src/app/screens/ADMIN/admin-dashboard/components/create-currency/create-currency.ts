@@ -70,7 +70,7 @@ export class CreateCurrency implements OnInit {
       currencyDesc: ['', Validators.required],
       currencyMapId: [''],
       currencyStatus: ['A'],
-      createdBy: [this.authService.getUserName() || '']
+      createdBy: [this.authService.getLoginId() || '']
     });
   }
 
@@ -159,7 +159,7 @@ onSave(): void {
   const payload = {
     ...this.currencyForm.getRawValue(),
     dynamicFields: dynamicPayload,
-    updatedBy: this.authService.getUserName() || ''
+    updatedBy: this.authService.getLoginId() || ''
   };
 
   this.api.updateTnxx(payload, `currency/update/${this.storeCurrency.currencyId}`).subscribe({
@@ -182,10 +182,7 @@ onSave(): void {
   // ---------------- WORKFLOW ----------------
   submit(): void {
     if (!this.storeCurrency?.currencyCode) return;
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
+    const payload = this.authService.getSubmitPayload()
     this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Currency submitted successfully', 'success')
@@ -199,10 +196,7 @@ onSave(): void {
 
   approve(): void {
     if (!this.storeCurrency?.currencyCode) return;
-  const payload = {
-     recordStatus: 'A', 
-     inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  }
+  const payload = this.authService.getApprovePayload()
     this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Currency approved successfully', 'success')
@@ -210,18 +204,157 @@ onSave(): void {
     });
   }
 
-  reject(): void {
-    if (!this.storeCurrency?.currencyCode) return;
-    const payload = {
-      recordStatus: 'I',
-      inputterId: ""
+  reject(id: number): void {
+    
+      if (!id) return;
+    
+      Swal.fire({
+        title: 'Reject Transaction',
+        input: 'textarea',
+        inputLabel: 'Reject Reason',
+        inputPlaceholder: 'Please enter the reason for rejection...',
+        inputAttributes: {
+          'aria-label': 'Reject reason'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+    
+        preConfirm: (reason) => {
+    
+          if (!reason || !reason.trim()) {
+    
+            Swal.showValidationMessage(
+              'Reject reason is required'
+            );
+    
+            return false;
+          }
+    
+          return reason.trim();
+        }
+    
+      }).then((result) => {
+    
+        if (!result.isConfirmed) {
+          return;
+        }
+    
+        const rejectReason = result.value;
+    
+        // =========================
+        // CREATE REJECT PAYLOAD
+        // =========================
+    
+        const payload =
+          this.authService.getRejectPayload(rejectReason);
+    
+        console.log('Reject ID:', id);
+        console.log('Reject Payload:', payload);
+    
+        // =========================
+        // CALL API
+        // =========================
+    
+        this.api.setTnxByStatus(
+          payload,
+          id,
+          'customer'
+        ).subscribe({
+    
+          next: (res: any) => {
+    
+            console.log('Reject successful:', res);
+    
+            Swal.fire(
+              'Rejected!',
+              res?.message || 'Currency rejected successfully',
+              'success'
+            ).then(() => {
+    
+              this.router.navigate(
+                ['/admin/customer-list'],
+                {
+                  queryParams: {
+                    tabName: 'rejected'
+                  }
+                }
+              );
+    
+            });
+    
+          },
+    
+          error: (err: any) => {
+    
+            console.error('Reject failed:', err);
+    
+            Swal.fire(
+              'Error',
+              err?.error?.message || 'Reject failed',
+              'error'
+            );
+    
+          }
+    
+        });
+    
+      });
     }
-    this.api.setTnxByStatus(payload, this.storeCurrency.id, 'currency').subscribe({
-      next: () =>
-        Swal.fire('Rejected!', 'Currency rejected successfully', 'success')
-          .then(() => this.router.navigate(['/admin/currency-list']))
-    });
-  }
+
+    // -------- Amend method ----------
+
+    amend(id: number): void {
+    
+      if (!id) return;
+    
+      const payload = this.authService.getAmendPayload();
+    
+      console.log('🚀 Amend clicked with ID:', id);
+      console.log('📦 Amend Payload:', payload);
+    
+      this.api.setTnxByStatus(
+        payload,
+        id,
+        'customer'
+      ).subscribe({
+    
+        next: (res: any) => {
+    
+          console.log('✅ Approve API Response:', res);
+    
+          Swal.fire(
+            'Approved!',
+            res?.message || 'Customer approved successfully',
+            'success'
+          ).then(() => {
+    
+            this.router.navigate(
+              ['/admin/customer-list'],
+              {
+                queryParams: {
+                  tabName: 'approved'
+                }
+              }
+            );
+    
+          });
+        },
+    
+        error: (err: any) => {
+    
+          console.log('❌ Approve API Error:', err);
+          console.log('❌ Error Body:', err?.error);
+          console.log('❌ Error Message:', err?.message);
+    
+          Swal.fire(
+            'Error',
+            err?.error?.message || 'Approve failed',
+            'error'
+          );
+        }
+      });
+    }
 
   // ---------------- UI HELPERS ----------------
   toggle(): void { this.isOpen = !this.isOpen; }

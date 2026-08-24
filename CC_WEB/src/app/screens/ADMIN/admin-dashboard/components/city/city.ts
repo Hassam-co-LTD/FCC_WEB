@@ -71,7 +71,7 @@ cityId: [''],
 cityName: ['', Validators.required],
 state: ['', Validators.required],
 country: ['', Validators.required],
-createdBy:[this.authService.getUserName() || '', Validators.required]
+createdBy:[this.authService.getLoginId() || '', Validators.required]
 });
 }
 
@@ -185,10 +185,7 @@ updateCity(): void {
 submit(): void {
 if (!this.storeCity?.id) return;
 
-const payload = {
-  recordStatus: 'S',
-  inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-};
+let payload = this.authService.getSubmitPayload()
 
 this.api.setTnxByStatus(payload, this.storeCity.id, 'city').subscribe({
 next: () =>
@@ -203,10 +200,8 @@ Swal.fire('Submitted!', 'City submitted successfully', 'success')
 
 reject(id: number): void {
 if (!this.storeCity?.id) return;
-const payload = {
-  recordStatus: 'I',
-  inputterId: ""
-};
+let payload = this.authService.getSubmitPayload()
+
 this.api.setTnxByStatus(payload, id, 'city').subscribe({
 next: () =>
 Swal.fire('Rejected!', 'City rejected successfully', 'success')
@@ -219,10 +214,8 @@ Swal.fire('Rejected!', 'City rejected successfully', 'success')
 }
 
 approve(id: number): void {
-const payload = {
-  recordStatus: 'A',
-  authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-};
+let payload = this.authService.getSubmitPayload()
+
 this.api.setTnxByStatus(payload, id, 'city').subscribe({
 next: () =>
 Swal.fire('Approved!', 'City approved successfully', 'success')

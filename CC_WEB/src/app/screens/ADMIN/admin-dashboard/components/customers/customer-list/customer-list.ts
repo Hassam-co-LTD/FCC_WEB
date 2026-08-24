@@ -123,69 +123,7 @@ export class CustomerList implements OnInit {
     this.router.navigate(['/admin/create-customer/' + customer.id]);
   }
 
-  submitStatus(id: number) {
-    if(!id) return;
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Customer submitted successfully', 'success');
-        this.loadDraftCustomers();
-        this.loadSubmittedCustomers();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit customer', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Customer approved successfully', 'success');
-        this.loadSubmittedCustomers();
-        this.loadApprovedCustomers();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve customer', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    const payload = {
-      recordStatus: 'R',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Customer rejected successfully', 'success');
-        this.loadSubmittedCustomers();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject customer', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCustomer(id: number) {
-    const payload = {
-      recordStatus: 'D',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved customer moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftCustomers();
-        this.loadApprovedCustomers();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved customer to draft', 'error')
-    });
-  }
-
+ 
   // ================== Track By ==================
   trackById(index: number, item: any) {
     return item.id;

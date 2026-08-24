@@ -123,69 +123,7 @@ export class CompanyList implements OnInit {
     this.router.navigate(['/admin/create-company/' + customer.id]);
   }
 
-  submitStatus(id: number) {
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'company').subscribe({
-      next: (res) => {
-        console.log('Submit response:', res);
-        Swal.fire('Success', 'Company submitted successfully', 'success');
-        this.loadDraftCompany();
-        this.loadSubmittedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit company', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Company approved successfully', 'success');
-        this.loadSubmittedCompany();
-        this.loadApprovedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve company', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    const payload = {
-      recordStatus: 'R',
-      inputterId: ""
-    };
-    this.api.setTnxByStatus(payload, id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Company rejected successfully', 'success');
-        this.loadSubmittedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject company', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCustomer(id: number) {
-    if (!id) return;
-    const payload = {
-      recordStatus: 'I',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    // Move approved company back to Draft for editing
-    this.api.setTnxByStatus(payload, id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved company moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftCompany();
-        this.loadApprovedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved company to draft', 'error')
-    });
-  }
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

@@ -70,7 +70,7 @@ export class CreateCompany implements OnInit {
       companyAddress: ['', Validators.required],
       companyStatus: ['A', Validators.required],
       companyType: ['', Validators.required],
-      createdBy: [this.authService.getUserName() || '', Validators.required]
+      createdBy: [this.authService.getLoginId() || '', Validators.required]
     });
   }
 
@@ -178,7 +178,7 @@ update(id: number): void {
   const payload = {
     ...this.companyForm.getRawValue(),
     dynamicFields: dynamicPayload,
-    updatedBy: this.authService.getUserName() || ''
+    updatedBy: this.authService.getLoginId() || ''
   };
 
   this.api.updateTnxx(payload, `company/update/${this.storeCompany.companyId}`).subscribe({
@@ -195,10 +195,7 @@ update(id: number): void {
   // ================= WORKFLOW =================
   submit(): void {
   if (!this.storeCompany?.companyId) return;
-  const payload = {
-    recordStatus: 'S',
-    inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  };
+  const payload = this.authService.getSubmitPayload()
   Swal.fire({
     title: 'Are you sure?',
     text: 'Do you want to submit this company?',
@@ -228,47 +225,107 @@ update(id: number): void {
   });
 }
 
-reject(storeCompanyId:String): void {
-  if (!this.storeCompany?.companyId) return;
-  const payload = {
-    recordStatus: 'I',
-    inputerrId:""
-  }
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'Do you want to reject this company?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, Reject',
-    cancelButtonText: 'Cancel'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: 'Rejecting...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      this.api.setTnxByStatus(payload, this.storeCompany.companyId, 'company').subscribe({
-        next: () => {
-          Swal.fire('Rejected!', 'Company rejected successfully', 'success')
-            .then(() => this.router.navigate(['/admin/company-inquiry'], { queryParams: { tabName: 'rejected' } }));
-        },
-        error: err => {
-          console.error('Reject failed', err);
-          Swal.fire('Error', 'Failed to reject company', 'error');
+reject(id: number): void {
+  
+    if (!id) return;
+  
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
+  
+      preConfirm: (reason) => {
+  
+        if (!reason || !reason.trim()) {
+  
+          Swal.showValidationMessage(
+            'Reject reason is required'
+          );
+  
+          return false;
         }
+  
+        return reason.trim();
+      }
+  
+    }).then((result) => {
+  
+      if (!result.isConfirmed) {
+        return;
+      }
+  
+      const rejectReason = result.value;
+  
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
+  
+      const payload =
+        this.authService.getRejectPayload(rejectReason);
+  
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
+  
+      // =========================
+      // CALL API
+      // =========================
+  
+      this.api.setTnxByStatus(
+        payload,
+        id,
+        'customer'
+      ).subscribe({
+  
+        next: (res: any) => {
+  
+          console.log('Reject successful:', res);
+  
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Company rejected successfully',
+            'success'
+          ).then(() => {
+  
+            this.router.navigate(
+              ['/admin/customer-list'],
+              {
+                queryParams: {
+                  tabName: 'rejected'
+                }
+              }
+            );
+  
+          });
+  
+        },
+  
+        error: (err: any) => {
+  
+          console.error('Reject failed:', err);
+  
+          Swal.fire(
+            'Error',
+            err?.error?.message || 'Reject failed',
+            'error'
+          );
+  
+        }
+  
       });
-    }
-  });
-}
+  
+    });
+  }
 
 approve(companyId:String): void {
   if (!this.storeCompany?.companyId) return;
-  const payload  = {
-    recordStatus: 'A',
-    authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-  }
+  const payload  = this.authService.getApprovePayload()
   Swal.fire({
    
   }).then((result) => {

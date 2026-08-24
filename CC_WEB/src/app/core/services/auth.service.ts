@@ -155,13 +155,16 @@ logout(): void {
   }
 
   /** Get userId from sessionStorage */
-  getUserId(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.userId?.toString() || null;
-  }
+ getUserId(): number | null {
 
+  const data = sessionStorage.getItem('userData');
+
+  if (!data) return null;
+
+  const parsed = JSON.parse(data);
+
+  return parsed.userId ?? null;
+}
  getToken(): string | null {
   return sessionStorage.getItem('token');
 }
@@ -245,4 +248,33 @@ logout(): void {
     const parsed = JSON.parse(data);
     return parsed.loginId || null;
   }
+
+  getSubmitPayload() {
+  return {
+    recordStatus: 'S',
+    inputterId: this.getUserId()!
+  };
+}
+
+getApprovePayload() {
+  return {
+    recordStatus: 'A',
+    authorizerId: this.getUserId()!
+  };
+}
+
+getRejectPayload(rejectReason: string) {
+  return {
+    recordStatus: 'R',
+    rejectReason: rejectReason,
+    rejectedBy: this.getUserId()!
+  };
+}
+
+getAmendPayload() {
+  return {
+    recordStatus: 'I',
+    updatedBy: this.getUserName()!
+  };
+}
 }

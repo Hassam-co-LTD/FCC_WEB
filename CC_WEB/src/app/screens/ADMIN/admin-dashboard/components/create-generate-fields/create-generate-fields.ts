@@ -91,7 +91,7 @@ export class CreateGenerateFields implements OnInit {
       label: ['', Validators.required],
       fieldType: ['', Validators.required],
       screen: ['', Validators.required],
-      createdBy: [this.authService.getUserName() || '', Validators.required],
+      createdBy: [this.authService.getLoginId() || '', Validators.required],
       options: this.fb.array([]) // <-- FormArray starts empty, populate later
     });
   }
@@ -178,7 +178,7 @@ export class CreateGenerateFields implements OnInit {
     if (this.fieldForm.invalid) return;
     const payload ={
      ...this.fieldForm.getRawValue(),
-     updatedBy: this.authService.getUserName() || ''
+     updatedBy: this.authService.getLoginId() || ''
     }
     console.log('Updating payload:', payload);
     this.api.updateTnx(payload, 'dynamic-fields', id).subscribe({
@@ -193,10 +193,7 @@ export class CreateGenerateFields implements OnInit {
 
   submit(): void {
     if (!this.storeField?.id) return;
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
+    const payload = this.authService.getSubmitPayload()
     this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
       next: () => Swal.fire('submitted!', 'Dynamic Field submitted', 'success')
         .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Submitted' } })),
@@ -205,24 +202,105 @@ export class CreateGenerateFields implements OnInit {
   }
 
   reject(id: number): void {
-    if (!this.storeField?.id) return;
-    const payload = {
-      recordStatus: 'I',
-      inputterId: ""
-    };
-    this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
-      next: () => Swal.fire('Rejected!', 'Field rejected', 'success')
-        .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Draft' } })),
-      error: err => Swal.fire('Error', 'Rejection failed', 'error')
-    });
-  }
-
+    
+      if (!id) return;
+    
+      Swal.fire({
+        title: 'Reject Transaction',
+        input: 'textarea',
+        inputLabel: 'Reject Reason',
+        inputPlaceholder: 'Please enter the reason for rejection...',
+        inputAttributes: {
+          'aria-label': 'Reject reason'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+    
+        preConfirm: (reason) => {
+    
+          if (!reason || !reason.trim()) {
+    
+            Swal.showValidationMessage(
+              'Reject reason is required'
+            );
+    
+            return false;
+          }
+    
+          return reason.trim();
+        }
+    
+      }).then((result) => {
+    
+        if (!result.isConfirmed) {
+          return;
+        }
+    
+        const rejectReason = result.value;
+    
+        // =========================
+        // CREATE REJECT PAYLOAD
+        // =========================
+    
+        const payload =
+          this.authService.getRejectPayload(rejectReason);
+    
+        console.log('Reject ID:', id);
+        console.log('Reject Payload:', payload);
+    
+        // =========================
+        // CALL API
+        // =========================
+    
+        this.api.setTnxByStatus(
+          payload,
+          id,
+          'customer'
+        ).subscribe({
+    
+          next: (res: any) => {
+    
+            console.log('Reject successful:', res);
+    
+            Swal.fire(
+              'Rejected!',
+              res?.message || 'fields rejected successfully',
+              'success'
+            ).then(() => {
+    
+              this.router.navigate(
+                ['/admin/customer-list'],
+                {
+                  queryParams: {
+                    tabName: 'rejected'
+                  }
+                }
+              );
+    
+            });
+    
+          },
+    
+          error: (err: any) => {
+    
+            console.error('Reject failed:', err);
+    
+            Swal.fire(
+              'Error',
+              err?.error?.message || 'Reject failed',
+              'error'
+            );
+    
+          }
+    
+        });
+    
+      });
+    }
   approve(id: number): void {
     if (!this.storeField?.id) return;
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
+    const payload = this.authService.getApprovePayload()
     this.api.setTnxByStatus(payload, this.storeField.id, 'dynamic-fields').subscribe({
       next: () => Swal.fire('Approved!', 'Field approved', 'success')
         .then(() => this.router.navigate(['/admin/dynamic-field-inquiry'], { queryParams: { tabName: 'Approved' } })),

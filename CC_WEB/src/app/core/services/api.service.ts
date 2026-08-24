@@ -30,6 +30,9 @@ export interface UndertakingLc {
   // Flexible key for any extra props
   [key: string]: any;
 }
+
+
+
  
 @Injectable({
   providedIn: 'root',
@@ -696,7 +699,7 @@ updateUndertakingDraft(tnxId: string, dto: UndertakingRequestDTO): Observable<Un
   /**
    * Get accounts that can be transferred FROM
    */
-  getTransferFromAccounts(userRole: string, companyId: string, userId: string): Observable<AccountsMaster[]> {
+  getTransferFromAccounts(userRole: string, companyId: string, userId:any): Observable<AccountsMaster[]> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
@@ -871,9 +874,11 @@ updateTnxByRoleId(data:any,name:String,id:String){
 // set transaction status by id
 setTnxByStatus(
   payload: {
-    recordStatus: string;
-    inputterId?: string;
-    authorizerId?: string;
+    recordStatus?: string;
+    inputterId?: number;
+    authorizerId?: number;
+    rejectReason?: string;
+    rejectedBy?: number;
   },
   id: number | string,
   name: string
@@ -893,7 +898,6 @@ setTnxByStatus(
 
   return this.http.put<any>(url, payload);
 }
-
 //get list of data
 getDatalist(name:String){
    return this.http.get<any>(`${this.adminBaseUrl}${name}/list`);

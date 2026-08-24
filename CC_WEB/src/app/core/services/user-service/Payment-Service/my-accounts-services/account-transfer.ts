@@ -100,7 +100,7 @@ export class MyAccountsService {
   getTransferFromAccounts(): Observable<any[]> {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const userId = this.authService.getUserId()?.toString() || '';
  
     return this.apiService.getTransferFromAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
@@ -124,8 +124,8 @@ export class MyAccountsService {
    */
   getTransferToAccounts(): Observable<any[]> {
     const userRole = this.userRoleSubject.value;
-    const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const companyId = (this.authService.getCompanyId() ?? '') as string;
+    const userId = this.authService.getUserId()?.toString() || '';
  
     return this.apiService.getTransferToAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
@@ -677,7 +677,7 @@ export class MyAccountsService {
   getAccessibleAccounts(): Observable<AccountsMaster[]> {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const userId = this.authService.getUserId()?.toString() || '';
    
     return this.apiService.getAccessibleAccounts(userRole, companyId, userId).pipe(
       catchError(() => of([]))

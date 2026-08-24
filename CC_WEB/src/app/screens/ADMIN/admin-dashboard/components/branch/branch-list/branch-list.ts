@@ -123,71 +123,10 @@ export class BranchList implements OnInit {
     this.router.navigate(['/admin/create-branch/' + branch.id]);
   }
 
-  submitStatus(id: number) {
-     const payload = {
-      recordStatus  : 'S',
-      
-      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-     }
-    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch submitted successfully', 'success');
-        this.loadDraftBranches();
-        this.loadSubmittedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit branch', 'error')
-    });
-  }
 
-  setApprove(id: number) {
-    const payload = {
-      recordStatus : 'A',
-      
-      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
 
-    }
-    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch approved successfully', 'success');
-        this.loadSubmittedBranches();
-        this.loadApprovedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve branch', 'error')
-    });
-  }
+ 
 
-  Reject(id: number) {
-    const payload = {
-      recordStatus:'I',
-      inputterId:''
-    }
-    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch rejected successfully', 'success');
-        this.loadSubmittedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject branch', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Branch ================== */
-  editApprovedBranch(id: number) {
-   const  payload  = {
-    recordStatus:'A',
-    
-      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-   }
-    // Move approved branch back to Draft for editing
-    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved branch moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftBranches();
-        this.loadApprovedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved branch to draft', 'error')
-    });
-  }
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

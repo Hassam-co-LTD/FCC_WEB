@@ -153,64 +153,6 @@ export class CurrencyList implements OnInit {
   }
 
   // ================== Status Actions ==================
-  submitStatus(id: number) {
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency submitted successfully', 'success');
-        this.loadDraftCurrencies();
-        this.loadSubmittedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to submit currency', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
-    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency approved successfully', 'success');
-        this.loadSubmittedCurrencies();
-        this.loadApprovedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to approve currency', 'error')
-    });
-  }
-
-  reject(id: number) {
-    const payload = {
-      recordStatus: 'R',
-      inputterId: ""
-    };
-    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency rejected successfully', 'success');
-        this.loadSubmittedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to reject currency', 'error')
-    });
-  }
-
-  editApprovedCurrency(id: number) {
-    const payload = {
-      recordStatus: 'D',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Moved to Draft for editing', 'success');
-        this.loadDraftCurrencies();
-        this.loadApprovedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to move currency', 'error')
-    });
-  }
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

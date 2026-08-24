@@ -120,67 +120,7 @@ export class DynamicDropdownOptionInquiry implements OnInit {
 
   // ================== Actions ==================
   
-  submitStatus(id: number) {
-    const payload = {
-      recordStatus: 'S',
-      inputterId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Dropdown option submitted successfully', 'success');
-        this.loadDraftCity();
-        this.loadSubmittedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit dropdown option', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Dropdown option approved successfully', 'success');
-        this.loadSubmittedCity();
-        this.loadApprovedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve dropdown option', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    const payload = {
-      recordStatus: 'R',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Dropdown option rejected successfully', 'success');
-        this.loadSubmittedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject dropdown option', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCity(id: number) {
-    const payload = {
-      recordStatus: 'I',
-      authorizerId: `${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    };
-    // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus(payload, id, 'dynamic-dropdown').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved dropdown option moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftCity();
-        this.loadApprovedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved dropdown option to draft', 'error')
-    });
-  }
+ 
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

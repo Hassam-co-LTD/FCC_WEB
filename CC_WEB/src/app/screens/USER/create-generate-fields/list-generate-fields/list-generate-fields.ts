@@ -119,66 +119,7 @@ export class ListGenerateFields implements OnInit {
     this.router.navigate(['/admin/create-field/' + field.id]);
   }
 
-  submitStatus(id: number) {
-    if(!id) return;
-   const payload = {
-      recordStatus: 'S',
-      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Field submitted successfully', 'success');
-        this.loadDraftFields();
-        this.loadSubmittedFields();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit field', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    if(!id) return;
-    const payload = {
-      recordStatus: 'A',
-      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Field approved successfully', 'success');
-        this.loadSubmittedFields();
-        this.loadApprovedFields();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve field', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    const payload = {
-      recordStatus: 'R',
-      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Field rejected successfully', 'success');
-        this.loadSubmittedFields();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject field', 'error')
-    });
-  }
-
-  editApprovedField(id: number) {
-    const payload = {
-      recordStatus: 'D',
-      authorizerId: `${this.authService.getUserId()}+${this.authService.getUserName()}`
-    };
-    this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved field moved to Draft for editing', 'success');
-        this.loadDraftFields();
-        this.loadApprovedFields();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved field to draft', 'error')
-    });
-  }
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

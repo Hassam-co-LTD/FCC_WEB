@@ -80,7 +80,7 @@ export class CustomerBranch implements OnInit {
       contactPerson: [''],
       cityId: [null, Validators.required],
       contactNo: [''],
-      createdBy:[this.authService.getUserName()]
+      createdBy:[this.authService.getLoginId()]
     });
   }
 
@@ -191,7 +191,7 @@ update(id:number): void {
 
   const branchPayload = {
     ...this.branchForm.getRawValue(),
-    updatedBy:this.authService.getUserName(),
+    updatedBy:this.authService.getLoginId(),
     dynamicFields: dynamicPayload,
     updatedOn: new Date().toISOString().split('.')[0]
   };
@@ -221,10 +221,8 @@ update(id:number): void {
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeBranch?.id) return;
-    const payload  = {
-      recordStatus : 'S',
-      inputterId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
+    let payload = this.authService.getSubmitPayload()
+
     this.api.setTnxByStatus(payload, this.storeBranch.id, 'branch').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Branch submitted successfully', 'success')
@@ -236,29 +234,109 @@ update(id:number): void {
     });
   }
 
-  reject(id: number): void {
+ reject(id: number): void {
  
-   const payload = {
-    recordStatus : 'I',
-    inputterId: '',
-   }   
-    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
-      next: () =>
-        Swal.fire('Rejected!', 'Branch rejected successfully', 'success')
-          .then(() =>
-            this.router.navigate(['/admin/branch-list'], {
-              queryParams: { tabName: 'Rejected' }
-            })
-          )
-    });
-  }
+   if (!id) return;
+ 
+   Swal.fire({
+     title: 'Reject Transaction',
+     input: 'textarea',
+     inputLabel: 'Reject Reason',
+     inputPlaceholder: 'Please enter the reason for rejection...',
+     inputAttributes: {
+       'aria-label': 'Reject reason'
+     },
+     showCancelButton: true,
+     confirmButtonText: 'Reject',
+     cancelButtonText: 'Cancel',
+ 
+     preConfirm: (reason) => {
+ 
+       if (!reason || !reason.trim()) {
+ 
+         Swal.showValidationMessage(
+           'Reject reason is required'
+         );
+ 
+         return false;
+       }
+ 
+       return reason.trim();
+     }
+ 
+   }).then((result) => {
+ 
+     if (!result.isConfirmed) {
+       return;
+     }
+ 
+     const rejectReason = result.value;
+ 
+     // =========================
+     // CREATE REJECT PAYLOAD
+     // =========================
+ 
+     const payload =
+       this.authService.getRejectPayload(rejectReason);
+ 
+     console.log('Reject ID:', id);
+     console.log('Reject Payload:', payload);
+ 
+     // =========================
+     // CALL API
+     // =========================
+ 
+     this.api.setTnxByStatus(
+       payload,
+       id,
+       'customer'
+     ).subscribe({
+ 
+       next: (res: any) => {
+ 
+         console.log('Reject successful:', res);
+ 
+         Swal.fire(
+           'Rejected!',
+           res?.message || 'Customer rejected successfully',
+           'success'
+         ).then(() => {
+ 
+           this.router.navigate(
+             ['/admin/customer-list'],
+             {
+               queryParams: {
+                 tabName: 'rejected'
+               }
+             }
+           );
+ 
+         });
+ 
+       },
+ 
+       error: (err: any) => {
+ 
+         console.error('Reject failed:', err);
+ 
+         Swal.fire(
+           'Error',
+           err?.error?.message || 'Reject failed',
+           'error'
+         );
+ 
+       }
+ 
+     });
+ 
+   });
+ }
+
+
 
   approve(id: number): void {
-    const payload = {
-       recordStatus : 'S',
-       
-      authorizerId:`${this.authService.getLoginId()}+${this.authService.getCompanyId()}`
-    }
+   let payload = this.authService.getApprovePayload()
+
     this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Branch approved successfully', 'success')

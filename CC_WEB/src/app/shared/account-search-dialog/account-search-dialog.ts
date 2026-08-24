@@ -95,7 +95,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
  
   // User Info
   currentUserRole: string = '';
-  currentUserId: string = '';
+  currentUserId: number | null = null;
   currentCompanyId: string = '';
  
   // Subscriptions
@@ -113,7 +113,7 @@ export class AccountSearchDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Get current user info from AuthService
     this.currentUserRole = this.authService.getUserRole() || '';
-    this.currentUserId = this.authService.getUserId() || '';
+     this.currentUserId = this.authService.getUserId();
     this.currentCompanyId = this.authService.getCompanyId() || '';
    
     // Load accounts
