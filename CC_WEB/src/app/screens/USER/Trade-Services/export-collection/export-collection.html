@@ -96,7 +96,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Create')"
+            *ngIf="hasPermission('EC_CreateSave')"
             mat-flat-button
             color="accent"
             (click)="saveForm()">
@@ -115,7 +115,7 @@
           ">
  
           <button
-            *ngIf="hasPermission('Amend')"
+            *ngIf="hasPermission('EC_InquiryPendingUpdate')"
             mat-stroked-button
             color="primary"
             (click)="update()">
@@ -123,7 +123,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Submit')"
+            *ngIf="hasPermission('EC_InquirySubmit')"
             mat-flat-button
             color="accent"
             (click)="submitCollection()">
@@ -139,7 +139,7 @@
           *ngIf="screenMode === 'SUBMITTED'">
  
           <button
-            *ngIf="hasPermission('Reject')"
+            *ngIf="hasPermission('EC_InquiryReject')"
             mat-stroked-button
             color="primary"
             (click)="openReject()">
@@ -147,7 +147,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Approve')"
+            *ngIf="hasPermission('EC_InquiryApprove')"
             mat-flat-button
             color="accent"
             (click)="approve()">
@@ -188,7 +188,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Amend')"
+            *ngIf="hasPermission('EC_InquiryRejectUpdate')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()">

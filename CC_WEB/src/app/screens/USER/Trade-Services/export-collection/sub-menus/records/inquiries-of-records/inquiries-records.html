@@ -1,8 +1,8 @@
 <div class="page-header">
-<div class="title">
-<h2>{{ activeTab | titlecase }} Export Collection Records</h2>
-<p>Manage and track all Export Collection {{ activeTab }} transactions</p>
-</div>
+    <div class="title">
+        <h2>{{ activeTab | titlecase }} Export Collection Records</h2>
+        <p>Manage and track all Export Collection {{ activeTab }} transactions</p>
+    </div>
 </div>
  
 <!-- ================= SEARCH ================= -->
@@ -60,7 +60,7 @@
     <ng-container *ngFor="let tab of tabs">
  
         <div
-            *ngIf="hasPermission('Inquiry')"
+            *ngIf="hasPermission('EC_Inquiry')"
             class="tab"
             [class.active]="activeTab === tab.key"
             (click)="setActiveTab(tab.key)">
@@ -78,9 +78,9 @@
     <div class="results-summary">
  
         Showing
-<strong>{{ pagedTransactions.length }}</strong>
+        <strong>{{ pagedTransactions.length }}</strong>
         of
-<strong>{{ filteredTransactions.length }}</strong>
+        <strong>{{ filteredTransactions.length }}</strong>
         {{ activeTab }} records
  
     </div>
@@ -97,47 +97,47 @@
  
                 <th *ngIf="activeTab == 'live'">
                     Event Ref No
-</th>
+                </th>
  
                 <th (click)="sortBy('tnxId')">
                     TNX ID
-</th>
+                </th>
  
                 <th *ngIf="activeTab == 'live'">
                     Event Sequence
-</th>
+                </th>
  
                 <th *ngIf="activeTab == 'live'">
                     Event
-</th>
+                </th>
  
                 <th (click)="sortBy('createdOn')">
                     Created
-</th>
+                </th>
  
                 <th>
                     Issuer Reference
-</th>
+                </th>
  
                 <th>
                     Currency
-</th>
+                </th>
  
                 <th>
                     Amount
-</th>
+                </th>
  
                 <th>
                     Drawer
-</th>
+                </th>
  
                 <th>
                     Drawee
-</th>
+                </th>
  
                 <th>
                     Action
-</th>
+                </th>
  
             </tr>
  
@@ -149,10 +149,10 @@
                 *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
  
                 <!-- EVENT REF NO -->
-<td *ngIf="activeTab == 'live'">
+                <td *ngIf="activeTab == 'live'">
  
                     <a
-                        *ngIf="hasPermission('Amend')"
+                        *ngIf="hasPermission('EC_Amend')"
                         class="tnx-link"
                         (click)="openExportCollection(tx)">
  
@@ -160,17 +160,17 @@
  
                     </a>
  
-                    <span *ngIf="!hasPermission('Amend')">
+                    <span *ngIf="!hasPermission('EC_Amend')">
                         {{ tx.eventRefNo }}
-</span>
+                    </span>
  
                 </td>
  
                 <!-- TNX ID -->
-<td>
+                <td>
  
                     <a
-                        *ngIf="activeTab !== 'live' && hasPermission('Amend')"
+                        *ngIf="activeTab !== 'live' && hasPermission('EC_Amend')"
                         class="tnx-link"
                         (click)="openExportCollection(tx)">
  
@@ -179,7 +179,7 @@
                     </a>
  
                     <span
-                        *ngIf="activeTab === 'live' || !hasPermission('Amend')">
+                        *ngIf="activeTab === 'live' || !hasPermission('EC_Amend')">
  
                         {{ tx.tnxId }}
  
@@ -188,50 +188,50 @@
                 </td>
  
                 <!-- EVENT SEQUENCE -->
-<td *ngIf="activeTab == 'live'">
+                <td *ngIf="activeTab == 'live'">
                     {{ tx.eventSequence }}
-</td>
+                </td>
  
                 <!-- EVENT -->
-<td *ngIf="activeTab == 'live'">
+                <td *ngIf="activeTab == 'live'">
                     {{ tx.eventType }}
-</td>
+                </td>
  
                 <!-- CREATED -->
-<td>
+                <td>
                     {{ tx.createdOn | date:'yyyy-MM-dd' }}
-</td>
+                </td>
  
                 <!-- ISSUER -->
-<td>
+                <td>
                     {{ tx.issuerReference }}
-</td>
+                </td>
  
                 <!-- CURRENCY -->
-<td>
+                <td>
                     {{ tx.currency }}
-</td>
+                </td>
  
                 <!-- AMOUNT -->
-<td>
+                <td>
                     {{ tx.amount }}
-</td>
+                </td>
  
                 <!-- DRAWER -->
-<td>
+                <td>
                     {{ tx.drawerName }}
-</td>
+                </td>
  
                 <!-- DRAWEE -->
-<td>
+                <td>
                     {{ tx.draweeName }}
-</td>
+                </td>
  
                 <!-- ACTION -->
-<td>
+                <td>
  
                     <button
-                        *ngIf="hasPermission('Inquiry')"
+                        *ngIf="hasPermission('EC_Inquiry')"
                         class="btn-action"
                         (click)="viewTransaction(tx)">
  
@@ -275,7 +275,7 @@
  
         <span>
             Page {{ currentPage }} of {{ totalPages }}
-</span>
+        </span>
  
         <button
             class="btn-pagination"

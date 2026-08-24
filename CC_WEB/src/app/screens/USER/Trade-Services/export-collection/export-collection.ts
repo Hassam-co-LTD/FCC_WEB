@@ -590,7 +590,6 @@
 //       });
 //   }
 // }
-
 import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -1115,7 +1114,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   saveForm(): void {
-    if (!this.hasPermission('Create')) {
+    if (!this.hasPermission('EC_CreateSave')) {
       this.snackBar.open(
         'You do not have permission to create an Export Collection.',
         'Close',
@@ -1175,7 +1174,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   submitCollection(): void {
-    if (!this.hasPermission('Submit')) {
+    if (!this.hasPermission('EC_InquirySubmit')) {
       this.snackBar.open(
         'You do not have permission to submit this transaction.',
         'Close',
@@ -1269,7 +1268,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   update(): void {
-    if (!this.hasPermission('Amend')) {
+    if (!this.hasPermission('EC_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
         'Close',
@@ -1335,7 +1334,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   approve(): void {
-    if (!this.hasPermission('Approve')) {
+    if (!this.hasPermission('EC_InquiryApprove')) {
       this.snackBar.open(
         'You do not have permission to approve this transaction.',
         'Close',
@@ -1361,7 +1360,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   openReject(): void {
-    if (!this.hasPermission('Reject')) {
+    if (!this.hasPermission('EC_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
         'Close',
@@ -1423,7 +1422,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   updateRejected(): void {
-    if (!this.hasPermission('Amend')) {
+    if (!this.hasPermission('EC_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
         'Close',
@@ -1471,4 +1470,5 @@ export class ExportCollection implements OnInit {
           });
         },
       });
-    }}
+  }
+}

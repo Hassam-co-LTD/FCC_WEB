@@ -97,7 +97,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Amend')"
+            *ngIf="hasPermission('EC_AmendSave')"
             mat-flat-button
             color="accent"
             (click)="saveForm()"
@@ -148,7 +148,7 @@
  
           <!-- Submit -->
           <button
-            *ngIf="hasPermission('Amend')"
+            *ngIf="hasPermission('EC_AmendSubmit')"
             mat-flat-button
             color="accent"
             (click)="submit()">
@@ -163,7 +163,7 @@
           *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
  
           <button
-            *ngIf="hasPermission('Reject')"
+            *ngIf="hasPermission('EC_AmendPendingReject')"
             mat-stroked-button
             color="primary"
             (click)="openReject()">
@@ -171,7 +171,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Approve')"
+            *ngIf="hasPermission('EC_AmendApprove')"
             mat-flat-button
             color="accent"
             (click)="approve()">
@@ -207,7 +207,7 @@
           </button>
  
           <button
-            *ngIf="hasPermission('Amend')"
+            *ngIf="hasPermission('EC_AmendUpdateReject')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()">

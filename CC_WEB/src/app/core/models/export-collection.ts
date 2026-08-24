@@ -27,7 +27,6 @@ export interface ExportCollectionTransaction {
   draweeAddress4?: string;
 
   remittingBankName?: string;
-  remittingBank: string;
   issuerReference?: string;
   principalAccount?: string;
   feeAccount?: string;

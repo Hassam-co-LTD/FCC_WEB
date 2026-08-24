@@ -548,7 +548,7 @@ export class ApprovedInquiryRecords {
   }
 
   viewTransaction(tx: ExportCollectionTransaction): void {
-    if (!this.hasPermission('Inquiry')) {
+    if (!this.hasPermission('EC_Inquiry')) {
       console.warn('Inquiry permission denied');
       return;
     }
@@ -575,7 +575,7 @@ export class ApprovedInquiryRecords {
   }
 
   openApprovedAmendTransaction(tx: ExportCollectionTransaction): void {
-    if (!this.hasPermission('Amend')) {
+    if (!this.hasPermission('EC_Amend')) {
       console.warn('Amend permission denied');
       return;
     }
