@@ -81,7 +81,7 @@
                 </ng-container>
             
                 <!-- REJECTED: Back + Update -->
-                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+                <ng-container *ngIf="sourceTab === 'rejected' && eventType === 'AMD'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
                     <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
                 </ng-container>

@@ -841,14 +841,23 @@ export class AmendScreen implements OnInit {
       return;
     }
     const dialogRef = this.dialog.open(RejectDialogComponent, { width: '400px' });
+
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return;
-      this.api.rejectAmendment(eventRefNo, reason).subscribe({
-        next: () => {
-          this.snackBar.open('Amendment rejected. Live LC unchanged.', 'Close', { duration: 3000 });
+
+      this.api.rejectAmendment(this.currentTx?.eventRefNo!, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open(
+            'Amendment rejected. Live LC unchanged.',
+            'Close',
+            { duration: 3000 },
+          );
           this.navigateBack('rejected');
         },
-        error: () => this.snackBar.open('Failed to reject amendment', 'Close', { duration: 3000 })
+        error: () =>
+          this.snackBar.open('Failed to reject amendment', 'Close', {
+            duration: 3000,
+          }),
       });
     });
   }
@@ -866,29 +875,37 @@ export class AmendScreen implements OnInit {
   }
 
   updateRejected(): void {
-    if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+    if (this.importForm.invalid || !this.currentTx?.eventRefNo) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
     const payload = this.flattenForm(); // flatten form values
-    payload.tnxId = this.currentTx.tnxId;
+    payload.eventRefNo = this.currentTx.eventRefNo;
 
-    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
-      next: (res) => {
-        this.snackBar.open(
-          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
-          'Close',
-          { duration: 3000 }
-        );
+    this.api
+      .updateRejectedAmendmentTransaction(payload.eventRefNo, payload)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open(
+            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+            'Close',
+            { duration: 3000 },
+          );
 
-        // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],);
-      },
-      error: () => {
-        this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
-      }
-    });
+          // Navigate back to inquiries with Pending tab
+          this.router.navigate([
+            '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+          ]);
+        },
+        error: () => {
+          this.snackBar.open('Failed to update rejected transaction', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
   }
 
 }

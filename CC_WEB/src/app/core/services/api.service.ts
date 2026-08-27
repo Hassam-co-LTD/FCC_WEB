@@ -375,6 +375,18 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  updateRejectedAmendmentTransaction(
+    eventRefNo: string,
+    payload: ImportLcTransaction,
+  ){
+    return this.http
+      .put<ImportLcTransaction>(
+        `${this.baseeventUrl}/amend/updateRejected/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
   /* -------------------- IMPORT LC API Methods END -------------------- */
 
   // =================================================================
