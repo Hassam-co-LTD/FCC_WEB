@@ -1,81 +1,254 @@
 <div class="screen">
-    <!-- Sidebar -->
-    <app-sidebar [steps]="undertakingSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
-    </app-sidebar>
 
-    <!-- Main Content -->
-    <div class="content">
-        <div class="scroll-area">
+  <!-- Sidebar -->
+  <app-sidebar
+    [steps]="undertakingSteps"
+    [currentStep]="currentStep"
+    (stepChange)="scrollToSection($event)">
+  </app-sidebar>
 
-            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
-            <hr class="section-divider" />
 
-            <section id="section-1">
-                <app-application-beneficiary [form]="applicantForm"></app-application-beneficiary>
-            </section>
-            <hr class="section-divider" />
+  <!-- Main Content -->
+  <div class="content">
 
-            <section id="section-2"><app-bank-details [form]="bankForm"></app-bank-details></section>
-            <hr class="section-divider" />
+    <div class="scroll-area">
 
-            <section id="section-3">
-                <app-undertaking-details [form]="undertakingDetailsForm"></app-undertaking-details>
-            </section>
-            <hr class="section-divider" />
+      <section id="section-0">
+        <app-general-details
+          [form]="generalDetails">
+        </app-general-details>
+      </section>
 
-            <section id="section-4"><app-instructions-bank [form]="instructionForm"></app-instructions-bank></section>
-            <hr class="section-divider" />
+      <hr class="section-divider" />
 
-            <section id="section-5">
-                <app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
-            </section>
-            <hr class="section-divider" />
 
-            <section id="section-6">
-                <router-outlet></router-outlet>
-            </section>
+      <section id="section-1">
+        <app-application-beneficiary
+          [form]="applicantBeneficiary">
+        </app-application-beneficiary>
+      </section>
 
-            <!-- Footer Buttons -->
-            <div class="actions">
+      <hr class="section-divider" />
 
-                <!-- LIVE TAB: Always Save + Back -->
-                <ng-container *ngIf="sourceTab === 'live'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="accent" (click)="saveForm()" [disabled]="isSaving">
-                        {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
-                </ng-container>
 
-                <!-- PENDING TAB + CRE: Back only (read-only view) -->
-                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                </ng-container>
+      <section id="section-2">
+        <app-bank-details
+          [form]="bankForm">
+        </app-bank-details>
+      </section>
 
-                <!-- PENDING TAB + AMD: Submit -->
-                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="accent" (click)="submitUndertaking()">Submit</button>
-                </ng-container>
+      <hr class="section-divider" />
 
-                <!-- SUBMITTED: Approve + Reject -->
-                <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
-                    <button mat-flat-button color="accent" (click)="approve()">Approve</button>
-                </ng-container>
 
-                <!-- APPROVED: Back only -->
-                <ng-container *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                </ng-container>
+      <section id="section-3">
+        <app-undertaking-details
+          [form]="undertakingDetails">
+        </app-undertaking-details>
+      </section>
 
-                <!-- REJECTED: Back + Update -->
-                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
-                </ng-container>
+      <hr class="section-divider" />
 
-            </div>
 
-        </div>
+      <section id="section-4">
+        <app-instructions-bank
+          [form]="instructions">
+        </app-instructions-bank>
+      </section>
+
+      <hr class="section-divider" />
+
+
+      <section id="section-5">
+        <app-attachments>
+        </app-attachments>
+      </section>
+
+      <hr class="section-divider" />
+
+
+      <!-- ================================================= -->
+      <!-- FOOTER BUTTONS -->
+      <!-- ================================================= -->
+
+      <div class="actions">
+
+
+        <!-- ================= LIVE ================= -->
+        <!-- UTG_Amend -->
+
+        <ng-container *ngIf="sourceTab === 'live'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+
+          <button
+            *ngIf="hasPermission('UTG_Amend')"
+            mat-flat-button
+            color="accent"
+            (click)="saveForm()"
+            [disabled]="isSaving">
+
+            {{ isSaving ? 'Saving...' : 'Save' }}
+
+          </button>
+
+        </ng-container>
+
+
+
+        <!-- ================= PENDING + CRE ================= -->
+        <!-- Inquiry only -->
+
+        <ng-container
+          *ngIf="
+            sourceTab === 'pending' &&
+            eventType === 'CRE'
+          ">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+        </ng-container>
+
+
+
+        <!-- ================= PENDING + AMD ================= -->
+        <!-- UTG_Amend -->
+
+        <ng-container
+          *ngIf="
+            sourceTab === 'pending' &&
+            eventType === 'AMD'
+          ">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+
+          <button
+            *ngIf="hasPermission('UTG_Amend')"
+            mat-flat-button
+            color="accent"
+            (click)="submitForm()">
+
+            Submit
+
+          </button>
+
+        </ng-container>
+
+
+
+        <!-- ================= SUBMITTED ================= -->
+        <!-- UTG_Approve -->
+
+        <ng-container
+          *ngIf="
+            sourceTab === 'submitted' &&
+            eventType === 'AMD'
+          ">
+
+          <button
+            *ngIf="hasPermission('UTG_Approve')"
+            mat-stroked-button
+            color="primary"
+            (click)="openReject()">
+
+            Reject
+
+          </button>
+
+
+          <button
+            *ngIf="hasPermission('UTG_Approve')"
+            mat-flat-button
+            color="accent"
+            (click)="approve()">
+
+            Approve
+
+          </button>
+
+        </ng-container>
+
+
+
+        <!-- ================= APPROVED ================= -->
+
+        <ng-container
+          *ngIf="
+            sourceTab === 'approved' &&
+            eventType === 'AMD'
+          ">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+        </ng-container>
+
+
+
+        <!-- ================= REJECTED ================= -->
+        <!-- UTG_Amend -->
+
+        <ng-container
+          *ngIf="
+            screenMode === 'EDIT' &&
+            mode === 'REJECTED'
+          ">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+
+          <button
+            *ngIf="hasPermission('UTG_Amend')"
+            mat-flat-button
+            color="primary"
+            (click)="updateRejected()">
+
+            Update
+
+          </button>
+
+        </ng-container>
+
+
+      </div>
+
     </div>
+
+  </div>
+
 </div>

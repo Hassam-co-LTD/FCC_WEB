@@ -1,5 +1,17 @@
-import { Component, Inject, PLATFORM_ID, OnInit, inject } from '@angular/core';
-import { CommonModule, isPlatformBrowser, DatePipe, TitleCasePipe } from '@angular/common';
+import {
+  Component,
+  PLATFORM_ID,
+  OnInit,
+  inject
+} from '@angular/core';
+
+import {
+  CommonModule,
+  isPlatformBrowser,
+  DatePipe,
+  TitleCasePipe
+} from '@angular/common';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -15,8 +27,8 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../../../../co
   selector: 'app-inquiries-records',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatIconModule, 
+    CommonModule,
+    MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     FormsModule,
@@ -27,325 +39,781 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../../../../co
   styleUrls: ['./inquiries-records.scss']
 })
 export class inquiriesRecords implements OnInit {
-  
-  // State
+
+  // =========================================================
+  // STATE
+  // =========================================================
+
   allTransactions: ShippingGuaranteeTransaction[] = [];
   filteredTransactions: ShippingGuaranteeTransaction[] = [];
-  
-  // Filters
+
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
   showAdvanced = false;
 
-  // Tabs Configuration
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+  // =========================================================
+  // TABS
+  // =========================================================
+
   tabs = [
-    {key: 'Live', label: 'Live'},
-    { key: 'pending', label: 'Pending' },     // Drafts (Input)
-    { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
-    { key: 'approved', label: 'Approved' },   // Final (View Only)
-    { key: 'rejected', label: 'Rejected' }    // Correction (Edit)
+    {
+      key: 'live',
+      label: 'Live',
+      permission: 'SG_InquiryLive'
+    },
+    {
+      key: 'pending',
+      label: 'Pending',
+      permission: 'SG_InquiryPending'
+    },
+    {
+      key: 'submitted',
+      label: 'Submitted',
+      permission: 'SG_InquirySubmit'
+    },
+    {
+      key: 'approved',
+      label: 'Approved',
+      permission: 'SG_InquiryApprove'
+    },
+    {
+      key: 'rejected',
+      label: 'Rejected',
+      permission: 'SG_InquiryReject'
+    }
   ];
 
-  // Pagination
+  // =========================================================
+  // PAGINATION
+  // =========================================================
+
   currentPage = 1;
   itemsPerPage = 10;
 
-  // Sorting
-  sortColumn: keyof ShippingGuaranteeTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
+  // =========================================================
+  // SORTING
+  // =========================================================
+
+  sortColumn:
+    | keyof ShippingGuaranteeTransaction
+    | 'currency'
+    | 'amount'
+    | 'expiryDate'
+    | 'createdOn' = 'createdOn';
+
   sortDirection: 'asc' | 'desc' = 'desc';
 
+  // =========================================================
+  // PLATFORM
+  // =========================================================
+
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly isBrowser =
+    isPlatformBrowser(this.platformId);
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
-     private api: ApiService,
-    private transactionService: ShippingGuaranteeFormTransactionService,
+    private api: ApiService,
+    private transactionService:
+      ShippingGuaranteeFormTransactionService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
-  // ngOnInit(): void {
-  //   if (!this.isBrowser) return;
+  // =========================================================
+  // LOAD PERMISSIONS
+  // =========================================================
 
-  //   // 1. Check URL for tab preference
-  //   this.route.queryParams.subscribe(params => {
-  //       if(params['tab']) {
-  //           this.activeTab = params['tab'];
-  //       }
-  //       // Initial Load (Backend Filtered)
-  //       this.loadByStatus();
-  //   });
+  private loadPermissions(): void {
 
-  //   // 2. Subscribe to stream updates (Real-time updates)
-  //   this.transactionService.transactionsStream$.subscribe(txList => {
-  //     this.allTransactions = txList; 
-  //     // Filter ONLY by search/sort locally (Status is done by backend)
-  //     this.filterBySearchOnly(); 
-  //   });
-  // }
-  ngOnInit(): void {
-    if (!this.isBrowser) return;
+    const storedPermissions =
+      sessionStorage.getItem('permissionNames');
 
-    this.route.queryParamMap.subscribe(params => {
-      const tab = params.get('tab');
-      if (
-        tab &&
-        this.tabs.some(t => t.key === tab)
-      ) {
-        this.activeTab = tab;
+    if (storedPermissions) {
+
+      try {
+
+        this.permissionNames =
+          JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Error parsing permissionNames:',
+          error
+        );
+
+        this.permissionNames = [];
       }
 
-      this.currentPage = 1;
-      this.loadTransactions();
-    });
+    } else {
 
-    this.transactionService.transactionsStream$.subscribe(txList => {
-      this.allTransactions = txList;
-      this.applyFilters();
+      console.warn(
+        'permissionNames not found in sessionStorage'
+      );
+
+      this.permissionNames = [];
     }
+  }
+
+  // =========================================================
+  // CHECK PERMISSION
+  // =========================================================
+
+  hasPermission(permission: string): boolean {
+
+    return this.permissionNames.some(
+      p =>
+        p?.trim().toLowerCase() ===
+        permission.trim().toLowerCase()
     );
   }
 
-  
-  // private loadTransactions(): void {
-  //   const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+  // =========================================================
+  // CHECK TAB PERMISSION
+  // =========================================================
 
-  //   this.api.getRecordTransactionsByStatusForShippingGuarantee(backendStatus).subscribe({
-  //     next: (txList) => {
-  //       this.allTransactions = txList;
-  //       this.applyFilters();
-  //     },
-  //     error: () => {
-  //       this.allTransactions = [];
-  //       this.filteredTransactions = [];
-  //     }
-  //   });
-  // }
+  canAccessTab(tab: string): boolean {
+
+    const tabConfig =
+      this.tabs.find(t => t.key === tab);
+
+    if (!tabConfig) {
+      return false;
+    }
+
+    return this.hasPermission(
+      tabConfig.permission
+    );
+  }
+
+  // =========================================================
+  // INITIALIZATION
+  // =========================================================
+
+  ngOnInit(): void {
+
+    if (!this.isBrowser) {
+      return;
+    }
+
+    // Load permissions FIRST
+    this.loadPermissions();
+
+    // -------------------------------------------------------
+    // Check URL tab
+    // -------------------------------------------------------
+
+    this.route.queryParamMap.subscribe(params => {
+
+      const requestedTab =
+        params.get('tab');
+
+      if (
+        requestedTab &&
+        this.canAccessTab(requestedTab)
+      ) {
+
+        this.activeTab = requestedTab;
+
+      } else {
+
+        // If requested tab is not allowed,
+        // automatically select first permitted tab.
+
+        const firstAllowedTab =
+          this.tabs.find(tab =>
+            this.hasPermission(tab.permission)
+          );
+
+        if (firstAllowedTab) {
+
+          this.activeTab =
+            firstAllowedTab.key;
+
+        } else {
+
+          console.warn(
+            'User has no Shipping Guarantee inquiry permissions.'
+          );
+
+          this.activeTab = '';
+        }
+      }
+
+      this.currentPage = 1;
+
+      if (this.activeTab) {
+        this.loadTransactions();
+      }
+
+    });
+
+    // -------------------------------------------------------
+    // Stream updates
+    // -------------------------------------------------------
+
+    this.transactionService
+      .transactionsStream$
+      .subscribe(txList => {
+
+        this.allTransactions = txList;
+
+        this.applyFilters();
+
+      });
+  }
+
+  // =========================================================
+  // LOAD TRANSACTIONS
+  // =========================================================
 
   private loadTransactions(): void {
-    if (this.activeTab === 'live') {
 
-      // this.api.getLiveEventHistoryForShippingGuarantee().subscribe({
-        this.api.getLiveEventHistory().subscribe({
-        next: (txList) => {
-          this.allTransactions = txList;
-          this.applyFilters();
-          // this.filteredTransactions = [...txList];
-        },
-        error: () => {
-          this.allTransactions = [];
-          this.filteredTransactions = [];
-        }
-      });
+    // Security check before loading
+    if (
+      !this.activeTab ||
+      !this.canAccessTab(this.activeTab)
+    ) {
+
+      console.warn(
+        'No permission to load tab:',
+        this.activeTab
+      );
+
+      this.allTransactions = [];
+      this.filteredTransactions = [];
 
       return;
     }
 
-    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+    // -------------------------------------------------------
+    // LIVE
+    // -------------------------------------------------------
 
-    this.api.getRecordTransactionsByStatusSg(backendStatus).subscribe({
-      next: (txList) => {
-        this.allTransactions = txList;
-        this.applyFilters();
-      },
-      error: () => {
-        this.allTransactions = [];
-        this.filteredTransactions = [];
-      }
-    });
+    if (this.activeTab === 'live') {
+
+      this.api
+        .getLiveEventHistorySg()
+        .subscribe({
+
+          next: txList => {
+
+            this.allTransactions =
+              txList;
+
+            this.applyFilters();
+
+          },
+
+          error: () => {
+
+            this.allTransactions = [];
+            this.filteredTransactions = [];
+
+          }
+
+        });
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // PENDING / SUBMITTED / APPROVED / REJECTED
+    // -------------------------------------------------------
+
+    const backendStatus =
+      this.mapTabToBackendStatus(
+        this.activeTab
+      );
+
+    this.api
+      .getRecordTransactionsByStatusSg(
+        backendStatus
+      )
+      .subscribe({
+
+        next: txList => {
+
+          this.allTransactions =
+            txList;
+
+          this.applyFilters();
+
+        },
+
+        error: () => {
+
+          this.allTransactions = [];
+          this.filteredTransactions = [];
+
+        }
+
+      });
   }
 
-  // --- DATA LOADING ---
+  // =========================================================
+  // CHANGE TAB
+  // =========================================================
+
   setActiveTab(tab: string): void {
-    // this.activeTab = tab;
-    // this.currentPage = 1;
-    // this.loadTransactions();
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
+
+    // Permission check INSIDE the function
+    if (!this.canAccessTab(tab)) {
+
+      console.warn(
+        'Permission denied for tab:',
+        tab
+      );
+
+      return;
+    }
+
+    if (this.activeTab === tab) {
+      return;
+    }
+
+    this.activeTab = tab;
+    this.currentPage = 1;
+
+    this.loadTransactions();
   }
-  // --- FILTERING ---
+
+  // =========================================================
+  // FILTERING
+  // =========================================================
 
   applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
 
-    const filtered = this.allTransactions.filter(tx => {
+    const query =
+      this.searchQuery
+        .toLowerCase()
+        .trim();
 
-      const matchesSearch =
-        !query ||
-        tx.tnxId?.toLowerCase().includes(query) ||
-        tx.beneficiaryName?.toLowerCase().includes(query) ||
-        tx.currency?.toLowerCase().includes(query);
+    const currency =
+      this.currencyFilter
+        .toLowerCase()
+        .trim();
 
-      const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+    const filtered =
+      this.allTransactions.filter(tx => {
 
-      return matchesSearch && matchesCurrency;
-    });
+        const matchesSearch =
+          !query ||
+          tx.tnxId
+            ?.toLowerCase()
+            .includes(query) ||
+          tx.beneficiaryName
+            ?.toLowerCase()
+            .includes(query) ||
+          tx.currency
+            ?.toLowerCase()
+            .includes(query);
+
+        const matchesCurrency =
+          !currency ||
+          tx.currency
+            ?.toLowerCase() === currency;
+
+        return (
+          matchesSearch &&
+          matchesCurrency
+        );
+      });
 
     this.applySorting(filtered);
   }
-  
+
+  // =========================================================
+  // CLEAR SEARCH
+  // =========================================================
+
   clearSearch(): void {
+
     this.searchQuery = '';
+
     this.applyFilters();
   }
 
-  // --- SORTING ---
+  // =========================================================
+  // SORTING
+  // =========================================================
 
-  sortBy(column: typeof this.sortColumn): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  sortBy(
+    column: typeof this.sortColumn
+  ): void {
+
+    if (
+      this.sortColumn === column
+    ) {
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
       this.sortDirection = 'asc';
+
     }
+
     this.applyFilters();
   }
 
-  private applySorting(source: ShippingGuaranteeTransaction[] = this.allTransactions): void {
-    const sorted = [...source].sort((a, b) => {
-      let aVal = this.resolveColumn(a, this.sortColumn);
-      let bVal = this.resolveColumn(b, this.sortColumn);
+  private applySorting(
+    source:
+      ShippingGuaranteeTransaction[] =
+      this.allTransactions
+  ): void {
 
-      // Handle null or undefined
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
+    const sorted =
+      [...source].sort((a, b) => {
 
-      // Handle Dates
-      if (aVal instanceof Date && bVal instanceof Date) {
+        const aVal =
+          this.resolveColumn(
+            a,
+            this.sortColumn
+          );
+
+        const bVal =
+          this.resolveColumn(
+            b,
+            this.sortColumn
+          );
+
+        if (aVal == null) {
+          return 1;
+        }
+
+        if (bVal == null) {
+          return -1;
+        }
+
+        if (
+          aVal instanceof Date &&
+          bVal instanceof Date
+        ) {
+
+          return this.sortDirection === 'asc'
+            ? aVal.getTime() -
+                bVal.getTime()
+            : bVal.getTime() -
+                aVal.getTime();
+        }
+
+        if (
+          typeof aVal === 'number' &&
+          typeof bVal === 'number'
+        ) {
+
+          return this.sortDirection === 'asc'
+            ? aVal - bVal
+            : bVal - aVal;
+        }
+
+        const aStr =
+          String(aVal);
+
+        const bStr =
+          String(bVal);
+
         return this.sortDirection === 'asc'
-          ? aVal.getTime() - bVal.getTime()
-          : bVal.getTime() - aVal.getTime();
-      }
+          ? aStr.localeCompare(bStr)
+          : bStr.localeCompare(aStr);
 
-      // Handle numbers
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc'
-          ? aVal - bVal
-          : bVal - aVal;
-      }
+      });
 
-      // Everything else: convert to string and use localeCompare
-      const aStr = String(aVal);
-      const bStr = String(bVal);
-      return this.sortDirection === 'asc'
-        ? aStr.localeCompare(bStr)
-        : bStr.localeCompare(aStr);
-    });
+    this.filteredTransactions =
+      sorted;
 
-    this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
 
-  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
+  private resolveColumn(
+    tx: ShippingGuaranteeTransaction,
+    column: string
+  ): any {
+
     switch (column) {
-      case 'tnxId': return tx.tnxId;
-      case 'currency': return tx.currency;
-      case 'amount': return tx.amount;
-      case 'expiryDate': return tx.expiryDate;
-      case 'createdOn': return tx.createdOn;
-      default: return null;
+
+      case 'tnxId':
+        return tx.tnxId;
+
+      case 'currency':
+        return tx.currency;
+
+      case 'amount':
+        return tx.amount;
+
+      case 'expiryDate':
+        return tx.expiryDate;
+
+      case 'createdOn':
+        return tx.createdOn;
+
+      default:
+        return null;
     }
   }
 
-  // --- PAGINATION ---
+  // =========================================================
+  // PAGINATION
+  // =========================================================
 
   get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+
+    const count =
+      Math.ceil(
+        this.filteredTransactions.length /
+        this.itemsPerPage
+      );
+
     return count < 1 ? 1 : count;
   }
 
-  get pagedTransactions(): ShippingGuaranteeTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+  get pagedTransactions():
+    ShippingGuaranteeTransaction[] {
+
+    const start =
+      (this.currentPage - 1) *
+      this.itemsPerPage;
+
+    return this.filteredTransactions
+      .slice(
+        start,
+        start + this.itemsPerPage
+      );
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+
+    if (
+      this.currentPage <
+      this.totalPages
+    ) {
+
+      this.currentPage++;
+    }
   }
 
-  // --- NAVIGATION ACTIONS ---
+  // =========================================================
+  // VIEW TRANSACTION
+  // Permission: View
+  // =========================================================
 
- viewTransaction(tx: ShippingGuaranteeTransaction): void {
-    const readOnly = ['A', 'R'].includes(tx.status!);
+  viewTransaction(
+    tx: ShippingGuaranteeTransaction
+  ): void {
 
-   this.api.getTransactionSgByTnxId(tx.tnxId!).subscribe({
-      next: (freshTx) => {
-        this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/shipping-guarantee/preview']);
-      },
-      error: () => {
-        this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/shipping-guarantee/preview']);
-      }
-    });
+    if (!this.hasPermission('SG_InquiryPreview')) {
+
+      console.warn(
+        'User does not have permission to view Shipping Guarantee.'
+      );
+
+      return;
+    }
+
+    const readOnly =
+      ['A', 'R'].includes(
+        tx.status!
+      );
+
+    this.api
+      .getTransactionSgByTnxId(
+        tx.tnxId!
+      )
+      .subscribe({
+
+        next: freshTx => {
+
+          this.transactionService
+            .setCurrentTransaction(
+              freshTx,
+              readOnly
+            );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/shipping-guarantee/preview'
+          ]);
+
+        },
+
+        error: () => {
+
+          this.transactionService
+            .setCurrentTransaction(
+              tx,
+              readOnly
+            );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/shipping-guarantee/preview'
+          ]);
+
+        }
+
+      });
   }
 
-  openShippingGuarantee(tx: ShippingGuaranteeTransaction) {
+  // =========================================================
+  // OPEN SHIPPING GUARANTEE
+  // Permission: View
+  // =========================================================
+
+  openShippingGuarantee(
+    tx: ShippingGuaranteeTransaction
+  ): void {
+
+    if (!this.hasPermission('SG_InquiryPreview')) {
+
+      console.warn(
+        'User does not have permission to open Shipping Guarantee.'
+      );
+
+      return;
+    }
+
+    // -------------------------------------------------------
+    // LIVE
+    // -------------------------------------------------------
+
     if (this.activeTab === 'live') {
-      // Live tab rows are event records — navigate by eventRefNo
+
+      if (!this.hasPermission('SG_InquiryLive')) {
+
+        console.warn(
+          'User does not have Live inquiry permission.'
+        );
+
+        return;
+      }
+
       this.router.navigate(
-        ['/shipping-guarantee/amend', tx.tnxId],
+        [
+          '/dashboard/Trade-Services/shipping-guarantee/amend',
+          tx.tnxId
+        ],
         {
           queryParams: {
             mode: 'READ_ONLY',
             tab: 'live',
-            eventRefNo: tx.eventRefNo ?? ''
+            eventRefNo:
+              tx.eventRefNo ?? ''
           }
         }
       );
+
       return;
     }
-    // Store transaction in service for import screen to pick up
-    // this.transactionService.setCurrentTransaction(tx);
-    const mode = this.resolveScreenMode(this.activeTab);
-    // Navigate to import screen
-    this.router.navigate(['/shipping-guarantee', tx.tnxId], {
-      state: {
-        transaction: tx,
-        // showUpdateSubmit: true // flag to show buttons
-        mode: mode
+
+    // -------------------------------------------------------
+    // OTHER TABS
+    // -------------------------------------------------------
+
+    const mode =
+      this.resolveScreenMode(
+        this.activeTab
+      );
+
+    this.router.navigate(
+      [
+        '/dashboard/Trade-Services/shipping-guarantee',
+        tx.tnxId
+      ],
+      {
+        state: {
+          transaction: tx,
+          mode: mode
+        }
       }
-    });
-  }
-  
-  trackByTnxId(_: number, tx: ShippingGuaranteeTransaction): string {
-    return tx.eventRefNo ?? tx.tnxId!;
+    );
   }
 
-  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+  // =========================================================
+  // TRACK BY
+  // =========================================================
+
+  trackByTnxId(
+    _: number,
+    tx: ShippingGuaranteeTransaction
+  ): string {
+
+    return (
+      tx.eventRefNo ??
+      tx.tnxId!
+    );
+  }
+
+  // =========================================================
+  // SCREEN MODE
+  // =========================================================
+
+  private resolveScreenMode(
+    tab: string
+  ): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+
     switch (tab) {
+
       case 'pending':
         return 'EDIT';
+
       case 'submitted':
         return 'APPROVAL';
+
       default:
         return 'READ_ONLY';
     }
   }
 
-  private mapTabToBackendStatus(tab: string): string {
+  // =========================================================
+  // BACKEND STATUS
+  // =========================================================
+
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
     switch (tab) {
+
       case 'pending':
         return 'i';
+
       case 'submitted':
         return 's';
+
       case 'approved':
         return 'a';
+
       case 'rejected':
         return 'r';
+
       default:
         return 'i';
     }
   }
-
 }

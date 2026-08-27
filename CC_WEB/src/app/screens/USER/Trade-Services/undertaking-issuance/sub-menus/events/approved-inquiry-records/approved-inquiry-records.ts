@@ -1,23 +1,16 @@
-import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
-import {
-  CommonModule,
-  isPlatformBrowser,
-  DecimalPipe,
-  DatePipe,
-  TitleCasePipe
-} from '@angular/common';
-
+import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { Router, ActivatedRoute } from '@angular/router';
+import { ApiService } from '../../../../../../../core/services/api.service';
 
-import {
-  UndertakingIssuanceService,
-  UndertakingTransaction
-} from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { UndertakingGuarantee } from '../../../../../../../core/models/undertaking-lc';
+
+import { UndertakingIssuanceService } from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 
 @Component({
   selector: 'app-approved-inquiry-records',
@@ -25,37 +18,62 @@ import {
   imports: [
     CommonModule,
     MatIconModule,
-    MatButtonModule,
-    MatTooltipModule,
-    FormsModule,
-    DecimalPipe,
-    DatePipe,
-    TitleCasePipe
+    FormsModule
   ],
   templateUrl: './approved-inquiry-records.html',
   styleUrls: ['./approved-inquiry-records.scss']
 })
-export class ApprovedInquiryRecords implements OnInit {
+export class ApprovedInquiryRecords {
 
-  // =========================
-  // STATE
-  // =========================
+  // =========================================================
+  // PAGINATION
+  // =========================================================
 
-  allTransactions: UndertakingTransaction[] = [];
-  filteredTransactions: UndertakingTransaction[] = [];
+  currentPage = 1;
+  itemsPerPage = 10;
 
-  // =========================
+  // =========================================================
+  // TRANSACTIONS
+  // =========================================================
+
+  allTransactions: UndertakingGuarantee[] = [];
+  filteredTransactions: UndertakingGuarantee[] = [];
+
+  // =========================================================
   // FILTERS
-  // =========================
+  // =========================================================
 
+  showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
-  activeTab = 'pending';
-  showAdvanced = false;
+  activeTab = 'live';
 
-  // =========================
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+  /**
+   * Checks whether the logged-in user has the requested permission.
+   *
+   * Example:
+   * hasPermission('UTG_Inquiry')
+   * hasPermission('UTG_Amend')
+   */
+  hasPermission(permission: string): boolean {
+
+    return this.permissionNames.some(
+      p =>
+        p.trim().toLowerCase() ===
+        permission.trim().toLowerCase()
+    );
+
+  }
+
+  // =========================================================
   // TABS
-  // =========================
+  // =========================================================
 
   tabs = [
     { key: 'live', label: 'Live' },
@@ -65,34 +83,36 @@ export class ApprovedInquiryRecords implements OnInit {
     { key: 'rejected', label: 'Rejected' }
   ];
 
-  // =========================
-  // PAGINATION
-  // =========================
-
-  currentPage = 1;
-  itemsPerPage = 10;
-
-  // =========================
+  // =========================================================
   // SORTING
-  // =========================
+  // =========================================================
 
-  sortColumn: string = 'lastUpdated';
-  sortDirection: 'desc' | 'asc' = 'desc';
+  sortColumn: keyof UndertakingGuarantee = 'createdOn';
 
-  private isBrowser: boolean;
+  sortDirection: 'asc' | 'desc' = 'desc';
+
+  // =========================================================
+  // PLATFORM
+  // =========================================================
+
+  private readonly platformId = inject(PLATFORM_ID);
+
+  private readonly isBrowser =
+    isPlatformBrowser(this.platformId);
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
     private transactionService: UndertakingIssuanceService,
     private router: Router,
-    private route: ActivatedRoute,
-    @Inject(PLATFORM_ID) platformId: Object
-  ) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+    private route: ActivatedRoute
+  ) {}
 
-  // =========================
+  // =========================================================
   // INITIALIZATION
-  // =========================
+  // =========================================================
 
   ngOnInit(): void {
 
@@ -100,241 +120,582 @@ export class ApprovedInquiryRecords implements OnInit {
       return;
     }
 
-    // Allow deep-linking into a specific tab, e.g. after Save/Submit/Approve/Reject
+    // =======================================================
+    // LOAD USER PERMISSIONS
+    // =======================================================
+
+    const storedPermissions =
+      sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+
+      try {
+
+        this.permissionNames =
+          JSON.parse(storedPermissions);
+
+      } catch {
+
+        this.permissionNames = [];
+
+      }
+
+    }
+
+    console.log(
+      'Undertaking Amendment Permissions:',
+      this.permissionNames
+    );
+
+    // =======================================================
+    // LOAD TAB FROM URL
+    // =======================================================
+
     this.route.queryParamMap.subscribe(params => {
+
       const tab = params.get('tab');
-      if (tab && tab !== this.activeTab) {
+
+      if (
+        tab &&
+        this.tabs.some(t => t.key === tab)
+      ) {
+
         this.activeTab = tab;
+
       }
+
+      this.currentPage = 1;
+
+      this.loadApprovedTransactions();
+
     });
 
-    this.loadByStatus();
-
-    this.transactionService.transactionsStream$.subscribe(txList => {
-      this.allTransactions = txList;
-      this.filterBySearchOnly();
-    });
   }
 
-  // =========================
+  // =========================================================
   // LOAD TRANSACTIONS
-  // =========================
+  // =========================================================
 
-  private loadByStatus(): void {
-    this.transactionService.refreshTransactions(this.activeTab).subscribe({
+  private loadApprovedTransactions(): void {
+
+    // -------------------------------------------------------
+    // DO NOT LOAD ANY DATA IF USER DOES NOT HAVE INQUIRY
+    // -------------------------------------------------------
+
+    if (!this.hasPermission('UTG_Inquiry')) {
+
+      this.allTransactions = [];
+
+      this.filteredTransactions = [];
+
+      return;
+
+    }
+
+    // -------------------------------------------------------
+    // LIVE
+    // -------------------------------------------------------
+
+    if (this.activeTab === 'live') {
+
+      this.api.getApprovedUtgMasterLcRecords().subscribe({
+
+        next: (txList) => {
+
+          this.allTransactions = txList;
+
+          this.applyFilters();
+
+        },
+
+        error: () => {
+
+          this.allTransactions = [];
+
+          this.filteredTransactions = [];
+
+        }
+
+      });
+
+      return;
+
+    }
+
+    // -------------------------------------------------------
+    // STATUS RECORDS
+    // -------------------------------------------------------
+
+    const backend =
+      this.mapTabToBackendStatus(
+        this.activeTab
+      );
+
+    this.api.getUtgAmendRecordsByStatus(backend).subscribe({
+
       next: (txList) => {
+
         this.allTransactions = txList;
-        this.currentPage = 1;
-        this.filterBySearchOnly();
+
+        this.applyFilters();
+
       },
+
       error: () => {
+
         this.allTransactions = [];
+
         this.filteredTransactions = [];
+
       }
+
     });
+
   }
 
-  // =========================
+  // =========================================================
+  // PAGINATION
+  // =========================================================
+
+  get pagedTransactions(): UndertakingGuarantee[] {
+
+    const start =
+      (this.currentPage - 1) *
+      this.itemsPerPage;
+
+    return this.filteredTransactions.slice(
+      start,
+      start + this.itemsPerPage
+    );
+
+  }
+
+  get totalPages(): number {
+
+    const count =
+      Math.ceil(
+        this.filteredTransactions.length /
+        this.itemsPerPage
+      );
+
+    return count < 1
+      ? 1
+      : count;
+
+  }
+
+  // =========================================================
+  // FILTERING
+  // =========================================================
+
+  applyFilters(): void {
+
+    const query =
+      this.searchQuery
+        .toLowerCase()
+        .trim();
+
+    const currency =
+      this.currencyFilter
+        .toLowerCase()
+        .trim();
+
+    const filtered =
+      this.allTransactions.filter(tx => {
+
+        const matchesSearch =
+          !query ||
+          tx.tnxId
+            ?.toLowerCase()
+            .includes(query) ||
+          tx.beneficiaryName
+            ?.toLowerCase()
+            .includes(query) ||
+          tx.currency
+            ?.toLowerCase()
+            .includes(query);
+
+        const matchesCurrency =
+          !currency ||
+          tx.currency
+            ?.toLowerCase() === currency;
+
+        return (
+          matchesSearch &&
+          matchesCurrency
+        );
+
+      });
+
+    this.applySorting(filtered);
+
+  }
+
+  // =========================================================
+  // CLEAR SEARCH
+  // =========================================================
+
+  clearSearch(): void {
+
+    this.searchQuery = '';
+
+    this.applyFilters();
+
+  }
+
+  // =========================================================
   // TAB SWITCHING
-  // =========================
+  // =========================================================
 
   setActiveTab(tab: string): void {
+
+    // -------------------------------------------------------
+    // INQUIRY PERMISSION CHECK
+    // -------------------------------------------------------
+
+    if (!this.hasPermission('UTG_Inquiry')) {
+      return;
+    }
 
     if (this.activeTab === tab) {
       return;
     }
 
     this.activeTab = tab;
+
     this.currentPage = 1;
 
-    this.allTransactions = [];
-    this.filteredTransactions = [];
+    this.loadApprovedTransactions();
 
-    this.loadByStatus();
   }
 
-  // =========================
-  // SEARCH + FILTER
-  // =========================
-
-  applyFilters(): void {
-    this.currentPage = 1;
-    this.filterBySearchOnly();
-  }
-
-  private filterBySearchOnly(): void {
-
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
-
-    let temp = [...this.allTransactions];
-
-    temp = temp.filter(tx => {
-
-      const data = tx.formData || {};
-
-      const benName = data.applicantBeneficiary?.beneficiaryName || '';
-      const appName = data.applicantBeneficiary?.applicantName || '';
-      const cur = data.undertakingDetails?.currency || '';
-      const issuerRef = data.bankForm?.issuerReference || '';
-      const displayId = tx.channelReference || '';
-
-      const matchesSearch =
-        !query ||
-        displayId.toLowerCase().includes(query) ||
-        issuerRef.toLowerCase().includes(query) ||
-        benName.toLowerCase().includes(query) ||
-        appName.toLowerCase().includes(query) ||
-        cur.toLowerCase().includes(query);
-
-      const matchesCurrency = !currency || cur.toLowerCase() === currency;
-
-      return matchesSearch && matchesCurrency;
-    });
-
-    this.applySorting(temp);
-  }
-
-  clearSearch(): void {
-    this.searchQuery = '';
-    this.applyFilters();
-  }
-
-  // =========================
+  // =========================================================
   // SORTING
-  // =========================
+  // =========================================================
 
-  sortBy(column: string): void {
+  toggleSort(
+    column: keyof UndertakingGuarantee
+  ): void {
 
     if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
+
       this.sortDirection = 'asc';
+
     }
 
-    this.applyFilters();
+    this.applySort();
+
   }
 
-  private applySorting(source: UndertakingTransaction[]): void {
+  private applySorting(
+    source: UndertakingGuarantee[] =
+      this.allTransactions
+  ): void {
 
-    this.filteredTransactions = [...source].sort((a, b) => {
+    const sorted =
+      [...source].sort((a, b) => {
 
-      const aVal = this.resolveColumn(a, this.sortColumn);
-      const bVal = this.resolveColumn(b, this.sortColumn);
+        const aVal =
+          this.resolveColumn(
+            a,
+            this.sortColumn
+          );
 
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
+        const bVal =
+          this.resolveColumn(
+            b,
+            this.sortColumn
+          );
 
-      if (aVal instanceof Date && bVal instanceof Date) {
+        if (aVal == null) {
+          return 1;
+        }
+
+        if (bVal == null) {
+          return -1;
+        }
+
+        if (
+          aVal instanceof Date &&
+          bVal instanceof Date
+        ) {
+
+          return this.sortDirection === 'asc'
+            ? aVal.getTime() -
+              bVal.getTime()
+            : bVal.getTime() -
+              aVal.getTime();
+
+        }
+
+        if (
+          typeof aVal === 'number' &&
+          typeof bVal === 'number'
+        ) {
+
+          return this.sortDirection === 'asc'
+            ? aVal - bVal
+            : bVal - aVal;
+
+        }
+
+        const aStr = String(aVal);
+        const bStr = String(bVal);
+
         return this.sortDirection === 'asc'
-          ? aVal.getTime() - bVal.getTime()
-          : bVal.getTime() - aVal.getTime();
-      }
+          ? aStr.localeCompare(bStr)
+          : bStr.localeCompare(aStr);
 
-      return this.sortDirection === 'asc'
-        ? String(aVal).localeCompare(String(bVal))
-        : String(bVal).localeCompare(String(aVal));
-    });
+      });
+
+    this.filteredTransactions = sorted;
+
+    this.currentPage = 1;
+
   }
 
-  private resolveColumn(tx: UndertakingTransaction, column: string): any {
-
-    const data = tx.formData || {};
+  private resolveColumn(
+    tx: UndertakingGuarantee,
+    column: string
+  ): any {
 
     switch (column) {
-      case 'channelReference':
-        return tx.channelReference;
-      case 'lastUpdated':
-        return new Date(tx.lastUpdated);
+
+      case 'tnxId':
+        return tx.tnxId;
+
       case 'currency':
-        return data.undertakingDetails?.currency;
-      case 'amount':
-        return data.undertakingDetails?.undertakingAmount;
+        return tx.currency;
+
+      case 'undertakingAmount':
+        return tx.undertakingAmount;
+
+      case 'expiryDate':
+        return tx.expiryDate;
+
+      case 'createdOn':
+        return tx.createdOn;
+
       default:
         return null;
+
     }
+
   }
 
-  // =========================
-  // PAGINATION
-  // =========================
+  private applySort(): void {
 
-  get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
-    return count < 1 ? 1 : count;
-  }
+    const dir =
+      this.sortDirection === 'asc'
+        ? 1
+        : -1;
 
-  get pagedTransactions(): UndertakingTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
-  }
+    this.filteredTransactions.sort(
+      (a, b) => {
 
-  previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
-  }
+        const va: any =
+          a[this.sortColumn] ?? '';
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
-  }
+        const vb: any =
+          b[this.sortColumn] ?? '';
 
-  // =========================
-  // ROW ACTIONS
-  // =========================
-
-  /**
-   * TNX ID link — mirrors Import LC's openApprovedAmendTransaction: routes into
-   * the editable Amend screen, carrying tab/eventType/eventRefNo so the Amend
-   * screen's footer-button logic (Save/Submit/Approve-Reject/Update) resolves.
-   */
-  openApprovedAmendTransaction(tx: UndertakingTransaction): void {
-
-    const identifier = tx.tnxId || tx.id;
-
-    if (this.activeTab === 'live') {
-      this.router.navigate(
-        ['/undertaking-issuance/amend', identifier],
-        {
-          queryParams: {
-            tab: 'live',
-            eventRefNo: tx.eventRefNo ?? ''
-          }
+        if (va < vb) {
+          return -1 * dir;
         }
+
+        if (va > vb) {
+          return 1 * dir;
+        }
+
+        return 0;
+
+      }
+    );
+
+  }
+
+  // =========================================================
+  // TRACK BY
+  // =========================================================
+
+  trackByTnxId(
+    _: number,
+    tx: UndertakingGuarantee
+  ): string {
+
+    return tx.tnxId!;
+
+  }
+
+  // =========================================================
+  // VIEW TRANSACTION
+  // =========================================================
+
+  viewTransaction(
+    tx: UndertakingGuarantee
+  ): void {
+
+    // -------------------------------------------------------
+    // INQUIRY PERMISSION
+    // -------------------------------------------------------
+
+    if (!this.hasPermission('UTG_Inquiry')) {
+      return;
+    }
+
+    const readOnly =
+      ['A', 'R'].includes(
+        tx.status!
       );
+
+    this.api
+      .getUtgAmendmentByTnxId(
+        tx.tnxId!
+      )
+      .subscribe({
+
+        next: (freshTx) => {
+
+          this.transactionService
+            .setCurrentTransaction(
+              freshTx,
+              readOnly
+            );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/amend/preview'
+          ]);
+
+        },
+
+        error: () => {
+
+          this.transactionService
+            .setCurrentTransaction(
+              tx,
+              readOnly
+            );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/amend/preview'
+          ]);
+
+        }
+
+      });
+
+  }
+
+  // =========================================================
+  // OPEN AMEND TRANSACTION
+  // =========================================================
+
+  openApprovedAmendTransaction(
+    tx: UndertakingGuarantee
+  ): void {
+
+    // -------------------------------------------------------
+    // AMEND PERMISSION
+    // -------------------------------------------------------
+
+    if (!this.hasPermission('UTG_Amend')) {
       return;
     }
 
     this.router.navigate(
-      ['/undertaking-issuance/amend', identifier],
+
+      [
+        '/dashboard/Trade-Services/undertaking-issuance/amend',
+        tx.tnxId
+      ],
+
       {
+
         queryParams: {
+
+          mode: 'EDIT',
+
           tab: this.activeTab,
-          eventType: tx.eventType ?? ''
+
+          eventType:
+            this.activeTab === 'live'
+              ? 'AMD'
+              : (tx.eventType ?? 'AMD'),
+
+          ...(this.activeTab !== 'live' && {
+            eventRefNo:
+              tx.eventRefNo ?? ''
+          })
+
         }
+
       }
+
     );
+
   }
 
-  /** "View" button — always opens the read-only preview, regardless of tab. */
-  viewTransaction(tx: UndertakingTransaction): void {
-    const identifier = tx.tnxId || tx.id;
+  // =========================================================
+  // PAGINATION CONTROLS
+  // =========================================================
 
-    this.router.navigate(
-      ['/undertaking-issuance/preview'],
-      {
-        queryParams: {
-          transactionId: identifier,
-          mode: 'view'
-        }
-      }
-    );
+  previousPage(): void {
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+
   }
 
-  // =========================
-  // TRACK BY
-  // =========================
+  nextPage(): void {
 
-  trackByTnxId(_: number, tx: UndertakingTransaction): string | number {
-    return tx.tnxId || tx.id;
+    if (
+      this.currentPage <
+      this.totalPages
+    ) {
+
+      this.currentPage++;
+
+    }
+
   }
+
+  // =========================================================
+  // BACKEND STATUS MAPPER
+  // =========================================================
+
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
+    switch (tab) {
+
+      case 'pending':
+        return 'i';
+
+      case 'submitted':
+        return 's';
+
+      case 'approved':
+        return 'a';
+
+      case 'rejected':
+        return 'r';
+
+      default:
+        return 'i';
+
+    }
+
+  }
+
 }

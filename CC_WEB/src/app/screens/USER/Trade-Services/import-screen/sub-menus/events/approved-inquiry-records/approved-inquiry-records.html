@@ -1,125 +1,469 @@
 <!-- ================= HEADER ================= -->
+
 <div class="page-header">
+
     <div class="title">
-        <h2>{{ activeTab | titlecase }} LC Records</h2>
-        <p>Manage and track all LC {{ activeTab }} transactions</p>
+
+        <h2>
+            {{ activeTab | titlecase }} LC Records
+        </h2>
+
+        <p>
+            Manage and track all LC {{ activeTab }} transactions
+        </p>
+
     </div>
+
 </div>
 
 
 <!-- ================= SEARCH ================= -->
+
 <div class="search-system">
+
     <div class="search-input-group">
-        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
+
+        <input
+            type="text"
+            placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
+            [(ngModel)]="searchQuery"
             (input)="applyFilters()" />
 
-        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+        <button
+            *ngIf="searchQuery"
+            class="clear-btn"
+            (click)="clearSearch()">
+
             <mat-icon>clear</mat-icon>
+
         </button>
+
     </div>
 
-    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
-        <mat-icon>tune</mat-icon> Advanced
+    <button
+        class="advanced-toggle"
+        (click)="showAdvanced = !showAdvanced">
+
+        <mat-icon>tune</mat-icon>
+        Advanced
+
     </button>
+
 </div>
 
 
 <!-- ================= ADVANCED SEARCH ================= -->
-<div class="advanced-search" *ngIf="showAdvanced">
-    <!-- <div class="field">
-        <label>Status</label>
-        <select [(ngModel)]="activeTab" (change)="applyFilters()">
-            <option *ngFor="let tab of tabs" [value]="tab.key">{{ tab.label }}</option>
-        </select>
-    </div> -->
+
+<div
+    class="advanced-search"
+    *ngIf="showAdvanced">
 
     <div class="field">
-        <label>Currency</label>
-        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+
+        <label>
+            Currency
+        </label>
+
+        <input
+            type="text"
+            [(ngModel)]="currencyFilter"
+            (input)="applyFilters()" />
+
     </div>
+
 </div>
+
 
 <!-- ================= TABS ================= -->
+
 <div class="ui-tabs">
-    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
-        {{ tab.label }}
-    </div>
+
+    <ng-container *ngFor="let tab of tabs">
+
+        <div
+            *ngIf="hasPermission('ILC_Inquiry')"
+            class="tab"
+            [class.active]="activeTab === tab.key"
+            (click)="setActiveTab(tab.key)">
+
+            {{ tab.label }}
+
+        </div>
+
+    </ng-container>
+
 </div>
+
+
+<!-- ================= RESULTS ================= -->
 
 <div class="filter-row">
+
     <div class="results-summary">
+
         Showing
-        <strong>{{ pagedTransactions.length }}</strong>
+
+        <strong>
+            {{ pagedTransactions.length }}
+        </strong>
+
         of
-        <strong>{{ filteredTransactions.length }}</strong>
+
+        <strong>
+            {{ filteredTransactions.length }}
+        </strong>
+
         approved records
+
     </div>
+
 </div>
 
+
+<!-- ================= TABLE ================= -->
+
 <div class="table-wrapper">
+
     <table>
+
         <thead>
+
             <tr>
-                <th (click)="toggleSort('tnxId')">TNX ID</th>
-                <th *ngIf="activeTab !== 'live'">Event</th>
-                <th *ngIf="activeTab !== 'live'">Event Ref No</th>
-                <th *ngIf="activeTab !== 'live'">Event Sequence</th>
-                <!-- <th>Event Ref No</th>
-                <th>Event Sequence</th> -->
-                <th>Created</th>
-                <th>Product</th>
-                <th>Issuer Reference</th>
-                <th>Expiry Date</th>
-                <th>Currency</th>
-                <th>Amount</th>
-                <th>Applicant</th>
-                <th>Beneficiary</th>
-                <th class="sticky-action">Action</th>
+
+                <!-- TNX ID -->
+
+                <th
+                    (click)="toggleSort('tnxId')">
+
+                    TNX ID
+
+                </th>
+
+
+                <!-- EVENT -->
+
+                <th *ngIf="activeTab !== 'live'">
+
+                    Event
+
+                </th>
+
+
+                <!-- EVENT REF -->
+
+                <th *ngIf="activeTab !== 'live'">
+
+                    Event Ref No
+
+                </th>
+
+
+                <!-- EVENT SEQUENCE -->
+
+                <th *ngIf="activeTab !== 'live'">
+
+                    Event Sequence
+
+                </th>
+
+
+                <!-- CREATED -->
+
+                <th>
+
+                    Created
+
+                </th>
+
+
+                <!-- PRODUCT -->
+
+                <th>
+
+                    Product
+
+                </th>
+
+
+                <!-- ISSUER -->
+
+                <th>
+
+                    Issuer Reference
+
+                </th>
+
+
+                <!-- EXPIRY -->
+
+                <th>
+
+                    Expiry Date
+
+                </th>
+
+
+                <!-- CURRENCY -->
+
+                <th>
+
+                    Currency
+
+                </th>
+
+
+                <!-- AMOUNT -->
+
+                <th>
+
+                    Amount
+
+                </th>
+
+
+                <!-- APPLICANT -->
+
+                <th>
+
+                    Applicant
+
+                </th>
+
+
+                <!-- BENEFICIARY -->
+
+                <th>
+
+                    Beneficiary
+
+                </th>
+
+
+                <!-- ACTION -->
+
+                <th class="sticky-action">
+
+                    Action
+
+                </th>
+
             </tr>
+
         </thead>
 
+
         <tbody>
-            <tr *ngFor="let tx of pagedTransactions;">
-                <td><a class="tnx-link" (click)="openApprovedAmendTransaction(tx)">{{ tx.tnxId }}</a></td>
-                <td *ngIf="activeTab !== 'live'">{{ tx.eventType }}</td>
-                <td *ngIf="activeTab !== 'live'">
-                    {{ tx.eventRefNo }}
-                </td>
-                <td *ngIf="activeTab !== 'live'">
-                    {{ tx.eventSequence }}
-                </td>
-                <!-- <td>
-                    {{ tx.eventRefNo }}
-                </td>
+
+            <tr
+                *ngFor="
+                    let tx of pagedTransactions;
+                    trackBy: trackByTnxId
+                ">
+
+                <!-- ================= TNX ID ================= -->
+
                 <td>
-                    {{ tx.eventSequence }}
-                </td> -->
-                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
-                <td>{{ tx.productType }}</td>
-                <td>{{tx.issuerReference}}</td>
-                <td>{{ tx.expiryDate }}</td>
-                <td>{{ tx.currency }}</td>
-                <td>{{ tx.amount }}</td>
-                <td>{{ tx.applicantName }}</td>
-                <td>{{ tx.beneficiaryName }}</td>
-                <td class="sticky-action">
-                    <button class="btn-action" (click)="viewTransaction(tx)">
-                        <mat-icon>visibility</mat-icon> View
-                    </button>
+
+                    <!-- Amend permission = clickable -->
+
+                    <a
+                        *ngIf="hasPermission('ILC_Amend')"
+                        class="tnx-link"
+                        (click)="openApprovedAmendTransaction(tx)">
+
+                        {{ tx.tnxId }}
+
+                    </a>
+
+
+                    <!-- No Amend permission = text only -->
+
+                    <span
+                        *ngIf="!hasPermission('ILC_Amend')">
+
+                        {{ tx.tnxId }}
+
+                    </span>
+
                 </td>
+
+
+                <!-- ================= EVENT ================= -->
+
+                <td *ngIf="activeTab !== 'live'">
+
+                    {{ tx.eventType }}
+
+                </td>
+
+
+                <!-- ================= EVENT REF ================= -->
+
+                <td *ngIf="activeTab !== 'live'">
+
+                    {{ tx.eventRefNo }}
+
+                </td>
+
+
+                <!-- ================= EVENT SEQUENCE ================= -->
+
+                <td *ngIf="activeTab !== 'live'">
+
+                    {{ tx.eventSequence }}
+
+                </td>
+
+
+                <!-- ================= CREATED ================= -->
+
+                <td>
+
+                    {{ tx.createdOn | date:'yyyy-MM-dd' }}
+
+                </td>
+
+
+                <!-- ================= PRODUCT ================= -->
+
+                <td>
+
+                    {{ tx.productType }}
+
+                </td>
+
+
+                <!-- ================= ISSUER ================= -->
+
+                <td>
+
+                    {{ tx.issuerReference }}
+
+                </td>
+
+
+                <!-- ================= EXPIRY ================= -->
+
+                <td>
+
+                    {{ tx.expiryDate }}
+
+                </td>
+
+
+                <!-- ================= CURRENCY ================= -->
+
+                <td>
+
+                    {{ tx.currency }}
+
+                </td>
+
+
+                <!-- ================= AMOUNT ================= -->
+
+                <td>
+
+                    {{ tx.amount }}
+
+                </td>
+
+
+                <!-- ================= APPLICANT ================= -->
+
+                <td>
+
+                    {{ tx.applicantName }}
+
+                </td>
+
+
+                <!-- ================= BENEFICIARY ================= -->
+
+                <td>
+
+                    {{ tx.beneficiaryName }}
+
+                </td>
+
+
+                <!-- ================= ACTION ================= -->
+
+                <td class="sticky-action">
+
+                    <button
+                        *ngIf="hasPermission('ILC_AmendPreview')"
+                        class="btn-action"
+                        (click)="viewTransaction(tx)">
+
+                        <mat-icon>
+                            visibility
+                        </mat-icon>
+
+                        View
+
+                    </button>
+
+                </td>
+
             </tr>
 
-            <tr *ngIf="pagedTransactions.length === 0">
-                <td colspan="20" class="no-records">
+
+            <!-- ================= NO RECORDS ================= -->
+
+            <tr
+                *ngIf="pagedTransactions.length === 0">
+
+                <td
+                    colspan="20"
+                    class="no-records">
+
                     No Approved Import LC records found
+
                 </td>
+
             </tr>
 
         </tbody>
+
     </table>
 
-    <div class="pagination">
-        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+
+    <!-- ================= PAGINATION ================= -->
+
+    <div
+        class="pagination"
+        *ngIf="filteredTransactions.length > 0">
+
+        <button
+            class="btn-pagination"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+
+            ‹
+
+        </button>
+
+
+        <span>
+
+            Page
+            {{ currentPage }}
+            of
+            {{ totalPages }}
+
+        </span>
+
+
+        <button
+            class="btn-pagination"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+
+            ›
+
+        </button>
+
     </div>
+
+</div>

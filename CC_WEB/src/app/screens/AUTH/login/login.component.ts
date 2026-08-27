@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
  
+ 
 // Angular Material Module Imports
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,12 +12,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
  
+ 
 // Core Application Service Providers
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
-//import { SessionTimeoutService } from '../../../core/services/admin-service/session-timeout-service/session-timeout-service';
+import { SessionTimeoutService } from '../../../core/services/session-timeout-service/session-timeout-service';
+ 
 // Strongly typed view paths for the authentication finite state machine
-export type AuthState = 'LOGIN' | 'FORGOT_PASSWORD' | 'EMAIL_SENT' | 'RESET_PASSWORD' | 'EXPIRED' | 'SUCCESS';
+export type AuthState =
+  | 'LOGIN'
+  | 'FORGOT_PASSWORD'
+  | 'EMAIL_SENT'
+  | 'RESET_PASSWORD'
+  | 'EXPIRED'
+  | 'SUCCESS';
  
 @Component({
   selector: 'app-login',
@@ -39,6 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   // Centralized Finite State Machine Core
   public authState: AuthState = 'LOGIN';
  
+ 
   // =========================
   // LOGIN FORM STATE
   // =========================
@@ -48,6 +58,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   userStatus = 'A';
   hidePassword = true;
   isDummyLogin = true;
+ 
  
   // =========================
   // RESET PASSWORD - FORGOT FLOW STATE
@@ -61,6 +72,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   hideNewPassword = true;
   hideConfirmPassword = true;
  
+ 
   // =========================
   // BACKGROUND UTILITY COUNTERS
   // =========================
@@ -68,10 +80,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   expiryDisplay = '15:00';
   private expiryInterval: any;
  
+ 
   resendSeconds = 60;
   resendDisplay = '60';
   canResend = false;
   private resendInterval: any;
+ 
  
   // =========================
   // PASSWORD COMPLEXITY & REQUIREMENT TRACKERS
@@ -80,6 +94,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   passwordStrengthColor = '';
   passwordStrengthProgress = 0;
   isPasswordInvalid = true;
+ 
  
   hasMinLength = false;
   hasUppercase = false;
@@ -110,7 +125,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         return;
       }
  
+ 
       this.token = urlToken;
+ 
  
       // Proactively evaluate external query tokens via server backend
       this.api.validateResetToken(urlToken).subscribe({
@@ -130,12 +147,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
  
+ 
   /**
    * Component destruction hook lifecycle interception
    */
   ngOnDestroy(): void {
     this.clearAllTimers();
   }
+ 
  
   /**
    * Central routing mechanism for View Layout Transitions
@@ -145,6 +164,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authState = targetState;
   }
  
+ 
   /**
    * State Management configuration engine to decouple running variables
    */
@@ -152,6 +172,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (targetState !== 'EMAIL_SENT') {
       this.clearAllTimers();
     }
+ 
  
     switch (targetState) {
       case 'LOGIN':
@@ -168,6 +189,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         break;
     }
   }
+ 
  
   private clearAllTimers(): void {
     if (this.expiryInterval) clearInterval(this.expiryInterval);
@@ -462,7 +484,9 @@ sessionStorage.setItem(
     if (this.hasNumber) passedRulesCount++;
     if (this.hasSpecialChar) passedRulesCount++;
  
+ 
     this.passwordStrengthProgress = (passedRulesCount / 5) * 100;
+ 
  
     if (passedRulesCount <= 2) {
       this.passwordStrength = 'Weak Security Profile';

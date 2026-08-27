@@ -1,15 +1,33 @@
-<!-- ================= HEADER ================= -->
+<!-- ========================================================= -->
+<!-- PAGE HEADER                                                -->
+<!-- ========================================================= -->
+
 <div class="page-header">
+
     <div class="title">
-        <h2>{{ activeTab | titlecase }} Undertaking Records</h2>
-        <p>Manage and track all Undertaking {{ activeTab }} transactions</p>
+
+        <h2>
+            {{ activeTab | titlecase }} Undertaking Records
+        </h2>
+
+        <p>
+            Manage and track all Undertaking
+            {{ activeTab }} transactions
+        </p>
+
     </div>
+
 </div>
 
 
-<!-- ================= SEARCH ================= -->
+<!-- ========================================================= -->
+<!-- SEARCH                                                     -->
+<!-- ========================================================= -->
+
 <div class="search-system">
+
     <div class="search-input-group">
+
         <input
             type="text"
             placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
@@ -20,29 +38,45 @@
         <button
             *ngIf="searchQuery"
             class="clear-btn"
-            (click)="clearSearch()"
-        >
-            <mat-icon>clear</mat-icon>
+            (click)="clearSearch()">
+
+            <mat-icon>
+                clear
+            </mat-icon>
+
         </button>
+
     </div>
+
 
     <button
         class="advanced-toggle"
-        (click)="showAdvanced = !showAdvanced"
-    >
-        <mat-icon>tune</mat-icon>
+        (click)="showAdvanced = !showAdvanced">
+
+        <mat-icon>
+            tune
+        </mat-icon>
+
         Advanced
+
     </button>
+
 </div>
 
 
-<!-- ================= ADVANCED SEARCH ================= -->
+<!-- ========================================================= -->
+<!-- ADVANCED SEARCH                                            -->
+<!-- ========================================================= -->
+
 <div
     class="advanced-search"
-    *ngIf="showAdvanced"
->
+    *ngIf="showAdvanced">
+
     <div class="field">
-        <label>Currency</label>
+
+        <label>
+            Currency
+        </label>
 
         <input
             type="text"
@@ -50,31 +84,46 @@
             (input)="applyFilters()"
             placeholder="e.g. USD"
         />
+
     </div>
+
 </div>
 
 
-<!-- ================= TABS ================= -->
+<!-- ========================================================= -->
+<!-- TABS                                                       -->
+<!-- ========================================================= -->
+
 <div class="ui-tabs">
 
-    <div
-        class="tab"
-        *ngFor="let tab of tabs"
-        [class.active]="activeTab === tab.key"
-        (click)="setActiveTab(tab.key)"
-    >
-        {{ tab.label }}
-    </div>
+    <ng-container
+        *ngFor="let tab of tabs">
+
+        <div
+            class="tab"
+            *ngIf="canAccessTab(tab.key)"
+            [class.active]="activeTab === tab.key"
+            (click)="setActiveTab(tab.key)">
+
+            {{ tab.label }}
+
+        </div>
+
+    </ng-container>
 
 </div>
 
 
-<!-- ================= RESULTS SUMMARY ================= -->
+<!-- ========================================================= -->
+<!-- FILTER / RESULT SUMMARY                                    -->
+<!-- ========================================================= -->
+
 <div class="filter-row">
 
     <div class="results-summary">
 
         Showing
+
         <strong>
             {{ pagedTransactions.length }}
         </strong>
@@ -92,78 +141,98 @@
 </div>
 
 
-<!-- ================= TABLE ================= -->
+<!-- ========================================================= -->
+<!-- TABLE                                                      -->
+<!-- ========================================================= -->
+
 <div class="table-wrapper">
 
     <table>
 
-        <!-- ================= TABLE HEADER ================= -->
+        <!-- ================================================= -->
+        <!-- HEADER                                             -->
+        <!-- ================================================= -->
+
         <thead>
 
             <tr>
 
-                <!-- TNX ID -->
                 <th
-                    (click)="sortBy('channelReference')"
-                    class="sortable"
-                >
+                    *ngIf="activeTab === 'live'">
+
+                    Event Ref No
+
+                </th>
+
+
+                <th
+                    (click)="sortBy('tnxId')">
+
                     TNX ID
+
                 </th>
 
 
-                <!-- CREATION DATE -->
                 <th
-                    (click)="sortBy('lastUpdated')"
-                    class="sortable"
-                >
-                    Creation Date
+                    *ngIf="activeTab === 'live'">
+
+                    Event Sequence
+
                 </th>
 
 
-                <!-- PRODUCT -->
+                <th
+                    *ngIf="activeTab === 'live'">
+
+                    Event
+
+                </th>
+
+
+                <th
+                    (click)="sortBy('createdOn')">
+
+                    Created
+
+                </th>
+
+
                 <th>
                     Product
                 </th>
 
 
-                <!-- ISSUER REFERENCE -->
-                <!-- <th> -->
-                    <!-- Issuer Ref -->
-                <!-- </th> -->
+                <th>
+                    Issuer Reference
+                </th>
 
 
-                <!-- EXPIRY DATE -->
                 <th>
                     Expiry Date
                 </th>
 
 
-                <!-- CURRENCY -->
                 <th>
                     Currency
                 </th>
 
 
-                <!-- AMOUNT -->
                 <th>
-                    Amount
+                    Undertaking Amount
                 </th>
 
 
-                <!-- APPLICANT -->
                 <th>
                     Applicant
                 </th>
 
 
-                <!-- BENEFICIARY -->
                 <th>
                     Beneficiary
                 </th>
 
 
-                <!-- ACTION -->
-                <th class="text-center">
+                <th class="sticky-action">
                     Action
                 </th>
 
@@ -172,260 +241,237 @@
         </thead>
 
 
-        <!-- ================= TABLE BODY ================= -->
+        <!-- ================================================= -->
+        <!-- BODY                                               -->
+        <!-- ================================================= -->
+
         <tbody>
 
             <tr
                 *ngFor="
                     let tx of pagedTransactions;
                     trackBy: trackByTnxId
-                "
-            >
+                ">
 
-                <!-- ================= TNX ID ================= -->
+
+                <!-- ========================================= -->
+                <!-- EVENT REF NO                               -->
+                <!-- ========================================= -->
+
+                <td
+                    *ngIf="activeTab === 'live'">
+
+                    <a
+                        class="tnx-link"
+                        *ngIf="hasPermission('UTG_Inquiry')"
+                        (click)="openUtg(tx)">
+
+                        {{ tx.eventRefNo }}
+
+                    </a>
+
+                    <span
+                        *ngIf="!hasPermission('UTG_Inquiry')">
+
+                        {{ tx.eventRefNo }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- ========================================= -->
+                <!-- TNX ID                                     -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    <!-- LIVE TAB -->
                     <a
-                        *ngIf="activeTab === 'live'"
                         class="tnx-link"
-                        (click)="openUndertaking(tx)"
-                    >
-                        {{ tx.channelReference }}
+                        *ngIf="
+                            activeTab !== 'live' &&
+                            (
+                                hasPermission('UTG_Inquiry') ||
+                                hasPermission('UTG_Amend') ||
+                                hasPermission('UTG_Approve')
+                            )
+                        "
+                        (click)="openUtg(tx)">
+
+                        {{ tx.tnxId }}
+
                     </a>
 
 
-                    <!-- NORMAL TABS -->
-                    <a
-                        *ngIf="activeTab !== 'live'"
-                        class="tnx-link"
-                        (click)="openUndertaking(tx)"
-                    >
-                        {{ tx.channelReference }}
-                    </a>
+                    <span
+                        *ngIf="
+                            activeTab === 'live' ||
+                            (
+                                !hasPermission('UTG_Inquiry') &&
+                                !hasPermission('UTG_Amend') &&
+                                !hasPermission('UTG_Approve')
+                            )
+                        ">
+
+                        {{ tx.tnxId }}
+
+                    </span>
 
                 </td>
 
 
-                <!-- ================= CREATION DATE ================= -->
+                <!-- ========================================= -->
+                <!-- EVENT SEQUENCE                             -->
+                <!-- ========================================= -->
+
+                <td
+                    *ngIf="activeTab === 'live'">
+
+                    {{ tx.eventSequence }}
+
+                </td>
+
+
+                <!-- ========================================= -->
+                <!-- EVENT                                      -->
+                <!-- ========================================= -->
+
+                <td
+                    *ngIf="activeTab === 'live'">
+
+                    {{ tx.eventType }}
+
+                </td>
+
+
+                <!-- ========================================= -->
+                <!-- CREATED                                    -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{ tx.lastUpdated | date:'yyyy-MM-dd' }}
+                    {{ tx.createdOn | date:'yyyy-MM-dd' }}
 
                 </td>
 
 
-                <!-- ================= PRODUCT ================= -->
+                <!-- ========================================= -->
+                <!-- PRODUCT                                    -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{ tx.formData.generalDetails?.productType || 'Undertaking' }}
+                    {{ tx.productType }}
 
                 </td>
 
 
-                <!-- ================= ISSUER REF ================= -->
-                <!-- <td> -->
+                <!-- ========================================= -->
+                <!-- ISSUER REFERENCE                           -->
+                <!-- ========================================= -->
 
-                    <!-- {{ tx.formData.bankForm?.issuerReference || '-' }} -->
-
-                <!-- </td> -->
-
-
-                <!-- ================= EXPIRY DATE ================= -->
                 <td>
 
-                    {{
-                        tx.formData.undertakingDetails?.expiryDate
-                        | date:'yyyy-MM-dd'
-                    }}
+                    {{ tx.issuerReference }}
 
                 </td>
 
 
-                <!-- ================= CURRENCY ================= -->
+                <!-- ========================================= -->
+                <!-- EXPIRY DATE                                -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{ tx.formData.undertakingDetails?.currency }}
+                    {{ tx.expiryDate }}
 
                 </td>
 
 
-                <!-- ================= AMOUNT ================= -->
+                <!-- ========================================= -->
+                <!-- CURRENCY                                   -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{
-                        tx.formData.undertakingDetails?.undertakingAmount
-                        | number:'1.2-2'
-                    }}
+                    {{ tx.currency }}
 
                 </td>
 
 
-                <!-- ================= APPLICANT ================= -->
+                <!-- ========================================= -->
+                <!-- AMOUNT                                     -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{ tx.formData.applicantBeneficiary?.applicantName }}
+                    {{ tx.undertakingAmount }}
 
                 </td>
 
 
-                <!-- ================= BENEFICIARY ================= -->
+                <!-- ========================================= -->
+                <!-- APPLICANT                                  -->
+                <!-- ========================================= -->
+
                 <td>
 
-                    {{ tx.formData.applicantBeneficiary?.beneficiaryName }}
+                    {{ tx.applicantName }}
 
                 </td>
 
 
-                <!-- ================= ACTION ================= -->
-                <td class="text-center actions-cell">
+                <!-- ========================================= -->
+                <!-- BENEFICIARY                                -->
+                <!-- ========================================= -->
+
+                <td>
+
+                    {{ tx.beneficiaryName }}
+
+                </td>
 
 
-                    <!-- ================================================= -->
-                    <!-- LIVE TAB -->
-                    <!-- ================================================= -->
+                <!-- ========================================= -->
+                <!-- ACTION                                     -->
+                <!-- ========================================= -->
 
-                    <ng-container
-                        *ngIf="activeTab === 'live'"
-                    >
+                <td class="sticky-action">
 
-                        <button
-                            class="btn-action view"
-                            (click)="openUndertaking(tx)"
-                            matTooltip="View Live Event"
-                        >
+                    <button
+                        class="btn-action"
+                        *ngIf="hasPermission('UTG_Inquiry')"
+                        (click)="viewTransaction(tx)">
 
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
+                        <mat-icon>
+                            visibility
+                        </mat-icon>
 
-                            View
+                        View
 
-                        </button>
-
-                    </ng-container>
-
-
-                    <!-- ================================================= -->
-                    <!-- PENDING TAB -->
-                    <!-- ================================================= -->
-
-                    <ng-container
-                        *ngIf="activeTab === 'pending'"
-                    >
-
-                        <button
-                            class="btn-action view"
-                            (click)="viewOnly(tx)"
-                            matTooltip="Preview Draft"
-                        >
-
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
-
-                            View
-
-                        </button>
-
-                    </ng-container>
-
-
-                    <!-- ================================================= -->
-                    <!-- SUBMITTED TAB -->
-                    <!-- ================================================= -->
-
-                    <ng-container
-                        *ngIf="activeTab === 'submitted'"
-                    >
-
-                        <button
-                            class="btn-action view"
-                            (click)="openUndertaking(tx)"
-                            matTooltip="View Submitted Undertaking"
-                        >
-
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
-
-                            View
-
-                        </button>
-
-                    </ng-container>
-
-
-                    <!-- ================================================= -->
-                    <!-- APPROVED TAB -->
-                    <!-- ================================================= -->
-
-                    <ng-container
-                        *ngIf="activeTab === 'approved'"
-                    >
-
-                        <button
-                            class="btn-action view"
-                            (click)="openUndertaking(tx)"
-                            matTooltip="View Approved Undertaking"
-                        >
-
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
-
-                            View
-
-                        </button>
-
-                    </ng-container>
-
-
-                    <!-- ================================================= -->
-                    <!-- REJECTED TAB -->
-                    <!-- ================================================= -->
-
-                    <ng-container
-                        *ngIf="activeTab === 'rejected'"
-                    >
-
-                        <button
-                            class="btn-action view"
-                            (click)="openUndertaking(tx)"
-                            matTooltip="View Rejected Undertaking"
-                        >
-
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
-
-                            View
-
-                        </button>
-
-                    </ng-container>
-
+                    </button>
 
                 </td>
 
             </tr>
 
 
-            <!-- ================= NO RECORDS ================= -->
+            <!-- ================================================= -->
+            <!-- NO RECORDS                                        -->
+            <!-- ================================================= -->
+
             <tr
-                *ngIf="pagedTransactions.length === 0"
-            >
+                *ngIf="pagedTransactions.length === 0">
 
                 <td
-                    colspan="10"
-                    class="no-records"
-                >
+                    colspan="13"
+                    class="no-records">
 
                     <div class="empty-state">
 
-                    
                         <p>
-                            No {{ activeTab }} Undertaking records found.
+                            No {{ activeTab }}
+                            Undertaking records found.
                         </p>
 
                     </div>
@@ -439,18 +485,21 @@
     </table>
 
 
-    <!-- ================= PAGINATION ================= -->
+    <!-- ======================================================= -->
+    <!-- PAGINATION                                               -->
+    <!-- ======================================================= -->
+
     <div
         class="pagination"
-        *ngIf="filteredTransactions.length > 0"
-    >
+        *ngIf="filteredTransactions.length > 0">
 
         <button
             class="btn-pagination"
             (click)="previousPage()"
-            [disabled]="currentPage === 1"
-        >
+            [disabled]="currentPage === 1">
+
             ‹
+
         </button>
 
 
@@ -467,8 +516,8 @@
         <button
             class="btn-pagination"
             (click)="nextPage()"
-            [disabled]="currentPage === totalPages"
-        >
+            [disabled]="currentPage === totalPages">
+
             ›
 
         </button>

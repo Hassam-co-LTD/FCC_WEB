@@ -1,34 +1,45 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { MatCard } from "@angular/material/card";
+import { MatCard } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpClientModule } from '@angular/common/http';
-import { ApiService } from '../../../../../../core/services/api.service';
-import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { ImportLcTransaction } from "../../../../../../core/models/import-lc";
-import { Dialog } from '@angular/cdk/dialog';
-import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+
+import { ApiService } from '../../../../../../core/services/api.service';
+
+import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+
+import { ImportLcTransaction } from '../../../../../../core/models/import-lc';
+
+import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
-  imports: [CommonModule, MatIcon, DecimalPipe, MatCard, HttpClientModule, MatDialogModule],
-  standalone: true,
+  imports: [
+    CommonModule,
+    MatIcon,
+    DecimalPipe,
+    MatCard,
+    MatButtonModule,
+    HttpClientModule,
+    MatDialogModule
+  ],
+  standalone: true
 })
 export class Preview implements OnInit {
   @Input() transaction!: ImportLcTransaction;
-  viewMode: 'submit' | 'readonly' = 'submit';
-  // @Input() readonly = false;
 
-  // get showActions(): boolean {
-  //   return this.transaction?.status === 'I';
-  // }
+  viewMode: 'submit' | 'readonly' = 'submit';
+
   importForm!: FormGroup;
 
   isOpen = true;
@@ -36,36 +47,44 @@ export class Preview implements OnInit {
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-
   currentTx: ImportLcTransaction | null = null;
 
-  // pageName1 = 'Update';
-  // pageName2 = 'Submit';
+  permissionNames: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
     private api: ApiService,
-    private dialog: MatDialog, 
+    private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService
-  ) { }
+  ) {}
 
-  ngOnInit(): void {    
-    this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
-    ||
-    this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
+  ngOnInit(): void {
+    // Get permissions from session
+    const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    this.permissionNames = userData.permissionNames || [];
+
+    this.currentTx =
+      this.transaction || this.transactionService.getCurrentTransaction();
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
       this.router.navigate(['/import-screen']);
       return;
     }
+
     this.viewMode = this.transactionService.getViewMode();
-     this.initForm();
+    this.initForm();
   }
 
-    private initForm(): void {
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
+    );
+  }
+
+  private initForm(): void {
     this.importForm = this.fb.group({
       id: [this.currentTx!.id],
       tnxId: [this.currentTx!.tnxId],
@@ -73,14 +92,21 @@ export class Preview implements OnInit {
       createdOn: [this.currentTx!.createdOn],
 
       productType: [this.currentTx!.productType],
-      modeOfTransmission: [this.currentTx!.modeOfTransmission], 
+      modeOfTransmission: [this.currentTx!.modeOfTransmission],
       expiryDate: [this.currentTx!.expiryDate],
       placeOfExpiry: [this.currentTx!.placeOfExpiry],
+      featureIrrevocable: [this.currentTx!.featureIrrevocable],
+      featureRevolving: [this.currentTx!.featureRevolving],
+      featureTransferable: [this.currentTx!.featureTransferable],
+      applicableRules: [this.currentTx!.applicableRules],
+      confirmationInstruction: [this.currentTx!.confirmationInstruction],
 
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
       applicantAddress3: [this.currentTx!.applicantAddress3],
+      applicantAddress4: [this.currentTx!.applicantAddress4],
+      applicantCountry: [this.currentTx!.applicantCountry],
 
       beneficiaryName: [this.currentTx!.beneficiaryName],
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
@@ -117,15 +143,15 @@ export class Preview implements OnInit {
       descriptionOfGoods: [this.currentTx!.descriptionOfGoods],
       documentsRequired: [this.currentTx!.documentsRequired],
       additionalInstructions: [this.currentTx!.additionalInstructions],
-      otherInstructions: [this.currentTx!.otherInstructions],
+      otherDetails: [this.currentTx!.otherDetails],
 
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
+      otherInstructions: [this.currentTx!.otherInstructions],
 
       attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
-    // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
       this.importForm.disable({ emitEvent: false });
     }
@@ -135,15 +161,33 @@ export class Preview implements OnInit {
     return this.importForm.get('attachments') as FormArray;
   }
 
-  back() {
-    this.router.navigate(['/import-screen/inquiries'])
+  back(): void {
+    if (!this.hasPermission('ILC_Inquiry')) {
+      this.snackBar.open(
+        'You do not have permission to view Import LC records.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+
+    this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
   }
 
-  /** SUBMIT */
   submitLc(): void {
+    if (!this.hasPermission('ILC_InquirySubmit')) {
+      this.snackBar.open(
+        'You do not have permission to submit an Import LC.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
+
     if (!tnxId) {
       this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
       return;
@@ -151,101 +195,166 @@ export class Preview implements OnInit {
 
     this.api.submitTransaction(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/import-screen/success'], {
-          state: { transaction: res }
-        });
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-screen/success'],
+          { state: { transaction: res } },
+        );
       },
-      error: () => {
-        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
+      error: (error) => {
+        console.error('Error submitting transaction:', error);
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
       }
     });
   }
 
   approveTransaction(): void {
-    if (!this.currentTx?.tnxId) return;
+    if (!this.hasPermission('ILC_InquiryApprove')) {
+      this.snackBar.open(
+        'You do not have permission to approve an Import LC.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
 
-    this.api.approveTransaction(this.currentTx.tnxId, this.currentTx).subscribe({
+    const tnxId = this.currentTx?.tnxId;
+
+    if (!tnxId) {
+      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      return;
+    }
+
+    this.api.approveTransaction(tnxId, this.currentTx!).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-screen/success'],
+          { state: { transaction: res } },
+        );
       },
-      error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
+      error: (error) => {
+        console.error('Error approving transaction:', error);
+        this.snackBar.open('Error approving transaction', 'Close', {
+          duration: 3000,
+        });
+      }
     });
   }
 
-  // rejectTransaction(): void {
-  //   if (!this.currentTx?.tnxId) return;
-
-  //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
-  //     next: (res) => {
-  //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
-  //       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
-  //     },
-  //     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
-  //   });
-  // }
   rejectTransaction(): void {
+    if (!this.hasPermission('ILC_InquiryReject')) {
+      this.snackBar.open(
+        'You do not have permission to reject an Import LC.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+
     const tnxId = this.currentTx?.tnxId;
-    if (!tnxId) return;
+
+    if (!tnxId) {
+      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      return;
+    }
 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
-      backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
-      panelClass: 'custom-dialog-container'     // white dialog box 
-       });
+      width: '400px',
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-dark-backdrop',
+      panelClass: 'custom-dialog-container'
+    });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
-      if (!reason) return; // user cancelled
-      this.api.rejectTransaction(tnxId, reason ).subscribe({
+      if (!reason) return;
+
+      this.api.rejectTransaction(tnxId, reason).subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+
+          this.router.navigate(
+            ['/dashboard/Trade-Services/import-screen/success'],
+            { state: { transaction: res } },
+          );
         },
-        error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+        error: (error) => {
+          console.error('Error rejecting transaction:', error);
+          this.snackBar.open('Error rejecting transaction', 'Close', {
+            duration: 3000,
+          });
+        }
       });
     });
   }
 
-  downloadFile(index: number) {
-      const currentTx = this.attachmentsArray.at(index)?.value;
-      if (!currentTx) return;
+  downloadFile(index: number): void {
+    if (!this.hasPermission('ILC_InquiryPreview')) {
+      this.snackBar.open(
+        'You do not have permission to download attachments.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
 
-      const { file, fileName } = currentTx;
+    const currentAttachment = this.attachmentsArray.at(index)?.value;
 
-      if (file instanceof Blob) {
-        const url = URL.createObjectURL(file);
-        this.triggerDownload(url, fileName);
-        URL.revokeObjectURL(url);
-        return;
-      }
+    if (!currentAttachment) return;
 
-      if (typeof file === 'string' && file.startsWith('currentTx:')) {
-        const arr = file.split(',');
-        const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
+    const { file, fileName } = currentAttachment;
+
+    if (file instanceof Blob) {
+      const url = URL.createObjectURL(file);
+      this.triggerDownload(url, fileName);
+      URL.revokeObjectURL(url);
+      return;
+    }
+
+    if (typeof file === 'string' && file.startsWith('currentTx:')) {
+      const arr = file.split(',');
+      const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
+
+      try {
         const bstr = atob(arr[1]);
         const u8arr = new Uint8Array(bstr.length);
+
         for (let n = 0; n < bstr.length; n++) {
           u8arr[n] = bstr.charCodeAt(n);
         }
+
         const blob = new Blob([u8arr], { type: mime });
         const url = URL.createObjectURL(blob);
+
         this.triggerDownload(url, fileName);
         URL.revokeObjectURL(url);
-        return;
+      } catch (error) {
+        console.error('Error decoding attachment:', error);
+        this.snackBar.open('Unable to download attachment', 'Close', {
+          duration: 3000,
+        });
       }
-
-      console.error("Unsupported file format", file);
+      return;
     }
 
-    private triggerDownload(url: string, fileName: string) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      a.click();
-    }
+    console.error('Unsupported file format', file);
+    this.snackBar.open('Unsupported file format', 'Close', { duration: 3000 });
+  }
 
-    trackByIndex(index: number, item: any): any {
-      return item?.id || index;
-    }
-  
+  private triggerDownload(url: string, fileName: string): void {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName || 'attachment';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  trackByIndex(index: number, item: any): any {
+    return item?.id || index;
+  }
 }

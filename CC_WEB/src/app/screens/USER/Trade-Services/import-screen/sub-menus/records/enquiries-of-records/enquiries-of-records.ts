@@ -9,8 +9,9 @@ import {
   ImportlcFormTransactionService,
 } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 
-import { ImportLcTransaction } from "../../../../../../../core/models/import-lc";
+import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 import { ApiService } from '../../../../../../../core/services/api.service';
+
 @Component({
   selector: 'app-enquiries-of-records',
   standalone: true,
@@ -19,23 +20,49 @@ import { ApiService } from '../../../../../../../core/services/api.service';
   styleUrls: ['./enquiries-of-records.scss']
 })
 export class EnquiriesOfRecords implements OnInit {
+
   currentPage = 1;
   itemsPerPage = 10;
+
   allTransactions: ImportLcTransaction[] = [];
   filteredTransactions: ImportLcTransaction[] = [];
+
   showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
+
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      p => p.trim().toLowerCase() === permission.toLowerCase()
+    );
+  }
+
+  // =========================================================
+  // TABS
+  // =========================================================
+
   tabs = [
     { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
     { key: 'submitted', label: 'Submitted' },
     { key: 'approved', label: 'Approved' },
     { key: 'rejected', label: 'Rejected' },
-    // { key: 'response awaited', label: 'Response Awaited'}
   ];
-  sortColumn: keyof ImportLcTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
+
+  sortColumn:
+    keyof ImportLcTransaction |
+    'currency' |
+    'amount' |
+    'expiryDate' |
+    'createdOn' = 'createdOn';
+
   sortDirection: 'asc' | 'desc' = 'desc';
 
   private readonly platformId = inject(PLATFORM_ID);
@@ -48,53 +75,95 @@ export class EnquiriesOfRecords implements OnInit {
     private route: ActivatedRoute,
   ) {}
 
- ngOnInit(): void {
-  if (!this.isBrowser) return;
+  ngOnInit(): void {
 
-  this.loadTransactions();
+    if (!this.isBrowser) return;
 
-  this.transactionService.transactionsStream$.subscribe(txList => {
-    this.allTransactions = txList;
-    this.applyFilters();
-  });
-}
+    // =========================================================
+    // LOAD USER PERMISSIONS
+    // =========================================================
 
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+      } catch {
+        this.permissionNames = [];
+      }
+    }
+
+    console.log('Import LC Permissions:', this.permissionNames);
+
+    // =========================================================
+    // LOAD TRANSACTIONS
+    // =========================================================
+
+    this.loadTransactions();
+
+    this.transactionService.transactionsStream$.subscribe(txList => {
+      this.allTransactions = txList;
+      this.applyFilters();
+    });
+  }
+
+  // =========================================================
+  // LOAD TRANSACTIONS
+  // =========================================================
 
   private loadTransactions(): void {
+
     if (this.activeTab === 'live') {
 
       this.api.getLiveEventHistory().subscribe({
+
         next: (txList) => {
+
           this.allTransactions = txList;
           this.applyFilters();
-          // this.filteredTransactions = [...txList];
+
         },
+
         error: () => {
+
           this.allTransactions = [];
           this.filteredTransactions = [];
+
         }
+
       });
 
       return;
     }
 
-    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+    const backendStatus =
+      this.mapTabToBackendStatus(this.activeTab);
 
     this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
+
       next: (txList) => {
+
         this.allTransactions = txList;
         this.applyFilters();
+
       },
+
       error: () => {
+
         this.allTransactions = [];
         this.filteredTransactions = [];
+
       }
+
     });
   }
 
-
+  // =========================================================
+  // FILTERS
+  // =========================================================
 
   applyFilters(): void {
+
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
 
@@ -108,7 +177,8 @@ export class EnquiriesOfRecords implements OnInit {
         tx.currency?.toLowerCase().includes(query);
 
       const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+        !currency ||
+        tx.currency?.toLowerCase() === currency;
 
       return matchesSearch && matchesCurrency;
     });
@@ -116,150 +186,249 @@ export class EnquiriesOfRecords implements OnInit {
     this.applySorting(filtered);
   }
 
-  // setActiveTab(tab: string): void {
-  //   this.activeTab = tab;
-  //   this.applyFilters();
-  // }
+  // =========================================================
+  // TAB CHANGE
+  // =========================================================
 
- setActiveTab(tab: string): void {
-  if (this.activeTab === tab) {
-    return;
-  }
+  setActiveTab(tab: string): void {
+
+    if (this.activeTab === tab) {
+      return;
+    }
 
   this.activeTab = tab;
   this.currentPage = 1;
 
-  this.loadTransactions();
-}
+    this.loadTransactions();
+  }
 
-  // private loadByStatus(status: string): void {
-  //   const backendStatus = this.mapTabToBackendStatus(status);
-  //   this.api.getTransactionsByStatus(backendStatus).subscribe({
-  //     next: (txList) => {
-  //       this.allTransactions = txList;
-  //       this.filteredTransactions = txList;
-  //     },
-  //     error: () => {
-  //       this.allTransactions = [];
-  //       this.filteredTransactions = [];
-  //     }
-  //   });
-  // }
-
-
-  // getTabCount(tabKey: string): number {
-  //   return this.allTransactions.filter(tx => this.mapStatusToTab(tx.status!) === tabKey).length;
-  // }
+  // =========================================================
+  // SEARCH
+  // =========================================================
 
   clearSearch(): void {
+
     this.searchQuery = '';
     this.applyFilters();
+
   }
 
-  // clearCurrency(): void {
-  //   this.currencyFilter = '';
-  //   this.applyFilters();
-  // }
+  // =========================================================
+  // SORTING
+  // =========================================================
 
   sortBy(column: typeof this.sortColumn): void {
+
     if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
       this.sortDirection = 'asc';
+
     }
+
     this.applyFilters();
   }
 
-  private applySorting(source: ImportLcTransaction[] = this.allTransactions): void {
-    const sorted = [...source].sort((a, b) => {
-      let aVal = this.resolveColumn(a, this.sortColumn);
-      let bVal = this.resolveColumn(b, this.sortColumn);
+  private applySorting(
+    source: ImportLcTransaction[] = this.allTransactions
+  ): void {
 
-      // Handle null or undefined
+    const sorted = [...source].sort((a, b) => {
+
+      const aVal = this.resolveColumn(
+        a,
+        this.sortColumn
+      );
+
+      const bVal = this.resolveColumn(
+        b,
+        this.sortColumn
+      );
+
+      // Handle null / undefined
       if (aVal == null) return 1;
       if (bVal == null) return -1;
 
       // Handle Dates
       if (aVal instanceof Date && bVal instanceof Date) {
+
         return this.sortDirection === 'asc'
           ? aVal.getTime() - bVal.getTime()
           : bVal.getTime() - aVal.getTime();
+
       }
 
       // Handle numbers
-      if (typeof aVal === 'number' && typeof bVal === 'number') {
+      if (
+        typeof aVal === 'number' &&
+        typeof bVal === 'number'
+      ) {
+
         return this.sortDirection === 'asc'
           ? aVal - bVal
           : bVal - aVal;
+
       }
 
-      // Everything else: convert to string and use localeCompare
+      // Everything else
       const aStr = String(aVal);
       const bStr = String(bVal);
+
       return this.sortDirection === 'asc'
         ? aStr.localeCompare(bStr)
         : bStr.localeCompare(aStr);
+
     });
 
     this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
 
+  private resolveColumn(
+    tx: ImportLcTransaction,
+    column: string
+  ): any {
 
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
     switch (column) {
-      case 'tnxId': return tx.tnxId;
-      case 'currency': return tx.currency;
-      case 'amount': return tx.amount;
-      case 'expiryDate': return tx.expiryDate;
-      case 'createdOn': return tx.createdOn;
-      default: return null;
+
+      case 'tnxId':
+        return tx.tnxId;
+
+      case 'currency':
+        return tx.currency;
+
+      case 'amount':
+        return tx.amount;
+
+      case 'expiryDate':
+        return tx.expiryDate;
+
+      case 'createdOn':
+        return tx.createdOn;
+
+      default:
+        return null;
     }
   }
 
+  // =========================================================
+  // PAGINATION
+  // =========================================================
+
   get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+
+    const count = Math.ceil(
+      this.filteredTransactions.length /
+      this.itemsPerPage
+    );
+
     return count < 1 ? 1 : count;
   }
-  
+
   get pagedTransactions(): ImportLcTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+
+    const start =
+      (this.currentPage - 1) *
+      this.itemsPerPage;
+
+    return this.filteredTransactions.slice(
+      start,
+      start + this.itemsPerPage
+    );
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+
   }
 
-  // viewTransaction(tx: ImportLcTransaction): void {
-  //   this.transactionService.setCurrentTransaction(tx, true);
-  //   this.router.navigate(['/import-screen/preview']);
-  // }
+  // =========================================================
+  // VIEW TRANSACTION
+  // =========================================================
+
   viewTransaction(tx: ImportLcTransaction): void {
-    const readOnly = ['A', 'R'].includes(tx.status!);
+
+    if (!this.hasPermission('ILC_InquiryPreview')) {
+      return;
+    }
+
+    const readOnly =
+      ['A', 'R'].includes(tx.status!);
 
     this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
+
       next: (freshTx) => {
-        this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+
+        this.transactionService.setCurrentTransaction(
+          freshTx,
+          readOnly
+        );
+
+        this.router.navigate([
+          'dashboard/Trade-Services/import-screen/preview'
+        ]);
+
       },
+
       error: () => {
-        this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/import-screen/preview']);
+
+        this.transactionService.setCurrentTransaction(
+          tx,
+          readOnly
+        );
+
+        this.router.navigate([
+          'dashboard/Trade-Services/import-screen/preview'
+        ]);
+
       }
+
     });
   }
 
-  openImportLc(tx: ImportLcTransaction) {
+  // =========================================================
+  // OPEN / AMEND IMPORT LC
+  // =========================================================
+
+  openImportLc(tx: ImportLcTransaction): void {
+
+    // =========================================================
+    // AMEND PERMISSION
+    // =========================================================
+
+    if (!this.hasPermission('ILC_Amend')) {
+      return;
+    }
+
+    // =========================================================
+    // LIVE TAB
+    // =========================================================
+
     if (this.activeTab === 'live') {
-      // Live tab rows are event records — navigate by eventRefNo
+
       this.router.navigate(
-        ['/import-screen/amend', tx.tnxId],
+        [
+          'dashboard/Trade-Services/import-screen/amend',
+          tx.tnxId
+        ],
         {
           queryParams: {
             mode: 'READ_ONLY',
@@ -268,50 +437,88 @@ export class EnquiriesOfRecords implements OnInit {
           }
         }
       );
+
       return;
     }
-    // Store transaction in service for import screen to pick up
-    // this.transactionService.setCurrentTransaction(tx);
-    const mode = this.resolveScreenMode(this.activeTab);
-    // Navigate to import screen
-    this.router.navigate(['/import-screen', tx.tnxId], {
-      state: {
-        transaction: tx,
-        // showUpdateSubmit: true // flag to show buttons
-        mode : mode
+
+    // =========================================================
+    // NORMAL RECORD
+    // =========================================================
+
+    const mode =
+      this.resolveScreenMode(this.activeTab);
+
+    this.router.navigate(
+      [
+        'dashboard/Trade-Services/import-screen',
+        tx.tnxId
+      ],
+      {
+        state: {
+          transaction: tx,
+          mode: mode
+        }
       }
-    });
+    );
   }
 
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  // =========================================================
+  // TRACK BY
+  // =========================================================
+
+  trackByTnxId(
+    _: number,
+    tx: ImportLcTransaction
+  ): string {
+
     return tx.eventRefNo ?? tx.tnxId!;
   }
 
-  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+  // =========================================================
+  // SCREEN MODE
+  // =========================================================
+
+  private resolveScreenMode(
+    tab: string
+  ): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
+
     switch (tab) {
+
       case 'pending':
         return 'EDIT';
+
       case 'submitted':
         return 'APPROVAL';
+
       default:
         return 'READ_ONLY';
     }
   }
 
-  private mapTabToBackendStatus(tab: string): string {
+  // =========================================================
+  // BACKEND STATUS
+  // =========================================================
+
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
     switch (tab) {
+
       case 'pending':
         return 'i';
+
       case 'submitted':
         return 's';
+
       case 'approved':
         return 'a';
+
       case 'rejected':
         return 'r';
+
       default:
         return 'i';
     }
   }
-
-
 }

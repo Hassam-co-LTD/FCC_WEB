@@ -1,93 +1,220 @@
 <div class="screen">
-    <!-- Sidebar -->
-    <app-sidebar [steps]="importSteps" [currentStep]="currentStep" (stepChange)="scrollToSection($event)">
-    </app-sidebar>
-    <!-- Main Content -->
-    <div class="content">
-        <div class="scroll-area">
 
-            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
-            <hr class="section-divider" />
+  <!-- Sidebar -->
+  <app-sidebar
+    [steps]="importSteps"
+    [currentStep]="currentStep"
+    (stepChange)="scrollToSection($event)">
+  </app-sidebar>
 
-            <section id="section-1"><app-applicant-beneficiary [form]="applicantForm"></app-applicant-beneficiary>
-            </section>
-            <hr class="section-divider" />
+  <!-- Main Content -->
+  <div class="content">
 
-            <section id="section-2"><app-bank-details [form]="bankForm"></app-bank-details></section>
-            <hr class="section-divider" />
+    <div class="scroll-area">
 
-            <section id="section-3"><app-amount-charge-details [form]="amountChargeForm"></app-amount-charge-details>
-            </section>
-            <hr class="section-divider" />
+      <section id="section-0">
+        <app-general-details [form]="generalDetailsForm"></app-general-details>
+      </section>
 
-            <section id="section-4"><app-payment-details [form]="paymentDetailsForm"></app-payment-details></section>
-            <hr class="section-divider" />
+      <hr class="section-divider" />
 
-            <section id="section-5"><app-shipment-details [form]="shipmentForm"></app-shipment-details></section>
-            <hr class="section-divider" />
+      <section id="section-1">
+        <app-applicant-beneficiary [form]="applicantForm"></app-applicant-beneficiary>
+      </section>
 
-            <section id="section-6"><app-narrative-details [form]="narrativeForm"></app-narrative-details></section>
-            <hr class="section-divider" />
+      <hr class="section-divider" />
 
-            <section id="section-7"><app-licenses></app-licenses></section>
-            <hr class="section-divider" />
+      <section id="section-2">
+        <app-bank-details [form]="bankForm"></app-bank-details>
+      </section>
 
-            <section id="section-8"><app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank>
-            </section>
-            <hr class="section-divider" />
+      <hr class="section-divider" />
 
-            <section id="section-9"><app-attachments (filesChange)="updateAttachments($event)"></app-attachments>
-            </section>
-            <hr class="section-divider" />
+      <section id="section-3">
+        <app-amount-charge-details [form]="amountChargeForm"></app-amount-charge-details>
+      </section>
 
-            <section id="section-10">
-                <router-outlet></router-outlet>
-                <!-- Footer Buttons -->
-                <!-- <app-preview [form]="importForm"></app-preview> -->
-            </section>
+      <hr class="section-divider" />
 
-            <!-- Footer Buttons -->
-            <div class="actions">
-            
-                <!-- LIVE TAB: Always Save + Back -->
-                <ng-container *ngIf="sourceTab === 'live'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="accent" (click)="saveForm()" [disabled]="isSaving">
-                        {{ isSaving ? 'Saving...' : 'Save' }}
-                    </button>
-                </ng-container>
-            
-                <!-- PENDING TAB + CRE: Back only (read-only view) -->
-                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                </ng-container>
-            
-                <!-- PENDING TAB + AMD: Update + Submit -->
-                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
-                    <button mat-flat-button color="accent" (click)="submitLc()">Submit</button>
-                </ng-container>
-            
-                <!-- SUBMITTED: Approve + Reject -->
-                <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
-                    <button mat-flat-button color="accent" (click)="approve()">Approve</button>
-                </ng-container>
-            
-                <!-- APPROVED: Back only -->
-                <ng-container *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                </ng-container>
-            
-                <!-- REJECTED: Back + Update -->
-                <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
-                </ng-container>
-            
-            </div>
-            
-        </div>
+      <section id="section-4">
+        <app-payment-details [form]="paymentDetailsForm"></app-payment-details>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-5">
+        <app-shipment-details [form]="shipmentForm"></app-shipment-details>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-6">
+        <app-narrative-details [form]="narrativeForm"></app-narrative-details>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-7">
+        <app-licenses></app-licenses>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-8">
+        <app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-9">
+        <app-attachments
+          (filesChange)="updateAttachments($event)">
+        </app-attachments>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-10">
+        <router-outlet></router-outlet>
+      </section>
+
+      <!-- Footer Buttons -->
+      <div class="actions">
+
+        <!-- LIVE TAB -->
+        <ng-container *ngIf="sourceTab === 'live'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+            Back
+          </button>
+
+          <button
+            *ngIf="hasPermission('ILC_AmendSave')"
+            mat-flat-button
+            color="accent"
+            (click)="saveForm()"
+            [disabled]="isSaving">
+
+            {{ isSaving ? 'Saving...' : 'Save' }}
+
+          </button>
+
+        </ng-container>
+
+
+        <!-- PENDING + CRE -->
+        <ng-container
+          *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+            Back
+          </button>
+
+        </ng-container>
+
+
+        <!-- PENDING + AMD -->
+        <ng-container
+          *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+            Back
+          </button>
+
+          <button
+            *ngIf="hasPermission('ILC_AmendSubmit')"
+            mat-flat-button
+            color="accent"
+            (click)="submitLc()">
+
+            Submit
+
+          </button>
+
+        </ng-container>
+
+
+        <!-- SUBMITTED + AMD -->
+        <ng-container
+          *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
+
+          <button
+            *ngIf="hasPermission('ILC_AmendPendingReject')"
+            mat-stroked-button
+            color="primary"
+            (click)="openReject()">
+
+            Reject
+
+          </button>
+
+          <button
+            *ngIf="hasPermission('ILC_AmendApprove')"
+            mat-flat-button
+            color="accent"
+            (click)="approve()">
+
+            Approve
+
+          </button>
+
+        </ng-container>
+
+
+        <!-- APPROVED + AMD -->
+        <ng-container
+          *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+        </ng-container>
+
+
+        <!-- REJECTED -->
+        <ng-container
+          *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()">
+
+            Back
+
+          </button>
+
+          <button
+            *ngIf="hasPermission('ILC_AmendUpdateReject')"
+            mat-flat-button
+            color="primary"
+            (click)="updateRejected()">
+
+            Update
+
+          </button>
+
+        </ng-container>
+
+      </div>
+
     </div>
+
+  </div>
+
 </div>

@@ -11,6 +11,18 @@ import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { Attachments } from '../../../components/attachments/attachments';
 import { generalDetails } from '../../../components/general-details/general-details';
 import { ApplicationBeneficiary } from '../../../components/application-beneficiary/application-beneficiary';
+import { generalDetails } from '../../../components/general-details/general-details';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
+
+import { CommonModule } from '@angular/common';
 import { BankDetails } from '../../../components/bank-details/bank-details';
 import { UndertakingDetails } from '../../../components/undertaking-details/undertaking-details';
 import { InstructionsBank } from '../../../components/instructions-bank/instructions-bank';
@@ -37,28 +49,47 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
   styleUrls: ['./amend.scss']
 })
 export class AmendScreen implements OnInit {
+
   currentStep = 0;
   undertakingForm!: FormGroup;
 
-  // Mirrors Import LC AmendScreen mode/screenMode semantics
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
+
   screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
 
-  currentTx: UndertakingTransaction = {} as UndertakingTransaction;
+  currentTx: UndertakingGuarantee = {} as UndertakingGuarantee;
 
   showUpdateSubmit = false;
   showApproveReject = false;
+
   rejectionReason = '';
 
   tnxId = '';
   companyId = '';
-  eventType = '';
-  eventRefNo = '';
-  requestedMode = '';
-  sourceTab = '';
+
+  eventType: string = '';
+  eventRefNo: string = '';
+  requestedMode: string = '';
+  sourceTab: string = '';
 
   isSaving = false;
   isHistoricalView = false;
+
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      p => p.trim().toLowerCase() === permission.trim().toLowerCase()
+    );
+  }
+
+  // =========================================================
+  // STEPS
+  // =========================================================
 
   undertakingSteps = [
     { label: 'General Details' },
@@ -81,29 +112,76 @@ export class AmendScreen implements OnInit {
   }
 
   ngOnInit() {
-    // Scroll-spy, identical approach to Import LC AmendScreen
+
+    // =========================================================
+    // LOAD PERMISSIONS
+    // =========================================================
+
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+      } catch {
+        this.permissionNames = [];
+      }
+    }
+
+    console.log('Undertaking Permissions:', this.permissionNames);
+
     setTimeout(() => {
+
       const sections = document.querySelectorAll('section');
+
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+
+          entries.forEach((entry) => {
+
             if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
+
             }
+
           });
+
         },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+        {
+          threshold: 0.4,
+          root: document.querySelector('.scroll-area')
+        },
       );
-      sections.forEach(section => observer.observe(section));
+
+      sections.forEach((section) => observer.observe(section));
+
     }, 200);
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    this.route.queryParamMap.subscribe((params) => {
+      this.requestedMode = params.get('mode')!;
+    });
+
+    const sessionData = JSON.parse(
+      sessionStorage.getItem('userData') || '{}'
+    );
+
     this.companyId = sessionData.companyId ?? '';
 
-    this.route.paramMap.subscribe(params => {
+    console.log('Company ID from route:', this.companyId);
+
+    this.tnxId =
+      this.route.snapshot.paramMap.get('tnxId') || '';
+
+    console.log('TNX ID from route:', this.tnxId);
+
+    this.route.paramMap.subscribe((params) => {
+
       this.tnxId = params.get('tnxId') || '';
 
-      this.route.queryParamMap.subscribe(q => {
+      this.route.queryParamMap.subscribe((q) => {
+
         this.requestedMode = q.get('mode') ?? '';
         this.sourceTab = q.get('tab') ?? '';
         this.eventType = q.get('eventType') ?? '';
@@ -114,24 +192,36 @@ export class AmendScreen implements OnInit {
         } else {
           this.enterCreateMode();
         }
+
       });
+
     });
+
   }
 
+  // =========================================================
+  // FORM
+  // =========================================================
+
   private buildForm(): void {
+
     this.undertakingForm = this.fb.group({
+
       generalDetails: this.fb.group({
         productType: ['Undertaking'],
         modeOfTransmission: ['SWIFT'],
         formOfUndertaking: [''],
         purpose: ['']
       }),
+
       applicantBeneficiary: this.fb.group({
         applicantName: [''],
         applicantAddress1: [''],
         applicantAddress2: [''],
         applicantAddress3: [''],
         applicantAddress4: [''],
+        applicantCountry: [''],
+
         beneficiaryName: [''],
         beneficiaryAddress1: [''],
         beneficiaryAddress2: [''],
@@ -139,6 +229,7 @@ export class AmendScreen implements OnInit {
         beneficiaryAddress4: [''],
         beneficiaryCountry: ['']
       }),
+
       bankForm: this.fb.group({
         recipientBankName: [''],
         issuerReference: [''],
@@ -151,6 +242,7 @@ export class AmendScreen implements OnInit {
         address4: [''],
         country: ['']
       }),
+
       undertakingDetails: this.fb.group({
         typeOfUndertaking: [''],
         effectiveOption: [''],
@@ -182,6 +274,7 @@ export class AmendScreen implements OnInit {
         languageType: [''],
         tsOption: ['']
       }),
+
       instructions: this.fb.group({
         deliveryType: [''],
         deliveryMode: [''],
@@ -190,17 +283,30 @@ export class AmendScreen implements OnInit {
         feeAccount: [''],
         otherInstructions: ['']
       }),
-      attachments: this.fb.array([])
+
+      attachments: this.fb.array([]),
+
     });
+
   }
 
+  // =========================================================
+  // MODES
+  // =========================================================
+
   private enterCreateMode(): void {
+
     this.mode = 'CREATE';
+
     this.showUpdateSubmit = false;
     this.showApproveReject = false;
+
     this.isHistoricalView = false;
-    this.currentTx = {} as UndertakingTransaction;
+
+    this.currentTx = {} as UndertakingGuarantee;
+
     this.undertakingForm.reset();
+
     this.buildForm();
   }
 
@@ -221,65 +327,127 @@ export class AmendScreen implements OnInit {
   //  4. Master record (no tab context) → load master via tnxId
   // ======================================================
   private enterEditMode(tnxId: string): void {
+
     this.mode = 'UPDATE';
 
-    // ── SCENARIO 1 ────────────────────────────────────────────────
+    // =========================================================
+    // SCENARIO 1 - HISTORICAL EVENT
+    // =========================================================
+
     if (this.eventRefNo) {
+
       this.isHistoricalView = true;
-      this.api.getAmendmentByEventRefNo(this.eventRefNo).subscribe({
+
+      this.api.getUtgAmendmentByEventRefNo(this.eventRefNo).subscribe({
+
         next: (event) => {
+
           this.currentTx = event;
+
           this.screenMode = 'APPROVED';
+
           this.undertakingForm.disable();
+
           this.patchForm(event);
+
         },
+
         error: () => {
-          this.snackBar.open('Event snapshot not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/undertaking-issuance/inquiries-records']);
-        }
+
+          this.snackBar.open(
+            'Event snapshot not found',
+            'Close',
+            { duration: 3000 }
+          );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+          ]);
+
+        },
+
       });
+
       return;
     }
 
-    // ── SCENARIO 2 ────────────────────────────────────────────────
+    // =========================================================
+    // SCENARIO 2 - LIVE
+    // =========================================================
+
     if (this.sourceTab === 'live') {
+
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxId(tnxId).subscribe({
+
         next: (event) => {
+
           this.currentTx = event;
+
           this.patchForm(event);
 
           if (event.status === 'I') {
+
             this.screenMode = 'EDIT';
+
             this.undertakingForm.enable();
+
           } else {
-            // Existing AMD already submitted/approved — defensive read-only
+
             this.screenMode = 'SUBMITTED';
+
             this.undertakingForm.disable();
+
           }
+
         },
+
         error: () => {
-          // No existing AMD draft — pre-populate from master record.
-          // AMD event is created server-side on Save.
-          this.api.getTransactionByTnxId(tnxId).subscribe({
+
+          this.api.getUndertakingByTnxId(tnxId).subscribe({
+
             next: (tx) => {
-              this.currentTx = { tnxId: tx.tnxId } as UndertakingTransaction;
+
+              this.currentTx = {
+                tnxId: tx.tnxId
+              } as UndertakingGuarantee;
+
               this.patchForm(tx);
+
               this.screenMode = 'EDIT';
+
               this.undertakingForm.enable();
+
             },
+
             error: () => {
-              this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-              this.router.navigate(['/undertaking-issuance/inquiries-records']);
-            }
+
+              this.snackBar.open(
+                'Transaction not found',
+                'Close',
+                { duration: 3000 }
+              );
+
+              this.router.navigate([
+                '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+              ]);
+
+            },
+
           });
-        }
+
+        },
+
       });
+
       return;
     }
 
-    // ── SCENARIO 3 ────────────────────────────────────────────────
+    // =========================================================
+    // SCENARIO 3 - AMENDMENT
+    // =========================================================
+
     const isAmendmentTab =
       this.eventType === 'AMD' ||
       this.sourceTab === 'pending' ||
@@ -288,277 +456,753 @@ export class AmendScreen implements OnInit {
       this.sourceTab === 'rejected';
 
     if (isAmendmentTab) {
+
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxId(tnxId).subscribe({
+      this.api.getUtgAmendmentByTnxId(tnxId).subscribe({
+
         next: (event) => {
+
           this.currentTx = event;
+
           this.patchForm(event);
 
           switch (event.status) {
+
             case 'I':
+
               this.mode = 'UPDATE';
               this.screenMode = 'EDIT';
+
               this.undertakingForm.enable();
+
               break;
+
             case 'S':
+
               this.mode = 'UPDATE';
               this.screenMode = 'SUBMITTED';
+
               this.undertakingForm.disable();
+
               break;
+
             case 'A':
+
               this.mode = 'UPDATE';
               this.screenMode = 'APPROVED';
+
               this.undertakingForm.disable();
+
               break;
+
             case 'R':
+
               this.mode = 'REJECTED';
               this.screenMode = 'EDIT';
+
               this.undertakingForm.enable();
+
               break;
+
             default:
+
               this.mode = 'UPDATE';
               this.screenMode = 'FINAL';
+
               this.undertakingForm.disable();
+
           }
+
         },
+
         error: () => {
-          this.snackBar.open('Amendment not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/undertaking-issuance/inquiries-records']);
-        }
+
+          this.snackBar.open(
+            'Amendment not found',
+            'Close',
+            { duration: 3000 }
+          );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+          ]);
+
+        },
+
       });
+
       return;
     }
 
-    // ── SCENARIO 4 ────────────────────────────────────────────────
+    // =========================================================
+    // SCENARIO 4 - MASTER LC
+    // =========================================================
+
     this.isHistoricalView = false;
-    this.api.getTransactionByTnxId(tnxId).subscribe({
+
+    this.api.getUndertakingByTnxId(tnxId).subscribe({
+
       next: (tx) => {
+
         this.currentTx = tx;
+
         this.patchForm(tx);
 
         switch (tx.status) {
+
           case 'I':
+
             this.mode = 'UPDATE';
             this.screenMode = 'EDIT';
+
             this.undertakingForm.enable();
+
             break;
+
           case 'S':
+
             this.mode = 'UPDATE';
             this.screenMode = 'SUBMITTED';
+
             this.undertakingForm.disable();
+
             break;
+
           case 'A':
+
             this.mode = 'UPDATE';
+
             if (this.requestedMode === 'EDIT') {
+
               this.screenMode = 'EDIT';
+
               this.undertakingForm.enable();
+
             } else {
+
               this.screenMode = 'APPROVED';
+
               this.undertakingForm.disable();
+
             }
+
             break;
+
           case 'R':
+
             this.mode = 'REJECTED';
             this.screenMode = 'EDIT';
+
             this.undertakingForm.enable();
+
             break;
+
           default:
+
             this.mode = 'UPDATE';
             this.screenMode = 'FINAL';
+
             this.undertakingForm.disable();
+
         }
+
       },
+
       error: () => {
-        this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/undertaking-issuance/inquiries-records']);
-      }
+
+        this.snackBar.open(
+          'Transaction not found',
+          'Close',
+          { duration: 3000 }
+        );
+
+        this.router.navigate([
+          '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+        ]);
+
+      },
+
     });
+
   }
 
-  // Safe getters for template access to each form group
-  get generalDetailsForm(): FormGroup { return this.undertakingForm.get('generalDetails') as FormGroup; }
-  get applicantForm(): FormGroup { return this.undertakingForm.get('applicantBeneficiary') as FormGroup; }
-  get bankForm(): FormGroup { return this.undertakingForm.get('bankForm') as FormGroup; }
-  get undertakingDetailsForm(): FormGroup { return this.undertakingForm.get('undertakingDetails') as FormGroup; }
-  get instructionForm(): FormGroup { return this.undertakingForm.get('instructions') as FormGroup; }
-  get attachmentsArray(): FormArray { return this.undertakingForm.get('attachments') as FormArray; }
+  // =========================================================
+  // FORM GETTERS
+  // =========================================================
 
-  // tx.formData is nested (see UndertakingIssuance.patchForm) — mirror that here
-  private patchForm(tx: UndertakingTransaction): void {
-    const data: any = (tx as any).formData || tx;
+  get generalDetails(): FormGroup {
+    return this.undertakingForm.get('generalDetails') as FormGroup;
+  }
+
+  get applicantBeneficiary(): FormGroup {
+    return this.undertakingForm.get('applicantBeneficiary') as FormGroup;
+  }
+
+  get bankForm(): FormGroup {
+    return this.undertakingForm.get('bankForm') as FormGroup;
+  }
+
+  get undertakingDetails(): FormGroup {
+    return this.undertakingForm.get('undertakingDetails') as FormGroup;
+  }
+
+  get instructions(): FormGroup {
+    return this.undertakingForm.get('instructions') as FormGroup;
+  }
+
+  // =========================================================
+  // FORM HELPERS
+  // =========================================================
+
+  private patchForm(tx: UndertakingGuarantee): void {
+
     this.undertakingForm.patchValue({
-      generalDetails: data.generalDetails || {},
-      applicantBeneficiary: data.applicantBeneficiary || {},
-      bankForm: data.bankForm || {},
-      undertakingDetails: data.undertakingDetails || {},
-      instructions: data.instructions || {}
+
+      generalDetails: tx,
+      applicantBeneficiary: tx,
+      bankForm: tx,
+      undertakingDetails: tx,
+      instructions: tx,
+
     });
 
-    const files = data.attachments?.files || [];
-    if (Array.isArray(files)) this.updateAttachments(files);
   }
 
-  scrollToSection(index: number) {
-    this.currentStep = index;
-    const section = document.getElementById(`section-${index}`);
-    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scrollToSection(i: number) {
+
+    this.currentStep = i;
+
+    const section = document.getElementById(`section-${i}`);
+
+    section?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
   }
 
-  private buildPayload(): any {
+  private flattenForm(): UndertakingGuarantee {
+
     return {
+
       companyId: this.companyId,
-      ...this.undertakingForm.getRawValue()
+
+      ...this.undertakingForm.value.generalDetails,
+      ...this.undertakingForm.value.applicantBeneficiary,
+      ...this.undertakingForm.value.bankForm,
+      ...this.undertakingForm.value.undertakingDetails,
+      ...this.undertakingForm.value.instructions,
+
+      attachments: this.undertakingForm.value.attachments,
+
     };
+
   }
+
+  // =========================================================
+  // SAVE
+  // UTG_AMEND REQUIRED
+  // =========================================================
 
   saveForm(): void {
+
+    if (!this.hasPermission('UTG_Amend')) {
+
+      this.snackBar.open(
+        'You do not have permission to amend Undertaking.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
     if (this.isSaving) return;
+
     this.isSaving = true;
 
     if (!this.companyId) {
-      this.snackBar.open('Session expired or company not found.', 'Close', { duration: 3000 });
+
+      this.snackBar.open(
+        'Session expired or company not found.',
+        'Close',
+        { duration: 3000 }
+      );
+
       this.isSaving = false;
+
       return;
     }
 
-    const payload = this.buildPayload();
-    const tnxId = this.currentTx?.tnxId; // master tnxId, used for PUT /amend/{tnxId}
+    const payload = this.flattenForm();
+
+    console.log('Payload before saving draft:', payload);
+
+    const tnxId = this.currentTx?.tnxId;
 
     if (!tnxId) {
-      this.snackBar.open('Transaction ID missing. Cannot amend.', 'Close', { duration: 3000 });
+
+      this.snackBar.open(
+        'Transaction ID missing. Cannot amend.',
+        'Close',
+        { duration: 3000 }
+      );
+
       this.isSaving = false;
+
       return;
     }
 
-    this.api.saveAmendTransaction(tnxId, payload).pipe(
-      finalize(() => this.isSaving = false)
-    ).subscribe({
-      next: (res: UndertakingTransaction) => {
-        this.currentTx = { ...this.currentTx, ...res };
-        this.snackBar.open(
-          `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
-          'Close',
-          { duration: 5000 }
-        );
-        setTimeout(() => this.router.navigate(['/undertaking-issuance/inquiries-records']), 50);
-      },
-      error: () => {
-        this.snackBar.open('Error saving amendment', 'Close', { duration: 3000 });
-      }
-    });
+    this.api
+      .saveUtgAmendTransaction(tnxId, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+
+        next: (res: UndertakingGuarantee) => {
+
+          this.currentTx = {
+            ...this.currentTx,
+            ...res
+          };
+
+          this.snackBar.open(
+            `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
+            'Close',
+            { duration: 5000 }
+          );
+
+          setTimeout(() => {
+
+            this.router.navigate([
+              '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records',
+            ]);
+
+          }, 50);
+
+        },
+
+        error: () => {
+
+          this.snackBar.open(
+            'Error saving amendment',
+            'Close',
+            { duration: 3000 }
+          );
+
+        },
+
+      });
+
   }
 
-  submitUndertaking(): void {
+  // =========================================================
+  // SUBMIT
+  // UTG_AMEND REQUIRED
+  // =========================================================
+
+  submitForm(): void {
+
+    if (!this.hasPermission('UTG_Amend')) {
+
+      this.snackBar.open(
+        'You do not have permission to submit Undertaking amendments.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
     const eventRefNo = this.currentTx?.eventRefNo;
 
     if (!eventRefNo) {
-      this.snackBar.open('Please save the amendment draft first.', 'Close', { duration: 3000 });
+
+      this.snackBar.open(
+        'Please save the amendment draft first.',
+        'Close',
+        { duration: 3000 }
+      );
+
       return;
     }
 
     const payload = {
-      ...this.buildPayload(),
+
+      ...this.flattenForm(),
+
       event: 'AMD',
-      tnxId: this.tnxId
+      tnxId: this.tnxId,
+
     };
 
-    this.api.submitAmendment(eventRefNo, payload).subscribe({
+    this.api.submitUtgAmendment(eventRefNo, payload).subscribe({
+
       next: (res) => {
+
+        this.router.navigate(
+          ['/dashboard/Trade-Services/undertaking-issuance/success'],
+          {
+            state: {
+              source: 'IMPORT_LC_AMD',
+              transaction: res
+            },
+          },
+        );
+
         this.snackBar.open(
           `Amendment Submitted (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
           { duration: 5000 }
         );
-        setTimeout(() => this.router.navigate(['/undertaking-issuance/inquiries-records']), 50);
+
+        setTimeout(() => {
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records',
+          ]);
+
+        }, 50);
+
       },
-      error: () => this.snackBar.open('Error submitting amendment', 'Close', { duration: 3000 })
+
+      error: () => {
+
+        this.snackBar.open(
+          'Error submitting amendment',
+          'Close',
+          { duration: 3000 }
+        );
+
+      },
+
     });
+
   }
 
+  // =========================================================
+  // BACK
+  // =========================================================
+
+  back() {
+
+    this.router.navigate(['/dashboard']);
+
+  }
+
+  updateAttachments(files: File[]) {
+
+    const arr =
+      this.undertakingForm.get('attachments') as FormArray;
+
+    arr.clear();
+
+    files.forEach((file) =>
+
+      arr.push(
+
+        this.fb.group({
+
+          title: file.name.replace(/\.[^/.]+$/, ''),
+
+          fileName: file.name,
+
+          size: file.size,
+
+          type: file.type,
+
+          file: file,
+
+        }),
+
+      ),
+
+    );
+
+  }
+
+  // =========================================================
+  // UPDATE REJECTED
+  // UTG_AMEND REQUIRED
+  // =========================================================
+
+  update(): void {
+
+    if (!this.hasPermission('UTG_Amend')) {
+
+      this.snackBar.open(
+        'You do not have permission to update Undertaking.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    if (
+      this.undertakingForm.invalid ||
+      !this.currentTx?.tnxId
+    ) {
+
+      this.snackBar.open(
+        'Invalid form or missing transaction ID',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    const payload = this.flattenForm();
+
+    payload.tnxId = this.tnxId;
+
+    console.log('Payload before update:', payload);
+
+    if (!payload.tnxId) {
+
+      console.error('TNX ID is missing!');
+
+      return;
+    }
+
+  }
+
+  // =========================================================
+  // APPROVE
+  // UTG_APPROVE REQUIRED
+  // =========================================================
+
   approve(): void {
+
+    if (!this.hasPermission('UTG_Approve')) {
+
+      this.snackBar.open(
+        'You do not have permission to approve Undertaking amendments.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
     const eventRefNo = this.currentTx?.eventRefNo;
+
     if (!eventRefNo) {
-      this.snackBar.open('Amendment reference not found.', 'Close', { duration: 3000 });
+
+      this.snackBar.open(
+        'Amendment reference not found.',
+        'Close',
+        { duration: 3000 }
+      );
+
       return;
     }
 
     const payload = {
-      ...this.buildPayload(),
+
+      ...this.flattenForm(),
+
       event: 'AMD',
-      tnxId: this.tnxId
+      tnxId: this.tnxId,
+
     };
 
-    this.api.approveAmendment(eventRefNo, payload).subscribe({
+    this.api.approveUtgAmendment(
+      eventRefNo,
+      payload
+    ).subscribe({
+
       next: () => {
-        this.snackBar.open('Amendment approved. Live undertaking updated.', 'Close', { duration: 3000 });
-        setTimeout(() => this.router.navigate(['/undertaking-issuance/inquiries-records']), 50);
-      },
-      error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
-    });
-  }
 
-  openReject(): void {
-    const eventRefNo = this.currentTx?.eventRefNo;
-    if (!eventRefNo) {
-      this.snackBar.open('Amendment reference not found.', 'Close', { duration: 3000 });
-      return;
-    }
-
-    const dialogRef = this.dialog.open(RejectDialogComponent, { width: '400px' });
-    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
-      if (!reason) return;
-      this.api.rejectAmendment(eventRefNo, reason).subscribe({
-        next: () => {
-          this.snackBar.open('Amendment rejected. Live undertaking unchanged.', 'Close', { duration: 3000 });
-          this.navigateBack('rejected');
-        },
-        error: () => this.snackBar.open('Failed to reject amendment', 'Close', { duration: 3000 })
-      });
-    });
-  }
-
-  private navigateBack(tab: string) {
-    this.router.navigate(['/undertaking-issuance/inquiries-records'], { queryParams: { tab } });
-  }
-
-  updateRejected(): void {
-    if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
-      return;
-    }
-
-    const payload = this.buildPayload();
-    payload.tnxId = this.currentTx.tnxId;
-
-    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
-      next: (res) => {
         this.snackBar.open(
-          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+          'Amendment approved. Live LC updated.',
           'Close',
           { duration: 3000 }
         );
-        this.router.navigate(['/undertaking-issuance/inquiries-records'], { queryParams: { tab: 'pending' } });
+
+        setTimeout(() => {
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+          ]);
+
+        }, 50);
+
       },
+
       error: () => {
-        this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
-      }
+
+        this.snackBar.open(
+          'Approval failed',
+          'Close',
+          { duration: 3000 }
+        );
+
+      },
+
     });
+
   }
 
-  updateAttachments(files: File[]) {
-    const arr = this.undertakingForm.get('attachments') as FormArray;
-    arr.clear();
-    files.forEach(file => arr.push(this.fb.group({
-      title: file.name?.replace(/\.[^/.]+$/, ''),
-      fileName: file.name,
-      size: file.size,
-      type: file.type,
-      file: file
-    })));
+  // =========================================================
+  // REJECT
+  // UTG_APPROVE REQUIRED
+  // =========================================================
+
+  openReject(): void {
+
+    if (!this.hasPermission('UTG_Approve')) {
+
+      this.snackBar.open(
+        'You do not have permission to reject Undertaking amendments.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    const eventRefNo = this.currentTx?.eventRefNo;
+
+    if (!eventRefNo) {
+
+      this.snackBar.open(
+        'Amendment reference not found.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    const dialogRef = this.dialog.open(
+      RejectDialogComponent,
+      {
+        width: '400px',
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(
+      (reason: string | undefined) => {
+
+        if (!reason) return;
+
+        this.api
+          .rejectUtgAmendment(eventRefNo, reason)
+          .subscribe({
+
+            next: () => {
+
+              this.snackBar.open(
+                'Amendment rejected. Live LC unchanged.',
+                'Close',
+                { duration: 3000 }
+              );
+
+              this.navigateBack('rejected');
+
+            },
+
+            error: () => {
+
+              this.snackBar.open(
+                'Failed to reject amendment',
+                'Close',
+                { duration: 3000 }
+              );
+
+            },
+
+          });
+
+      }
+    );
+
   }
 
-  back() {
-    this.router.navigate(['/dashboard']);
+  private navigateBack(tab: string) {
+
+    this.router.navigate(
+      [
+        '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records',
+      ],
+      {
+        queryParams: { tab },
+      },
+    );
+
   }
+
+  // =========================================================
+  // UPDATE REJECTED
+  // UTG_AMEND REQUIRED
+  // =========================================================
+
+  updateRejected(): void {
+
+    if (!this.hasPermission('UTG_Amend')) {
+
+      this.snackBar.open(
+        'You do not have permission to update rejected Undertaking.',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    if (
+      this.undertakingForm.invalid ||
+      !this.currentTx?.tnxId
+    ) {
+
+      this.snackBar.open(
+        'Invalid form or missing transaction ID',
+        'Close',
+        { duration: 3000 }
+      );
+
+      return;
+    }
+
+    const payload = this.flattenForm();
+
+    payload.tnxId = this.currentTx.tnxId;
+
+    this.api
+      .updateRejectedUndertaking(
+        payload.tnxId,
+        payload
+      )
+      .subscribe({
+
+        next: (res) => {
+
+          this.snackBar.open(
+            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+            'Close',
+            { duration: 3000 }
+          );
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries',
+          ]);
+
+        },
+
+        error: () => {
+
+          this.snackBar.open(
+            'Failed to update rejected transaction',
+            'Close',
+            { duration: 3000 }
+          );
+
+        },
+
+      });
+
+  }
+
 }

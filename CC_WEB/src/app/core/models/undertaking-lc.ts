@@ -1,16 +1,17 @@
-// Matches Java com.crud.example.demo.dto.RecordListDTO
-export interface RecordListDTO {
-  id: number;
-  tnxId: string;
-  status: string;
-  applicantName: string;
-  beneficiaryName: string;
-  currency: string;
-  undertakingAmount: number;
-  productType: string;
-  updatedAt: string;        // ISO datetime
-  issuerReference: string;
-  expiryDate: string;       // ISO date (yyyy-MM-dd)
+export interface UndertakingGuarantee {
+  status?: string; // "I", "S", "A"
+  tnxId?: string;
+  companyId?: string;
+  createdOn?: Date;
+  updatedOn?: Date;
+  eventType?: string;
+  eventRefNo?: string;
+  eventSequence?: number;
+  
+  // ================================
+  // SYSTEM FIELDS
+  // ================================
+  id?: number;
   rejectionReason?: string;
 }
 // Matches Java com.crud.example.demo.dto.UndertakingRequestDTO

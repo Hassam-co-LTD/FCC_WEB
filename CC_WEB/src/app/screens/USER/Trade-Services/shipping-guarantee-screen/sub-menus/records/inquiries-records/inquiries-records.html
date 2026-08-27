@@ -1,107 +1,401 @@
 <div class="page-header">
     <div class="title">
         <h2>{{ activeTab | titlecase }} Shipping Records</h2>
-        <p>Manage and track all Shipping {{ activeTab }} transactions</p>
+        <p>
+            Manage and track all Shipping
+            {{ activeTab }} transactions
+        </p>
     </div>
 </div>
+
 
 <!-- ================= SEARCH ================= -->
-<div class="search-system">
-    <div class="search-input-group">
-        <input type="text" placeholder="Search by TNX ID, Beneficiary, Bank, Currency" [(ngModel)]="searchQuery"
-            (input)="applyFilters()" />
 
-        <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
-            <mat-icon>clear</mat-icon>
+<div class="search-system">
+
+    <div class="search-input-group">
+
+        <input
+            type="text"
+            placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+        />
+
+        <button
+            *ngIf="searchQuery"
+            class="clear-btn"
+            (click)="clearSearch()">
+
+            <mat-icon>
+                clear
+            </mat-icon>
+
         </button>
+
     </div>
 
-    <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
-        <mat-icon>tune</mat-icon> Advanced
+
+    <button
+        class="advanced-toggle"
+        (click)="showAdvanced = !showAdvanced">
+
+        <mat-icon>
+            tune
+        </mat-icon>
+
+        Advanced
+
     </button>
+
 </div>
 
+
 <!-- ================= ADVANCED SEARCH ================= -->
-<div class="advanced-search" *ngIf="showAdvanced">
+
+<div
+    class="advanced-search"
+    *ngIf="showAdvanced">
+
     <div class="field">
-        <label>Currency</label>
-        <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+
+        <label>
+            Currency
+        </label>
+
+        <input
+            type="text"
+            [(ngModel)]="currencyFilter"
+            (input)="applyFilters()"
+        />
+
     </div>
+
 </div>
 
 
 <!-- ================= TABS ================= -->
+
 <div class="ui-tabs">
-    <div class="tab" *ngFor="let tab of tabs" [class.active]="activeTab === tab.key" (click)="setActiveTab(tab.key)">
-        {{ tab.label }}
-    </div>
+
+    <ng-container
+        *ngFor="let tab of tabs">
+
+        <div
+            class="tab"
+            *ngIf="hasPermission(tab.permission)"
+            [class.active]="activeTab === tab.key"
+            (click)="setActiveTab(tab.key)">
+
+            {{ tab.label }}
+
+        </div>
+
+    </ng-container>
+
 </div>
 
+
+<!-- ================= RESULTS ================= -->
 
 <div class="filter-row">
+
     <div class="results-summary">
-        Showing <strong>{{ pagedTransactions.length }}</strong> 
-        of <strong>{{ filteredTransactions.length }}</strong> 
+
+        Showing
+        <strong>
+            {{ pagedTransactions.length }}
+        </strong>
+
+        of
+
+        <strong>
+            {{ filteredTransactions.length }}
+        </strong>
+
         {{ activeTab }} records
+
     </div>
+
 </div>
 
+
+<!-- ================= TABLE ================= -->
+
 <div class="table-wrapper">
+
     <table>
+
         <thead>
+
             <tr>
-                <th *ngIf="activeTab == 'live'">Event Ref No</th>
-                <th (click)="sortBy('tnxId')">TNX ID</th>
-                <th *ngIf="activeTab == 'live'">Event Sequence</th>
-                <th *ngIf="activeTab == 'live'">Event</th>
-                <th (click)="sortBy('createdOn')">Created</th>
-                <th>Issuer Reference</th>
-                <th>Expiry Date</th>
-                <th>Customer Reference</th>
-                <th>Bill Of Lading</th>
-                <th class="sticky-action">Action</th>
+
+                <th
+                    *ngIf="activeTab == 'live'">
+
+                    Event Ref No
+
+                </th>
+
+
+                <th
+                    (click)="sortBy('tnxId')">
+
+                    TNX ID
+
+                </th>
+
+
+                <th
+                    *ngIf="activeTab == 'live'">
+
+                    Event Sequence
+
+                </th>
+
+
+                <th
+                    *ngIf="activeTab == 'live'">
+
+                    Event
+
+                </th>
+
+
+                <th
+                    (click)="sortBy('createdOn')">
+
+                    Created
+
+                </th>
+
+
+                <th>
+                    Issuer Reference
+                </th>
+
+
+                <th>
+                    Amount
+                </th>
+
+
+                <th>
+                    Expiry Date
+                </th>
+
+
+                <th>
+                    Customer Reference
+                </th>
+
+
+                <th>
+                    Bill Of Lading
+                </th>
+
+
+                <th class="sticky-action">
+                    Action
+                </th>
+
             </tr>
+
         </thead>
 
+
         <tbody>
-            <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-                <td *ngIf="activeTab == 'live'">
-                    <a class="tnx-link" (click)="openShippingGuarantee(tx)">{{ tx.eventRefNo }}</a>
-                </td>
-                <td>
-                    <a class="tnx-link" *ngIf="activeTab !== 'live'" (click)="openShippingGuarantee(tx)">
-                        {{ tx.tnxId }}
+
+            <tr
+                *ngFor="
+                    let tx of pagedTransactions;
+                    trackBy: trackByTnxId
+                ">
+
+
+                <!-- EVENT REF -->
+
+                <td
+                    *ngIf="activeTab == 'live'">
+
+                    <a
+                        class="tnx-link"
+                        (click)="openShippingGuarantee(tx)">
+
+                        {{ tx.eventRefNo }}
+
                     </a>
-                    <span *ngIf="activeTab === 'live'">{{ tx.tnxId }}</span>
+
                 </td>
-                <td *ngIf="activeTab == 'live'">
+
+
+                <!-- TNX ID -->
+
+                <td>
+
+                    <a
+                        class="tnx-link"
+                        *ngIf="activeTab !== 'live'"
+                        (click)="openShippingGuarantee(tx)">
+
+                        {{ tx.tnxId }}
+
+                    </a>
+
+
+                    <span
+                        *ngIf="activeTab === 'live'">
+
+                        {{ tx.tnxId }}
+
+                    </span>
+
+                </td>
+
+
+                <!-- EVENT SEQUENCE -->
+
+                <td
+                    *ngIf="activeTab == 'live'">
+
                     {{ tx.eventSequence }}
+
                 </td>
-                <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
-                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
-                <td>{{tx.issuerReference}}</td>
-                <td>{{ tx.expiryDate }}</td>
-                <td>{{ tx.customerReference }}</td>
-                <td>{{ tx.billoflading }}</td>
+
+
+                <!-- EVENT -->
+
+                <td
+                    *ngIf="activeTab == 'live'">
+
+                    {{ tx.eventType }}
+
+                </td>
+
+
+                <!-- CREATED -->
+
+                <td>
+
+                    {{ tx.createdOn | date:'yyyy-MM-dd' }}
+
+                </td>
+
+
+                <!-- ISSUER REFERENCE -->
+
+                <td>
+                    {{ tx.issuerReference }}
+                </td>
+
+
+                <!-- AMOUNT -->
+
+                <td>
+                    {{ tx.amount }}
+                </td>
+
+
+                <!-- EXPIRY -->
+
+                <td>
+                    {{ tx.expiryDate }}
+                </td>
+
+
+                <!-- CUSTOMER REFERENCE -->
+
+                <td>
+                    {{ tx.customerReference }}
+                </td>
+
+
+                <!-- BILL OF LADING -->
+
+                <td>
+                    {{ tx.billoflading }}
+                </td>
+
+
+                <!-- ACTION -->
+
                 <td class="sticky-action">
-                    <button class="btn-action" (click)="viewTransaction(tx)">
-                        <mat-icon>visibility</mat-icon> View
+
+                    <button
+                        *ngIf="hasPermission('SG_InquiryPreview')"
+                        class="btn-action"
+                        (click)="viewTransaction(tx)">
+
+                        <mat-icon>
+                            visibility
+                        </mat-icon>
+
+                        View
+
                     </button>
+
                 </td>
+
             </tr>
 
-            <tr *ngIf="pagedTransactions.length === 0">
-                <td colspan="20" class="no-records">
-                    No {{ activeTab }} Shipping Records found
+
+            <!-- NO RECORDS -->
+
+            <tr
+                *ngIf="
+                    pagedTransactions.length === 0
+                ">
+
+                <td
+                    colspan="20"
+                    class="no-records">
+
+                    No
+                    {{ activeTab }}
+                    Shipping Records found
+
                 </td>
+
             </tr>
 
         </tbody>
+
     </table>
 
+
+    <!-- ================= PAGINATION ================= -->
+
     <div class="pagination">
-        <button class="btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">‹</button>
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-        <button class="btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+
+        <button
+            class="btn-pagination"
+            (click)="previousPage()"
+            [disabled]="currentPage === 1">
+
+            ‹
+
+        </button>
+
+
+        <span>
+
+            Page
+            {{ currentPage }}
+            of
+            {{ totalPages }}
+
+        </span>
+
+
+        <button
+            class="btn-pagination"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages">
+
+            ›
+
+        </button>
+
     </div>
+
 </div>
