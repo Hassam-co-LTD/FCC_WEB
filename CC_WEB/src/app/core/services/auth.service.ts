@@ -1,131 +1,94 @@
-import { Injectable, PLATFORM_ID, inject,NgZone } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
- import Swal from 'sweetalert2';
+import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private platformId = inject(PLATFORM_ID);
-  private router = inject(Router)
-  private ngZone = inject(NgZone)
+  private router = inject(Router);
+  private ngZone = inject(NgZone);
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
   /** Dummy login for testing */
- login(userId: string, companyId: string, password: string): boolean {
+  login(userId: string, companyId: string, password: string): boolean {
+    if (
+      (userId === 'admin' && companyId === 'admin' && password === 'admin') ||
+      (userId === 'user' && companyId === 'ABC' && password === 'user') ||
+      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')
+    ) {
+      if (this.isBrowser()) {
+        const role = userId === 'admin' ? 'A' : 'U';
 
-  if ((userId === 'admin' && companyId === 'admin' && password === 'admin') ||
-      (userId === 'user' && companyId === 'ABC' && password === 'user') || 
-      (userId === 'NBP-01' && companyId === 'NBP' && password === 'NBP')) {
+        const userData = {
+          userId: userId,
+          companyId: companyId,
+          userCategory: role,
+          companyType: companyId === 'NBP' ? 'B' : 'U',
+        };
 
-    if (this.isBrowser()) {
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        sessionStorage.setItem('token', 'dummy-token');
+      }
 
-      const role = userId === 'admin' ? 'A' : 'U';
-
-      const userData = {
-        userId: userId,
-        companyId: companyId,
-        userCategory: role,
-        companyType: companyId === 'NBP' ? 'B' : 'U'
-      };
-
-      sessionStorage.setItem('userData', JSON.stringify(userData));
-      sessionStorage.setItem('token', 'dummy-token');
-
+      return true;
     }
 
-    return true;
+    return false;
   }
-
-  return false;
-}
 
   /** Logout */
- 
-logout(): void {
 
-  if (this.isBrowser()) {
+  logout(): void {
+    if (this.isBrowser()) {
+      console.log('========== LOGOUT START ==========');
 
+      // Clear authentication data
+      sessionStorage.removeItem('token');
 
-    console.log("========== LOGOUT START ==========");
+      sessionStorage.removeItem('refreshToken');
 
+      sessionStorage.removeItem('userData');
 
-    // Clear authentication data
-    sessionStorage.removeItem('token');
+      // Clear all stored session data
+      sessionStorage.clear();
 
-    sessionStorage.removeItem('refreshToken');
+      localStorage.clear();
 
-    sessionStorage.removeItem('userData');
+      console.log('Session storage cleared');
 
+      this.ngZone.run(() => {
+        Swal.fire({
+          icon: 'warning',
 
-    // Clear all stored session data
-    sessionStorage.clear();
+          title: 'Session Expired',
 
-    localStorage.clear();
+          text: 'Your session has expired due to inactivity. Please login again.',
 
+          confirmButtonText: 'Login Again',
 
+          allowOutsideClick: false,
 
-    console.log("Session storage cleared");
+          allowEscapeKey: false,
+        }).then(() => {
+          console.log('Redirecting to login...');
 
-
-
-    this.ngZone.run(() => {
-
-
-      Swal.fire({
-
-        icon: 'warning',
-
-        title: 'Session Expired',
-
-        text: 'Your session has expired due to inactivity. Please login again.',
-
-        confirmButtonText: 'Login Again',
-
-        allowOutsideClick: false,
-
-        allowEscapeKey: false
-
-
-      }).then(() => {
-
-
-        console.log(
-          "Redirecting to login..."
-        );
-
-
-        this.router.navigate([
-          '/login'
-        ]);
-
-
+          this.router.navigate(['/login']);
+        });
       });
-
-
-    });
-
-
-
-  } else {
-
-
-    console.log(
-      "You are on the server"
-    );
-
-
+    } else {
+      console.log('You are on the server');
+    }
   }
-
-}
   /** Check if user is logged in (sessionStorage contains backend userData) */
   checkAuth(): boolean {
     return !!sessionStorage.getItem('userData');
   }
- /** Get normalized user category (ADMIN / USER) */
+  /** Get normalized user category (ADMIN / USER) */
   // getUserCategory(): 'A' | 'U' | null {
   //   const data = sessionStorage.getItem('userData');
   //   if (!data) return null;
@@ -155,19 +118,18 @@ logout(): void {
   }
 
   /** Get userId from sessionStorage */
- getUserId(): number | null {
+  getUserId(): number | null {
+    const data = sessionStorage.getItem('userData');
 
-  const data = sessionStorage.getItem('userData');
+    if (!data) return null;
 
-  if (!data) return null;
+    const parsed = JSON.parse(data);
 
-  const parsed = JSON.parse(data);
-
-  return parsed.userId ?? null;
-}
- getToken(): string | null {
-  return sessionStorage.getItem('token');
-}
+    return parsed.userId ?? null;
+  }
+  getToken(): string | null {
+    return sessionStorage.getItem('token');
+  }
   /** Get role (ADMIN / USER) */
   getUserRole(): 'A' | 'U' | null {
     return this.getUserCategory();
@@ -191,7 +153,7 @@ logout(): void {
   //   console.log("getCompanyType - raw session data:", data);
   //   if (!data) return null;
   //   const parsed = JSON.parse(data);
-    
+
   //   return parsed.body.companyType?.toUpperCase() || null;
   // }
 
@@ -201,23 +163,25 @@ logout(): void {
 
     const parsed = JSON.parse(data);
 
-    return (parsed.body?.companyType ?? parsed.companyType)?.toUpperCase() || null;
+    return (
+      (parsed.body?.companyType ?? parsed.companyType)?.toUpperCase() || null
+    );
   }
 
   getRedirectUrl(): string {
-  const companyType = this.getCompanyType();
-  const userCategory = this.getUserCategory();
+    const companyType = this.getCompanyType();
+    const userCategory = this.getUserCategory();
 
-  if (companyType === 'B') {
-    return '/customer-user';
-  } else if (companyType === 'C' && userCategory === 'A') {
-    return '/admin';
-  } else if (companyType === 'C' && userCategory === 'U') {
-    return '/dashboard';
+    if (companyType === 'B') {
+      return '/customer-user';
+    } else if (companyType === 'C' && userCategory === 'A') {
+      return '/admin';
+    } else if (companyType === 'C' && userCategory === 'U') {
+      return '/dashboard';
+    }
+
+    return '/login';
   }
-
-  return '/login';
-}
   setUserCategory(value: 'A' | 'U') {
     if (!this.isBrowser()) return;
     const data = sessionStorage.getItem('userData');
@@ -250,31 +214,31 @@ logout(): void {
   }
 
   getSubmitPayload() {
-  return {
-    recordStatus: 'S',
-    inputterId: this.getUserId()!
-  };
-}
+    return {
+      recordStatus: 'S',
+      inputterId: this.getLoginId()!,
+    };
+  }
 
-getApprovePayload() {
-  return {
-    recordStatus: 'A',
-    authorizerId: this.getUserId()!
-  };
-}
+  getApprovePayload() {
+    return {
+      recordStatus: 'A',
+      authorizerId: this.getLoginId()!,
+    };
+  }
 
-getRejectPayload(rejectReason: string) {
-  return {
-    recordStatus: 'R',
-    rejectReason: rejectReason,
-    rejectedBy: this.getUserId()!
-  };
-}
+  getRejectPayload(rejectReason: string) {
+    return {
+      recordStatus: 'R',
+      rejectReason: rejectReason,
+      rejectedBy: this.getLoginId()!,
+    };
+  }
 
-getAmendPayload() {
-  return {
-    recordStatus: 'I',
-    updatedBy: this.getUserName()!
-  };
-}
+  getAmendPayload() {
+    return {
+      recordStatus: 'I',
+      updatedBy: this.getUserId()!,
+    };
+  }
 }

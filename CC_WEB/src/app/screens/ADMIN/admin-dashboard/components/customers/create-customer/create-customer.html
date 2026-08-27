@@ -2,228 +2,358 @@
      CREATE CUSTOMER PAGE
 ========================= -->
 <div class="create-customer-page">
-
   <!-- ================= PAGE HEADER ================= -->
   <div class="badge-group">
-
     <!-- RECORD STATUS -->
-    <span class="status-badge"
+    <span
+      class="status-badge"
       [ngClass]="{
         'create': !storeCustomer?.recordStatus,
         'draft': storeCustomer?.recordStatus === 'I',
         'submitted': storeCustomer?.recordStatus === 'S',
         'approved': storeCustomer?.recordStatus === 'A'
-      }">
-
+      }"
+    >
       <mat-icon>
-        {{
-          !storeCustomer?.recordStatus ? 'add_circle' :
-          storeCustomer?.recordStatus === 'I' ? 'edit_note' :
-          storeCustomer?.recordStatus === 'S' ? 'hourglass_top' :
-          'verified'
-        }}
+        {{ !storeCustomer?.recordStatus ? 'add_circle' :
+        storeCustomer?.recordStatus === 'I' ? 'edit_note' :
+        storeCustomer?.recordStatus === 'S' ? 'hourglass_top' : 'verified' }}
       </mat-icon>
 
-      {{
-        !storeCustomer?.recordStatus ? 'CREATE' :
-        storeCustomer?.recordStatus === 'I' ? 'DRAFT' :
-        storeCustomer?.recordStatus === 'S' ? 'SUBMITTED' :
-        'APPROVED'
-      }}
-
+      {{ !storeCustomer?.recordStatus ? 'CREATE' : storeCustomer?.recordStatus
+      === 'I' ? 'DRAFT' : storeCustomer?.recordStatus === 'S' ? 'SUBMITTED' :
+      'APPROVED' }}
     </span>
-
   </div>
 
   <!-- =========================
        CUSTOMER GENERAL DETAILS FORM
   ========================== -->
-  <div class="customer-form-wrapper"
-       [ngClass]="{ 'hide-when-approved': storeCustomer?.recordStatus === 'A' }">
-
+  <div
+    class="customer-form-wrapper"
+    [ngClass]="{
+    'hide-when-approved':
+      storeCustomer?.recordStatus === 'A'
+  }"
+  >
     <!-- ================= SECTION HEADER ================= -->
+
     <div class="section-header" (click)="toggle()">
       <h2>Customer General Details</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+      <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
     </div>
 
     <!-- ================= COLLAPSIBLE FORM ================= -->
-    <div class="collapsible"
-         [class.open]="isOpen"
-         [formGroup]="customerForm">
 
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="customerForm">
       <ng-container *ngIf="isOpen">
-
         <!-- ================= BASIC DETAILS ================= -->
-        <div class="form-grid">
 
-          <!-- Customer ID -->
+        <div class="form-grid">
+          <!-- ================================================= -->
+          <!-- CUSTOMER ID -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Customer ID</h4>
+
             <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
                 formControlName="custId"
                 placeholder="Customer ID"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('custId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('custId') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Name -->
+          <!-- ================================================= -->
+          <!-- NAME -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Name</h4>
+
             <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
                 formControlName="name"
                 placeholder="Full Name"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('name')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('name') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Email -->
+          <!-- ================================================= -->
+          <!-- EMAIL -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Email</h4>
+
             <mat-form-field appearance="outline">
               <input
                 matInput
                 type="email"
                 formControlName="email"
                 placeholder="example@email.com"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('email')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('email') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Contact -->
+          <!-- ================================================= -->
+          <!-- CONTACT -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Contact</h4>
+
             <mat-form-field appearance="outline">
               <input
                 matInput
                 type="tel"
                 formControlName="contact"
                 placeholder="+1 (555) 000-0000"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('contact')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('contact') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Legal ID -->
+          <!-- ================================================= -->
+          <!-- LEGAL ID -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Legal ID</h4>
+
             <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
                 formControlName="legalId"
                 placeholder="CNIC / NTN / ECIB"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('legalId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('legalId') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Customer Status -->
+          <!-- ================================================= -->
+          <!-- CUSTOMER STATUS -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Customer Status</h4>
+
             <mat-form-field appearance="outline">
               <mat-label>Status</mat-label>
 
-              <mat-select
-                formControlName="customerStatus"
-                [disabled]="isReadOnly()">
+              <mat-select formControlName="customerStatus">
+                <mat-option value="Active"> Active </mat-option>
 
-                <mat-option value="Active">Active</mat-option>
-                <mat-option value="Inactive">Inactive</mat-option>
-
+                <mat-option value="Inactive"> Inactive </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('customerStatus')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('customerStatus') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Branch Code -->
+          <!-- ================================================= -->
+          <!-- BRANCH CODE -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Branch Code</h4>
+
             <mat-form-field appearance="outline">
+              <mat-label> Branch Code </mat-label>
 
-              <mat-label>Branch Code</mat-label>
+              <mat-select formControlName="branchCode">
+                <mat-option value=""> Select Branch </mat-option>
 
-              <mat-select
-                formControlName="branchCode"
-                [disabled]="isReadOnly()">
+                <mat-option value="BR-001"> Branch 001 </mat-option>
 
-                <mat-option value="">Select Branch</mat-option>
-                <mat-option value="BR-001">Branch 001</mat-option>
-                <mat-option value="BR-002">Branch 002</mat-option>
-                <mat-option value="BR-003">Branch 003</mat-option>
+                <mat-option value="BR-002"> Branch 002 </mat-option>
 
+                <mat-option value="BR-003"> Branch 003 </mat-option>
               </mat-select>
-
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('branchCode')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchCode') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Country / City -->
+          <!-- ================================================= -->
+          <!-- COUNTRY / CITY -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Country / City</h4>
 
             <mat-form-field appearance="outline">
+              <mat-label> Country / City </mat-label>
 
-              <mat-label>Country / City</mat-label>
+              <mat-select formControlName="countryCity">
+                <mat-option value=""> Select City </mat-option>
 
-              <mat-select
-                formControlName="countryCity"
-                [disabled]="isReadOnly()">
+                <mat-option value="Karachi"> Karachi </mat-option>
 
-                <mat-option value="">Select City</mat-option>
-                <mat-option value="Karachi">Karachi</mat-option>
-                <mat-option value="Lahore">Lahore</mat-option>
-                <mat-option value="Islamabad">Islamabad</mat-option>
+                <mat-option value="Lahore"> Lahore </mat-option>
 
+                <mat-option value="Islamabad"> Islamabad </mat-option>
               </mat-select>
-
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('countryCity')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('countryCity') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Customer Type -->
+          <!-- ================================================= -->
+          <!-- CUSTOMER TYPE -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Customer Type</h4>
 
             <mat-form-field appearance="outline">
+              <mat-label> Customer Type </mat-label>
 
-              <mat-label>Customer Type</mat-label>
+              <mat-select formControlName="customerType">
+                <mat-option value="Regular"> Regular </mat-option>
 
-              <mat-select
-                formControlName="customerType"
-                [disabled]="isReadOnly()">
+                <mat-option value="Premium"> Premium </mat-option>
 
-                <mat-option value="Regular">Regular</mat-option>
-                <mat-option value="Premium">Premium</mat-option>
-                <mat-option value="VIP">VIP</mat-option>
-
+                <mat-option value="VIP"> VIP </mat-option>
               </mat-select>
-
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('customerType')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('customerType') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Customer Category -->
+          <!-- ================================================= -->
+          <!-- CUSTOMER CATEGORY -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Customer Category</h4>
 
             <mat-form-field appearance="outline">
+              <mat-label> Customer Category </mat-label>
 
-              <mat-label>Customer Category</mat-label>
+              <mat-select formControlName="customerCategory">
+                <mat-option value="Bank"> Bank </mat-option>
 
-              <mat-select
-                formControlName="customerCategory"
-                [disabled]="isReadOnly()">
-
-                <mat-option value="Bank">Bank</mat-option>
-                <mat-option value="Client">Client</mat-option>
-
+                <mat-option value="Client"> Client </mat-option>
               </mat-select>
-
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('customerCategory')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('customerCategory') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Address Line 1 -->
+          <!-- ================================================= -->
+          <!-- ADDRESS 1 -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Address Line 1</h4>
 
@@ -233,11 +363,25 @@
                 type="text"
                 formControlName="address1"
                 placeholder="Address Line 1"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('address1')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('address1') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Address Line 2 -->
+          <!-- ================================================= -->
+          <!-- ADDRESS 2 -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Address Line 2</h4>
 
@@ -247,11 +391,25 @@
                 type="text"
                 formControlName="address2"
                 placeholder="Address Line 2"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('address2')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('address2') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Address Line 3 -->
+          <!-- ================================================= -->
+          <!-- ADDRESS 3 -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Address Line 3</h4>
 
@@ -261,93 +419,165 @@
                 type="text"
                 formControlName="address3"
                 placeholder="Address Line 3"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('address3')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('address3') }}
+              </span>
+            </div>
           </div>
-
         </div>
-
       </ng-container>
-
     </div>
   </div>
 
   <!-- =========================
        DYNAMIC CUSTOMER FIELDS
   ========================== -->
-  <div class="customer-form-wrapper dynamic-fields-section"
-        [ngClass]="{ 'hide-when-approved': storeCustomer?.recordStatus === 'A' }">
+  ```html
+  <div
+    class="customer-form-wrapper dynamic-fields-section"
+    [ngClass]="{
+    'hide-when-approved': storeCustomer?.recordStatus === 'A'
+  }"
+  >
+    <!-- =====================================================
+       SECTION HEADER
+  ====================================================== -->
 
-    <!-- Section Header -->
     <div class="section-header" (click)="toggleDynamicFields()">
       <h2>Customer Additional Fields</h2>
+
       <mat-icon>
         {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
       </mat-icon>
     </div>
 
-    <!-- Dynamic Fields -->
-    <div class="collapsible"
-         [class.open]="isDynamicFieldsOpen"
-         [formGroup]="dynamicFieldsForm">
+    <!-- =====================================================
+       DYNAMIC FIELDS
+  ====================================================== -->
 
+    <div
+      class="collapsible"
+      [class.open]="isDynamicFieldsOpen"
+      [formGroup]="dynamicFieldsForm"
+    >
       <div class="form-grid">
-
         <ng-container *ngFor="let field of fields">
-
           <div class="field-group">
-
+            <!-- FIELD LABEL -->
             <h4>{{ field.label || field.fieldName }}</h4>
 
-            <!-- Text -->
+            <!-- =================================================
+               TEXT FIELD
+          ================================================== -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'text'"
-              appearance="outline">
-
+              appearance="outline"
+            >
               <input
                 matInput
                 [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
-
+                [readonly]="isReadOnly()"
+                placeholder="{{ field.label || field.fieldName }}"
+              />
             </mat-form-field>
 
-            <!-- Number -->
+            <!-- PREVIOUS VALUE -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousDynamicValue(field.fieldId)"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousDynamicValue(field.fieldId) }}
+              </span>
+            </div>
+
+            <!-- =================================================
+               NUMBER FIELD
+          ================================================== -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'number'"
-              appearance="outline">
-
+              appearance="outline"
+            >
               <input
                 matInput
                 type="number"
                 [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
-
+                [readonly]="isReadOnly()"
+                placeholder="{{ field.label || field.fieldName }}"
+              />
             </mat-form-field>
 
-            <!-- Date -->
+            <!-- PREVIOUS VALUE -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousDynamicValue(field.fieldId)"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousDynamicValue(field.fieldId) }}
+              </span>
+            </div>
+
+            <!-- =================================================
+               DATE FIELD
+          ================================================== -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'date'"
-              appearance="outline">
-
+              appearance="outline"
+            >
               <input
                 matInput
                 type="date"
                 [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
-
+                [readonly]="isReadOnly()"
+                placeholder="{{ field.label || field.fieldName }}"
+              />
             </mat-form-field>
 
-            <!-- Select -->
+            <!-- PREVIOUS VALUE -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousDynamicValue(field.fieldId)"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousDynamicValue(field.fieldId) }}
+              </span>
+            </div>
+
+            <!-- =================================================
+               SELECT FIELD
+          ================================================== -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'select'"
-              appearance="outline">
+              appearance="outline"
+            >
+              <mat-label> {{ field.label || field.fieldName }} </mat-label>
 
-              <mat-label>
-                {{ field.label || field.fieldName }}
-              </mat-label>
-
-              <mat-select [formControlName]="field.fieldName">
-
+              <mat-select
+                [formControlName]="field.fieldName"
+                [disabled]="isReadOnly()"
+              >
                 <mat-option value="">
                   Select {{ field.label || field.fieldName }}
                 </mat-option>
@@ -357,40 +587,44 @@
                     {{ option.text }}
                   </mat-option>
                 </ng-container>
-
               </mat-select>
-
             </mat-form-field>
 
+            <!-- PREVIOUS VALUE -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousDynamicValue(field.fieldId)"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousDynamicValue(field.fieldId) }}
+              </span>
+            </div>
           </div>
-
         </ng-container>
-
       </div>
-
     </div>
-
   </div>
 
   <!-- =========================
        CUSTOMER ACCOUNTS
   ========================== -->
-  <div class="customer-accounts"
-       *ngIf="storeCustomerAccounts?.length"
-       [ngClass]="{ 'hide-when-approved': storeCustomer?.recordStatus === 'A' }">
-
+  <div
+    class="customer-accounts"
+    *ngIf="storeCustomerAccounts?.length"
+    [ngClass]="{ 'hide-when-approved': storeCustomer?.recordStatus === 'A' }"
+  >
     <!-- Header -->
     <div class="section-header">
       <h2>Customer Accounts</h2>
 
-      <span class="account-count">
-        {{ storeCustomerAccounts?.length }}
-      </span>
+      <span class="account-count"> {{ storeCustomerAccounts?.length }} </span>
     </div>
 
     <!-- Accounts Table -->
     <div class="accounts-table">
-
       <!-- Table Header -->
       <div class="table-header">
         <span>#</span>
@@ -402,472 +636,361 @@
       </div>
 
       <!-- Table Rows -->
-      <div class="table-row"
-           *ngFor="let account of storeCustomerAccounts; let i = index">
-
+      <div
+        class="table-row"
+        *ngFor="let account of storeCustomerAccounts; let i = index"
+      >
         <span class="col-index">{{ i + 1 }}</span>
 
         <a href="/admin/edit-accounts/{{ account.id }}">
-          <span class="col-account">
-            {{ account.accountNo }}
-          </span>
+          <span class="col-account"> {{ account.accountNo }} </span>
         </a>
 
-        <span class="col-title">
-          {{ account.accountTitle }}
-        </span>
+        <span class="col-title"> {{ account.accountTitle }} </span>
 
-        <span class="col-type">
-          {{ account.accountType }}
-        </span>
+        <span class="col-type"> {{ account.accountType }} </span>
 
-        <span class="col-status"
-              [ngClass]="{
+        <span
+          class="col-status"
+          [ngClass]="{
                 'active': account.accountStatus === 'Active',
                 'inactive': account.accountStatus !== 'Active'
-              }">
-
+              }"
+        >
           {{ account.accountStatus }}
-
         </span>
 
-        <span class="col-iban">
-          {{ account.iban }}
-        </span>
-
+        <span class="col-iban"> {{ account.iban }} </span>
       </div>
 
       <!-- Actions -->
       <div class="card-actions">
-
-        <button class="btn-save"
-                (click)="openAddAccountDialog(
+        <button
+          class="btn-save"
+          (click)="openAddAccountDialog(
                   storeCustomer?.custId,
                   storeCustomer?.name
-                )">
-
+                )"
+        >
           Add Account
-
         </button>
-
       </div>
-
     </div>
-
   </div>
-<!-- =========================
+  <!-- =========================
      CUSTOMER ACTION BUTTONS
 ========================== -->
-<div class="customer-actions">
+  <div class="customer-actions">
+    <!-- Hidden File Input -->
+    <input
+      #customerFileInput
+      type="file"
+      accept=".xlsx,.xls,.csv,.pdf"
+      hidden
+      (change)="onCustomerFileSelected($event)"
+    />
 
-  <!-- Hidden File Input -->
-  <input
-    #customerFileInput
-    type="file"
-    accept=".xlsx,.xls,.csv,.pdf"
-    hidden
-    (change)="onCustomerFileSelected($event)"
-  />
+    <!-- Create -->
+    <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
 
-  <!-- Create -->
-  <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
+      <!-- Import Customers -->
+      <button
+        type="button"
+        class="btn-import"
+        (click)="customerFileInput.click()"
+      >
+        Import Customers
+      </button>
 
-    <button class="btn-cancel" (click)="onCancel()">
-      Cancel
-    </button>
-
-    <!-- Import Customers -->
-    <button
-      type="button"
-      class="btn-import"
-      (click)="customerFileInput.click()">
-
-      Import Customers
-
-    </button>
-
-    <button class="btn-save"
-            [disabled]="!storeCustomerResponseForAccounts?.id"
-            (click)="openAddAccountDialog(
+      <button
+        class="btn-save"
+        [disabled]="!storeCustomerResponseForAccounts?.id"
+        (click)="openAddAccountDialog(
               storeCustomerResponseForAccounts.id,
               storeCustomerResponseForAccounts.name
-            )">
+            )"
+      >
+        Add Account
+      </button>
 
-      Add Account
+      <button
+        class="btn-save"
+        [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
+        (click)="onSave()"
+      >
+        Save
+      </button>
+    </ng-container>
 
-    </button>
+    <!-- Draft -->
+    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
+      <button class="btn-back" (click)="onBack()">Back</button>
 
-    <button class="btn-save"
-            [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
-            (click)="onSave()">
+      <!-- Import Customers -->
+      <input
+        #customerFileInput
+        type="file"
+        accept=".txt"
+        hidden
+        (change)="onCustomerFileSelected($event)"
+      />
 
-      Save
-
-    </button>
-
-  </ng-container>
-
-  <!-- Draft -->
-  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
-
-    <button class="btn-back" (click)="onBack()">
-      Back
-    </button>
-
-    <!-- Import Customers -->
-   <input
-  #customerFileInput
-  type="file"
-  accept=".txt"
-  hidden
-  (change)="onCustomerFileSelected($event)"
->
-
-    <button class="btn-update"
-            [disabled]="
+      <button
+        class="btn-update"
+        [disabled]="
               !customerForm.dirty ||
               !dynamicFieldsForm.dirty ||
               !customerForm.valid ||
               !dynamicFieldsForm.valid
             "
-            (click)="updateCustomer()">
+        (click)="updateCustomer()"
+      >
+        Update
+      </button>
 
-      Update
+      <button
+        class="btn-submit"
+        [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
+        (click)="submit()"
+      >
+        Submit
+      </button>
 
-    </button>
-
-    <button class="btn-submit"
-            [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
-            (click)="submit()">
-
-      Submit
-
-    </button>
-
-    <button class="btn-save"
-            *ngIf="storeCustomerAccounts?.length === 0"
-            (click)="openAddAccountDialog(
+      <button
+        class="btn-save"
+        *ngIf="storeCustomerAccounts?.length === 0"
+        (click)="openAddAccountDialog(
               storeCustomer?.custId,
               storeCustomer?.name
-            )">
+            )"
+      >
+        Create Account
+      </button>
+    </ng-container>
 
-      Create Account
+    <!-- Submitted -->
+    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
+      <button class="btn-reject" (click)="reject(storeCustomer.id)">
+        Reject
+      </button>
 
-    </button>
-
-  </ng-container>
-
-  <!-- Submitted -->
-  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
-
-    <button class="btn-reject"
-            (click)="reject(storeCustomer.id)">
-
-      Reject
-
-    </button>
-
-    <button class="btn-approve"
-            (click)="approve(storeCustomer.id)">
-
-      Approve
-
-    </button>
-
-  </ng-container>
-
-</div>
-<!-- ======================================================
+      <button class="btn-approve" (click)="approve(storeCustomer.id)">
+        Approve
+      </button>
+    </ng-container>
+  </div>
+  <!-- ======================================================
      APPROVED DOSSIER SECTION
 ====================================================== -->
-<section class="dossier-container"
-         *ngIf="storeCustomer"
-         [ngClass]="{
+  <section
+    class="dossier-container"
+    *ngIf="storeCustomer"
+    [ngClass]="{
            'hide-when-approved': storeCustomer?.recordStatus !== 'A'
-         }">
+         }"
+  >
+    <!-- ================= HEADER ================= -->
+    <header class="dossier-header">
+      <div
+        class="status-strip"
+        [class.active]="storeCustomer.customerStatus === 'Active'"
+      ></div>
 
-  <!-- ================= HEADER ================= -->
-  <header class="dossier-header">
+      <div class="header-content">
+        <!-- Identity -->
+        <div class="identity-block">
+          <div class="avatar-circle">
+            {{ storeCustomer?.name?.trim()?.charAt(0)?.toUpperCase() || '?' }}
+          </div>
 
-    <div class="status-strip"
-         [class.active]="storeCustomer.customerStatus === 'Active'">
+          <div class="text-group">
+            <h1 class="customer-name">{{ storeCustomer.name | titlecase }}</h1>
+
+            <span class="customer-id">
+              System Ref:
+              <code>{{ storeCustomer.custId }}</code>
+            </span>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="badge-group">
+          <span
+            class="status-badge"
+            [attr.data-status]="storeCustomer.customerStatus"
+          >
+            {{ storeCustomer.customerStatus | uppercase }}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= CORE INFO ================= -->
+    <div class="dossier-grid">
+      <mat-card class="info-card">
+        <div class="card-title">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <span>General Information</span>
+        </div>
+
+        <div class="data-grid">
+          <div class="data-item">
+            <label>Legal ID</label>
+            <span class="value val-mono"> {{ storeCustomer.legalId }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Type / Category</label>
+
+            <span class="value">
+              {{ storeCustomer.customerType }}
+
+              <span class="divider">|</span>
+
+              {{ storeCustomer.customerCategory }}
+            </span>
+          </div>
+
+          <div class="data-item">
+            <label>Email Address</label>
+            <span class="value"> {{ storeCustomer.email }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Contact Number</label>
+            <span class="value"> {{ storeCustomer.contact }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Branch / City</label>
+
+            <span class="value">
+              {{ storeCustomer.branchCode }} — {{ storeCustomer.countryCity }}
+            </span>
+          </div>
+
+          <div class="data-item full-width" *ngIf="storeCustomer.address1">
+            <label>Registered Address</label>
+
+            <span class="value">
+              {{ storeCustomer.address1 }}, {{ storeCustomer.address2 }}
+            </span>
+          </div>
+        </div>
+      </mat-card>
     </div>
 
-    <div class="header-content">
+    <!-- ================= DYNAMIC FIELDS ================= -->
+    <!-- ================= DYNAMIC FIELDS (DOSSIER STYLE - SAME AS GENERAL INFO) ================= -->
+    <section
+      class="dynamic-fields-section"
+      *ngIf="storeCustomer.dynamicFields?.length"
+    >
+      <mat-card class="info-card">
+        <div class="card-title">
+          <mat-icon>analytics</mat-icon>
+          <span>Additional Customer Attributes</span>
 
-      <!-- Identity -->
-      <div class="identity-block">
-
-        <div class="avatar-circle">
-          {{ storeCustomer?.name?.trim()?.charAt(0)?.toUpperCase() || '?' }}
-        </div>
-
-        <div class="text-group">
-
-          <h1 class="customer-name">
-            {{ storeCustomer.name | titlecase }}
-          </h1>
-
-          <span class="customer-id">
-            System Ref:
-            <code>{{ storeCustomer.custId }}</code>
+          <span class="count-pill">
+            {{ storeCustomer.dynamicFields.length }} Fields
           </span>
-
         </div>
 
-      </div>
+        <div class="data-grid">
+          <div
+            class="data-item"
+            *ngFor="let field of storeCustomer.dynamicFields"
+          >
+            <!-- KEY -->
+            <label> {{ field.fieldId | titlecase }} </label>
 
-      <!-- Status -->
-      <div class="badge-group">
+            <!-- VALUE -->
+            <span class="value"> {{ field.value || '—' }} </span>
+          </div>
+        </div>
+      </mat-card>
+    </section>
+    <!-- ================= ACCOUNTS SECTION ================= -->
+    <section class="portfolio-section">
+      <!-- Header -->
+      <div class="section-header">
+        <div class="header-text">
+          <mat-icon>layers</mat-icon>
+          <h2>Linked Accounts Portfolio</h2>
+        </div>
 
-        <span class="status-badge"
-              [attr.data-status]="storeCustomer.customerStatus">
-
-          {{ storeCustomer.customerStatus | uppercase }}
-
+        <span class="count-pill">
+          {{ storeCustomerAccounts?.length }} Active Records
         </span>
-
       </div>
 
-    </div>
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="dossier-table">
+          <thead>
+            <tr>
+              <th>Account Title & No.</th>
+              <th>IBAN</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
 
-  </header>
+          <tbody>
+            <tr *ngFor="let acc of storeCustomerAccounts">
+              <td>
+                <div class="primary-text">{{ acc.accountTitle }}</div>
 
-  <!-- ================= CORE INFO ================= -->
-  <div class="dossier-grid">
+                <div class="secondary-text val-mono">{{ acc.accountNo }}</div>
+              </td>
 
-    <mat-card class="info-card">
+              <td>
+                <code class="iban-text"> {{ acc.iban }} </code>
+              </td>
 
-      <div class="card-title">
+              <td>
+                <span class="type-tag"> {{ acc.accountType }} </span>
+              </td>
 
-        <mat-icon>account_balance_wallet</mat-icon>
-        <span>General Information</span>
-
+              <td>
+                <span
+                  class="dot-status"
+                  [class.active]="acc.accountStatus === 'A'"
+                >
+                  {{ acc.accountStatus === 'A' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+    </section>
 
-      <div class="data-grid">
+    <!-- ================= FOOTER ================= -->
+    <footer class="dossier-footer">
+      <!-- Audit -->
+      <div class="audit-info">
+        <mat-icon>history</mat-icon>
 
-        <div class="data-item">
-          <label>Legal ID</label>
-          <span class="value val-mono">
-            {{ storeCustomer.legalId }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Type / Category</label>
-
-          <span class="value">
-            {{ storeCustomer.customerType }}
-
-            <span class="divider">|</span>
-
-            {{ storeCustomer.customerCategory }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Email Address</label>
-          <span class="value">
-            {{ storeCustomer.email }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Contact Number</label>
-          <span class="value">
-            {{ storeCustomer.contact }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Branch / City</label>
-
-          <span class="value">
-            {{ storeCustomer.branchCode }}
-            —
-            {{ storeCustomer.countryCity }}
-          </span>
-        </div>
-
-        <div class="data-item full-width"
-             *ngIf="storeCustomer.address1">
-
-          <label>Registered Address</label>
-
-          <span class="value">
-            {{ storeCustomer.address1 }},
-            {{ storeCustomer.address2 }}
-          </span>
-
-        </div>
-
-      </div>
-
-    </mat-card>
-
-  </div>
-
-  <!-- ================= DYNAMIC FIELDS ================= -->
-  <!-- ================= DYNAMIC FIELDS (DOSSIER STYLE - SAME AS GENERAL INFO) ================= -->
-<section class="dynamic-fields-section"
-         *ngIf="storeCustomer.dynamicFields?.length">
-
-  <mat-card class="info-card">
-
-    <div class="card-title">
-      <mat-icon>analytics</mat-icon>
-      <span>Additional Customer Attributes</span>
-
-      <span class="count-pill">
-        {{ storeCustomer.dynamicFields.length }} Fields
-      </span>
-    </div>
-
-    <div class="data-grid">
-
-      <div class="data-item"
-           *ngFor="let field of storeCustomer.dynamicFields">
-
-        <!-- KEY -->
-        <label>
-          {{ field.fieldId | titlecase }}
-        </label>
-
-        <!-- VALUE -->
-        <span class="value">
-          {{ field.value || '—' }}
+        <span>
+          Last Approved/Updated:
+          <strong> {{ storeCustomer.updatedOn | date:'medium' }} </strong>
         </span>
-
       </div>
 
-    </div>
+      <!-- Footer Actions -->
+      <div class="footer-actions">
+        <button mat-stroked-button color="primary" (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Return to Dashboard
+        </button>
 
-  </mat-card>
-
-</section>
-  <!-- ================= ACCOUNTS SECTION ================= -->
-  <section class="portfolio-section">
-
-    <!-- Header -->
-    <div class="section-header">
-
-      <div class="header-text">
-
-        <mat-icon>layers</mat-icon>
-        <h2>Linked Accounts Portfolio</h2>
-
+        <button mat-flat-button color="warn" (click)="amend(storeCustomer.id)">
+          <mat-icon>edit</mat-icon>
+          Amend Record
+        </button>
       </div>
-
-      <span class="count-pill">
-        {{ storeCustomerAccounts?.length }} Active Records
-      </span>
-
-    </div>
-
-    <!-- Table -->
-    <div class="table-responsive">
-
-      <table class="dossier-table">
-
-        <thead>
-          <tr>
-            <th>Account Title & No.</th>
-            <th>IBAN</th>
-            <th>Type</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <tr *ngFor="let acc of storeCustomerAccounts">
-
-            <td>
-
-              <div class="primary-text">
-                {{ acc.accountTitle }}
-              </div>
-
-              <div class="secondary-text val-mono">
-                {{ acc.accountNo }}
-              </div>
-
-            </td>
-
-            <td>
-              <code class="iban-text">
-                {{ acc.iban }}
-              </code>
-            </td>
-
-            <td>
-              <span class="type-tag">
-                {{ acc.accountType }}
-              </span>
-            </td>
-
-            <td>
-
-              <span class="dot-status"
-                    [class.active]="acc.accountStatus === 'A'">
-
-                {{ acc.accountStatus === 'A' ? 'Active' : 'Inactive' }}
-
-              </span>
-
-            </td>
-
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
+    </footer>
   </section>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="dossier-footer">
-
-    <!-- Audit -->
-    <div class="audit-info">
-
-      <mat-icon>history</mat-icon>
-
-      <span>
-        Last Approved/Updated:
-        <strong>
-          {{ storeCustomer.updatedOn | date:'medium' }}
-        </strong>
-      </span>
-
-    </div>
-
-    <!-- Footer Actions -->
-    <div class="footer-actions">
-
-      <button mat-stroked-button
-              color="primary"
-              (click)="onBack()">
-
-        <mat-icon>arrow_back</mat-icon>
-        Return to Dashboard
-
-      </button>
-
-      <button mat-flat-button
-              color="warn"
-              (click)="amend(storeCustomer.id)">
-
-        <mat-icon>edit</mat-icon>
-        Amend Record
-
-      </button>
-
-    </div>
-
-  </footer>
-
-</section>
+</div>

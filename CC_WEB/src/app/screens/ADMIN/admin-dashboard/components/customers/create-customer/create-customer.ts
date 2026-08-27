@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TransactionComparisonService } from '../../../../../../core/services/admin-service/transaction-comparison.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { AddAccountDialog } from './add-account-dialog/add-account-dialog';
@@ -49,6 +50,7 @@ export class CreateCustomer implements OnInit {
   storeCustomer: any = {};
   storeDynamicFieldsResponse: any[] = [];
   storeCustomerAccounts: any = {};
+  storeRejectedCustomer: any = {};
   fields: any[] = [];
   allCompanies: any[] = [];
   storeCustomerResponseForAccounts: any = {};
@@ -64,7 +66,8 @@ export class CreateCustomer implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private comparisonService: TransactionComparisonService,
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +76,7 @@ export class CreateCustomer implements OnInit {
     this.loadCompanies();
     this.loadDynamicFields();
     this.loadDropdownOptions();
-    console.log("customer loaded")
+    console.log('customer loaded');
   }
 
   // ---------------- FORM ----------------
@@ -93,36 +96,81 @@ export class CreateCustomer implements OnInit {
       address1: [''],
       address2: [''],
       address3: [''],
-      createdBy:[this.authService.getLoginId()],
-      
+      createdBy: [this.authService.getLoginId()],
     });
   }
 
   // ---------------- LOAD CUSTOMER ----------------
 
   private loadCustomer(): void {
-    const id = this.route.snapshot.paramMap.get('id');
+    const custId = this.route.snapshot.paramMap.get('id');
 
-    if (!id) return;
+    console.log('Route Customer ID:', custId);
+
+    if (!custId) {
+      console.error('No customer ID found in route');
+      return;
+    }
 
     this.isEditMode = true;
 
-    this.api.getTnxById(id, 'customer').subscribe({
+    // =========================================
+    // LOAD CUSTOMER BY custId
+    // Example: cust0011
+    // =========================================
+
+    this.api.getTnxById(custId, 'customer').subscribe({
       next: (res: any) => {
-        console.log('Loaded customer:', res);
+        console.log('Loaded customer by custId:', res);
+
+        // =========================================
+        // CURRENT CUSTOMER
+        // =========================================
 
         this.storeCustomer = res;
+
         this.storeDynamicFieldsResponse = res.dynamicFields || [];
 
+        // Patch normal fields
         this.customerForm.patchValue(res);
 
-        this.getAllCustomerAccounts(res?.custId);
+        // =========================================
+        // LOAD CUSTOMER ACCOUNTS
+        // =========================================
 
-        // if fields already loaded then patch
+        if (res.custId) {
+          this.getAllCustomerAccounts(res.custId);
+        }
+
+        // =========================================
+        // PATCH DYNAMIC FIELDS
+        // =========================================
+
         this.patchDynamicValues();
+
+        // =========================================
+        // LOAD REJECTED HISTORY
+        // =========================================
+
+        this.api.getRejectedTransaction(res.custId, 'customer').subscribe({
+          next: (res: any) => {
+            this.storeRejectedCustomer = res;
+            console.log(
+              'rejected customer appeared ',
+              this.storeRejectedCustomer,
+            );
+            this.compareCustomerData();
+            this.compareCustomerDynamicFields();
+          },
+          error: (errr: any) => {
+            console.error('rejected customer not found ', errr);
+          },
+        });
       },
 
-      error: (err: any) => console.error('Load failed', err),
+      error: (err: any) => {
+        console.error('Failed to load customer by custId:', err);
+      },
     });
   }
 
@@ -133,8 +181,7 @@ export class CreateCustomer implements OnInit {
       next: (res: any) => {
         console.log('Field definitions:', res);
 
-        this.fields = res;
-
+        this.fields = this.removeDuplicateFields(res);
         const group: any = {};
 
         this.fields.forEach((field: any) => {
@@ -392,252 +439,181 @@ export class CreateCustomer implements OnInit {
 
   // ---------------- WORKFLOW ----------------
 
- submit(): void {
-  if (!this.storeCustomer?.id) return;
+  submit(): void {
+    if (!this.storeCustomer?.id) return;
 
-   let payload = this.authService.getSubmitPayload()
-  
-   console.log("payload laoded from submmit method", payload)
+    let payload = this.authService.getSubmitPayload();
 
-  // =========================
-  // SUBMIT API
-  // =========================
-  this.api.setTnxByStatus(
-    payload,
-    this.storeCustomer.id,
-    'customer'
-  ).subscribe({
-    next: (res: any) => {
+    console.log('payload laoded from submmit method', payload);
 
-      console.log('Customer submitted successfully:', res);
+    // =========================
+    // SUBMIT API
+    // =========================
+    this.api
+      .setTnxByStatus(payload, this.storeCustomer.id, 'customer')
+      .subscribe({
+        next: (res: any) => {
+          console.log('Customer submitted successfully:', res);
 
-      Swal.fire(
-        'Submitted!',
-        'Customer submitted successfully',
-        'success'
-      ).then(() =>
-        this.router.navigate(['/admin/customer-list'], {
-          queryParams: { tabName: 'submitted' }
-        })
-      );
-    },
+          Swal.fire(
+            'Submitted!',
+            'Customer submitted successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/customer-list'], {
+              queryParams: { tabName: 'submitted' },
+            }),
+          );
+        },
 
-    error: (err: any) => {
-      console.error('Submit failed:', err);
+        error: (err: any) => {
+          console.error('Submit failed:', err);
 
-      Swal.fire(
-        'Error',
-        err?.error?.message || 'Submit failed',
-        'error'
-      );
-    }
-  });
-}
+          Swal.fire('Error', err?.error?.message || 'Submit failed', 'error');
+        },
+      });
+  }
   reject(id: number): void {
+    if (!id) return;
 
-  if (!id) return;
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason',
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
 
-  Swal.fire({
-    title: 'Reject Transaction',
-    input: 'textarea',
-    inputLabel: 'Reject Reason',
-    inputPlaceholder: 'Please enter the reason for rejection...',
-    inputAttributes: {
-      'aria-label': 'Reject reason'
-    },
-    showCancelButton: true,
-    confirmButtonText: 'Reject',
-    cancelButtonText: 'Cancel',
+      preConfirm: (reason) => {
+        if (!reason || !reason.trim()) {
+          Swal.showValidationMessage('Reject reason is required');
 
-    preConfirm: (reason) => {
+          return false;
+        }
 
-      if (!reason || !reason.trim()) {
-
-        Swal.showValidationMessage(
-          'Reject reason is required'
-        );
-
-        return false;
+        return reason.trim();
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
       }
 
-      return reason.trim();
-    }
+      const rejectReason = result.value;
 
-  }).then((result) => {
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
 
-    if (!result.isConfirmed) {
-      return;
-    }
+      const payload = this.authService.getRejectPayload(rejectReason);
 
-    const rejectReason = result.value;
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
 
-    // =========================
-    // CREATE REJECT PAYLOAD
-    // =========================
+      // =========================
+      // CALL API
+      // =========================
 
-    const payload =
-      this.authService.getRejectPayload(rejectReason);
+      this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+        next: (res: any) => {
+          console.log('Reject successful:', res);
 
-    console.log('Reject ID:', id);
-    console.log('Reject Payload:', payload);
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Customer rejected successfully',
+            'success',
+          ).then(() => {
+            this.router.navigate(['/admin/customer-list'], {
+              queryParams: {
+                tabName: 'rejected',
+              },
+            });
+          });
+        },
 
-    // =========================
-    // CALL API
-    // =========================
+        error: (err: any) => {
+          console.error('Reject failed:', err);
 
-    this.api.setTnxByStatus(
-      payload,
-      id,
-      'customer'
-    ).subscribe({
+          Swal.fire('Error', err?.error?.message || 'Reject failed', 'error');
+        },
+      });
+    });
+  }
+  approve(id: number): void {
+    if (!id) return;
 
+    const payload = this.authService.getApprovePayload();
+
+    console.log('🚀 Approve clicked with ID:', id);
+    console.log('📦 Approve Payload:', payload);
+
+    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
       next: (res: any) => {
-
-        console.log('Reject successful:', res);
+        console.log('✅ Approve API Response:', res);
 
         Swal.fire(
-          'Rejected!',
-          res?.message || 'Customer rejected successfully',
-          'success'
+          'Approved!',
+          res?.message || 'Customer approved successfully',
+          'success',
         ).then(() => {
-
-          this.router.navigate(
-            ['/admin/customer-list'],
-            {
-              queryParams: {
-                tabName: 'rejected'
-              }
-            }
-          );
-
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: {
+              tabName: 'approved',
+            },
+          });
         });
-
       },
 
       error: (err: any) => {
+        console.log('❌ Approve API Error:', err);
+        console.log('❌ Error Body:', err?.error);
+        console.log('❌ Error Message:', err?.message);
 
-        console.error('Reject failed:', err);
+        Swal.fire('Error', err?.error?.message || 'Approve failed', 'error');
+      },
+    });
+  }
+
+  // ------------ Amend method ...................
+  amend(id: number): void {
+    if (!id) return;
+
+    const payload = this.authService.getAmendPayload();
+
+    console.log('🚀 Approve clicked with ID:', id);
+    console.log('📦 Approve Payload:', payload);
+
+    this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+      next: (res: any) => {
+        console.log('✅ Approve API Response:', res);
 
         Swal.fire(
-          'Error',
-          err?.error?.message || 'Reject failed',
-          'error'
-        );
+          'Approved!',
+          res?.message || 'Customer approved successfully',
+          'success',
+        ).then(() => {
+          this.router.navigate(['/admin/customer-list'], {
+            queryParams: {
+              tabName: 'approved',
+            },
+          });
+        });
+      },
 
-      }
+      error: (err: any) => {
+        console.log('❌ Approve API Error:', err);
+        console.log('❌ Error Body:', err?.error);
+        console.log('❌ Error Message:', err?.message);
 
+        Swal.fire('Error', err?.error?.message || 'Approve failed', 'error');
+      },
     });
+  }
 
-  });
-}
- approve(id: number): void {
-
-  if (!id) return;
-
-  const payload = this.authService.getApprovePayload();
-
-  console.log('🚀 Approve clicked with ID:', id);
-  console.log('📦 Approve Payload:', payload);
-
-  this.api.setTnxByStatus(
-    payload,
-    id,
-    'customer'
-  ).subscribe({
-
-    next: (res: any) => {
-
-      console.log('✅ Approve API Response:', res);
-
-      Swal.fire(
-        'Approved!',
-        res?.message || 'Customer approved successfully',
-        'success'
-      ).then(() => {
-
-        this.router.navigate(
-          ['/admin/customer-list'],
-          {
-            queryParams: {
-              tabName: 'approved'
-            }
-          }
-        );
-
-      });
-    },
-
-    error: (err: any) => {
-
-      console.log('❌ Approve API Error:', err);
-      console.log('❌ Error Body:', err?.error);
-      console.log('❌ Error Message:', err?.message);
-
-      Swal.fire(
-        'Error',
-        err?.error?.message || 'Approve failed',
-        'error'
-      );
-    }
-  });
-}
-
-
-// ------------ Amend method ...................
-amend(id: number): void {
-
-  if (!id) return;
-
-  const payload = this.authService.getAmendPayload();
-
-  console.log('🚀 Approve clicked with ID:', id);
-  console.log('📦 Approve Payload:', payload);
-
-  this.api.setTnxByStatus(
-    payload,
-    id,
-    'customer'
-  ).subscribe({
-
-    next: (res: any) => {
-
-      console.log('✅ Approve API Response:', res);
-
-      Swal.fire(
-        'Approved!',
-        res?.message || 'Customer approved successfully',
-        'success'
-      ).then(() => {
-
-        this.router.navigate(
-          ['/admin/customer-list'],
-          {
-            queryParams: {
-              tabName: 'approved'
-            }
-          }
-        );
-
-      });
-    },
-
-    error: (err: any) => {
-
-      console.log('❌ Approve API Error:', err);
-      console.log('❌ Error Body:', err?.error);
-      console.log('❌ Error Message:', err?.message);
-
-      Swal.fire(
-        'Error',
-        err?.error?.message || 'Approve failed',
-        'error'
-      );
-    }
-  });
-}
-
-// ....................... Amend .............
-
+  // ....................... Amend .............
 
   // ---------------- ACCOUNTS ----------------
 
@@ -753,5 +729,141 @@ amend(id: number): void {
     });
 
     event.target.value = '';
+  }
+
+  // =====================================================
+  // REJECTED CUSTOMER
+  // =====================================================
+
+  rejectedCustomer: any | null = null;
+
+  // =====================================================
+  // PREVIOUS NORMAL CUSTOMER VALUES
+  // =====================================================
+
+  previousValues: { [key: string]: any } = {};
+
+  // =====================================================
+  // PREVIOUS DYNAMIC FIELD VALUES
+  // =====================================================
+
+  previousDynamicValues: { [key: string]: any } = {};
+
+  // =====================================================
+  // CUSTOMER GENERAL DETAILS FIELDS
+  // =====================================================
+
+  private readonly customerFields = [
+    'custId',
+    'name',
+    'email',
+    'contact',
+    'legalId',
+    'customerStatus',
+    'branchCode',
+    'countryCity',
+    'customerType',
+    'customerCategory',
+    'address1',
+    'address2',
+    'address3',
+  ];
+
+  // =====================================================
+  // COMPARE CUSTOMER GENERAL DETAILS
+  // =====================================================
+
+  private compareCustomerData(): void {
+    this.previousValues = this.comparisonService.compare(
+      this.storeCustomer,
+      this.storeRejectedCustomer,
+      this.customerFields,
+    );
+
+    console.log('Previous customer values:', this.previousValues);
+  }
+
+  // =====================================================
+  // COMPARE DYNAMIC FIELDS
+  // =====================================================
+
+  private compareCustomerDynamicFields(): void {
+    // Clear old values first
+    this.previousDynamicValues = {};
+
+    if (
+      !this.storeCustomer?.dynamicFields ||
+      !this.storeRejectedCustomer?.dynamicFields
+    ) {
+      return;
+    }
+
+    this.previousDynamicValues = this.comparisonService.compareDynamicFields(
+      this.storeCustomer.dynamicFields,
+      this.storeRejectedCustomer.dynamicFields,
+    );
+
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  // =====================================================
+  // CHECK PREVIOUS CUSTOMER VALUE
+  // =====================================================
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS CUSTOMER VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+  // =====================================================
+  // CHECK PREVIOUS DYNAMIC FIELD VALUE
+  // =====================================================
+
+  hasPreviousDynamicValue(fieldId: string): boolean {
+    return (
+      this.previousDynamicValues &&
+      Object.prototype.hasOwnProperty.call(
+        this.previousDynamicValues,
+        fieldId,
+      ) &&
+      this.previousDynamicValues[fieldId] !== null &&
+      this.previousDynamicValues[fieldId] !== undefined &&
+      String(this.previousDynamicValues[fieldId]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS DYNAMIC FIELD VALUE
+  // =====================================================
+
+  getPreviousDynamicValue(fieldId: string): any {
+    return this.previousDynamicValues?.[fieldId] ?? '';
+  }
+
+  // remove the dupplicates
+
+  private removeDuplicateFields(fields: any[]): any[] {
+    const uniqueFields = new Map<string, any>();
+
+    fields.forEach((field) => {
+      if (field?.fieldId) {
+        uniqueFields.set(field.fieldId, field);
+      }
+    });
+
+    return Array.from(uniqueFields.values());
   }
 }

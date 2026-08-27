@@ -1,4 +1,4 @@
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
@@ -16,16 +16,13 @@ export class ImportlcFormTransactionService {
   private readOnly = true;
   private viewMode: 'submit' | 'readonly' = 'submit';
 
-  private isBrowser: boolean;
-
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
-    this.isBrowser = isPlatformBrowser(platformId);
-  }
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
 
   /* ================= addOrUpdateTransaction ================= */
   addOrUpdateTransaction(tx: ImportLcTransaction): void {
     const transactions = [...this.savetransactions$.value];
-    const index = transactions.findIndex(t => t.tnxId === tx.tnxId);
+    const index = transactions.findIndex((t) => t.tnxId === tx.tnxId);
 
     if (index > -1) {
       // Merge new data with existing transaction to avoid nulls
