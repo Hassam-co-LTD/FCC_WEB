@@ -441,17 +441,13 @@
   <!-- =========================
        DYNAMIC CUSTOMER FIELDS
   ========================== -->
-  ```html
+
   <div
     class="customer-form-wrapper dynamic-fields-section"
     [ngClass]="{
     'hide-when-approved': storeCustomer?.recordStatus === 'A'
   }"
   >
-    <!-- =====================================================
-       SECTION HEADER
-  ====================================================== -->
-
     <div class="section-header" (click)="toggleDynamicFields()">
       <h2>Customer Additional Fields</h2>
 
@@ -459,10 +455,6 @@
         {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
       </mat-icon>
     </div>
-
-    <!-- =====================================================
-       DYNAMIC FIELDS
-  ====================================================== -->
 
     <div
       class="collapsible"
@@ -475,10 +467,7 @@
             <!-- FIELD LABEL -->
             <h4>{{ field.label || field.fieldName }}</h4>
 
-            <!-- =================================================
-               TEXT FIELD
-          ================================================== -->
-
+            <!-- TEXT FIELD -->
             <mat-form-field
               *ngIf="field.fieldType === 'text'"
               appearance="outline"
@@ -491,23 +480,7 @@
               />
             </mat-form-field>
 
-            <!-- PREVIOUS VALUE -->
-
-            <div
-              class="previous-value"
-              *ngIf="hasPreviousDynamicValue(field.fieldId)"
-            >
-              <span class="previous-label"> Previous Value: </span>
-
-              <span class="previous-text">
-                {{ getPreviousDynamicValue(field.fieldId) }}
-              </span>
-            </div>
-
-            <!-- =================================================
-               NUMBER FIELD
-          ================================================== -->
-
+            <!-- NUMBER FIELD -->
             <mat-form-field
               *ngIf="field.fieldType === 'number'"
               appearance="outline"
@@ -521,23 +494,7 @@
               />
             </mat-form-field>
 
-            <!-- PREVIOUS VALUE -->
-
-            <div
-              class="previous-value"
-              *ngIf="hasPreviousDynamicValue(field.fieldId)"
-            >
-              <span class="previous-label"> Previous Value: </span>
-
-              <span class="previous-text">
-                {{ getPreviousDynamicValue(field.fieldId) }}
-              </span>
-            </div>
-
-            <!-- =================================================
-               DATE FIELD
-          ================================================== -->
-
+            <!-- DATE FIELD -->
             <mat-form-field
               *ngIf="field.fieldType === 'date'"
               appearance="outline"
@@ -551,23 +508,7 @@
               />
             </mat-form-field>
 
-            <!-- PREVIOUS VALUE -->
-
-            <div
-              class="previous-value"
-              *ngIf="hasPreviousDynamicValue(field.fieldId)"
-            >
-              <span class="previous-label"> Previous Value: </span>
-
-              <span class="previous-text">
-                {{ getPreviousDynamicValue(field.fieldId) }}
-              </span>
-            </div>
-
-            <!-- =================================================
-               SELECT FIELD
-          ================================================== -->
-
+            <!-- SELECT FIELD -->
             <mat-form-field
               *ngIf="field.fieldType === 'select'"
               appearance="outline"
@@ -590,7 +531,10 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- PREVIOUS VALUE -->
+            <!-- =================================================
+               PREVIOUS VALUE
+               ONE BLOCK FOR EACH DYNAMIC FIELD
+          ================================================== -->
 
             <div
               class="previous-value"
@@ -607,7 +551,6 @@
       </div>
     </div>
   </div>
-
   <!-- =========================
        CUSTOMER ACCOUNTS
   ========================== -->

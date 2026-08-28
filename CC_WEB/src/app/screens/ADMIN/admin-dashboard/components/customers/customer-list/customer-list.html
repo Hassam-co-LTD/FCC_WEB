@@ -1,11 +1,16 @@
 <div class="customer-status-container">
-  <h2 class="page-title">Customer Records</h2>
-
+  <div class="page-title-container">
+    <h1 class="page-title">Customer Records</h1>
+  </div>
   <mat-tab-group
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
-    <!-- ================= Draft Tab ================= -->
+    ```
+    <!-- =====================================================
+     DRAFT TAB
+====================================================== -->
+
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
         <input
@@ -14,7 +19,12 @@
           [(ngModel)]="searchText"
           (input)="filterDraftCustomers(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCustomers('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftCustomers('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -24,42 +34,108 @@
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftCustomers?.length; else noDrafts">
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredDraftCustomers?.length; else noDrafts"
+        >
           <table class="customer-table">
             <thead>
               <tr>
+                <!-- Customer Fields -->
+                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Status</th>
+                <th>Legal ID</th>
+                <th>Customer Status</th>
+                <th>Record Status</th>
+                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
-                <th>Legal ID</th>
-                <th>Branch Code</th>
+                <th>Customer Category</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
+
+                <!-- Audit Fields -->
+                <th>Created By</th>
                 <th>Created On</th>
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+
+                <!-- Rejection Fields -->
+                <th>Reject Reason</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredDraftCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
+              <tr
+                *ngFor="
+              let c of storeFilteredDraftCustomers;
+              trackBy: trackById
+            "
+              >
+                <td>{{ c.id }}</td>
+
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/create-customer',
+                  c.custId
+                ]"
+                  >
+                    {{ c.custId }}
+                  </a>
+                </td>
+
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
+                <td>{{ c.legalId }}</td>
+
+                <td>{{ c.customerStatus }}</td>
+
+                <td>
+                  <span class="status" [ngClass]="c.recordStatus">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
-                <td>{{ c.legalId }}</td>
-                <td>{{ c.branchCode }}</td>
+                <td>{{ c.customerCategory }}</td>
+
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
+
+                <!-- Audit -->
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+
+                <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <td>{{ c.inputterId }}</td>
+                <td>{{ c.inputterDttm | date:'short' }}</td>
+
+                <td>{{ c.authorizerId }}</td>
+                <td>{{ c.authorizerDttm | date:'short' }}</td>
+
+                <!-- Rejection -->
+                <td>{{ c.rejectReason }}</td>
+                <td>{{ c.rejectedBy }}</td>
+                <td>{{ c.rejectedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -71,7 +147,10 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Approved Tab ================= -->
+    <!-- =====================================================
+     APPROVED TAB
+====================================================== -->
+
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
       <div class="search-bar">
         <input
@@ -80,52 +159,124 @@
           [(ngModel)]="searchText"
           (input)="filterApprovedCustomers(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCustomers('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedCustomers('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedCustomers?.length; else noApproved">
+        <div
+          class="table-wrapper"
+          *ngIf="
+        storeFilteredApprovedCustomers?.length;
+        else noApproved
+      "
+        >
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Status</th>
+                <th>Legal ID</th>
+                <th>Customer Status</th>
+                <th>Record Status</th>
+                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
-                <th>Legal ID</th>
-                <th>Branch Code</th>
+                <th>Customer Category</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
+
+                <th>Created By</th>
                 <th>Created On</th>
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+
+                <th>Reject Reason</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
+              <tr
+                *ngFor="
+              let c of storeFilteredApprovedCustomers;
+              trackBy: trackById
+            "
+              >
+                <td>{{ c.id }}</td>
+
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/create-customer',
+                  c.custId
+                ]"
+                  >
+                    {{ c.custId }}
+                  </a>
+                </td>
+
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
+                <td>{{ c.legalId }}</td>
+
+                <td>{{ c.customerStatus }}</td>
+
+                <td>
+                  <span class="status" [ngClass]="c.recordStatus">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
-                <td>{{ c.legalId }}</td>
-                <td>{{ c.branchCode }}</td>
+                <td>{{ c.customerCategory }}</td>
+
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
+
+                <!-- Audit -->
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+
+                <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <td>{{ c.inputterId }}</td>
+                <td>{{ c.inputterDttm | date:'short' }}</td>
+
+                <td>{{ c.authorizerId }}</td>
+                <td>{{ c.authorizerDttm | date:'short' }}</td>
+
+                <!-- Rejection -->
+                <td>{{ c.rejectReason }}</td>
+                <td>{{ c.rejectedBy }}</td>
+                <td>{{ c.rejectedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -137,7 +288,10 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Submitted Tab ================= -->
+    <!-- =====================================================
+     SUBMITTED TAB
+====================================================== -->
+
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
       <div class="search-bar">
         <input
@@ -146,52 +300,124 @@
           [(ngModel)]="searchText"
           (input)="filterSubmittedCustomers(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCustomers('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedCustomers('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCustomers?.length; else noSubmitted">
+        <div
+          class="table-wrapper"
+          *ngIf="
+        storeFilteredSubmittedCustomers?.length;
+        else noSubmitted
+      "
+        >
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
-                <th>Status</th>
+                <th>Legal ID</th>
+                <th>Customer Status</th>
+                <th>Record Status</th>
+                <th>Branch Code</th>
                 <th>Country / City</th>
                 <th>Customer Type</th>
-                <th>Legal ID</th>
-                <th>Branch Code</th>
+                <th>Customer Category</th>
                 <th>Address 1</th>
                 <th>Address 2</th>
                 <th>Address 3</th>
+
+                <th>Created By</th>
                 <th>Created On</th>
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+
+                <th>Reject Reason</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedCustomers; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-customer', c.custId]">{{ c.custId }}</a></td>
+              <tr
+                *ngFor="
+              let c of storeFilteredSubmittedCustomers;
+              trackBy: trackById
+            "
+              >
+                <td>{{ c.id }}</td>
+
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/create-customer',
+                  c.custId
+                ]"
+                  >
+                    {{ c.custId }}
+                  </a>
+                </td>
+
                 <td>{{ c.name }}</td>
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
-                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
+                <td>{{ c.legalId }}</td>
+
+                <td>{{ c.customerStatus }}</td>
+
+                <td>
+                  <span class="status" [ngClass]="c.recordStatus">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <td>{{ c.branchCode }}</td>
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
-                <td>{{ c.legalId }}</td>
-                <td>{{ c.branchCode }}</td>
+                <td>{{ c.customerCategory }}</td>
+
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
+
+                <!-- Audit -->
+                <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
+
+                <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <td>{{ c.inputterId }}</td>
+                <td>{{ c.inputterDttm | date:'short' }}</td>
+
+                <td>{{ c.authorizerId }}</td>
+                <td>{{ c.authorizerDttm | date:'short' }}</td>
+
+                <!-- Rejection -->
+                <td>{{ c.rejectReason }}</td>
+                <td>{{ c.rejectedBy }}</td>
+                <td>{{ c.rejectedOn | date:'short' }}</td>
               </tr>
             </tbody>
           </table>
@@ -202,5 +428,6 @@
         </ng-template>
       </div>
     </mat-tab>
+    ```
   </mat-tab-group>
 </div>
