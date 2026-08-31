@@ -588,16 +588,16 @@ export class CreateCustomer implements OnInit {
 
     this.api.setTnxByStatus(payload, id, 'customer').subscribe({
       next: (res: any) => {
-        console.log('✅ Approve API Response:', res);
+        console.log('✅ transaction amended succssesfully', res);
 
         Swal.fire(
-          'Approved!',
-          res?.message || 'Customer approved successfully',
+          'AMEND!',
+          res?.message || 'Customer Amended successfully',
           'success',
         ).then(() => {
           this.router.navigate(['/admin/customer-list'], {
             queryParams: {
-              tabName: 'approved',
+              tabName: 'amend',
             },
           });
         });

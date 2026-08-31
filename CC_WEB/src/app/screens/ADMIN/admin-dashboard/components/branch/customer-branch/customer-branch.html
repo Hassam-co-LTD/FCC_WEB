@@ -1,498 +1,539 @@
-<!-- Branch Form (Draft / Edit) -->
- <div class="badge-group">
+<!-- =========================
+     BRANCH PAGE
+========================= -->
 
-  <span class="status-badge"
+<div class="create-customer-page">
+  <!-- ================= PAGE STATUS ================= -->
 
+  <div class="badge-group">
+    <span
+      class="status-badge"
+      [ngClass]="{
+        'create': !storeBranch?.recordStatus,
+        'draft': storeBranch?.recordStatus === 'I',
+        'submitted': storeBranch?.recordStatus === 'S',
+        'approved': storeBranch?.recordStatus === 'A'
+      }"
+    >
+      <mat-icon>
+        {{ !storeBranch?.recordStatus ? 'add_circle' : storeBranch?.recordStatus
+        === 'I' ? 'edit_note' : storeBranch?.recordStatus === 'S' ?
+        'hourglass_top' : 'verified' }}
+      </mat-icon>
+
+      {{ !storeBranch?.recordStatus ? 'CREATE' : storeBranch?.recordStatus ===
+      'I' ? 'DRAFT' : storeBranch?.recordStatus === 'S' ? 'SUBMITTED' :
+      'APPROVED' }}
+    </span>
+  </div>
+
+  <!-- =====================================================
+       BRANCH GENERAL DETAILS
+  ====================================================== -->
+
+  <div
+    class="customer-form-wrapper"
     [ngClass]="{
-      'create': !storeBranch?.recordStatus,
-      'draft': storeBranch?.recordStatus === 'I',
-      'submitted': storeBranch?.recordStatus === 'S',
-      'approved': storeBranch?.recordStatus === 'A'
-    }">
+      'hide-when-approved': storeBranch?.recordStatus === 'A'
+    }"
+  >
+    <!-- SECTION HEADER -->
+    <div class="section-header" (click)="isOpen = !isOpen">
+      <h2>Branch General Details</h2>
 
-    <mat-icon>
-      {{
-        !storeBranch?.recordStatus ? 'add_circle' :
-        storeBranch?.recordStatus === 'I' ? 'edit_note' :
-        storeBranch?.recordStatus === 'S' ? 'hourglass_top' :
-        'verified'
-      }}
-    </mat-icon>
-
-    {{
-      !storeBranch?.recordStatus ? 'Create' :
-      storeBranch?.recordStatus === 'I' ? 'Draft' :
-      storeBranch?.recordStatus === 'S' ? 'Submitted' :
-      'Approved'
-    }}
-
-  </span>
-
-</div>
-<div class="branch-container" [ngClass]="{'hide-when-approved': storeBranch?.recordStatus === 'A'}">
-
-  <!-- Toggle Header -->
-  <div class="section-header" (click)="isOpen = !isOpen">
-    <h2>Create Branch</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-  </div>
-
-  <!-- Collapsible Form -->
-  <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
-
-    <div class="form-grid">
-
-      <!-- Branch Id -->
-
-      <div class="field-group">
-        <h4>Branch Id</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="branchId" placeholder="Branch Id"  />
-        </mat-form-field  >
-
-      </div>
-
-      <!-- Branch Code -->
-      <div class="field-group">
-        <h4>Branch Code</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="branchCode" placeholder="Enter Branch Code">
-        </mat-form-field>
-      </div>
-
-      <!-- Branch Name -->
-      <div class="field-group">
-        <h4>Branch Name</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="branchName" placeholder="Enter Branch Name">
-        </mat-form-field>
-      </div>
-
-      <!-- Contact Person -->
-      <div class="field-group">
-        <h4>Contact Person</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="contactPerson" placeholder="Enter Contact Person">
-        </mat-form-field>
-      </div>
-
-      <!-- City -->
-      <div class="field-group">
-        <h4>City</h4>
-        <mat-form-field appearance="outline" class="full">
-          <mat-select formControlName="cityId" panelClass="dropdown-panel">
-            <mat-option *ngFor="let item of storeCities" [value]="item.id">
-              {{ item.cityName }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-
-      <!-- Contact Number -->
-      <div class="field-group">
-        <h4>Contact Number</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="contactNo" placeholder="Enter Contact Number">
-        </mat-form-field>
-      </div>
-
-      <!-- Swift Address -->
-      <div class="field-group">
-        <h4>Swift Address</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="swiftAddress" placeholder="Enter Swift Address">
-        </mat-form-field>
-      </div>
-
-      <!-- Email Address -->
-      <div class="field-group">
-        <h4>Email Address</h4>
-        <mat-form-field appearance="outline">
-          <input matInput type="email" formControlName="emailAddress" placeholder="Enter Email Address">
-        </mat-form-field>
-      </div>
-
-      <!-- Local Currency -->
-      <div class="field-group">
-        <h4>Local Currency</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="localCurrency" placeholder="Enter Local Currency">
-        </mat-form-field>
-      </div>
-
-
-      
-      <div class="field-group">
-        <h4>branch status</h4>
-        <mat-form-field appearance="outline">
-          <input matInput formControlName="branchStatus" placeholder="Enter Local Currency">
-        </mat-form-field>
-      </div>
-
-      <!-- Branch Address (full width) -->
-      <div class="field-group full">
-        <h4>Branch Address</h4>
-        <mat-form-field appearance="outline" class="full">
-          <textarea matInput formControlName="branchAddress" rows="3" placeholder="Enter Branch Address"></textarea>
-        </mat-form-field>
-      </div>
-
+      <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
     </div>
 
-    <!-- ================= DYNAMIC FIELDS (CITY STYLE) ================= -->
-    <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
-      <div class="section-header" (click)="toggleDynamicFields()">
-        <h2>Branch Additional Fields</h2>
-        <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-      </div>
-
-      <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
+    <!-- COLLAPSIBLE FORM -->
+    <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
+      <ng-container *ngIf="isOpen">
         <div class="form-grid">
-          <ng-container *ngFor="let field of fields">
+          <!-- Branch ID -->
+          <div class="field-group">
+            <h4>Branch ID</h4>
 
-            <div class="field-group">
-              <h4>{{ field.label || field.fieldName }}</h4>
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="branchId"
+                placeholder="Branch ID"
+              />
+            </mat-form-field>
+          </div>
 
-              <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
-                <input matInput [formControlName]="field.fieldName" />
-              </mat-form-field>
+          <!-- Branch Code -->
+          <div class="field-group">
+            <h4>Branch Code</h4>
 
-              <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
-                <input matInput type="number" [formControlName]="field.fieldName" />
-              </mat-form-field>
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="branchCode"
+                placeholder="Enter Branch Code"
+              />
+            </mat-form-field>
+          </div>
 
-              <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
-                <input matInput type="date" [formControlName]="field.fieldName" />
-              </mat-form-field>
+          <!-- Branch Name -->
+          <div class="field-group">
+            <h4>Branch Name</h4>
 
-              <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-                <mat-select [formControlName]="field.fieldName">
-                  <mat-option value="">Select</mat-option>
-                  <mat-option *ngFor="let opt of field.options" [value]="opt.value">
-                    {{ opt.text }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="branchName"
+                placeholder="Enter Branch Name"
+              />
+            </mat-form-field>
+          </div>
 
-            </div>
+          <!-- Contact Person -->
+          <div class="field-group">
+            <h4>Contact Person</h4>
 
-          </ng-container>
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="contactPerson"
+                placeholder="Enter Contact Person"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- City -->
+          <div class="field-group">
+            <h4>City</h4>
+
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="cityId" panelClass="dropdown-panel">
+                <mat-option value=""> Select City </mat-option>
+
+                <mat-option *ngFor="let item of storeCities" [value]="item.id">
+                  {{ item.cityName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Contact Number -->
+          <div class="field-group">
+            <h4>Contact Number</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="contactNo"
+                placeholder="Enter Contact Number"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Swift Address -->
+          <div class="field-group">
+            <h4>Swift Address</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="swiftAddress"
+                placeholder="Enter Swift Address"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Email Address -->
+          <div class="field-group">
+            <h4>Email Address</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                type="email"
+                formControlName="emailAddress"
+                placeholder="Enter Email Address"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Local Currency -->
+          <div class="field-group">
+            <h4>Local Currency</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="localCurrency"
+                placeholder="Enter Local Currency"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Branch Status -->
+          <div class="field-group">
+            <h4>Branch Status</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                formControlName="branchStatus"
+                placeholder="Enter Branch Status"
+              />
+            </mat-form-field>
+          </div>
+
+          <!-- Branch Address -->
+          <div class="field-group full">
+            <h4>Branch Address</h4>
+
+            <mat-form-field appearance="outline">
+              <textarea
+                matInput
+                formControlName="branchAddress"
+                rows="3"
+                placeholder="Enter Branch Address"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       BRANCH ADDITIONAL / DYNAMIC FIELDS
+  ====================================================== -->
+
+  <div
+    class="customer-form-wrapper dynamic-fields-section"
+    [ngClass]="{
+      'hide-when-approved': storeBranch?.recordStatus === 'A'
+    }"
+    *ngIf="fields?.length"
+  >
+    <div class="section-header" (click)="toggleDynamicFields()">
+      <h2>Branch Additional Fields</h2>
+
+      <mat-icon>
+        {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+    </div>
+
+    <div
+      class="collapsible"
+      [class.open]="isDynamicFieldsOpen"
+      [formGroup]="dynamicFieldsForm"
+    >
+      <div class="form-grid">
+        <ng-container *ngFor="let field of fields">
+          <div class="field-group">
+            <h4>{{ field.label || field.fieldName }}</h4>
+
+            <!-- TEXT -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'text'"
+              appearance="outline"
+            >
+              <input
+                matInput
+                [formControlName]="field.fieldName"
+                placeholder="{{ field.label || field.fieldName }}"
+              />
+            </mat-form-field>
+
+            <!-- NUMBER -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'number'"
+              appearance="outline"
+            >
+              <input
+                matInput
+                type="number"
+                [formControlName]="field.fieldName"
+                placeholder="{{ field.label || field.fieldName }}"
+              />
+            </mat-form-field>
+
+            <!-- DATE -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'date'"
+              appearance="outline"
+            >
+              <input matInput type="date" [formControlName]="field.fieldName" />
+            </mat-form-field>
+
+            <!-- SELECT -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'select'"
+              appearance="outline"
+            >
+              <mat-label> {{ field.label || field.fieldName }} </mat-label>
+
+              <mat-select [formControlName]="field.fieldName">
+                <mat-option value="">
+                  Select {{ field.label || field.fieldName }}
+                </mat-option>
+
+                <mat-option
+                  *ngFor="let option of field.options || []"
+                  [value]="option.value"
+                >
+                  {{ option.text }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+       BRANCH ACTION BUTTONS
+  ====================================================== -->
+
+  <div class="customer-actions">
+    <!-- CREATE -->
+    <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
+      <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+
+      <button
+        class="btn-save"
+        [disabled]="
+      !branchForm.valid ||
+      !dynamicFieldsForm.valid
+    "
+        (click)="onSave()"
+      >
+        Save
+      </button>
+    </ng-container>
+
+    <!-- DRAFT -->
+    <ng-container
+      *ngIf="
+    isEditMode &&
+    storeBranch?.recordStatus === 'I'
+  "
+    >
+      <button class="btn-back" (click)="onBack()">Back</button>
+
+      <button
+        class="btn-update"
+        [disabled]="
+      !branchForm.dirty ||
+      !dynamicFieldsForm.dirty
+    "
+        (click)="update(storeBranch.id)"
+      >
+        Update
+      </button>
+
+      <button
+        class="btn-submit"
+        [disabled]="
+      !branchForm.valid ||
+      !dynamicFieldsForm.valid
+    "
+        (click)="submit()"
+      >
+        Submit
+      </button>
+    </ng-container>
+
+    <!-- SUBMITTED -->
+    <ng-container
+      *ngIf="
+    isEditMode &&
+    storeBranch?.recordStatus === 'S'
+  "
+    >
+      <button class="btn-reject" (click)="reject(storeBranch.id)">
+        Reject
+      </button>
+
+      <button class="btn-approve" (click)="approve(storeBranch.id)">
+        Approve
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- =====================================================
+       APPROVED BRANCH DOSSIER
+  ====================================================== -->
+
+  <section
+    class="dossier-container"
+    *ngIf="storeBranch"
+    [ngClass]="{
+      'hide-when-approved':
+        storeBranch?.recordStatus !== 'A'
+    }"
+  >
+    <!-- HEADER -->
+    <header class="dossier-header">
+      <div
+        class="status-strip"
+        [class.active]="
+      storeBranch.branchStatus === 'A' ||
+      storeBranch.branchStatus === 'Active'
+    "
+      ></div>
+
+      <div class="header-content">
+        <!-- IDENTITY -->
+        <div class="identity-block">
+          <div class="avatar-circle">
+            {{ storeBranch?.branchName ?.trim() ?.charAt(0) ?.toUpperCase() ||
+            'B' }}
+          </div>
+
+          <div class="text-group">
+            <h1 class="customer-name">
+              {{ storeBranch.branchName | titlecase }}
+            </h1>
+
+            <span class="customer-id">
+              Branch Ref:
+              <code>{{ storeBranch.branchId }}</code>
+            </span>
+          </div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="badge-group">
+          <span
+            class="status-badge"
+            [attr.data-status]="storeBranch.branchStatus"
+          >
+            {{ storeBranch.branchStatus || 'APPROVED' | uppercase }}
+          </span>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Form Actions -->
-    <div class="customer-actions">
-      <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
-        <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="btn-save" [disabled]="!branchForm.valid || !dynamicFieldsForm.valid" (click)="onSave()">Save</button>
-      </ng-container>
+    <!-- CORE INFORMATION -->
+    <div class="dossier-grid">
+      <mat-card class="info-card">
+        <div class="card-title">
+          <mat-icon> account_balance </mat-icon>
 
-      <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'I'">
-        <button class="btn-back" (click)="onBack()">Back</button>
-        <button class="btn-update" [disabled]="!branchForm.dirty || !dynamicFieldsForm.dirty" (click)="update(storeBranch.id)">Update</button>
-        <button class="btn-submit" [disabled]="!branchForm.valid || !dynamicFieldsForm.valid" (click)="submit()">Submit</button>
-      </ng-container>
-
-      <ng-container *ngIf="isEditMode && storeBranch?.recordStatus === 'S'">
-        <button class="btn-reject" (click)="reject(storeBranch.id)">Reject</button>
-        <button class="btn-approve" (click)="approve(storeBranch.id)">Approve</button>
-      </ng-container>
-    </div>
-
-  </div>
-</div>
-
-<!-- ================= APPROVED BRANCH ================= -->
-<div *ngIf="storeBranch?.status === 'A'" class="approved-container">
-
-  <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
-    <h2>Branch Approved Details</h2>
-  </div>
-
-  <div class="details-grid">
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Branch Code</span>
-        <span class="value">{{ storeBranch.branchCode }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Branch Name</span>
-        <span class="value">{{ storeBranch.branchName }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Email Address</span>
-        <span class="value">{{ storeBranch.emailAddress }}</span>
-      </div>
-    </div>
-
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Contact Person</span>
-        <span class="value">{{ storeBranch.contactPerson }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Contact No</span>
-        <span class="value">{{ storeBranch.contactNo }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Record Status</span>
-        <span class="value">{{ storeBranch.recordStatus }}</span>
-      </div>
-    </div>
-
-    <div class="detail-row three-col">
-      <div class="detail-item">
-        <span class="label">Swift Address</span>
-        <span class="value">{{ storeBranch.swiftAddress }}</span>
-      </div>
-      <div class="detail-item">
-        <span class="label">Local Currency</span>
-        <span class="value">{{ storeBranch.localCurrency }}</span>
-      </div>
-
-      
-      <div class="detail-item">
-        <span class="label">City</span>
-        <span class="value">{{ storeBranch.cityMaster?.cityId }}</span>
-      </div>
-    </div>
-
-    <!-- Dynamic Fields Display -->
-    <div class="detail-row" *ngIf="storeBranch.dynamicFields?.length">
-      <div class="detail-item full-width" *ngFor="let field of storeBranch.dynamicFields">
-        <span class="label">{{ field.label || field.fieldName }}</span>
-        <span class="value">{{ field.value }}</span>
-      </div>
-    </div>
-
-    <div class="detail-row">
-      <div class="detail-item full-width">
-        <span class="label">Branch Address</span>
-        <span class="value">{{ storeBranch.branchAddress }}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="approved-actions">
-    <button class="btn-back" (click)="onBack()">← Back</button>
-    <button class="btn-edit" (click)="reject(storeBranch.id)">Amend</button>
-  </div>
-</div>
-
-<!-- ======================================================
-     APPROVED BRANCH DOSSIER SECTION
-====================================================== -->
-<section class="dossier-container"
-  [ngClass]="{'hide-when-approved': storeBranch?.recordStatus !== 'A'}">
-
-  <!-- ================= HEADER ================= -->
-  <header class="dossier-header">
-
-    <div class="status-strip active"></div>
-
-    <div class="header-content">
-
-      <div class="identity-block">
-
-        <div class="avatar-circle">
-          {{ storeBranch?.branchName?.trim()?.charAt(0)?.toUpperCase() || 'B' }}
+          <span> General Information </span>
         </div>
 
-        <div class="text-group">
-          <h1 class="customer-name">
-            {{ storeBranch.branchName | titlecase }}
-          </h1>
+        <div class="data-grid">
+          <div class="data-item">
+            <label>Branch Code</label>
+            <span class="value val-mono"> {{ storeBranch.branchCode }} </span>
+          </div>
 
-          <span class="customer-id">
-            Branch Ref:
-            <code>{{ storeBranch.branchId }}</code>
+          <div class="data-item">
+            <label>Branch Name</label>
+            <span class="value"> {{ storeBranch.branchName }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Contact Person</label>
+            <span class="value"> {{ storeBranch.contactPerson }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Contact Number</label>
+            <span class="value"> {{ storeBranch.contactNo }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Email Address</label>
+            <span class="value"> {{ storeBranch.emailAddress }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Swift Address</label>
+            <span class="value val-mono"> {{ storeBranch.swiftAddress }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Local Currency</label>
+            <span class="value"> {{ storeBranch.localCurrency }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Branch Status</label>
+            <span class="value"> {{ storeBranch.branchStatus }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>City</label>
+            <span class="value"> {{ storeBranch.cityName }} </span>
+          </div>
+
+          <div class="data-item">
+            <label>Record Status</label>
+            <span class="value"> {{ storeBranch.recordStatus }} </span>
+          </div>
+
+          <div class="data-item full-width">
+            <label>Registered Address</label>
+            <span class="value"> {{ storeBranch.branchAddress }} </span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- DYNAMIC FIELDS -->
+    <section
+      class="dynamic-fields-section"
+      *ngIf="storeBranch.dynamicFields?.length"
+    >
+      <mat-card class="info-card">
+        <div class="card-title">
+          <mat-icon> analytics </mat-icon>
+
+          <span> Additional Branch Attributes </span>
+
+          <span class="count-pill">
+            {{ storeBranch.dynamicFields.length }} Fields
           </span>
         </div>
 
-      </div>
+        <div class="data-grid">
+          <div
+            class="data-item"
+            *ngFor="
+          let field of storeBranch.dynamicFields
+        "
+          >
+            <label> {{ field.fieldId | titlecase }} </label>
 
-      <div class="badge-group">
+            <span class="value"> {{ field.value || '—' }} </span>
+          </div>
+        </div>
+      </mat-card>
+    </section>
 
-        <span class="status-badge" data-status="ACTIVE">
-          APPROVED
+    <!-- FOOTER -->
+    <footer class="dossier-footer">
+      <div class="audit-info">
+        <mat-icon> history </mat-icon>
+
+        <span>
+          Last Approved/Updated:
+          <strong> {{ storeBranch.updatedOn | date:'medium' }} </strong>
         </span>
-
       </div>
 
-    </div>
+      <div class="footer-actions">
+        <button mat-stroked-button color="primary" (click)="onBack()">
+          <mat-icon> arrow_back </mat-icon>
 
-  </header>
+          Return to Dashboard
+        </button>
 
-  <!-- ================= CORE INFO ================= -->
-  <div class="dossier-grid">
+        <button mat-flat-button color="warn" (click)="reject(storeBranch.id)">
+          <mat-icon> edit </mat-icon>
 
-    <mat-card class="info-card">
-
-      <div class="card-title">
-        <mat-icon>account_balance</mat-icon>
-        <span>Branch Information</span>
+          Amend Record
+        </button>
       </div>
-
-      <div class="data-grid">
-
-        <div class="data-item">
-          <label>Branch Code</label>
-          <span class="value val-mono">
-            {{ storeBranch.branchCode }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Branch Name</label>
-          <span class="value">
-            {{ storeBranch.branchName }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Contact Person</label>
-          <span class="value">
-            {{ storeBranch.contactPerson }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Contact Number</label>
-          <span class="value">
-            {{ storeBranch.contactNo }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Email Address</label>
-          <span class="value">
-            {{ storeBranch.emailAddress }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Swift Address</label>
-          <span class="value val-mono">
-            {{ storeBranch.swiftAddress }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Local Currency</label>
-          <span class="value">
-            {{ storeBranch.localCurrency }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Branch Status</label>
-          <span class="value">
-            {{ storeBranch.branchStatus }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>City</label>
-          <span class="value">
-            {{ storeBranch.cityName }}
-          </span>
-        </div>
-
-        <div class="data-item">
-          <label>Record Status</label>
-          <span class="value">
-            {{ storeBranch.recordStatus }}
-          </span>
-        </div>
-
-        <div class="data-item full-width">
-          <label>Branch Address</label>
-          <span class="value">
-            {{ storeBranch.branchAddress }}
-          </span>
-        </div>
-
-      </div>
-
-    </mat-card>
-
-  </div>
-
-  <!-- ================= DYNAMIC FIELDS ================= -->
-  <section class="dynamic-fields-section"
-    *ngIf="storeBranch.dynamicFields?.length">
-
-    <div class="section-title">
-
-      <mat-icon>analytics</mat-icon>
-
-      <span>Additional Branch Attributes</span>
-
-      <span class="count-pill">
-        {{ storeBranch.dynamicFields.length }} Fields
-      </span>
-
-    </div>
-
-    <div class="additional-grid">
-
-      <div class="additional-card"
-        *ngFor="let field of storeBranch.dynamicFields">
-
-        <div class="field-label">
-          {{ field.label || field.fieldName }}
-        </div>
-
-        <div class="field-value">
-          {{ field.value || '—' }}
-        </div>
-
-      </div>
-
-    </div>
-
+    </footer>
   </section>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="dossier-footer">
-
-    <div class="audit-info">
-
-      <mat-icon>history</mat-icon>
-
-      <span>
-        Last Updated:
-        <strong>
-          {{ storeBranch.updatedOn | date:'medium' }}
-        </strong>
-      </span>
-
-    </div>
-
-    <div class="footer-actions">
-
-      <button mat-stroked-button
-        color="primary"
-        (click)="onBack()">
-
-        <mat-icon>arrow_back</mat-icon>
-        Back
-
-      </button>
-
-      <button mat-flat-button
-        color="warn"
-        (click)="reject(storeBranch.id)">
-
-        <mat-icon>edit</mat-icon>
-        Amend Record
-
-      </button>
-
-    </div>
-
-  </footer>
-
-</section>
+</div>

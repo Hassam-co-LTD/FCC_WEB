@@ -238,7 +238,7 @@ export class AuthService {
   getAmendPayload() {
     return {
       recordStatus: 'I',
-      updatedBy: this.getUserId()!,
+      updatedBy: this.getLoginId()!,
     };
   }
 }

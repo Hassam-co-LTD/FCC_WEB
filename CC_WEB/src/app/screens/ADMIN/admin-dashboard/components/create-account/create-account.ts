@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,7 +25,7 @@ import { ApiService } from '../../../../../core/services/api.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,   
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatCheckboxModule,
@@ -30,29 +35,26 @@ import { ApiService } from '../../../../../core/services/api.service';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-
-    
   ],
   templateUrl: './create-account.html',
-  styleUrls: ['./create-account.scss']
+  styleUrls: ['./create-account.scss'],
 })
 export class Accounts implements OnInit {
-
   AccountsForm!: FormGroup;
   storeAccounts: any = {};
-  allCompanies : any = {};
-  approvedAccountTypes:any [] = []
+  allCompanies: any = {};
+  approvedAccountTypes: any[] = [];
   isEditMode = false;
   isOpen = true;
   private accountLoaded = false;
-private fieldsLoaded = false;
+  private fieldsLoaded = false;
 
   // dynamicFIelds
 
   fields: any[] = [];
-dynamicFieldsForm!: FormGroup;
-isDynamicFieldsOpen = true;
-dynamicReady = false;
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+  dynamicReady = false;
 
   constructor(
     private fb: FormBuilder,
@@ -60,175 +62,165 @@ dynamicReady = false;
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.loadAccounts();
     this.loadCompanies();
-    this.loadApprovedAccountTypes()
-      this.loadDynamicFields(); //
+    this.loadApprovedAccountTypes();
+    this.loadDynamicFields(); //
   }
 
   private buildForm(): void {
     this.AccountsForm = this.fb.group({
-     
-       accountNo: ['', Validators.required],
-    iban: ['', Validators.required],
-    accountType: ['', Validators.required],
-    accountTitle: ['', Validators.required],
-    accountStatus: ['', Validators.required],
-    companyId:['',Validators.required],
-    createdBy: this.authService.getLoginId() || '',
+      accountNo: ['', Validators.required],
+      iban: ['', Validators.required],
+      accountType: ['', Validators.required],
+      accountTitle: ['', Validators.required],
+      accountStatus: ['', Validators.required],
+      companyId: ['', Validators.required],
+      createdBy: this.authService.getLoginId() || '',
     });
   }
 
- 
   loadApprovedAccountTypes() {
-    this.api.getTnxByStatus('A','AccountMaster').subscribe({
-      next: res => {
+    this.api.getTnxByStatus('A', 'AccountMaster').subscribe({
+      next: (res) => {
         this.approvedAccountTypes = res;
-        console.log("approved AccountTypes",this.approvedAccountTypes)
+        console.log('approved AccountTypes', this.approvedAccountTypes);
       },
-      error: err => console.error('Error fetching approved AccountTypes', err)
+      error: (err) =>
+        console.error('Error fetching approved AccountTypes', err),
     });
   }
 
- private loadAccounts(): void {
-  const id = Number(this.route.snapshot.paramMap.get('id'));
+  private loadAccounts(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
-  console.log('Loading Accounts with ID:', id);
+    console.log('Loading Accounts with ID:', id);
 
-  if (!isNaN(id)) {
-    this.isEditMode = true;
+    if (!isNaN(id)) {
+      this.isEditMode = true;
 
-    this.api.getTnxById(id, "accounts").subscribe({
-      next: res => {
+      this.api.getTnxById(id, 'accounts').subscribe({
+        next: (res) => {
+          this.storeAccounts = res;
 
-        this.storeAccounts = res;
+          this.AccountsForm.patchValue(res);
 
-        this.AccountsForm.patchValue(res);
+          this.accountLoaded = true;
 
-        this.accountLoaded = true;
-
-        this.tryPatchDynamicFields(); // 🔥 FIX
-
-      },
-      error: err => console.error('Load failed', err)
-    });
+          this.tryPatchDynamicFields(); // 🔥 FIX
+        },
+        error: (err) => console.error('Load failed', err),
+      });
+    }
   }
-}
   private patchDynamicFields(dynamicFields: any[]): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !dynamicFields?.length
+    )
+      return;
 
-  if (!this.dynamicFieldsForm || !this.fields?.length || !dynamicFields?.length) return;
+    dynamicFields.forEach((df) => {
+      const fieldDef = this.fields.find((f) => f.fieldId === df.fieldId);
 
-  dynamicFields.forEach(df => {
+      if (fieldDef) {
+        this.dynamicFieldsForm.get(fieldDef.fieldName)?.setValue(df.value);
+      }
+    });
+  }
 
-    const fieldDef = this.fields.find(f => f.fieldId === df.fieldId);
+  private loadCompanies(): void {
+    this.api.getTnxByStatus('A', 'company').subscribe({
+      next: (companies) => {
+        this.allCompanies = companies;
 
-    if (fieldDef) {
-      this.dynamicFieldsForm
-        .get(fieldDef.fieldName)
-        ?.setValue(df.value);
+        console.log('Fetched companies:', this.allCompanies);
+
+        // 🔥 repatch in edit mode
+        if (this.storeAccounts?.companyId) {
+          const selectedCompany = this.allCompanies.find(
+            (c: any) => c.companyId === this.storeAccounts.companyId,
+          );
+
+          if (selectedCompany) {
+            this.AccountsForm.patchValue({
+              companyId: selectedCompany.id,
+            });
+          }
+        }
+      },
+      error: (err) => console.error('Error fetching companies', err),
+    });
+  }
+  // ---------------- CREATE ----------------
+  onSave(): void {
+    if (this.AccountsForm.invalid || this.dynamicFieldsForm.invalid) return;
+
+    const dynamicPayload = this.fields.map((f) => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
+    }));
+
+    const payload = {
+      ...this.AccountsForm.getRawValue(),
+      dynamicFields: dynamicPayload,
+    };
+
+    this.api.saveTnx(payload, 'accounts').subscribe({
+      next: (res) => {
+        console.log('account saved sucsesfully ', res);
+        Swal.fire('Saved!', 'Accounts saved successfully', 'success').then(() =>
+          this.router.navigate(['/admin/accounts-list']),
+        );
+      },
+      error: (err) => console.error('Save failed', err),
+    });
+  }
+  // ---------------- UPDATE ----------------
+  update(id: number): void {
+    if (this.AccountsForm.invalid) return;
+
+    const dynamicPayload = this.fields.map((f) => ({
+      fieldId: f.fieldId,
+      value: this.dynamicFieldsForm?.get(f.fieldName)?.value || '',
+    }));
+
+    const payload = {
+      ...this.AccountsForm.getRawValue(),
+      updatedBy: this.authService.getLoginId() || '',
+      dynamicFields: dynamicPayload,
+    };
+    console.log('payload to update ', payload);
+
+    this.api.updateTnx(payload, 'accounts', id).subscribe({
+      next: () => {
+        Swal.fire('Updated!', 'Accounts updated successfully', 'success').then(
+          () => this.router.navigate(['/admin/edit-accounts', id]),
+        );
+      },
+      error: (err) => console.error('Update failed', err),
+    });
+  }
+
+  // ---------------- UI HELPERS ----------------
+  isReadOnly(): boolean {
+    // New customer (no storeCustomer) → editable
+    if (this.storeAccounts?.id) return false;
+    {
+      return true;
     }
 
-  });
-}
-
-  
-  private loadCompanies(): void {
-  this.api.getTnxByStatus('A',"company").subscribe({
-    next: companies => {
-
-      this.allCompanies = companies;
-
-      console.log('Fetched companies:', this.allCompanies);
-
-      // 🔥 repatch in edit mode
-      if (this.storeAccounts?.companyId) {
-
-        const selectedCompany = this.allCompanies.find(
-          (c:any) => c.companyId === this.storeAccounts.companyId
-        );
-
-        if (selectedCompany) {
-
-          this.AccountsForm.patchValue({
-            companyId: selectedCompany.id
-          });
-
-        }
-      }
-    },
-    error: err => console.error('Error fetching companies', err)
-  });
-}
-  // ---------------- CREATE ----------------
- onSave(): void {
-
-  if (this.AccountsForm.invalid || this.dynamicFieldsForm.invalid) return;
-
-  const dynamicPayload = this.fields.map(f => ({
-    fieldId: f.fieldId,
-    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
-  }));
-
-  const payload = {
-    ...this.AccountsForm.getRawValue(),
-    dynamicFields: dynamicPayload
-  };
-
-  this.api.saveTnx(payload, 'accounts').subscribe({
-    next: res => {
-      Swal.fire('Saved!', 'Accounts saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/accounts-list']));
-    },
-    error: err => console.error('Save failed', err)
-  });
-}
-  // ---------------- UPDATE ----------------
- update(id: number): void {
-
-  if (this.AccountsForm.invalid) return;
-
-  const dynamicPayload = this.fields.map(f => ({
-    fieldId: f.fieldId,
-    value: this.dynamicFieldsForm?.get(f.fieldName)?.value || ''
-  }));
-
-  const payload = {
-    ...this.AccountsForm.getRawValue(),
-    updatedBy: this.authService.getLoginId() || '',
-    dynamicFields: dynamicPayload
-  };
- console.log("payload to update " ,payload)
-   
-  this.api.updateTnx(payload, 'accounts', id).subscribe({
-    
-    next: () => {
-      Swal.fire('Updated!', 'Accounts updated successfully', 'success')
-        .then(() => this.router.navigate(['/admin/edit-accounts', id]));
-    },
-    error: err => console.error('Update failed', err)
-  });
-}
-  
-  
-  // ---------------- UI HELPERS ----------------
- isReadOnly(): boolean {
-  // New customer (no storeCustomer) → editable
-  if (this.storeAccounts?.id) return false;{
-    return true;
+    // Existing customer:
+    // - Draft (D) → editable
+    // - Submitted (S), Approved (A) → read-only
+    return false;
   }
-
-  // Existing customer:
-  // - Draft (D) → editable
-  // - Submitted (S), Approved (A) → read-only
-  return false;
-}
-
-
 
   toggle(): void {
     this.isOpen = !this.isOpen;
@@ -241,256 +233,211 @@ dynamicReady = false;
   onCancel(): void {
     this.AccountsForm.reset();
   }
-  submit() {    
+  submit() {
     if (!this.storeAccounts?.id) return;
-    const payload = this.authService.getSubmitPayload()
-    this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
-      next: (res) => {
-        console.log('Submited response:', res);
-        Swal.fire('Submitted!', 'Accounts submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/accounts-inquiry', this.storeAccounts.id],{ queryParams: { tabName: 'submitted' } }));
-      },  
-      error: err => console.error('Submit failed', err)
-    });
+    const payload = this.authService.getSubmitPayload();
+    this.api
+      .setTnxByStatus(payload, this.storeAccounts.id, 'accounts')
+      .subscribe({
+        next: (res) => {
+          console.log('Submited response:', res);
+          Swal.fire(
+            'Submitted!',
+            'Accounts submitted successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(
+              ['/admin/accounts-inquiry', this.storeAccounts.id],
+              { queryParams: { tabName: 'submitted' } },
+            ),
+          );
+        },
+        error: (err) => console.error('Submit failed', err),
+      });
   }
-
- 
-
 
   reject(id: number): void {
-    
-      if (!id) return;
-    
-      Swal.fire({
-        title: 'Reject Transaction',
-        input: 'textarea',
-        inputLabel: 'Reject Reason',
-        inputPlaceholder: 'Please enter the reason for rejection...',
-        inputAttributes: {
-          'aria-label': 'Reject reason'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Reject',
-        cancelButtonText: 'Cancel',
-    
-        preConfirm: (reason) => {
-    
-          if (!reason || !reason.trim()) {
-    
-            Swal.showValidationMessage(
-              'Reject reason is required'
-            );
-    
-            return false;
-          }
-    
-          return reason.trim();
-        }
-    
-      }).then((result) => {
-    
-        if (!result.isConfirmed) {
-          return;
-        }
-    
-        const rejectReason = result.value;
-    
-        // =========================
-        // CREATE REJECT PAYLOAD
-        // =========================
-    
-        const payload =
-          this.authService.getRejectPayload(rejectReason);
-    
-        console.log('Reject ID:', id);
-        console.log('Reject Payload:', payload);
-    
-        // =========================
-        // CALL API
-        // =========================
-    
-        this.api.setTnxByStatus(
-          payload,
-          id,
-          'customer'
-        ).subscribe({
-    
-          next: (res: any) => {
-    
-            console.log('Reject successful:', res);
-    
-            Swal.fire(
-              'Rejected!',
-              res?.message || 'Account rejected successfully',
-              'success'
-            ).then(() => {
-    
-              this.router.navigate(
-                ['/admin/customer-list'],
-                {
-                  queryParams: {
-                    tabName: 'rejected'
-                  }
-                }
-              );
-    
-            });
-    
-          },
-    
-          error: (err: any) => {
-    
-            console.error('Reject failed:', err);
-    
-            Swal.fire(
-              'Error',
-              err?.error?.message || 'Reject failed',
-              'error'
-            );
-    
-          }
-    
-        });
-    
-      });
-    }
-  approve(id: number): void {
-  if (!this.storeAccounts?.id) return;
-  const payload = this.authService.getApprovePayload()
-  this.api.setTnxByStatus(payload, this.storeAccounts.id, 'accounts').subscribe({
-    next: () => {
-      Swal.fire('Approved!', 'Accounts approved successfully', 'success')
-        .then(() => 
-          this.router.navigate(['/admin/accounts-inquiry', this.storeAccounts.id], { queryParams: { tabName: 'approved' } })
-        );
-    },
-    error: err => console.error('Approve failed', err)
-  });
-}
+    if (!id) return;
 
-// delete an account
-deleteAccount(id: number): void {
-
-  if (!id) {
-    Swal.fire('Warning', 'Invalid account id', 'warning');
-    return;
-  }
-
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'This action cannot be undone!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, delete it!',
-    cancelButtonText: 'Cancel'
-  }).then((result) => {
-
-    if (!result.isConfirmed) return;
-
-    this.api.deleteAccount(id, 'accounts').subscribe({
-
-      // ✅ SUCCESS
-      next: (res) => {
-        console.log("delete account response ", res)
-        Swal.fire(
-          'Deleted',
-          'Account removed successfully',
-          'success'
-        ).then(() => {
-
-          // 🔥 get dynamic custId from selected account
-          const custId = this.storeAccounts?.custId;
-
-          console.log('Redirecting with custId:', custId);
-
-          if (custId) {
-
-            this.router.navigate([
-              '/admin/create-customer',
-              custId
-            ]);
-
-          } else {
-
-            // fallback if custId missing
-            this.router.navigate([
-              '/admin/create-customer',
-              this.storeAccounts.custId
-            ]);
-
-          }
-
-        });
-
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason',
       },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
 
-      // ❌ ERROR
-      error: (err) => {
+      preConfirm: (reason) => {
+        if (!reason || !reason.trim()) {
+          Swal.showValidationMessage('Reject reason is required');
 
-        console.log('DELETE ERROR:', err);
+          return false;
+        }
 
-        Swal.fire(
-          'Error',
-          err?.error?.message ||
-          err?.message ||
-          'Failed to delete account',
-          'error'
-        );
-
+        return reason.trim();
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
       }
 
-    });
+      const rejectReason = result.value;
 
-  });
-}
-// dynamicFields methods 
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
 
-private loadDynamicFields(): void {
+      const payload = this.authService.getRejectPayload(rejectReason);
 
-  this.api.getFieldsByScreenAndStatus('Accounts', 'A').subscribe({
-    next: (res: any) => {
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
 
-      this.fields = res || [];
+      // =========================
+      // CALL API
+      // =========================
 
-      const group: any = {};
+      this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+        next: (res: any) => {
+          console.log('Reject successful:', res);
 
-      this.fields.forEach((f: any) => {
-        group[f.fieldName] = [''];
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Account rejected successfully',
+            'success',
+          ).then(() => {
+            this.router.navigate(['/admin/customer-list'], {
+              queryParams: {
+                tabName: 'rejected',
+              },
+            });
+          });
+        },
+
+        error: (err: any) => {
+          console.error('Reject failed:', err);
+
+          Swal.fire('Error', err?.error?.message || 'Reject failed', 'error');
+        },
       });
+    });
+  }
+  approve(id: number): void {
+    if (!this.storeAccounts?.id) return;
+    const payload = this.authService.getApprovePayload();
+    this.api
+      .setTnxByStatus(payload, this.storeAccounts.id, 'accounts')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Approved!',
+            'Accounts approved successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(
+              ['/admin/accounts-inquiry', this.storeAccounts.id],
+              { queryParams: { tabName: 'approved' } },
+            ),
+          );
+        },
+        error: (err) => console.error('Approve failed', err),
+      });
+  }
 
-      this.dynamicFieldsForm = this.fb.group(group);
-
-      this.fieldsLoaded = true;
-
-      this.tryPatchDynamicFields(); // 🔥 FIX
-
-    },
-    error: err => console.error('Dynamic fields error', err)
-  });
-
-}
-private tryPatchDynamicFields(): void {
-
-  if (!this.accountLoaded || !this.fieldsLoaded) return;
-
-  const dynamicFields = this.storeAccounts?.dynamicFields;
-
-  if (!dynamicFields || !dynamicFields.length) return;
-
-  dynamicFields.forEach((df:any) => {
-
-    const fieldDef = this.fields.find(f => f.fieldId === df.fieldId);
-
-    if (fieldDef) {
-
-      this.dynamicFieldsForm
-        .get(fieldDef.fieldName)
-        ?.setValue(df.value);
-
+  // delete an account
+  deleteAccount(id: number): void {
+    if (!id) {
+      Swal.fire('Warning', 'Invalid account id', 'warning');
+      return;
     }
 
-  });
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (!result.isConfirmed) return;
 
-  this.dynamicReady = true;
-}
+      this.api.deleteAccount(id, 'accounts').subscribe({
+        // ✅ SUCCESS
+        next: (res) => {
+          console.log('delete account response ', res);
+          Swal.fire('Deleted', 'Account removed successfully', 'success').then(
+            () => {
+              // 🔥 get dynamic custId from selected account
+              const custId = this.storeAccounts?.custId;
+
+              console.log('Redirecting with custId:', custId);
+
+              if (custId) {
+                this.router.navigate(['/admin/create-customer', custId]);
+              } else {
+                // fallback if custId missing
+                this.router.navigate([
+                  '/admin/create-customer',
+                  this.storeAccounts.custId,
+                ]);
+              }
+            },
+          );
+        },
+
+        // ❌ ERROR
+        error: (err) => {
+          console.log('DELETE ERROR:', err);
+
+          Swal.fire(
+            'Error',
+            err?.error?.message || err?.message || 'Failed to delete account',
+            'error',
+          );
+        },
+      });
+    });
+  }
+  // dynamicFields methods
+
+  private loadDynamicFields(): void {
+    this.api.getFieldsByScreenAndStatus('Accounts', 'A').subscribe({
+      next: (res: any) => {
+        this.fields = res || [];
+
+        const group: any = {};
+
+        this.fields.forEach((f: any) => {
+          group[f.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        this.fieldsLoaded = true;
+
+        this.tryPatchDynamicFields(); // 🔥 FIX
+      },
+      error: (err) => console.error('Dynamic fields error', err),
+    });
+  }
+  private tryPatchDynamicFields(): void {
+    if (!this.accountLoaded || !this.fieldsLoaded) return;
+
+    const dynamicFields = this.storeAccounts?.dynamicFields;
+
+    if (!dynamicFields || !dynamicFields.length) return;
+
+    dynamicFields.forEach((df: any) => {
+      const fieldDef = this.fields.find((f) => f.fieldId === df.fieldId);
+
+      if (fieldDef) {
+        this.dynamicFieldsForm.get(fieldDef.fieldName)?.setValue(df.value);
+      }
+    });
+
+    this.dynamicReady = true;
+  }
 }
