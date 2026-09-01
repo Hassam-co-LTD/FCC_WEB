@@ -547,15 +547,15 @@
 <div class="actions">
   <button mat-stroked-button (click)="back()">Back</button>
 
-  <ng-container     *ngIf="
-      currentTx?.status === 'I' &&
-      hasPermission('UTG_AmendPreviewSubmit')
-    ">
+  <ng-container     >
     <button
       mat-flat-button
       color="primary"
       (click)="submitForm()"
-      *ngIf="currentTx?.status === 'I'"
+      *ngIf="
+      currentTx?.status === 'I' &&
+      hasPermission('UTG_AmendPreviewSubmit')
+    "
     >
       Submit
     </button>

@@ -508,27 +508,28 @@
 <div class="actions">
   <button mat-stroked-button (click)="back()">Back</button>
 
-  <ng-container *ngIf="
-        currentTx?.status === 'I' &&
-        hasPermission('UTG_AmendPreviewSubmit')
-      ">
+  <ng-container >
     <button
       mat-flat-button
       color="primary"
       (click)="submitForm()"
-      *ngIf="currentTx?.status === 'I'"
+   *ngIf="
+        currentTx?.status === 'I' &&
+        hasPermission('UTG_AmendPreviewSubmit')
+      "
     >
       Submit
     </button>
 
     <button
-      mat-flat-button
-      color="warn"
-      (click)="rejectTransaction()"
-       *ngIf="
+    *ngIf="
         currentTx?.status === 'S' &&
         hasPermission('UTG_AmendPreviewReject')
       "
+      mat-flat-button
+      color="warn"
+      (click)="rejectTransaction()"
+       
     >
       Reject
     </button>

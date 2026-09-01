@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
-
+import { NgIf } from '@angular/common';
 // --- SERVICE IMPORT ---
 import { 
   UndertakingIssuanceService
@@ -28,6 +28,7 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
     MatButtonModule,
     DecimalPipe,
     MatDividerModule,
+    NgIf,
   ],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
@@ -190,20 +191,12 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
+    if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
+      console.warn('Submit blocked: missing UTG_AmendPreviewSubmit permission');
 
-     if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
-       console.warn(
-         'Submit blocked: missing UTG_AmendPreviewSubmit permission',
-       );
-
-       this.snackBar.open(
-         'You do not have permission to submit this transaction.',
-         'Close',
-         { duration: 3000 },
-       );
-
-       return;
-     }
+     
+      return;
+    }
 
     if (this.viewMode === 'readonly') return;
 
@@ -231,8 +224,6 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-
-    
     if (!this.hasPermission('UTG_AmendPreviewApprove')) {
       console.warn(
         'Approve blocked: missing UTG_AmendPreviewApprove permission',
@@ -279,20 +270,17 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
+    if (!this.hasPermission('UTG_AmendPreviewReject')) {
+      console.warn('Reject blocked: missing UTG_AmendPreviewReject permission');
 
-     if (!this.hasPermission('UTG_AmendPreviewReject')) {
-       console.warn(
-         'Reject blocked: missing UTG_AmendPreviewReject permission',
-       );
+      this.snackBar.open(
+        'You do not have permission to reject this transaction.',
+        'Close',
+        { duration: 3000 },
+      );
 
-       this.snackBar.open(
-         'You do not have permission to reject this transaction.',
-         'Close',
-         { duration: 3000 },
-       );
-
-       return;
-     }
+      return;
+    }
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 

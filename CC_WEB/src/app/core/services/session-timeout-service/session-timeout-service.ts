@@ -6,7 +6,7 @@ import { AuthService } from '../auth.service';
 export class SessionTimeoutService {
   private timeoutId: any;
 
-  private timeoutDuration = 10 * 60 * 1000; // 10 minutes
+  private timeoutDuration = 60 * 60 * 1000; // 1 hour
   constructor(
     private ngZone: NgZone,
     private authService: AuthService,
