@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,10 +36,9 @@ import { ApiService } from '../../../../../core/services/api.service';
     MatNativeDateModule,
   ],
   templateUrl: './permissions-group.html',
-  styleUrls: ['./permissions-group.scss']
+  styleUrls: ['./permissions-group.scss'],
 })
 export class CreatePermissionGroup implements OnInit {
-
   permissionGroupForm!: FormGroup;
   storePermissionGroup: any = {};
   allPermissions: any[] = [];
@@ -48,121 +52,105 @@ export class CreatePermissionGroup implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private authService: AuthService  
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.buildForm();
     this.loadPermissionGroup();
-    this.loadPermissions()
+    this.loadPermissions();
   }
-private buildForm(): void {
-  this.permissionGroupForm = this.fb.group({
+  private buildForm(): void {
+    this.permissionGroupForm = this.fb.group({
+      permissionGroupId: ['', Validators.required],
 
-    permissionGroupId: ['', Validators.required],
+      permissionGroupName: ['', Validators.required],
 
-    permissionGroupName: ['', Validators.required],
+      description: ['', Validators.required],
 
-    description: ['', Validators.required],
+      permissionIds: [[], Validators.required],
 
-    permissionIds: [[], Validators.required],
-
-    permissionGroupStatus: ['A', Validators.required],
-    createdBy: [this.authService.getLoginId() || '', Validators.required], 
-
-  });
-}
+      permissionGroupStatus: ['A', Validators.required],
+      createdBy: [this.authService.getLoginId() || '', Validators.required],
+    });
+  }
 
   private loadPermissionGroup(): void {
-
     const id = this.route.snapshot.paramMap.get('id');
     console.log('Loading permission group with ID:', id);
 
     if (id) {
-
       this.isEditMode = true;
 
       this.api.getTnxById(id, 'PermissionsGroup').subscribe({
-        next: res => {
+        next: (res) => {
           this.storePermissionGroup = res;
           console.log('Permission Group:', res);
           this.permissionGroupForm.patchValue(res);
         },
-        error: err => console.error(err)
+        error: (err) => console.error(err),
       });
-
     }
-
   }
-
 
   // ---------------- CREATE ----------------
   onSave(): void {
-
     if (this.permissionGroupForm.invalid) return;
 
     const payload = this.permissionGroupForm.getRawValue();
-    
+
     console.log('Payload to save:', payload);
 
     this.api.saveTnx(payload, 'PermissionsGroup').subscribe({
-
       next: () => {
-
-        Swal.fire('Saved!', 'Permission Group saved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-group-master-inquiry']));
-
+        Swal.fire(
+          'Saved!',
+          'Permission Group saved successfully',
+          'success',
+        ).then(() =>
+          this.router.navigate(['/admin/permission-group-master-inquiry']),
+        );
       },
 
-      error: err => {
-
+      error: (err) => {
         console.error('Save failed', err);
 
         let backendMessage = '';
 
         if (typeof err.error === 'string') {
           backendMessage = err.error;
-        }
-        else if (err.error?.message) {
+        } else if (err.error?.message) {
           backendMessage = err.error.message;
         }
 
         Swal.fire('Error', backendMessage, 'error');
-
-      }
-
+      },
     });
-
   }
-
-
 
   // ---------------- UPDATE ----------------
   update(id: Number): void {
-
     if (this.permissionGroupForm.invalid) return;
 
     const payload = {
       ...this.permissionGroupForm.getRawValue(),
-     updatedBy:this.authService.getLoginId()
+      updatedBy: this.authService.getLoginId(),
     };
 
     this.api.updateTnx(payload, 'PermissionsGroup', id).subscribe({
-
       next: () => {
-
-        Swal.fire('Updated!', 'Permission Group updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-group-master-inquiry']));
-
+        Swal.fire(
+          'Updated!',
+          'Permission Group updated successfully',
+          'success',
+        ).then(() =>
+          this.router.navigate(['/admin/permission-group-master-inquiry']),
+        );
       },
 
-      error: err => console.error('Update failed', err)
-
+      error: (err) => console.error('Update failed', err),
     });
-
   }
-
-
 
   // ---------------- UI HELPERS ----------------
 
@@ -173,206 +161,160 @@ private buildForm(): void {
     return false;
   }
 
-
   toggle(): void {
     this.isOpen = !this.isOpen;
   }
-
 
   onBack(): void {
     this.location.back();
   }
 
-
   onCancel(): void {
     this.permissionGroupForm.reset();
   }
 
-
-
   submit(): void {
+    const payload = this.authService.getSubmitPayload();
+    this.api
+      .setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Submitted!',
+            'Permission Group submitted successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-group-master-inquiry']),
+          );
+        },
 
-    const payload = this.authService.getSubmitPayload()
-    this.api.setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
-    .subscribe({
-
-      next: () => {
-
-        Swal.fire('Submitted!', 'Permission Group submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-group-master-inquiry']));
-
-      },
-
-      error: err => console.error('Submit failed', err)
-
-    });
-
+        error: (err) => console.error('Submit failed', err),
+      });
   }
-
-
 
   reject(id: number): void {
-    
-      if (!id) return;
-    
-      Swal.fire({
-        title: 'Reject Transaction',
-        input: 'textarea',
-        inputLabel: 'Reject Reason',
-        inputPlaceholder: 'Please enter the reason for rejection...',
-        inputAttributes: {
-          'aria-label': 'Reject reason'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Reject',
-        cancelButtonText: 'Cancel',
-    
-        preConfirm: (reason) => {
-    
-          if (!reason || !reason.trim()) {
-    
-            Swal.showValidationMessage(
-              'Reject reason is required'
-            );
-    
-            return false;
-          }
-    
-          return reason.trim();
-        }
-    
-      }).then((result) => {
-    
-        if (!result.isConfirmed) {
-          return;
-        }
-    
-        const rejectReason = result.value;
-    
-        // =========================
-        // CREATE REJECT PAYLOAD
-        // =========================
-    
-        const payload =
-          this.authService.getRejectPayload(rejectReason);
-    
-        console.log('Reject ID:', id);
-        console.log('Reject Payload:', payload);
-    
-        // =========================
-        // CALL API
-        // =========================
-    
-        this.api.setTnxByStatus(
-          payload,
-          id,
-          'customer'
-        ).subscribe({
-    
-          next: (res: any) => {
-    
-            console.log('Reject successful:', res);
-    
-            Swal.fire(
-              'Rejected!',
-              res?.message || 'Customer rejected successfully',
-              'success'
-            ).then(() => {
-    
-              this.router.navigate(
-                ['/admin/customer-list'],
-                {
-                  queryParams: {
-                    tabName: 'rejected'
-                  }
-                }
-              );
-    
-            });
-    
-          },
-    
-          error: (err: any) => {
-    
-            console.error('Reject failed:', err);
-    
-            Swal.fire(
-              'Error',
-              err?.error?.message || 'Reject failed',
-              'error'
-            );
-    
-          }
-    
-        });
-    
-      });
-    }
+    if (!id) return;
 
-  approve(): void {
-
-    if (!this.storePermissionGroup?.permissionGroupId) return;
-
-
-    const payload = this.authService.getApprovePayload()
-
-    this.api.setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
-    .subscribe({
-
-      next: () => {
-
-        Swal.fire('Approved!', 'Permission Group approved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-group-master-inquiry']));
-
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason',
       },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
 
-      error: err => console.error('Approve failed', err)
+      preConfirm: (reason) => {
+        if (!reason || !reason.trim()) {
+          Swal.showValidationMessage('Reject reason is required');
 
+          return false;
+        }
+
+        return reason.trim();
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const rejectReason = result.value;
+
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
+
+      const payload = this.authService.getRejectPayload(rejectReason);
+
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
+
+      // =========================
+      // CALL API
+      // =========================
+
+      this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+        next: (res: any) => {
+          console.log('Reject successful:', res);
+
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Customer rejected successfully',
+            'success',
+          ).then(() => {
+            this.router.navigate(['/admin/customer-list'], {
+              queryParams: {
+                tabName: 'rejected',
+              },
+            });
+          });
+        },
+
+        error: (err: any) => {
+          console.error('Reject failed:', err);
+
+          Swal.fire('Error', err?.error?.message || 'Reject failed', 'error');
+        },
+      });
     });
-
   }
 
+  approve(): void {
+    if (!this.storePermissionGroup?.permissionGroupId) return;
 
+    const payload = this.authService.getApprovePayload();
+
+    this.api
+      .setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Approved!',
+            'Permission Group approved successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-group-master-inquiry']),
+          );
+        },
+
+        error: (err) => console.error('Approve failed', err),
+      });
+  }
 
   amend(permissionGroupId: String): void {
-
     if (!this.storePermissionGroup?.permissionGroupId) return;
     const payload = this.authService.getAmendPayload();
 
-    this.api.setTnxByStatus(
-      payload,
-      this.storePermissionGroup.permissionGroupId,
-      'PermissionGroup'
-    )
-    .subscribe({
+    this.api
+      .setTnxByStatus(payload, this.storePermissionGroup.id, 'PermissionsGroup')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Amended!',
+            'Permission Group moved to Draft for amendment',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-group-master-inquiry']),
+          );
+        },
 
-      next: () => {
-
-        Swal.fire('Amended!', 'Permission Group moved to Draft for amendment', 'success')
-          .then(() => this.router.navigate(['/admin/permission-group-master-inquiry']));
-
-      },
-
-      error: err => console.error('Amend failed', err)
-
-    });
-
+        error: (err) => console.error('Amend failed', err),
+      });
   }
 
   private loadPermissions(): void {
+    this.api.getTnxByStatus('A', 'Permissions').subscribe({
+      next: (res: any[]) => {
+        this.allPermissions = res;
+        console.log('Loaded Permissions:', this.allPermissions);
+      },
 
-  this.api.getTnxByStatus('A', 'Permissions').subscribe({
-
-    next: (res: any[]) => {
-      this.allPermissions = res;
-      console.log('Loaded Permissions:', this.allPermissions);
-    },
-
-    error: err => {
-      console.error('Permission loading failed', err);
-    }
-
-  });
-
-}
+      error: (err) => {
+        console.error('Permission loading failed', err);
+      },
+    });
+  }
 }

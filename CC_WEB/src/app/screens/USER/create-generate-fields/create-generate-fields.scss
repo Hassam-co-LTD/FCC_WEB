@@ -1,157 +1,247 @@
 @use "../../../../styles/theme" as theme;
-/* Hide when approved */
+
+/* =========================================================
+HIDE WHEN NOT APPROVED
+========================================================= */
+
 .hide-when-approved {
-  display: none !important;
+display: none !important;
 }
 
-/* =========================
-   Section Header
-=========================== */
+/* =========================================================
+SECTION HEADER
+========================================================= */
+
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: theme.$primary;
-  padding: 14px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  color: theme.$text-light;
-  &:hover {
-    background: theme.$primary-dark;
-    box-shadow: theme.$shadow-primary;
-  }
+display: flex;
+justify-content: space-between;
+align-items: center;
 
-  mat-icon {
-    color: theme.$text-light;
-    font-size: 22px;
-  }
+background: theme.$primary;
+padding: 14px 18px;
+
+border-radius: 8px;
+cursor: pointer;
+margin-bottom: 10px;
+
+transition:
+background 0.3s ease,
+box-shadow 0.3s ease;
+
+color: theme.$text-light;
+
+&:hover {
+background: theme.$primary-dark;
+box-shadow: theme.$shadow-primary;
 }
 
-/* =========================
-   Collapsible
-=========================== */
+mat-icon {
+color: theme.$text-light;
+font-size: 22px;
+}
+}
+
+/* =========================================================
+COLLAPSIBLE FORM
+========================================================= */
+
 .collapsible {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-5px);
-  transition: all 0.35s ease-in-out;
+max-height: 0;
+overflow: hidden;
+
+opacity: 0;
+transform: translateY(-5px);
+
+transition: all 0.35s ease-in-out;
 }
 
 .collapsible.open {
-  max-height: 2000px;
-  opacity: 1;
-  transform: translateY(0);
-  padding: 15px 10px;
-  background: theme.$light-bg;
-  border-radius: 6px;
-  border: 1px solid theme.$border-light;
+max-height: 2000px;
+
+opacity: 1;
+transform: translateY(0);
+
+padding: 15px 10px;
+
+background: theme.$light-bg;
+border-radius: 6px;
+border: 1px solid theme.$border-light;
 }
 
-/* =========================
-   Headings
-=========================== */
+/* =========================================================
+HEADINGS
+========================================================= */
+
 h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: theme.$white;
+font-size: 20px;
+font-weight: 600;
+
+margin: 0;
+
+color: theme.$white;
 }
 
 h4 {
-  font-size: 16px;
-  margin: 20px 0 10px;
-  font-weight: 600;
-  color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
-  padding-left: 8px;
+font-size: 16px;
+
+margin: 20px 0 10px;
+
+font-weight: 600;
+
+color: theme.$primary-dark;
+
+border-left: 4px solid theme.$primary;
+
+padding-left: 8px;
 }
 
-/* =========================
-   Form Layout
-=========================== */
+/* =========================================================
+FORM LAYOUT
+========================================================= */
+
 .field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+display: flex;
+flex-direction: column;
+
+gap: 8px;
 }
 
 .form-grid,
 .form-grid-responsive {
-  display: grid;
-  gap: theme.$gap-default;
-  margin-bottom: 15px;
+display: grid;
+
+gap: theme.$gap-default;
+
+margin-bottom: 15px;
 }
 
-/* Responsive columns */
+/* Default two-column layout */
+
 .form-grid {
-  grid-template-columns: repeat(2, 1fr);
+grid-template-columns: repeat(2, 1fr);
 }
+
+/* Responsive form grid */
 
 .form-grid-responsive {
-  grid-template-columns: repeat(2, 1fr);
+grid-template-columns: repeat(2, 1fr);
 
-  @media (min-width: 1441px) {
-    grid-template-columns: repeat(3, 1fr); // large screens
-  }
-
-  @media (min-width: 1025px) and (max-width: 1440px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
+@media (min-width: 1441px) {
+grid-template-columns: repeat(3, 1fr);
 }
 
-/* Alternating Applicant & Beneficiary Box Indicator */
+@media (min-width: 1025px) and (max-width: 1440px) {
+grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 1024px) {
+grid-template-columns: 1fr;
+}
+}
+
+/* =========================================================
+ALTERNATE FORM GRID
+========================================================= */
+
 .form-grid.alternate {
-  padding-left: 10px;
-  border-left: 2px dashed theme.$border-primary;
-  margin-left: 4px;
+padding-left: 10px;
+
+border-left: 2px dashed theme.$border-primary;
+
+margin-left: 4px;
 }
 
-/* Fields */
+/* =========================================================
+MATERIAL FORM FIELDS
+========================================================= */
+
 mat-form-field {
-  width: 100%;
+width: 100%;
 }
 
-/* Toggle */
 mat-slide-toggle {
-  margin: 12px 0;
-  font-weight: 500;
+margin: 12px 0;
+
+font-weight: 500;
 }
 
-/* Input field styling */
 input[matInput] {
-  font-size: 14px !important;
-  color: theme.$primary-dark;
+font-size: 14px !important;
+
+color: theme.$primary-dark;
 }
 
 .mat-mdc-floating-label,
 .mat-mdc-form-field-label {
-  font-size: 14px !important;
+font-size: 14px !important;
 }
 
 ::placeholder {
-  color: theme.$primary-dark;
-  opacity: 0.8;
+color: theme.$primary-dark;
+opacity: 0.8;
 }
 
 .mdc-text-field {
-  background-color: theme.$white;
+background-color: theme.$white;
 }
 
-/* =========================
-   Customer Form Buttons Outside
-=========================== */
+/* =========================================================
+DROPDOWN OPTIONS
+========================================================= */
+
+.options-section {
+margin-top: 32px;
+
+padding: 16px;
+
+border: 1px solid theme.$border-light;
+border-radius: theme.$radius-default;
+
+background: theme.$light-bg;
+}
+
+.options-section h3 {
+margin-bottom: 16px;
+
+font-weight: 600;
+
+color: theme.$primary;
+}
+
+.option-row {
+display: flex;
+
+flex-wrap: wrap;
+
+gap: theme.$gap-default;
+
+align-items: center;
+
+margin-bottom: 12px;
+}
+
+.field-group.half {
+flex: 1 1 45%;
+
+min-width: 150px;
+}
+
+.field-group.remove-btn {
+flex: 0 0 auto;
+}
+
+/* =========================================================
+CUSTOMER / FORM ACTIONS
+========================================================= */
+
 .customer-actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+margin-top: 20px;
+
+display: flex;
+
+justify-content: flex-end;
+
+gap: 12px;
 }
 
 .customer-actions .btn-save,
@@ -161,273 +251,595 @@ input[matInput] {
 .customer-actions .btn-submit,
 .customer-actions .btn-approve,
 .customer-actions .btn-reject {
-  background: theme.$primary;
-  color: theme.$text-light;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: theme.$button-shadow;
 
-  &:hover:not(:disabled) {
-    background: theme.$primary-dark;
-  }
+background: theme.$primary;
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
+color: theme.$text-light;
+
+padding: 10px 18px;
+
+border-radius: theme.$radius-default;
+
+font-weight: 500;
+
+border: none;
+
+cursor: pointer;
+
+transition:
+background 0.3s ease,
+box-shadow 0.3s ease;
+
+box-shadow: theme.$button-shadow;
+
+&:hover:not(:disabled) {
+background: theme.$primary-dark;
 }
 
-/* =========================
-   Approved Customer Container
-=========================== */
-/* Approved container */
-.approved-container {
-  background: theme.$light-bg;
-  border-radius: 8px;
-  border: 1px solid theme.$border-light;
-  padding: 20px 25px;
-  max-width: 1200px;
-  margin: 20px auto;
-  box-shadow: theme.$shadow-primary;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+&:disabled {
+opacity: 0.6;
 
-  .approved-badge {
-    display: inline-block;
-    background: #28a745; // green for approved
-    color: theme.$text-light;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    align-self: flex-start;
-  }
 
-  .approved-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); // 2 columns per row
-    gap: 20px;
+cursor: not-allowed;
 
-    p {
-      margin: 0;
-      font-size: 14px;
-      color: theme.$primary-dark;
+box-shadow: none;
 
-      strong {
-        font-weight: 600;
-      }
-    }
-  }
+
+}
 }
 
-/* Buttons outside approved container */
+/* =========================================================
+GENERATE FIELD DOSSIER
+SAME VISUAL LANGUAGE AS CUSTOMER DOSSIER
+========================================================= */
+
+.dossier-container {
+background: theme.$white;
+
+border: 1px solid theme.$border-light;
+
+border-radius: theme.$radius-large;
+
+padding: 24px;
+
+max-width: 1200px;
+
+margin: 20px auto;
+
+box-shadow: theme.$shadow-primary;
+}
+
+/* =========================================================
+DOSSIER HEADER
+========================================================= */
+
+.dossier-header {
+position: relative;
+
+border: 1px solid theme.$border-light;
+
+border-radius: theme.$radius-default;
+
+background: theme.$white;
+
+overflow: hidden;
+
+margin-bottom: 24px;
+}
+
+.status-strip {
+position: absolute;
+
+left: 0;
+top: 0;
+bottom: 0;
+
+width: 5px;
+
+background: theme.$primary;
+}
+
+.status-strip.active {
+background: theme.$primary;
+}
+
+.header-content {
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+padding: 20px 24px 20px 28px;
+
+gap: 20px;
+}
+
+/* =========================================================
+FIELD IDENTITY
+========================================================= */
+
+.identity-block {
+display: flex;
+
+align-items: center;
+
+gap: 14px;
+}
+
+.avatar-circle {
+width: 52px;
+height: 52px;
+
+border-radius: 50%;
+
+background: theme.$primary;
+
+color: theme.$text-light;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+font-size: 21px;
+
+font-weight: 700;
+
+flex-shrink: 0;
+}
+
+.text-group {
+display: flex;
+
+flex-direction: column;
+
+gap: 4px;
+}
+
+.customer-name {
+margin: 0;
+
+font-size: 22px;
+
+font-weight: 600;
+
+color: theme.$primary-dark;
+}
+
+.customer-id {
+font-size: 13px;
+
+color: theme.$primary-dark;
+
+opacity: 0.8;
+}
+
+.customer-id code {
+font-family: monospace;
+
+font-weight: 600;
+}
+
+/* =========================================================
+STATUS BADGE
+========================================================= */
+
+.badge-group {
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+}
+
+.status-badge {
+display: inline-flex;
+
+align-items: center;
+
+justify-content: center;
+
+padding: 6px 14px;
+
+border-radius: theme.$radius-default;
+
+background: theme.$primary;
+
+color: theme.$text-light;
+
+font-size: 13px;
+
+font-weight: 600;
+}
+
+/* =========================================================
+DOSSIER GRID
+========================================================= */
+
+.dossier-grid {
+display: grid;
+
+grid-template-columns: 1fr;
+
+gap: 20px;
+
+margin-bottom: 20px;
+}
+
+/* =========================================================
+INFORMATION CARD
+========================================================= */
+
+.info-card {
+background: theme.$white;
+
+border: 1px solid theme.$border-light;
+
+border-radius: theme.$radius-large;
+
+padding: 20px;
+
+box-shadow: none;
+}
+
+/* =========================================================
+CARD TITLE
+========================================================= */
+
+.card-title {
+display: flex;
+
+align-items: center;
+
+gap: 10px;
+
+margin-bottom: 20px;
+
+font-size: 17px;
+
+font-weight: 600;
+
+color: theme.$primary-dark;
+}
+
+.card-title mat-icon {
+color: theme.$primary;
+}
+
+/* =========================================================
+DATA GRID
+========================================================= */
+
+.data-grid {
+display: grid;
+
+grid-template-columns: repeat(2, 1fr);
+
+gap: 14px;
+}
+
+/* =========================================================
+DATA ITEM
+========================================================= */
+
+.data-item {
+display: flex;
+
+flex-direction: column;
+
+gap: 6px;
+
+padding: 12px 16px;
+
+border: 1px solid theme.$border-light;
+
+border-radius: theme.$radius-default;
+
+background: theme.$light-bg;
+}
+
+.data-item.full-width {
+grid-column: 1 / -1;
+}
+
+.data-item label {
+font-size: 12px;
+
+font-weight: 600;
+
+color: theme.$primary-dark;
+
+opacity: 0.75;
+
+text-transform: uppercase;
+
+letter-spacing: 0.3px;
+}
+
+.data-item .value {
+font-size: 14px;
+
+font-weight: 500;
+
+color: theme.$primary-dark;
+
+word-break: break-word;
+}
+
+.val-mono {
+font-family: monospace;
+}
+
+/* =========================================================
+DIVIDER
+========================================================= */
+
+.divider {
+margin: 0 6px;
+
+color: theme.$border-primary;
+}
+
+/* =========================================================
+DYNAMIC FIELD SECTION
+========================================================= */
+
+.dynamic-fields-section {
+margin-top: 20px;
+}
+
+.count-pill {
+margin-left: auto;
+
+padding: 5px 10px;
+
+border-radius: 20px;
+
+background: theme.$light-bg;
+
+border: 1px solid theme.$border-light;
+
+color: theme.$primary-dark;
+
+font-size: 12px;
+
+font-weight: 600;
+}
+
+/* =========================================================
+APPROVED ACTIONS
+========================================================= */
+
 .approved-actions {
-  max-width: 1200px;
-  margin: 0 auto 20px; // center and spacing below
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+max-width: 1200px;
 
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: theme.$button-shadow;
-    flex: 0 0 auto; // prevent full width
+margin: 16px auto 30px;
 
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
+display: flex;
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
+justify-content: flex-end;
+
+gap: 12px;
 }
 
-/* Responsive adjustments */
+.approved-actions button {
+background: theme.$primary;
+
+color: theme.$text-light;
+
+padding: 10px 18px;
+
+border-radius: theme.$radius-default;
+
+border: none;
+
+font-weight: 500;
+
+cursor: pointer;
+
+box-shadow: theme.$button-shadow;
+
+transition:
+background 0.3s ease,
+box-shadow 0.3s ease;
+
+&:hover:not(:disabled) {
+background: theme.$primary-dark;
+}
+
+&:disabled {
+opacity: 0.6;
+
+
+cursor: not-allowed;
+
+box-shadow: none;
+
+
+}
+}
+
+/* =========================================================
+DOSSIER FOOTER
+========================================================= */
+
+.dossier-footer {
+display: flex;
+
+justify-content: space-between;
+
+align-items: center;
+
+gap: 20px;
+
+margin-top: 24px;
+
+padding-top: 20px;
+
+border-top: 1px solid theme.$border-light;
+}
+
+.audit-info {
+display: flex;
+
+align-items: center;
+
+gap: 8px;
+
+color: theme.$primary-dark;
+
+font-size: 13px;
+}
+
+.audit-info mat-icon {
+color: theme.$primary;
+}
+
+.footer-actions {
+display: flex;
+
+align-items: center;
+
+gap: 12px;
+}
+
+.footer-actions button {
+min-height: 40px;
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 1024px) {
+
+.data-grid {
+grid-template-columns: 1fr;
+}
+
+.data-item.full-width {
+grid-column: auto;
+}
+
+.header-content {
+padding: 18px 20px 18px 24px;
+}
+}
+
 @media (max-width: 768px) {
-  .approved-container .approved-info {
-    grid-template-columns: 1fr; // stack on small screens
-  }
 
-  .approved-actions {
-    flex-direction: column;
-    gap: 10px;
+.dossier-container {
+padding: 16px;
 
-    button {
-      width: 100%; // full width on mobile
-    }
-  }
 
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: theme.$button-shadow;
+margin: 15px auto;
 
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
-
-  ng-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
 }
 
-/* =========================
-   Responsive Adjustments
-=========================== */
-/* =========================
-   Approved Customer Container
-=========================== */
+.header-content {
+flex-direction: column;
 
-.approved-container {
-  background: theme.$white;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-large;
-  padding: 24px;
-  max-width: 1200px;
-  margin: 20px auto;
-  box-shadow: theme.$shadow-primary;
+
+align-items: flex-start;
+
+
 }
 
-/* Header */
-.approved-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-  }
+.badge-group {
+width: 100%;
 }
 
-/* Badge — NO GREEN */
-.approved-badge {
-  background: theme.$primary;
-  color: theme.$text-light;
-  padding: 6px 14px;
-  border-radius: theme.$radius-default;
-  font-size: 13px;
-  font-weight: 600;
+.status-badge {
+width: fit-content;
 }
 
-/* Info list */
-.approved-info {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+.customer-name {
+font-size: 19px;
 }
 
-/* Single row card */
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-default;
-  background: theme.$light-bg;
+.avatar-circle {
+width: 46px;
+height: 46px;
+
+
+font-size: 18px;
+
+
 }
 
-.key {
-  font-weight: 600;
-  color: theme.$primary-dark;
-  white-space: nowrap;
+.dossier-footer {
+flex-direction: column;
+
+
+align-items: stretch;
+
+
 }
 
-.value {
-  color: theme.$primary-dark;
-  text-align: right;
-  word-break: break-word;
-}
-/* Responsive */
-@media (min-width: 1440px) {
-  .info-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 40px;
-    align-items: center;
-  }
+.footer-actions {
+flex-direction: column;
 
-  .value {
-    text-align: left;
-  }
+
+width: 100%;
+
+
 }
+
+.footer-actions button {
+width: 100%;
+}
+
 .approved-actions {
-  max-width: 1200px;
-  margin: 16px auto 30px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+flex-direction: column;
 
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: theme.$radius-default;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: theme.$button-shadow;
 
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
+gap: 10px;
 
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
+
 }
 
+.approved-actions button {
+width: 100%;
+}
+
+.customer-actions {
+flex-direction: column;
+
+
+align-items: stretch;
+
+
+}
+
+.customer-actions button {
+width: 100%;
+}
 
 .option-row {
-  display: flex;
-  flex-wrap: wrap; /* wrap on smaller screens */
-  // gap: $gap-default; /* same spacing as other fields */
+flex-direction: column;
+
+
+align-items: stretch;
+
+
 }
 
 .field-group.half {
-  flex: 1 1 45%; /* half width on large screens, shrink if needed */
-  min-width: 150px; /* ensures small screens don't break layout */
+flex: 1 1 100%;
+
+
+width: 100%;
+
+
+}
 }
 
-.field-group.remove-btn {
-  flex: 0 0 auto; /* button stays fixed width */
+@media (min-width: 1440px) {
+
+.data-grid {
+grid-template-columns: repeat(2, 1fr);
+}
 }

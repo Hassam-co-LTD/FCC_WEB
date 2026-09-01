@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import  {AuthService}  from '../../../../../core/services/auth.service';
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 @Component({
@@ -31,10 +36,9 @@ import { ApiService } from '../../../../../core/services/api.service';
     MatNativeDateModule,
   ],
   templateUrl: './permission-master.html',
-  styleUrls: ['./permission-master.scss']
+  styleUrls: ['./permission-master.scss'],
 })
 export class PermissionMaster implements OnInit {
-
   permissionForm!: FormGroup;
   storePermission: any = {};
 
@@ -47,7 +51,7 @@ export class PermissionMaster implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -55,66 +59,62 @@ export class PermissionMaster implements OnInit {
     this.loadPermission();
   }
 
- private buildForm(): void {
-  this.permissionForm = this.fb.group({
-    permissionId: ['', Validators.required],
-    permissionName: ['', Validators.required],
-    moduleName: ['', Validators.required],
-    description: [''],
-    permissionStatus: ['A', Validators.required],
-    createdBy: [this.authService.getLoginId() || ''],
-    // recordStatus will be handled by the backend (default 'I')
-  });
-}
-  private loadPermission(): void {
-
-  const id = this.route.snapshot.paramMap.get('id');
-  console.log('Loading permission with ID:', id);
-
-  if (id) {
-
-    this.isEditMode = true;
-
-    this.api.getTnxById(id, 'Permissions').subscribe({
-      next: res => {
-        this.storePermission = res;
-        console.log('Permission:', res);
-        this.permissionForm.patchValue(res);
-      },
-      error: err => console.error(err)
+  private buildForm(): void {
+    this.permissionForm = this.fb.group({
+      permissionId: ['', Validators.required],
+      permissionName: ['', Validators.required],
+      moduleName: ['', Validators.required],
+      description: [''],
+      permissionStatus: ['A', Validators.required],
+      createdBy: [this.authService.getLoginId() || ''],
+      // recordStatus will be handled by the backend (default 'I')
     });
-
   }
+  private loadPermission(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log('Loading permission with ID:', id);
 
-}
-  // ---------------- CREATE ----------------
- onSave(): void {
-  if (this.permissionForm.invalid) return;
+    if (id) {
+      this.isEditMode = true;
 
-  const payload = this.permissionForm.getRawValue();
-  console.log('Payload to save:', payload);
-
-  this.api.saveTnx(payload, 'Permissions').subscribe({
-    next: () => {
-      Swal.fire('Saved!', 'Permission saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/Permission-master-inquiry']));
-    },
-    error: err => {
-      console.error('Save failed', err);
-
-      // Show exactly the backend message
-      let backendMessage = '';
-      if (typeof err.error === 'string') {
-        backendMessage = err.error; // backend string message
-      } else if (err.error?.message) {
-        backendMessage = err.error.message; // if backend sends JSON { message: ... }
-      }
-
-      Swal.fire('Error', backendMessage, 'error');
+      this.api.getTnxById(id, 'Permissions').subscribe({
+        next: (res) => {
+          this.storePermission = res;
+          console.log('Permission:', res);
+          this.permissionForm.patchValue(res);
+        },
+        error: (err) => console.error(err),
+      });
     }
-  });
-}
+  }
+  // ---------------- CREATE ----------------
+  onSave(): void {
+    if (this.permissionForm.invalid) return;
 
+    const payload = this.permissionForm.getRawValue();
+    console.log('Payload to save:', payload);
+
+    this.api.saveTnx(payload, 'Permissions').subscribe({
+      next: () => {
+        Swal.fire('Saved!', 'Permission saved successfully', 'success').then(
+          () => this.router.navigate(['/admin/Permission-master-inquiry']),
+        );
+      },
+      error: (err) => {
+        console.error('Save failed', err);
+
+        // Show exactly the backend message
+        let backendMessage = '';
+        if (typeof err.error === 'string') {
+          backendMessage = err.error; // backend string message
+        } else if (err.error?.message) {
+          backendMessage = err.error.message; // if backend sends JSON { message: ... }
+        }
+
+        Swal.fire('Error', backendMessage, 'error');
+      },
+    });
+  }
 
   // ---------------- UPDATE ----------------
   update(id: Number): void {
@@ -122,14 +122,19 @@ export class PermissionMaster implements OnInit {
     const payload = {
       ...this.permissionForm.getRawValue(),
       updatedBy: this.authService.getLoginId() || '',
-    }
-    
+    };
+
     this.api.updateTnx(payload, 'Permissions', id).subscribe({
       next: () => {
-        Swal.fire('Updated!', 'Permission updated successfully', 'success')
-          .then(() => this.router.navigate(['/admin/Permission-master-inquiry']));
+        Swal.fire(
+          'Updated!',
+          'Permission updated successfully',
+          'success',
+        ).then(() =>
+          this.router.navigate(['/admin/Permission-master-inquiry']),
+        );
       },
-      error: err => console.error('Update failed', err)
+      error: (err) => console.error('Update failed', err),
     });
   }
 
@@ -154,139 +159,131 @@ export class PermissionMaster implements OnInit {
   }
 
   submit(): void {
-    if(!this.storePermission?.permissionId) return;
-    const payload = this.authService.getSubmitPayload()
-    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
-      next: (res) => {
-        console.log('Submit response:', res);
-        Swal.fire('Submitted!', 'Permission submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-master-inquiry']));
-      },
-      error: err => console.error('Submit failed', err)
-    });
+    if (!this.storePermission?.permissionId) return;
+    const payload = this.authService.getSubmitPayload();
+    this.api
+      .setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions')
+      .subscribe({
+        next: (res) => {
+          console.log('Submit response:', res);
+          Swal.fire(
+            'Submitted!',
+            'Permission submitted successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-master-inquiry']),
+          );
+        },
+        error: (err) => console.error('Submit failed', err),
+      });
   }
 
- reject(id: number): void {
- 
-   if (!id) return;
- 
-   Swal.fire({
-     title: 'Reject Transaction',
-     input: 'textarea',
-     inputLabel: 'Reject Reason',
-     inputPlaceholder: 'Please enter the reason for rejection...',
-     inputAttributes: {
-       'aria-label': 'Reject reason'
-     },
-     showCancelButton: true,
-     confirmButtonText: 'Reject',
-     cancelButtonText: 'Cancel',
- 
-     preConfirm: (reason) => {
- 
-       if (!reason || !reason.trim()) {
- 
-         Swal.showValidationMessage(
-           'Reject reason is required'
-         );
- 
-         return false;
-       }
- 
-       return reason.trim();
-     }
- 
-   }).then((result) => {
- 
-     if (!result.isConfirmed) {
-       return;
-     }
- 
-     const rejectReason = result.value;
- 
-     // =========================
-     // CREATE REJECT PAYLOAD
-     // =========================
- 
-     const payload =
-       this.authService.getRejectPayload(rejectReason);
- 
-     console.log('Reject ID:', id);
-     console.log('Reject Payload:', payload);
- 
-     // =========================
-     // CALL API
-     // =========================
- 
-     this.api.setTnxByStatus(
-       payload,
-       id,
-       'customer'
-     ).subscribe({
- 
-       next: (res: any) => {
- 
-         console.log('Reject successful:', res);
- 
-         Swal.fire(
-           'Rejected!',
-           res?.message || 'Customer rejected successfully',
-           'success'
-         ).then(() => {
- 
-           this.router.navigate(
-             ['/admin/customer-list'],
-             {
-               queryParams: {
-                 tabName: 'rejected'
-               }
-             }
-           );
- 
-         });
- 
-       },
- 
-       error: (err: any) => {
- 
-         console.error('Reject failed:', err);
- 
-         Swal.fire(
-           'Error',
-           err?.error?.message || 'Reject failed',
-           'error'
-         );
- 
-       }
- 
-     });
- 
-   });
- }
+  reject(id: number): void {
+    if (!id) return;
+
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason',
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
+
+      preConfirm: (reason) => {
+        if (!reason || !reason.trim()) {
+          Swal.showValidationMessage('Reject reason is required');
+
+          return false;
+        }
+
+        return reason.trim();
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const rejectReason = result.value;
+
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
+
+      const payload = this.authService.getRejectPayload(rejectReason);
+
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
+
+      // =========================
+      // CALL API
+      // =========================
+
+      this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+        next: (res: any) => {
+          console.log('Reject successful:', res);
+
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Customer rejected successfully',
+            'success',
+          ).then(() => {
+            this.router.navigate(['/admin/customer-list'], {
+              queryParams: {
+                tabName: 'rejected',
+              },
+            });
+          });
+        },
+
+        error: (err: any) => {
+          console.error('Reject failed:', err);
+
+          Swal.fire('Error', err?.error?.message || 'Reject failed', 'error');
+        },
+      });
+    });
+  }
 
   approve(): void {
     if (!this.storePermission?.permissionId) return;
 
-  const payload = this.authService.getApprovePayload()
+    const payload = this.authService.getApprovePayload();
 
-    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
-      next: () => {
-        Swal.fire('Approved!', 'Permission approved successfully', 'success')
-          .then(() => this.router.navigate(['/admin/permission-master-inquiry']));
-      },
-      error: err => console.error('Approve failed', err)
-    });
+    this.api
+      .setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Approved!',
+            'Permission approved successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-master-inquiry']),
+          );
+        },
+        error: (err) => console.error('Approve failed', err),
+      });
   }
   amend(PermissionId: String): void {
     if (!this.storePermission?.PermissionId) return;
-    const payload = this.authService.getAmendPayload()
-    this.api.setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions').subscribe({
-      next: () => {
-        Swal.fire('Amended!', 'Permission moved to Draft for amendment', 'success')
-          .then(() => this.router.navigate(['/admin/permission-master-inquiry']));
-      },
-      error: err => console.error('Amend failed', err)
-    });
+    const payload = this.authService.getAmendPayload();
+    this.api
+      .setTnxByStatus(payload, this.storePermission.permissionId, 'Permissions')
+      .subscribe({
+        next: () => {
+          Swal.fire(
+            'Amended!',
+            'Permission moved to Draft for amendment',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/permission-master-inquiry']),
+          );
+        },
+        error: (err) => console.error('Amend failed', err),
+      });
   }
-  
 }
