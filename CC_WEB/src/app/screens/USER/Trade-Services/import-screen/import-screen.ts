@@ -48,7 +48,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     Sidebar,
   ],
   templateUrl: './import-screen.html',
-  styleUrls: ['./import-screen.scss']
+  styleUrls: ['./import-screen.scss'],
 })
 export class ImportScreen implements OnInit {
   currentStep = 0;
@@ -62,17 +62,20 @@ export class ImportScreen implements OnInit {
   tnxId = '';
   companyId = '';
 
+  //permissions
+  permissionNames: string[] = [];
+
   importSteps = [
-    { label: "General Details" },
-    { label: "Applicant Details" },
-    { label: "Bank Details" },
-    { label: "Amount & Charges" },
-    { label: "Payment Details" },
-    { label: "Shipment Details" },
-    { label: "Narrative Details" },
-    { label: "Licenses" },
-    { label: "Instructions to Bank" },
-    { label: "Attachments" }
+    { label: 'General Details' },
+    { label: 'Applicant Details' },
+    { label: 'Bank Details' },
+    { label: 'Amount & Charges' },
+    { label: 'Payment Details' },
+    { label: 'Shipment Details' },
+    { label: 'Narrative Details' },
+    { label: 'Licenses' },
+    { label: 'Instructions to Bank' },
+    { label: 'Attachments' },
   ];
 
   constructor(
@@ -83,8 +86,7 @@ export class ImportScreen implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
-    private authservice: AuthService
-
+    private authservice: AuthService,
   ) {
     this.buildForm();
   }
@@ -93,16 +95,18 @@ export class ImportScreen implements OnInit {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
             }
           });
         },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-      sections.forEach(section => observer.observe(section));
+      sections.forEach((section) => observer.observe(section));
     }, 200);
 
     const navState = history.state;
@@ -117,7 +121,7 @@ export class ImportScreen implements OnInit {
     console.log('TNX ID from route:', this.tnxId);
     // const txFromState = history.state.transaction;
     // console.log('Transaction from state:', txFromState);
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       const tnxId = params.get('tnxId');
       if (tnxId) {
         this.enterEditMode(tnxId);
@@ -125,6 +129,32 @@ export class ImportScreen implements OnInit {
         this.enterCreateMode();
       }
     });
+  }
+
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log('Import LC Permission Names:', this.permissionNames);
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
   }
 
   private buildForm(): void {
@@ -139,7 +169,7 @@ export class ImportScreen implements OnInit {
         featureRevolving: [false],
         featureTransferable: [false],
         applicableRules: ['EUCP'],
-        confirmationInstruction: ['confirm']
+        confirmationInstruction: ['confirm'],
       }),
       applicantForm: this.fb.group({
         applicantName: [''],
@@ -153,7 +183,7 @@ export class ImportScreen implements OnInit {
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
         beneficiaryAddress4: [''],
-        beneficiaryCountry: ['']
+        beneficiaryCountry: [''],
       }),
       bankForm: this.fb.group({
         issuingBankName: [''],
@@ -169,13 +199,13 @@ export class ImportScreen implements OnInit {
         variationMinus: [''],
         issuingBankCharges: ['Applicant'],
         outsideCountryCharges: ['Beneficiary'],
-        additionalAmount: ['']
+        additionalAmount: [''],
       }),
       paymentDetailsForm: this.fb.group({
         creditAvailableWith: [''],
         bankName: [''],
         creditAvailableBy: ['Payment'],
-        paymentDraftAt: ['Sight']
+        paymentDraftAt: ['Sight'],
       }),
       shipmentForm: this.fb.group({
         shipmentFrom: [''],
@@ -185,20 +215,20 @@ export class ImportScreen implements OnInit {
         lastShipmentDate: [''],
         shipmentPeriodNarrative: [''],
         partialShipment: ['Allowed'],
-        transhipment: ['Not Allowed']
+        transhipment: ['Not Allowed'],
       }),
       narrativeForm: this.fb.group({
         descriptionOfGoods: [''],
         documentsRequired: [''],
         additionalInstructions: [''],
-        otherDetails: ['']
+        otherDetails: [''],
       }),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
-        otherInstructions: ['']
+        otherInstructions: [''],
       }),
-      attachments: this.fb.array([])
+      attachments: this.fb.array([]),
     });
   }
 
@@ -213,7 +243,7 @@ export class ImportScreen implements OnInit {
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
     this.api.getTransactionByTnxId(tnxId).subscribe({
-      next: tx => {
+      next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
 
@@ -252,21 +282,43 @@ export class ImportScreen implements OnInit {
         }
       },
       error: () => {
-        this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
-      }
+        this.snackBar.open('Transaction not found', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-screen/inquiries',
+        ]);
+      },
     });
   }
-  // Safe getters for html form access of the specific form groups 
-  get generalDetailsForm(): FormGroup { return this.importForm.get('generalDetails') as FormGroup; }
-  get applicantForm(): FormGroup { return this.importForm.get('applicantForm') as FormGroup; }
-  get bankForm(): FormGroup { return this.importForm.get('bankForm') as FormGroup; }
-  get amountChargeForm(): FormGroup { return this.importForm.get('amountChargeForm') as FormGroup; }
-  get paymentDetailsForm(): FormGroup { return this.importForm.get('paymentDetailsForm') as FormGroup; }
-  get shipmentForm(): FormGroup { return this.importForm.get('shipmentForm') as FormGroup; }
-  get narrativeForm(): FormGroup { return this.importForm.get('narrativeForm') as FormGroup; }
-  get instructionForm(): FormGroup { return this.importForm.get('instructionForm') as FormGroup; }
-  get attachmentsArray(): FormArray { return this.importForm.get('attachments') as FormArray; }
+  // Safe getters for html form access of the specific form groups
+  get generalDetailsForm(): FormGroup {
+    return this.importForm.get('generalDetails') as FormGroup;
+  }
+  get applicantForm(): FormGroup {
+    return this.importForm.get('applicantForm') as FormGroup;
+  }
+  get bankForm(): FormGroup {
+    return this.importForm.get('bankForm') as FormGroup;
+  }
+  get amountChargeForm(): FormGroup {
+    return this.importForm.get('amountChargeForm') as FormGroup;
+  }
+  get paymentDetailsForm(): FormGroup {
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
+  }
+  get shipmentForm(): FormGroup {
+    return this.importForm.get('shipmentForm') as FormGroup;
+  }
+  get narrativeForm(): FormGroup {
+    return this.importForm.get('narrativeForm') as FormGroup;
+  }
+  get instructionForm(): FormGroup {
+    return this.importForm.get('instructionForm') as FormGroup;
+  }
+  get attachmentsArray(): FormArray {
+    return this.importForm.get('attachments') as FormArray;
+  }
 
   private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
@@ -277,7 +329,7 @@ export class ImportScreen implements OnInit {
       paymentDetailsForm: tx,
       shipmentForm: tx,
       narrativeForm: tx,
-      instructionForm: tx
+      instructionForm: tx,
     });
   }
 
@@ -302,63 +354,114 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
-      attachments: this.importForm.value.attachments
+      attachments: this.importForm.value.attachments,
     };
   }
 
-
   saveForm(): void {
+
+  if (!this.hasPermission('ILC_CreateSave')) {
+    this.snackBar.open(
+      'You do not have permission to create an Import LC.',
+      'Close',
+      {
+        duration: 3000,
+      },
+    );
+
+    return;
+  }
+
+
     if (this.importForm.invalid) {
       this.importForm.markAllAsTouched();
-      this.snackBar.open('Please complete all required fields before saving.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Please complete all required fields before saving.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
 
     // Flatten nested form groups into single object
     const payload = this.flattenForm();
-    console.log("Payload before saving draft:", payload);
+    console.log('Payload before saving draft:', payload);
 
     this.api.savePending(payload).subscribe({
       next: (res: ImportLcTransaction) => {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
         // this.transactionService.addOrUpdateTransaction(res);
-        this.snackBar.open(`Draft saved successfully (TNX ID: ${res.tnxId})`, 'Close', { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],
-        ), 50);
+        this.snackBar.open(
+          `Draft saved successfully (TNX ID: ${res.tnxId})`,
+          'Close',
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-screen/inquiries',
+            ]),
+          50,
+        );
       },
-      error: () => this.snackBar.open('Error saving draft', 'Close', { duration: 3000 })
+      error: () =>
+        this.snackBar.open('Error saving draft', 'Close', { duration: 3000 }),
     });
   }
 
-
   submitLc(): void {
+
+      if (!this.hasPermission('ILC_InquirySubmit')) {
+        this.snackBar.open(
+          'You do not have permission to submit this transaction.',
+          'Close',
+          {
+            duration: 3000,
+          },
+        );
+
+        return;
+      }
+
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
     if (!tnxId) {
-      this.snackBar.open('Transaction ID not found. Please save the draft first.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Transaction ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
     if (!companyId) {
-      this.snackBar.open('Company ID not found. Please save the draft first.', 'Close', { duration: 3000 });
+      this.snackBar.open(
+        'Company ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
       return;
     }
     const payload = {
       ...this.flattenForm(), // merge current form data
-      event:'CRE',
+      event: 'CRE',
       tnxId: this.tnxId,
-    }
+    };
     this.api.submitTransaction(tnxId, payload).subscribe({
       next: (res: ImportLcTransaction) => {
         this.transactionService.addOrUpdateTransaction(res);
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], {
-          state: { source: 'IMPORT_LC', transaction: res }
-        });
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-screen/success'],
+          {
+            state: { source: 'IMPORT_LC', transaction: res },
+          },
+        );
       },
       error: () => {
-        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-
   }
 
   back() {
@@ -368,18 +471,39 @@ export class ImportScreen implements OnInit {
   updateAttachments(files: File[]) {
     const arr = this.importForm.get('attachments') as FormArray;
     arr.clear();
-    files.forEach(file => arr.push(this.fb.group({
-      title: file.name.replace(/\.[^/.]+$/, ""),
-      fileName: file.name,
-      size: file.size,
-      type: file.type,
-      file: file
-    })));
+    files.forEach((file) =>
+      arr.push(
+        this.fb.group({
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
   }
 
+
   update(): void {
+
+    
+    if (!this.hasPermission('ILC_InquiryPendingUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to amend this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -413,29 +537,66 @@ export class ImportScreen implements OnInit {
         this.snackBar.open(
           `Data successfully updated (${res.tnxId})`,
           'Close',
-          { duration: 3000 }
+          { duration: 3000 },
         );
 
         setTimeout(
-          () => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],),
-          300
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-screen/inquiries',
+            ]),
+          300,
         );
       },
       error: () => {
-        this.snackBar.open('Error updating transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Error updating transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
   approve(): void {
-    this.api.approveTransaction(this.currentTx.tnxId!, this.currentTx).subscribe({
-      next: () => this.navigateBack('approved'),
-      error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
-    });
+
+    
+    if (!this.hasPermission('ILC_InquiryApprove')) {
+      this.snackBar.open(
+        'You do not have permission to approve this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+    this.api
+      .approveTransaction(this.currentTx.tnxId!, this.currentTx)
+      .subscribe({
+        next: () => this.navigateBack('approved'),
+        error: () =>
+          this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
+      });
   }
   openReject(): void {
+    
+    if (!this.hasPermission('ILC_InquiryReject')) {
+      this.snackBar.open(
+        'You do not have permission to reject this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+
+
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px'
+      width: '400px',
     });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
@@ -443,12 +604,16 @@ export class ImportScreen implements OnInit {
 
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
           this.navigateBack('rejected'); // send user to rejected tab
         },
         error: () => {
-          this.snackBar.open('Failed to reject transaction', 'Close', { duration: 3000 });
-        }
+          this.snackBar.open('Failed to reject transaction', 'Close', {
+            duration: 3000,
+          });
+        },
       });
     });
   }
@@ -461,16 +626,35 @@ export class ImportScreen implements OnInit {
   // }
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'], {
-      relativeTo: this.route,
-      queryParamsHandling: 'merge',
-      queryParams: { tab }
-    });
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-screen/inquiries'],
+      {
+        relativeTo: this.route,
+        queryParamsHandling: 'merge',
+        queryParams: { tab },
+      },
+    );
   }
 
   updateRejected(): void {
+
+    
+    if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to amend this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -482,16 +666,19 @@ export class ImportScreen implements OnInit {
         this.snackBar.open(
           `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
           'Close',
-          { duration: 3000 }
+          { duration: 3000 },
         );
 
         // Navigate back to inquiries with Pending tab
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries'],);
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-screen/inquiries',
+        ]);
       },
       error: () => {
-        this.snackBar.open('Failed to update rejected transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Failed to update rejected transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
-
 }

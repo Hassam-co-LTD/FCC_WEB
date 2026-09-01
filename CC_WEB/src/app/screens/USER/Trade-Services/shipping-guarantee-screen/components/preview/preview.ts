@@ -18,7 +18,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
   standalone: true,
   imports: [CommonModule, MatCardModule, MatIcon, MatDialogModule],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
 })
 export class Preview implements OnInit {
   @Input() transaction!: ShippingGuaranteeTransaction;
@@ -39,12 +39,20 @@ export class Preview implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: ShippingGuaranteeFormTransactionService
-  ) { }
+    private transactionService: ShippingGuaranteeFormTransactionService,
+  ) {}
+
+  permissionNames: string[] = [];
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
 
   ngOnInit(): void {
-    this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
-      ||
+    this.currentTx =
+      this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
@@ -71,7 +79,7 @@ export class Preview implements OnInit {
       modeOfShipment: [this.currentTx!.modeOfShipment],
       shippingDetails: [this.currentTx!.shippingDetails],
       description: [this.currentTx!.description],
-      
+
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
@@ -95,7 +103,7 @@ export class Preview implements OnInit {
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
 
-      attachments: this.fb.array(this.currentTx!.attachments ?? [])
+      attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
     // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
@@ -106,13 +114,24 @@ export class Preview implements OnInit {
   get attachmentsArray(): FormArray {
     return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
-  
-back() {
-  this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'])
-}
+
+  back() {
+    this.router.navigate([
+      '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+    ]);
+  }
 
   /** SUBMIT */
   submit(): void {
+    
+    // Permission check
+    if (!this.hasPermission('SG_AmendSubmit')) {
+      console.warn(
+        'User does not have SG_AmendSubmit permission'
+      );
+      return;
+    }
+
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
@@ -123,26 +142,50 @@ back() {
 
     this.api.submitSgByTnxId(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], {
-          state: { transaction: res }
-        });
+        this.router.navigate(
+          ['/dashboard/Trade-Services/shipping-guarantee/success'],
+          {
+            state: { transaction: res },
+          },
+        );
       },
       error: () => {
-        this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
-      }
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-  } 
+  }
 
   approveTransaction(): void {
+
+     // Permission check
+    if (!this.hasPermission('SG_AmendApprove')) {
+      console.warn(
+        'User does not have SG_AmendApprove permission'
+      );
+      return;
+    }
+
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveTransactionSg(this.currentTx.tnxId, this.currentTx).subscribe({
-      next: (res) => {
-        this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
-      },
-      error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
-    });
+    this.api
+      .approveTransactionSg(this.currentTx.tnxId, this.currentTx)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction approved', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/shipping-guarantee/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error approving transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
 
   // rejectTransaction(): void {
@@ -157,27 +200,44 @@ back() {
   //   });
   // }
   rejectTransaction(): void {
+
+      // Permission check
+    if (!this.hasPermission('SG_AmendPendingReject')) {
+      console.warn(
+        'User does not have SG_AmendPendingReject permission'
+      );
+      return;
+    }
+
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
-      width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
+      width: '400px',
+      hasBackdrop: true, // ensure overlay backdrop
       backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
-      panelClass: 'custom-dialog-container'     // white dialog box 
-       });
+      panelClass: 'custom-dialog-container', // white dialog box
+    });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-      this.api.rejectTransactionSg(tnxId, reason ).subscribe({
+      this.api.rejectTransactionSg(tnxId, reason).subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/success'], { state: { transaction: res } });
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/shipping-guarantee/success'],
+            { state: { transaction: res } },
+          );
         },
-        error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+        error: () =>
+          this.snackBar.open('Error rejecting transaction', 'Close', {
+            duration: 3000,
+          }),
       });
     });
   }
-
 
   downloadFile(index: number) {
     const currentTx = this.attachmentsArray.at(index)?.value;
@@ -207,7 +267,7 @@ back() {
       return;
     }
 
-    console.error("Unsupported file format", file);
+    console.error('Unsupported file format', file);
   }
 
   private triggerDownload(url: string, fileName: string) {
@@ -220,5 +280,4 @@ back() {
   trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }
-
 }

@@ -22,20 +22,18 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
   selector: 'app-preview',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatIconModule, 
-    MatCardModule, 
-    MatButtonModule, 
+    CommonModule,
+    MatIconModule,
+    MatCardModule,
+    MatButtonModule,
     DecimalPipe,
-    MatDividerModule
+    MatDividerModule,
   ],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
 })
 export class Preview implements OnInit {
-  
-  @Input() transaction!:
-  UndertakingGuarantee; 
+  @Input() transaction!: UndertakingGuarantee;
   viewMode: 'submit' | 'readonly' = 'submit';
   undertakingForm!: FormGroup;
   isOpen = true;
@@ -46,19 +44,53 @@ export class Preview implements OnInit {
 
   currentTx: UndertakingGuarantee | null = null;
 
-
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: UndertakingIssuanceService
-  ) { }
+    private transactionService: UndertakingIssuanceService,
+  ) {}
+
+  permissionNames: string[] = [];
+
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  // =========================================================
+  // CHECK PERMISSION
+  // =========================================================
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
 
   ngOnInit(): void {
-    this.currentTx = this.transaction //  Priority: @Input() transaction (Success page)
-      ||
+    this.currentTx =
+      this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
@@ -140,103 +172,175 @@ export class Preview implements OnInit {
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
-  // 🔒 Read-only mode (Success page)
-  if(this.viewMode === 'readonly') {
-  this.undertakingForm.disable({ emitEvent: false });
-}
+    // 🔒 Read-only mode (Success page)
+    if (this.viewMode === 'readonly') {
+      this.undertakingForm.disable({ emitEvent: false });
+    }
   }
 
   get attachmentsArray(): FormArray {
     return this.undertakingForm.get('attachments') as FormArray;
-}
-
-back() {
-  this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/inquiries-records'])
-}
-
-/** SUBMIT */
-submitForm(): void {
-  if(this.viewMode === 'readonly') return;
-
-  const tnxId = this.currentTx?.tnxId;
-  if(!tnxId) {
-    this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
-    return;
   }
 
-  this.api.submitUndertaking(tnxId, this.currentTx!).subscribe({
-    next: (res) => {
-      this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/success'], {
-        state: { transaction: res }
-      });
-    },
-    error: () => {
-      this.snackBar.open('Error submitting transaction', 'Close', { duration: 3000 });
+  back() {
+    this.router.navigate([
+      '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+    ]);
+  }
+
+  /** SUBMIT */
+  submitForm(): void {
+
+     if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
+       console.warn(
+         'Submit blocked: missing UTG_AmendPreviewSubmit permission',
+       );
+
+       this.snackBar.open(
+         'You do not have permission to submit this transaction.',
+         'Close',
+         { duration: 3000 },
+       );
+
+       return;
+     }
+
+    if (this.viewMode === 'readonly') return;
+
+    const tnxId = this.currentTx?.tnxId;
+    if (!tnxId) {
+      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      return;
     }
-  });
-}
 
-approveTransaction(): void {
-  if(!this.currentTx?.tnxId) return;
-
-  this.api.approveUndertaking(this.currentTx.tnxId, this.currentTx).subscribe({
-    next: (res) => {
-      this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-      this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/success'], { state: { transaction: res } });
-    },
-    error: () => this.snackBar.open('Error approving transaction', 'Close', { duration: 3000 })
-  });
-}
-
-// rejectTransaction(): void {
-//   if (!this.currentTx?.tnxId) return;
-
-//   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
-//     next: (res) => {
-//       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
-//       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
-//     },
-//     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
-//   });
-// }
-rejectTransaction(): void {
-  const tnxId = this.currentTx?.tnxId;
-  if(!tnxId) return;
-
-  const dialogRef = this.dialog.open(RejectDialogComponent, {
-    width: '400px', hasBackdrop: true,                        // ensure overlay backdrop
-    backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
-    panelClass: 'custom-dialog-container'     // white dialog box 
-  });
-
-  dialogRef.afterClosed().subscribe((reason: string | undefined) => {
-    if (!reason) return; // user cancelled
-    this.api.rejectUndertaking(tnxId, reason).subscribe({
+    this.api.submitUndertaking(tnxId, this.currentTx!).subscribe({
       next: (res) => {
-        this.snackBar.open('Transaction rejected successfully', 'Close', { duration: 3000 });
-        this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/success'], { state: { transaction: res } });
+        this.router.navigate(
+          ['/dashboard/Trade-Services/undertaking-issuance/success'],
+          {
+            state: { transaction: res },
+          },
+        );
       },
-      error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+      error: () => {
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-  });
-}
+  }
 
+  approveTransaction(): void {
 
+    
+    if (!this.hasPermission('UTG_AmendPreviewApprove')) {
+      console.warn(
+        'Approve blocked: missing UTG_AmendPreviewApprove permission',
+      );
+
+      this.snackBar.open(
+        'You do not have permission to approve this transaction.',
+        'Close',
+        { duration: 3000 },
+      );
+
+      return;
+    }
+    if (!this.currentTx?.tnxId) return;
+
+    this.api
+      .approveUndertaking(this.currentTx.tnxId, this.currentTx)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction approved', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/undertaking-issuance/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error approving transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
+  }
+
+  // rejectTransaction(): void {
+  //   if (!this.currentTx?.tnxId) return;
+
+  //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
+  //     next: (res) => {
+  //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
+  //       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+  //     },
+  //     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+  //   });
+  // }
+  rejectTransaction(): void {
+
+     if (!this.hasPermission('UTG_AmendPreviewReject')) {
+       console.warn(
+         'Reject blocked: missing UTG_AmendPreviewReject permission',
+       );
+
+       this.snackBar.open(
+         'You do not have permission to reject this transaction.',
+         'Close',
+         { duration: 3000 },
+       );
+
+       return;
+     }
+    const tnxId = this.currentTx?.tnxId;
+    if (!tnxId) return;
+
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+      hasBackdrop: true, // ensure overlay backdrop
+      backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
+      panelClass: 'custom-dialog-container', // white dialog box
+    });
+
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+      this.api.rejectUndertaking(tnxId, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/undertaking-issuance/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error rejecting transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
+    });
+  }
 
   // ==========================================
   //  HELPERS
   // ==========================================
 
   private showSuccess(msg: string) {
-    this.snackBar.open(`${msg} - ${this.currentTx?.id}`, 'Close', { 
-        duration: 4000, 
-        panelClass: ['success-snackbar'] 
+    this.snackBar.open(`${msg} - ${this.currentTx?.id}`, 'Close', {
+      duration: 4000,
+      panelClass: ['success-snackbar'],
     });
   }
 
   private showError(action: string, err: any) {
     console.error(err);
-    this.snackBar.open(`Failed to ${action} transaction. Server might be down.`, 'Close', { duration: 3000 });
+    this.snackBar.open(
+      `Failed to ${action} transaction. Server might be down.`,
+      'Close',
+      { duration: 3000 },
+    );
   }
 
   // ==========================================
@@ -270,7 +374,7 @@ rejectTransaction(): void {
       return;
     }
 
-    console.error("Unsupported file format", file);
+    console.error('Unsupported file format', file);
   }
 
   private triggerDownload(url: string, fileName: string) {
@@ -283,5 +387,4 @@ rejectTransaction(): void {
   trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }
-
 }

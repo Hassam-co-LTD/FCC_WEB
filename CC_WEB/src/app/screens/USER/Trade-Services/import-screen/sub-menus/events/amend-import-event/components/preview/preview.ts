@@ -42,6 +42,7 @@ export class Preview {
 
   // pageName1 = 'Update';
   // pageName2 = 'Submit';
+  permissionNames: string[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -55,6 +56,10 @@ export class Preview {
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
+
+    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+
+    this.permissionNames = sessionData.permissionNames || [];
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
@@ -75,6 +80,12 @@ export class Preview {
     //   });
     // }
     this.initForm();
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
+    );
   }
 
   private initForm(): void {
@@ -164,6 +175,9 @@ export class Preview {
   }
 
   submitLc(): void {
+
+        if (!this.hasPermission('ILC_AmendSubmit')) return;
+
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
@@ -190,6 +204,9 @@ export class Preview {
   }
 
   approveTransaction(): void {
+
+        if (!this.hasPermission('ILC_AmendApprove')) return;
+
     if (!this.currentTx?.tnxId) return;
 
     this.api.approveAmendment(this.currentTx.tnxId, this.currentTx).subscribe({
@@ -208,6 +225,8 @@ export class Preview {
   }
 
   rejectTransaction(): void {
+
+     if (!this.hasPermission('ILC_AmendReject')) return;
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
@@ -239,6 +258,11 @@ export class Preview {
   }
 
   downloadFile(index: number) {
+
+    if (!this.hasPermission('ILCAmendPreview')) {
+      return;
+    }
+
     const data = this.attachmentsArray.at(index)?.value;
     if (!data) return;
 

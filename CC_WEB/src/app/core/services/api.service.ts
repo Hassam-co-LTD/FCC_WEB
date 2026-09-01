@@ -13,11 +13,6 @@ import { ExportCollectionTransaction } from '../models/export-collection';
   providedIn: 'root',
 })
 export class ApiService {
-  // -------------------------------------------------------------
-  // CONFIGURATION
-  // -------------------------------------------------------------
-  // --- DYNAMIC BASE URL CONFIGURATION ---
-
   // Settlement System (Trade Finance)
   private get baseUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/v1`;
@@ -40,14 +35,13 @@ export class ApiService {
 
   // Admin/Security System (Login, Roles, Users)
   private get adminBaseUrl(): string {
-    return `${environment.gatewayUrl}/api/v1/`;
+    return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
 
   private get loginBaseUrl(): string {
     return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
-  // Ensure your environment.apiUrl is 'http://localhost:8084/api/v1/'
-  // private baseUrl = `${environment.apiUrl}`;
+
   // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
 
   constructor(private http: HttpClient) {}

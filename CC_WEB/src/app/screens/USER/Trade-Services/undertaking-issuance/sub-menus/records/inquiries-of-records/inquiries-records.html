@@ -89,7 +89,7 @@
                 <td>{{ tx.applicantName }}</td>
                 <td>{{ tx.beneficiaryName }}</td>
                 <td class="sticky-action">
-                    <button class="btn-action" (click)="viewTransaction(tx)">
+                    <button *ngIf="hasPermission('UTG_Inquiry')" class="btn-action" (click)="viewTransaction(tx)">
                         <mat-icon>visibility</mat-icon> View
                     </button>
                 </td>

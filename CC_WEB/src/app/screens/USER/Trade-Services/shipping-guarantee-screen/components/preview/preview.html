@@ -264,7 +264,11 @@
       mat-flat-button
       color="primary"
       (click)="submit()"
-      *ngIf="currentTx?.status === 'I'"
+       *ngIf="
+      viewMode === 'submit' &&
+      currentTx?.status === 'I' &&
+      hasPermission('SG_AmendSubmit')
+    "
     >
       Submit
     </button>
@@ -273,7 +277,10 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+          *ngIf="
+      currentTx?.status === 'S' &&
+      hasPermission('SG_AmendPendingReject')
+    "
     >
       Reject
     </button>
@@ -282,7 +289,10 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+    *ngIf="
+      currentTx?.status === 'S' &&
+      hasPermission('SG_AmendApprove')
+    "
     >
       Approve
     </button>

@@ -664,7 +664,7 @@
       mat-flat-button
       color="primary"
       (click)="submitLc()"
-      *ngIf="currentTx?.status === 'I'"
+      *ngIf="currentTx?.status === 'I' &&  hasPermission('ILC_InquirySubmit')"
     >
       Submit
     </button>
@@ -675,7 +675,7 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+      *ngIf="currentTx?.status === 'S' && hasPermission('ILC_InquiryReject')"
     >
       Reject
     </button>
@@ -685,7 +685,7 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+      *ngIf="currentTx?.status === 'S' &&      hasPermission('ILC_InquiryApprove')"
     >
       Approve
     </button>

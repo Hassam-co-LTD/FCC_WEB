@@ -637,6 +637,35 @@ export class UndertakingIssuance implements OnInit {
   }
 
   private scrollSpyHandler?: () => void;
+  permissionNames: string[] = [];
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
 
   ngOnInit() {
     setTimeout(() => {
@@ -894,6 +923,18 @@ export class UndertakingIssuance implements OnInit {
   // ==========================================
 
   saveForm(): void {
+    if (!this.hasPermission('UTG_CreateSave')) {
+      this.snackBar.open(
+        'You do not have permission to save this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (this.undertakingForm.invalid) {
       this.undertakingForm.markAllAsTouched();
       this.snackBar.open(
@@ -932,6 +973,21 @@ export class UndertakingIssuance implements OnInit {
   }
 
   submitForm(): void {
+
+    
+    if (!this.hasPermission('UTG_InquirySubmit')) {
+      this.snackBar.open(
+        'You do not have permission to submit this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
     if (!tnxId) {
@@ -990,6 +1046,20 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateForm(): void {
+
+    
+    if (!this.hasPermission('UTG_InquiryPendingUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to update this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,
@@ -1031,6 +1101,19 @@ export class UndertakingIssuance implements OnInit {
   }
 
   approve(): void {
+
+     if (!this.hasPermission('UTG_InquiryApprove')) {
+       this.snackBar.open(
+         'You do not have permission to approve this transaction.',
+         'Close',
+         {
+           duration: 3000,
+         },
+       );
+
+       return;
+     }
+
     this.api
       .approveUndertaking(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
@@ -1041,6 +1124,19 @@ export class UndertakingIssuance implements OnInit {
   }
 
   openReject(): void {
+
+    if (!this.hasPermission('UTG_InquiryReject')) {
+      this.snackBar.open(
+        'You do not have permission to reject this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
     });
@@ -1065,6 +1161,20 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateRejected(): void {
+
+    
+    if (!this.hasPermission('UTG_InquiryRejectUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to update this rejected transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,

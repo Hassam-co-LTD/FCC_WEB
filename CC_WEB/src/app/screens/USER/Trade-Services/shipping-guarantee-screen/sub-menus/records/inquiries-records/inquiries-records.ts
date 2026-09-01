@@ -15,36 +15,36 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../../../../co
   selector: 'app-inquiries-records',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatIconModule, 
+    CommonModule,
+    MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     FormsModule,
     DatePipe,
-    TitleCasePipe
+    TitleCasePipe,
   ],
   templateUrl: './inquiries-records.html',
-  styleUrls: ['./inquiries-records.scss']
+  styleUrls: ['./inquiries-records.scss'],
 })
 export class inquiriesRecords implements OnInit {
-  
   // State
   allTransactions: ShippingGuaranteeTransaction[] = [];
   filteredTransactions: ShippingGuaranteeTransaction[] = [];
-  
+
   // Filters
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'pending';
   showAdvanced = false;
 
+  permissionNames: string[] = [];
   // Tabs Configuration
   tabs = [
-    {key: 'live', label: 'Live'},
-    { key: 'pending', label: 'Pending' },     // Drafts (Input)
+    { key: 'live', label: 'Live' },
+    { key: 'pending', label: 'Pending' }, // Drafts (Input)
     { key: 'submitted', label: 'Submitted' }, // Checker (Approve/Reject)
-    { key: 'approved', label: 'Approved' },   // Final (View Only)
-    { key: 'rejected', label: 'Rejected' }    // Correction (Edit)
+    { key: 'approved', label: 'Approved' }, // Final (View Only)
+    { key: 'rejected', label: 'Rejected' }, // Correction (Edit)
   ];
 
   // Pagination
@@ -52,14 +52,19 @@ export class inquiriesRecords implements OnInit {
   itemsPerPage = 10;
 
   // Sorting
-  sortColumn: keyof ShippingGuaranteeTransaction | 'currency' | 'amount' | 'expiryDate' | 'createdOn' = 'createdOn';
+  sortColumn:
+    | keyof ShippingGuaranteeTransaction
+    | 'currency'
+    | 'amount'
+    | 'expiryDate'
+    | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   constructor(
-     private api: ApiService,
+    private api: ApiService,
     private transactionService: ShippingGuaranteeFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
@@ -79,20 +84,50 @@ export class inquiriesRecords implements OnInit {
 
   //   // 2. Subscribe to stream updates (Real-time updates)
   //   this.transactionService.transactionsStream$.subscribe(txList => {
-  //     this.allTransactions = txList; 
+  //     this.allTransactions = txList;
   //     // Filter ONLY by search/sort locally (Status is done by backend)
-  //     this.filterBySearchOnly(); 
+  //     this.filterBySearchOnly();
   //   });
   // }
+
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  // =========================================================
+  // CHECK PERMISSION
+  // =========================================================
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       const tab = params.get('tab');
-      if (
-        tab &&
-        this.tabs.some(t => t.key === tab)
-      ) {
+      if (tab && this.tabs.some((t) => t.key === tab)) {
         this.activeTab = tab;
       }
 
@@ -100,14 +135,12 @@ export class inquiriesRecords implements OnInit {
       this.loadTransactions();
     });
 
-    this.transactionService.transactionsStream$.subscribe(txList => {
+    this.transactionService.transactionsStream$.subscribe((txList) => {
       this.allTransactions = txList;
       this.applyFilters();
-    }
-    );
+    });
   }
 
-  
   // private loadTransactions(): void {
   //   const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
@@ -125,9 +158,8 @@ export class inquiriesRecords implements OnInit {
 
   private loadTransactions(): void {
     if (this.activeTab === 'live') {
-
       // this.api.getLiveEventHistoryForShippingGuarantee().subscribe({
-        this.api.getLiveEventHistorySg().subscribe({
+      this.api.getLiveEventHistorySg().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
           this.applyFilters();
@@ -136,7 +168,7 @@ export class inquiriesRecords implements OnInit {
         error: () => {
           this.allTransactions = [];
           this.filteredTransactions = [];
-        }
+        },
       });
 
       return;
@@ -152,7 +184,7 @@ export class inquiriesRecords implements OnInit {
       error: () => {
         this.allTransactions = [];
         this.filteredTransactions = [];
-      }
+      },
     });
   }
 
@@ -173,8 +205,7 @@ export class inquiriesRecords implements OnInit {
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
 
-    const filtered = this.allTransactions.filter(tx => {
-
+    const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
@@ -189,7 +220,7 @@ export class inquiriesRecords implements OnInit {
 
     this.applySorting(filtered);
   }
-  
+
   clearSearch(): void {
     this.searchQuery = '';
     this.applyFilters();
@@ -207,7 +238,9 @@ export class inquiriesRecords implements OnInit {
     this.applyFilters();
   }
 
-  private applySorting(source: ShippingGuaranteeTransaction[] = this.allTransactions): void {
+  private applySorting(
+    source: ShippingGuaranteeTransaction[] = this.allTransactions,
+  ): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
@@ -225,9 +258,7 @@ export class inquiriesRecords implements OnInit {
 
       // Handle numbers
       if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc'
-          ? aVal - bVal
-          : bVal - aVal;
+        return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
       }
 
       // Everything else: convert to string and use localeCompare
@@ -244,19 +275,27 @@ export class inquiriesRecords implements OnInit {
 
   private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
     switch (column) {
-      case 'tnxId': return tx.tnxId;
-      case 'currency': return tx.currency;
-      case 'amount': return tx.amount;
-      case 'expiryDate': return tx.expiryDate;
-      case 'createdOn': return tx.createdOn;
-      default: return null;
+      case 'tnxId':
+        return tx.tnxId;
+      case 'currency':
+        return tx.currency;
+      case 'amount':
+        return tx.amount;
+      case 'expiryDate':
+        return tx.expiryDate;
+      case 'createdOn':
+        return tx.createdOn;
+      default:
+        return null;
     }
   }
 
   // --- PAGINATION ---
 
   get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    const count = Math.ceil(
+      this.filteredTransactions.length / this.itemsPerPage,
+    );
     return count < 1 ? 1 : count;
   }
 
@@ -275,22 +314,39 @@ export class inquiriesRecords implements OnInit {
 
   // --- NAVIGATION ACTIONS ---
 
- viewTransaction(tx: ShippingGuaranteeTransaction): void {
+  viewTransaction(tx: ShippingGuaranteeTransaction): void {
+    if (!this.hasPermission('SG_InquiryPreview')) {
+      console.warn('User does not have permission to view Shipping Guarantee.');
+
+      return;
+    }
+
     const readOnly = ['A', 'R'].includes(tx.status!);
 
-   this.api.getTransactionSgByTnxId(tx.tnxId!).subscribe({
+    this.api.getTransactionSgByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-       this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
+        this.router.navigate([
+          '/dashboard/Trade-Services/shipping-guarantee/preview',
+        ]);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee/preview']);
-      }
+        this.router.navigate([
+          '/dashboard/Trade-Services/shipping-guarantee/preview',
+        ]);
+      },
     });
   }
 
   openShippingGuarantee(tx: ShippingGuaranteeTransaction) {
+    
+    if (!this.hasPermission('SG_InquiryPreview')) {
+      console.warn('User does not have permission to open Shipping Guarantee.');
+
+      return;
+    }
+
     if (this.activeTab === 'live') {
       // Live tab rows are event records — navigate by eventRefNo
       this.router.navigate(
@@ -299,9 +355,9 @@ export class inquiriesRecords implements OnInit {
           queryParams: {
             mode: 'READ_ONLY',
             tab: 'live',
-            eventRefNo: tx.eventRefNo ?? ''
-          }
-        }
+            eventRefNo: tx.eventRefNo ?? '',
+          },
+        },
       );
       return;
     }
@@ -309,15 +365,18 @@ export class inquiriesRecords implements OnInit {
     // this.transactionService.setCurrentTransaction(tx);
     const mode = this.resolveScreenMode(this.activeTab);
     // Navigate to import screen
-    this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee', tx.tnxId], {
-      state: {
-        transaction: tx,
-        // showUpdateSubmit: true // flag to show buttons
-        mode: mode
-      }
-    });
+    this.router.navigate(
+      ['/dashboard/Trade-Services/shipping-guarantee', tx.tnxId],
+      {
+        state: {
+          transaction: tx,
+          // showUpdateSubmit: true // flag to show buttons
+          mode: mode,
+        },
+      },
+    );
   }
-  
+
   trackByTnxId(_: number, tx: ShippingGuaranteeTransaction): string {
     return tx.eventRefNo ?? tx.tnxId!;
   }
@@ -347,5 +406,4 @@ export class inquiriesRecords implements OnInit {
         return 'i';
     }
   }
-
 }

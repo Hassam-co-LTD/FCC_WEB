@@ -81,7 +81,40 @@ export class AmendScreen implements OnInit {
   ) {
     this.buildForm();
   }
+  permissionNames: string[] = [];
 
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  // =========================================================
+  // CHECK PERMISSION
+  // =========================================================
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
   ngOnInit() {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
@@ -455,6 +488,17 @@ export class AmendScreen implements OnInit {
   }
 
   saveForm(): void {
+
+     if (!this.hasPermission('UTG_Amend')) {
+       this.snackBar.open(
+         'You do not have permission to amend Undertaking.',
+         'Close',
+         { duration: 3000 },
+       );
+
+       return;
+     }
+
     if (this.isSaving) return;
     this.isSaving = true;
 
@@ -512,6 +556,16 @@ export class AmendScreen implements OnInit {
   }
 
   submitForm(): void {
+     if (!this.hasPermission('UTG_Amend')) {
+       this.snackBar.open(
+         'You do not have permission to submit Undertaking amendments.',
+         'Close',
+         { duration: 3000 },
+       );
+
+       return;
+     }
+
     const eventRefNo = this.currentTx?.eventRefNo;
     console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
 
@@ -577,6 +631,16 @@ export class AmendScreen implements OnInit {
   }
 
   update(): void {
+     if (!this.hasPermission('UTG_Amend')) {
+       this.snackBar.open(
+         'You do not have permission to update Undertaking.',
+         'Close',
+         { duration: 3000 },
+       );
+
+       return;
+     }
+
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,
@@ -594,6 +658,17 @@ export class AmendScreen implements OnInit {
   }
 
   approve(): void {
+
+    if (!this.hasPermission('UTG_Approve')) {
+      this.snackBar.open(
+        'You do not have permission to approve Undertaking amendments.',
+        'Close',
+        { duration: 3000 },
+      );
+
+      return;
+    }
+
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
       this.snackBar.open('Amendment reference not found.', 'Close', {
@@ -625,6 +700,17 @@ export class AmendScreen implements OnInit {
   }
 
   openReject(): void {
+    
+    if (!this.hasPermission('UTG_Approve')) {
+      this.snackBar.open(
+        'You do not have permission to reject Undertaking amendments.',
+        'Close',
+        { duration: 3000 },
+      );
+
+      return;
+    }
+
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
       this.snackBar.open('Amendment reference not found.', 'Close', {
@@ -666,6 +752,17 @@ export class AmendScreen implements OnInit {
   }
 
   updateRejected(): void {
+    
+    if (!this.hasPermission('UTG_Amend')) {
+      this.snackBar.open(
+        'You do not have permission to update rejected Undertaking.',
+        'Close',
+        { duration: 3000 },
+      );
+
+      return;
+    }
+
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,

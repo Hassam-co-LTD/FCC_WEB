@@ -86,7 +86,12 @@
                 <td>{{ tx.customerReference }}</td>
                 <td>{{ tx.billoflading }}</td>
                 <td class="sticky-action">
-                    <button class="btn-action" (click)="viewTransaction(tx)">
+                    <button 
+                    *ngIf="
+              hasPermission(
+                'SG_AmendPreview'
+              )
+            "class="btn-action" (click)="viewTransaction(tx)">
                         <mat-icon>visibility</mat-icon> View
                     </button>
                 </td>

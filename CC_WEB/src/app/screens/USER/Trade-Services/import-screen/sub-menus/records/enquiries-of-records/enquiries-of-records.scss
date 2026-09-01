@@ -3,261 +3,323 @@
 
 /* ================= HEADER ================= */
 .page-header {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 
-    h2 {
-        margin: 0;
-        font-size: 1.2rem;
-        color: theme.$text-dark;
-    }
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: theme.$text-dark;
+  }
 
-    p {
-        margin: 4px 0 0;
-        font-size: 0.85rem;
-        color: theme.$text-medium;
-    }
+  p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: theme.$text-medium;
+  }
 }
 
 /* ================= SEARCH SYSTEM ================= */
 .search-system {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  .search-input-group {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 6px;
+    background: theme.$white;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    padding: 6px 10px;
+    flex: 1;
 
-    .search-input-group {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: theme.$white;
-        border: 1px solid theme.$border-light;
-        border-radius: theme.$radius-default;
-        padding: 6px 10px;
-        flex: 1;
-
-        input {
-            border: none;
-            outline: none;
-            flex: 1;
-            font-size: 0.85rem;
-        }
-
-        mat-icon {
-            font-size: 18px;
-            color: theme.$text-medium;
-        }
-
-        .clear-btn {
-            border: none;
-            background: transparent;
-            cursor: pointer;
-        }
+    input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 0.85rem;
     }
 
-    .advanced-toggle {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.8rem;
-        background: theme.$primary-light;
-        border: 1px solid theme.$border-light;
-        border-radius: theme.$radius-default;
-        padding: 6px 10px;
-        cursor: pointer;
+    mat-icon {
+      font-size: 18px;
+      color: theme.$text-medium;
     }
+
+    .clear-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+  }
+
+  .advanced-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    background: theme.$primary-light;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+    padding: 6px 10px;
+    cursor: pointer;
+  }
 }
 
 /* ================= ADVANCED SEARCH ================= */
 .advanced-search {
+  display: flex;
+  gap: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: theme.$primary-light;
+  border-radius: theme.$radius-default;
+
+  .field {
     display: flex;
-    gap: 16px;
-    padding: 12px;
-    margin-bottom: 12px;
-    background: theme.$primary-light;
-    border-radius: theme.$radius-default;
+    flex-direction: column;
+    gap: 4px;
 
-    .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-
-        label {
-            font-size: 0.75rem;
-            color: theme.$text-medium;
-        }
-
-        input,
-        select {
-            padding: 6px 8px;
-            font-size: 0.8rem;
-            border-radius: theme.$radius-default;
-            border: 1px solid theme.$border-light;
-        }
+    label {
+      font-size: 0.75rem;
+      color: theme.$text-medium;
     }
+
+    input,
+    select {
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      border-radius: theme.$radius-default;
+      border: 1px solid theme.$border-light;
+    }
+  }
 }
 
 /* ================= TABS ================= */
 .ui-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 12px;
-    overflow-x: auto;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
 
-    .tab {
-        padding: 6px 12px;
-        font-size: 0.75rem;
-        border-radius: 16px;
-        background: theme.$hover-bg;
-        cursor: pointer;
-        white-space: nowrap;
+  .tab {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 16px;
+    background: theme.$hover-bg;
+    cursor: pointer;
+    white-space: nowrap;
 
-        &.active {
-            background: theme.$primary;
-            color: theme.$white;
-        }
+    &.active {
+      background: theme.$primary;
+      color: theme.$white;
     }
+  }
 }
 
 /* ==============================
-   Filter Row
+   Filter / Report Toolbar
 ================================*/
+
 .filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+  padding: 8px 2px;
+
+  min-height: 38px;
+
+  .results-summary {
     display: flex;
-    justify-content: right;
     align-items: center;
-    margin-bottom: 12px;
+    gap: 4px;
 
-    .form-group {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    font-size: 0.78rem;
+    color: theme.$text-medium;
+    white-space: nowrap;
 
-        label {
-            font-size: 0.8rem;
-            color: theme.$text-medium;
-        }
-
-        select {
-            padding: 6px 10px;
-            border-radius: theme.$radius-default;
-            border: 1px solid theme.$border-light;
-            font-size: 0.8rem;
-            background: theme.$white;
-        }
+    strong {
+      color: theme.$text-dark;
+      font-weight: 600;
     }
-
-    .results-summary {
-        font-size: 0.8rem;
-        color: theme.$text-medium;
-    }
+  }
 }
+
+
+/* ==============================
+   Download Report Button
+================================*/
+
+.btn-download-report {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 34px;
+  padding: 7px 14px;
+
+  border: 1px solid color.scale(theme.$primary, $lightness: 5%);
+  border-radius: 7px;
+
+  background: theme.$primary;
+  color: theme.$white;
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+
+  mat-icon {
+    width: 17px;
+    height: 17px;
+
+    font-size: 17px;
+    line-height: 17px;
+  }
+
+  &:hover:not(:disabled) {
+    background: color.scale(theme.$primary, $lightness: -8%);
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
 
 /* ==============================
    Table Wrapper
 ================================*/
 .table-wrapper {
-    background: theme.$white;
-    border-radius: theme.$radius-large;
-    border: 1px solid theme.$border-light;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  background: theme.$white;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.table-wrapper th.sticky-action{
-    background: theme.$primary-light;
-    position: sticky;
-    right: 0;
+.table-wrapper th.sticky-action {
+  background: theme.$primary-light;
+  position: sticky;
+  right: 0;
 }
 .table-wrapper td.sticky-action {
-    position: sticky;
-    right: 0;
-    max-width: 160px;
-    box-sizing: border-box;
-    background: theme.$white;
-    z-index: 10;
-    text-align: center;
-    vertical-align: middle;
-    white-space: nowrap;
-    box-shadow: -6px 0 12px -8px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
-    text-overflow: ellipsis;
+  position: sticky;
+  right: 0;
+  max-width: 160px;
+  box-sizing: border-box;
+  background: theme.$white;
+  z-index: 10;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  box-shadow: -6px 0 12px -8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table-wrapper thead th.sticky-action {
-    z-index: 12;
+  z-index: 12;
 }
 
 @media (max-width: 480px) {
-    $mobile-action-width: 120px;
+  $mobile-action-width: 120px;
 
-    .table-wrapper {
-        padding-right: $mobile-action-width;
-    }
+  .table-wrapper {
+    padding-right: $mobile-action-width;
+  }
 
-    .table-wrapper th.sticky-action,
-    .table-wrapper td.sticky-action {
-        width: $mobile-action-width;
-        max-width: $mobile-action-width;
-    }
+  .table-wrapper th.sticky-action,
+  .table-wrapper td.sticky-action {
+    width: $mobile-action-width;
+    max-width: $mobile-action-width;
+  }
 }
 
 /* ==============================
    Table
 ================================*/
 table {
-    width: 100%;
-    min-width: 1400px;
-    border-collapse: collapse;
+  width: 100%;
+  min-width: 1400px;
+  border-collapse: collapse;
 }
 
 thead {
-    background: theme.$primary-light;
+  background: theme.$primary-light;
 
-    th {
-        padding: 10px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: theme.$text-dark;
-        white-space: nowrap;
-        cursor: pointer;
-        user-select: none;
+  th {
+    padding: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: theme.$text-dark;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
 
-        &:hover {
-            background: color.scale(theme.$primary-light, $lightness: -4%);
-        }
+    &:hover {
+      background: color.scale(theme.$primary-light, $lightness: -4%);
     }
+  }
 }
 
 tbody {
-    tr {
-        border-top: 1px solid theme.$border-light;
-        transition: background 0.15s ease;
+  tr {
+    border-top: 1px solid theme.$border-light;
+    transition: background 0.15s ease;
 
-        &:hover {
-            background: theme.$hover-bg;
-        }
+    &:hover {
+      background: theme.$hover-bg;
     }
+  }
 
-    td {
-        padding: 10px;
-        font-size: 0.8rem;
-        color: theme.$text-medium;
-        white-space: nowrap;
-        text-align: center; 
-        vertical-align: middle;
-    }
+  td {
+    padding: 10px;
+    font-size: 0.8rem;
+    color: theme.$text-medium;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+  }
 }
 
 .tnx-link {
-    color: #0b4eb3;
-    cursor: pointer;
-    text-decoration: underline;
-    font-weight: 500;
+  color: #0b4eb3;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
 
-    &:hover {
-        text-decoration: none;
-    }
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 /* ==============================
@@ -270,7 +332,6 @@ tbody {
 //     font-weight: 500;
 //     display: inline-block;
 
-
 //     &.status-draft {
 //         background: theme.$hover-bg;
 //         color: theme.$text-medium;
@@ -282,97 +343,103 @@ tbody {
 //     }
 // }
 .status {
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .status.draft {
-    background: #fef3c7;
-    color: #92400e;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 /* ==============================
    Amount
 ================================*/
 .amount {
-    font-weight: 600;
-    color: theme.$primary;
+  font-weight: 600;
+  color: theme.$primary;
 }
 
 /* ==============================
    Actions
 ================================*/
 .btn-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    background: transparent;
-    border: none;
-    color: theme.$primary;
-    cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: theme.$primary;
+  cursor: pointer;
 
-    mat-icon {
-        font-size: 18px;
-    }
+  mat-icon {
+    font-size: 18px;
+  }
 
-    &:hover {
-        color: color.scale(theme.$primary, $lightness: -15%);
-    }
+  &:hover {
+    color: color.scale(theme.$primary, $lightness: -15%);
+  }
 }
 
 /* ==============================
    No Records
 ================================*/
 .no-records {
-    text-align: center;
-    padding: 30px;
-    font-size: 0.85rem;
-    color: theme.$text-medium;
+  text-align: center;
+  padding: 30px;
+  font-size: 0.85rem;
+  color: theme.$text-medium;
 }
 
 /* ==============================
    Pagination
 ================================*/
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
 
-    span {
-        font-size: 0.8rem;
-        color: theme.$text-medium;
+  span {
+    font-size: 0.8rem;
+    color: theme.$text-medium;
+  }
+
+  .btn-pagination {
+    background: theme.$primary-light;
+    border: 1px solid theme.$border-light;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
-
-    .btn-pagination {
-        background: theme.$primary-light;
-        border: 1px solid theme.$border-light;
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        cursor: pointer;
-
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    }
+  }
 }
-
-
 
 /* ==============================
    Responsive
 ================================*/
 @media (max-width: 768px) {
-    .filter-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    .results-summary {
+      justify-content: flex-start;
     }
+
+    .btn-download-report {
+      width: 100%;
+    }
+  }
 }

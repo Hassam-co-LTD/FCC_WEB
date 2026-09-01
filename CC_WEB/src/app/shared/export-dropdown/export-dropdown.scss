@@ -1,0 +1,250 @@
+@use "sass:color";
+@use "../../../styles/theme" as theme;
+
+/* ==============================
+   Export Dropdown
+================================*/
+
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+
+/* ==============================
+   Download Report Button
+================================*/
+
+.btn-download-report {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 34px;
+  padding: 7px 10px 7px 14px;
+
+  border: 1px solid color.scale(
+    theme.$primary,
+    $lightness: 5%
+  );
+
+  border-radius: 7px;
+
+  background: theme.$primary;
+  color: theme.$white;
+
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  line-height: 1;
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+
+  mat-icon {
+    width: 17px;
+    height: 17px;
+
+    font-size: 17px;
+    line-height: 17px;
+  }
+
+  .dropdown-arrow {
+    width: 18px;
+    height: 18px;
+
+    font-size: 18px;
+    line-height: 18px;
+
+    margin-left: 2px;
+  }
+
+  &:hover:not(:disabled) {
+    background: color.scale(
+      theme.$primary,
+      $lightness: -8%
+    );
+
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+
+/* ==============================
+   Export Menu
+================================*/
+
+.export-menu {
+  position: absolute;
+
+  top: calc(100% + 6px);
+  right: 0;
+
+  min-width: 215px;
+
+  padding: 5px;
+
+  background: theme.$white;
+
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.12);
+
+  z-index: 1000;
+
+  animation: export-menu-enter 0.12s ease-out;
+}
+
+
+/* ==============================
+   Export Option
+================================*/
+
+.export-option {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 9px 10px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: theme.$text-dark;
+
+  font-family: inherit;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  mat-icon {
+    width: 20px;
+    height: 20px;
+
+    font-size: 20px;
+    line-height: 20px;
+
+    color: theme.$primary;
+  }
+
+  &:hover {
+    background: theme.$primary-light;
+
+    .export-option-title {
+      color: theme.$primary;
+    }
+  }
+
+  &:active {
+    background: color.scale(
+      theme.$primary-light,
+      $lightness: -4%
+    );
+  }
+}
+
+
+/* ==============================
+   Option Content
+================================*/
+
+.export-option-content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.export-option-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  color: theme.$text-dark;
+}
+
+.export-option-description {
+  font-size: 0.7rem;
+
+  color: theme.$text-medium;
+
+  white-space: nowrap;
+}
+
+
+/* ==============================
+   Animation
+================================*/
+
+@keyframes export-menu-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ==============================
+   Mobile
+================================*/
+
+@media (max-width: 768px) {
+
+  .export-dropdown {
+    width: 100%;
+  }
+
+  .btn-download-report {
+    width: 100%;
+  }
+
+  .export-menu {
+    left: 0;
+    right: 0;
+
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

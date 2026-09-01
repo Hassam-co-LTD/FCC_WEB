@@ -42,26 +42,50 @@ export class ApprovedInquiryRecords {
     private router: Router,
     private route: ActivatedRoute,
   ) {}
+  permissionNames: string[] = [];
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
 
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       const tab = params.get('tab');
-      if (
-        tab &&
-        this.tabs.some(t => t.key === tab)
-      ) {
+      if (tab && this.tabs.some((t) => t.key === tab)) {
         this.activeTab = tab;
       }
 
       this.currentPage = 1;
       this.loadApprovedTransactions();
-  });
+    });
   }
   private loadApprovedTransactions(): void {
     if (this.activeTab === 'live') {
-
       this.api.getApprovedUtgMasterLcRecords().subscribe({
         next: (txList) => {
           this.allTransactions = txList;
@@ -71,12 +95,12 @@ export class ApprovedInquiryRecords {
         error: () => {
           this.allTransactions = [];
           this.filteredTransactions = [];
-        }
+        },
       });
 
       return;
     }
-    const backend =  this.mapTabToBackendStatus(this.activeTab)
+    const backend = this.mapTabToBackendStatus(this.activeTab);
     this.api.getUtgAmendRecordsByStatus(backend).subscribe({
       next: (txList) => {
         this.allTransactions = txList;
@@ -87,7 +111,7 @@ export class ApprovedInquiryRecords {
       error: () => {
         this.allTransactions = [];
         this.filteredTransactions = [];
-      }
+      },
     });
   }
 
@@ -97,15 +121,16 @@ export class ApprovedInquiryRecords {
   }
 
   get totalPages(): number {
-    const count = Math.ceil(this.filteredTransactions.length / this.itemsPerPage);
+    const count = Math.ceil(
+      this.filteredTransactions.length / this.itemsPerPage,
+    );
     return count < 1 ? 1 : count;
   }
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
 
-    const filtered = this.allTransactions.filter(tx => {
-
+    const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
         !query ||
         tx.tnxId?.toLowerCase().includes(query) ||
@@ -121,7 +146,9 @@ export class ApprovedInquiryRecords {
     this.applySorting(filtered);
   }
 
-  private applySorting(source: UndertakingGuarantee[] = this.allTransactions): void {
+  private applySorting(
+    source: UndertakingGuarantee[] = this.allTransactions,
+  ): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
@@ -139,9 +166,7 @@ export class ApprovedInquiryRecords {
 
       // Handle numbers
       if (typeof aVal === 'number' && typeof bVal === 'number') {
-        return this.sortDirection === 'asc'
-          ? aVal - bVal
-          : bVal - aVal;
+        return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
       }
 
       // Everything else: convert to string and use localeCompare
@@ -158,12 +183,18 @@ export class ApprovedInquiryRecords {
 
   private resolveColumn(tx: UndertakingGuarantee, column: string): any {
     switch (column) {
-      case 'tnxId': return tx.tnxId;
-      case 'currency': return tx.currency;
-      case 'undertakingAmount': return tx.undertakingAmount;
-      case 'expiryDate': return tx.expiryDate;
-      case 'createdOn': return tx.createdOn;
-      default: return null;
+      case 'tnxId':
+        return tx.tnxId;
+      case 'currency':
+        return tx.currency;
+      case 'undertakingAmount':
+        return tx.undertakingAmount;
+      case 'expiryDate':
+        return tx.expiryDate;
+      case 'createdOn':
+        return tx.createdOn;
+      default:
+        return null;
     }
   }
   clearSearch(): void {
@@ -207,19 +238,27 @@ export class ApprovedInquiryRecords {
     return tx.tnxId!;
   }
 
-
   viewTransaction(tx: UndertakingGuarantee): void {
+    
+    if (!this.hasPermission('UTG_Inquiry')) {
+      return;
+    }
+
     const readOnly = ['A', 'R'].includes(tx.status!);
 
     this.api.getUtgAmendmentByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/amend/preview']);
+        this.router.navigate([
+          '/dashboard/Trade-Services/undertaking-issuance/amend/preview',
+        ]);
       },
       error: () => {
         this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance/amend/preview']);
-      }
+        this.router.navigate([
+          '/dashboard/Trade-Services/undertaking-issuance/amend/preview',
+        ]);
+      },
     });
   }
 
@@ -231,11 +270,12 @@ export class ApprovedInquiryRecords {
         queryParams: {
           mode: 'EDIT',
           tab: this.activeTab,
-          eventType: this.activeTab === 'live' ? 'AMD' : (tx.eventType ?? 'AMD'),
+          eventType:
+            this.activeTab === 'live' ? 'AMD' : (tx.eventType ?? 'AMD'),
           // Only pass eventRefNo for non-live tabs (for navigating to a specific event)
-          ...(this.activeTab !== 'live' && { eventRefNo: tx.eventRefNo ?? '' })
-        }
-      }
+          ...(this.activeTab !== 'live' && { eventRefNo: tx.eventRefNo ?? '' }),
+        },
+      },
     );
   }
 
@@ -261,5 +301,4 @@ export class ApprovedInquiryRecords {
         return 'i';
     }
   }
-
 }

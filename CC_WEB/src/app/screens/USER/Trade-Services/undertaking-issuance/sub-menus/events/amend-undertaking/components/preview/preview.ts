@@ -51,6 +51,41 @@ export class Preview implements OnInit {
     private transactionService: UndertakingIssuanceService,
   ) {}
 
+  permissionNames: string[] = [];
+
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  // =========================================================
+  // CHECK PERMISSION
+  // =========================================================
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
+
   ngOnInit(): void {
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
@@ -153,6 +188,20 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
+     if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
+       console.warn('User does not have UTG_AmendPreviewSubmit permission');
+
+       this.snackBar.open(
+         'You do not have permission to submit this transaction',
+         'Close',
+         {
+           duration: 3000,
+         },
+       );
+
+       return;
+     }
+
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
@@ -179,6 +228,21 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
+
+    if (!this.hasPermission('UTG_AmendPreviewApprove')) {
+      console.warn('User does not have UTG_AmendPreviewApprove permission');
+
+      this.snackBar.open(
+        'You do not have permission to approve this transaction',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     if (!this.currentTx?.tnxId) return;
 
     this.api
@@ -212,6 +276,21 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
+
+    if (!this.hasPermission('UTG_AmendPreviewReject')) {
+      console.warn('User does not have UTG_AmendPreviewReject permission');
+
+      this.snackBar.open(
+        'You do not have permission to reject this transaction',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 

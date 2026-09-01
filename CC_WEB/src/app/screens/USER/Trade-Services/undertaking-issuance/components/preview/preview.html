@@ -508,7 +508,10 @@
 <div class="actions">
   <button mat-stroked-button (click)="back()">Back</button>
 
-  <ng-container *ngIf="viewMode === 'submit'">
+  <ng-container *ngIf="
+        currentTx?.status === 'I' &&
+        hasPermission('UTG_AmendPreviewSubmit')
+      ">
     <button
       mat-flat-button
       color="primary"
@@ -522,7 +525,10 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+       *ngIf="
+        currentTx?.status === 'S' &&
+        hasPermission('UTG_AmendPreviewReject')
+      "
     >
       Reject
     </button>
@@ -531,7 +537,10 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-      *ngIf="currentTx?.status === 'S'"
+      *ngIf="
+        currentTx?.status === 'S' &&
+        hasPermission('UTG_AmendPreviewApprove')
+      "
     >
       Approve
     </button>

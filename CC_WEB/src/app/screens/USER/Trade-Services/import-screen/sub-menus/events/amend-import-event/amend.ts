@@ -41,10 +41,10 @@ import { finalize } from 'rxjs';
     Attachments,
     MatDialogModule,
     Sidebar,
-    RouterOutlet
+    RouterOutlet,
   ],
   templateUrl: './amend.html',
-  styleUrls: ['./amend.scss']
+  styleUrls: ['./amend.scss'],
 })
 export class AmendScreen implements OnInit {
   currentStep = 0;
@@ -60,22 +60,23 @@ export class AmendScreen implements OnInit {
   eventType: string = '';
   eventRefNo: string = '';
   requestedMode: string = '';
-  sourceTab: string = '';  
+  sourceTab: string = '';
   isSaving = false;
   isHistoricalView = false;
 
+  permissionNames: string[] = [];
 
   importSteps = [
-    { label: "General Details" },
-    { label: "Applicant Details" },
-    { label: "Bank Details" },
-    { label: "Amount & Charges" },
-    { label: "Payment Details" },
-    { label: "Shipment Details" },
-    { label: "Narrative Details" },
-    { label: "Licenses" },
-    { label: "Instructions to Bank" },
-    { label: "Attachments" }
+    { label: 'General Details' },
+    { label: 'Applicant Details' },
+    { label: 'Bank Details' },
+    { label: 'Amount & Charges' },
+    { label: 'Payment Details' },
+    { label: 'Shipment Details' },
+    { label: 'Narrative Details' },
+    { label: 'Licenses' },
+    { label: 'Instructions to Bank' },
+    { label: 'Attachments' },
   ];
 
   constructor(
@@ -84,29 +85,32 @@ export class AmendScreen implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private route: ActivatedRoute,
-    private dialog: MatDialog
-
+    private dialog: MatDialog,
   ) {
     this.buildForm();
   }
 
   ngOnInit() {
+
+        this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
             }
           });
         },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-      sections.forEach(section => observer.observe(section));
+      sections.forEach((section) => observer.observe(section));
     }, 200);
 
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       this.requestedMode = params.get('mode')!;
     });
 
@@ -118,20 +122,19 @@ export class AmendScreen implements OnInit {
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
     console.log('TNX ID from route:', this.tnxId);
 
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       this.tnxId = params.get('tnxId') || '';
 
-      this.route.queryParamMap.subscribe(q => {
+      this.route.queryParamMap.subscribe((q) => {
         this.requestedMode = q.get('mode') ?? '';
-        this.sourceTab = q.get('tab') ?? '';        // read tab
-        this.eventType = q.get('eventType') ?? '';  // read eventType directly
+        this.sourceTab = q.get('tab') ?? ''; // read tab
+        this.eventType = q.get('eventType') ?? ''; // read eventType directly
         this.eventRefNo = q.get('eventRefNo') ?? '';
 
         console.log('tnxId:', this.tnxId);
         console.log('sourceTab:', this.sourceTab);
         console.log('eventType:', this.eventType);
         console.log('eventRefNo:', this.eventRefNo);
-
 
         if (this.tnxId) {
           this.enterEditMode(this.tnxId);
@@ -141,8 +144,8 @@ export class AmendScreen implements OnInit {
       });
     });
   }
-    // const txFromState = history.state.transaction;
-    // console.log('Transaction from state:', txFromState);
+  // const txFromState = history.state.transaction;
+  // console.log('Transaction from state:', txFromState);
   //   this.route.paramMap.subscribe(params => {
   //     this.tnxId = params.get('tnxId') || '';
 
@@ -158,6 +161,36 @@ export class AmendScreen implements OnInit {
   //   });
   // }
 
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log('Import LC Amend Permissions:', this.permissionNames);
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  // ============================================================
+  // CHECK PERMISSION
+  // ============================================================
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
+
   private buildForm(): void {
     // Always initialize the form to avoid null bindings
     this.importForm = this.fb.group({
@@ -170,7 +203,7 @@ export class AmendScreen implements OnInit {
         featureRevolving: [false],
         featureTransferable: [false],
         applicableRules: ['EUCP'],
-        confirmationInstruction: ['confirm']
+        confirmationInstruction: ['confirm'],
       }),
       applicantForm: this.fb.group({
         applicantName: [''],
@@ -184,14 +217,14 @@ export class AmendScreen implements OnInit {
         beneficiaryAddress2: [''],
         beneficiaryAddress3: [''],
         beneficiaryAddress4: [''],
-        beneficiaryCountry: ['']
+        beneficiaryCountry: [''],
       }),
       bankForm: this.fb.group({
         issuingBankName: [''],
         issuerReference: [''],
         advisingBankName: [''],
         adviseThroughBankName: [''],
-        bankName: ['']
+        bankName: [''],
       }),
       amountChargeForm: this.fb.group({
         currency: [''],
@@ -201,13 +234,13 @@ export class AmendScreen implements OnInit {
         variationMinus: [''],
         issuingBankCharges: ['Applicant'],
         outsideCountryCharges: ['Beneficiary'],
-        additionalAmount: ['']
+        additionalAmount: [''],
       }),
       paymentDetailsForm: this.fb.group({
         creditAvailableWith: [''],
         bankName: [''],
         creditAvailableBy: ['Payment'],
-        paymentDraftAt: ['Sight']
+        paymentDraftAt: ['Sight'],
       }),
       shipmentForm: this.fb.group({
         shipmentFrom: [''],
@@ -217,20 +250,20 @@ export class AmendScreen implements OnInit {
         lastShipmentDate: [''],
         shipmentPeriodNarrative: [''],
         partialShipment: ['Allowed'],
-        transhipment: ['Not Allowed']
+        transhipment: ['Not Allowed'],
       }),
       narrativeForm: this.fb.group({
         descriptionOfGoods: [''],
         documentsRequired: [''],
         additionalInstructions: [''],
-        otherDetails: ['']
+        otherDetails: [''],
       }),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
-        otherInstructions: ['']
+        otherInstructions: [''],
       }),
-      attachments: this.fb.array([])
+      attachments: this.fb.array([]),
     });
   }
 
@@ -243,8 +276,6 @@ export class AmendScreen implements OnInit {
     this.importForm.reset();
     this.buildForm();
   }
-
-
 
   // private enterEditMode(tnxId: string): void {
 
@@ -382,7 +413,6 @@ export class AmendScreen implements OnInit {
   //   });
   // }
 
-
   // ======================================================
   // ENTER EDIT MODE  — three branches:
   //
@@ -412,9 +442,13 @@ export class AmendScreen implements OnInit {
           this.patchForm(event);
         },
         error: () => {
-          this.snackBar.open('Event snapshot not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
-        }
+          this.snackBar.open('Event snapshot not found', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([
+            '/dashboard/Trade-Services/import-screen/inquiries',
+          ]);
+        },
       });
       return;
     }
@@ -455,11 +489,15 @@ export class AmendScreen implements OnInit {
               this.importForm.enable();
             },
             error: () => {
-              this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-              this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
-            }
+              this.snackBar.open('Transaction not found', 'Close', {
+                duration: 3000,
+              });
+              this.router.navigate([
+                '/dashboard/Trade-Services/import-screen/inquiries',
+              ]);
+            },
           });
-        }
+        },
       });
       return;
     }
@@ -511,9 +549,13 @@ export class AmendScreen implements OnInit {
           }
         },
         error: () => {
-          this.snackBar.open('Amendment not found', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
-        }
+          this.snackBar.open('Amendment not found', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([
+            '/dashboard/Trade-Services/import-screen/inquiries',
+          ]);
+        },
       });
       return;
     }
@@ -560,22 +602,44 @@ export class AmendScreen implements OnInit {
         }
       },
       error: () => {
-        this.snackBar.open('Transaction not found', 'Close', { duration: 3000 });
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
-      }
+        this.snackBar.open('Transaction not found', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-screen/inquiries',
+        ]);
+      },
     });
   }
-  
-  // Safe getters for html form access of the specific form groups 
-  get generalDetailsForm(): FormGroup { return this.importForm.get('generalDetails') as FormGroup; }
-  get applicantForm(): FormGroup { return this.importForm.get('applicantForm') as FormGroup; }
-  get bankForm(): FormGroup { return this.importForm.get('bankForm') as FormGroup; }
-  get amountChargeForm(): FormGroup { return this.importForm.get('amountChargeForm') as FormGroup; }
-  get paymentDetailsForm(): FormGroup { return this.importForm.get('paymentDetailsForm') as FormGroup; }
-  get shipmentForm(): FormGroup { return this.importForm.get('shipmentForm') as FormGroup; }
-  get narrativeForm(): FormGroup { return this.importForm.get('narrativeForm') as FormGroup; }
-  get instructionForm(): FormGroup { return this.importForm.get('instructionForm') as FormGroup; }
-  get attachmentsArray(): FormArray { return this.importForm.get('attachments') as FormArray; }
+
+  // Safe getters for html form access of the specific form groups
+  get generalDetailsForm(): FormGroup {
+    return this.importForm.get('generalDetails') as FormGroup;
+  }
+  get applicantForm(): FormGroup {
+    return this.importForm.get('applicantForm') as FormGroup;
+  }
+  get bankForm(): FormGroup {
+    return this.importForm.get('bankForm') as FormGroup;
+  }
+  get amountChargeForm(): FormGroup {
+    return this.importForm.get('amountChargeForm') as FormGroup;
+  }
+  get paymentDetailsForm(): FormGroup {
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
+  }
+  get shipmentForm(): FormGroup {
+    return this.importForm.get('shipmentForm') as FormGroup;
+  }
+  get narrativeForm(): FormGroup {
+    return this.importForm.get('narrativeForm') as FormGroup;
+  }
+  get instructionForm(): FormGroup {
+    return this.importForm.get('instructionForm') as FormGroup;
+  }
+  get attachmentsArray(): FormArray {
+    return this.importForm.get('attachments') as FormArray;
+  }
 
   private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
@@ -586,7 +650,7 @@ export class AmendScreen implements OnInit {
       paymentDetailsForm: tx,
       shipmentForm: tx,
       narrativeForm: tx,
-      instructionForm: tx
+      instructionForm: tx,
     });
   }
 
@@ -611,13 +675,12 @@ export class AmendScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
-      attachments: this.importForm.value.attachments
+      attachments: this.importForm.value.attachments,
     };
   }
 
-
   // saveForm(): void {
-  //   if (this.isSaving) return; 
+  //   if (this.isSaving) return;
   //   this.isSaving = true;
   //   if (this.importForm.invalid) {
   //     this.importForm.markAllAsTouched();
@@ -674,52 +737,66 @@ export class AmendScreen implements OnInit {
     this.isSaving = true;
 
     if (!this.companyId) {
-      this.snackBar.open('Session expired or company not found.', 'Close', { duration: 3000 });
+      this.snackBar.open('Session expired or company not found.', 'Close', {
+        duration: 3000,
+      });
       this.isSaving = false;
       return;
     }
 
-    
     const payload = this.flattenForm();
-    console.log("Payload before saving draft:", payload);
-    const tnxId = this.currentTx?.tnxId;  // ← master LC tnxId, used for PUT /amend/{tnxId}
-    
+    console.log('Payload before saving draft:', payload);
+    const tnxId = this.currentTx?.tnxId; // ← master LC tnxId, used for PUT /amend/{tnxId}
+
     if (!tnxId) {
-      this.snackBar.open('Transaction ID missing. Cannot amend.', 'Close', { duration: 3000 });
+      this.snackBar.open('Transaction ID missing. Cannot amend.', 'Close', {
+        duration: 3000,
+      });
       this.isSaving = false;
       return;
     }
 
-    this.api.saveamendTransaction(tnxId, payload).pipe(
-      finalize(() => this.isSaving = false)
-    ).subscribe({
-      next: (res: ImportLcTransaction) => {
-        this.currentTx = { ...this.currentTx, ...res };
+    this.api
+      .saveamendTransaction(tnxId, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: (res: ImportLcTransaction) => {
+          this.currentTx = { ...this.currentTx, ...res };
 
-        console.log('Saved amendment, eventRefNo:', this.currentTx.eventRefNo); // verify here
+          console.log(
+            'Saved amendment, eventRefNo:',
+            this.currentTx.eventRefNo,
+          ); // verify here
 
-        this.snackBar.open(
-          `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
-          'Close',
-          { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records']),50 
-        );
-      },
-      error: () => {
-        this.snackBar.open('Error saving amendment', 'Close', { duration: 3000 });
-      }
-    });
+          this.snackBar.open(
+            `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
+            'Close',
+            { duration: 5000 },
+          );
+          setTimeout(
+            () =>
+              this.router.navigate([
+                '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+              ]),
+            50,
+          );
+        },
+        error: () => {
+          this.snackBar.open('Error saving amendment', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
   }
-
-
-
 
   submitLc(): void {
     const eventRefNo = this.currentTx?.eventRefNo;
     console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
 
     if (!eventRefNo) {
-      this.snackBar.open('Please save the amendment draft first.', 'Close', { duration: 3000 });
+      this.snackBar.open('Please save the amendment draft first.', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -727,25 +804,35 @@ export class AmendScreen implements OnInit {
       ...this.flattenForm(), // merge current form data
       event: 'AMD',
       tnxId: this.tnxId,
-    }   
+    };
 
-    this.api.submitAmendment(eventRefNo,payload).subscribe({
+    this.api.submitAmendment(eventRefNo, payload).subscribe({
       next: (res) => {
-        this.router.navigate(['/dashboard/Trade-Services/import-screen/success'], {
-          state: { source: 'IMPORT_LC_AMD', transaction: res }
-        });
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-screen/success'],
+          {
+            state: { source: 'IMPORT_LC_AMD', transaction: res },
+          },
+        );
         this.snackBar.open(
           `Amendment Submitted (Ref: ${res.eventRefNo ?? res.tnxId})`,
           'Close',
-          { duration: 5000 });
-        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records']), 50
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+            ]),
+          50,
         );
       },
-      error: () => this.snackBar.open('Error submitting amendment', 'Close', { duration: 3000 })
+      error: () =>
+        this.snackBar.open('Error submitting amendment', 'Close', {
+          duration: 3000,
+        }),
     });
   }
-
-
 
   back() {
     this.router.navigate(['/dashboard']);
@@ -754,18 +841,24 @@ export class AmendScreen implements OnInit {
   updateAttachments(files: File[]) {
     const arr = this.importForm.get('attachments') as FormArray;
     arr.clear();
-    files.forEach(file => arr.push(this.fb.group({
-      title: file.name.replace(/\.[^/.]+$/, ""),
-      fileName: file.name,
-      size: file.size,
-      type: file.type,
-      file: file
-    })));
+    files.forEach((file) =>
+      arr.push(
+        this.fb.group({
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
   }
 
   update(): void {
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', { duration: 3000 });
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -816,31 +909,45 @@ export class AmendScreen implements OnInit {
   approve(): void {
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
-      this.snackBar.open('Amendment reference not found.', 'Close', { duration: 3000 });
+      this.snackBar.open('Amendment reference not found.', 'Close', {
+        duration: 3000,
+      });
       return;
     }
     const payload = {
       ...this.flattenForm(), // merge current form data
       event: 'AMD',
       tnxId: this.tnxId,
-    }
+    };
     this.api.approveAmendment(eventRefNo, payload).subscribe({
       next: () => {
-        this.snackBar.open('Amendment approved. Live LC updated.', 'Close', { duration: 3000 });
-        setTimeout(() => this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']), 50
+        this.snackBar.open('Amendment approved. Live LC updated.', 'Close', {
+          duration: 3000,
+        });
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-screen/inquiries',
+            ]),
+          50,
         );
       },
-      error: () => this.snackBar.open('Approval failed', 'Close', { duration: 3000 })
+      error: () =>
+        this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
     });
   }
 
   openReject(): void {
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
-      this.snackBar.open('Amendment reference not found.', 'Close', { duration: 3000 });
+      this.snackBar.open('Amendment reference not found.', 'Close', {
+        duration: 3000,
+      });
       return;
     }
-    const dialogRef = this.dialog.open(RejectDialogComponent, { width: '400px' });
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+    });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return;
@@ -869,9 +976,12 @@ export class AmendScreen implements OnInit {
   // }
 
   private navigateBack(tab: string) {
-    this.router.navigate(['/dashboard/Trade-Services/import-screen/approved-inquiry-records'], {
-      queryParams: { tab }
-    });
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-screen/approved-inquiry-records'],
+      {
+        queryParams: { tab },
+      },
+    );
   }
 
   updateRejected(): void {
@@ -907,5 +1017,4 @@ export class AmendScreen implements OnInit {
         },
       });
   }
-
 }

@@ -52,7 +52,9 @@
                 <!-- LIVE TAB: Always Save + Back -->
                 <ng-container *ngIf="sourceTab === 'live'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="accent" (click)="saveForm()" [disabled]="isSaving">
+                    <button 
+                    *ngIf="hasPermission('ILC_AmendSave')"
+                    mat-flat-button color="accent" (click)="saveForm()" [disabled]="isSaving">
                         {{ isSaving ? 'Saving...' : 'Save' }}
                     </button>
                 </ng-container>
@@ -66,13 +68,16 @@
                 <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
                     <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
-                    <button mat-flat-button color="accent" (click)="submitLc()">Submit</button>
+                    <button
+                    *ngIf="hasPermission('ILC_AmendSubmit')" mat-flat-button color="accent" (click)="submitLc()">Submit</button>
                 </ng-container>
             
                 <!-- SUBMITTED: Approve + Reject -->
                 <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
-                    <button mat-stroked-button color="primary" (click)="openReject()">Reject</button>
-                    <button mat-flat-button color="accent" (click)="approve()">Approve</button>
+                    <button
+                    *ngIf="hasPermission('ILC_AmendPendingReject')" mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+                    <button
+                    *ngIf="hasPermission('ILC_AmendApprove')" mat-flat-button color="accent" (click)="approve()">Approve</button>
                 </ng-container>
             
                 <!-- APPROVED: Back only -->
@@ -83,7 +88,8 @@
                 <!-- REJECTED: Back + Update -->
                 <ng-container *ngIf="sourceTab === 'rejected' && eventType === 'AMD'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <button mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+                    <button 
+                    *ngIf="hasPermission('ILC_AmendUpdateReject')"mat-flat-button color="primary" (click)="updateRejected()">Update</button>
                 </ng-container>
             
             </div>
