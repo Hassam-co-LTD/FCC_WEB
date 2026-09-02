@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,7 +20,7 @@ import { MatCard } from '@angular/material/card';
 import { AuthService } from '../../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../../core/services/api.service';
-
+import { TransactionComparisonService } from '../../../../../../core/services/admin-service/transaction-comparison.service';
 @Component({
   selector: 'app-customer-branch',
   standalone: true,
@@ -31,13 +36,12 @@ import { ApiService } from '../../../../../../core/services/api.service';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatCard
+    MatCard,
   ],
   templateUrl: './customer-branch.html',
-  styleUrls: ['./customer-branch.scss']
+  styleUrls: ['./customer-branch.scss'],
 })
 export class CustomerBranch implements OnInit {
-
   branchForm!: FormGroup;
   dynamicFieldsForm!: FormGroup;
 
@@ -56,7 +60,8 @@ export class CustomerBranch implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private authService:AuthService
+    private authService: AuthService,
+    private comparisonService: TransactionComparisonService,
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +85,7 @@ export class CustomerBranch implements OnInit {
       contactPerson: [''],
       cityId: [null, Validators.required],
       contactNo: [''],
-      createdBy:[this.authService.getLoginId()]
+      createdBy: [this.authService.getLoginId()],
     });
   }
 
@@ -95,12 +100,28 @@ export class CustomerBranch implements OnInit {
       next: (res: any) => {
         console.log('Loaded Branch:', res);
         this.storeBranch = res;
-        console.log("storeBranch", this.storeBranch);
+        console.log('storeBranch', this.storeBranch);
         this.storeDynamicFieldsResponse = res.dynamicFields || [];
         this.branchForm.patchValue(res);
         this.patchDynamicValues();
+        if (this.storeBranch.recordStatus === 'S') {
+          this.api
+            .getRejectedTransaction(this.storeBranch.id, 'branch')
+            .subscribe({
+              next: (res: any) => {
+                console.log('Rejected Branch:', res);
+                this.storeRejectedCustomerBranch = res;
+                this.storeRejectedDynamicFields = res.dynamicFields || [];
+
+                this.compareCustomerBranchData();
+                this.compareCustomerBranchDynamicFields();
+              },
+              error: (err: any) =>
+                console.error('Error fetching rejected branch', err),
+            });
+        }
       },
-      error: (err: any) => console.error('Load failed', err)
+      error: (err: any) => console.error('Load failed', err),
     });
   }
 
@@ -109,7 +130,7 @@ export class CustomerBranch implements OnInit {
     this.api.getFieldsByScreenAndStatus('branch', 'A').subscribe({
       next: (res: any) => {
         console.log('Branch Dynamic Fields:', res);
-        this.fields = res;
+        this.fields = this.removeDuplicateFields(res);
 
         const group: any = {};
         this.fields.forEach((f: any) => {
@@ -119,13 +140,18 @@ export class CustomerBranch implements OnInit {
         this.dynamicFieldsForm = this.fb.group(group);
         this.patchDynamicValues();
       },
-      error: (err: any) => console.error('Dynamic field load failed', err)
+      error: (err: any) => console.error('Dynamic field load failed', err),
     });
   }
 
   // ================= PATCH DYNAMIC =================
   private patchDynamicValues(): void {
-    if (!this.dynamicFieldsForm || !this.fields?.length || !this.storeDynamicFieldsResponse?.length) return;
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
 
     const patch: any = {};
 
@@ -138,228 +164,215 @@ export class CustomerBranch implements OnInit {
   }
 
   // ================= SAVE =================
-onSave(): void {
-  if (this.branchForm.invalid) return;
+  onSave(): void {
+    if (this.branchForm.invalid) return;
 
-  // 🔹 Prepare dynamic fields (matches DTO)
-  const dynamicPayload = this.fields?.map(f => ({
-     // Use existing ID or 0 for new
-     branchId: this.branchForm.value.branchId || 0,
-    fieldId: f.fieldId,
-    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
-  })) || [];
+    // 🔹 Prepare dynamic fields (matches DTO)
+    const dynamicPayload =
+      this.fields?.map((f) => ({
+        // Use existing ID or 0 for new
+        branchId: this.branchForm.value.branchId || 0,
+        fieldId: f.fieldId,
+        value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
+      })) || [];
 
-  // 🔹 Create FULL payload (matches BranchMasterRequestDto)
-  const branchPayload = {
-    ...this.branchForm.getRawValue(),
-    dynamicFields: dynamicPayload,
-    createdOn: new Date().toISOString().split('.')[0]
-  };
+    // 🔹 Create FULL payload (matches BranchMasterRequestDto)
+    const branchPayload = {
+      ...this.branchForm.getRawValue(),
+      dynamicFields: dynamicPayload,
+      createdOn: new Date().toISOString().split('.')[0],
+    };
 
-  console.log('Sending DTO payload:', branchPayload);
+    console.log('Sending DTO payload:', branchPayload);
 
-  // 🔹 SINGLE API CALL
-  this.api.saveTnx(branchPayload, 'branch').subscribe({
-    next: (res: any) => {
-      console.log('Branch + Dynamic saved:', res);
+    // 🔹 SINGLE API CALL
+    this.api.saveTnx(branchPayload, 'branch').subscribe({
+      next: (res: any) => {
+        console.log('Branch + Dynamic saved:', res);
 
-      Swal.fire('Saved!', 'Branch saved successfully', 'success')
-        .then(() => {
+        Swal.fire('Saved!', 'Branch saved successfully', 'success').then(() => {
           this.router.navigate(['/admin/branch-list'], {
-            queryParams: { tabName: 'Draft' }
+            queryParams: { tabName: 'Draft' },
           });
         });
-    },
-    error: (err: any) => {
-      console.error('Save failed', err);
-      Swal.fire('Error', 'Branch save failed', 'error');
-    }
-  });
-}
+      },
+      error: (err: any) => {
+        console.error('Save failed', err);
+        Swal.fire('Error', 'Branch save failed', 'error');
+      },
+    });
+  }
   // ================= UPDATE =================
- // ---------------- UPDATE ----------------
-update(id:number): void {
+  // ---------------- UPDATE ----------------
+  update(id: number): void {
+    if (this.branchForm.invalid) return;
 
-  if (this.branchForm.invalid) return;
+    const branchId = this.branchForm.value.branchId;
 
-  const branchId = this.branchForm.value.branchId;
+    const dynamicPayload =
+      this.fields?.map((f) => ({
+        fieldId: f.fieldId,
+        value: this.dynamicFieldsForm.get(f.fieldName)?.value || '',
+      })) || [];
 
-  const dynamicPayload = this.fields?.map(f => ({
-    fieldId: f.fieldId,
-    value: this.dynamicFieldsForm.get(f.fieldName)?.value || ''
-  })) || [];
+    const branchPayload = {
+      ...this.branchForm.getRawValue(),
+      updatedBy: this.authService.getLoginId(),
+      dynamicFields: dynamicPayload,
+      updatedOn: new Date().toISOString().split('.')[0],
+    };
 
-  const branchPayload = {
-    ...this.branchForm.getRawValue(),
-    updatedBy:this.authService.getLoginId(),
-    dynamicFields: dynamicPayload,
-    updatedOn: new Date().toISOString().split('.')[0]
-  };
+    console.log('Payload to update:', branchPayload);
 
-  console.log('Payload to update:', branchPayload);
+    this.api.updateTnxx(branchPayload, `branch/update/${branchId}`).subscribe({
+      next: () => {
+        Swal.fire(
+          'Updated!',
+          'Branch and Additional Fields updated successfully',
+          'success',
+        );
 
-  this.api.updateTnxx(branchPayload, `branch/update/${branchId}`).subscribe({
+        console.log('Branch updated successfully');
+      },
 
-    next: () => {
-
-      Swal.fire(
-        'Updated!',
-        'Branch and Additional Fields updated successfully',
-        'success'
-      );
-
-      console.log('Branch updated successfully');
-    },
-
-    error: err => {
-      console.error('Branch update failed', err);
-    }
-
-  });
-
-}
+      error: (err) => {
+        console.error('Branch update failed', err);
+      },
+    });
+  }
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeBranch?.id) return;
-    let payload = this.authService.getSubmitPayload()
+    let payload = this.authService.getSubmitPayload();
 
     this.api.setTnxByStatus(payload, this.storeBranch.id, 'branch').subscribe({
       next: () =>
-        Swal.fire('Submitted!', 'Branch submitted successfully', 'success')
-          .then(() =>
-            this.router.navigate(['/admin/branch-list'], {
-              queryParams: { tabName: 'submitted' }
-            })
-          )
+        Swal.fire(
+          'Submitted!',
+          'Branch submitted successfully',
+          'success',
+        ).then(() =>
+          this.router.navigate(['/admin/branch-list'], {
+            queryParams: { tabName: 'submitted' },
+          }),
+        ),
     });
   }
 
- reject(id: number): void {
- 
-   if (!id) return;
- 
-   Swal.fire({
-     title: 'Reject Transaction',
-     input: 'textarea',
-     inputLabel: 'Reject Reason',
-     inputPlaceholder: 'Please enter the reason for rejection...',
-     inputAttributes: {
-       'aria-label': 'Reject reason'
-     },
-     showCancelButton: true,
-     confirmButtonText: 'Reject',
-     cancelButtonText: 'Cancel',
- 
-     preConfirm: (reason) => {
- 
-       if (!reason || !reason.trim()) {
- 
-         Swal.showValidationMessage(
-           'Reject reason is required'
-         );
- 
-         return false;
-       }
- 
-       return reason.trim();
-     }
- 
-   }).then((result) => {
- 
-     if (!result.isConfirmed) {
-       return;
-     }
- 
-     const rejectReason = result.value;
- 
-     // =========================
-     // CREATE REJECT PAYLOAD
-     // =========================
- 
-     const payload =
-       this.authService.getRejectPayload(rejectReason);
- 
-     console.log('Reject ID:', id);
-     console.log('Reject Payload:', payload);
- 
-     // =========================
-     // CALL API
-     // =========================
- 
-     this.api.setTnxByStatus(
-       payload,
-       id,
-       'customer'
-     ).subscribe({
- 
-       next: (res: any) => {
- 
-         console.log('Reject successful:', res);
- 
-         Swal.fire(
-           'Rejected!',
-           res?.message || 'Customer rejected successfully',
-           'success'
-         ).then(() => {
- 
-           this.router.navigate(
-             ['/admin/customer-list'],
-             {
-               queryParams: {
-                 tabName: 'rejected'
-               }
-             }
-           );
- 
-         });
- 
-       },
- 
-       error: (err: any) => {
- 
-         console.error('Reject failed:', err);
- 
-         Swal.fire(
-           'Error',
-           err?.error?.message || 'Reject failed',
-           'error'
-         );
- 
-       }
- 
-     });
- 
-   });
- }
+  reject(id: number): void {
+    if (!id) return;
 
+    Swal.fire({
+      title: 'Reject Transaction',
+      input: 'textarea',
+      inputLabel: 'Reject Reason',
+      inputPlaceholder: 'Please enter the reason for rejection...',
+      inputAttributes: {
+        'aria-label': 'Reject reason',
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Reject',
+      cancelButtonText: 'Cancel',
 
+      preConfirm: (reason) => {
+        if (!reason || !reason.trim()) {
+          Swal.showValidationMessage('Reject reason is required');
+
+          return false;
+        }
+
+        return reason.trim();
+      },
+    }).then((result) => {
+      if (!result.isConfirmed) {
+        return;
+      }
+
+      const rejectReason = result.value;
+
+      // =========================
+      // CREATE REJECT PAYLOAD
+      // =========================
+
+      const payload = this.authService.getRejectPayload(rejectReason);
+
+      console.log('Reject ID:', id);
+      console.log('Reject Payload:', payload);
+
+      // =========================
+      // CALL API
+      // =========================
+
+      this.api.setTnxByStatus(payload, id, 'branch').subscribe({
+        next: (res: any) => {
+          console.log('Reject successful:', res);
+
+          Swal.fire(
+            'Rejected!',
+            res?.message || 'Branch rejected successfully',
+            'success',
+          ).then(() => {
+            this.router.navigate(['/admin/branch-list'], {
+              queryParams: {
+                tabName: 'rejected',
+              },
+            });
+          });
+        },
+
+        error: (err: any) => {
+          console.error('Reject failed:', err);
+
+          Swal.fire('Error', err?.error?.message || 'Reject failed', 'error');
+        },
+      });
+    });
+  }
 
   approve(id: number): void {
-   let payload = this.authService.getApprovePayload()
+    let payload = this.authService.getApprovePayload();
 
     this.api.setTnxByStatus(payload, id, 'branch').subscribe({
       next: () =>
-        Swal.fire('Approved!', 'Branch approved successfully', 'success')
-          .then(() =>
+        Swal.fire('Approved!', 'Branch approved successfully', 'success').then(
+          () =>
             this.router.navigate(['/admin/branch-list'], {
-              queryParams: { tabName: 'approved' }
-            })
-          )
+              queryParams: { tabName: 'approved' },
+            }),
+        ),
     });
   }
 
+  amend(id: number): void {
+    let payload = this.authService.getAmendPayload();
+    this.api.setTnxByStatus(payload, id, 'branch').subscribe({
+      next: () =>
+        Swal.fire('Amended!', 'Branch amended successfully', 'success').then(
+          () =>
+            this.router.navigate(['/admin/branch-list'], {
+              queryParams: { tabName: 'amended' },
+            }),
+        ),
+    });
+  }
   // ================= UTIL =================
   getAllCities(): void {
     this.api.getTnxByStatus('A', 'city/getApprovedCities').subscribe({
-      next: res => this.storeCities = res,
-      error: err => console.error('Failed to load cities', err)
+      next: (res) => (this.storeCities = res),
+      error: (err) => console.error('Failed to load cities', err),
     });
   }
 
-  toggle(): void { this.isOpen = !this.isOpen; }
-  toggleDynamicFields(): void { this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen; }
+  toggle(): void {
+    this.isOpen = !this.isOpen;
+  }
+  toggleDynamicFields(): void {
+    this.isDynamicFieldsOpen = !this.isDynamicFieldsOpen;
+  }
 
-  onBack(): void { this.location.back(); }
+  onBack(): void {
+    this.location.back();
+  }
   onCancel(): void {
     this.branchForm.reset();
     this.dynamicFieldsForm?.reset();
@@ -367,5 +380,142 @@ update(id:number): void {
 
   isReadOnly(): boolean {
     return this.storeBranch?.recordStatus === 'A';
+  }
+
+  // ===================  previous values for comparison ===================
+
+  // =====================================================
+  // REJECTED CUSTOMER
+  // =====================================================
+
+  storeRejectedCustomerBranch: any | null = null;
+
+  storeRejectedDynamicFields: any[] = [];
+  // =====================================================
+  // PREVIOUS NORMAL CUSTOMER VALUES
+  // =====================================================
+
+  previousValues: { [key: string]: any } = {};
+
+  // =====================================================
+  // PREVIOUS DYNAMIC FIELD VALUES
+  // =====================================================
+
+  previousDynamicValues: { [key: string]: any } = {};
+
+  // =====================================================
+  // CUSTOMER GENERAL DETAILS FIELDS
+  // =====================================================
+
+  private readonly customerBranchFields = [
+    'branchId',
+    'branchCode',
+    'branchName',
+    'branchAddress',
+    'swiftAddress',
+    'branchStatus',
+    'cityId',
+    'contactNo',
+    'contactPerson',
+    'emailAddress',
+    'localCurrency',
+  ];
+
+  // =====================================================
+  // COMPARE CUSTOMER GENERAL DETAILS
+  // =====================================================
+
+  private compareCustomerBranchData(): void {
+    this.previousValues = this.comparisonService.compare(
+      this.storeBranch,
+      this.storeRejectedCustomerBranch,
+      this.customerBranchFields,
+    );
+
+    console.log('Previous customer values:', this.previousValues);
+  }
+
+  // =====================================================
+  // COMPARE DYNAMIC FIELDS
+  // =====================================================
+
+  private compareCustomerBranchDynamicFields(): void {
+    // Clear old values first
+    this.previousDynamicValues = {};
+
+    if (
+      !this.storeBranch?.dynamicFields ||
+      !this.storeRejectedCustomerBranch?.dynamicFields
+    ) {
+      return;
+    }
+
+    this.previousDynamicValues = this.comparisonService.compareDynamicFields(
+      this.storeBranch.dynamicFields,
+      this.storeRejectedDynamicFields,
+    );
+
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  // =====================================================
+  // CHECK PREVIOUS CUSTOMER VALUE
+  // =====================================================
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS CUSTOMER VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+  // =====================================================
+  // CHECK PREVIOUS DYNAMIC FIELD VALUE
+  // =====================================================
+
+  hasPreviousDynamicValue(fieldId: string): boolean {
+    return (
+      this.previousDynamicValues &&
+      Object.prototype.hasOwnProperty.call(
+        this.previousDynamicValues,
+        fieldId,
+      ) &&
+      this.previousDynamicValues[fieldId] !== null &&
+      this.previousDynamicValues[fieldId] !== undefined &&
+      String(this.previousDynamicValues[fieldId]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS DYNAMIC FIELD VALUE
+  // =====================================================
+
+  getPreviousDynamicValue(fieldId: string): any {
+    return this.previousDynamicValues?.[fieldId] ?? '';
+  }
+
+  // remove the dupplicates
+
+  private removeDuplicateFields(fields: any[]): any[] {
+    const uniqueFields = new Map<string, any>();
+
+    fields.forEach((field) => {
+      if (field?.fieldId) {
+        uniqueFields.set(field.fieldId, field);
+      }
+    });
+
+    return Array.from(uniqueFields.values());
   }
 }

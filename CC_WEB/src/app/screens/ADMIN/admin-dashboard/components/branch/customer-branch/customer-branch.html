@@ -38,6 +38,7 @@
     }"
   >
     <!-- SECTION HEADER -->
+
     <div class="section-header" (click)="isOpen = !isOpen">
       <h2>Branch General Details</h2>
 
@@ -45,10 +46,14 @@
     </div>
 
     <!-- COLLAPSIBLE FORM -->
+
     <div class="collapsible" [class.open]="isOpen" [formGroup]="branchForm">
       <ng-container *ngIf="isOpen">
         <div class="form-grid">
-          <!-- Branch ID -->
+          <!-- =================================================
+           BRANCH ID
+      ================================================== -->
+
           <div class="field-group">
             <h4>Branch ID</h4>
 
@@ -59,9 +64,20 @@
                 placeholder="Branch ID"
               />
             </mat-form-field>
+
+            <div class="previous-value" *ngIf="hasPreviousValue('branchId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchId') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Branch Code -->
+          <!-- =================================================
+           BRANCH CODE
+      ================================================== -->
+
           <div class="field-group">
             <h4>Branch Code</h4>
 
@@ -72,9 +88,20 @@
                 placeholder="Enter Branch Code"
               />
             </mat-form-field>
+
+            <div class="previous-value" *ngIf="hasPreviousValue('branchCode')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchCode') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Branch Name -->
+          <!-- =================================================
+           BRANCH NAME
+      ================================================== -->
+
           <div class="field-group">
             <h4>Branch Name</h4>
 
@@ -85,9 +112,20 @@
                 placeholder="Enter Branch Name"
               />
             </mat-form-field>
+
+            <div class="previous-value" *ngIf="hasPreviousValue('branchName')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchName') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Contact Person -->
+          <!-- =================================================
+           CONTACT PERSON
+      ================================================== -->
+
           <div class="field-group">
             <h4>Contact Person</h4>
 
@@ -98,9 +136,23 @@
                 placeholder="Enter Contact Person"
               />
             </mat-form-field>
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('contactPerson')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('contactPerson') }}
+              </span>
+            </div>
           </div>
 
-          <!-- City -->
+          <!-- =================================================
+           CITY
+      ================================================== -->
+
           <div class="field-group">
             <h4>City</h4>
 
@@ -113,9 +165,20 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <div class="previous-value" *ngIf="hasPreviousValue('cityId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('cityId') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Contact Number -->
+          <!-- =================================================
+           CONTACT NUMBER
+      ================================================== -->
+
           <div class="field-group">
             <h4>Contact Number</h4>
 
@@ -126,9 +189,20 @@
                 placeholder="Enter Contact Number"
               />
             </mat-form-field>
+
+            <div class="previous-value" *ngIf="hasPreviousValue('contactNo')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('contactNo') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Swift Address -->
+          <!-- =================================================
+           SWIFT ADDRESS
+      ================================================== -->
+
           <div class="field-group">
             <h4>Swift Address</h4>
 
@@ -139,9 +213,23 @@
                 placeholder="Enter Swift Address"
               />
             </mat-form-field>
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('swiftAddress')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('swiftAddress') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Email Address -->
+          <!-- =================================================
+           EMAIL ADDRESS
+      ================================================== -->
+
           <div class="field-group">
             <h4>Email Address</h4>
 
@@ -153,9 +241,23 @@
                 placeholder="Enter Email Address"
               />
             </mat-form-field>
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('emailAddress')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('emailAddress') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Local Currency -->
+          <!-- =================================================
+           LOCAL CURRENCY
+      ================================================== -->
+
           <div class="field-group">
             <h4>Local Currency</h4>
 
@@ -166,22 +268,56 @@
                 placeholder="Enter Local Currency"
               />
             </mat-form-field>
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('localCurrency')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('localCurrency') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Branch Status -->
+          <!-- =================================================
+           BRANCH STATUS
+      ================================================== -->
+
           <div class="field-group">
             <h4>Branch Status</h4>
 
             <mat-form-field appearance="outline">
-              <input
-                matInput
+              <mat-select
                 formControlName="branchStatus"
-                placeholder="Enter Branch Status"
-              />
+                [disabled]="isReadOnly()"
+              >
+                <mat-option value=""> Select Branch Status </mat-option>
+
+                <mat-option value="A"> Active </mat-option>
+
+                <mat-option value="I"> Inactive </mat-option>
+              </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('branchStatus')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchStatus') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Branch Address -->
+          <!-- =================================================
+           BRANCH ADDRESS
+      ================================================== -->
+
           <div class="field-group full">
             <h4>Branch Address</h4>
 
@@ -193,6 +329,17 @@
                 placeholder="Enter Branch Address"
               ></textarea>
             </mat-form-field>
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('branchAddress')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('branchAddress') }}
+              </span>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -203,13 +350,20 @@
        BRANCH ADDITIONAL / DYNAMIC FIELDS
   ====================================================== -->
 
+  <!-- =====================================================
+     BRANCH ADDITIONAL / DYNAMIC FIELDS
+====================================================== -->
+
   <div
     class="customer-form-wrapper dynamic-fields-section"
     [ngClass]="{
-      'hide-when-approved': storeBranch?.recordStatus === 'A'
-    }"
-    *ngIf="fields?.length"
+    'hide-when-approved': storeBranch?.recordStatus === 'A'
+  }"
   >
+    <!-- ===================================================
+       SECTION HEADER
+  ==================================================== -->
+
     <div class="section-header" (click)="toggleDynamicFields()">
       <h2>Branch Additional Fields</h2>
 
@@ -217,6 +371,10 @@
         {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
       </mat-icon>
     </div>
+
+    <!-- ===================================================
+       COLLAPSIBLE DYNAMIC FIELD FORM
+  ==================================================== -->
 
     <div
       class="collapsible"
@@ -226,9 +384,16 @@
       <div class="form-grid">
         <ng-container *ngFor="let field of fields">
           <div class="field-group">
+            <!-- =================================================
+               FIELD LABEL
+          ================================================= -->
+
             <h4>{{ field.label || field.fieldName }}</h4>
 
-            <!-- TEXT -->
+            <!-- =================================================
+               TEXT FIELD
+          ================================================= -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'text'"
               appearance="outline"
@@ -236,11 +401,15 @@
               <input
                 matInput
                 [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}"
+                [readonly]="isReadOnly()"
+                [placeholder]="field.label || field.fieldName"
               />
             </mat-form-field>
 
-            <!-- NUMBER -->
+            <!-- =================================================
+               NUMBER FIELD
+          ================================================= -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'number'"
               appearance="outline"
@@ -249,51 +418,92 @@
                 matInput
                 type="number"
                 [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}"
+                [readonly]="isReadOnly()"
+                [placeholder]="field.label || field.fieldName"
               />
             </mat-form-field>
 
-            <!-- DATE -->
+            <!-- =================================================
+               DATE FIELD
+          ================================================= -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'date'"
               appearance="outline"
             >
-              <input matInput type="date" [formControlName]="field.fieldName" />
+              <input
+                matInput
+                type="date"
+                [formControlName]="field.fieldName"
+                [readonly]="isReadOnly()"
+                [placeholder]="field.label || field.fieldName"
+              />
             </mat-form-field>
 
-            <!-- SELECT -->
+            <!-- =================================================
+               SELECT FIELD
+          ================================================= -->
+
             <mat-form-field
               *ngIf="field.fieldType === 'select'"
               appearance="outline"
             >
               <mat-label> {{ field.label || field.fieldName }} </mat-label>
 
-              <mat-select [formControlName]="field.fieldName">
+              <mat-select
+                [formControlName]="field.fieldName"
+                [disabled]="isReadOnly()"
+              >
                 <mat-option value="">
                   Select {{ field.label || field.fieldName }}
                 </mat-option>
 
-                <mat-option
-                  *ngFor="let option of field.options || []"
-                  [value]="option.value"
-                >
-                  {{ option.text }}
-                </mat-option>
+                <ng-container *ngFor="let option of field.options || []">
+                  <mat-option [value]="option.value">
+                    {{ option.text }}
+                  </mat-option>
+                </ng-container>
               </mat-select>
             </mat-form-field>
+
+            <!-- =================================================
+               PREVIOUS / REJECTED VALUE
+               IMPORTANT:
+               USE field.fieldId HERE
+          ================================================== -->
+
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousDynamicValue(field.fieldId)"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousDynamicValue(field.fieldId) }}
+              </span>
+            </div>
           </div>
         </ng-container>
       </div>
     </div>
   </div>
+  ```
 
   <!-- =====================================================
        BRANCH ACTION BUTTONS
   ====================================================== -->
 
   <div class="customer-actions">
-    <!-- CREATE -->
-    <ng-container *ngIf="!storeBranch || !storeBranch.recordStatus">
+    <!-- =================================================
+     CREATE
+================================================== -->
+
+    <ng-container
+      *ngIf="
+    !storeBranch ||
+    !storeBranch.recordStatus
+  "
+    >
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
 
       <button
@@ -308,7 +518,10 @@
       </button>
     </ng-container>
 
-    <!-- DRAFT -->
+    <!-- =================================================
+     DRAFT
+================================================== -->
+
     <ng-container
       *ngIf="
     isEditMode &&
@@ -320,7 +533,7 @@
       <button
         class="btn-update"
         [disabled]="
-      !branchForm.dirty ||
+      !branchForm.dirty &&
       !dynamicFieldsForm.dirty
     "
         (click)="update(storeBranch.id)"
@@ -340,7 +553,10 @@
       </button>
     </ng-container>
 
-    <!-- SUBMITTED -->
+    <!-- =================================================
+     SUBMITTED
+================================================== -->
+
     <ng-container
       *ngIf="
     isEditMode &&
@@ -370,6 +586,7 @@
     }"
   >
     <!-- HEADER -->
+
     <header class="dossier-header">
       <div
         class="status-strip"
@@ -381,6 +598,7 @@
 
       <div class="header-content">
         <!-- IDENTITY -->
+
         <div class="identity-block">
           <div class="avatar-circle">
             {{ storeBranch?.branchName ?.trim() ?.charAt(0) ?.toUpperCase() ||
@@ -394,16 +612,20 @@
 
             <span class="customer-id">
               Branch Ref:
-              <code>{{ storeBranch.branchId }}</code>
+
+              <code> {{ storeBranch.branchId }} </code>
             </span>
           </div>
         </div>
 
         <!-- STATUS -->
+
         <div class="badge-group">
           <span
             class="status-badge"
-            [attr.data-status]="storeBranch.branchStatus"
+            [attr.data-status]="
+          storeBranch.branchStatus
+        "
           >
             {{ storeBranch.branchStatus || 'APPROVED' | uppercase }}
           </span>
@@ -412,6 +634,7 @@
     </header>
 
     <!-- CORE INFORMATION -->
+
     <div class="dossier-grid">
       <mat-card class="info-card">
         <div class="card-title">
@@ -423,66 +646,82 @@
         <div class="data-grid">
           <div class="data-item">
             <label>Branch Code</label>
+
             <span class="value val-mono"> {{ storeBranch.branchCode }} </span>
           </div>
 
           <div class="data-item">
             <label>Branch Name</label>
+
             <span class="value"> {{ storeBranch.branchName }} </span>
           </div>
 
           <div class="data-item">
             <label>Contact Person</label>
+
             <span class="value"> {{ storeBranch.contactPerson }} </span>
           </div>
 
           <div class="data-item">
             <label>Contact Number</label>
+
             <span class="value"> {{ storeBranch.contactNo }} </span>
           </div>
 
           <div class="data-item">
             <label>Email Address</label>
+
             <span class="value"> {{ storeBranch.emailAddress }} </span>
           </div>
 
           <div class="data-item">
             <label>Swift Address</label>
+
             <span class="value val-mono"> {{ storeBranch.swiftAddress }} </span>
           </div>
 
           <div class="data-item">
             <label>Local Currency</label>
+
             <span class="value"> {{ storeBranch.localCurrency }} </span>
           </div>
 
           <div class="data-item">
             <label>Branch Status</label>
+
             <span class="value"> {{ storeBranch.branchStatus }} </span>
           </div>
 
           <div class="data-item">
             <label>City</label>
+
             <span class="value"> {{ storeBranch.cityName }} </span>
           </div>
 
           <div class="data-item">
             <label>Record Status</label>
+
             <span class="value"> {{ storeBranch.recordStatus }} </span>
           </div>
 
           <div class="data-item full-width">
-            <label>Registered Address</label>
+            <label> Registered Address </label>
+
             <span class="value"> {{ storeBranch.branchAddress }} </span>
           </div>
         </div>
       </mat-card>
     </div>
 
-    <!-- DYNAMIC FIELDS -->
+    <!-- =====================================================
+     APPROVED DYNAMIC FIELDS
+====================================================== -->
+
     <section
       class="dynamic-fields-section"
-      *ngIf="storeBranch.dynamicFields?.length"
+      *ngIf="
+    storeBranch.dynamicFields?.length
+  "
     >
       <mat-card class="info-card">
         <div class="card-title">
@@ -511,12 +750,14 @@
     </section>
 
     <!-- FOOTER -->
+
     <footer class="dossier-footer">
       <div class="audit-info">
         <mat-icon> history </mat-icon>
 
         <span>
           Last Approved/Updated:
+
           <strong> {{ storeBranch.updatedOn | date:'medium' }} </strong>
         </span>
       </div>
@@ -528,7 +769,7 @@
           Return to Dashboard
         </button>
 
-        <button mat-flat-button color="warn" (click)="reject(storeBranch.id)">
+        <button mat-flat-button color="warn" (click)="amend(storeBranch.id)">
           <mat-icon> edit </mat-icon>
 
           Amend Record

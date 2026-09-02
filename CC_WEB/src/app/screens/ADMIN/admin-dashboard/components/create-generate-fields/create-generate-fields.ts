@@ -21,7 +21,7 @@ import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 import { MatCard } from '@angular/material/card';
-
+import { TransactionComparisonService } from '../../../../../core/services/admin-service/transaction-comparison.service';
 export interface DynamicFieldsResponseDto {
   fieldId: number;
   fieldName: string;
@@ -50,7 +50,6 @@ export interface DynamicFieldsResponseDto {
     MatDatepickerModule,
     MatNativeDateModule,
     MatFormField,
-    MatCard,
   ],
   templateUrl: './create-generate-fields.html',
   styleUrls: ['./create-generate-fields.scss'],
@@ -70,6 +69,7 @@ export class CreateGenerateFields implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private authService: AuthService,
+    private comparisonService: TransactionComparisonService,
   ) {}
 
   ngOnInit(): void {
@@ -145,6 +145,24 @@ export class CreateGenerateFields implements OnInit {
           console.log('get by id:', this.storeField);
           this.fieldForm.patchValue(res);
 
+          if (this.storeField?.recordStatus === 'S') {
+            this.api
+              .getRejectedTransaction(res.id, 'dynamic-fields')
+              .subscribe({
+                next: (res: any) => {
+                  this.storeRejectedField = res;
+                  console.log(
+                    'rejected customer appeared ',
+                    this.storeRejectedField,
+                  );
+                  this.compareCustomerData();
+                },
+                error: (errr: any) => {
+                  console.error('rejected customer not found ', errr);
+                },
+              });
+          }
+
           if (res.fieldType === 'select' && res.options?.length) {
             this.options.clear();
             res.options.forEach((opt: any) =>
@@ -200,7 +218,7 @@ export class CreateGenerateFields implements OnInit {
   }
 
   update(id: number): void {
-    if (this.fieldForm.invalid) return;
+    if (!id) return;
     const payload = {
       ...this.fieldForm.getRawValue(),
       updatedBy: this.authService.getLoginId() || '',
@@ -281,7 +299,7 @@ export class CreateGenerateFields implements OnInit {
       // CALL API
       // =========================
 
-      this.api.setTnxByStatus(payload, id, 'customer').subscribe({
+      this.api.setTnxByStatus(payload, id, 'dynamic-fields').subscribe({
         next: (res: any) => {
           console.log('Reject successful:', res);
 
@@ -290,7 +308,7 @@ export class CreateGenerateFields implements OnInit {
             res?.message || 'fields rejected successfully',
             'success',
           ).then(() => {
-            this.router.navigate(['/admin/customer-list'], {
+            this.router.navigate(['/admin/dynamic-field-inquiry'], {
               queryParams: {
                 tabName: 'rejected',
               },
@@ -332,5 +350,63 @@ export class CreateGenerateFields implements OnInit {
       },
       error: (err) => console.error('Load all dropdowns failed', err),
     });
+  }
+
+  amend(id: number): void {
+    this.api
+      .setTnxByStatus(this.authService.getAmendPayload(), id, 'dynamic-fields')
+      .subscribe({
+        next: () =>
+          Swal.fire('Amended!', 'Field amended', 'success').then(() =>
+            this.router.navigate(['/admin/dynamic-field-inquiry'], {
+              queryParams: { tabName: 'Amended' },
+            }),
+          ),
+        error: (err) => Swal.fire('Error', 'Amend failed', 'error'),
+      });
+  }
+
+  // previous values for comparison
+  storeRejectedField: any | null = null;
+
+  // =====================================================
+  // PREVIOUS NORMAL CUSTOMER VALUES
+  // =====================================================
+
+  previousValues: { [key: string]: any } = {};
+
+  private readonly fields = {
+    fieldId: 'Field ID',
+    fieldName: 'Field Name',
+    label: 'Label',
+    fieldType: 'Field Type',
+    screen: 'Screen',
+  };
+  private compareCustomerData(): void {
+    this.previousValues = this.comparisonService.compare(
+      this.storeField,
+      this.storeRejectedField,
+      Object.keys(this.fields),
+    );
+
+    console.log('Previous customer values:', this.previousValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS CUSTOMER VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

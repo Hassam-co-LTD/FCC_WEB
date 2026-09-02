@@ -25,11 +25,19 @@
     <!-- Collapsible Form -->
     <div class="collapsible" [class.open]="isOpen" [formGroup]="fieldForm">
       <ng-container *ngIf="isOpen">
-        <!-- ---------------- BASIC DETAILS ---------------- -->
-        <div class="form-grid form-grid-large">
+        <!-- ================================================= -->
+        <!-- BASIC DETAILS -->
+        <!-- ================================================= -->
+
+        <div class="form-grid">
+          <!-- ================================================= -->
+          <!-- FIELD ID -->
+          <!-- ================================================= -->
+
           <div class="field-group">
             <h4>Field ID</h4>
-            <mat-form-field appearance="outline" class="full">
+
+            <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
@@ -38,11 +46,25 @@
                 [readonly]="isReadOnly()"
               />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('fieldId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('fieldId') }}
+              </span>
+            </div>
           </div>
+
+          <!-- ================================================= -->
+          <!-- FIELD NAME -->
+          <!-- ================================================= -->
 
           <div class="field-group">
             <h4>Field Name</h4>
-            <mat-form-field appearance="outline" class="full">
+
+            <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
@@ -51,11 +73,25 @@
                 [readonly]="isReadOnly()"
               />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('fieldName')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('fieldName') }}
+              </span>
+            </div>
           </div>
+
+          <!-- ================================================= -->
+          <!-- LABEL -->
+          <!-- ================================================= -->
 
           <div class="field-group">
             <h4>Label</h4>
-            <mat-form-field appearance="outline" class="full">
+
+            <mat-form-field appearance="outline">
               <input
                 matInput
                 type="text"
@@ -64,83 +100,129 @@
                 [readonly]="isReadOnly()"
               />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('label')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('label') }}
+              </span>
+            </div>
           </div>
+
+          <!-- ================================================= -->
+          <!-- INPUT TYPE -->
+          <!-- ================================================= -->
 
           <div class="field-group">
             <h4>Input Type</h4>
-            <mat-form-field appearance="outline" class="full">
+
+            <mat-form-field appearance="outline">
               <mat-label>Input Type</mat-label>
+
               <mat-select
                 formControlName="fieldType"
                 [disabled]="isReadOnly()"
                 panelClass="white-dropdown"
               >
-                <mat-option value="text">Text</mat-option>
-                <mat-option value="number">Number</mat-option>
-                <mat-option value="select">Select</mat-option>
-                <mat-option value="date">Date</mat-option>
+                <mat-option value="text"> Text </mat-option>
+
+                <mat-option value="number"> Number </mat-option>
+
+                <mat-option value="select"> Select </mat-option>
+
+                <mat-option value="date"> Date </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('fieldType')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('fieldType') }}
+              </span>
+            </div>
           </div>
+
+          <!-- ================================================= -->
+          <!-- SCREEN -->
+          <!-- ================================================= -->
 
           <div class="field-group">
             <h4>Screen</h4>
-            <mat-form-field appearance="outline" class="full">
+
+            <mat-form-field appearance="outline">
               <mat-label>Screen</mat-label>
+
               <mat-select
                 formControlName="screen"
                 [disabled]="isReadOnly()"
                 panelClass="white-dropdown"
               >
-                <mat-option value="customer">Customer</mat-option>
-                <mat-option value="branch">Branch</mat-option>
-                <mat-option value="city">City</mat-option>
-                <mat-option value="role">Role</mat-option>
-                <mat-option value="Company">Company</mat-option>
-                <mat-option value="Currency"> Currency</mat-option>
-                <mat-option value="ClientUser">ClientUser</mat-option>
-                <mat-option value="AccountTypes">AccountTypes</mat-option>
+                <mat-option value="customer"> Customer </mat-option>
 
-                <mat-option value="Accounts">Accounts</mat-option>
+                <mat-option value="branch"> Branch </mat-option>
+
+                <mat-option value="city"> City </mat-option>
+
+                <mat-option value="role"> Role </mat-option>
+
+                <mat-option value="Company"> Company </mat-option>
+
+                <mat-option value="Currency"> Currency </mat-option>
+
+                <mat-option value="ClientUser"> ClientUser </mat-option>
+
+                <mat-option value="AccountTypes"> AccountTypes </mat-option>
+
+                <mat-option value="Accounts"> Accounts </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('screen')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('screen') }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
-        <!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
-        <!-- ---------------- SELECT OPTIONS FOR DROPDOWN ---------------- -->
+        <!-- ================================================= -->
+        <!-- SELECT OPTIONS FOR DROPDOWN -->
+        <!-- ================================================= -->
+
         <div
-          *ngIf="fieldForm.get('fieldType')?.value === 'select' && options.length > 0"
+          *ngIf="
+        fieldForm.get('fieldType')?.value === 'select' &&
+        options.length > 0
+      "
           class="options-section"
           formArrayName="options"
-          style="
-            margin-top: 32px;
-            padding: 16px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background-color: #fafafa;
-          "
         >
-          <h3 style="margin-bottom: 16px; font-weight: 600; color: #0b4eb3">
-            Dropdown Options (Max 5)
-          </h3>
+          <h3>Dropdown Options (Max 5)</h3>
+
+          <!-- ================================================= -->
+          <!-- OPTIONS -->
+          <!-- ================================================= -->
 
           <div
             *ngFor="let opt of options.controls; let i = index"
             [formGroupName]="i"
             class="option-row"
-            style="
-              display: flex;
-              flex-wrap: wrap;
-              gap: 16px;
-              align-items: center;
-              margin-bottom: 12px;
-            "
           >
-            <!-- Option ID -->
-            <div class="field-group" style="flex: 0 0 120px; min-width: 120px">
-              <mat-form-field appearance="outline" style="width: 100%">
+            <!-- ================================================= -->
+            <!-- OPTION ID -->
+            <!-- ================================================= -->
+
+            <div class="field-group">
+              <h4>Option ID</h4>
+
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   formControlName="fieldId"
@@ -148,11 +230,25 @@
                   [readonly]="isReadOnly()"
                 />
               </mat-form-field>
+
+              <!-- Previous Value -->
+              <div class="previous-value" *ngIf="hasPreviousValue('fieldId')">
+                <span class="previous-label"> Previous Value: </span>
+
+                <span class="previous-text">
+                  {{ getPreviousValue('fieldId') }}
+                </span>
+              </div>
             </div>
 
-            <!-- Option Value -->
-            <div class="field-group" style="flex: 1 1 200px; min-width: 150px">
-              <mat-form-field appearance="outline" style="width: 100%">
+            <!-- ================================================= -->
+            <!-- OPTION VALUE -->
+            <!-- ================================================= -->
+
+            <div class="field-group">
+              <h4>Option Value</h4>
+
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   formControlName="value"
@@ -162,9 +258,14 @@
               </mat-form-field>
             </div>
 
-            <!-- Option Text -->
-            <div class="field-group" style="flex: 1 1 200px; min-width: 150px">
-              <mat-form-field appearance="outline" style="width: 100%">
+            <!-- ================================================= -->
+            <!-- OPTION TEXT -->
+            <!-- ================================================= -->
+
+            <div class="field-group">
+              <h4>Option Text</h4>
+
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   formControlName="text"
@@ -174,11 +275,14 @@
               </mat-form-field>
             </div>
 
-            <!-- dropDownKey -->
+            <!-- ================================================= -->
+            <!-- DROPDOWN KEY -->
+            <!-- ================================================= -->
 
-            <div class="field-group" style="flex: 1 1 200px; min-width: 150px">
-              <mat-form-field appearance="outline" style="width: 100%">
-                <mat-label>Dropdown Options</mat-label>
+            <div class="field-group">
+              <h4>Dropdown Options</h4>
+
+              <mat-form-field appearance="outline">
                 <mat-select
                   formControlName="dropDownKey"
                   [disabled]="isReadOnly()"
@@ -192,38 +296,59 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <!-- Remove Button -->
-            <div class="field-group" style="flex: 0 0 auto">
+
+            <!-- ================================================= -->
+            <!-- REMOVE BUTTON -->
+            <!-- ================================================= -->
+
+            <div class="field-group option-remove">
               <button
                 mat-icon-button
                 color="warn"
                 type="button"
                 (click)="removeOption(i)"
-                [disabled]="isReadOnly() || options.length === 1"
+                [disabled]="
+              isReadOnly() ||
+              options.length === 1
+            "
               >
-                <mat-icon>delete</mat-icon>
+                <mat-icon> delete </mat-icon>
               </button>
             </div>
           </div>
 
-          <!-- Add Option Button -->
-          <div class="form-actions" style="margin-top: 16px; text-align: right">
+          <!-- ================================================= -->
+          <!-- ADD OPTION BUTTON -->
+          <!-- ================================================= -->
+
+          <div class="form-actions">
             <button
               mat-flat-button
               type="button"
               color="primary"
               (click)="addOption()"
-              [disabled]="options.length >= 5 || isReadOnly()"
+              [disabled]="
+            options.length >= 5 ||
+            isReadOnly()
+          "
             >
               Add Option
             </button>
           </div>
         </div>
-        <!-- ---------------- FORM ACTIONS OUTSIDE ---------------- -->
+
+        <!-- ================================================= -->
+        <!-- FORM ACTIONS -->
+        <!-- ================================================= -->
+
         <div class="customer-actions">
-          <!-- ---------------- New Customer ---------------- -->
+          <!-- ================================================= -->
+          <!-- NEW FIELD -->
+          <!-- ================================================= -->
+
           <ng-container *ngIf="!storeField || !storeField.recordStatus">
             <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+
             <button
               class="btn-save"
               [disabled]="!fieldForm.valid"
@@ -233,9 +358,18 @@
             </button>
           </ng-container>
 
-          <!-- ---------------- Edit Mode: Draft ---------------- -->
-          <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'I'">
+          <!-- ================================================= -->
+          <!-- EDIT MODE - DRAFT -->
+          <!-- ================================================= -->
+
+          <ng-container
+            *ngIf="
+          isEditMode &&
+          storeField?.recordStatus === 'I'
+        "
+          >
             <button class="btn-back" (click)="onBack()">Back</button>
+
             <button
               class="btn-update"
               [disabled]="!fieldForm.dirty"
@@ -243,68 +377,91 @@
             >
               Update
             </button>
+
             <button class="btn-submit" (click)="submit()">Submit</button>
           </ng-container>
-          <!-- ---------------- Edit Mode: Submitted ---------------- -->
-          <ng-container *ngIf="isEditMode && storeField?.recordStatus === 'S'">
+
+          <!-- ================================================= -->
+          <!-- EDIT MODE - SUBMITTED -->
+          <!-- ================================================= -->
+
+          <ng-container
+            *ngIf="
+          isEditMode &&
+          storeField?.recordStatus === 'S'
+        "
+          >
             <button class="btn-reject" (click)="reject(storeField.id)">
               Reject
             </button>
+
             <button class="btn-approve" (click)="approve(storeField.id)">
               Approve
             </button>
           </ng-container>
         </div>
 
-        <!-- ---------------- APPROVED VIEW ---------------- -->
-        <div
-          class="approved-container"
-          [ngClass]="{'hide-when-approved': storeField.recordStatus !=='A'}"
-        >
-          <div class="approved-header">
-            <span class="approved-badge">✔ Approved</span>
-            <h3>Field Details</h3>
-          </div>
-
-          <div class="approved-info">
-            <div class="info-item">
-              <span class="key">Field ID:</span>
-              <span class="value">{{ storeField.fieldId }}</span>
-            </div>
-            <div class="info-item">
-              <span class="key">Field Name:</span>
-              <span class="value">{{ storeField.fieldName }}</span>
-            </div>
-            <div class="info-item">
-              <span class="key">Label:</span>
-              <span class="value">{{ storeField.label }}</span>
-            </div>
-            <div class="info-item">
-              <span class="key">Field Type:</span>
-              <span class="value">{{ storeField.fieldType }}</span>
-            </div>
-            <div class="info-item">
-              <span class="key">Screen:</span>
-              <span class="value">{{ storeField.screen }}</span>
-            </div>
-            <div
-              *ngIf="storeField.fieldType==='select' && storeField.options?.length"
-            >
-              <div class="info-item" *ngFor="let o of storeField.options">
-                <span class="key">Option:</span>
-                <span class="value">{{ o.value }} → {{ o.label }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- ================================================= -->
+        <!-- APPROVED VIEW -->
+        <!-- ================================================= -->
 
         <div class="approved-actions" *ngIf="storeField.recordStatus === 'A'">
           <button class="btn-back" (click)="onBack()">Back</button>
-          <button class="btn-update" (click)="approve(storeField.id)">
+
+          <button class="btn-update" (click)="amend(storeField.id)">
             Amend
           </button>
         </div>
       </ng-container>
+    </div>
+    ```
+  </div>
+
+  <!-- =========================
+     APPROVED VIEW SECTION
+========================= -->
+  <div class="approved-wrapper" *ngIf="storeField?.recordStatus === 'A'">
+    <div class="approved-container">
+      <div class="approved-header">
+        <span class="approved-badge">✔ Approved</span>
+        <h3>Field Details</h3>
+      </div>
+
+      <div class="approved-info">
+        <div class="info-item">
+          <span class="key">Field ID:</span>
+          <span class="value">{{ storeField?.fieldId }}</span>
+        </div>
+        <div class="info-item">
+          <span class="key">Field Name:</span>
+          <span class="value">{{ storeField?.fieldName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="key">Label:</span>
+          <span class="value">{{ storeField?.label }}</span>
+        </div>
+        <div class="info-item">
+          <span class="key">Field Type:</span>
+          <span class="value">{{ storeField?.fieldType }}</span>
+        </div>
+        <div class="info-item">
+          <span class="key">Screen:</span>
+          <span class="value">{{ storeField?.screen }}</span>
+        </div>
+        <div
+          *ngIf="storeField?.fieldType === 'select' && storeField?.options?.length"
+        >
+          <div class="info-item" *ngFor="let o of storeField?.options">
+            <span class="key">Option:</span>
+            <span class="value">{{ o.value }} → {{ o.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="approved-actions">
+      <button class="btn-back" (click)="onBack()">Back</button>
+      <button class="btn-update" (click)="amend(storeField?.id)">Amend</button>
     </div>
   </div>
 </div>
