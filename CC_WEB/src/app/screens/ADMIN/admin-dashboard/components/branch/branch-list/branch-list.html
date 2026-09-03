@@ -5,7 +5,11 @@
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
-    <!-- ================= Draft Tab ================= -->
+    ```
+    <!-- ===================================================== -->
+    <!-- DRAFT TAB -->
+    <!-- ===================================================== -->
+
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
         <input
@@ -14,7 +18,12 @@
           [(ngModel)]="searchText"
           (input)="filterDraftBranches(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftBranches('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftBranches('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -24,7 +33,14 @@
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftBranches && storeFilteredDraftBranches.length > 0; else noDrafts">
+        <div
+          class="table-wrapper"
+          *ngIf="
+        storeFilteredDraftBranches &&
+        storeFilteredDraftBranches.length > 0;
+        else noDrafts
+      "
+        >
           <table class="branch-table">
             <thead>
               <tr>
@@ -38,21 +54,74 @@
                 <th>Contact Person</th>
                 <th>Contact No</th>
                 <th>Record Status</th>
+
+                <!-- Audit Fields -->
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let b of storeFilteredDraftBranches; trackBy: trackById">
-            <td><a [routerLink]="['/admin/edit-branch',b.branchId]">{{ b.branchCode }}</a></td>
-         
+              <tr
+                *ngFor="
+              let b of storeFilteredDraftBranches;
+              trackBy: trackById
+            "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/edit-branch',
+                  b.branchId
+                ]"
+                  >
+                    {{ b.branchCode }}
+                  </a>
+                </td>
+
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>
                 <td>{{ b.emailAddress }}</td>
                 <td>{{ b.localCurrency }}</td>
-                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.citymaster?.cityId }}</td>
                 <td>{{ b.contactPerson }}</td>
                 <td>{{ b.contactNo }}</td>
+
                 <td>{{ b.recordStatus }}</td>
+
+                <!-- Audit Fields -->
+
+                <td>{{ b.createdBy }}</td>
+
+                <td>{{ b.createdOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.updatedBy }}</td>
+
+                <td>{{ b.updatedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.inputterId }}</td>
+
+                <td>{{ b.inputterDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.authorizerId }}</td>
+
+                <td>{{ b.authorizerDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectedBy }}</td>
+
+                <td>{{ b.rejectedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -64,7 +133,10 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Approved Tab ================= -->
+    <!-- ===================================================== -->
+    <!-- APPROVED TAB -->
+    <!-- ===================================================== -->
+
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
       <div class="search-bar">
         <input
@@ -73,17 +145,30 @@
           [(ngModel)]="searchText"
           (input)="filterApprovedBranches(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedBranches('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedBranches('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedBranches && storeFilteredApprovedBranches.length > 0; else noApproved">
+        <div
+          class="table-wrapper"
+          *ngIf="
+        storeFilteredApprovedBranches &&
+        storeFilteredApprovedBranches.length > 0;
+        else noApproved
+      "
+        >
           <table class="branch-table">
             <thead>
               <tr>
@@ -97,20 +182,74 @@
                 <th>Contact Person</th>
                 <th>Contact No</th>
                 <th>Record Status</th>
+
+                <!-- Audit Fields -->
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let b of storeFilteredApprovedBranches; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-branch', b.branchId]">{{ b.branchCode }}</a></td>
+              <tr
+                *ngFor="
+              let b of storeFilteredApprovedBranches;
+              trackBy: trackById
+            "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/edit-branch',
+                  b.branchId
+                ]"
+                  >
+                    {{ b.branchCode }}
+                  </a>
+                </td>
+
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>
                 <td>{{ b.emailAddress }}</td>
                 <td>{{ b.localCurrency }}</td>
-                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.citymaster?.cityId }}</td>
                 <td>{{ b.contactPerson }}</td>
                 <td>{{ b.contactNo }}</td>
+
                 <td>{{ b.recordStatus }}</td>
+
+                <!-- Audit Fields -->
+
+                <td>{{ b.createdBy }}</td>
+
+                <td>{{ b.createdOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.updatedBy }}</td>
+
+                <td>{{ b.updatedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.inputterId }}</td>
+
+                <td>{{ b.inputterDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.authorizerId }}</td>
+
+                <td>{{ b.authorizerDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectedBy }}</td>
+
+                <td>{{ b.rejectedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -122,7 +261,10 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Submitted Tab ================= -->
+    <!-- ===================================================== -->
+    <!-- SUBMITTED TAB -->
+    <!-- ===================================================== -->
+
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
       <div class="search-bar">
         <input
@@ -131,17 +273,30 @@
           [(ngModel)]="searchText"
           (input)="filterSubmittedBranches(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedBranches('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedBranches('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedBranches && storeFilteredSubmittedBranches.length > 0; else noSubmitted">
+        <div
+          class="table-wrapper"
+          *ngIf="
+        storeFilteredSubmittedBranches &&
+        storeFilteredSubmittedBranches.length > 0;
+        else noSubmitted
+      "
+        >
           <table class="branch-table">
             <thead>
               <tr>
@@ -155,20 +310,74 @@
                 <th>Contact Person</th>
                 <th>Contact No</th>
                 <th>Record Status</th>
+
+                <!-- Audit Fields -->
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Updated By</th>
+                <th>Updated On</th>
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let b of storeFilteredSubmittedBranches; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-branch', b.branchId]">{{ b.branchCode }}</a></td>
+              <tr
+                *ngFor="
+              let b of storeFilteredSubmittedBranches;
+              trackBy: trackById
+            "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                  '/admin/edit-branch',
+                  b.branchId
+                ]"
+                  >
+                    {{ b.branchCode }}
+                  </a>
+                </td>
+
                 <td>{{ b.branchName }}</td>
                 <td>{{ b.branchAddress }}</td>
                 <td>{{ b.swiftAddress }}</td>
                 <td>{{ b.emailAddress }}</td>
                 <td>{{ b.localCurrency }}</td>
-                <td>{{ b.citymaster?.cityName }}</td>
+                <td>{{ b.citymaster?.cityId }}</td>
                 <td>{{ b.contactPerson }}</td>
                 <td>{{ b.contactNo }}</td>
+
                 <td>{{ b.recordStatus }}</td>
+
+                <!-- Audit Fields -->
+
+                <td>{{ b.createdBy }}</td>
+
+                <td>{{ b.createdOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.updatedBy }}</td>
+
+                <td>{{ b.updatedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.inputterId }}</td>
+
+                <td>{{ b.inputterDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.authorizerId }}</td>
+
+                <td>{{ b.authorizerDttm | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectedBy }}</td>
+
+                <td>{{ b.rejectedOn | date:'dd-MM-yyyy HH:mm:ss' }}</td>
+
+                <td>{{ b.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -179,5 +388,6 @@
         </ng-template>
       </div>
     </mat-tab>
+    ```
   </mat-tab-group>
 </div>

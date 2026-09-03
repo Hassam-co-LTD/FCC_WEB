@@ -1,330 +1,628 @@
- <div class="badge-group">
+```html
+<!-- =========================
+     STATUS BADGE
+========================== -->
 
-  <span class="status-badge"
-
+<div class="badge-group">
+  <span
+    class="status-badge"
     [ngClass]="{
-      'create': !storeCity?.recordStatus,
-      'draft': storeCity?.recordStatus === 'I',
-      'submitted': storeCity?.recordStatus === 'S',
-      'approved': storeCity?.recordStatus === 'A'
-    }">
-
+      create: !storeCity?.recordStatus,
+      draft: storeCity?.recordStatus === 'I',
+      submitted: storeCity?.recordStatus === 'S',
+      approved: storeCity?.recordStatus === 'A'
+    }"
+  >
     <mat-icon>
-      {{
-        !storeCity?.recordStatus ? 'add_circle' :
-        storeCity?.recordStatus === 'I' ? 'edit_note' :
-        storeCity?.recordStatus === 'S' ? 'hourglass_top' :
-        'verified'
-      }}
+      {{ !storeCity?.recordStatus ? 'add_circle' : storeCity?.recordStatus ===
+      'I' ? 'edit_note' : storeCity?.recordStatus === 'S' ? 'hourglass_top' :
+      'verified' }}
     </mat-icon>
 
-    {{
-      !storeCity?.recordStatus ? 'Create' :
-      storeCity?.recordStatus === 'I' ? 'Draft' :
-      storeCity?.recordStatus === 'S' ? 'Submitted' :
-      'Approved'
-    }}
-
+    {{ !storeCity?.recordStatus ? 'Create' : storeCity?.recordStatus === 'I' ?
+    'Draft' : storeCity?.recordStatus === 'S' ? 'Submitted' : 'Approved' }}
   </span>
-
 </div>
 
 <div class="create-customer-page">
-
-  <!-- Header -->
- 
-  <!-- =========================
+  <!-- =====================================================
        EDITABLE CITY FORM
-  ========================== -->
-  <ng-container *ngIf="storeCity?.recordStatus !== 'A'">
+  ====================================================== -->
 
-    <!-- General Details -->
+  <ng-container *ngIf="storeCity?.recordStatus !== 'A'">
+    <!-- =====================================================
+         GENERAL DETAILS
+    ====================================================== -->
+
     <div class="customer-form-wrapper">
       <div class="section-header" (click)="toggle()">
         <h2>City General Details</h2>
-        <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+        <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
       </div>
 
       <div class="collapsible" [class.open]="isOpen" [formGroup]="cityForm">
         <ng-container *ngIf="isOpen">
           <div class="form-grid">
+            <!-- =================================================
+                 CITY ID
+            ================================================== -->
 
             <div class="field-group">
               <h4>City ID</h4>
+
               <mat-form-field appearance="outline">
-                <input matInput formControlName="cityId" placeholder="City ID" [readonly]="isReadOnly()" />
+                <input
+                  matInput
+                  formControlName="cityId"
+                  placeholder="City ID"
+                  [readonly]="isReadOnly()"
+                />
               </mat-form-field>
+
+              <!-- Previous Value -->
+
+              <div class="previous-value" *ngIf="hasPreviousValue('cityId')">
+                <span class="previous-label"> Previous Value: </span>
+
+                <span class="previous-text">
+                  {{ getPreviousValue('cityId') }}
+                </span>
+              </div>
             </div>
+
+            <!-- =================================================
+                 CITY NAME
+            ================================================== -->
 
             <div class="field-group">
               <h4>City Name</h4>
+
               <mat-form-field appearance="outline">
-                <input matInput formControlName="cityName" placeholder="City Name" [readonly]="isReadOnly()" />
+                <input
+                  matInput
+                  formControlName="cityName"
+                  placeholder="City Name"
+                  [readonly]="isReadOnly()"
+                />
               </mat-form-field>
+
+              <!-- Previous Value -->
+
+              <div class="previous-value" *ngIf="hasPreviousValue('cityName')">
+                <span class="previous-label"> Previous Value: </span>
+
+                <span class="previous-text">
+                  {{ getPreviousValue('cityName') }}
+                </span>
+              </div>
             </div>
+
+            <!-- =================================================
+                 STATE
+            ================================================== -->
 
             <div class="field-group">
               <h4>State</h4>
+
               <mat-form-field appearance="outline">
-                <input matInput formControlName="state" placeholder="State" [readonly]="isReadOnly()" />
+                <input
+                  matInput
+                  formControlName="state"
+                  placeholder="State"
+                  [readonly]="isReadOnly()"
+                />
               </mat-form-field>
+
+              <!-- Previous Value -->
+
+              <div class="previous-value" *ngIf="hasPreviousValue('state')">
+                <span class="previous-label"> Previous Value: </span>
+
+                <span class="previous-text">
+                  {{ getPreviousValue('state') }}
+                </span>
+              </div>
             </div>
+
+            <!-- =================================================
+                 COUNTRY
+            ================================================== -->
 
             <div class="field-group">
               <h4>Country</h4>
-              <mat-form-field appearance="outline">
-                <input matInput formControlName="country" placeholder="Country" [readonly]="isReadOnly()" />
-              </mat-form-field>
-            </div>
 
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  formControlName="country"
+                  placeholder="Country"
+                  [readonly]="isReadOnly()"
+                />
+              </mat-form-field>
+
+              <!-- Previous Value -->
+
+              <div class="previous-value" *ngIf="hasPreviousValue('country')">
+                <span class="previous-label"> Previous Value: </span>
+
+                <span class="previous-text">
+                  {{ getPreviousValue('country') }}
+                </span>
+              </div>
+            </div>
           </div>
         </ng-container>
       </div>
     </div>
 
-    <!-- Dynamic Fields -->
-    <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
+    <!-- =====================================================
+         DYNAMIC FIELDS
+    ====================================================== -->
+
+    <div
+      class="customer-form-wrapper dynamic-fields-section"
+      *ngIf="fields?.length"
+    >
       <div class="section-header" (click)="toggleDynamicFields()">
         <h2>City Additional Fields</h2>
-        <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+        <mat-icon>
+          {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
       </div>
 
-      <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
-        <div class="form-grid">
-          <ng-container *ngFor="let field of fields">
+      <div
+        class="collapsible"
+        [class.open]="isDynamicFieldsOpen"
+        [formGroup]="dynamicFieldsForm"
+      >
+        <ng-container *ngIf="isDynamicFieldsOpen">
+          <div class="form-grid">
+            <ng-container *ngFor="let field of fields">
+              <div class="field-group">
+                <!-- =================================================
+                     FIELD LABEL
+                ================================================== -->
 
-            <div class="field-group">
-              <h4>{{ field.label || field.fieldName }}</h4>
+                <h4>{{ field.label || field.fieldName }}</h4>
 
-              <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
-                <input matInput [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <!-- =================================================
+                     TEXT FIELD
+                ================================================== -->
 
-              <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
-                <input matInput type="number" [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <mat-form-field
+                  *ngIf="field.fieldType === 'text'"
+                  appearance="outline"
+                >
+                  <input
+                    matInput
+                    [formControlName]="field.fieldName"
+                    [readonly]="isReadOnly()"
+                    [placeholder]="
+                      field.label || field.fieldName
+                    "
+                  />
+                </mat-form-field>
 
-              <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
-                <input matInput type="date" [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <!-- =================================================
+                     NUMBER FIELD
+                ================================================== -->
 
-              <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-                <mat-select [formControlName]="field.fieldName">
-                  <mat-option value="">Select</mat-option>
-                  <mat-option *ngFor="let opt of field.options" [value]="opt.value">
-                    {{ opt.text }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+                <mat-form-field
+                  *ngIf="field.fieldType === 'number'"
+                  appearance="outline"
+                >
+                  <input
+                    matInput
+                    type="number"
+                    [formControlName]="field.fieldName"
+                    [readonly]="isReadOnly()"
+                    [placeholder]="
+                      field.label || field.fieldName
+                    "
+                  />
+                </mat-form-field>
 
-            </div>
+                <!-- =================================================
+                     DATE FIELD
+                ================================================== -->
 
-          </ng-container>
-        </div>
+                <mat-form-field
+                  *ngIf="field.fieldType === 'date'"
+                  appearance="outline"
+                >
+                  <input
+                    matInput
+                    type="date"
+                    [formControlName]="field.fieldName"
+                    [readonly]="isReadOnly()"
+                  />
+                </mat-form-field>
+
+                <!-- =================================================
+                     SELECT FIELD
+                ================================================== -->
+
+                <mat-form-field
+                  *ngIf="field.fieldType === 'select'"
+                  appearance="outline"
+                >
+                  <mat-select
+                    [formControlName]="field.fieldName"
+                    [disabled]="isReadOnly()"
+                  >
+                    <mat-option value=""> Select </mat-option>
+
+                    <mat-option
+                      *ngFor="let opt of field.options || []"
+                      [value]="opt.value"
+                    >
+                      {{ opt.text }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- =================================================
+                     PREVIOUS / REJECTED DYNAMIC VALUE
+                     
+                     IMPORTANT:
+                     Use field.fieldId
+                     NOT field.fieldName
+                ================================================== -->
+
+                <div
+                  class="previous-value"
+                  *ngIf="
+                    hasPreviousDynamicValue(field.fieldId)
+                  "
+                >
+                  <span class="previous-label"> Previous Value: </span>
+
+                  <span class="previous-text">
+                    {{ getPreviousDynamicValue( field.fieldId ) }}
+                  </span>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="customer-actions">
+    <!-- =====================================================
+         ACTION BUTTONS
+    ====================================================== -->
 
-      <!-- New -->
-      <ng-container *ngIf="!storeCity || !storeCity.recordStatus">
+    <div class="customer-actions">
+      <!-- =================================================
+           CREATE
+      ================================================== -->
+
+      <ng-container
+        *ngIf="
+          !storeCity ||
+          !storeCity.recordStatus
+        "
+      >
         <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="btn-save"
-                [disabled]="!cityForm.valid || !dynamicFieldsForm.valid"
-                (click)="onSave()">
+
+        <button
+          class="btn-save"
+          [disabled]="
+            !cityForm.valid ||
+            !dynamicFieldsForm.valid
+          "
+          (click)="onSave()"
+        >
           Save
         </button>
       </ng-container>
 
-      <!-- Draft -->
-      <ng-container *ngIf="isEditMode && storeCity?.recordStatus === 'I'">
+      <!-- =================================================
+           DRAFT
+      ================================================== -->
+
+      <ng-container
+        *ngIf="
+          isEditMode &&
+          storeCity?.recordStatus === 'I'
+        "
+      >
         <button class="btn-back" (click)="onBack()">Back</button>
-        <button class="btn-update"
-                [disabled]="!cityForm.dirty || !dynamicFieldsForm.dirty"
-                (click)="updateCity()">
+
+        <button
+          class="btn-update"
+          [disabled]="
+            !cityForm.dirty &&
+            !dynamicFieldsForm.dirty
+          "
+          (click)="updateCity()"
+        >
           Update
         </button>
-        <button class="btn-submit" (click)="submit()">Submit</button>
+
+        <button
+          class="btn-submit"
+          [disabled]="
+            !cityForm.valid ||
+            !dynamicFieldsForm.valid
+          "
+          (click)="submit()"
+        >
+          Submit
+        </button>
       </ng-container>
 
-      <!-- Submitted -->
-      <ng-container *ngIf="isEditMode && storeCity?.recordStatus === 'S'">
-        <button class="btn-reject" (click)="reject(storeCity.id)">Reject</button>
-        <button class="btn-approve" (click)="approve(storeCity.id)">Approve</button>
-      </ng-container>
+      <!-- =================================================
+           SUBMITTED
+      ================================================== -->
 
+      <ng-container
+        *ngIf="
+          isEditMode &&
+          storeCity?.recordStatus === 'S'
+        "
+      >
+        <button class="btn-reject" (click)="reject(storeCity.id)">
+          Reject
+        </button>
+
+        <button class="btn-approve" (click)="approve(storeCity.id)">
+          Approve
+        </button>
+      </ng-container>
     </div>
-
   </ng-container>
 
-  <!-- =========================
+  <!-- =====================================================
        APPROVED CITY SECTION
-  <section class="dossier-container"
-  [ngClass]="{'hide-when-approved': storeCity?.recordStatus !== 'A'}">
+  ====================================================== -->
 
-  <!-- ================= HEADER ================= -->
-  <header class="dossier-header">
+  <section class="dossier-container" *ngIf="storeCity?.recordStatus === 'A'">
+    <!-- =====================================================
+         DOSSIER HEADER
+    ====================================================== -->
 
-  <div class="status-strip active"></div>
+    <header class="dossier-header">
+      <div class="status-strip active"></div>
 
-  <div class="header-content">
+      <div class="header-content">
+        <div class="identity-block">
+          <div class="avatar-circle">
+            {{ storeCity?.cityName ?.trim() ?.charAt(0) ?.toUpperCase() || 'C'
+            }}
+          </div>
 
-    <div class="identity-block">
+          <div class="text-group">
+            <h1 class="customer-name">{{ storeCity?.cityName | titlecase }}</h1>
 
-      <div class="avatar-circle">
-        {{ storeCity?.cityName?.trim()?.charAt(0)?.toUpperCase() || 'C' }}
+            <span class="customer-id">
+              City Ref:
+
+              <code> {{ storeCity?.cityId }} </code>
+            </span>
+          </div>
+        </div>
+
+        <div class="badge-group">
+          <span class="status-badge" data-status="ACTIVE"> APPROVED </span>
+        </div>
       </div>
+    </header>
 
-      <div class="text-group">
-        <h1 class="customer-name">
-          {{ storeCity.cityName | titlecase }}
-        </h1>
+    <!-- =====================================================
+         CORE CITY INFORMATION
+    ====================================================== -->
 
-        <span class="customer-id">
-          City Ref:
-          <code>{{ storeCity.cityId }}</code>
-        </span>
-      </div>
+    <div class="dossier-grid">
+      <mat-card class="info-card">
+        <div class="card-title">
+          <mat-icon> location_city </mat-icon>
 
+          <span> City Information </span>
+        </div>
+
+        <div class="data-grid">
+          <!-- City ID -->
+
+          <div class="data-item">
+            <label> City ID </label>
+
+            <span class="value val-mono"> {{ storeCity?.cityId }} </span>
+          </div>
+
+          <!-- City Name -->
+
+          <div class="data-item">
+            <label> City Name </label>
+
+            <span class="value"> {{ storeCity?.cityName }} </span>
+          </div>
+
+          <!-- State -->
+
+          <div class="data-item">
+            <label> State </label>
+
+            <span class="value"> {{ storeCity?.state }} </span>
+          </div>
+
+          <!-- Country -->
+
+          <div class="data-item">
+            <label> Country </label>
+
+            <span class="value"> {{ storeCity?.country }} </span>
+          </div>
+
+          <!-- Record Status -->
+
+          <div class="data-item">
+            <label> Record Status </label>
+
+            <span class="value"> {{ storeCity?.recordStatus }} </span>
+          </div>
+
+          <!-- =================================================
+               CREATED AUDIT
+          ================================================== -->
+
+          <div class="data-item">
+            <label> Created By </label>
+
+            <span class="value"> {{ storeCity?.createdBy || '—' }} </span>
+          </div>
+
+          <div class="data-item">
+            <label> Created On </label>
+
+            <span class="value">
+              {{ storeCity?.createdOn | date:'medium' }}
+            </span>
+          </div>
+
+          <!-- =================================================
+               UPDATED AUDIT
+          ================================================== -->
+
+          <div class="data-item">
+            <label> Updated By </label>
+
+            <span class="value"> {{ storeCity?.updatedBy || '—' }} </span>
+          </div>
+
+          <div class="data-item">
+            <label> Updated On </label>
+
+            <span class="value">
+              {{ storeCity?.updatedOn | date:'medium' }}
+            </span>
+          </div>
+
+          <!-- =================================================
+               INPUTTER AUDIT
+          ================================================== -->
+
+          <div class="data-item">
+            <label> Inputter ID </label>
+
+            <span class="value"> {{ storeCity?.inputterId || '—' }} </span>
+          </div>
+
+          <div class="data-item">
+            <label> Inputter Date/Time </label>
+
+            <span class="value">
+              {{ storeCity?.inputterDttm | date:'medium' }}
+            </span>
+          </div>
+
+          <!-- =================================================
+               AUTHORIZER AUDIT
+          ================================================== -->
+
+          <div class="data-item">
+            <label> Authorizer ID </label>
+
+            <span class="value"> {{ storeCity?.authorizerId || '—' }} </span>
+          </div>
+
+          <div class="data-item">
+            <label> Authorizer Date/Time </label>
+
+            <span class="value">
+              {{ storeCity?.authorizerDttm | date:'medium' }}
+            </span>
+          </div>
+
+          <!-- =================================================
+               REJECTION AUDIT
+          ================================================== -->
+
+          <div class="data-item" *ngIf="storeCity?.rejectedBy">
+            <label> Rejected By </label>
+
+            <span class="value"> {{ storeCity?.rejectedBy }} </span>
+          </div>
+
+          <div class="data-item" *ngIf="storeCity?.rejectedOn">
+            <label> Rejected On </label>
+
+            <span class="value">
+              {{ storeCity?.rejectedOn | date:'medium' }}
+            </span>
+          </div>
+
+          <div class="data-item full-width" *ngIf="storeCity?.rejectReason">
+            <label> Reject Reason </label>
+
+            <span class="value"> {{ storeCity?.rejectReason }} </span>
+          </div>
+        </div>
+      </mat-card>
     </div>
 
-    <div class="badge-group">
+    <!-- =====================================================
+         APPROVED DYNAMIC FIELDS
+    ====================================================== -->
 
-      <span class="status-badge" data-status="ACTIVE">
-        APPROVED
-      </span>
+    <section
+      class="dynamic-fields-section"
+      *ngIf="storeCity?.dynamicFields?.length"
+    >
+      <div class="section-title">
+        <mat-icon> analytics </mat-icon>
 
-    </div>
+        <span> Additional City Attributes </span>
 
-  </div>
-
-</header>
-
-<!-- ================= CORE INFO ================= -->
-<div class="dossier-grid">
-
-  <mat-card class="info-card">
-
-    <div class="card-title">
-      <mat-icon>location_city</mat-icon>
-      <span>City Information</span>
-    </div>
-
-    <div class="data-grid">
-
-      <div class="data-item">
-        <label>City ID</label>
-        <span class="value val-mono">
-          {{ storeCity.cityId }}
+        <span class="count-pill">
+          {{ storeCity.dynamicFields.length }} Fields
         </span>
       </div>
 
-      <div class="data-item">
-        <label>City Name</label>
-        <span class="value">
-          {{ storeCity.cityName }}
+      <div class="additional-grid">
+        <div
+          class="additional-card"
+          *ngFor="
+            let field of storeCity.dynamicFields
+          "
+        >
+          <div class="field-label">{{ field.fieldId }}</div>
+
+          <div class="field-value">{{ field.value || '—' }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="dossier-footer">
+      <div class="audit-info">
+        <mat-icon> history </mat-icon>
+
+        <span>
+          Last Updated:
+
+          <strong> {{ storeCity?.updatedOn | date:'medium' }} </strong>
         </span>
       </div>
 
-      <div class="data-item">
-        <label>State</label>
-        <span class="value">
-          {{ storeCity.state }}
-        </span>
+      <div class="footer-actions">
+        <button mat-stroked-button color="primary" (click)="onBack()">
+          <mat-icon> arrow_back </mat-icon>
+
+          Back
+        </button>
+
+        <button mat-flat-button color="warn" (click)="amend(storeCity.id)">
+          <mat-icon> edit </mat-icon>
+
+          Amend Record
+        </button>
       </div>
-
-      <div class="data-item">
-        <label>Country</label>
-        <span class="value">
-          {{ storeCity.country }}
-        </span>
-      </div>
-
-      <div class="data-item">
-        <label>Record Status</label>
-        <span class="value">
-          {{ storeCity.recordStatus }}
-        </span>
-      </div>
-
-    </div>
-
-  </mat-card>
-
+    </footer>
+  </section>
 </div>
-
-<!-- ================= DYNAMIC FIELDS ================= -->
-<section class="dynamic-fields-section"
-  *ngIf="storeCity.dynamicFields?.length">
-
-  <div class="section-title">
-
-    <mat-icon>analytics</mat-icon>
-
-    <span>Additional City Attributes</span>
-
-    <span class="count-pill">
-      {{ storeCity.dynamicFields.length }} Fields
-    </span>
-
-  </div>
-
-  <div class="additional-grid">
-
-    <div class="additional-card"
-      *ngFor="let field of storeCity.dynamicFields">
-
-      <div class="field-label">
-        {{ field.fieldId }}
-      </div>
-
-      <div class="field-value">
-        {{ field.value || '—' }}
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="dossier-footer">
-
-  <div class="audit-info">
-
-    <mat-icon>history</mat-icon>
-
-    <span>
-      Last Updated:
-      <strong>
-        {{ storeCity.updatedOn | date:'medium' }}
-      </strong>
-    </span>
-
-  </div>
-
-  <div class="footer-actions">
-
-    <button mat-stroked-button
-      color="primary"
-      (click)="onBack()">
-
-      <mat-icon>arrow_back</mat-icon>
-      Back
-
-    </button>
-
-    <button mat-flat-button
-      color="warn"
-      (click)="reject(storeCity.id)">
-
-      <mat-icon>edit</mat-icon>
-      Amend Record
-
-    </button>
-
-  </div>
-
-</footer>

@@ -1,20 +1,29 @@
+```html
 <div class="customer-status-container">
-  <h2 class="page-title">Customer Records</h2>
+  <h2 class="page-title">City Records</h2>
 
   <mat-tab-group
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
-    <!-- ================= Draft Tab ================= -->
+    <!-- ========================================================= -->
+    <!-- DRAFT TAB -->
+    <!-- ========================================================= -->
+
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID, Name, Email, or Legal ID"
+          placeholder="Search City By ID, Name, State, or Country"
           [(ngModel)]="searchText"
           (input)="filterDraftCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterDraftCity('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterDraftCity('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
@@ -24,7 +33,10 @@
           Showing {{ filteredDraftCount }} of {{ draftCount }} draft records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredDraftCity?.length; else noDrafts">
+        <div
+          class="table-wrapper"
+          *ngIf="storeFilteredDraftCity?.length; else noDrafts"
+        >
           <table class="customer-table">
             <thead>
               <tr>
@@ -32,18 +44,82 @@
                 <th>City</th>
                 <th>State</th>
                 <th>Country</th>
-                 <th>Created On</th>
+                <th>Status</th>
+
+                <th>Created By</th>
+                <th>Created On</th>
+
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date/Time</th>
+
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredDraftCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
+              <tr
+                *ngFor="
+                  let c of storeFilteredDraftCity;
+                  trackBy: trackById
+                "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                      '/admin/edit-city',
+                      c.cityId
+                    ]"
+                  >
+                    {{ c.cityId }}
+                  </a>
+                </td>
+
                 <td>{{ c.cityName }}</td>
+
                 <td>{{ c.state }}</td>
+
                 <td>{{ c.country }}</td>
-                <td>{{ c.createdOn | date:'short' }}</td>
-                <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <td>
+                  <span class="status {{ c.recordStatus }}">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <!-- Created Audit -->
+
+                <td>{{ c.createdBy || '-' }}</td>
+
+                <td>{{ c.createdOn ? (c.createdOn | date:'short') : '-' }}</td>
+
+                <!-- Updated Audit -->
+
+                <td>{{ c.updatedBy || '-' }}</td>
+
+                <td>{{ c.updatedOn ? (c.updatedOn | date:'short') : '-' }}</td>
+
+                <!-- Inputter Audit -->
+
+                <td>{{ c.inputterId || '-' }}</td>
+
+                <td>
+                  {{ c.inputterDttm ? (c.inputterDttm | date:'short') : '-' }}
+                </td>
+
+                <!-- Rejection Audit -->
+
+                <td>{{ c.rejectedBy || '-' }}</td>
+
+                <td>
+                  {{ c.rejectedOn ? (c.rejectedOn | date:'short') : '-' }}
+                </td>
+
+                <td>{{ c.rejectReason || '-' }}</td>
               </tr>
             </tbody>
           </table>
@@ -55,26 +131,41 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Approved Tab ================= -->
+    <!-- ========================================================= -->
+    <!-- APPROVED TAB -->
+    <!-- ========================================================= -->
+
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID, Name, Email, or Legal ID"
+          placeholder="Search City By ID, Name, State, or Country"
           [(ngModel)]="searchText"
           (input)="filterApprovedCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterApprovedCity('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterApprovedCity('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredApprovedCity?.length; else noApproved">
+        <div
+          class="table-wrapper"
+          *ngIf="
+            storeFilteredApprovedCity?.length;
+            else noApproved
+          "
+        >
           <table class="customer-table">
             <thead>
               <tr>
@@ -83,19 +174,81 @@
                 <th>State</th>
                 <th>Country</th>
                 <th>Status</th>
+
+                <th>Created By</th>
                 <th>Created On</th>
+
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date/Time</th>
+
+                <th>Authorizer ID</th>
+                <th>Authorizer Date/Time</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredApprovedCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
+              <tr
+                *ngFor="
+                  let c of storeFilteredApprovedCity;
+                  trackBy: trackById
+                "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                      '/admin/edit-city',
+                      c.cityId
+                    ]"
+                  >
+                    {{ c.cityId }}
+                  </a>
+                </td>
+
                 <td>{{ c.cityName }}</td>
+
                 <td>{{ c.state }}</td>
+
                 <td>{{ c.country }}</td>
-                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
-                 <td>{{ c.createdOn | date:'short' }}</td>
-                <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <!-- Status -->
+
+                <td>
+                  <span class="status {{ c.recordStatus }}">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <!-- Created Audit -->
+
+                <td>{{ c.createdBy || '-' }}</td>
+
+                <td>{{ c.createdOn ? (c.createdOn | date:'short') : '-' }}</td>
+
+                <!-- Updated Audit -->
+
+                <td>{{ c.updatedBy || '-' }}</td>
+
+                <td>{{ c.updatedOn ? (c.updatedOn | date:'short') : '-' }}</td>
+
+                <!-- Inputter Audit -->
+
+                <td>{{ c.inputterId || '-' }}</td>
+
+                <td>
+                  {{ c.inputterDttm ? (c.inputterDttm | date:'short') : '-' }}
+                </td>
+
+                <!-- Authorizer Audit -->
+
+                <td>{{ c.authorizerId || '-' }}</td>
+
+                <td>
+                  {{ c.authorizerDttm ? (c.authorizerDttm | date:'short') : '-'
+                  }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -107,26 +260,41 @@
       </div>
     </mat-tab>
 
-    <!-- ================= Submitted Tab ================= -->
+    <!-- ========================================================= -->
+    <!-- SUBMITTED TAB -->
+    <!-- ========================================================= -->
+
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Search City By ID, Name, Email, or Legal ID"
+          placeholder="Search City By ID, Name, State, or Country"
           [(ngModel)]="searchText"
           (input)="filterSubmittedCity(searchText)"
         />
-        <button *ngIf="searchText" class="clear-btn" (click)="searchText=''; filterSubmittedCity('')">
+
+        <button
+          *ngIf="searchText"
+          class="clear-btn"
+          (click)="searchText=''; filterSubmittedCity('')"
+        >
           <mat-icon>clear</mat-icon>
         </button>
       </div>
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted
+          records
         </div>
 
-        <div class="table-wrapper" *ngIf="storeFilteredSubmittedCity?.length; else noSubmitted">
+        <div
+          class="table-wrapper"
+          *ngIf="
+            storeFilteredSubmittedCity?.length;
+            else noSubmitted
+          "
+        >
           <table class="customer-table">
             <thead>
               <tr>
@@ -134,19 +302,70 @@
                 <th>Name</th>
                 <th>State</th>
                 <th>Country</th>
+                <th>Status</th>
+
+                <th>Created By</th>
                 <th>Created On</th>
+
+                <th>Updated By</th>
                 <th>Updated On</th>
+
+                <th>Inputter ID</th>
+                <th>Inputter Date/Time</th>
               </tr>
             </thead>
+
             <tbody>
-              <tr *ngFor="let c of storeFilteredSubmittedCity; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-city', c.cityId]">{{ c.cityId }}</a></td>
-                <td>{{ c.cityName}}</td>
+              <tr
+                *ngFor="
+                  let c of storeFilteredSubmittedCity;
+                  trackBy: trackById
+                "
+              >
+                <td>
+                  <a
+                    [routerLink]="[
+                      '/admin/edit-city',
+                      c.cityId
+                    ]"
+                  >
+                    {{ c.cityId }}
+                  </a>
+                </td>
+
+                <td>{{ c.cityName }}</td>
+
                 <td>{{ c.state }}</td>
+
                 <td>{{ c.country }}</td>
-                <td><span class="status {{ c.status }}">{{ c.status }}</span></td>
-                <td>{{ c.createdOn | date:'short' }}</td>
-                <td>{{ c.updatedOn | date:'short' }}</td>
+
+                <!-- Status -->
+
+                <td>
+                  <span class="status {{ c.recordStatus }}">
+                    {{ c.recordStatus }}
+                  </span>
+                </td>
+
+                <!-- Created Audit -->
+
+                <td>{{ c.createdBy || '-' }}</td>
+
+                <td>{{ c.createdOn ? (c.createdOn | date:'short') : '-' }}</td>
+
+                <!-- Updated Audit -->
+
+                <td>{{ c.updatedBy || '-' }}</td>
+
+                <td>{{ c.updatedOn ? (c.updatedOn | date:'short') : '-' }}</td>
+
+                <!-- Inputter Audit -->
+
+                <td>{{ c.inputterId || '-' }}</td>
+
+                <td>
+                  {{ c.inputterDttm ? (c.inputterDttm | date:'short') : '-' }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -159,3 +378,4 @@
     </mat-tab>
   </mat-tab-group>
 </div>
+```

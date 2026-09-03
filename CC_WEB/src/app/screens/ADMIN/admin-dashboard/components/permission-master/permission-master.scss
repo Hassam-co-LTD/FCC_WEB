@@ -1,24 +1,50 @@
 @use '../../../../../../styles/theme' as theme;
 
-/* Hide when approved */
+/* ======================================================
+   HIDE APPROVED SECTIONS
+====================================================== */
+
 .hide-when-approved {
   display: none !important;
 }
 
-/* =========================
-   Section Header
-=========================== */
+/* ======================================================
+   GLOBAL TYPOGRAPHY
+====================================================== */
+
+h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: theme.$white;
+}
+
+h4 {
+  margin: 20px 0 10px;
+  padding-left: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: theme.$primary-dark;
+  border-left: 4px solid theme.$primary;
+}
+
+/* ======================================================
+   COMMON SECTION HEADER
+====================================================== */
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: theme.$primary;
-  padding: 14px 18px;
-  border-radius: 8px;
-  cursor: pointer;
   margin-bottom: 10px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  padding: 14px 18px;
+  background: theme.$primary;
+  border-radius: theme.$radius-default;
   color: theme.$text-light;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover {
     background: theme.$primary-dark;
@@ -31,49 +57,33 @@
   }
 }
 
-/* =========================
-   Collapsible
-=========================== */
+/* ======================================================
+   COLLAPSIBLE
+====================================================== */
+
 .collapsible {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transform: translateY(-5px);
+  padding: 0;
   transition: all 0.35s ease-in-out;
+
+  &.open {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border: 1px solid theme.$border-light;
+    border-radius: theme.$radius-default;
+  }
 }
 
-.collapsible.open {
-  max-height: 2000px;
-  opacity: 1;
-  transform: translateY(0);
-  padding: 15px 10px;
-  background: theme.$light-bg;
-  border-radius: 6px;
-  border: 1px solid theme.$border-light;
-}
+/* ======================================================
+   FORM LAYOUT
+====================================================== */
 
-/* =========================
-   Headings
-=========================== */
-h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: theme.$white;
-}
-
-h4 {
-  font-size: 16px;
-  margin: 20px 0 10px;
-  font-weight: 600;
-  color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
-  padding-left: 8px;
-}
-
-/* =========================
-   Form Layout
-=========================== */
 .field-group {
   display: flex;
   flex-direction: column;
@@ -87,7 +97,6 @@ h4 {
   margin-bottom: 15px;
 }
 
-/* Responsive columns */
 .form-grid {
   grid-template-columns: repeat(2, 1fr);
 }
@@ -96,7 +105,7 @@ h4 {
   grid-template-columns: repeat(2, 1fr);
 
   @media (min-width: 1441px) {
-    grid-template-columns: repeat(3, 1fr); // large screens
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @media (min-width: 1025px) and (max-width: 1440px) {
@@ -109,24 +118,26 @@ h4 {
 }
 
 /* Alternating Applicant & Beneficiary Box Indicator */
+
 .form-grid.alternate {
   padding-left: 10px;
   border-left: 2px dashed theme.$border-primary;
   margin-left: 4px;
 }
 
-/* Fields */
+/* ======================================================
+   FIELDS
+====================================================== */
+
 mat-form-field {
   width: 100%;
 }
 
-/* Toggle */
 mat-slide-toggle {
   margin: 12px 0;
   font-weight: 500;
 }
 
-/* Input field styling */
 input[matInput] {
   font-size: 14px !important;
   color: theme.$primary-dark;
@@ -146,14 +157,15 @@ input[matInput] {
   background-color: theme.$white;
 }
 
-/* =========================
-   Customer Form Buttons Outside
-=========================== */
+/* ======================================================
+   FORM ACTION BUTTONS
+====================================================== */
+
 .customer-actions {
-  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  margin-top: 20px;
 }
 
 .customer-actions .btn-save,
@@ -163,15 +175,17 @@ input[matInput] {
 .customer-actions .btn-submit,
 .customer-actions .btn-approve,
 .customer-actions .btn-reject {
-  background: theme.$primary;
-  color: theme.$text-light;
   padding: 10px 18px;
-  border-radius: 6px;
-  font-weight: 500;
+  background: theme.$primary;
   border: none;
+  border-radius: theme.$radius-default;
+  color: theme.$text-light;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
   box-shadow: theme.$button-shadow;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 
   &:hover:not(:disabled) {
     background: theme.$primary-dark;
@@ -184,237 +198,445 @@ input[matInput] {
   }
 }
 
-/* =========================
-   Approved Customer Container
-=========================== */
-/* Approved container */
-.approved-container {
-  background: theme.$light-bg;
-  border-radius: 8px;
-  border: 1px solid theme.$border-light;
-  padding: 20px 25px;
-  max-width: 1200px;
-  margin: 20px auto;
-  box-shadow: theme.$shadow-primary;
+/* ======================================================
+   DOSSIER CONTAINER
+====================================================== */
+
+.dossier-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: calc(theme.$gap-default * 1.5);
+  padding: calc(theme.$gap-default * 2);
+  background: theme.$screen-bg;
+  border-radius: theme.$radius-large;
+  font-family: 'Inter', sans-serif;
+  color: theme.$text-dark;
 
-  .approved-badge {
-    display: inline-block;
-    background: #28a745; // green for approved
-    color: theme.$text-light;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    align-self: flex-start;
+  @media (max-width: 768px) {
+    padding: theme.$gap-default;
+  }
+}
+
+/* ======================================================
+   DOSSIER HEADER
+====================================================== */
+
+.dossier-header {
+  overflow: hidden;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
+
+  .status-strip {
+    width: 100%;
+    height: 4px;
+    background: theme.$border-light;
+
+    &.active {
+      background: theme.$primary;
+    }
   }
 
-  .approved-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); // 2 columns per row
-    gap: 20px;
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: theme.$gap-default * 1.5;
 
-    p {
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: theme.$gap-default;
+    }
+  }
+
+  .identity-block {
+    display: flex;
+    align-items: center;
+    gap: theme.$gap-default;
+  }
+
+  .avatar-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    background: theme.$primary;
+    border-radius: theme.$radius-default;
+    color: theme.$text-light;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .text-group {
+    .customer-name {
       margin: 0;
-      font-size: 14px;
       color: theme.$primary-dark;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
 
-      strong {
-        font-weight: 600;
+    .customer-id {
+      font-size: 0.85rem;
+      color: theme.$text-medium;
+
+      code {
+        padding: 2px 6px;
+        background: theme.$primary-light;
+        border-radius: 4px;
+        color: theme.$primary;
+      }
+    }
+  }
+
+  .status-badge {
+    padding: 6px 14px;
+    background: theme.$primary-light;
+    border-radius: 20px;
+    color: theme.$primary;
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    /* FCC Permission status */
+    &[data-status='A'] {
+      background: #e7f7ee;
+      color: #0f9d58;
+    }
+
+    /* Customer / other screens */
+    &[data-status='Active'],
+    &[data-status='ACTIVE'] {
+      background: #e7f7ee;
+      color: #0f9d58;
+    }
+  }
+}
+
+/* ======================================================
+   BADGE GROUP
+====================================================== */
+
+.badge-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+/* ======================================================
+   DOSSIER GRID
+====================================================== */
+
+.dossier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: theme.$gap-default;
+}
+
+/* ======================================================
+   INFORMATION CARD
+====================================================== */
+
+.info-card {
+  padding: theme.$gap-default * 1.5;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
+}
+
+/* ======================================================
+   CARD TITLE
+====================================================== */
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: theme.$gap-default;
+
+  mat-icon {
+    color: theme.$primary;
+  }
+
+  span {
+    color: theme.$primary-dark;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .count-pill {
+    margin-left: auto;
+  }
+}
+
+/* ======================================================
+   DATA GRID
+====================================================== */
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: theme.$gap-default;
+}
+
+/* ======================================================
+   DATA ITEM
+====================================================== */
+
+.data-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    color: theme.$text-medium;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .value {
+    color: theme.$text-dark;
+    font-size: 0.95rem;
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .val-mono {
+    color: theme.$primary;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+  }
+
+  .divider {
+    padding: 0 6px;
+    color: theme.$border-primary;
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ======================================================
+   DYNAMIC FIELDS SECTION
+====================================================== */
+
+.dynamic-fields-section {
+  .additional-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .additional-card {
+    padding: 14px 16px;
+    background: theme.$white;
+    border: 1px solid #e6eefc;
+    border-radius: theme.$radius-default;
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: theme.$primary;
+      box-shadow: 0 6px 18px rgba(11, 78, 179, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .kv-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kv-key {
+      padding-left: 8px;
+      border-left: 3px solid theme.$primary;
+      color: theme.$text-medium;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .kv-value {
+      padding-left: 12px;
+      color: theme.$primary-dark;
+      font-size: 0.95rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+  }
+}
+
+/* ======================================================
+   PORTFOLIO SECTION
+====================================================== */
+
+.portfolio-section {
+  padding: theme.$gap-default * 1.5;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  box-shadow: theme.$shadow-primary;
+}
+
+/* ======================================================
+   DOSSIER TABLE
+====================================================== */
+
+.dossier-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 12px;
+    background: #f8fbff;
+    border-bottom: 2px solid theme.$border-light;
+    color: theme.$text-medium;
+    font-size: 0.75rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid theme.$border-light;
+  }
+
+  .iban-text {
+    color: theme.$primary;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+  }
+
+  .type-tag {
+    padding: 2px 8px;
+    background: theme.$primary-light;
+    border-radius: 4px;
+    color: theme.$primary;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .dot-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #cbd5e1;
+      border-radius: 50%;
+    }
+
+    &.active::before {
+      background: #10b981;
+    }
+  }
+}
+
+/* ======================================================
+   DOSSIER FOOTER
+====================================================== */
+
+.dossier-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: theme.$gap-default;
+  border-top: 1px solid theme.$border-light;
+
+  .audit-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: theme.$text-medium;
+    font-size: 0.85rem;
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: theme.$gap-default;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: theme.$gap-default;
+    text-align: center;
+
+    .footer-actions {
+      width: 100%;
+      flex-direction: column;
+
+      button {
+        width: 100%;
       }
     }
   }
 }
 
-/* Buttons outside approved container */
-.approved-actions {
-  max-width: 1200px;
-  margin: 0 auto 20px; // center and spacing below
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+/* ======================================================
+   IMPORT BUTTON
+====================================================== */
 
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: theme.$button-shadow;
-    flex: 0 0 auto; // prevent full width
+.btn-import {
+  background-color: #0d6efd;
+  color: white;
 
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
+  &:hover {
+    background-color: #0b5ed7;
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .approved-container .approved-info {
-    grid-template-columns: 1fr; // stack on small screens
-  }
+/* ======================================================
+   PREVIOUS VALUE
+====================================================== */
 
-  .approved-actions {
+.previous-value {
+  margin-top: 5px;
+  padding: 7px 10px;
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  margin-right: 6px;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
+}
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width: 768px) {
+  .customer-actions {
     flex-direction: column;
     gap: 10px;
 
     button {
-      width: 100%; // full width on mobile
+      width: 100%;
     }
   }
 
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: theme.$button-shadow;
-
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
+  .data-grid {
+    grid-template-columns: 1fr;
   }
 
-  ng-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    flex-wrap: wrap;
+  .info-card {
+    padding: theme.$gap-default;
   }
 }
-
-/* =========================
-   Responsive Adjustments
-=========================== */
-/* =========================
-   Approved Customer Container
-=========================== */
-
-.approved-container {
-  background: theme.$white;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-large;
-  padding: 24px;
-  max-width: 1200px;
-  margin: 20px auto;
-  box-shadow: theme.$shadow-primary;
-}
-
-/* Header */
-.approved-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-  }
-}
-
-/* Badge — NO GREEN */
-.approved-badge {
-  background: theme.$primary;
-  color: theme.$text-light;
-  padding: 6px 14px;
-  border-radius: theme.$radius-default;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-/* Info list */
-.approved-info {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-/* Single row card */
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid theme.$border-light;
-  border-radius: theme.$radius-default;
-  background: theme.$light-bg;
-}
-
-.key {
-  font-weight: 600;
-  color: theme.$primary-dark;
-  white-space: nowrap;
-}
-
-.value {
-  color: theme.$primary-dark;
-  text-align: right;
-  word-break: break-word;
-}
-/* Responsive */
-@media (min-width: 1440px) {
-  .info-item {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 40px;
-    align-items: center;
-  }
-
-  .value {
-    text-align: left;
-  }
-}
-.approved-actions {
-  max-width: 1200px;
-  margin: 16px auto 30px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-
-  button {
-    background: theme.$primary;
-    color: theme.$text-light;
-    padding: 10px 18px;
-    border-radius: theme.$radius-default;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: theme.$button-shadow;
-
-    &:hover:not(:disabled) {
-      background: theme.$primary-dark;
-    }
-
-    &:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
-}
-
