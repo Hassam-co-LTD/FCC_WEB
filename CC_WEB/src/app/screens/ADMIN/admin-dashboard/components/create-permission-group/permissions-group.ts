@@ -211,12 +211,12 @@ private buildForm(): void {
 
   reject(id: Number): void {
 
-    if (!this.storePermissionGroup?.permissionGroupId) return;
+    if (!this.storePermissionGroup?.id) return;
 
 
     this.api.setTnxByStatus(
       'I',
-      this.storePermissionGroup.permissionGroupId,
+      this.storePermissionGroup.id,
       'PermissionGroup'
     )
     .subscribe({

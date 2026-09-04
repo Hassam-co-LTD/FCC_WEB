@@ -73,6 +73,26 @@ export class Amend implements OnInit {
 
   permissionNames: string[] = [];
 
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log('Import LC Amend Permissions:', this.permissionNames);
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p.trim().toLowerCase() === permission.toLowerCase(),
@@ -80,6 +100,7 @@ export class Amend implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
@@ -416,7 +437,6 @@ export class Amend implements OnInit {
   }
 
   saveForm(): void {
-    
     if (!this.hasPermission('SG_AmendSave')) {
       return;
     }
@@ -478,9 +498,9 @@ export class Amend implements OnInit {
   }
 
   submitLc(): void {
-        if (!this.hasPermission('SG_AmendSubmit')) {
-          return;
-        }
+    if (!this.hasPermission('SG_AmendSubmit')) {
+      return;
+    }
 
     const eventRefNo = this.currentTx?.eventRefNo;
     console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
@@ -563,10 +583,9 @@ export class Amend implements OnInit {
   }
 
   approve(): void {
-
-      if (!this.hasPermission('SG_AmendApprove')) {
-        return;
-      }
+    if (!this.hasPermission('SG_AmendApprove')) {
+      return;
+    }
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
       this.snackBar.open('Amendment reference not found.', 'Close', {
@@ -598,7 +617,6 @@ export class Amend implements OnInit {
   }
 
   openReject(): void {
-
     if (!this.hasPermission('SG_AmendReject')) {
       return;
     }
@@ -642,8 +660,6 @@ export class Amend implements OnInit {
   }
 
   updateRejected(): void {
-
-    
     if (!this.hasPermission('SG_AmendUpdateReject')) {
       return;
     }

@@ -73,6 +73,7 @@ export class ApprovedInquiryRecords {
   }
 
   ngOnInit(): void {
+    this.loadPermissions();
     if (!this.isBrowser) return;
     this.route.queryParamMap.subscribe((params) => {
       const tab = params.get('tab');

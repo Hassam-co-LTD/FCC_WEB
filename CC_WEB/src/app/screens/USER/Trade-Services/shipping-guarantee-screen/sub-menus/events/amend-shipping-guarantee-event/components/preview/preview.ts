@@ -78,6 +78,7 @@ export class Preview {
   }
 
   ngOnInit(): void {
+    this.loadPermissions();
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)

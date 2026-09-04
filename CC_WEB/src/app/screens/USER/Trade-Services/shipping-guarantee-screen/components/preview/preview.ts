@@ -44,6 +44,29 @@ export class Preview implements OnInit {
 
   permissionNames: string[] = [];
 
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
+        );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
@@ -51,6 +74,7 @@ export class Preview implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadPermissions();
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
@@ -123,12 +147,9 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submit(): void {
-    
     // Permission check
     if (!this.hasPermission('SG_AmendSubmit')) {
-      console.warn(
-        'User does not have SG_AmendSubmit permission'
-      );
+      console.warn('User does not have SG_AmendSubmit permission');
       return;
     }
 
@@ -158,12 +179,9 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-
-     // Permission check
+    // Permission check
     if (!this.hasPermission('SG_AmendApprove')) {
-      console.warn(
-        'User does not have SG_AmendApprove permission'
-      );
+      console.warn('User does not have SG_AmendApprove permission');
       return;
     }
 
@@ -200,12 +218,9 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
-
-      // Permission check
+    // Permission check
     if (!this.hasPermission('SG_AmendPendingReject')) {
-      console.warn(
-        'User does not have SG_AmendPendingReject permission'
-      );
+      console.warn('User does not have SG_AmendPendingReject permission');
       return;
     }
 

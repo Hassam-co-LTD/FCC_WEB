@@ -53,6 +53,22 @@
   </div>
 </div>
 
+
+<div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
+  <button
+    class="btn-load-records"
+    type="button"
+    (click)="loadTransactions()"
+  >
+    <mat-icon>cloud_download</mat-icon>
+    Load {{ activeTab | titlecase }} Records
+  </button>
+
+  <span>
+    Click to retrieve the latest {{ activeTab }} Import LC records
+  </span>
+</div>
+
 <div class="filter-row">
   <div class="results-summary">
     Showing <strong>{{ pagedTransactions.length }}</strong> of
@@ -67,7 +83,44 @@
   </app-export-dropdown>
 </div>
 
-<div class="table-wrapper">
+<div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
+  <div
+  class="on-demand-empty"
+  *ngIf="!hasLoadedData && !isLoading"
+>
+  <mat-icon>database</mat-icon>
+
+  <h3>Records not loaded</h3>
+
+  <p>
+    Click the button below to retrieve
+    {{ activeTab | titlecase }} Import LC records.
+  </p>
+
+  <button
+    class="btn-load-records"
+    type="button"
+    (click)="loadTransactions()"
+  >
+    <mat-icon>cloud_download</mat-icon>
+    Load Records
+  </button>
+</div>
+  <!-- ================= LOADING OVERLAY ================= -->
+  <div class="table-loading-overlay" *ngIf="isLoading">
+    <div class="loader-content">
+      <div class="loader-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <div class="loader-text">
+        <span>Loading records</span>
+        <span class="loader-dots"> <i></i> <i></i> <i></i> </span>
+      </div>
+      <small> Please wait while we retrieve the latest transactions </small>
+    </div>
+  </div>
   <table>
     <thead>
       <tr>
@@ -114,7 +167,10 @@
         <td>{{ tx.beneficiaryName }}</td>
         <td class="sticky-action">
           <button
-           *ngIf="hasPermission('ILC_InquiryPreview')" class="btn-action" (click)="viewTransaction(tx)">
+            *ngIf="hasPermission('ILC_InquiryPreview')"
+            class="btn-action"
+            (click)="viewTransaction(tx)"
+          >
             <mat-icon>visibility</mat-icon> View
           </button>
         </td>

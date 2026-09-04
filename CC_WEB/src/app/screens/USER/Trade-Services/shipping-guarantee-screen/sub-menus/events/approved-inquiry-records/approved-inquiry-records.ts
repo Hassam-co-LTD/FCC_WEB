@@ -83,6 +83,7 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadPermissions();
     if (!this.isBrowser) return;
 
     this.route.queryParamMap.subscribe((params) => {

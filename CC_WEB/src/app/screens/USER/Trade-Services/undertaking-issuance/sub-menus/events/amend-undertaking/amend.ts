@@ -116,6 +116,7 @@ export class AmendScreen implements OnInit {
     );
   }
   ngOnInit() {
+    this.loadPermissions(); 
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(

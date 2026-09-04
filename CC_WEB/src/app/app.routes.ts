@@ -337,6 +337,30 @@ export const routes: Routes = [
                 (m) => m.RoleMasterList,
               ),
           },
+
+          {
+            path: 'create-permission-group',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group').then(
+                (m) => m.CreatePermissionGroup,
+              ),
+          },
+
+          {
+            path: 'edit-permission-group/:id',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group').then(
+                (m) => m.CreatePermissionGroup,
+              ),
+          },
+
+          {
+            path: 'permission-group-inquiry',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/permissions-groups-inquiry/permissions-groups-inquiry').then(
+                (m) => m.PermissionsGroupsInquiry,
+              ),
+          },
         ],
       },
 

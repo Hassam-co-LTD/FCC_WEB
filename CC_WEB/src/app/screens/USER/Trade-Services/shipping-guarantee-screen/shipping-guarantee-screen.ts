@@ -102,6 +102,7 @@ export class ShippingGuarantee implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(

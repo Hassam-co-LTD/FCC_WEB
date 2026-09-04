@@ -668,6 +668,7 @@ export class UndertakingIssuance implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
       const scrollArea = document.querySelector('.scroll-area') as HTMLElement;
       if (!scrollArea) return;

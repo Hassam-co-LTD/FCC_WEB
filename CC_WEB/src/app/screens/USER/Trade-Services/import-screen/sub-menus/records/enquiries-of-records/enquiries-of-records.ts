@@ -1,4 +1,5 @@
 import { Component, PLATFORM_ID, OnInit, inject } from '@angular/core';
+import { finalize, delay } from 'rxjs/operators';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +25,9 @@ import { ApiService } from '../../../../../../../core/services/api.service';
   styleUrls: ['./enquiries-of-records.scss'],
 })
 export class EnquiriesOfRecords implements OnInit {
+  isLoading = false;
+  hasLoadedData = false;
+
   currentPage = 1;
   itemsPerPage = 10;
   allTransactions: ImportLcTransaction[] = [];
@@ -87,45 +91,112 @@ export class EnquiriesOfRecords implements OnInit {
         this.activeTab = tab;
       }
 
-      this.currentPage = 1;
-      this.loadTransactions();
+       this.hasLoadedData = false;
+       this.allTransactions = [];
+       this.filteredTransactions = [];
+      // this.currentPage = 1;
+      // this.loadTransactions();
     });
 
-    this.transactionService.transactionsStream$.subscribe((txList) => {
-      this.allTransactions = txList;
-      this.applyFilters();
-    });
+    // this.transactionService.transactionsStream$.subscribe((txList) => {
+    //   this.allTransactions = txList;
+    //   this.applyFilters();
+    // });
   }
 
-  private loadTransactions(): void {
-    if (this.activeTab === 'live') {
-      this.api.getLiveEventHistory().subscribe({
-        next: (txList) => {
-          this.allTransactions = txList;
-          this.applyFilters();
-          // this.filteredTransactions = [...txList];
-        },
-        error: () => {
-          this.allTransactions = [];
-          this.filteredTransactions = [];
-        },
-      });
+   loadTransactions(): void {
+     if (this.isLoading) {
+       return;
+     }
 
-      return;
-    }
+     this.isLoading = true;
+     this.hasLoadedData = false;
 
-    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+     this.allTransactions = [];
+     this.filteredTransactions = [];
 
-    this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
-      next: (txList) => {
-        this.allTransactions = txList;
-        this.applyFilters();
-      },
-      error: () => {
-        this.allTransactions = [];
-        this.filteredTransactions = [];
-      },
-    });
+     if (this.activeTab === 'live') {
+       this.api
+         .getLiveEventHistory()
+         .pipe(
+           finalize(() => {
+             this.isLoading = false;
+             this.hasLoadedData = true;
+           }),
+         )
+         .subscribe({
+           next: (txList) => {
+             this.allTransactions = txList;
+             this.applyFilters();
+           },
+
+           error: (error) => {
+             console.error('Failed to load live transactions:', error);
+
+             this.allTransactions = [];
+             this.filteredTransactions = [];
+           },
+         });
+
+       return;
+     }
+
+     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+
+     this.api
+       .getRecordTransactionsByStatus(backendStatus)
+       .pipe(
+         delay(1500),
+         finalize(() => {
+           this.isLoading = false;
+           this.hasLoadedData = true;
+         }),
+       )
+       .subscribe({
+         next: (txList) => {
+           this.allTransactions = txList;
+           this.applyFilters();
+         },
+
+         error: (error) => {
+           console.error(
+             `Failed to load ${this.activeTab} transactions:`,
+             error,
+           );
+
+           this.allTransactions = [];
+           this.filteredTransactions = [];
+         },
+       });
+
+    // if (this.activeTab === 'live') {
+    //   this.api.getLiveEventHistory().subscribe({
+    //     next: (txList) => {
+    //       this.allTransactions = txList;
+    //       this.applyFilters();
+    //       // this.filteredTransactions = [...txList];
+    //     },
+    //     error: () => {
+    //       this.allTransactions = [];
+    //       this.filteredTransactions = [];
+    //     },
+    //   });
+
+    //   return;
+    // }
+
+    // const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+
+    // this.api.getRecordTransactionsByStatus(backendStatus).subscribe({
+    //   next: (txList) => {
+    //     this.allTransactions = txList;
+    //     this.applyFilters();
+    //   },
+    //   error: () => {
+    //     this.allTransactions = [];
+    //     this.filteredTransactions = [];
+    //   },
+    // });
   }
 
   applyFilters(): void {
@@ -165,14 +236,19 @@ export class EnquiriesOfRecords implements OnInit {
   // });
   //}
   setActiveTab(tab: string): void {
-    if (this.activeTab === tab) {
-      return;
-    }
+  if (this.activeTab === tab) {
+    return;
+  }
 
-    this.activeTab = tab;
-    this.currentPage = 1;
+  this.activeTab = tab;
+  this.currentPage = 1;
 
-    this.loadTransactions();
+  // Clear existing data.
+  // User must explicitly click Load Records.
+  this.allTransactions = [];
+  this.filteredTransactions = [];
+
+  this.hasLoadedData = false;
   }
 
   // private loadByStatus(status: string): void {
