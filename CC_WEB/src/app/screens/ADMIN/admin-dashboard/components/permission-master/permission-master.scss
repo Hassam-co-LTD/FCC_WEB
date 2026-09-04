@@ -1,3 +1,4 @@
+
 @use '../../../../../../styles/theme' as theme;
 
 /* ======================================================
@@ -36,12 +37,16 @@ h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   margin-bottom: 10px;
   padding: 14px 18px;
+
   background: theme.$primary;
   border-radius: theme.$radius-default;
+
   color: theme.$text-light;
   cursor: pointer;
+
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease;
@@ -67,13 +72,16 @@ h4 {
   opacity: 0;
   transform: translateY(-5px);
   padding: 0;
+
   transition: all 0.35s ease-in-out;
 
   &.open {
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
+
     padding: 15px 10px;
+
     background: theme.$light-bg;
     border: 1px solid theme.$border-light;
     border-radius: theme.$radius-default;
@@ -117,8 +125,6 @@ h4 {
   }
 }
 
-/* Alternating Applicant & Beneficiary Box Indicator */
-
 .form-grid.alternate {
   padding-left: 10px;
   border-left: 2px dashed theme.$border-primary;
@@ -126,7 +132,7 @@ h4 {
 }
 
 /* ======================================================
-   FIELDS
+   FORM FIELDS
 ====================================================== */
 
 mat-form-field {
@@ -168,49 +174,65 @@ input[matInput] {
   margin-top: 20px;
 }
 
-.customer-actions .btn-save,
-.customer-actions .btn-update,
-.customer-actions .btn-back,
-.customer-actions .btn-cancel,
-.customer-actions .btn-submit,
-.customer-actions .btn-approve,
-.customer-actions .btn-reject {
-  padding: 10px 18px;
-  background: theme.$primary;
-  border: none;
-  border-radius: theme.$radius-default;
-  color: theme.$text-light;
-  font-weight: 500;
-  cursor: pointer;
-  box-shadow: theme.$button-shadow;
-  transition:
-    background 0.3s ease,
-    box-shadow 0.3s ease;
+.customer-actions {
+  .btn-save,
+  .btn-update,
+  .btn-back,
+  .btn-cancel,
+  .btn-submit,
+  .btn-approve,
+  .btn-reject {
+    padding: 10px 18px;
 
-  &:hover:not(:disabled) {
-    background: theme.$primary-dark;
-  }
+    background: theme.$primary;
+    border: none;
+    border-radius: theme.$radius-default;
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
+    color: theme.$text-light;
+    font-weight: 500;
+
+    cursor: pointer;
+    box-shadow: theme.$button-shadow;
+
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
   }
 }
 
 /* ======================================================
-   DOSSIER CONTAINER
+   APPROVED / DOSSIER CONTAINER
 ====================================================== */
 
-.dossier-container {
+.approved-container {
   display: flex;
   flex-direction: column;
   gap: calc(theme.$gap-default * 1.5);
+
   padding: calc(theme.$gap-default * 2);
+
   background: theme.$screen-bg;
+
+  border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
+
+  box-shadow: theme.$shadow-primary;
+
   font-family: 'Inter', sans-serif;
   color: theme.$text-dark;
+
+  max-width: 1200px;
+  margin: 20px auto;
 
   @media (max-width: 768px) {
     padding: theme.$gap-default;
@@ -218,14 +240,17 @@ input[matInput] {
 }
 
 /* ======================================================
-   DOSSIER HEADER
+   APPROVED HEADER
 ====================================================== */
 
-.dossier-header {
+.approved-header {
   overflow: hidden;
+
   background: theme.$white;
+
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
+
   box-shadow: theme.$shadow-primary;
 
   .status-strip {
@@ -242,7 +267,8 @@ input[matInput] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: theme.$gap-default * 1.5;
+
+    padding: calc(theme.$gap-default * 1.5);
 
     @media (max-width: 768px) {
       flex-direction: column;
@@ -261,10 +287,13 @@ input[matInput] {
     display: flex;
     align-items: center;
     justify-content: center;
+
     width: 54px;
     height: 54px;
+
     background: theme.$primary;
     border-radius: theme.$radius-default;
+
     color: theme.$text-light;
     font-size: 1.4rem;
     font-weight: 700;
@@ -273,6 +302,7 @@ input[matInput] {
   .text-group {
     .customer-name {
       margin: 0;
+
       color: theme.$primary-dark;
       font-size: 1.4rem;
       font-weight: 700;
@@ -284,8 +314,10 @@ input[matInput] {
 
       code {
         padding: 2px 6px;
+
         background: theme.$primary-light;
         border-radius: 4px;
+
         color: theme.$primary;
       }
     }
@@ -293,19 +325,19 @@ input[matInput] {
 
   .status-badge {
     padding: 6px 14px;
+
     background: theme.$primary-light;
     border-radius: 20px;
+
     color: theme.$primary;
     font-size: 0.75rem;
     font-weight: 700;
 
-    /* FCC Permission status */
     &[data-status='A'] {
       background: #e7f7ee;
       color: #0f9d58;
     }
 
-    /* Customer / other screens */
     &[data-status='Active'],
     &[data-status='ACTIVE'] {
       background: #e7f7ee;
@@ -315,14 +347,28 @@ input[matInput] {
 }
 
 /* ======================================================
-   BADGE GROUP
+   APPROVED BADGE
 ====================================================== */
 
 .badge-group {
   display: flex;
   justify-content: center;
   align-items: center;
+
   padding: 1rem 0;
+}
+
+.approved-badge {
+  display: inline-block;
+
+  padding: 6px 14px;
+
+  background: theme.$primary;
+  border-radius: theme.$radius-default;
+
+  color: theme.$text-light;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 /* ======================================================
@@ -340,10 +386,13 @@ input[matInput] {
 ====================================================== */
 
 .info-card {
-  padding: theme.$gap-default * 1.5;
+  padding: calc(theme.$gap-default * 1.5);
+
   background: theme.$white;
+
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
+
   box-shadow: theme.$shadow-primary;
 }
 
@@ -355,6 +404,7 @@ input[matInput] {
   display: flex;
   align-items: center;
   gap: 10px;
+
   margin-bottom: theme.$gap-default;
 
   mat-icon {
@@ -423,26 +473,37 @@ input[matInput] {
 }
 
 /* ======================================================
-   DYNAMIC FIELDS SECTION
+   DYNAMIC FIELDS - APPROVED VIEW
 ====================================================== */
 
 .dynamic-fields-section {
   .additional-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(260px, 1fr)
+    );
+
     gap: 14px;
   }
 
   .additional-card {
     padding: 14px 16px;
+
     background: theme.$white;
+
     border: 1px solid #e6eefc;
     border-radius: theme.$radius-default;
+
     transition: all 0.25s ease;
 
     &:hover {
       border-color: theme.$primary;
-      box-shadow: 0 6px 18px rgba(11, 78, 179, 0.08);
+
+      box-shadow:
+        0 6px 18px rgba(11, 78, 179, 0.08);
+
       transform: translateY(-1px);
     }
 
@@ -454,19 +515,26 @@ input[matInput] {
 
     .kv-key {
       padding-left: 8px;
+
       border-left: 3px solid theme.$primary;
+
       color: theme.$text-medium;
+
       font-size: 0.78rem;
       font-weight: 700;
+
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
     .kv-value {
       padding-left: 12px;
+
       color: theme.$primary-dark;
+
       font-size: 0.95rem;
       font-weight: 600;
+
       word-break: break-word;
     }
   }
@@ -477,10 +545,13 @@ input[matInput] {
 ====================================================== */
 
 .portfolio-section {
-  padding: theme.$gap-default * 1.5;
+  padding: calc(theme.$gap-default * 1.5);
+
   background: theme.$white;
+
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
+
   box-shadow: theme.$shadow-primary;
 }
 
@@ -494,29 +565,38 @@ input[matInput] {
 
   th {
     padding: 12px;
+
     background: #f8fbff;
+
     border-bottom: 2px solid theme.$border-light;
+
     color: theme.$text-medium;
+
     font-size: 0.75rem;
     text-align: left;
   }
 
   td {
     padding: 12px;
+
     border-bottom: 1px solid theme.$border-light;
   }
 
   .iban-text {
     color: theme.$primary;
+
     font-family: 'Roboto Mono', monospace;
     font-weight: 600;
   }
 
   .type-tag {
     padding: 2px 8px;
+
     background: theme.$primary-light;
     border-radius: 4px;
+
     color: theme.$primary;
+
     font-size: 0.8rem;
     font-weight: 600;
   }
@@ -528,8 +608,10 @@ input[matInput] {
 
     &::before {
       content: '';
+
       width: 8px;
       height: 8px;
+
       background: #cbd5e1;
       border-radius: 50%;
     }
@@ -548,13 +630,16 @@ input[matInput] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding-top: theme.$gap-default;
+
   border-top: 1px solid theme.$border-light;
 
   .audit-info {
     display: flex;
     align-items: center;
     gap: 8px;
+
     color: theme.$text-medium;
     font-size: 0.85rem;
   }
@@ -567,6 +652,7 @@ input[matInput] {
   @media (max-width: 768px) {
     flex-direction: column;
     gap: theme.$gap-default;
+
     text-align: center;
 
     .footer-actions {
@@ -578,6 +664,122 @@ input[matInput] {
       }
     }
   }
+}
+
+/* ======================================================
+   APPROVED INFO
+====================================================== */
+
+.approved-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* ======================================================
+   APPROVED INFORMATION ITEM
+====================================================== */
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px 16px;
+
+  background: theme.$white;
+
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+
+  .key {
+    color: theme.$primary-dark;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .value {
+    color: theme.$primary-dark;
+    text-align: right;
+    word-break: break-word;
+  }
+}
+
+/* ======================================================
+   APPROVED ACTIONS
+====================================================== */
+
+.approved-actions {
+  max-width: 1200px;
+
+  margin: 16px auto 30px;
+
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  button {
+    padding: 10px 18px;
+
+    background: theme.$primary;
+
+    color: theme.$text-light;
+
+    border: none;
+    border-radius: theme.$radius-default;
+
+    font-weight: 500;
+
+    cursor: pointer;
+
+    box-shadow: theme.$button-shadow;
+
+    transition:
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background: theme.$primary-dark;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+}
+
+/* ======================================================
+   PREVIOUS VALUE
+====================================================== */
+
+.previous-value {
+  margin-top: 5px;
+
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+
+  background-color: #fff7e6;
+
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  margin-right: 6px;
+
+  color: #92400e;
+  font-weight: 600;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }
 
 /* ======================================================
@@ -594,33 +796,23 @@ input[matInput] {
 }
 
 /* ======================================================
-   PREVIOUS VALUE
-====================================================== */
-
-.previous-value {
-  margin-top: 5px;
-  padding: 7px 10px;
-  border-left: 3px solid #f59e0b;
-  background-color: #fff7e6;
-  border-radius: 4px;
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.previous-label {
-  margin-right: 6px;
-  color: #92400e;
-  font-weight: 600;
-}
-
-.previous-text {
-  color: #b45309;
-  font-weight: 500;
-}
-
-/* ======================================================
    RESPONSIVE
 ====================================================== */
+
+@media (min-width: 1440px) {
+  .info-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: 40px;
+
+    align-items: center;
+
+    .value {
+      text-align: left;
+    }
+  }
+}
 
 @media (max-width: 768px) {
   .customer-actions {
@@ -638,5 +830,18 @@ input[matInput] {
 
   .info-card {
     padding: theme.$gap-default;
+  }
+
+  .approved-info {
+    grid-template-columns: 1fr;
+  }
+
+  .approved-actions {
+    flex-direction: column;
+    gap: 10px;
+
+    button {
+      width: 100%;
+    }
   }
 }

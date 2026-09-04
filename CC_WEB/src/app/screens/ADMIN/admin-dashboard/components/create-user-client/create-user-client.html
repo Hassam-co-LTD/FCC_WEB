@@ -2,48 +2,40 @@
      CREATE CLIENT USER PAGE
 ========================= -->
 <div class="create-customer-page">
-
   <!-- =========================
        Page Header
   ========================== -->
- <!-- ================= PAGE HEADER ================= -->
+  <!-- ================= PAGE HEADER ================= -->
   <div class="badge-group">
-
     <!-- RECORD STATUS -->
-    <span class="status-badge"
+    <span
+      class="status-badge"
       [ngClass]="{
         'create': !storeClientUser?.recordStatus,
         'draft': storeClientUser?.recordStatus === 'I',
         'submitted': storeClientUser?.recordStatus === 'I',
         'approved': storeClientUser?.recordStatus === 'A'
-      }">
-
+      }"
+    >
       <mat-icon>
-        {{
-          !storeClientUser?.recordStatus ? 'add_circle' :
-          storeClientUser?.recordStatus === 'I' ? 'edit_note' :
-          storeClientUser?.recordStatus === 'S' ? 'hourglass_top' :
-          'verified'
-        }}
+        {{ !storeClientUser?.recordStatus ? 'add_circle' :
+        storeClientUser?.recordStatus === 'I' ? 'edit_note' :
+        storeClientUser?.recordStatus === 'S' ? 'hourglass_top' : 'verified' }}
       </mat-icon>
 
-      {{
-        !storeClientUser?.recordStatus ? 'CREATE' :
-        storeClientUser?.recordStatus === 'I' ? 'DRAFT' :
-        storeClientUser?.recordStatus === 'S' ? 'SUBMITTED' :
-        'APPROVED'
-      }}
-
+      {{ !storeClientUser?.recordStatus ? 'CREATE' :
+      storeClientUser?.recordStatus === 'I' ? 'DRAFT' :
+      storeClientUser?.recordStatus === 'S' ? 'SUBMITTED' : 'APPROVED' }}
     </span>
-
   </div>
-
 
   <!-- =========================
        Client User Form Container
   ========================== -->
-  <div class="customer-form-wrapper" [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
-
+  <div
+    class="customer-form-wrapper"
+    [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}"
+  >
     <!-- Section Header -->
     <div class="section-header" (click)="toggle()">
       <h2>Client User Details</h2>
@@ -52,40 +44,58 @@
 
     <!-- Collapsible Form -->
     <div class="collapsible" [class.open]="isOpen" [formGroup]="clientUserForm">
-
       <ng-container *ngIf="isOpen">
         <!-- ---------------- BASIC DETAILS ---------------- -->
         <div class="form-grid form-grid-large">
           <div class="field-group">
             <h4>Login ID</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="loginId" placeholder="Login ID" 
-              [readonly]="isReadOnly()"  />
+              <input
+                matInput
+                type="text"
+                formControlName="loginId"
+                placeholder="Login ID"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
           </div>
 
           <div class="field-group">
             <h4>Name</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="userName" placeholder="User Name" 
-              [readonly]="isReadOnly()"  />
+              <input
+                matInput
+                type="text"
+                formControlName="userName"
+                placeholder="User Name"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
           </div>
-
 
           <div class="field-group">
             <h4>email</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="email" placeholder="User email" 
-              [readonly]="isReadOnly()"  />
+              <input
+                matInput
+                type="text"
+                formControlName="email"
+                placeholder="User email"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
           </div>
-
 
           <div class="field-group">
             <h4>Password</h4>
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="password" formControlName="password" placeholder="Password" [readonly]="isReadOnly()" />
+              <input
+                matInput
+                type="password"
+                formControlName="password"
+                placeholder="Password"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
           </div>
 
@@ -93,76 +103,83 @@
             <h4>User Category</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Category</mat-label>
-              <mat-select formControlName="userCategory" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select
+                formControlName="userCategory"
+                [disabled]="isReadOnly()"
+                panelClass="white-dropdown"
+              >
                 <mat-option value="A">Admin</mat-option>
                 <mat-option value="U">user</mat-option>
-                
               </mat-select>
             </mat-form-field>
           </div>
-         
+
           <div class="field-group">
             <h4>Company</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Select Company</mat-label>
-              <mat-select formControlName="companyId" [disabled]="isReadOnly()" panelClass="white-dropdown">
-                <mat-option *ngFor="let company of allCompanies" [value]="company.companyId">
+              <mat-select
+                formControlName="companyId"
+                [disabled]="isReadOnly()"
+                panelClass="white-dropdown"
+              >
+                <mat-option
+                  *ngFor="let company of allCompanies"
+                  [value]="company.companyId"
+                >
                   {{ company.companyName }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-           
+
           <div class="field-group">
             <h4>User Status</h4>
             <mat-form-field appearance="outline" class="full">
               <mat-label>Status</mat-label>
-              <mat-select formControlName="userStatus" [disabled]="isReadOnly()" panelClass="white-dropdown">
+              <mat-select
+                formControlName="userStatus"
+                [disabled]="isReadOnly()"
+                panelClass="white-dropdown"
+              >
                 <mat-option value="A">Active</mat-option>
                 <mat-option value="I">Inactive</mat-option>
-                
               </mat-select>
             </mat-form-field>
           </div>
 
-          
-      <div class="field-group">
-  <h4>Permission Group</h4>
+          <div class="field-group">
+            <h4>Permission Group</h4>
 
-  <mat-form-field appearance="outline" class="full">
+            <mat-form-field appearance="outline" class="full">
+              <mat-label>Select Permission Group</mat-label>
 
-    <mat-label>Select Permission Group</mat-label>
-
-    <mat-select
-        formControlName="permissionGroupId"
-        [disabled]="isReadOnly()">
-
-        <mat-option
-            *ngFor="let group of storePermissoinGroups"
-            [value]="group.id">
-
-            {{ group.permissionGroupName }}
-
-        </mat-option>
-
-    </mat-select>
-
-  </mat-form-field>
-</div>
-          
+              <mat-select
+                formControlName="permissionGroupId"
+                [disabled]="isReadOnly()"
+              >
+                <mat-option
+                  *ngFor="let group of storePermissoinGroups"
+                  [value]="group.id"
+                >
+                  {{ group.permissionGroupName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
       </ng-container>
     </div>
   </div>
 
- 
   <!-- =========================
        USER DETAILS + ROLES
   ========================== -->
   <div
-  class="user-details-roles-container"
-  *ngIf="hasClientUser"
-  [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
+    class="user-details-roles-container"
+    *ngIf="hasClientUser"
+    [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}"
+  >
     <!-- ================= ROLES ASSIGNMENT ================= -->
     <section class="card collapsible-card roles-section">
       <div class="card-header" (click)="toggleRoles()">
@@ -171,118 +188,166 @@
       </div>
 
       <div class="card-body" [class.collapsed]="!isRolesOpen">
-
         <!-- Role Multi-Select -->
         <mat-form-field appearance="fill" class="role-select">
           <mat-label>Select Roles</mat-label>
           <mat-select multiple [(value)]="selectedRoleIds!">
-            <mat-option *ngFor="let role of userRoles ?? []" [value]="role.roleId">
+            <mat-option
+              *ngFor="let role of userRoles ?? []"
+              [value]="role.roleId"
+            >
               {{ role.roleDesc }}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
         <div class="action-buttons">
-          <button mat-raised-button color="primary" (click)="assignRoles()" [disabled]="!storeClientUser">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="assignRoles()"
+            [disabled]="!storeClientUser"
+          >
             Assign Roles
           </button>
 
-          <button mat-raised-button color="accent" (click)="updateRoles()" [disabled]="!storeClientUser">
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="updateRoles()"
+            [disabled]="!storeClientUser"
+          >
             Update Roles
           </button>
         </div>
 
         <!-- Currently Assigned Roles -->
-        <div class="assigned-roles" *ngIf="userAssignedRoles && userAssignedRoles.length > 0">
-  <p><strong>Currently Assigned Roles:</strong></p>
+        <div
+          class="assigned-roles"
+          *ngIf="userAssignedRoles && userAssignedRoles.length > 0"
+        >
+          <p><strong>Currently Assigned Roles:</strong></p>
 
-  <ul>
-    <li *ngFor="let r of userAssignedRoles">
-      {{ r.roleDesc }}
-      
-      <button mat-icon-button color="warn" (click)="deleteRole(r.roleId)">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </li>
-  </ul>
-</div>
+          <ul>
+            <li *ngFor="let r of userAssignedRoles">
+              {{ r.roleDesc }}
+
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteRole(r.roleId)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </li>
+          </ul>
+        </div>
 
         <div *ngIf="!userAssignedRoles?.length">
           <p>No roles assigned yet.</p>
         </div>
-
       </div>
     </section>
   </div>
 
-   <!-- ================= DYNAMIC FIELDS ================= -->
-<div class="customer-form-wrapper dynamic-fields-section"
-     [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}">
-  <div class="section-header" (click)="toggleDynamicFields()">
-    <h2>Additional Fields</h2>
-    <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
-  </div>
-
-  <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
-
-    <div class="form-grid">
-      <ng-container *ngFor="let field of fields">
-
-        <div class="field-group">
-          <h4>{{ field.label || field.fieldName }}</h4>
-
-          <!-- TEXT -->
-          <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
-            <input matInput [formControlName]="field.fieldId" />
-          </mat-form-field>
-
-          <!-- NUMBER -->
-          <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
-            <input matInput type="number" [formControlName]="field.fieldId" />
-          </mat-form-field>
-
-          <!-- DATE -->
-          <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
-            <input matInput type="date" [formControlName]="field.fieldId" />
-          </mat-form-field>
-
-          <!-- SELECT -->
-          <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-            <mat-select [formControlName]="field.fieldId">
-              <mat-option value="">Select</mat-option>
-              <mat-option *ngFor="let opt of field.options" [value]="opt.value">
-                {{ opt.text }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-
-
-        </div>
-
-      </ng-container>
+  <!-- ================= DYNAMIC FIELDS ================= -->
+  <div
+    class="customer-form-wrapper dynamic-fields-section"
+    [ngClass]="{'hide-when-approved': storeClientUser?.recordStatus === 'A'}"
+  >
+    <div class="section-header" (click)="toggleDynamicFields()">
+      <h2>Additional Fields</h2>
+      <mat-icon
+        >{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon
+      >
     </div>
 
+    <div
+      class="collapsible"
+      [class.open]="isDynamicFieldsOpen"
+      [formGroup]="dynamicFieldsForm"
+    >
+      <div class="form-grid">
+        <ng-container *ngFor="let field of fields">
+          <div class="field-group">
+            <h4>{{ field.label || field.fieldName }}</h4>
+
+            <!-- TEXT -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'text'"
+              appearance="outline"
+            >
+              <input matInput [formControlName]="field.fieldId" />
+            </mat-form-field>
+
+            <!-- NUMBER -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'number'"
+              appearance="outline"
+            >
+              <input matInput type="number" [formControlName]="field.fieldId" />
+            </mat-form-field>
+
+            <!-- DATE -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'date'"
+              appearance="outline"
+            >
+              <input matInput type="date" [formControlName]="field.fieldId" />
+            </mat-form-field>
+
+            <!-- SELECT -->
+            <mat-form-field
+              *ngIf="field.fieldType === 'select'"
+              appearance="outline"
+            >
+              <mat-select [formControlName]="field.fieldId">
+                <mat-option value="">Select</mat-option>
+                <mat-option
+                  *ngFor="let opt of field.options"
+                  [value]="opt.value"
+                >
+                  {{ opt.text }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
-</div>
-<br><br>
-   <!-- ---------------- FORM ACTIONS ---------------- -->
-    <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
-      <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update" [disabled]="!clientUserForm.dirty || !clientUserForm.valid" (click)="update(storeClientUser.id)">Update</button>
-      <button class="btn-submit"  (click)="submit()">Submit</button>
-    </ng-container>
+  <br /><br />
+  <!-- ---------------- FORM ACTIONS ---------------- -->
+  <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
+    <button class="btn-back" (click)="onBack()">Back</button>
+    <button
+      class="btn-update"
+      [disabled]="!clientUserForm.dirty || !clientUserForm.valid"
+      (click)="update(storeClientUser.id)"
+    >
+      Update
+    </button>
+    <button class="btn-submit" (click)="submit()">Submit</button>
+  </ng-container>
   <div class="customer-actions">
     <ng-container *ngIf="!storeClientUser || !storeClientUser.userStatus">
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-      <button class="btn-save" [disabled]="!clientUserForm.valid" (click)="onSave()">Save</button>
+      <button
+        class="btn-save"
+        [disabled]="!clientUserForm.valid"
+        (click)="onSave()"
+      >
+        Save
+      </button>
     </ng-container>
 
-    
-
     <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'S'">
-      <button class="btn-reject" (click)="reject(storeClientUser?.id)">Reject</button>
-      <button class="btn-approve" (click)="approve(storeClientUser?.id)">Approve</button>
+      <button class="btn-reject" (click)="reject(storeClientUser?.id)">
+        Reject
+      </button>
+      <button class="btn-approve" (click)="approve(storeClientUser?.id)">
+        Approve
+      </button>
     </ng-container>
   </div>
 
@@ -290,219 +355,199 @@
   <!-- =========================
      APPROVED VIEW (DOSSIER STYLE)
 ========================= -->
-<section class="dossier-premium-view"
-         *ngIf="storeClientUser?.recordStatus === 'A'">
+  <section
+    class="dossier-premium-view"
+    *ngIf="storeClientUser?.recordStatus === 'A'"
+  >
+    <!-- ================= HEADER ================= -->
+    <header class="dossier-premium-header">
+      <div class="header-inner">
+        <div class="profile-identity">
+          <div class="premium-avatar">
+            {{ storeClientUser?.userName?.charAt(0)?.toUpperCase() || '?' }}
+          </div>
 
-  <!-- ================= HEADER ================= -->
-  <header class="dossier-premium-header">
-    <div class="header-inner">
+          <div>
+            <h1 class="user-full-name">
+              {{ storeClientUser?.userName | titlecase }}
+            </h1>
 
-      <div class="profile-identity">
-
-        <div class="premium-avatar">
-          {{ storeClientUser?.userName?.charAt(0)?.toUpperCase() || '?' }}
-        </div>
-
-        <div>
-          <h1 class="user-full-name">
-            {{ storeClientUser?.userName | titlecase }}
-          </h1>
-
-          <div class="user-meta">
-            Login ID:
-            <span class="meta-value">{{ storeClientUser?.loginId }}</span>
+            <div class="user-meta">
+              Login ID:
+              <span class="meta-value">{{ storeClientUser?.loginId }}</span>
+            </div>
           </div>
         </div>
 
+        <span
+          class="status-pill"
+          [ngClass]="storeClientUser?.userStatus === 'A' ? 'active' : 'inactive'"
+        >
+          <mat-icon>
+            {{ storeClientUser?.userStatus === 'A' ? 'check_circle' : 'block' }}
+          </mat-icon>
+
+          {{ storeClientUser?.userStatus === 'A' ? 'ACTIVE' : 'INACTIVE' }}
+        </span>
       </div>
+    </header>
 
-      <span class="status-pill"
-            [ngClass]="storeClientUser?.userStatus === 'A' ? 'active' : 'inactive'">
-
-        <mat-icon>
-          {{ storeClientUser?.userStatus === 'A' ? 'check_circle' : 'block' }}
-        </mat-icon>
-
-        {{ storeClientUser?.userStatus === 'A' ? 'ACTIVE' : 'INACTIVE' }}
-      </span>
-
-    </div>
-  </header>
-
-  <!-- ================= MAIN GRID ================= -->
-  <div class="dossier-content-grid">
-
-    <!-- ========== USER CORE INFO ========== -->
-    <mat-card class="premium-card">
-
-      <div class="card-title-row">
-        <mat-icon>person</mat-icon>
-        <h3>User Information</h3>
-      </div>
-
-      <div class="kv-grid">
-
-        <div class="kv-pair">
-          <label>User ID</label>
-          <span class="val">{{ storeClientUser?.id }}</span>
+    <!-- ================= MAIN GRID ================= -->
+    <div class="dossier-content-grid">
+      <!-- ========== USER CORE INFO ========== -->
+      <mat-card class="premium-card">
+        <div class="card-title-row">
+          <mat-icon>person</mat-icon>
+          <h3>User Information</h3>
         </div>
 
-        <!-- will display after adding the proper app user ID -->
-        <!-- <div class="kv-pair">
+        <div class="kv-grid">
+          <div class="kv-pair">
+            <label>User ID</label>
+            <span class="val">{{ storeClientUser?.id }}</span>
+          </div>
+
+          <!-- will display after adding the proper app user ID -->
+          <!-- <div class="kv-pair">
           <label>App User ID</label>
           <span class="val">{{ storeClientUser?.appUserId }}</span>
         </div> -->
 
-        <div class="kv-pair">
-          <label>Login ID</label>
-          <span class="val">{{ storeClientUser?.loginId }}</span>
+          <div class="kv-pair">
+            <label>Login ID</label>
+            <span class="val">{{ storeClientUser?.loginId }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>User Name</label>
+            <span class="val">{{ storeClientUser?.userName }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>User Category</label>
+            <span class="category-tag">
+              {{ storeClientUser?.userCategory === 'A' ? 'ADMIN' : 'USER' }}
+            </span>
+          </div>
+
+          <div class="kv-pair">
+            <label>Company</label>
+            <span class="val"
+              >{{ getCompanyName(storeClientUser?.companyId) }}</span
+            >
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- ========== AUDIT TRAIL ========== -->
+      <mat-card class="premium-card">
+        <div class="card-title-row">
+          <mat-icon>history</mat-icon>
+          <h3>Audit Trail</h3>
         </div>
 
-        <div class="kv-pair">
-          <label>User Name</label>
-          <span class="val">{{ storeClientUser?.userName }}</span>
+        <div class="kv-grid">
+          <div class="kv-pair">
+            <label>Created By</label>
+            <span class="val">{{ storeClientUser?.createdBy || '—' }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>Updated By</label>
+            <span class="val">{{ storeClientUser?.updatedBy || '—' }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>Inputter ID</label>
+            <span class="val">{{ storeClientUser?.inputterId }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>Authorizer</label>
+            <span class="val">{{ storeClientUser?.authorizerId || '—' }}</span>
+          </div>
+
+          <div class="kv-pair">
+            <label>Created On</label>
+            <span class="val"
+              >{{ storeClientUser?.createdOn | date:'medium' }}</span
+            >
+          </div>
+
+          <div class="kv-pair">
+            <label>Updated On</label>
+            <span class="val"
+              >{{ storeClientUser?.updatedOn | date:'medium' }}</span
+            >
+          </div>
+
+          <div class="kv-pair">
+            <label>Inputter Time</label>
+            <span class="val"
+              >{{ storeClientUser?.inputterDttm | date:'medium' }}</span
+            >
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- ========== ROLES ========== -->
+      <mat-card class="premium-card">
+        <div class="card-title-row">
+          <mat-icon>security</mat-icon>
+          <h3>Assigned Roles</h3>
         </div>
 
-        <div class="kv-pair">
-          <label>User Category</label>
-          <span class="category-tag">
-            {{ storeClientUser?.userCategory === 'A' ? 'ADMIN' : 'USER' }}
+        <div class="role-cloud" *ngIf="userAssignedRoles?.length; else noRoles">
+          <span class="role-pill" *ngFor="let role of userAssignedRoles">
+            {{ role.roleDesc }}
           </span>
         </div>
 
-        <div class="kv-pair">
-          <label>Company</label>
-          <span class="val">{{ getCompanyName(storeClientUser?.companyId) }}</span>
-        </div>
+        <ng-template #noRoles>
+          <p class="empty-msg">No roles assigned</p>
+        </ng-template>
+      </mat-card>
+    </div>
 
-      </div>
-    </mat-card>
-
-    <!-- ========== AUDIT TRAIL ========== -->
-    <mat-card class="premium-card">
-
+    <!-- ========== DYNAMIC FIELDS ========== -->
+    <mat-card
+      class="premium-card full-width"
+      *ngIf="storeClientUser?.dynamicFields?.length"
+    >
       <div class="card-title-row">
-        <mat-icon>history</mat-icon>
-        <h3>Audit Trail</h3>
+        <mat-icon>dynamic_form</mat-icon>
+        <h3>Dynamic Fields</h3>
       </div>
 
-      <div class="kv-grid">
+      <div class="dynamic-list">
+        <div
+          class="dynamic-item"
+          *ngFor="let field of storeClientUser?.dynamicFields"
+        >
+          <span class="key"> {{ field.fieldId }} </span>
 
-        <div class="kv-pair">
-          <label>Created By</label>
-          <span class="val">{{ storeClientUser?.createdBy || '—' }}</span>
+          <span class="dots"></span>
+
+          <span class="value"> {{ field.value }} </span>
         </div>
-
-        <div class="kv-pair">
-          <label>Updated By</label>
-          <span class="val">{{ storeClientUser?.updatedBy || '—' }}</span>
-        </div>
-
-        <div class="kv-pair">
-          <label>Inputter ID</label>
-          <span class="val">{{ storeClientUser?.inputterId }}</span>
-        </div>
-
-        <div class="kv-pair">
-          <label>Authorizer</label>
-          <span class="val">{{ storeClientUser?.authorizerId || '—' }}</span>
-        </div>
-
-        <div class="kv-pair">
-          <label>Created On</label>
-          <span class="val">{{ storeClientUser?.createdOn | date:'medium' }}</span>
-        </div>
-
-        <div class="kv-pair">
-          <label>Updated On</label>
-          <span class="val">{{ storeClientUser?.updatedOn | date:'medium' }}</span>
-        </div>
-
-        <div class="kv-pair">
-          <label>Inputter Time</label>
-          <span class="val">{{ storeClientUser?.inputterDttm | date:'medium' }}</span>
-        </div>
-
       </div>
     </mat-card>
 
-    <!-- ========== ROLES ========== -->
-    <mat-card class="premium-card">
-
-      <div class="card-title-row">
-        <mat-icon>security</mat-icon>
-        <h3>Assigned Roles</h3>
+    <!-- ================= FOOTER ================= -->
+    <footer class="dossier-footer">
+      <div class="audit-trail">
+        <mat-icon>update</mat-icon>
+        Last Updated: {{ storeClientUser?.updatedOn | date:'medium' }}
       </div>
 
-      <div class="role-cloud" *ngIf="userAssignedRoles?.length; else noRoles">
+      <div class="btn-group">
+        <button class="btn-back" (click)="onBack()">Back</button>
 
-        <span class="role-pill"
-              *ngFor="let role of userAssignedRoles">
-
-          {{ role.roleDesc }}
-
-        </span>
-
+        <button class="btn-primary" (click)="amend(storeClientUser?.id)">
+          <mat-icon>edit</mat-icon>
+          AMEND
+        </button>
       </div>
-
-      <ng-template #noRoles>
-        <p class="empty-msg">No roles assigned</p>
-      </ng-template>
-
-    </mat-card>
-
-  </div>
-
-  <!-- ========== DYNAMIC FIELDS ========== -->
-  <mat-card class="premium-card full-width"
-            *ngIf="storeClientUser?.dynamicFields?.length">
-
-    <div class="card-title-row">
-      <mat-icon>dynamic_form</mat-icon>
-      <h3>Dynamic Fields</h3>
-    </div>
-
-    <div class="dynamic-list">
-
-      <div class="dynamic-item"
-           *ngFor="let field of storeClientUser?.dynamicFields">
-
-        <span class="key">
-          {{ field.fieldId }}
-        </span>
-
-        <span class="dots"></span>
-
-        <span class="value">
-          {{ field.value }}
-        </span>
-
-      </div>
-
-    </div>
-
-  </mat-card>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="dossier-footer">
-
-    <div class="audit-trail">
-      <mat-icon>update</mat-icon>
-      Last Updated: {{ storeClientUser?.updatedOn | date:'medium' }}
-    </div>
-
-    <div class="btn-group">
-
-    <button class="btn-back" (click)="onBack()">Back</button>
-
-      <button class="btn-primary"
-              (click)="reject(storeClientUser?.id)">
-        <mat-icon>edit</mat-icon>
-        AMEND
-      </button>
-
-    </div>
-
-  </footer>
-
-</section>
+    </footer>
+  </section>
+</div>

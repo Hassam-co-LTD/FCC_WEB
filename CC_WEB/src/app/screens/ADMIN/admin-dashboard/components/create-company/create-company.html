@@ -1,151 +1,427 @@
 <div class="create-customer-page">
-
   <div class="page-header">
     <h1>Create Company</h1>
   </div>
 
-  <!-- ================= COMPANY FORM ================= -->
+  <!-- =========================================================
+       COMPANY FORM
+       ========================================================= -->
   <div class="customer-form-wrapper" *ngIf="storeCompany?.recordStatus !== 'A'">
-
     <div class="section-header" (click)="toggle()">
       <h2>Company Details</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+      <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
     </div>
 
     <div class="collapsible" [class.open]="isOpen" [formGroup]="companyForm">
       <ng-container *ngIf="isOpen">
         <div class="form-grid form-grid-large">
+          <!-- ================= COMPANY ID ================= -->
           <div class="field-group">
             <h4>Company ID</h4>
+
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="companyId" [readonly]="isReadOnly()" />
+              <input
+                matInput
+                type="text"
+                formControlName="companyId"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('companyId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ previousValues['companyId'] }}
+              </span>
+            </div>
           </div>
 
+          <!-- ================= COMPANY NAME ================= -->
           <div class="field-group">
             <h4>Company Name</h4>
+
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="companyName" [readonly]="isReadOnly()" />
+              <input
+                matInput
+                type="text"
+                formControlName="companyName"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('companyName')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ previousValues['companyName'] }}
+              </span>
+            </div>
           </div>
 
+          <!-- ================= COMPANY ADDRESS ================= -->
           <div class="field-group">
             <h4>Company Address</h4>
+
             <mat-form-field appearance="outline" class="full">
-              <input matInput type="text" formControlName="companyAddress" [readonly]="isReadOnly()" />
+              <input
+                matInput
+                type="text"
+                formControlName="companyAddress"
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('companyAddress')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ previousValues['companyAddress'] }}
+              </span>
+            </div>
           </div>
 
+          <!-- ================= COMPANY STATUS ================= -->
           <div class="field-group">
             <h4>Company Status</h4>
+
             <mat-form-field appearance="outline" class="full">
-              <mat-select formControlName="companyStatus" [disabled]="isReadOnly()">
-                <mat-option value="A">Active</mat-option>
-                <mat-option value="I">Inactive</mat-option>
-                <mat-option value="D">Draft</mat-option>
+              <mat-select
+                formControlName="companyStatus"
+                [disabled]="isReadOnly()"
+              >
+                <mat-option value="A"> Active </mat-option>
+
+                <mat-option value="I"> Inactive </mat-option>
+
+                <mat-option value="D"> Draft </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div
+              class="previous-value"
+              *ngIf="hasPreviousValue('companyStatus')"
+            >
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ previousValues['companyStatus'] }}
+              </span>
+            </div>
           </div>
 
+          <!-- ================= COMPANY TYPE ================= -->
           <div class="field-group">
             <h4>Company Type</h4>
+
             <mat-form-field appearance="outline" class="full">
-              <mat-select formControlName="companyType" [disabled]="isReadOnly()">
-                <mat-option value="B">Bank</mat-option>
-                <mat-option value="C">Customer</mat-option>
+              <mat-select
+                formControlName="companyType"
+                [disabled]="isReadOnly()"
+              >
+                <mat-option value="B"> Bank </mat-option>
+
+                <mat-option value="C"> Customer </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Value -->
+            <div class="previous-value" *ngIf="hasPreviousValue('companyType')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ previousValues['companyType'] }}
+              </span>
+            </div>
           </div>
         </div>
       </ng-container>
     </div>
 
+    <!-- =========================================================
+         DYNAMIC FIELDS
+         ========================================================= -->
     <!-- ================= DYNAMIC FIELDS ================= -->
-    <div class="customer-form-wrapper dynamic-fields-section" *ngIf="fields?.length">
+    <div
+      class="customer-form-wrapper dynamic-fields-section"
+      *ngIf="fields?.length"
+    >
       <div class="section-header" (click)="toggleDynamicFields()">
         <h2>Company Additional Fields</h2>
-        <mat-icon>{{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+        <mat-icon>
+          {{ isDynamicFieldsOpen ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
       </div>
 
-      <div class="collapsible" [class.open]="isDynamicFieldsOpen" [formGroup]="dynamicFieldsForm">
-        <div class="form-grid">
+      <div
+        class="collapsible"
+        [class.open]="isDynamicFieldsOpen"
+        [formGroup]="dynamicFieldsForm"
+      >
+        <div class="additional-grid">
           <ng-container *ngFor="let field of fields">
-            <div class="field-group">
-              <h4>{{ field.label || field.fieldName }}</h4>
+            <div class="additional-card">
+              <div class="kv-row">
+                <!-- ================= FIELD LABEL ================= -->
+                <div class="kv-key">{{ field.label || field.fieldName }}</div>
 
-              <mat-form-field *ngIf="field.fieldType === 'text'" appearance="outline">
-                <input matInput [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <!-- ================= TEXT FIELD ================= -->
+                <mat-form-field
+                  *ngIf="field.fieldType === 'text'"
+                  appearance="outline"
+                >
+                  <input matInput [formControlName]="field.fieldName" />
+                </mat-form-field>
 
-              <mat-form-field *ngIf="field.fieldType === 'number'" appearance="outline">
-                <input matInput type="number" [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <!-- ================= NUMBER FIELD ================= -->
+                <mat-form-field
+                  *ngIf="field.fieldType === 'number'"
+                  appearance="outline"
+                >
+                  <input
+                    matInput
+                    type="number"
+                    [formControlName]="field.fieldName"
+                  />
+                </mat-form-field>
 
-              <mat-form-field *ngIf="field.fieldType === 'date'" appearance="outline">
-                <input matInput type="date" [formControlName]="field.fieldName" />
-              </mat-form-field>
+                <!-- ================= DATE FIELD ================= -->
+                <mat-form-field
+                  *ngIf="field.fieldType === 'date'"
+                  appearance="outline"
+                >
+                  <input
+                    matInput
+                    type="date"
+                    [formControlName]="field.fieldName"
+                  />
+                </mat-form-field>
 
-              <mat-form-field *ngIf="field.fieldType === 'select'" appearance="outline">
-                <mat-select [formControlName]="field.fieldName">
-                  <mat-option value="">Select</mat-option>
-                  <mat-option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.text }}</mat-option>
-                </mat-select>
-              </mat-form-field>
+                <!-- ================= SELECT FIELD ================= -->
+                <mat-form-field
+                  *ngIf="field.fieldType === 'select'"
+                  appearance="outline"
+                >
+                  <mat-select [formControlName]="field.fieldName">
+                    <mat-option value=""> Select </mat-option>
 
+                    <mat-option
+                      *ngFor="let opt of field.options"
+                      [value]="opt.value"
+                    >
+                      {{ opt.text }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- ================= PREVIOUS VALUE ================= -->
+                <div
+                  class="previous-value"
+                  *ngIf="hasPreviousDynamicValue(field.fieldId)"
+                >
+                  <span class="previous-label"> Previous Value: </span>
+
+                  <span class="previous-text">
+                    {{ previousDynamicValues[field.fieldId] }}
+                  </span>
+                </div>
+              </div>
             </div>
           </ng-container>
         </div>
       </div>
     </div>
 
-    <!-- ================= ACTION BUTTONS ================= -->
+    <!-- =========================================================
+         ACTION BUTTONS
+         ========================================================= -->
     <div class="customer-actions">
+      <!-- ================= CREATE ================= -->
       <ng-container *ngIf="!storeCompany || !storeCompany.recordStatus">
         <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-        <button class="btn-save" [disabled]="!companyForm.valid || (fields.length && !dynamicFieldsForm.valid)" (click)="onSave()">Save</button>
+
+        <button
+          class="btn-save"
+          [disabled]="
+            !companyForm.valid ||
+            (fields.length && !dynamicFieldsForm.valid)
+          "
+          (click)="onSave()"
+        >
+          Save
+        </button>
       </ng-container>
 
-      <ng-container *ngIf="isEditMode && storeCompany?.recordStatus === 'I'">
+      <!-- ================= DRAFT ================= -->
+      <ng-container
+        *ngIf="
+          isEditMode &&
+          storeCompany?.recordStatus === 'I'
+        "
+      >
         <button class="btn-back" (click)="onBack()">Back</button>
-        <button class="btn-update" [disabled]="!companyForm.dirty || !dynamicFieldsForm.dirty" (click)="update(storeCompany.id)">Update</button>
+
+        <button
+          class="btn-update"
+          [disabled]="
+            !companyForm.dirty &&
+            !dynamicFieldsForm.dirty
+          "
+          (click)="update(storeCompany.id)"
+        >
+          Update
+        </button>
+
         <button class="btn-submit" (click)="submit()">Submit</button>
       </ng-container>
 
-      <ng-container *ngIf="isEditMode && storeCompany?.recordStatus === 'S'">
-        <button class="btn-reject" (click)="reject(storeCompany.companyId)">Reject</button>
-        <button class="btn-approve" (click)="approve(storeCompany.companyId)">Approve</button>
+      <!-- ================= SUBMITTED ================= -->
+      <ng-container
+        *ngIf="
+          isEditMode &&
+          storeCompany?.recordStatus === 'S'
+        "
+      >
+        <button class="btn-reject" (click)="reject(storeCompany.companyId)">
+          Reject
+        </button>
+
+        <button class="btn-approve" (click)="approve(storeCompany.companyId)">
+          Approve
+        </button>
       </ng-container>
     </div>
-
   </div>
 
-  <!-- ================= APPROVED VIEW ================= -->
+  <!-- =========================================================
+       APPROVED VIEW
+       ========================================================= -->
+  ```html
+  <!-- =====================================================
+     APPROVED COMPANY VIEW
+     ===================================================== -->
   <div class="approved-container" *ngIf="storeCompany?.recordStatus === 'A'">
+    <!-- ================= APPROVED HEADER ================= -->
     <div class="approved-header">
-      <span class="approved-badge">✔ Approved</span>
+      <span class="approved-badge"> ✔ Approved </span>
+
       <h3>Company Details</h3>
     </div>
 
+    <!-- ================= COMPANY INFORMATION ================= -->
     <div class="approved-info">
-      <div class="info-item"><span class="key">Company ID:</span> <span class="value">{{ storeCompany.companyId }}</span></div>
-      <div class="info-item"><span class="key">Company Name:</span> <span class="value">{{ storeCompany.companyName }}</span></div>
-      <div class="info-item"><span class="key">Company Address:</span> <span class="value">{{ storeCompany.companyAddress }}</span></div>
-      <div class="info-item"><span class="key">Company Type:</span> <span class="value">{{ storeCompany.companyType }}</span></div>
-      <div class="info-item"><span class="key">Status:</span> <span class="value">{{ storeCompany.companyStatus }}</span></div>
+      <!-- ================= COMPANY ID ================= -->
+      <div class="info-item">
+        <span class="key"> Company ID: </span>
 
-      <div *ngIf="storeCompany.dynamicFields?.length">
-        <h3>Dynamic Fields</h3>
-        <div class="info-item" *ngFor="let field of storeCompany.dynamicFields">
-          <span class="key">{{ field.label || field.fieldName }}</span>
-          <span class="value">{{ field.value }}</span>
+        <span class="value"> {{ storeCompany.companyId }} </span>
+      </div>
+
+      <!-- ================= COMPANY NAME ================= -->
+      <div class="info-item">
+        <span class="key"> Company Name: </span>
+
+        <span class="value"> {{ storeCompany.companyName }} </span>
+      </div>
+
+      <!-- ================= COMPANY ADDRESS ================= -->
+      <div class="info-item">
+        <span class="key"> Company Address: </span>
+
+        <span class="value"> {{ storeCompany.companyAddress }} </span>
+      </div>
+
+      <!-- ================= COMPANY STATUS ================= -->
+      <div class="info-item">
+        <span class="key"> Company Status: </span>
+
+        <span class="value"> {{ storeCompany.companyStatus }} </span>
+      </div>
+
+      <!-- ================= COMPANY TYPE ================= -->
+      <div class="info-item">
+        <span class="key"> Company Type: </span>
+
+        <span class="value"> {{ storeCompany.companyType }} </span>
+      </div>
+
+      <!-- ================= RECORD STATUS ================= -->
+      <div class="info-item">
+        <span class="key"> Record Status: </span>
+
+        <span class="value"> {{ storeCompany.recordStatus }} </span>
+      </div>
+
+      <!-- =====================================================
+         APPROVED DYNAMIC FIELDS
+         ===================================================== -->
+      <ng-container *ngIf="storeCompany.dynamicFields?.length">
+        <div class="dynamic-fields-section">
+          <h3>Company Additional Fields</h3>
+
+          <div
+            class="info-item"
+            *ngFor="let field of storeCompany.dynamicFields"
+          >
+            <span class="key"> {{ field.label || field.fieldName }}: </span>
+
+            <span class="value"> {{ field.value }} </span>
+          </div>
         </div>
+      </ng-container>
+
+      <!-- =====================================================
+         AUDIT INFORMATION
+         ===================================================== -->
+
+      <div class="info-item" *ngIf="storeCompany.createdBy">
+        <span class="key"> Created By: </span>
+
+        <span class="value"> {{ storeCompany.createdBy }} </span>
+      </div>
+
+      <div class="info-item" *ngIf="storeCompany.createdOn">
+        <span class="key"> Created On: </span>
+
+        <span class="value">
+          {{ storeCompany.createdOn | date:'medium' }}
+        </span>
+      </div>
+
+      <div class="info-item" *ngIf="storeCompany.updatedBy">
+        <span class="key"> Updated By: </span>
+
+        <span class="value"> {{ storeCompany.updatedBy }} </span>
+      </div>
+
+      <div class="info-item" *ngIf="storeCompany.updatedOn">
+        <span class="key"> Updated On: </span>
+
+        <span class="value">
+          {{ storeCompany.updatedOn | date:'medium' }}
+        </span>
       </div>
     </div>
 
+    <!-- ================= APPROVED ACTIONS ================= -->
     <div class="approved-actions">
-      <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update" (click)="reject(storeCompany.cityId)">Amend</button>
+      <button type="button" class="btn-back" (click)="onBack()">Back</button>
+
+      <button
+        type="button"
+        class="btn-update"
+        (click)="amend(storeCompany.companyId)"
+      >
+        Amend
+      </button>
     </div>
   </div>
-
 </div>

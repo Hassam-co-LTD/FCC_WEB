@@ -1,11 +1,12 @@
 <!-- =========================
      CREATE ROLE PAGE
 ========================= -->
-<div class="create-customer-page">
 
+<div class="create-customer-page">
   <!-- =========================
        Page Header
   ========================== -->
+
   <div class="page-header">
     <h1>Create Role</h1>
   </div>
@@ -13,86 +14,147 @@
   <!-- =========================
        Role Form Container
   ========================== -->
-  <div class="customer-form-wrapper"
-       [ngClass]="{'hide-when-approved': storeRole?.recordStatus === 'A'}">
 
-    <!-- Section Header -->
+  <div
+    class="customer-form-wrapper"
+    [ngClass]="{'hide-when-approved': storeRole?.recordStatus === 'A'}"
+  >
+    ```
+    <!-- =========================
+     Section Header
+========================== -->
     <div class="section-header" (click)="toggle()">
       <h2>Role General Details</h2>
-      <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+      <mat-icon> {{ isOpen ? 'expand_less' : 'expand_more' }} </mat-icon>
     </div>
 
-    <!-- Collapsible Form -->
+    <!-- =========================
+     Collapsible Form
+========================== -->
+    ```html
     <div class="collapsible" [class.open]="isOpen" [formGroup]="roleForm">
-
       <ng-container *ngIf="isOpen">
-
-        <!-- ---------------- BASIC DETAILS ---------------- -->
+        <!-- =========================
+         BASIC DETAILS
+    ========================== -->
         <div class="form-grid form-grid-large">
-
-          <!-- Role ID -->
+          <!-- =========================
+           ROLE ID
+      ========================== -->
           <div class="field-group">
             <h4>Role ID</h4>
+
             <mat-form-field appearance="outline" class="full">
               <input
                 matInput
                 type="text"
                 formControlName="roleId"
                 placeholder="Role ID"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Role ID -->
+            <div class="previous-value" *ngIf="hasPreviousValue('roleId')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('roleId') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Role Description -->
+          <!-- =========================
+           ROLE DESCRIPTION
+      ========================== -->
           <div class="field-group">
             <h4>Role Description</h4>
+
             <mat-form-field appearance="outline" class="full">
               <input
                 matInput
                 type="text"
                 formControlName="roleDesc"
                 placeholder="Role Description"
-                [readonly]="isReadOnly()" />
+                [readonly]="isReadOnly()"
+              />
             </mat-form-field>
+
+            <!-- Previous Role Description -->
+            <div class="previous-value" *ngIf="hasPreviousValue('roleDesc')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('roleDesc') }}
+              </span>
+            </div>
           </div>
 
-          <!-- Role Destination -->
-           <div class="field-group">
+          <!-- =========================
+           ROLE DESTINATION
+      ========================== -->
+          <div class="field-group">
             <h4>Role Destination</h4>
+
             <mat-form-field appearance="outline" class="full">
               <mat-label>Role Destination</mat-label>
+
               <mat-select
                 formControlName="roleDest"
                 [disabled]="isReadOnly()"
-                panelClass="white-dropdown">
-                <mat-option value="B">B</mat-option>
-                <mat-option value="C">C</mat-option>
+                panelClass="white-dropdown"
+              >
+                <mat-option value="B"> B </mat-option>
+
+                <mat-option value="C"> C </mat-option>
               </mat-select>
             </mat-form-field>
-          </div>
 
+            <!-- Previous Role Destination -->
+            <div class="previous-value" *ngIf="hasPreviousValue('roleDest')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('roleDest') }}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <!-- ---------------- DROPDOWN DETAILS ---------------- -->
+        <!-- =========================
+         ROLE STATUS
+    ========================== -->
         <div class="form-grid form-grid-large">
-
-          <!-- Role Status -->
           <div class="field-group">
             <h4>Role Status</h4>
+
             <mat-form-field appearance="outline" class="full">
               <mat-label>Role Status</mat-label>
+
               <mat-select
                 formControlName="roleStatus"
                 [disabled]="isReadOnly()"
-                panelClass="white-dropdown">
-                <mat-option value="A">Active</mat-option>
-                <mat-option value="I">Inactive</mat-option>
+                panelClass="white-dropdown"
+              >
+                <mat-option value="A"> Active </mat-option>
+
+                <mat-option value="I"> Inactive </mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Previous Role Status -->
+            <div class="previous-value" *ngIf="hasPreviousValue('roleStatus')">
+              <span class="previous-label"> Previous Value: </span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('roleStatus') === 'A' ? 'Active' :
+                getPreviousValue('roleStatus') === 'I' ? 'Inactive' :
+                getPreviousValue('roleStatus') }}
+              </span>
+            </div>
           </div>
-
         </div>
-
       </ng-container>
     </div>
   </div>
@@ -100,85 +162,133 @@
   <!-- =========================
        FORM ACTIONS
   ========================== -->
-  <div class="customer-actions">
 
-    <!-- New Role -->
+  <div class="customer-actions">
+    ```
+    <!-- =========================
+     NEW ROLE
+========================== -->
     <ng-container *ngIf="!storeRole || !storeRole.recordStatus">
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-      <button class="btn-save"
-              [disabled]="!roleForm.valid"
-              (click)="onSave()">
+
+      <button class="btn-save" [disabled]="!roleForm.valid" (click)="onSave()">
         Save
       </button>
     </ng-container>
 
-    <!-- Draft (I) -->
+    <!-- =========================
+     DRAFT (I)
+========================== -->
     <ng-container *ngIf="isEditMode && storeRole?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
-      <button class="btn-update"
-              [disabled]="!roleForm.dirty || !roleForm.valid"
-              (click)="update(storeRole.roleId)">
+
+      <button
+        class="btn-update"
+        [disabled]="!roleForm.dirty || !roleForm.valid"
+        (click)="update(storeRole.roleId)"
+      >
         Update
       </button>
-      <button class="btn-submit"
-              [disabled]="!roleForm.valid"
-              (click)="submit()">
+
+      <button
+        class="btn-submit"
+        [disabled]="!roleForm.valid"
+        (click)="submit()"
+      >
         Submit
       </button>
     </ng-container>
 
-    <!-- Submitted (S) -->
+    <!-- =========================
+     SUBMITTED (S)
+========================== -->
     <ng-container *ngIf="isEditMode && storeRole?.recordStatus === 'S'">
-      <button class="btn-reject" (click)="reject(storeRole.roleId)">Reject</button>
-      <button class="btn-approve" (click)="approve(storeRole.roleId)">Approve</button>
+      <button class="btn-reject" (click)="reject(storeRole.roleId)">
+        Reject
+      </button>
+
+      <button class="btn-approve" (click)="approve(storeRole.roleId)">
+        Approve
+      </button>
     </ng-container>
-
+    ```
   </div>
-
 </div>
 
 <!-- =========================
      APPROVED VIEW
 ========================= -->
-<div class="approved-container"
-     [ngClass]="{'hide-when-approved': storeRole?.recordStatus !== 'A'}">
 
+<div
+  class="approved-container"
+  [ngClass]="{'hide-when-approved': storeRole?.recordStatus !== 'A'}"
+>
   <div class="approved-header">
-    <span class="approved-badge">✔ Approved</span>
+    ```
+    <span class="approved-badge"> ✔ Approved </span>
+
     <h3>Role Details</h3>
+    ```
   </div>
 
   <div class="approved-info">
+    ```
+    <!-- =========================
+     ROLE ID
+========================== -->
     <div class="info-item">
-      <span class="key">Role ID:</span>
-      <span class="value">{{ storeRole.roleId }}</span>
+      <span class="key"> Role ID: </span>
+
+      <span class="value"> {{ storeRole.roleId }} </span>
     </div>
 
+    <!-- =========================
+     ROLE DESCRIPTION
+========================== -->
     <div class="info-item">
-      <span class="key">Role Description:</span>
-      <span class="value">{{ storeRole.roleDesc }}</span>
+      <span class="key"> Role Description: </span>
+
+      <span class="value"> {{ storeRole.roleDesc }} </span>
     </div>
 
+    <!-- =========================
+     ROLE DESTINATION
+========================== -->
     <div class="info-item">
-      <span class="key">Role Destination:</span>
-      <span class="value">{{ storeRole.roleDest }}</span>
+      <span class="key"> Role Destination: </span>
+
+      <span class="value"> {{ storeRole.roleDest }} </span>
     </div>
 
+    <!-- =========================
+     ROLE STATUS
+========================== -->
     <div class="info-item">
-      <span class="key">Role Status:</span>
+      <span class="key"> Role Status: </span>
+
       <span class="value">
         {{ storeRole.roleStatus === 'A' ? 'Active' : 'Inactive' }}
       </span>
     </div>
 
+    <!-- =========================
+     RECORD STATUS
+========================== -->
     <div class="info-item">
-      <span class="key">Record Status:</span>
-      <span class="value">{{ storeRole.recordStatus }}</span>
+      <span class="key"> Record Status: </span>
+
+      <span class="value"> {{ storeRole.recordStatus }} </span>
     </div>
+    ```
   </div>
 </div>
 
+<!-- =========================
+     APPROVED ACTIONS
+========================= -->
+
 <div class="approved-actions" *ngIf="storeRole?.recordStatus === 'A'">
   <button class="btn-back" (click)="onBack()">Back</button>
-  <button class="btn-update" (click)="amend(storeRole.id)">Amend</button>
+
+  <button class="btn-update" (click)="amend(storeRole.roleId)">Amend</button>
 </div>
