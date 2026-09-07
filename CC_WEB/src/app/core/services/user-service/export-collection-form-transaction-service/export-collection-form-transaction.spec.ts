@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ExportCollectionFormTransaction } from './export-collection-form-transaction';
+import { ExportCollectionFormTransactionService } from './export-collection-form-transaction';
 
-describe('ExportCollectionFormTransaction', () => {
-  let service: ExportCollectionFormTransaction;
+describe('ExportCollectionFormTransactionService', () => {
+  let service: ExportCollectionFormTransactionService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ExportCollectionFormTransaction);
+    service = TestBed.inject(ExportCollectionFormTransactionService);
   });
 
   it('should be created', () => {

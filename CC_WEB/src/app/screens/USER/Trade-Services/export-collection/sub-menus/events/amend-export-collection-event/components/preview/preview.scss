@@ -1,0 +1,200 @@
+@use "../../../../../../../../../../styles/theme" as theme;
+
+
+/* ================================
+   PREVIEW WRAPPER
+================================ */
+.preview-section {
+  background: theme.$light-bg;
+  border-radius: theme.$radius-large;
+  padding: 0;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px theme.$shadow-primary;
+}
+
+/* ================================
+   SECTION HEADER COLLAPSIBLE
+================================ */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0b4eb3;
+  border: 1px solid theme.$border-light;
+  padding: 14px 18px;
+  border-radius: theme.$radius-large;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  color: theme.$primary;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: theme.$primary;
+  }
+
+  mat-icon {
+    font-size: 22px;
+    color: theme.$primary;
+  }
+
+  &:hover {
+    background: theme.$hover-bg;
+    border-color: theme.$hover-border;
+  }
+}
+
+/* Collapsible Wrapper */
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-in-out;
+
+  &.open {
+    max-height: 7000px;
+  }
+}
+
+/* ================================
+   PREVIEW BLOCK
+================================ */
+.preview-block {
+  background: theme.$white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: theme.$radius-large;
+  border: 1px solid theme.$border-light;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+
+  h2, h3, h4 {
+    margin: 0 0 16px 0;
+    font-weight: 600;
+    color: theme.$text-dark;
+  }
+
+  h2 {
+    font-size: 18px;
+    color: theme.$primary;
+  }
+
+  h3 {
+    font-size: 16px;
+    margin-top: 25px;
+    color: theme.$primary-dark;
+  }
+
+  h4 {
+    font-size: 15px;
+    color: theme.$text-medium;
+  }
+}
+
+/* Divider */
+hr {
+  border: 0;
+  height: 1px;
+  background: theme.$border-light;
+  margin: 0 0 20px 0;
+}
+
+/* ================================
+   EACH PREVIEW ROW
+================================ */
+.preview-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  padding: 10px 0;
+  align-items: center;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.preview-label {
+  font-weight: 600;
+  color: theme.$text-medium;
+}
+
+.preview-value {
+  color: theme.$text-dark;
+}
+
+/* ================================
+   GRID TABLES (Attachments / Docs)
+================================ */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: theme.$light-bg;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-large;
+  overflow: hidden;
+  margin-top: 10px;
+
+  .preview-row {
+    display: contents;
+  }
+
+  .header {
+    background: theme.$primary-light;
+    color: theme.$primary;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 10px;
+    border-bottom: 1px solid theme.$border-light;
+
+    div {
+      padding: 10px;
+    }
+  }
+
+  .preview-row div {
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .preview-row:last-child div {
+    border-bottom: none;
+  }
+}
+
+/* ================================
+   ICONS
+================================ */
+.pdf-icon {
+  color: #c62828;
+}
+
+.image-icon {
+  color: theme.$primary;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-icon {
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    color: theme.$primary-hover;
+    transform: scale(1.1);
+  }
+}
+
+/* ================================
+   EMPTY TEXT
+================================ */
+p {
+  margin: 10px 0 0;
+  color: theme.$text-medium;
+  font-size: 14px;
+}

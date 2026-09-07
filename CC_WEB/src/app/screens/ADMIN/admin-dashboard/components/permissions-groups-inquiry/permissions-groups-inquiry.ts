@@ -139,6 +139,10 @@ export class PermissionsGroupsInquiry implements OnInit, OnDestroy {
       next: (res: any) => {
         const data = (res as PermissionGroupRow[]) || [];
         this.approvedPermissionsGroup = data;
+        console.log(
+          '--------------------------------Approved PermissionsGroup data:----------------------',
+          this.approvedPermissionsGroup,
+        );
         this.storeFilteredApprovedPermissionsGroup = [...data];
       },
       error: (err: unknown) => {

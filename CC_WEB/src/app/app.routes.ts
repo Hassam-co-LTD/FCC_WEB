@@ -1,6 +1,20 @@
-import { Routes } from '@angular/router';
+import { Routes, UrlMatcher, UrlSegment } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
+
+export const transactionIdMatcher: UrlMatcher = (segments: UrlSegment[]) => {
+  if (
+    segments.length === 2 &&
+    segments[0].path === 'import-screen' &&
+    /^\d+$/.test(segments[1].path)
+  ) {
+    return {
+      consumed: segments,
+    };
+  }
+
+  return null;
+};
 
 export const routes: Routes = [
   // Default redirect
@@ -21,11 +35,6 @@ export const routes: Routes = [
         (m) => m.LoginComponent,
       ),
   },
-  // {
-  //     path: 'signup',
-  //     loadComponent: () =>
-  //         import('./screens/AUTH/signup/signup.component').then((m) => m.SignupComponent),
-  // },
 
   // Protected routes (with layout)
   {
@@ -33,11 +42,14 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
-      // Admin-Dashboard
-      // my routes
-
       {
         path: 'admin',
+        canActivate: [authGuard],
+        canActivateChild: [authGuard],
+        data: {
+          role: 'A',
+          companyType: 'C',
+        },
         loadComponent: () =>
           import('./screens/ADMIN/admin-dashboard/admin-dashboard').then(
             (m) => m.AdminComponent,
@@ -71,7 +83,6 @@ export const routes: Routes = [
                 (m) => m.CreateCustomer,
               ),
           },
-
           {
             path: 'create-branch',
             loadComponent: () =>
@@ -170,7 +181,6 @@ export const routes: Routes = [
                 (m) => m.CreateClientUser,
               ),
           },
-
           {
             path: 'create-company',
             loadComponent: () =>
@@ -213,7 +223,6 @@ export const routes: Routes = [
                 (m) => m.CreateRoleMaster,
               ),
           },
-          // showing the user details roles component
           {
             path: 'create-client-user/:id',
             loadComponent: () =>
@@ -221,7 +230,6 @@ export const routes: Routes = [
                 (m) => m.CreateClientUser,
               ),
           },
-
           {
             path: 'create-dynamic-fields',
             loadComponent: () =>
@@ -264,7 +272,7 @@ export const routes: Routes = [
                 (m) => m.CreateDynamicFieldOptions,
               ),
           },
-          // ========Acounts========
+          // ========Accounts========
           {
             path: 'create-account',
             loadComponent: () =>
@@ -286,7 +294,6 @@ export const routes: Routes = [
                 (m) => m.Accounts,
               ),
           },
-          // create-account-types
           {
             path: 'create-account-types',
             loadComponent: () =>
@@ -308,25 +315,7 @@ export const routes: Routes = [
                 (m) => m.AccountTypesInquiry,
               ),
           },
-
-          //   admin password change
-          //                   {
-          //                     path:'change-password',
-          //   loadComponent: () =>
-          //                             import('./screens/AUTH/login/change-password/change-password').then((m) => m.ChangePasswordComponent)
-
-          //                   },
-
-          //                 //   user password change
-          //   {
-          //                     path:'user-change-password',
-          //   loadComponent: () =>
-          //                             import('./screens/AUTH/login/user-password-change/user-password-change').then((m) => m.UserPasswordChange)
-
-          //                   },
-
           // ================= Permission Master =================
-
           {
             path: 'create-permission',
             loadComponent: () =>
@@ -334,7 +323,6 @@ export const routes: Routes = [
                 (m) => m.PermissionMaster,
               ),
           },
-
           {
             path: 'edit-permission/:id',
             loadComponent: () =>
@@ -342,7 +330,6 @@ export const routes: Routes = [
                 (m) => m.PermissionMaster,
               ),
           },
-
           {
             path: 'permission-master-inquiry',
             loadComponent: () =>
@@ -350,8 +337,6 @@ export const routes: Routes = [
                 (m) => m.RoleMasterList,
               ),
           },
-
-          // permissions master group
 
           {
             path: 'create-permission-group',
@@ -361,13 +346,13 @@ export const routes: Routes = [
               ),
           },
 
-          {
-            path: 'edit-permission-group/:id',
-            loadComponent: () =>
-              import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group').then(
-                (m) => m.CreatePermissionGroup,
-              ),
-          },
+{
+  path: 'edit-permission-group/:id',
+  loadComponent: () =>
+    import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
+      .then(m => m.CreatePermissionGroup)
+},
+
 
           {
             path: 'permission-group-inquiry',
@@ -376,15 +361,15 @@ export const routes: Routes = [
                 (m) => m.PermissionsGroupsInquiry,
               ),
           },
-
-          // Permission group inquiry
-          // permission-group-inquiry
         ],
       },
 
-      //  Bank Dashboard
+      //  CustomerUser Dashboard
       {
         path: 'customer-user',
+        canActivate: [authGuard],
+        canActivateChild: [authGuard],
+        data: { companyType: 'B' },
         loadComponent: () =>
           import('./screens/CustomerUser/create-customer/create-customer').then(
             (m) => m.CreateCustomer,
@@ -414,433 +399,389 @@ export const routes: Routes = [
         ],
       },
 
-      // ==============================
-      // System overview
-      // ==============================
       {
         path: 'system-overview',
+        canActivate: [authGuard],
+        data: { role: 'A', companyType: 'C' },
         loadComponent: () =>
           import('./screens/ADMIN/system-overview/system-overview').then(
             (m) => m.SystemOverview,
           ),
       },
-
-      // ==============================
-      // Middle-Office
-      // ==============================
       {
         path: 'middle-office',
+        canActivate: [authGuard],
+        data: { role: 'A', companyType: 'C' },
         loadComponent: () =>
           import('./screens/ADMIN/middle-office/middle-office').then(
             (m) => m.MiddleOffice,
           ),
       },
 
-      // Dashboard
       {
         path: 'dashboard',
         canActivate: [authGuard],
-        data: { role: 'U' },
+        canActivateChild: [authGuard],
+        data: { role: 'U', companyType: 'C' },
         loadComponent: () =>
-          import('./screens/USER/dashboard/dashboard').then((m) => m.Dashboard),
-      },
-
-      // Search Transaction ID
-      {
-        path: 'Search-by-id',
-        loadComponent: () =>
-          import('./screens/USER/search-transaction-id/search-transaction-id').then(
-            (m) => m.SearchTransactionID,
-          ),
-      },
-      // ==============================
-      // EXPORT LC SCREEN
-      // ==============================
-      // {
-      //     path: 'export-screen/inquiries-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records'
-      //         ).then((m) => m.InquiriesOfRecords),
-      // },
-      {
-        path: 'export-screen/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(
-            (m) => m.ExportPreview,
-          ),
-      },
-      {
-        path: 'export-screen/success',
-        loadComponent: () =>
-          import('./shared/success/success').then((m) => m.Success),
-      },
-      // {
-      //     path: 'export-screen/amend',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend')
-      //             .then((m) => m.Amend),
-      // },
-      // {
-      //     path: 'export-screen/approved-inquiry-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-      //         ).then((m) => m.ApprovedInquiryRecords),
-      // },
-      // {
-      //     path: 'export-screen/amend/preview',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/components/preview/preview').then(m => m.PreviewSection),
-      // },
-      {
-        path: 'export-screen/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-            (m) => m.ExportScreen,
-          ),
-      },
-      // {
-      //     path: 'export-screen/amend/:tnxId',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-exportlc-event/amend').then(m => m.Amend),
-      // },
-      {
-        path: 'export-screen',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-            (m) => m.ExportScreen,
-          ),
-      },
-      {
-        path: 'exportlc-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Export LC',
-          description: 'Manage all Export LC activities here.',
-          createRoute: '/export-screen',
-          templateRoute: '/export-screen?mode=template',
-          existingRoute: '/Search-by-id',
-          uploadRoute: '/export-screen?mode=upload',
-        },
-      },
-
-      // ==============================
-      // SHIPPING GUARANTEE
-      // ==============================
-      // {
-      //     path: 'shipping-guarantee/inquiries-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records'
-      //         ).then((m) => m.inquiriesRecords),
-      // },
-      {
-        path: 'shipping-guarantee/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview').then(
-            (m) => m.Preview,
-          ),
-        data: { title: 'Preview Shipping Guarantee' },
-      },
-      {
-        path: 'shipping-guarantee/success',
-        loadComponent: () =>
-          import('./shared/success/success').then((m) => m.Success),
-        data: { title: 'Shipping Guarantee Submitted' },
-      },
-      // {
-      //     path: 'shipping-guarantee/amend',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend')
-      //             .then((m) => m.Amend),
-      // },
-
-      // Import Amend Route
-      // {
-      //     path: 'shipping-guarantee/approved-inquiry-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-      //         ).then((m) => m.ApprovedInquiryRecords),
-      // }
-      // ,
-
-      // {
-      //     path: 'shipping-guarantee/amend/preview',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(m => m.Preview),
-      // }
-      // ,
-
-      // Dynamic TNX ID route
-      {
-        path: 'shipping-guarantee/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
-            (m) => m.ShippingGuarantee,
-          ),
-      },
-
-      // {
-      //     path: 'shipping-guarantee/amend/:tnxId',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(m => m.Amend),
-      // },
-      // Base Shipping Guarantee screen
-      {
-        path: 'shipping-guarantee',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
-            (m) => m.ShippingGuarantee,
-          ),
-        data: { title: 'Shipping Guarantee' },
-      },
-      {
-        path: 'shipping-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Shipping Guarantee',
-          description: 'Manage all Shipping Guarantee activities here.',
-          createRoute: '/shipping-guarantee',
-          templateRoute: '/shipping-guarantee?mode=template',
-          existingRoute: '/shipping-guarantee/inquiries-records',
-          uploadRoute: '/shipping-guarantee?mode=upload',
-        },
-      },
-      // ==============================
-      // EXPORT COLLECTION
-      // ==============================
-      // {
-      //     path: 'export-collection/inquiries-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records'
-      //         ).then((m) => m.inquiriesRecords),
-      // },
-      {
-        path: 'export-collection/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then(
-            (m) => m.Preview,
-          ),
-      },
-      {
-        path: 'export-collection/success',
-        loadComponent: () =>
-          import('./shared/success/success').then((m) => m.Success),
-        data: { title: 'Export Collection Submitted' },
-      },
-      // {
-      //     path: 'export-collection/amend',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend')
-      //             .then((m) => m.Amend),
-      // },
-      // Approved Amend Route
-      // {
-      //     path: 'export-collection/approved-inquiry-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-      //         ).then((m) => m.ApprovedInquiryRecords),
-      // },
-
-      // {
-      //     path: 'export-collection/amend/preview',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(m => m.PreviewSection),
-      // },
-
-      {
-        path: 'export-collection/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-collection/export-collection').then(
-            (m) => m.ExportCollection,
-          ),
-      },
-
-      // {
-      //     path: 'export-collection/amend/:tnxId',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(m => m.Amend),
-      // },
-
-      {
-        path: 'export-collection',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/export-collection/export-collection').then(
-            (m) => m.ExportCollection,
-          ),
-        data: { title: 'Export Collection' },
-      },
-
-      {
-        path: 'export-collection-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Export Collection',
-          description: 'Manage all Export Collection related activities here.',
-          createRoute: '/export-collection',
-          templateRoute: '/export-collection?mode=template',
-          existingRoute: '/export-collection/inquiries-records',
-          uploadRoute: '/export-collection?mode=upload',
-        },
-      },
-      // ==============================
-      // UNDERTAKING ISSUANCE
-      // ==============================
-
-      // {
-      //     path: 'undertaking-issuance/inquiries-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records'
-      //         ).then((m) => m.inquiriesRecords),
-      // },
-      {
-        path: 'undertaking-issuance/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then(
-            (m) => m.Preview,
-          ),
-      },
-      {
-        path: 'undertaking-issuance/success',
-        loadComponent: () =>
-          import('./shared/success/success').then((m) => m.Success),
-      },
-      {
-        path: 'undertaking-issuance/amend',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(
-            (m) => m.AmendScreen,
-          ),
-      },
-      // {
-      //     path: 'undertaking-issuance/approved-inquiry-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-      //         ).then((m) => m.ApprovedInquiryRecords),
-      // },
-      {
-        path: 'undertaking-issuance/amend/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(
-            (m) => m.Preview,
-          ),
-      },
-      {
-        path: 'undertaking-issuance/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then(
-            (m) => m.RequestUndertaking,
-          ),
-      },
-
-      {
-        path: 'undertaking-issuance/amend/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(
-            (m) => m.AmendScreen,
-          ),
-      },
-
-      {
-        path: 'undertaking-issuance',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
-            (m) => m.UndertakingIssuance,
-          ),
-      },
-
-      {
-        path: 'undertaking-issuance/request-undertaking',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/undertaking-issuance/request-undertaking/request-undertaking').then(
-            (m) => m.RequestUndertaking,
-          ),
+          import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
         children: [
-          {
-            path: 'general-details',
-            loadComponent: () =>
-              import('./screens/USER/Trade-Services/undertaking-issuance/components/general-details/general-details').then(
-                (m) => m.generalDetails,
-              ),
-          },
-          {
-            path: 'beneficiary-details',
-            loadComponent: () =>
-              import('./screens/USER/Trade-Services/undertaking-issuance/components/application-beneficiary/application-beneficiary').then(
-                (m) => m.ApplicationBeneficiary,
-              ),
-          },
-          {
-            path: 'bank-details',
-            loadComponent: () =>
-              import('./screens/USER/Trade-Services/undertaking-issuance/components/bank-details/bank-details').then(
-                (m) => m.BankDetails,
-              ),
-          },
-          {
-            path: 'undertaking-details',
-            loadComponent: () =>
-              import('./screens/USER/Trade-Services/undertaking-issuance/components/undertaking-details/undertaking-details').then(
-                (m) => m.UndertakingDetails,
-              ),
-          },
-          {
-            path: 'instruction-bank',
-            loadComponent: () =>
-              import('./screens/USER/Trade-Services/undertaking-issuance/components/instructions-bank/instructions-bank').then(
-                (m) => m.InstructionsBank,
-              ),
-          },
-        ],
-      },
+          // { path: '', redirectTo: 'Trade-Services', pathMatch: 'full' },
 
-      // Submitted-Records Route
-      // {
-      //     path: 'undertaking-issuance/submitted-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/undertaking-issuance/sub-menus/events/submitted-records/submitted-records'
-      //         ).then((m) => m.SubmittedRecordsComponent),
-      // },
-      // Approved-Records Route
-      //             {
-      //     path: 'undertaking-issuance/approved-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/undertaking-issuance/sub-menus/events/appoved-records/appoved-records'
-      //         ).then((m) => m.AppovedRecords),
-      // },
-      {
-        path: 'undertaking-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Undertaking Issuance',
-          description:
-            'Manage all Undertaking Issuance related activities here.',
-          createRoute: '/undertaking-issuance',
-          templateRoute: '/undertaking-issuance?mode=template',
-          existingRoute: '/undertaking-issuance/inquiries-records',
-          uploadRoute: '/undertaking-issuance?mode=upload',
-        },
-      },
+          {
+            path: 'search-by-id',
+            loadComponent: () =>
+              import('./screens/USER/search-transaction-id/search-transaction-id').then(
+                (m) => m.SearchTransactionID,
+              ),
+          },
+
+          // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
+          // Export Collection, Undertaking Issuance ONLY
+          {
+            path: 'Trade-Services',
+            loadComponent: () =>
+              import('./screens/USER/Trade-Services/Trade-Services').then(
+                (m) => m.TradeServices,
+              ),
+            children: [
+              // ---------- EXPORT LC ----------
+              {
+                path: 'export-screen/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/records/inquiries-of-records/inquiries-of-records').then(
+                    (m) => m.InquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'export-screen/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(
+                    (m) => m.ExportPreview,
+                  ),
+              },
+              {
+                path: 'export-screen/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                matcher: transactionIdMatcher,
+
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
+                    (m) => m.ExportScreen,
+                  ),
+              },
+              {
+                path: 'export-screen',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
+                    (m) => m.ExportScreen,
+                  ),
+              },
+              {
+                path: 'exportlc-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Export LC',
+                  description: 'Manage all Export LC activities here.',
+                  createRoute: '/dashboard/Trade-Services/export-screen',
+                  templateRoute:
+                    '/dashboard/Trade-Services/export-screen?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/export-screen/inquiries',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/export-screen?mode=upload',
+                },
+              },
+
+              // ---------- SHIPPING GUARANTEE ----------
+              {
+                path: 'shipping-guarantee/inquiries-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/records/inquiries-records/inquiries-records').then(
+                    (m) => m.inquiriesRecords,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'shipping-guarantee/amend',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/approved-inquiry-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/amend/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
+                    (m) => m.ShippingGuarantee,
+                  ),
+              },
+              {
+                matcher: transactionIdMatcher,
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
+                    (m) => m.ShippingGuarantee,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee/amend/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
+                path: 'shipping-guarantee',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
+                    (m) => m.ShippingGuarantee,
+                  ),
+              },
+              {
+                path: 'shipping-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Shipping Guarantee',
+                  description: 'Manage all Shipping Guarantee activities here.',
+                  createRoute: '/dashboard/Trade-Services/shipping-guarantee',
+                  templateRoute:
+                    '/dashboard/Trade-Services/shipping-guarantee?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/shipping-guarantee?mode=upload',
+                },
+              },
+
+              // ---------- EXPORT COLLECTION ----------
+              {
+                path: 'export-collection/inquiries-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/records/inquiries-of-records/inquiries-records').then(
+                    (m) => m.InquiriesRecords,
+                  ),
+              },
+              {
+                path: 'export-collection/preview',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'export-collection/success',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'export-collection/amend',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
+                path: 'export-collection/approved-inquiry-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'export-collection/amend/preview',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/components/preview/preview').then(
+                    (m) => m.PreviewSection,
+                  ),
+              },
+              {
+                path: 'export-collection/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
+                    (m) => m.ExportCollection,
+                  ),
+              },
+              {
+                matcher: transactionIdMatcher,
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
+                    (m) => m.ExportCollection,
+                  ),
+              },
+              {
+                path: 'export-collection/amend/:tnxId',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/sub-menus/events/amend-export-collection-event/amend').then(
+                    (m) => m.Amend,
+                  ),
+              },
+              {
+                path: 'export-collection',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
+                    (m) => m.ExportCollection,
+                  ),
+              },
+              {
+                path: 'export-collection-welcome',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Export Collection',
+                  description:
+                    'Manage all Export Collection related activities here.',
+                  createRoute: '/dashboard/Trade-Services/export-collection',
+                  templateRoute:
+                    '/dashboard/Trade-Services/export-collection?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/export-collection/inquiries-records',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/export-collection?mode=upload',
+                },
+              },
+
+              // ---------- UNDERTAKING ISSUANCE ----------
+              {
+                path: 'undertaking-issuance/inquiries-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/records/inquiries-of-records/inquiries-records').then(
+                    (m) => m.inquiriesRecords,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/preview',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/success',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'undertaking-issuance/amend',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/approved-inquiry-records',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/amend/preview',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
+                    (m) => m.UndertakingIssuance,
+                  ),
+              },
+              {
+                matcher: transactionIdMatcher,
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
+                    (m) => m.UndertakingIssuance,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance/amend/:tnxId',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/sub-menus/events/amend-undertaking/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'undertaking-issuance',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
+                    (m) => m.UndertakingIssuance,
+                  ),
+              },
+              {
+                path: 'undertaking-welcome',
+                pathMatch: 'full',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Undertaking Issuance',
+                  description:
+                    'Manage all Undertaking Issuance related activities here.',
+                  createRoute: '/dashboard/Trade-Services/undertaking-issuance',
+                  templateRoute:
+                    '/dashboard/Trade-Services/undertaking-issuance?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/undertaking-issuance?mode=upload',
+                },
+              },
 
       // ==============================
       // IMPORT LC

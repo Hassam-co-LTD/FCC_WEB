@@ -1,0 +1,63 @@
+<div class="export-dropdown">
+
+  <button
+    type="button"
+    class="btn-download-report"
+    [disabled]="disabled"
+    (click)="toggleDropdown()"
+  >
+    <mat-icon>download</mat-icon>
+
+    <span>{{ label }}</span>
+
+    <mat-icon class="dropdown-arrow">
+      {{ isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+    </mat-icon>
+  </button>
+
+  <div
+    class="export-menu"
+    *ngIf="isOpen"
+  >
+
+    <button
+      type="button"
+      class="export-option"
+      *ngIf="showExcel"
+      (click)="selectFormat('excel')"
+    >
+      <mat-icon>table_view</mat-icon>
+
+      <div class="export-option-content">
+        <span class="export-option-title">
+          Excel
+        </span>
+
+        <span class="export-option-description">
+          Download as Excel file
+        </span>
+      </div>
+    </button>
+
+    <button
+      type="button"
+      class="export-option"
+      *ngIf="showPdf"
+      (click)="selectFormat('pdf')"
+    >
+      <mat-icon>picture_as_pdf</mat-icon>
+
+      <div class="export-option-content">
+        <span class="export-option-title">
+          PDF
+        </span>
+
+        <span class="export-option-description">
+          Download as PDF file
+        </span>
+      </div>
+    </button>
+
+  </div>
+
+</div>

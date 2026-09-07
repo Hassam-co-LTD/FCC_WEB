@@ -51,7 +51,7 @@ import { DynamicFields } from '../../../../core/services/admin-service/dynamic-f
     MatDialogModule,
     Sidebar,
     RouterOutlet,
-    DynamicFields
+    DynamicFields,
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss'],
@@ -357,21 +357,19 @@ export class ImportScreen implements OnInit {
       );
       return;
     }
-    // my dynamic fields code start here 
+    // my dynamic fields code start here
     const formValues = this.dynamicFieldsForm.value;
     const dynamicFields = this.fields.map((f: any) => ({
       fieldId: f.fieldId,
       value: formValues[f.fieldName],
-  
     }));
-
 
     // Flatten nested form groups into single object
     const payload = {
       ...this.flattenForm(),
       dynamicFields: dynamicFields, // Include dynamic fields in the payload
     };
-    // ends here 
+    // ends here
     console.log('Payload before saving draft:', payload);
 
     this.api.savePending(payload).subscribe({
@@ -551,7 +549,6 @@ export class ImportScreen implements OnInit {
   //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
   //   });
   // }
-
 
   private navigateBack(tab: string) {
     this.router.navigate(['/import-screen/inquiries'], {

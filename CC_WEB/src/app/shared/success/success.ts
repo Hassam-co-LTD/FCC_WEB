@@ -39,23 +39,28 @@ export class Success implements OnInit {
     switch (state.source) {
 
       case 'IMPORT_LC':
-        this.listingRoute = 'import-screen/inquiries';
-        this.createRoute = 'import-screen';
+        this.listingRoute = '/dashboard/Trade-Services/import-screen/inquiries';
+        this.createRoute = '/dashboard/Trade-Services/import-screen';
         break;
 
       case 'UNDERTAKING_ISSUANCE':
-        this.listingRoute = 'undertaking-issuance/inquiries-records';
-        this.createRoute = 'undertaking-issuance/request-undertaking/general-details';
+        this.listingRoute = '/dashboard/Trade-Services/undertaking-issuance/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/undertaking-issuance';
         break;
 
       case 'SHIPPING_GUARANTEE':
-        this.listingRoute = 'shipping-guarantee/inquiries-records';
-        this.createRoute = 'shipping-guarantee';
+        this.listingRoute = '/dashboard/Trade-Services/shipping-guarantee/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/shipping-guarantee';
         break;
 
       case 'EXPORT_COLLECTION':
-        this.listingRoute = 'export-collection/inquiries-records';
-        this.createRoute = 'export-collection';
+        this.listingRoute = '/dashboard/Trade-Services/export-collection/inquiries-records';
+        this.createRoute = '/dashboard/Trade-Services/export-collection';
+        break;
+
+      case 'EXPORT_LC':
+        this.listingRoute = '/dashboard/Trade-Services/export-screen/inquiries-of-records';
+        this.createRoute = '/dashboard/Trade-Services/export-screen';
         break;
 
       default:
