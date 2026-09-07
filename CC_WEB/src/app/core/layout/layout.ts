@@ -781,6 +781,53 @@ export class LayoutComponent implements OnInit {
       console.log('Final Menu Items:', this.menuItems);
     }
   }
+
+  // Generate Dynamic Fields
+  //       {
+  // label: 'Generate Fields',
+  // icon: 'dynamic_form',
+  // open: false,
+  // children: [
+
+  //   // -------------------------
+  //   // DYNAMIC FIELDS
+  //   // -------------------------
+  //   {
+  //     label: 'Dynamic Fields',
+  //     route: '/dynamic-fields',
+  //     open: false,
+  //     children: [
+  //       {
+  //         label: 'Create',
+  //         route: '/dynamic-fields/create'
+  //       },
+  //       {
+  //         label: 'Inquiries',
+  //         route: '/dynamic-fields/inquiries'
+  //       }
+  //     ]
+  //   },
+
+  //   // -------------------------
+  //   // DYNAMIC OPTIONS
+  //   // -------------------------
+  //   {
+  //     label: 'Dynamic Options',
+  //     route: '/dynamic-options',
+  //     open: false,
+  //     children: [
+  //       {
+  //         label: 'Create',
+  //         route: '/dynamic-dropdowns/create'
+  //       },
+  //       {
+  //         label: 'Inquiries',
+  //         route: '/dynamic-dropdowns-inque/inquiries'
+  //       }
+  //     ]
+  //   }
+
+  // ]
   // Ameen function
   onCustomerClick(item: MenuItem) {
     const currentUrl = this.router.url;

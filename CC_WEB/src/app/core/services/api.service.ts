@@ -8,7 +8,11 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
-import { TransferDTO, RecordsListTransferDTO, AccountsMaster } from '../models/my-accounts';
+import {
+  TransferDTO,
+  RecordsListTransferDTO,
+  AccountsMaster,
+} from '../models/my-accounts';
 import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
@@ -377,7 +381,7 @@ export class ApiService {
   updateRejectedAmendmentTransaction(
     eventRefNo: string,
     payload: ImportLcTransaction,
-  ){
+  ) {
     return this.http
       .put<ImportLcTransaction>(
         `${this.baseeventUrl}/amend/updateRejected/${eventRefNo}`,
@@ -1446,19 +1450,6 @@ export class ApiService {
     return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`, data);
   }
   // set transaction status by id
-  setTnxByStatus(status: string, id: number | string, name: string) {
-    console.log('Setting status:', status, 'for ID:', id, 'on', name);
-  }
-  // update transaction
-  updateTnx(data: any, name: String, id?: Number) {
-    console.log('the id ', id);
-    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`, data);
-  }
-  updateTnxByRoleId(data: any, name: String, id: String) {
-    console.log('the id ', id);
-    return this.http.put<any>(`${this.adminBaseUrl}${name}/update/${id}`, data);
-  }
-  // set transaction status by id
   setTnxByStatus(
     payload: {
       recordStatus?: string;
@@ -1619,11 +1610,6 @@ export class ApiService {
       },
     );
   }
-        refreshToken,
-      },
-    );
-  }
-
   getRejectedTransaction(custId: string, module: string) {
     return this.http.get<any>(
       `${environment.gatewayUrl}/api/v1/${module}/${custId}/rejected-history`,

@@ -599,7 +599,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -620,8 +620,6 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ExportCollectionTransaction } from '../../../../core/models/export-collection';
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
-import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
-import { CommonModule } from '@angular/common';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-export-collection',

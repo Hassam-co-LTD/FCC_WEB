@@ -346,13 +346,13 @@ export const routes: Routes = [
               ),
           },
 
-{
-  path: 'edit-permission-group/:id',
-  loadComponent: () =>
-    import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group')
-      .then(m => m.CreatePermissionGroup)
-},
-
+          {
+            path: 'edit-permission-group/:id',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/create-permission-group/permissions-group').then(
+                (m) => m.CreatePermissionGroup,
+              ),
+          },
 
           {
             path: 'permission-group-inquiry',
@@ -783,252 +783,243 @@ export const routes: Routes = [
                 },
               },
 
-      // ==============================
-      // IMPORT LC
-      // ==============================
+              // ==============================
+              // IMPORT LC
+              // ==============================
 
-      // Static routes first
-      {
-        path: 'import-screen/inquiries',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(
-            (m) => m.EnquiriesOfRecords,
-          ),
-      },
-      {
-        path: 'import-screen/preview',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(
-            (m) => m.Preview,
-          ),
-      },
-      {
-        path: 'import-screen/success',
-        loadComponent: () =>
-          import('./shared/success/success').then((m) => m.Success),
-      },
-      // {
-      //     path: 'import-screen/amend',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-      // },
+              // Static routes first
+              {
+                path: 'import-screen/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/sub-menus/records/enquiries-of-records/enquiries-of-records').then(
+                    (m) => m.EnquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'import-screen/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'import-screen/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'import-screen/amend',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
 
-      // // Import Amend Route
-      // {
-      //     path: 'import-screen/approved-inquiry-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records'
-      //         ).then((m) => m.ApprovedInquiryRecords),
-      // },
+              // Import Amend Route
+              {
+                path: 'import-screen/approved-inquiry-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
 
-      // {
-      //     path: 'import-screen/amend/preview',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(m => m.Preview),
-      // },
+              {
+                path: 'import-screen/amend/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
 
-      // Dynamic TNX ID route
-      {
-        path: 'import-screen/:tnxId',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/import-screen/import-screen').then(
-            (m) => m.ImportScreen,
-          ),
-      },
+              // Dynamic TNX ID route
+              {
+                path: 'import-screen/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/import-screen').then(
+                    (m) => m.ImportScreen,
+                  ),
+              },
 
-      // {
-      //     path: 'import-screen/amend/:tnxId',
-      //     loadComponent: () =>
-      //         import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(m => m.AmendScreen),
-      // },
+              {
+                path: 'import-screen/amend/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/sub-menus/events/amend-import-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
 
-      // Base import screen
-      {
-        path: 'import-screen',
-        loadComponent: () =>
-          import('./screens/USER/Trade-Services/import-screen/import-screen').then(
-            (m) => m.ImportScreen,
-          ),
-      },
-      {
-        path: 'import-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Import LC',
-          description: 'Manage all Import LC related activities here.',
-          createRoute: '/import-screen',
-          templateRoute: '/import-screen?mode=template',
-          existingRoute: '/import-screen/inquiries',
-          uploadRoute: '/import-screen?mode=upload',
-        },
-      },
+              // Base import screen
+              {
+                path: 'import-screen',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-screen/import-screen').then(
+                    (m) => m.ImportScreen,
+                  ),
+              },
+              {
+                path: 'import-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Import LC',
+                  description: 'Manage all Import LC related activities here.',
+                  createRoute: '/import-screen',
+                  templateRoute: '/import-screen?mode=template',
+                  existingRoute: '/import-screen/inquiries',
+                  uploadRoute: '/import-screen?mode=upload',
+                },
+              },
+            ],
+          },
 
-      // Import submitted-Records Route
-
-      // Import approved-Records Route
-      // {
-      //     path: 'import-screen/approved-records',
-      //     loadComponent: () =>
-      //         import(
-      //             './screens/USER/import-screen/sub-menus/records/approved-records/approved-records'
-      //         ).then((m) => m.ApprovedRecords),
-      // },
-
-      // Add this to your routes array after other USER services (after import-welcome route)
-
-      // ==============================
-      // PAYMENT SERVICES - MY ACCOUNTS
-      // ==============================
-      {
-        path: 'my-accounts',
-        children: [
+          // PAYMENT SERVICES — sibling of Trade Services, not nested inside it
           {
-            path: '', // The main form (Create mode)
-            loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
-                (m) => m.MyAccountsComponent,
-              ),
+            path: 'my-accounts',
+            children: [
+              {
+                path: '', // The main form (Create mode)
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
+                    (m) => m.MyAccountsComponent,
+                  ),
+              },
+              {
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
+                    (m) => m.MyAccountsComponent,
+                  ),
+              },
+              {
+                path: 'general-details',
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(
+                    (m) => m.GeneralDetails,
+                  ),
+              },
+            ],
           },
           {
-            path: 'transfer/:tnxId', // The main form (Edit/View mode)
+            path: 'IBFT',
+            children: [
+              {
+                path: '', // The main form (Create mode)
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
+                    (m) => m.IBFT,
+                  ),
+              },
+              {
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
+                    (m) => m.IBFT,
+                  ),
+              },
+              {
+                path: 'general-details',
+                loadComponent: () =>
+                  import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(
+                    (m) => m.GeneralDetails,
+                  ),
+              },
+            ],
+          },
+          // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
+          // Base fund-transfer screen
+          {
+            path: 'fund-transfer-welcome',
             loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
-                (m) => m.MyAccountsComponent,
+              import('./shared/welcome-screen/welcome-screen').then(
+                (m) => m.WelcomeScreen,
+              ),
+            data: {
+              title: 'Welcome to Fund Transfer',
+              description: 'Manage all activities related FUND TRANSFER here.',
+            },
+          },
+          // fund-transfer with-in-bank (3rd party) Route
+          {
+            path: 'fund-transfer/with-in',
+            loadComponent: () =>
+              import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then(
+                (m) => m.ThirdPartyTransfer,
               ),
           },
+          // fund-transfer IBFT Route
           {
-            path: 'general-details',
+            path: 'fund-transfer/ibft',
             loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/components/general-details/general-details').then(
-                (m) => m.GeneralDetails,
+              import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then(
+                (m) => m.ThirdPartyTransfer,
+              ),
+          },
+          // Import Fund-Records Route
+          {
+            path: 'fund-transfer/fund-transfer-records',
+            loadComponent: () =>
+              import('./screens/USER/Payment-Services/FundTransfer/sub-menus/records/inquiry-of-fundtransfer-records/inquiry-of-fundtransfer-records').then(
+                (m) => m.InquiryOfFundtransferRecords,
               ),
           },
         ],
       },
-
-      // ==============================
-      // PAYMENT SERVICES - IBFT
-      // ==============================
-      {
-        path: 'IBFT',
-        children: [
-          {
-            path: '', // The main form (Create mode)
-            loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
-                (m) => m.IBFT,
-              ),
-          },
-          {
-            path: 'transfer/:tnxId', // The main form (Edit/View mode)
-            loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
-                (m) => m.IBFT,
-              ),
-          },
-          {
-            path: 'general-details',
-            loadComponent: () =>
-              import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/general-details/general-details').then(
-                (m) => m.GeneralDetails,
-              ),
-          },
-        ],
-      },
-
-      // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
-      // Base fund-transfer screen
-      {
-        path: 'fund-transfer-welcome',
-        loadComponent: () =>
-          import('./shared/welcome-screen/welcome-screen').then(
-            (m) => m.WelcomeScreen,
-          ),
-        data: {
-          title: 'Welcome to Fund Transfer',
-          description: 'Manage all activities related FUND TRANSFER here.',
-        },
-      },
-
-      // fund-transfer with-in-bank (3rd party) Route
-      {
-        path: 'fund-transfer/with-in',
-        loadComponent: () =>
-          import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then(
-            (m) => m.ThirdPartyTransfer,
-          ),
-      },
-      // fund-transfer IBFT Route
-      {
-        path: 'fund-transfer/ibft',
-        loadComponent: () =>
-          import('./screens/USER/Payment-Services/FundTransfer/third-party-transfer/third-party-transfer').then(
-            (m) => m.ThirdPartyTransfer,
-          ),
-      },
-      // Import Fund-Records Route
-      {
-        path: 'fund-transfer/fund-transfer-records',
-        loadComponent: () =>
-          import('./screens/USER/Payment-Services/FundTransfer/sub-menus/records/inquiry-of-fundtransfer-records/inquiry-of-fundtransfer-records').then(
-            (m) => m.InquiryOfFundtransferRecords,
-          ),
-      },
-
       // User side Generate Fields Routes
-
-      {
-        path: 'dynamic-fields/create',
-        loadComponent: () =>
-          import('./screens/USER/create-generate-fields/create-generate-fields').then(
-            (m) => m.CreateGenerateFields,
-          ),
-      },
-      {
-        path: 'dynamic-fields/inquiries',
-        loadComponent: () =>
-          import('./screens/USER/create-generate-fields/list-generate-fields/list-generate-fields').then(
-            (m) => m.ListGenerateFields,
-          ),
-      },
-      {
-        path: 'dynamic-fields/:id',
-        loadComponent: () =>
-          import('./screens/USER/create-generate-fields/create-generate-fields').then(
-            (m) => m.CreateGenerateFields,
-          ),
-      },
-      {
-        path: 'dynamic-dropdowns/create',
-        loadComponent: () =>
-          import('./screens/USER/create-generate-fields/create-dropDown-option/create-dropDown-option').then(
-            (m) => m.CreateDynamicFieldOptions,
-          ),
-      },
-      {
-        path: 'dynamic-dropdowns-inque/inquiries',
-        loadComponent: () =>
-          import('./screens/USER/create-generate-fields/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then(
-            (m) => m.DynamicDropdownOptionInquiry,
-          ),
-      },
-      {
-        path: 'dynamic-dropdowns/create/:id',
-        loadComponent: () =>
-          import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then(
-            (m) => m.CreateDynamicFieldOptions,
-          ),
-      },
+      // {
+      //   path: 'dynamic-fields/create',
+      //   loadComponent: () =>
+      //     import('./screens/USER/create-generate-fields/create-generate-fields').then(
+      //       (m) => m.CreateGenerateFields,
+      //     ),
+      // },
+      // {
+      //   path: 'dynamic-fields/inquiries',
+      //   loadComponent: () =>
+      //     import('./screens/USER/create-generate-fields/list-generate-fields/list-generate-fields').then(
+      //       (m) => m.ListGenerateFields,
+      //     ),
+      // },
+      // {
+      //   path: 'dynamic-fields/:id',
+      //   loadComponent: () =>
+      //     import('./screens/USER/create-generate-fields/create-generate-fields').then(
+      //       (m) => m.CreateGenerateFields,
+      //     ),
+      // },
+      // {
+      //   path: 'dynamic-dropdowns/create',
+      //   loadComponent: () =>
+      //     import('./screens/USER/create-generate-fields/create-dropDown-option/create-dropDown-option').then(
+      //       (m) => m.CreateDynamicFieldOptions,
+      //     ),
+      // },
+      // {
+      //   path: 'dynamic-dropdowns-inque/inquiries',
+      //   loadComponent: () =>
+      //     import('./screens/USER/create-generate-fields/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then(
+      //       (m) => m.DynamicDropdownOptionInquiry,
+      //     ),
+      // },
+      // {
+      //   path: 'dynamic-dropdowns/create/:id',
+      //   loadComponent: () =>
+      //     import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then(
+      //       (m) => m.CreateDynamicFieldOptions,
+      //     ),
+      // },
 
       // Default child redirect
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
-
-  // Wildcard redirect
-  { path: '**', redirectTo: 'login' },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./screens/AUTH/page-not-found/page-not-found').then(
+        (m) => m.PageNotFound,
+      ),
+  },
 ];
