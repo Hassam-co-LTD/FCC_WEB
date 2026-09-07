@@ -436,10 +436,8 @@ export const routes: Routes = [
               ),
           },
 
-          // ==============================
           // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
           // Export Collection, Undertaking Issuance ONLY
-          // ==============================
           {
             path: 'Trade-Services',
             loadComponent: () =>
@@ -874,10 +872,7 @@ export const routes: Routes = [
               },
             ],
           },
-
-          // ==============================
           // PAYMENT SERVICES — sibling of Trade Services, not nested inside it
-          // ==============================
           {
             path: 'my-accounts',
             children: [
