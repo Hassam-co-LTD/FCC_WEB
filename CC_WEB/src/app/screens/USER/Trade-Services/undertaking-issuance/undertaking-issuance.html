@@ -4,17 +4,31 @@
       <h1>Undertaking Issued</h1>
       <p class="subtitle">Manage all undertaking transactions</p>
     </div>
-    
+
     <div class="ui-actions">
       <button class="btn-outline" matTooltip="View templates">
         <mat-icon>description</mat-icon>
         Templates
       </button>
-      <button class="btn-primary" [routerLink]="['/undertaking-issuance/request-undertaking/general-details']">
+      <button
+        class="btn-primary"
+        [routerLink]="['/undertaking-issuance/request-undertaking/general-details']"
+      >
         <mat-icon>add_circle</mat-icon>
         Request Undertaking
       </button>
     </div>
+
+    <!-- Dynamic Fields -->
+
+    <ng-container *ngIf="fields?.length">
+      <app-dynamic-fields
+        [form]="dynamicFieldsForm"
+        [fields]="fields"
+        [isOpen]="isDynamicFieldsOpen"
+      >
+      </app-dynamic-fields>
+    </ng-container>
   </div>
 
   <!-- <div class="search-system">
@@ -174,3 +188,4 @@
     </div>
   </div>
 </div> -->
+</div>

@@ -1,5 +1,11 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -19,20 +25,19 @@ import { SharedService } from '../../../../core/services/user-service/shared-for
     Upload,
     Attachments,
     Sidebar,
-    RouterOutlet
-],
+    RouterOutlet,
+  ],
   templateUrl: './export-screen.html',
-  styleUrls: ['./export-screen.scss']
+  styleUrls: ['./export-screen.scss'],
 })
 export class ExportScreen implements AfterViewInit {
-
   currentStep = 0;
   isPreviewRoute = false;
 
   exportlcSteps = [
     { label: 'General Details' },
     { label: 'Upload MT700/MT701' },
-    { label: 'Attachments' }
+    { label: 'Attachments' },
   ];
 
   exportLCForm!: FormGroup;
@@ -42,26 +47,28 @@ export class ExportScreen implements AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private sharedService: SharedService
+    private sharedService: SharedService,
   ) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
         customerRef: [''],
         advisingBank: ['', Validators.required],
-        issuerRef: ['', Validators.required]
+        issuerRef: ['', Validators.required],
       }),
 
       appUpload: this.fb.group({
-        file: [null]
+        file: [null],
       }),
 
-      attachments: this.fb.array([])
+      attachments: this.fb.array([]),
     });
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.isPreviewRoute = event.urlAfterRedirects.includes('/export-screen/preview');
+        this.isPreviewRoute = event.urlAfterRedirects.includes(
+          '/export-screen/preview',
+        );
       });
   }
 
@@ -87,13 +94,13 @@ export class ExportScreen implements AfterViewInit {
     this.attachmentsArray.clear();
     const previewFiles: any[] = [];
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const fg = this.fb.group({
         title: file.name.replace(/\.[^/.]+$/, ''),
         fileName: file.name,
         size: file.size,
         type: file.type,
-        file
+        file,
       });
       this.attachmentsArray.push(fg);
       previewFiles.push(fg.value);
@@ -104,8 +111,8 @@ export class ExportScreen implements AfterViewInit {
       ...data,
       attachments: {
         preview: previewFiles,
-        files // actual File[] for download
-      }
+        files, // actual File[] for download
+      },
     });
   }
 
@@ -120,20 +127,20 @@ export class ExportScreen implements AfterViewInit {
     }
 
     const attachmentFiles = this.attachmentsComponent?.files || [];
-    const attachmentsPreview = attachmentFiles.map(file => ({
+    const attachmentsPreview = attachmentFiles.map((file) => ({
       title: file.name.replace(/\.[^/.]+$/, ''),
       fileName: file.name,
       size: file.size,
       type: file.type,
-      file
+      file,
     }));
 
     const fullFormData = {
       ...this.exportLCForm.value,
       attachments: {
         preview: attachmentsPreview,
-        files: attachmentFiles
-      }
+        files: attachmentFiles,
+      },
     };
 
     this.sharedService.setFormData(fullFormData);
@@ -148,16 +155,18 @@ export class ExportScreen implements AfterViewInit {
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
+        (entries) => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
             }
           });
         },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-      sections.forEach(section => observer.observe(section));
+      sections.forEach((section) => observer.observe(section));
     }, 200);
   }
 

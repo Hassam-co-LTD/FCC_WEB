@@ -47,3 +47,7 @@ Thumbs.db
 # /src/app/screens/USER/
 # /src/app/screens/AUTH/
 
+
+
+# create-generate-fields
+/src/app/screens/USER/create-generate-fields/
