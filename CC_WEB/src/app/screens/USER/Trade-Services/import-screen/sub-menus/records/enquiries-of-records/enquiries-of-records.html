@@ -53,20 +53,13 @@
   </div>
 </div>
 
-
 <div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
-  <button
-    class="btn-load-records"
-    type="button"
-    (click)="loadTransactions()"
-  >
+  <button class="btn-load-records" type="button" (click)="loadTransactions()">
     <mat-icon>cloud_download</mat-icon>
     Load {{ activeTab | titlecase }} Records
   </button>
 
-  <span>
-    Click to retrieve the latest {{ activeTab }} Import LC records
-  </span>
+  <span> Click to retrieve the latest {{ activeTab }} Import LC records </span>
 </div>
 
 <div class="filter-row">
@@ -84,28 +77,21 @@
 </div>
 
 <div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
-  <div
-  class="on-demand-empty"
-  *ngIf="!hasLoadedData && !isLoading"
->
-  <mat-icon>database</mat-icon>
+  <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">
+    <mat-icon>database</mat-icon>
 
-  <h3>Records not loaded</h3>
+    <h3>Records not loaded</h3>
 
-  <p>
-    Click the button below to retrieve
-    {{ activeTab | titlecase }} Import LC records.
-  </p>
+    <p>
+      Click the button below to retrieve {{ activeTab | titlecase }} Import LC
+      records.
+    </p>
 
-  <button
-    class="btn-load-records"
-    type="button"
-    (click)="loadTransactions()"
-  >
-    <mat-icon>cloud_download</mat-icon>
-    Load Records
-  </button>
-</div>
+    <button class="btn-load-records" type="button" (click)="loadTransactions()">
+      <mat-icon>cloud_download</mat-icon>
+      Load Records
+    </button>
+  </div>
   <!-- ================= LOADING OVERLAY ================= -->
   <div class="table-loading-overlay" *ngIf="isLoading">
     <div class="loader-content">

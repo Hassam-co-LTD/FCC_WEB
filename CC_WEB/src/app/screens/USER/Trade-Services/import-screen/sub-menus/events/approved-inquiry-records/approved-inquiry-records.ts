@@ -7,7 +7,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { ExportDropdown, ExportFormat } from '../../../../../../../shared/export-dropdown/export-dropdown';
+import {
+  ExportDropdown,
+  ExportFormat,
+} from '../../../../../../../shared/export-dropdown/export-dropdown';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
