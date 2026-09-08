@@ -21,16 +21,11 @@ import { MatRadioModule } from "@angular/material/radio";
   templateUrl: './general-details.html',
   styleUrls: ['./general-details.scss']
 })
-export class generalDetails implements OnInit {
+export class generalDetails{
   
   @Input() form!: FormGroup;
-  // @Output() filesChange = new EventEmitter<File[]>();
+  preview: any = {};
   isOpen = true;
-
-  ngOnInit(): void {
-    // Do NOT recreate form here
-  }
-
   toggle() {
     this.isOpen = !this.isOpen;
   }

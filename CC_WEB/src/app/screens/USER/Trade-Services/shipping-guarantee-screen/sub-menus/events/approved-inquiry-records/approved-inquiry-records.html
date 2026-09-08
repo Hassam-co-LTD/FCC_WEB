@@ -1,668 +1,189 @@
-<!-- ========================================================= -->
-<!-- PAGE HEADER                                               -->
-<!-- ========================================================= -->
-
-<div
-    class="page-header"
-    *ngIf="canInquiry"
->
-
-    <div class="title">
-
-        <h2>
-            {{ activeTab | titlecase }}
-            Shipping Records
-        </h2>
-
-        <p>
-            Manage and track all Shipping
-            {{ activeTab }}
-            transactions
-        </p>
-
-    </div>
-
+<!-- ================= HEADER ================= -->
+<div class="page-header">
+  <div class="title">
+    <h2>{{ activeTab | titlecase }} Shipping Records</h2>
+    <p>Manage and track all Shipping {{ activeTab }} transactions</p>
+  </div>
 </div>
 
+<!-- ================= SEARCH ================= -->
+<div class="search-system">
+  <div class="search-input-group">
+    <input
+      type="text"
+      placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
+      [(ngModel)]="searchQuery"
+      (input)="applyFilters()"
+    />
 
+    <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
 
-<!-- ========================================================= -->
-<!-- NO INQUIRY PERMISSION                                     -->
-<!-- ========================================================= -->
+  <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+    <mat-icon>tune</mat-icon> Advanced
+  </button>
+</div>
 
-<div
-    class="no-permission-page"
-    *ngIf="!canInquiry"
->
+<!-- ================= ADVANCED SEARCH ================= -->
+<div class="advanced-search" *ngIf="showAdvanced">
+  <!-- <div class="field">
+        <label>Status</label>
+        <select [(ngModel)]="activeTab" (change)="applyFilters()">
+            <option *ngFor="let tab of tabs" [value]="tab.key">{{ tab.label }}</option>
+        </select>
+    </div> -->
 
-    <h2>
-        No Access
-    </h2>
+  <div class="field">
+    <label>Currency</label>
+    <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+  </div>
+</div>
+
+<!-- ================= TABS ================= -->
+<div class="ui-tabs">
+  <div
+    class="tab"
+    *ngFor="let tab of tabs"
+    [class.active]="activeTab === tab.key"
+    (click)="setActiveTab(tab.key)"
+  >
+    {{ tab.label }}
+  </div>
+</div>
+
+<div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
+  <button
+    class="btn-load-records"
+    type="button"
+    (click)="loadApprovedTransactions()"
+  >
+    <mat-icon>cloud_download</mat-icon>
+    Load {{ activeTab | titlecase }} Records
+  </button>
+
+  <span> Click to retrieve the latest {{ activeTab }} Shipping records </span>
+</div>
+
+<div class="filter-row">
+  <div class="results-summary">
+    Showing <strong>{{ pagedTransactions.length }}</strong> of
+    <strong>{{ filteredTransactions.length }}</strong>
+    {{ activeTab }} records
+  </div>
+  <app-export-dropdown
+    [disabled]="filteredTransactions.length === 0"
+    (exportSelected)="onExportSelected($event)"
+  >
+  </app-export-dropdown>
+</div>
+
+<div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
+  <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">
+    <mat-icon>database</mat-icon>
+
+    <h3>Records not loaded</h3>
 
     <p>
-        You do not have permission to view
-        Shipping Guarantee inquiry records.
+      Click the button below to retrieve {{ activeTab | titlecase }} Shipping records.
     </p>
 
-</div>
-
-
-
-<!-- ========================================================= -->
-<!-- MAIN CONTENT                                              -->
-<!-- ========================================================= -->
-
-<div
-    class="shipping-inquiry-content"
-    *ngIf="canInquiry"
->
-
-
-    <!-- ===================================================== -->
-    <!-- SEARCH                                                -->
-    <!-- ===================================================== -->
-
-    <div class="search-system">
-
-        <div class="search-input-group">
-
-            <input
-                type="text"
-                placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
-                [(ngModel)]="searchQuery"
-                (input)="applyFilters()"
-            />
-
-
-            <!-- ============================================= -->
-            <!-- CLEAR SEARCH                                  -->
-            <!-- ============================================= -->
-
-            <button
-                *ngIf="searchQuery"
-                class="clear-btn"
-                type="button"
-                (click)="clearSearch()"
-            >
-
-                <mat-icon>
-                    clear
-                </mat-icon>
-
-            </button>
-
-        </div>
-
-
-
-        <!-- ================================================= -->
-        <!-- ADVANCED SEARCH                                   -->
-        <!-- ================================================= -->
-
-        <button
-            class="advanced-toggle"
-            type="button"
-            (click)="showAdvanced = !showAdvanced"
-        >
-
-            <mat-icon>
-                tune
-            </mat-icon>
-
-            Advanced
-
-        </button>
-
-    </div>
-
-
-
-    <!-- ===================================================== -->
-    <!-- ADVANCED SEARCH                                      -->
-    <!-- ===================================================== -->
-
-    <div
-        class="advanced-search"
-        *ngIf="showAdvanced"
+    <button
+      class="btn-load-records"
+      type="button"
+      (click)="loadApprovedTransactions()"
     >
-
-        <div class="field">
-
-            <label>
-                Currency
-            </label>
-
-            <input
-                type="text"
-                [(ngModel)]="currencyFilter"
-                (input)="applyFilters()"
-            />
-
-        </div>
-
+      <mat-icon>cloud_download</mat-icon>
+      Load Records
+    </button>
+  </div>
+  <!-- ================= LOADING OVERLAY ================= -->
+  <div class="table-loading-overlay" *ngIf="isLoading">
+    <div class="loader-content">
+      <div class="loader-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <div class="loader-text">
+        <span>Loading records</span>
+        <span class="loader-dots"> <i></i> <i></i> <i></i> </span>
+      </div>
+      <small> Please wait while we retrieve the latest transactions </small>
     </div>
-
-
-
-    <!-- ===================================================== -->
-    <!-- TABS                                                 -->
-    <!-- ===================================================== -->
-
-    <div class="ui-tabs">
-
-        <div
-            class="tab"
-            *ngFor="let tab of tabs"
-            [class.active]="activeTab === tab.key"
-            (click)="setActiveTab(tab.key)"
-        >
-
-            {{ tab.label }}
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ===================================================== -->
-    <!-- RESULTS SUMMARY                                      -->
-    <!-- ===================================================== -->
-
-    <div class="filter-row">
-
-        <div class="results-summary">
-
-            Showing
-
-            <strong>
-                {{ pagedTransactions.length }}
-            </strong>
-
-            of
-
-            <strong>
-                {{ filteredTransactions.length }}
-            </strong>
-
-            {{ activeTab }}
-            records
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ===================================================== -->
-    <!-- TABLE                                                -->
-    <!-- ===================================================== -->
-
-    <div class="table-wrapper">
-
-        <table>
-
-
-            <!-- ================================================= -->
-            <!-- TABLE HEADER                                      -->
-            <!-- ================================================= -->
-
-            <thead>
-
-                <tr>
-
-
-                    <!-- ========================================= -->
-                    <!-- TNX ID                                    -->
-                    <!-- ========================================= -->
-
-                    <th
-                        (click)="toggleSort('tnxId')"
-                    >
-
-                        TNX ID
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT                                     -->
-                    <!-- ========================================= -->
-
-                    <th
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        Event
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT REF NO                              -->
-                    <!-- ========================================= -->
-
-                    <th
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        Event Ref No
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT SEQUENCE                            -->
-                    <!-- ========================================= -->
-
-                    <th
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        Event Sequence
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- CREATED                                   -->
-                    <!-- ========================================= -->
-
-                    <th
-                        (click)="toggleSort('createdOn')"
-                    >
-
-                        Created
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- ISSUER REFERENCE                          -->
-                    <!-- ========================================= -->
-
-                    <th>
-
-                        Issuer Reference
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- AMOUNT                                    -->
-                    <!-- ========================================= -->
-
-                    <th>
-
-                        Amount
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EXPIRY DATE                               -->
-                    <!-- ========================================= -->
-
-                    <th>
-
-                        Expiry Date
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- CUSTOMER REFERENCE                        -->
-                    <!-- ========================================= -->
-
-                    <th>
-
-                        Customer Reference
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- BILL OF LADING                            -->
-                    <!-- ========================================= -->
-
-                    <th>
-
-                        Bill Of Lading
-
-                    </th>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- ACTION                                    -->
-                    <!-- ========================================= -->
-
-                    <th class="sticky-action">
-
-                        Action
-
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-
-            <!-- ================================================= -->
-            <!-- TABLE BODY                                       -->
-            <!-- ================================================= -->
-
-            <tbody>
-
-
-                <!-- ============================================= -->
-                <!-- TRANSACTION ROW                               -->
-                <!-- ============================================= -->
-
-                <tr
-                    *ngFor="
-                        let tx of pagedTransactions;
-                        trackBy: trackByTnxId
-                    "
-                >
-
-
-                    <!-- ========================================= -->
-                    <!-- TNX ID                                    -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-
-                        <!-- ===================================== -->
-                        <!-- AMEND PERMISSION                      -->
-                        <!-- ===================================== -->
-
-                        <a
-                            *ngIf="canAmend"
-                            class="tnx-link"
-                            href="javascript:void(0)"
-                            (click)="openApprovedAmendTransactionSG(tx)"
-                        >
-
-                            {{ tx.tnxId }}
-
-                        </a>
-
-
-
-                        <!-- ===================================== -->
-                        <!-- NO AMEND PERMISSION                  -->
-                        <!-- ===================================== -->
-
-                        <span
-                            *ngIf="!canAmend"
-                        >
-
-                            {{ tx.tnxId }}
-
-                        </span>
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT                                     -->
-                    <!-- ========================================= -->
-
-                    <td
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        {{ tx.eventType }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT REF NO                              -->
-                    <!-- ========================================= -->
-
-                    <td
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        {{ tx.eventRefNo }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EVENT SEQUENCE                            -->
-                    <!-- ========================================= -->
-
-                    <td
-                        *ngIf="activeTab !== 'live'"
-                    >
-
-                        {{ tx.eventSequence }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- CREATED                                   -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.createdOn | date:'yyyy-MM-dd' }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- ISSUER REFERENCE                          -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.issuerReference }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- AMOUNT                                    -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.amount }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- EXPIRY DATE                               -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.expiryDate }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- CUSTOMER REFERENCE                        -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.customerReference }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- BILL OF LADING                            -->
-                    <!-- ========================================= -->
-
-                    <td>
-
-                        {{ tx.billoflading }}
-
-                    </td>
-
-
-
-                    <!-- ========================================= -->
-                    <!-- ACTION                                    -->
-                    <!-- ========================================= -->
-
-                    <td class="sticky-action">
-
-
-                        <!-- ===================================== -->
-                        <!-- INQUIRY PERMISSION                     -->
-                        <!-- ===================================== -->
-
-                        <button
-                            *ngIf="canInquiry"
-                            class="btn-action"
-                            type="button"
-                            (click)="viewTransaction(tx)"
-                        >
-
-                            <mat-icon>
-                                visibility
-                            </mat-icon>
-
-                            View
-
-                        </button>
-
-
-
-                        <!-- ===================================== -->
-                        <!-- NO INQUIRY PERMISSION                 -->
-                        <!-- ===================================== -->
-
-                        <span
-                            *ngIf="!canInquiry"
-                            class="no-permission"
-                        >
-
-                            No Access
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-
-
-                <!-- ============================================= -->
-                <!-- NO RECORDS                                   -->
-                <!-- ============================================= -->
-
-                <tr
-                    *ngIf="
-                        pagedTransactions.length === 0
-                    "
-                >
-
-                    <td
-                        colspan="20"
-                        class="no-records"
-                    >
-
-                        No
-                        {{ activeTab }}
-                        Shipping Records found
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-
-
-        <!-- ===================================================== -->
-        <!-- PAGINATION                                           -->
-        <!-- ===================================================== -->
-
-        <div class="pagination">
-
-
-            <!-- ================================================= -->
-            <!-- PREVIOUS                                          -->
-            <!-- ================================================= -->
-
-            <button
-                class="btn-pagination"
-                type="button"
-                (click)="previousPage()"
-                [disabled]="currentPage === 1"
-            >
-
-                ‹
-
-            </button>
-
-
-
-            <!-- ================================================= -->
-            <!-- CURRENT PAGE                                      -->
-            <!-- ================================================= -->
-
-            <span>
-
-                Page
-                {{ currentPage }}
-                of
-                {{ totalPages }}
-
-            </span>
-
-
-
-            <!-- ================================================= -->
-            <!-- NEXT                                              -->
-            <!-- ================================================= -->
-
-            <button
-                class="btn-pagination"
-                type="button"
-                (click)="nextPage()"
-                [disabled]="currentPage === totalPages"
-            >
-
-                ›
-
-            </button>
-
-        </div>
-
-    </div>
-
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th (click)="toggleSort('tnxId')">TNX ID</th>
+        <th *ngIf="activeTab !== 'live'">Event</th>
+        <th *ngIf="activeTab !== 'live'">Event Ref No</th>
+        <th *ngIf="activeTab !== 'live'">Event Sequence</th>
+        <th (click)="toggleSort('createdOn')">Created</th>
+        <th>Issuer Reference</th>
+        <th>Amount</th>
+        <th>Expiry Date</th>
+        <th>Customer Reference</th>
+        <th>Bill Of Lading</th>
+        <th class="sticky-action">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let tx of pagedTransactions;">
+        <td>
+          <a class="tnx-link" (click)="openApprovedAmendTransactionSG(tx)"
+            >{{ tx.tnxId }}</a
+          >
+        </td>
+        <td *ngIf="activeTab !== 'live'">{{ tx.eventType }}</td>
+        <td *ngIf="activeTab !== 'live'">{{ tx.eventRefNo }}</td>
+        <td *ngIf="activeTab !== 'live'">{{ tx.eventSequence }}</td>
+        <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+        <td>{{ tx.issuerReference }}</td>
+        <td>{{tx.amount}}</td>
+        <td>{{ tx.expiryDate }}</td>
+        <td>{{ tx.customerReference }}</td>
+        <td>{{ tx.billoflading }}</td>
+        <td class="sticky-action">
+          <button
+            *ngIf="
+              hasPermission(
+                'SG_AmendPreview'
+              )
+            "
+            class="btn-action"
+            (click)="viewTransaction(tx)"
+          >
+            <mat-icon>visibility</mat-icon> View
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="pagedTransactions.length === 0">
+        <td colspan="20" class="no-records">
+          No {{ activeTab }} Shipping Records found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button
+      class="btn-pagination"
+      (click)="previousPage()"
+      [disabled]="currentPage === 1"
+    >
+      ‹
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="btn-pagination"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      ›
+    </button>
+  </div>
 </div>

@@ -27,28 +27,17 @@ import { ApiService } from '../../../../../../../core/services/api.service';
 import { ShippingGuaranteeTransaction } from '../../../../../../../core/models/shipping-guarantee';
 
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
-
-import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
-
 import { ApplicantBeneficiary } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/applicant-beneficiary/applicant-beneficiary';
-
 import { GeneralDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/general-details/general-details';
-
 import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/instruction-to-bank/instruction-to-bank';
-
 import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
-
 import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
 
 
 @Component({
   selector: 'app-amend',
-
-  standalone: true,
-
   imports: [
     FormsModule,
-    ReactiveFormsModule,
     CommonModule,
     MatDialogModule,
     RouterOutlet,
@@ -57,20 +46,14 @@ import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/eve
     ApplicantBeneficiary,
     BankDetails,
     InstructionToBank,
-    Attachments
+    Attachments,
   ],
-
+  standalone: true,
   templateUrl: './amend.html',
 
   styleUrls: ['./amend.scss']
 })
 export class Amend implements OnInit {
-
-
-  // =========================================================
-  // FORM / SCREEN STATE
-  // =========================================================
-
   currentStep = 0;
 
   ShippingGuaranteeForm!: FormGroup;
@@ -137,7 +120,7 @@ export class Amend implements OnInit {
     { label: 'Applicant & Beneficiary' },
     { label: 'Bank Details' },
     { label: 'Instructions' },
-    { label: 'Attachments' }
+    { label: 'Attachments' },
   ];
 
 
@@ -151,96 +134,63 @@ export class Amend implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private route: ActivatedRoute,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
 
     this.buildForm();
 
   }
 
+  permissionNames: string[] = [];
 
-  // =========================================================
-  // ON INIT
-  // =========================================================
-
-  ngOnInit(): void {
-
-
-    // =======================================================
-    // LOAD PERMISSIONS
-    // =======================================================
-
-    const storedPermissions =
-      sessionStorage.getItem('permissionNames');
+  private loadPermissions(): void {
+    const storedPermissions = sessionStorage.getItem('permissionNames');
 
     if (storedPermissions) {
-
       try {
+        this.permissionNames = JSON.parse(storedPermissions);
 
-        this.permissionNames =
-          JSON.parse(storedPermissions);
-
-      } catch {
+        console.log('Import LC Amend Permissions:', this.permissionNames);
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
 
         this.permissionNames = [];
-
       }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
 
+      this.permissionNames = [];
     }
+  }
 
-    console.log(
-      'Shipping Guarantee Amend Permissions:',
-      this.permissionNames
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
     );
+  }
 
-
-    // =======================================================
-    // INTERSECTION OBSERVER
-    // =======================================================
-
+  ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
-
-      const sections =
-        document.querySelectorAll('section');
-
-      const observer =
-        new IntersectionObserver(
-
-          entries => {
-
-            entries.forEach(entry => {
-
-              if (entry.isIntersecting) {
-
-                this.currentStep =
-                  Array.from(sections).indexOf(
-                    entry.target as HTMLElement
-                  );
-
-              }
-
-            });
-
-          },
-
-          {
-            threshold: 0.4,
-            root:
-              document.querySelector('.scroll-area')
-          }
-
-        );
-
-      sections.forEach(section =>
-        observer.observe(section)
+      const sections = document.querySelectorAll('section');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
+            }
+          });
+        },
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-
+      sections.forEach((section) => observer.observe(section));
     }, 200);
 
-
-    // =======================================================
-    // COMPANY ID
-    // =======================================================
+    this.route.queryParamMap.subscribe((params) => {
+      this.requestedMode = params.get('mode')!;
+    });
 
     const sessionData =
       JSON.parse(
@@ -261,46 +211,19 @@ export class Amend implements OnInit {
     // ROUTE
     // =======================================================
 
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
+      this.tnxId = params.get('tnxId') || '';
 
-      this.tnxId =
-        params.get('tnxId') || '';
+      this.route.queryParamMap.subscribe((q) => {
+        this.requestedMode = q.get('mode') ?? '';
+        this.sourceTab = q.get('tab') ?? ''; // read tab
+        this.eventType = q.get('eventType') ?? ''; // read eventType directly
+        this.eventRefNo = q.get('eventRefNo') ?? '';
 
-      this.route.queryParamMap.subscribe(q => {
-
-        this.requestedMode =
-          q.get('mode') ?? '';
-
-        this.sourceTab =
-          q.get('tab') ?? '';
-
-        this.eventType =
-          q.get('eventType') ?? '';
-
-        this.eventRefNo =
-          q.get('eventRefNo') ?? '';
-
-
-        console.log(
-          'tnxId:',
-          this.tnxId
-        );
-
-        console.log(
-          'sourceTab:',
-          this.sourceTab
-        );
-
-        console.log(
-          'eventType:',
-          this.eventType
-        );
-
-        console.log(
-          'eventRefNo:',
-          this.eventRefNo
-        );
-
+        console.log('tnxId:', this.tnxId);
+        console.log('sourceTab:', this.sourceTab);
+        console.log('eventType:', this.eventType);
+        console.log('eventRefNo:', this.eventRefNo);
 
         if (this.tnxId) {
 
@@ -320,97 +243,44 @@ export class Amend implements OnInit {
 
   }
 
-
-  // =========================================================
-  // BUILD FORM
-  // =========================================================
-
   private buildForm(): void {
-
-    this.ShippingGuaranteeForm =
-      this.fb.group({
-
-        generalDetailsForm:
-          this.fb.group({
-
-            expiryDate: [''],
-
-            beneficiaryReference: [''],
-
-            customerReference: [''],
-
-            billoflading: [''],
-
-            modeOfShipment: [''],
-
-            shippingDetails: [''],
-
-            description: ['']
-
-          }),
-
-
-        applicantBeneficiaryForm:
-          this.fb.group({
-
-            applicantName: [''],
-
-            applicantAddress1: [''],
-
-            applicantAddress2: [''],
-
-            applicantAddress3: [''],
-
-            applicantAddress4: [''],
-
-            applicantCountry: [''],
-
-            beneficiaryName: [''],
-
-            beneficiaryAddress1: [''],
-
-            beneficiaryAddress2: [''],
-
-            beneficiaryAddress3: [''],
-
-            beneficiaryAddress4: [''],
-
-            beneficiaryCountry: ['']
-
-          }),
-
-
-        issuingbankForm:
-          this.fb.group({
-
-            bankName: [''],
-
-            issuerReference: [''],
-
-            currency: [''],
-
-            amount: ['']
-
-          }),
-
-
-        instructionForm:
-          this.fb.group({
-
-            principalAccount: [''],
-
-            feeAccount: [''],
-
-            otherInstructions: ['']
-
-          }),
-
-
-        attachments:
-          this.fb.array([])
-
-      });
-
+    this.ShippingGuaranteeForm = this.fb.group({
+      generalDetailsForm: this.fb.group({
+        expiryDate: [''],
+        beneficiaryReference: [''],
+        customerReference: [''],
+        billoflading: [''],
+        modeOfShipment: [''],
+        shippingDetails: [''],
+        description: [''],
+      }),
+      applicantBeneficiaryForm: this.fb.group({
+        applicantName: [''],
+        applicantAddress1: [''],
+        applicantAddress2: [''],
+        applicantAddress3: [''],
+        applicantAddress4: [''],
+        applicantCountry: [''],
+        beneficiaryName: [''],
+        beneficiaryAddress1: [''],
+        beneficiaryAddress2: [''],
+        beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
+        beneficiaryCountry: [''],
+      }),
+      issuingbankForm: this.fb.group({
+        bankName: [''],
+        issuerReference: [''],
+        currency: [''],
+        amount: [''],
+      }),
+      instructionForm: this.fb.group({
+        principalAccount: [''],
+        feeAccount: [''],
+        otherInstructions: [''],
+      }),
+      attachments: this.fb.array([]),
+    });
   }
 
 
@@ -457,44 +327,22 @@ export class Amend implements OnInit {
     if (this.eventRefNo) {
 
       this.isHistoricalView = true;
-
-      this.api
-        .getAmendmentByEventRefNoSg(
-          this.eventRefNo
-        )
-        .subscribe({
-
-          next: event => {
-
-            this.currentTx = event;
-
-            this.screenMode =
-              'APPROVED';
-
-            this.ShippingGuaranteeForm.disable();
-
-            this.patchForm(event);
-
-          },
-
-          error: () => {
-
-            this.snackBar.open(
-              'Event snapshot not found',
-              'Close',
-              {
-                duration: 3000
-              }
-            );
-
-            this.router.navigate([
-              '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-            ]);
-
-          }
-
-        });
-
+      this.api.getAmendmentByEventRefNoSg(this.eventRefNo).subscribe({
+        next: (event) => {
+          this.currentTx = event;
+          this.screenMode = 'APPROVED';
+          this.ShippingGuaranteeForm.disable();
+          this.patchForm(event);
+        },
+        error: () => {
+          this.snackBar.open('Event snapshot not found', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([
+            '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+          ]);
+        },
+      });
       return;
 
     }
@@ -509,78 +357,46 @@ export class Amend implements OnInit {
 
       this.isHistoricalView = false;
 
-      this.api
-        .getAmendmentByTnxIdSg(tnxId)
-        .subscribe({
+      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
+        next: (event) => {
+          // Existing AMD draft found — load it
+          this.currentTx = event;
+          this.patchForm(event);
 
-          next: event => {
-
-            this.currentTx = event;
-
-            this.patchForm(event);
-
-
-            if (event.status === 'I') {
-
-              this.screenMode =
-                'EDIT';
-
-              this.ShippingGuaranteeForm.enable();
-
-            } else {
-
-              this.screenMode =
-                'SUBMITTED';
-
-              this.ShippingGuaranteeForm.disable();
-
-            }
-
-          },
-
-          error: () => {
-
-            this.api
-              .getTransactionSgByTnxId(tnxId)
-              .subscribe({
-
-                next: tx => {
-
-                  this.currentTx = {
-                    tnxId: tx.tnxId
-                  } as ShippingGuaranteeTransaction;
-
-                  this.patchForm(tx);
-
-                  this.screenMode =
-                    'EDIT';
-
-                  this.ShippingGuaranteeForm.enable();
-
-                },
-
-                error: () => {
-
-                  this.snackBar.open(
-                    'Transaction not found',
-                    'Close',
-                    {
-                      duration: 3000
-                    }
-                  );
-
-                  this.router.navigate([
-                    '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-                  ]);
-
-                }
-
-              });
-
+          if (event.status === 'I') {
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
+          } else {
+            // AMD already submitted/approved — shouldn't normally happen from Live tab
+            // but handle defensively: show read-only
+            this.screenMode = 'SUBMITTED';
+            this.ShippingGuaranteeForm.disable();
           }
-
-        });
-
+        },
+        error: () => {
+          // No existing AMD draft — load master LC data to pre-populate form
+          // The AMD event will only be created when user clicks Save
+          this.api.getTransactionSgByTnxId(tnxId).subscribe({
+            next: (tx) => {
+              // Only store tnxId on currentTx — no eventRefNo exists yet
+              this.currentTx = {
+                tnxId: tx.tnxId,
+              } as ShippingGuaranteeTransaction;
+              this.patchForm(tx);
+              this.screenMode = 'EDIT';
+              this.ShippingGuaranteeForm.enable();
+            },
+            error: () => {
+              this.snackBar.open('Transaction not found', 'Close', {
+                duration: 3000,
+              });
+              this.router.navigate([
+                '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+              ]);
+            },
+          });
+        },
+      });
       return;
 
     }
@@ -603,103 +419,47 @@ export class Amend implements OnInit {
 
       this.isHistoricalView = false;
 
-      this.api
-        .getAmendmentByTnxIdSg(tnxId)
-        .subscribe({
+      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
+        next: (event) => {
+          this.currentTx = event;
+          this.patchForm(event);
 
-          next: event => {
-
-            this.currentTx = event;
-
-            this.patchForm(event);
-
-
-            switch (event.status) {
-
-              case 'I':
-
-                this.mode =
-                  'UPDATE';
-
-                this.screenMode =
-                  'EDIT';
-
-                this.ShippingGuaranteeForm.enable();
-
-                break;
-
-
-              case 'S':
-
-                this.mode =
-                  'UPDATE';
-
-                this.screenMode =
-                  'SUBMITTED';
-
-                this.ShippingGuaranteeForm.disable();
-
-                break;
-
-
-              case 'A':
-
-                this.mode =
-                  'UPDATE';
-
-                this.screenMode =
-                  'APPROVED';
-
-                this.ShippingGuaranteeForm.disable();
-
-                break;
-
-
-              case 'R':
-
-                this.mode =
-                  'REJECTED';
-
-                this.screenMode =
-                  'EDIT';
-
-                this.ShippingGuaranteeForm.enable();
-
-                break;
-
-
-              default:
-
-                this.mode =
-                  'UPDATE';
-
-                this.screenMode =
-                  'FINAL';
-
-                this.ShippingGuaranteeForm.disable();
-
-            }
-
-          },
-
-          error: () => {
-
-            this.snackBar.open(
-              'Amendment not found',
-              'Close',
-              {
-                duration: 3000
-              }
-            );
-
-            this.router.navigate([
-              '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-            ]);
-
+          switch (event.status) {
+            case 'I':
+              this.mode = 'UPDATE';
+              this.screenMode = 'EDIT';
+              this.ShippingGuaranteeForm.enable();
+              break;
+            case 'S':
+              this.mode = 'UPDATE';
+              this.screenMode = 'SUBMITTED';
+              this.ShippingGuaranteeForm.disable();
+              break;
+            case 'A':
+              this.mode = 'UPDATE';
+              this.screenMode = 'APPROVED';
+              this.ShippingGuaranteeForm.disable();
+              break;
+            case 'R':
+              this.mode = 'REJECTED';
+              this.screenMode = 'EDIT';
+              this.ShippingGuaranteeForm.enable();
+              break;
+            default:
+              this.mode = 'UPDATE';
+              this.screenMode = 'FINAL';
+              this.ShippingGuaranteeForm.disable();
           }
-
-        });
-
+        },
+        error: () => {
+          this.snackBar.open('Amendment not found', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate([
+            '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+          ]);
+        },
+      });
       return;
 
     }
@@ -711,177 +471,74 @@ export class Amend implements OnInit {
     // =======================================================
 
     this.isHistoricalView = false;
+    this.api.getTransactionSgByTnxId(tnxId).subscribe({
+      next: (tx) => {
+        this.currentTx = tx;
+        this.patchForm(tx);
 
-    this.api
-      .getTransactionSgByTnxId(tnxId)
-      .subscribe({
-
-        next: tx => {
-
-          this.currentTx = tx;
-
-          this.patchForm(tx);
-
-
-          switch (tx.status) {
-
-            case 'I':
-
-              this.mode =
-                'UPDATE';
-
-              this.screenMode =
-                'EDIT';
-
+        switch (tx.status) {
+          case 'I':
+            this.mode = 'UPDATE';
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
+            break;
+          case 'S':
+            this.mode = 'UPDATE';
+            this.screenMode = 'SUBMITTED';
+            this.ShippingGuaranteeForm.disable();
+            break;
+          case 'A':
+            this.mode = 'UPDATE';
+            if (this.requestedMode === 'EDIT') {
+              this.screenMode = 'EDIT';
               this.ShippingGuaranteeForm.enable();
-
-              break;
-
-
-            case 'S':
-
-              this.mode =
-                'UPDATE';
-
-              this.screenMode =
-                'SUBMITTED';
-
+            } else {
+              this.screenMode = 'APPROVED';
               this.ShippingGuaranteeForm.disable();
-
-              break;
-
-
-            case 'A':
-
-              this.mode =
-                'UPDATE';
-
-              if (
-                this.requestedMode === 'EDIT'
-              ) {
-
-                this.screenMode =
-                  'EDIT';
-
-                this.ShippingGuaranteeForm.enable();
-
-              } else {
-
-                this.screenMode =
-                  'APPROVED';
-
-                this.ShippingGuaranteeForm.disable();
-
-              }
-
-              break;
-
-
-            case 'R':
-
-              this.mode =
-                'REJECTED';
-
-              this.screenMode =
-                'EDIT';
-
-              this.ShippingGuaranteeForm.enable();
-
-              break;
-
-
-            default:
-
-              this.mode =
-                'UPDATE';
-
-              this.screenMode =
-                'FINAL';
-
-              this.ShippingGuaranteeForm.disable();
-
-          }
-
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'Transaction not found',
-            'Close',
-            {
-              duration: 3000
             }
-          );
-
-          this.router.navigate([
-            '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-          ]);
-
+            break;
+          case 'R':
+            this.mode = 'REJECTED';
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
+            break;
+          default:
+            this.mode = 'UPDATE';
+            this.screenMode = 'FINAL';
+            this.ShippingGuaranteeForm.disable();
         }
-
-      });
-
+      },
+      error: () => {
+        this.snackBar.open('Transaction not found', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate([
+          '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+        ]);
+      },
+    });
   }
 
-
-  // =========================================================
-  // FORM GETTERS
-  // =========================================================
-
+  // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
-
-    return this.ShippingGuaranteeForm.get(
-      'generalDetailsForm'
-    ) as FormGroup;
-
+    return this.ShippingGuaranteeForm.get('generalDetailsForm') as FormGroup;
   }
-
-
   get applicantBeneficiaryForm(): FormGroup {
-
     return this.ShippingGuaranteeForm.get(
-      'applicantBeneficiaryForm'
+      'applicantBeneficiaryForm',
     ) as FormGroup;
-
   }
-
-
   get issuingbankForm(): FormGroup {
-
-    return this.ShippingGuaranteeForm.get(
-      'issuingbankForm'
-    ) as FormGroup;
-
+    return this.ShippingGuaranteeForm.get('issuingbankForm') as FormGroup;
   }
-
-
   get instructionForm(): FormGroup {
-
-    return this.ShippingGuaranteeForm.get(
-      'instructionForm'
-    ) as FormGroup;
-
+    return this.ShippingGuaranteeForm.get('instructionForm') as FormGroup;
   }
-
-
   get attachmentsArray(): FormArray {
-
-    return this.ShippingGuaranteeForm.get(
-      'attachments'
-    ) as FormArray;
-
+    return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
 
-
-  // =========================================================
-  // PATCH FORM
-  // =========================================================
-
-  private patchForm(
-    tx: ShippingGuaranteeTransaction
-  ): void {
-
+  private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
 
       generalDetailsForm: tx,
@@ -889,124 +546,55 @@ export class Amend implements OnInit {
       applicantBeneficiaryForm: tx,
 
       issuingbankForm: tx,
-
-      instructionForm: tx
-
+      instructionForm: tx,
     });
 
   }
 
-
-  // =========================================================
-  // SCROLL
-  // =========================================================
-
-  scrollToSection(
-    index: number
-  ): void {
-
+  scrollToSection(index: number) {
     this.currentStep = index;
-
-    document
-      .getElementById(`section-${index}`)
-      ?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-
+    const section = document.getElementById(`section-${index}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-
-  // =========================================================
-  // FLATTEN FORM
-  // =========================================================
-
-  private flattenForm():
-    ShippingGuaranteeTransaction {
-
+  private flattenForm(): ShippingGuaranteeTransaction {
     return {
-
       companyId: this.companyId,
-
-      ...this.ShippingGuaranteeForm.value
-        .generalDetailsForm,
-
-      ...this.ShippingGuaranteeForm.value
-        .applicantBeneficiaryForm,
-
-      ...this.ShippingGuaranteeForm.value
-        .issuingbankForm,
-
-      ...this.ShippingGuaranteeForm.value
-        .instructionForm,
-
-      attachments:
-        this.ShippingGuaranteeForm.value
-          .attachments
-
+      ...this.ShippingGuaranteeForm.value.generalDetailsForm,
+      ...this.ShippingGuaranteeForm.value.applicantBeneficiaryForm,
+      ...this.ShippingGuaranteeForm.value.issuingbankForm,
+      ...this.ShippingGuaranteeForm.value.instructionForm,
+      attachments: this.ShippingGuaranteeForm.value.attachments,
     };
-
   }
-
-
-  // =========================================================
-  // SAVE AMENDMENT
-  // =========================================================
 
   saveForm(): void {
-
     if (!this.hasPermission('SG_AmendSave')) {
       return;
     }
 
-
-    if (this.isSaving) {
-      return;
-    }
-
+    if (this.isSaving) return;
     this.isSaving = true;
 
 
     if (!this.companyId) {
-
-      this.snackBar.open(
-        'Session expired or company not found.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
+      this.snackBar.open('Session expired or company not found.', 'Close', {
+        duration: 3000,
+      });
       this.isSaving = false;
 
       return;
 
     }
 
-
-    const payload =
-      this.flattenForm();
-
-    console.log(
-      'Payload before saving draft:',
-      payload
-    );
-
-
-    const tnxId =
-      this.currentTx?.tnxId;
-
+    const payload = this.flattenForm();
+    console.log('Payload before saving draft:', payload);
+    const tnxId = this.currentTx?.tnxId; // ← master LC tnxId, used for PUT /amend/{tnxId}
 
     if (!tnxId) {
-
-      this.snackBar.open(
-        'Transaction ID missing. Cannot amend.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
+      this.snackBar.open('Transaction ID missing. Cannot amend.', 'Close', {
+        duration: 3000,
+      });
       this.isSaving = false;
 
       return;
@@ -1015,112 +603,50 @@ export class Amend implements OnInit {
 
 
     this.api
-      .saveAmendTransactionSg(
-        tnxId,
-        payload
-      )
-      .pipe(
-        finalize(
-          () =>
-            this.isSaving = false
-        )
-      )
+      .saveAmendTransactionSg(tnxId, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
+        next: (res: ShippingGuaranteeTransaction) => {
+          this.currentTx = { ...this.currentTx, ...res };
 
-        next:
-          (
-            res: ShippingGuaranteeTransaction
-          ) => {
-
-            this.currentTx = {
-              ...this.currentTx,
-              ...res
-            };
-
-
-            console.log(
-              'Saved amendment, eventRefNo:',
-              this.currentTx.eventRefNo
-            );
-
-
-            this.snackBar.open(
-              `Amendment saved (Ref: ${
-                res.eventRefNo ??
-                res.tnxId
-              })`,
-              'Close',
-              {
-                duration: 5000
-              }
-            );
-
-
-            setTimeout(() => {
-
-              this.router.navigate(
-                [
-                  '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'
-                ],
-                {
-                  queryParams: {
-                    tab: 'pending'
-                  }
-                }
-              );
-
-            }, 50);
-
-          },
-
-        error: () => {
+          console.log(
+            'Saved amendment, eventRefNo:',
+            this.currentTx.eventRefNo,
+          ); // verify here
 
           this.snackBar.open(
-            'Error saving amendment',
+            `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
             'Close',
-            {
-              duration: 3000
-            }
+            { duration: 5000 },
           );
-
-        }
-
+          setTimeout(
+            () =>
+              this.router.navigate([
+                '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records',
+              ]),
+            50,
+          );
+        },
+        error: () => {
+          this.snackBar.open('Error saving amendment', 'Close', {
+            duration: 3000,
+          });
+        },
       });
-
   }
 
-
-  // =========================================================
-  // SUBMIT AMENDMENT
-  // =========================================================
-
   submitLc(): void {
-
     if (!this.hasPermission('SG_AmendSubmit')) {
       return;
     }
 
-
-    const eventRefNo =
-      this.currentTx?.eventRefNo;
-
-
-    console.log(
-      'Submitting amendment, eventRefNo:',
-      eventRefNo
-    );
-
+    const eventRefNo = this.currentTx?.eventRefNo;
+    console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
 
     if (!eventRefNo) {
-
-      this.snackBar.open(
-        'Please save the amendment draft first.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
+      this.snackBar.open('Please save the amendment draft first.', 'Close', {
+        duration: 3000,
+      });
       return;
 
     }
@@ -1131,98 +657,82 @@ export class Amend implements OnInit {
       ...this.flattenForm(),
 
       event: 'AMD',
-
-      tnxId: this.tnxId
-
+      tnxId: this.tnxId,
     };
 
-
-    this.api
-      .submitAmendmentSg(
-        eventRefNo,
-        payload
-      )
-      .subscribe({
-
-        next: res => {
-
-          this.router.navigate(
-            [
-              '/dashboard/Trade-Services/shipping-guarantee/success'
-            ],
-            {
-              state: {
-                source: 'SHIPPING_GUARANTEE_AMD',
-                transaction: res
-              }
-            }
-          );
-
-
-          this.snackBar.open(
-            `Amendment Submitted (Ref: ${
-              res.eventRefNo ??
-              res.tnxId
-            })`,
-            'Close',
-            {
-              duration: 5000
-            }
-          );
-
-
-          setTimeout(() => {
-
+    this.api.submitAmendmentSg(eventRefNo, payload).subscribe({
+      next: (res) => {
+        this.router.navigate(
+          ['/dashboard/Trade-Services/shipping-guarantee/success'],
+          {
+            state: { source: 'IMPORT_LC_AMD', transaction: res },
+          },
+        );
+        this.snackBar.open(
+          `Amendment Submitted (Ref: ${res.eventRefNo ?? res.tnxId})`,
+          'Close',
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
             this.router.navigate([
-              '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'
-            ]);
-
-          }, 50);
-
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'Error submitting amendment',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
+              '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records',
+            ]),
+          50,
+        );
+      },
+      error: () =>
+        this.snackBar.open('Error submitting amendment', 'Close', {
+          duration: 3000,
+        }),
+    });
+  }
+  back() {
+    this.router.navigate(['/dashboard']);
   }
 
+  updateAttachments(files: File[]) {
+    const arr = this.ShippingGuaranteeForm.get('attachments') as FormArray;
+    arr.clear();
+    files.forEach((file) =>
+      arr.push(
+        this.fb.group({
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
+  }
 
-  // =========================================================
-  // APPROVE
-  // =========================================================
+  update(): void {
+    if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const payload = this.flattenForm();
+    payload.tnxId = this.tnxId;
+    console.log('Payload before update:', payload);
+    if (!payload.tnxId) {
+      console.error('TNX ID is missing!');
+      return;
+    }
+  }
 
   approve(): void {
-
     if (!this.hasPermission('SG_AmendApprove')) {
       return;
     }
-
-
-    const eventRefNo =
-      this.currentTx?.eventRefNo;
-
-
+    const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
-
-      this.snackBar.open(
-        'Amendment reference not found.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
+      this.snackBar.open('Amendment reference not found.', 'Close', {
+        duration: 3000,
+      });
       return;
 
     }
@@ -1233,163 +743,78 @@ export class Amend implements OnInit {
       ...this.flattenForm(),
 
       event: 'AMD',
-
-      tnxId: this.tnxId
-
+      tnxId: this.tnxId,
     };
-
-
-    this.api
-      .approveAmendmentSg(
-        eventRefNo,
-        payload
-      )
-      .subscribe({
-
-        next: () => {
-
-          this.snackBar.open(
-            'Amendment approved. Live Shipping Guarantee updated.',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-
-          setTimeout(() => {
-
+    this.api.approveAmendmentSg(eventRefNo, payload).subscribe({
+      next: () => {
+        this.snackBar.open('Amendment approved. Live LC updated.', 'Close', {
+          duration: 3000,
+        });
+        setTimeout(
+          () =>
             this.router.navigate([
-              '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-            ]);
-
-          }, 50);
-
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'Approval failed',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
+              '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+            ]),
+          50,
+        );
+      },
+      error: () =>
+        this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
+    });
   }
-
-
-  // =========================================================
-  // REJECT
-  // =========================================================
 
   openReject(): void {
-
-    if (!this.hasPermission(
-      'SG_AmendReject'
-    )) {
+    if (!this.hasPermission('SG_AmendReject')) {
       return;
     }
 
-
-    const eventRefNo =
-      this.currentTx?.eventRefNo;
-
-
+    const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
-
-      this.snackBar.open(
-        'Amendment reference not found.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
+      this.snackBar.open('Amendment reference not found.', 'Close', {
+        duration: 3000,
+      });
       return;
 
     }
-
-
-    const dialogRef =
-      this.dialog.open(
-        RejectDialogComponent,
-        {
-          width: '400px'
-        }
-      );
-
-
-    dialogRef
-      .afterClosed()
-      .subscribe(
-        (
-          reason: string | undefined
-        ) => {
-
-          if (!reason) {
-            return;
-          }
-
-
-          this.api
-            .rejectAmendmentSg(
-              eventRefNo,
-              reason
-            )
-            .subscribe({
-
-              next: () => {
-
-                this.snackBar.open(
-                  'Amendment rejected. Live Shipping Guarantee unchanged.',
-                  'Close',
-                  {
-                    duration: 3000
-                  }
-                );
-
-
-                this.navigateBack(
-                  'rejected'
-                );
-
-              },
-
-              error: () => {
-
-                this.snackBar.open(
-                  'Failed to reject amendment',
-                  'Close',
-                  {
-                    duration: 3000
-                  }
-                );
-
-              }
-
-            });
-
-        }
-      );
-
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+    });
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+      if (!reason) return;
+      this.api.rejectAmendmentSg(eventRefNo, reason).subscribe({
+        next: () => {
+          this.snackBar.open(
+            'Amendment rejected. Live LC unchanged.',
+            'Close',
+            { duration: 3000 },
+          );
+          this.navigateBack('rejected');
+        },
+        error: () =>
+          this.snackBar.open('Failed to reject amendment', 'Close', {
+            duration: 3000,
+          }),
+      });
+    });
   }
 
-
-  // =========================================================
-  // UPDATE REJECTED
-  // =========================================================
+  private navigateBack(tab: string) {
+    this.router.navigate(
+      ['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'],
+      {
+        queryParams: { tab },
+      },
+    );
+  }
 
   updateRejected(): void {
-
-    if (!this.hasPermission(
-      'SG_AmendUpdateReject'
-    )) {
+    if (!this.hasPermission('SG_AmendUpdateReject')) {
+      return;
+    }
+    if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -1420,161 +845,24 @@ export class Amend implements OnInit {
       this.currentTx.tnxId;
 
 
-    this.api
-      .updateRejectedTransactionSg(
-        payload.tnxId,
-        payload
-      )
-      .subscribe({
+    this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
+      next: (res) => {
+        this.snackBar.open(
+          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+          'Close',
+          { duration: 3000 },
+        );
 
-        next: res => {
-
-          this.snackBar.open(
-            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-
-          this.router.navigate(
-            [
-              '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-            ],
-            {
-              queryParams: {
-                tab: 'pending'
-              }
-            }
-          );
-
-        },
-
-        error: () => {
-
-          this.snackBar.open(
-            'Failed to update rejected transaction',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
-  }
-
-
-  // =========================================================
-  // UPDATE
-  // =========================================================
-
-  update(): void {
-
-    if (
-      !this.ShippingGuaranteeForm.invalid &&
-      this.currentTx?.tnxId
-    ) {
-
-      const payload =
-        this.flattenForm();
-
-      payload.tnxId =
-        this.tnxId;
-
-      console.log(
-        'Payload before update:',
-        payload
-      );
-
-    }
-
-  }
-
-
-  // =========================================================
-  // BACK
-  // =========================================================
-
-  back(): void {
-
-    this.router.navigate([
-      '/dashboard'
-    ]);
-
-  }
-
-
-  // =========================================================
-  // ATTACHMENTS
-  // =========================================================
-
-  updateAttachments(
-    files: File[]
-  ): void {
-
-    const arr =
-      this.ShippingGuaranteeForm.get(
-        'attachments'
-      ) as FormArray;
-
-
-    arr.clear();
-
-
-    files.forEach(file => {
-
-      arr.push(
-        this.fb.group({
-
-          title:
-            file.name.replace(
-              /\.[^/.]+$/,
-              ''
-            ),
-
-          fileName:
-            file.name,
-
-          size:
-            file.size,
-
-          type:
-            file.type,
-
-          file:
-            file
-
-        })
-      );
-
+        // Navigate back to inquiries with Pending tab
+        this.router.navigate([
+          '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+        ]);
+      },
+      error: () => {
+        this.snackBar.open('Failed to update rejected transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-
   }
-
-
-  // =========================================================
-  // NAVIGATE BACK
-  // =========================================================
-
-  private navigateBack(
-    tab: string
-  ): void {
-
-    this.router.navigate(
-      [
-        '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'
-      ],
-      {
-        queryParams: {
-          tab
-        }
-      }
-    );
-
-  }
-
 }

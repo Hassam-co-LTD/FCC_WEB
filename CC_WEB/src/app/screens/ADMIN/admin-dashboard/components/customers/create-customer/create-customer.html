@@ -455,104 +455,128 @@
     </div>
 
   </div>
+<!-- =========================
+     CUSTOMER ACTION BUTTONS
+========================== -->
+<div class="customer-actions">
 
-  <!-- =========================
-       CUSTOMER ACTION BUTTONS
-  ========================== -->
-  <div class="customer-actions">
+  <!-- Hidden File Input -->
+  <input
+    #customerFileInput
+    type="file"
+    accept=".xlsx,.xls,.csv,.pdf"
+    hidden
+    (change)="onCustomerFileSelected($event)"
+  />
 
-    <!-- Create -->
-    <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
+  <!-- Create -->
+  <ng-container *ngIf="!storeCustomer || !storeCustomer.recordStatus">
 
-      <button class="btn-cancel" (click)="onCancel()">
-        Cancel
-      </button>
+    <button class="btn-cancel" (click)="onCancel()">
+      Cancel
+    </button>
 
-      <button class="btn-save"
-              [disabled]="!storeCustomerResponseForAccounts?.id"
-              (click)="openAddAccountDialog(
-                storeCustomerResponseForAccounts.id,
-                storeCustomerResponseForAccounts.name
-              )">
+    <!-- Import Customers -->
+    <button
+      type="button"
+      class="btn-import"
+      (click)="customerFileInput.click()">
 
-        Add Account
+      Import Customers
 
-      </button>
+    </button>
 
-      <button class="btn-save"
-              [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
-              (click)="onSave()">
+    <button class="btn-save"
+            [disabled]="!storeCustomerResponseForAccounts?.id"
+            (click)="openAddAccountDialog(
+              storeCustomerResponseForAccounts.id,
+              storeCustomerResponseForAccounts.name
+            )">
 
-        Save
+      Add Account
 
-      </button>
+    </button>
 
-    </ng-container>
+    <button class="btn-save"
+            [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
+            (click)="onSave()">
 
-    <!-- Draft -->
-    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
+      Save
 
-      <button class="btn-back" (click)="onBack()">
-        Back
-      </button>
+    </button>
 
-      <button class="btn-update"
-              [disabled]="
-                !customerForm.dirty ||
-                !dynamicFieldsForm.dirty ||
-                !customerForm.valid ||
-                !dynamicFieldsForm.valid
-              "
-              (click)="updateCustomer()">
+  </ng-container>
 
-        Update
+  <!-- Draft -->
+  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'I'">
 
-      </button>
+    <button class="btn-back" (click)="onBack()">
+      Back
+    </button>
 
-      <button class="btn-submit"
-              [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
-              (click)="submit()">
+    <!-- Import Customers -->
+   <input
+  #customerFileInput
+  type="file"
+  accept=".txt"
+  hidden
+  (change)="onCustomerFileSelected($event)"
+>
 
-        Submit
+    <button class="btn-update"
+            [disabled]="
+              !customerForm.dirty ||
+              !dynamicFieldsForm.dirty ||
+              !customerForm.valid ||
+              !dynamicFieldsForm.valid
+            "
+            (click)="updateCustomer()">
 
-      </button>
+      Update
 
-      <button class="btn-save"
-              *ngIf="storeCustomerAccounts?.length === 0"
-              (click)="openAddAccountDialog(
-                storeCustomer?.custId,
-                storeCustomer?.name
-              )">
+    </button>
 
-        Create Account
+    <button class="btn-submit"
+            [disabled]="!customerForm.valid || !dynamicFieldsForm.valid"
+            (click)="submit()">
 
-      </button>
+      Submit
 
-    </ng-container>
+    </button>
 
-    <!-- Submitted -->
-    <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
+    <button class="btn-save"
+            *ngIf="storeCustomerAccounts?.length === 0"
+            (click)="openAddAccountDialog(
+              storeCustomer?.custId,
+              storeCustomer?.name
+            )">
 
-      <button class="btn-reject"
-              (click)="reject(storeCustomer.id)">
+      Create Account
 
-        Reject
+    </button>
 
-      </button>
+  </ng-container>
 
-      <button class="btn-approve"
-              (click)="approve(storeCustomer.id)">
+  <!-- Submitted -->
+  <ng-container *ngIf="isEditMode && storeCustomer?.recordStatus === 'S'">
 
-        Approve
+    <button class="btn-reject"
+            (click)="reject(storeCustomer.id)">
 
-      </button>
+      Reject
 
-    </ng-container>
+    </button>
 
-  </div>
+    <button class="btn-approve"
+            (click)="approve(storeCustomer.id)">
+
+      Approve
+
+    </button>
+
+  </ng-container>
 
 </div>
-
 <!-- ======================================================
      APPROVED DOSSIER SECTION
 ====================================================== -->

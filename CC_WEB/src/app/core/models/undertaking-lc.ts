@@ -12,7 +12,7 @@ export interface UndertakingGuarantee {
   // ================================
   id?: number;
   rejectionReason?: string;
- 
+
   // ================================
   // 1. GENERAL DETAILS
   // ================================
@@ -20,7 +20,7 @@ export interface UndertakingGuarantee {
   modeOfTransmission?: string;
   formOfUndertaking?: string;
   purpose?: string;
- 
+
   // ================================
   // 2. APPLICANT
   // ================================
@@ -30,7 +30,7 @@ export interface UndertakingGuarantee {
   applicantAddress3?: string;
   applicantAddress4?: string;
   applicantCountry?: string;
- 
+
   // ================================
   // BENEFICIARY
   // ================================
@@ -40,23 +40,23 @@ export interface UndertakingGuarantee {
   beneficiaryAddress3?: string;
   beneficiaryAddress4?: string;
   beneficiaryCountry?: string;
- 
+
   // ================================
   // 3. BANK DETAILS
   // ================================
   recipientBankName?: string;
   issuerReference?: string;
   issuanceType?: string;
- 
+
   swiftcode?: string;
- 
+
   bankName?: string;
   bankAddress1?: string;
   bankAddress2?: string;
   bankAddress3?: string;
   bankAddress4?: string;
   bankCountry?: string;
- 
+
   // ================================
   // 4. UNDERTAKING TERMS
   // ================================
@@ -64,18 +64,18 @@ export interface UndertakingGuarantee {
   effectiveOption?: string;
   expiryType?: string;
   expiryDate?: Date;
- 
+
   currency?: string;
   undertakingAmount?: number;
   variationPlus?: number;
   variationMinus?: number;
- 
+
   issuanceCharges?: string;
   correspondentCharges?: string;
   supplementaryInfo?: string;
   basicExtensionType?: string;
   increaseDecreaseType?: string;
- 
+
   // ================================
   // 5. CONTRACT DETAILS
   // ================================
@@ -85,7 +85,7 @@ export interface UndertakingGuarantee {
   contractAmount?: number;
   percentageCovered?: number;
   contractNarrative?: string;
- 
+
   // ================================
   // 6. LEGAL & RULES
   // ================================
@@ -93,7 +93,7 @@ export interface UndertakingGuarantee {
   governingLawsType?: string;
   countrySubdivision?: string;
   jurisdiction?: string;
- 
+
   // ================================
   // 7. OPTIONS & TEXT
   // ================================
@@ -103,7 +103,7 @@ export interface UndertakingGuarantee {
   textOfUndertakingInfo?: string;
   underlyingTransactionInfo?: string;
   presentationInfo?: string;
- 
+
   // ================================
   // 8. INSTRUCTIONS
   // ================================

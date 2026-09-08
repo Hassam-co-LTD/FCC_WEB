@@ -69,11 +69,11 @@
     <ng-container *ngIf="isEditMode && storeDropDown?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
       <button class="btn-update"
-              [disabled]="!storeDropDown.dirty || !storeDropDown.valid"
+              [disabled]="!dropdownForm.dirty || !dropdownForm.valid"
               (click)="update(storeDropDown.id)">
         Update
       </button>
-      <button class="btn-submit" [disabled]="!storeDropDown.valid" (click)="submit()">Submit</button>
+      <button class="btn-submit" (click)="submit()">Submit</button>
     </ng-container>
 
     <!-- Submitted -->

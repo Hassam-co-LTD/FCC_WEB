@@ -55,7 +55,7 @@ export class CreateDynamicFieldOptions implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.loadCustomer();
+    this.loadDropdownOption();
   
   
   }
@@ -68,9 +68,9 @@ export class CreateDynamicFieldOptions implements OnInit {
     });
   }
 
-  private loadCustomer(): void {
+  private loadDropdownOption(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Loading customer with ID:', id);
+    console.log('Loading dropdown option with ID:', id);
      if (!isNaN(id)) {
       this.isEditMode = true;
 
@@ -122,14 +122,10 @@ export class CreateDynamicFieldOptions implements OnInit {
   
   // ---------------- UI HELPERS ----------------
  isReadOnly(): boolean {
-  // New city (no storeCity) → editable
+
   if (!this.storeDropDown) {
     return false;
   }
-
-  // Existing city:
-  // - Draft (D) → editable
-  // - Submitted (S), Approved (A) → read-only
   return false;
 }
 
@@ -146,17 +142,30 @@ export class CreateDynamicFieldOptions implements OnInit {
   onCancel(): void {
     this.dropdownForm.reset();
   }
-  submit() {    
-    if (!this.storeDropDown?.id) return;
-    this.api.setTnxByStatus('S', this.storeDropDown.id, 'city').subscribe({
-      next: (res) => {
-        console.log('Submited response:', res);
-        Swal.fire('Submitted!', 'Dropdown option submitted successfully', 'success')
-          .then(() => this.router.navigate(['/admin/city-list'],{ queryParams: { tabName: 'submitted' } }));
-      },  
-      error: err => console.error('Submit failed', err)
-    });
-  }
+  submit() {     
+  if (!this.storeDropDown?.id) return;
+  this.api.setTnxByStatus(
+    'S',
+    this.storeDropDown.id,
+    'dynamic-dropdown'
+  ).subscribe({
+    next: (res) => {
+      console.log('Submitted response:', res);
+
+      Swal.fire(
+        'Submitted!',
+        'Dropdown option submitted successfully',
+        'success'
+      ).then(() =>
+        this.router.navigate(
+          ['/admin/dynamic-dropdown-option-inquiry'],
+          { queryParams: { tabName: 'submitted' } }
+        )
+      );
+    },
+    error: err => console.error('Submit failed', err)
+  });
+}
 
  
 

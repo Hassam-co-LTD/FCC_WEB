@@ -166,79 +166,21 @@
         <thead>
 
             <tr>
-
-                <th
-                    (click)="toggleSort('tnxId')"
-                >
-                    TNX ID
-                </th>
-
-
-                <th
-                    *ngIf="activeTab !== 'live'"
-                >
-                    Event
-                </th>
-
-
-                <th
-                    *ngIf="activeTab !== 'live'"
-                >
-                    Event Ref No
-                </th>
-
-
-                <th
-                    *ngIf="activeTab !== 'live'"
-                >
-                    Event Sequence
-                </th>
-
-
-                <th>
-                    Created
-                </th>
-
-
-                <th>
-                    Product
-                </th>
-
-
-                <th>
-                    Issuer Reference
-                </th>
-
-
-                <th>
-                    Expiry Date
-                </th>
-
-
-                <th>
-                    Currency
-                </th>
-
-
-                <th>
-                    Undertaking Amount
-                </th>
-
-
-                <th>
-                    Applicant
-                </th>
-
-
-                <th>
-                    Beneficiary
-                </th>
-
-
-                <th class="sticky-action">
-                    Action
-                </th>
-
+                <th (click)="toggleSort('tnxId')">TNX ID</th>
+                <th *ngIf="activeTab !== 'live'">Event</th>
+                <th *ngIf="activeTab !== 'live'">Event Ref No</th>
+                <th *ngIf="activeTab !== 'live'">Event Sequence</th>
+                <!-- <th>Event Ref No</th>
+                            <th>Event Sequence</th> -->
+                <th>Created</th>
+                <th>Product</th>
+                <th>Issuer Reference</th>
+                <th>Expiry Date</th>
+                <th>Currency</th>
+                <th>Undertaking Amount</th>
+                <th>Applicant</th>
+                <th>Beneficiary</th>
+                <th class="sticky-action">Action</th>
             </tr>
 
         </thead>
@@ -247,60 +189,10 @@
         <!-- ================= BODY ================= -->
 
         <tbody>
-
-            <tr
-                *ngFor="
-                    let tx of pagedTransactions;
-                    trackBy: trackByTnxId
-                "
-            >
-
-                <!-- ================= TNX ID ================= -->
-
-                <td>
-
-                    <!-- AMEND PERMISSION -->
-                    <a
-                        *ngIf="hasPermission('UTG_Amend')"
-                        class="tnx-link"
-                        (click)="openApprovedAmendTransaction(tx)"
-                    >
-
-                        {{ tx.tnxId }}
-
-                    </a>
-
-
-                    <!-- NO AMEND PERMISSION -->
-
-                    <span
-                        *ngIf="!hasPermission('UTG_Amend')"
-                    >
-
-                        {{ tx.tnxId }}
-
-                    </span>
-
-                </td>
-
-
-                <!-- ================= EVENT ================= -->
-
-                <td
-                    *ngIf="activeTab !== 'live'"
-                >
-
-                    {{ tx.eventType }}
-
-                </td>
-
-
-                <!-- ================= EVENT REF ================= -->
-
-                <td
-                    *ngIf="activeTab !== 'live'"
-                >
-
+            <tr *ngFor="let tx of pagedTransactions;">
+                <td><a class="tnx-link" (click)="openApprovedAmendTransaction(tx)">{{ tx.tnxId }}</a></td>
+                <td *ngIf="activeTab !== 'live'">{{ tx.eventType }}</td>
+                <td *ngIf="activeTab !== 'live'">
                     {{ tx.eventRefNo }}
 
                 </td>
@@ -313,98 +205,24 @@
                 >
 
                     {{ tx.eventSequence }}
-
                 </td>
-
-
-                <!-- ================= CREATED ================= -->
-
-                <td>
-
-                    {{ tx.createdOn | date:'yyyy-MM-dd' }}
-
-                </td>
-
-
-                <!-- ================= PRODUCT ================= -->
-
-                <td>
-
-                    {{ tx.productType }}
-
-                </td>
-
-
-                <!-- ================= ISSUER ================= -->
-
-                <td>
-
-                    {{ tx.issuerReference }}
-
-                </td>
-
-
-                <!-- ================= EXPIRY ================= -->
-
-                <td>
-
-                    {{ tx.expiryDate }}
-
-                </td>
-
-
-                <!-- ================= CURRENCY ================= -->
-
-                <td>
-
-                    {{ tx.currency }}
-
-                </td>
-
-
-                <!-- ================= AMOUNT ================= -->
-
-                <td>
-
-                    {{ tx.undertakingAmount }}
-
-                </td>
-
-
-                <!-- ================= APPLICANT ================= -->
-
-                <td>
-
-                    {{ tx.applicantName }}
-
-                </td>
-
-
-                <!-- ================= BENEFICIARY ================= -->
-
-                <td>
-
-                    {{ tx.beneficiaryName }}
-
-                </td>
-
-
-                <!-- ================= ACTION ================= -->
-
+                <!-- <td>
+                                {{ tx.eventRefNo }}
+                            </td>
+                            <td>
+                                {{ tx.eventSequence }}
+                            </td> -->
+                <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+                <td>{{ tx.productType }}</td>
+                <td>{{tx.issuerReference}}</td>
+                <td>{{ tx.expiryDate }}</td>
+                <td>{{ tx.currency }}</td>
+                <td>{{ tx.undertakingAmount }}</td>
+                <td>{{ tx.applicantName }}</td>
+                <td>{{ tx.beneficiaryName }}</td>
                 <td class="sticky-action">
-
-                    <button
-                        *ngIf="hasPermission('UTG_Inquiry')"
-                        class="btn-action"
-                        (click)="viewTransaction(tx)"
-                    >
-
-                        <mat-icon>
-                            visibility
-                        </mat-icon>
-
-                        View
-
+                    <button *ngIf="hasPermission('UTG_Inquiry')" class="btn-action" (click)="viewTransaction(tx)">
+                        <mat-icon>visibility</mat-icon> View
                     </button>
 
                 </td>

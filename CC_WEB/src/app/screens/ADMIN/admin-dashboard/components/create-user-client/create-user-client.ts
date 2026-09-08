@@ -108,23 +108,23 @@ UserData = {
     this.loadCompanies();
     this.fetchAllRoles();
     this.loadDynamicFields();
-    this.fetchAllPermissions();
+    this.fetchAllGroupPermissions();
 
   }
 
   // ================= CLIENT USER FORM =================
   private buildClientUserForm(): void {
-    this.clientUserForm = this.fb.group({
-      loginId: [this.userId, Validators.required],
-      userName: ['', Validators.required],
-      email:['',Validators.required],
-      password: ['', Validators.required],
-      userCategory: [''],
-      companyId: ["", Validators.required],
-      userStatus: [''],
-      permissionId: [[]] // Initialize as an empty array
-    });
-  }
+  this.clientUserForm = this.fb.group({
+    loginId: [this.userId, Validators.required],
+    userName: ['', Validators.required],
+    email: ['', Validators.required],
+    password: ['', Validators.required],
+    userCategory: [''],
+    companyId: ['', Validators.required],
+    userStatus: [''],
+    permissionGroupId: [null, Validators.required]
+  });
+}
 
   // ---------------- REPLACED LOGIC ----------------
   private loadClientUserDetails(): void {
@@ -186,28 +186,68 @@ UserData = {
 }
  
  update(id: number): void {
-  if (this.clientUserForm.invalid) return;
+
+  if (this.clientUserForm.invalid) {
+    return;
+  }
 
   const payload = {
     ...this.clientUserForm.getRawValue(),
-    dynamicFields: this.getDynamicPayload() // ✅ ADD THIS
+    dynamicFields: this.getDynamicPayload()
   };
 
-  console.log('Updating the payload payload:', payload);
+  console.log('Updating payload:', payload);
 
   this.api.updateTnx(payload, 'clientUsers', id).subscribe({
+
     next: (res) => {
-      console.log('Client User updated successfully',res);
-      Swal.fire('Updated!', 'Client User updated successfully', 'success')
-      
-      .then(() => this.router.navigate(['/admin/user-client-inquiry']))
-      console.log("data updated successfully ", res)
+
+      console.log('Client User updated successfully', res);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated!',
+        text: 'Client User updated successfully'
+      }).then(() => {
+        this.router.navigate(['/admin/user-client-inquiry']);
+      });
 
     },
-    error: err => console.error('Update failed', err)
+
+    error: (err) => {
+
+      console.error('Update failed', err);
+
+      let message = 'Unknown error occurred.';
+
+      if (err.error) {
+
+        if (typeof err.error === 'string') {
+          message = err.error;
+        } else if (err.error.message) {
+          message = err.error.message;
+        } else if (err.error.error) {
+          message = err.error.error;
+        } else {
+          message = JSON.stringify(err.error, null, 2);
+        }
+
+      } else if (err.message) {
+        message = err.message;
+      }
+
+      Swal.fire({
+        icon: 'error',
+        title: `Error ${err.status}`,
+        html: `<pre style="text-align:left;white-space:pre-wrap;">${message}</pre>`,
+        width: 700
+      });
+
+    }
+
   });
+
 }
-  
 
  isReadOnly(): boolean {
   return false;
@@ -382,18 +422,16 @@ get hasClientUser(): boolean {
   return this.storeClientUser && Object.keys(this.storeClientUser).length > 0;
 }
 
-approvedPermissions: any[] = [];
-
-fetchAllPermissions(): void {
-  this.api.getTnxByStatus('A', 'Permissions').subscribe({
-    next: (permissions: any[]) => {
-      this.approvedPermissions = permissions;
-
-      console.log('Fetched approved permissions:', this.approvedPermissions);
+storePermissoinGroups: any[] = [];
+fetchAllGroupPermissions(): void { 
+  this.api.getTnxByStatus('A', 'PermissionsGroup').subscribe({
+    next: (res: any) => {
+      this.storePermissoinGroups = res || [];
+      console.log('Fetched all permission groups:', this.storePermissoinGroups);
     },
-    error: err => {
-      console.error('Error fetching permissions', err);
-    }
+    error: err => console.error('Error fetching permission groups', err)
   });
 }
+
+
 }

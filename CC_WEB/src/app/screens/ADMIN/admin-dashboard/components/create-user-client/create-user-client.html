@@ -14,7 +14,7 @@
       [ngClass]="{
         'create': !storeClientUser?.recordStatus,
         'draft': storeClientUser?.recordStatus === 'I',
-        'submitted': storeClientUser?.recordStatus === 'S',
+        'submitted': storeClientUser?.recordStatus === 'I',
         'approved': storeClientUser?.recordStatus === 'A'
       }">
 
@@ -126,23 +126,24 @@
           </div>
 
           
-          <div class="field-group">
-  <h4>Permission</h4>
+      <div class="field-group">
+  <h4>Permission Group</h4>
 
   <mat-form-field appearance="outline" class="full">
-    <mat-label>Select Permission</mat-label>
+
+    <mat-label>Select Permission Group</mat-label>
 
     <mat-select
-      formControlName="permissionId"
-      [disabled]="isReadOnly()">
+        formControlName="permissionGroupId"
+        [disabled]="isReadOnly()">
 
-      <mat-option
-        *ngFor="let permission of approvedPermissions"
-        [value]="permission.id">
+        <mat-option
+            *ngFor="let group of storePermissoinGroups"
+            [value]="group.id">
 
-        {{ permission.permissionName }}
+            {{ group.permissionGroupName }}
 
-      </mat-option>
+        </mat-option>
 
     </mat-select>
 
@@ -269,7 +270,7 @@
     <ng-container *ngIf="isEditMode && storeClientUser?.recordStatus === 'I'">
       <button class="btn-back" (click)="onBack()">Back</button>
       <button class="btn-update" [disabled]="!clientUserForm.dirty || !clientUserForm.valid" (click)="update(storeClientUser.id)">Update</button>
-      <button class="btn-submit" [disabled]="!clientUserForm.valid" (click)="submit()">Submit</button>
+      <button class="btn-submit"  (click)="submit()">Submit</button>
     </ng-container>
   <div class="customer-actions">
     <ng-container *ngIf="!storeClientUser || !storeClientUser.userStatus">

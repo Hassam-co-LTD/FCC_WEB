@@ -587,12 +587,139 @@ return company ? company.companyName : 'N/A';
 
 loadDropdownOptions(): void {
 this.api.findByRecordStatusAndScreenAndDropDown('A', 'customers', 'customerType').subscribe({
-next: res => {
+next: (res:any) => {
 console.log('Dropdown options loaded:', res);
 // Handle dropdown options as needed
 },
-error: err => console.error('Failed to load dropdown options', err)
+error: (err:any) => console.error('Failed to load dropdown options', err)
 });
 }
 
+
+// selecting customers by file 
+onCustomerFileSelected(event: any): void {
+
+
+  const file = event.target.files[0];
+
+
+  if (!file) {
+    return;
+  }
+
+
+  const formData = new FormData();
+
+  formData.append('file', file);
+
+
+
+  this.api.importCustomers(formData).subscribe({
+
+    next: (response: any) => {
+
+
+      console.log(
+        "Import Response",
+        response
+      );
+
+
+
+      let message = 
+      `
+      Total Records: ${response.totalRecords}
+
+      Success: ${response.successRecords}
+
+      Failed: ${response.failedRecords}
+
+      `;
+
+
+
+      if(response.errorMessages.length > 0){
+
+
+        message += "\n\nErrors:\n";
+
+
+        response.errorMessages.forEach(
+          (error:any)=>{
+
+            message += "\n• " + error;
+
+          }
+        );
+
+      }
+
+
+
+      Swal.fire({
+
+        title:
+        response.failedRecords > 0
+        ? 'Import Completed With Errors'
+        : 'Import Successful',
+
+
+        text: message,
+
+
+        icon:
+        response.failedRecords > 0
+        ? 'warning'
+        : 'success'
+
+
+      })
+      .then(()=>{
+
+
+        this.router.navigate(
+          ['/admin/customer-list'],
+          {
+            queryParams:{
+              tabName:'draft'
+            }
+          }
+        );
+
+
+      });
+
+
+
+    },
+
+
+
+    error:(error:any)=>{
+
+
+      console.error(
+        "Import Failed",
+        error
+      );
+
+
+
+      Swal.fire(
+        'Import Failed',
+        error.error?.message ||
+        'Unexpected error occurred',
+        'error'
+      );
+
+
+    }
+
+  });
+
+
+
+  event.target.value='';
+
+}
 }

@@ -73,13 +73,10 @@ import { AuthService } from '../../../../core/services/auth.service';
 
     MatDialogModule,
     Sidebar,
-    MatIconModule,
-
-    Sidebar
   ],
 
   templateUrl: './import-screen.html',
-  styleUrls: ['./import-screen.scss']
+  styleUrls: ['./import-screen.scss'],
 })
 
 
@@ -114,17 +111,8 @@ export class ImportScreen implements OnInit {
 
   companyId = '';
 
-
-  // ============================================================
-  // PERMISSIONS
-  // ============================================================
-
+  //permissions
   permissionNames: string[] = [];
-
-
-  // ============================================================
-  // IMPORT LC FORM STEPS
-  // ============================================================
 
   importSteps = [
     { label: 'General Details' },
@@ -136,7 +124,7 @@ export class ImportScreen implements OnInit {
     { label: 'Narrative Details' },
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
-    { label: 'Attachments' }
+    { label: 'Attachments' },
   ];
 
 
@@ -229,11 +217,8 @@ export class ImportScreen implements OnInit {
     private route: ActivatedRoute,
 
     private dialog: MatDialog,
-
-    private transactionService:
-      ImportlcFormTransactionService,
-
-    private authservice: AuthService
+    private transactionService: ImportlcFormTransactionService,
+    private authservice: AuthService,
   ) {
 
     this.buildForm();
@@ -258,43 +243,20 @@ export class ImportScreen implements OnInit {
     // ----------------------------------------------------------
 
     setTimeout(() => {
-
-      const sections =
-        document.querySelectorAll('section');
-
-      const observer =
-        new IntersectionObserver(
-          entries => {
-
-            entries.forEach(entry => {
-
-              if (entry.isIntersecting) {
-
-                this.currentStep =
-                  Array.from(sections)
-                    .indexOf(
-                      entry.target as HTMLElement
-                    );
-              }
-
-            });
-
-          },
-          {
-            threshold: 0.4,
-
-            root:
-              document.querySelector(
-                '.scroll-area'
-              )
-          }
-        );
-
-
-      sections.forEach(section =>
-        observer.observe(section)
+      const sections = document.querySelectorAll('section');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
+            }
+          });
+        },
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
       );
-
+      sections.forEach((section) => observer.observe(section));
     }, 200);
 
 
@@ -310,43 +272,14 @@ export class ImportScreen implements OnInit {
         navState.mode;
     }
 
-
-    // ----------------------------------------------------------
-    // COMPANY
-    // ----------------------------------------------------------
-
-    this.companyId =
-      this.authservice.getCompanyId() || '';
-
-    console.log(
-      'Company ID:',
-      this.companyId
-    );
-
-
-    // ----------------------------------------------------------
-    // TNX ID
-    // ----------------------------------------------------------
-
-    this.tnxId =
-      this.route.snapshot.paramMap
-        .get('tnxId') || '';
-
-    console.log(
-      'TNX ID:',
-      this.tnxId
-    );
-
-
-    // ----------------------------------------------------------
-    // ROUTE PARAMETER
-    // ----------------------------------------------------------
-
-    this.route.paramMap.subscribe(params => {
-
-      const tnxId =
-        params.get('tnxId');
-
+    this.companyId = this.authservice.getCompanyId() || '';
+    console.log('Company ID from route:', this.companyId);
+    this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
+    console.log('TNX ID from route:', this.tnxId);
+    // const txFromState = history.state.transaction;
+    // console.log('Transaction from state:', txFromState);
+    this.route.paramMap.subscribe((params) => {
+      const tnxId = params.get('tnxId');
       if (tnxId) {
 
         this.enterEditMode(tnxId);
@@ -360,285 +293,105 @@ export class ImportScreen implements OnInit {
 
   }
 
-
-  // ============================================================
-  // LOAD PERMISSIONS
-  // ============================================================
-
   private loadPermissions(): void {
-
-    const storedPermissions =
-      sessionStorage.getItem(
-        'permissionNames'
-      );
-
+    const storedPermissions = sessionStorage.getItem('permissionNames');
 
     if (storedPermissions) {
-
       try {
+        this.permissionNames = JSON.parse(storedPermissions);
 
-        this.permissionNames =
-          JSON.parse(
-            storedPermissions
-          );
-
-        console.log(
-          'Import LC Permission Names:',
-          this.permissionNames
-        );
-
+        console.log('Import LC Permission Names:', this.permissionNames);
       } catch (error) {
-
-        console.error(
-          'Error parsing permissionNames:',
-          error
-        );
+        console.error('Error parsing permissionNames:', error);
 
         this.permissionNames = [];
       }
-
     } else {
-
-      console.warn(
-        'permissionNames not found in sessionStorage'
-      );
+      console.warn('permissionNames not found in sessionStorage');
 
       this.permissionNames = [];
     }
-
   }
 
-
-  // ============================================================
-  // CHECK PERMISSION
-  // ============================================================
-
-  hasPermission(
-    permission: string
-  ): boolean {
-
+  hasPermission(permission: string): boolean {
     return this.permissionNames.some(
-      p =>
-        p?.trim().toLowerCase() ===
-        permission.trim().toLowerCase()
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
-
   }
-
-
-  // ============================================================
-  // BUILD FORM
-  // ============================================================
 
   private buildForm(): void {
-
-    this.importForm =
-      this.fb.group({
-
-        generalDetails:
-          this.fb.group({
-
-            productType:
-              ['backtoback'],
-
-            modeOfTransmission:
-              ['SWIFT'],
-
-            expiryDate:
-              [''],
-
-            placeOfExpiry:
-              ['beneficiary'],
-
-            featureIrrevocable:
-              [false],
-
-            featureRevolving:
-              [false],
-
-            featureTransferable:
-              [false],
-
-            applicableRules:
-              ['EUCP'],
-
-            confirmationInstruction:
-              ['confirm']
-          }),
-
-
-        applicantForm:
-          this.fb.group({
-
-            applicantName:
-              [''],
-
-            applicantAddress1:
-              [''],
-
-            applicantAddress2:
-              [''],
-
-            applicantAddress3:
-              [''],
-
-            applicantAddress4:
-              [''],
-
-            applicantCountry:
-              [''],
-
-            beneficiaryName:
-              [''],
-
-            beneficiaryAddress1:
-              [''],
-
-            beneficiaryAddress2:
-              [''],
-
-            beneficiaryAddress3:
-              [''],
-
-            beneficiaryAddress4:
-              [''],
-
-            beneficiaryCountry:
-              ['']
-          }),
-
-
-        bankForm:
-          this.fb.group({
-
-            issuingBankName:
-              [''],
-
-            issuerReference:
-              [''],
-
-            advisingBankName:
-              [''],
-
-            adviseThroughBankName:
-              ['']
-          }),
-
-
-        amountChargeForm:
-          this.fb.group({
-
-            currency:
-              [''],
-
-            amount: [
-              '',
-              Validators.pattern(
-                /^[0-9]+(\.[0-9]{1,2})?$/
-              )
-            ],
-
-            variationType:
-              ['percent'],
-
-            variationPlus:
-              [''],
-
-            variationMinus:
-              [''],
-
-            issuingBankCharges:
-              ['Applicant'],
-
-            outsideCountryCharges:
-              ['Beneficiary'],
-
-            additionalAmount:
-              ['']
-          }),
-
-
-        paymentDetailsForm:
-          this.fb.group({
-
-            creditAvailableWith:
-              [''],
-
-            bankName:
-              [''],
-
-            creditAvailableBy:
-              ['Payment'],
-
-            paymentDraftAt:
-              ['Sight']
-          }),
-
-
-        shipmentForm:
-          this.fb.group({
-
-            shipmentFrom:
-              [''],
-
-            shipmentTo:
-              [''],
-
-            placeOfLoading:
-              [''],
-
-            placeOfDischarge:
-              [''],
-
-            lastShipmentDate:
-              [''],
-
-            shipmentPeriodNarrative:
-              [''],
-
-            partialShipment:
-              ['Allowed'],
-
-            transhipment:
-              ['Not Allowed']
-          }),
-
-
-        narrativeForm:
-          this.fb.group({
-
-            descriptionOfGoods:
-              [''],
-
-            documentsRequired:
-              [''],
-
-            additionalInstructions:
-              [''],
-
-            otherDetails:
-              ['']
-          }),
-
-
-        instructionForm:
-          this.fb.group({
-
-            principalAccount:
-              [''],
-
-            feeAccount:
-              [''],
-
-            otherInstructions:
-              ['']
-          }),
-
-
-        attachments:
-          this.fb.array([])
-      });
-
+    // Always initialize the form to avoid null bindings
+    this.importForm = this.fb.group({
+      generalDetails: this.fb.group({
+        productType: ['backtoback'],
+        modeOfTransmission: ['SWIFT'],
+        expiryDate: [''],
+        placeOfExpiry: ['beneficiary'],
+        featureIrrevocable: [false],
+        featureRevolving: [false],
+        featureTransferable: [false],
+        applicableRules: ['EUCP'],
+        confirmationInstruction: ['confirm'],
+      }),
+      applicantForm: this.fb.group({
+        applicantName: [''],
+        applicantAddress1: [''],
+        applicantAddress2: [''],
+        applicantAddress3: [''],
+        applicantAddress4: [''],
+        applicantCountry: [''],
+        beneficiaryName: [''],
+        beneficiaryAddress1: [''],
+        beneficiaryAddress2: [''],
+        beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
+        beneficiaryCountry: [''],
+      }),
+      bankForm: this.fb.group({
+        issuingBankName: [''],
+        issuerReference: [''],
+        advisingBankName: [''],
+        adviseThroughBankName: [''],
+      }),
+      amountChargeForm: this.fb.group({
+        currency: [''],
+        amount: ['', Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)],
+        variationType: ['percent'],
+        variationPlus: [''],
+        variationMinus: [''],
+        issuingBankCharges: ['Applicant'],
+        outsideCountryCharges: ['Beneficiary'],
+        additionalAmount: [''],
+      }),
+      paymentDetailsForm: this.fb.group({
+        creditAvailableWith: [''],
+        bankName: [''],
+        creditAvailableBy: ['Payment'],
+        paymentDraftAt: ['Sight'],
+      }),
+      shipmentForm: this.fb.group({
+        shipmentFrom: [''],
+        shipmentTo: [''],
+        placeOfLoading: [''],
+        placeOfDischarge: [''],
+        lastShipmentDate: [''],
+        shipmentPeriodNarrative: [''],
+        partialShipment: ['Allowed'],
+        transhipment: ['Not Allowed'],
+      }),
+      narrativeForm: this.fb.group({
+        descriptionOfGoods: [''],
+        documentsRequired: [''],
+        additionalInstructions: [''],
+        otherDetails: [''],
+      }),
+      instructionForm: this.fb.group({
+        principalAccount: [''],
+        feeAccount: [''],
+        otherInstructions: [''],
+      }),
+      attachments: this.fb.array([]),
+    });
   }
 
 
@@ -678,18 +431,10 @@ export class ImportScreen implements OnInit {
   ): void {
 
     this.mode = 'UPDATE';
-
-
-    this.api
-      .getTransactionByTnxId(tnxId)
-      .subscribe({
-
-        next: tx => {
-
-          this.currentTx = tx;
-
-          this.patchForm(tx);
-
+    this.api.getTransactionByTnxId(tnxId).subscribe({
+      next: (tx) => {
+        this.currentTx = tx;
+        this.patchForm(tx);
 
           switch (tx.status) {
 
@@ -727,147 +472,59 @@ export class ImportScreen implements OnInit {
 
               break;
 
-
-            case 'R':
-
-              this.mode = 'REJECTED';
-
-              this.screenMode = 'EDIT';
-
-              this.importForm.enable();
-
-              break;
-
-
-            default:
-
-              this.mode = 'UPDATE';
-
-              this.screenMode = 'FINAL';
-
-              this.importForm.disable();
-
-              break;
-          }
-
-        },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Transaction not found',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-
-          this.router.navigate([
-            '/dashboard/Trade-Services/import-screen/inquiries'
-          ]);
-
+          case 'R': // Rejected
+            this.mode = 'REJECTED';
+            this.screenMode = 'EDIT';
+            this.importForm.enable(); // allow correction
+            break;
+          default:
+            this.mode = 'UPDATE';
+            this.screenMode = 'FINAL';
+            this.importForm.disable();
+          // this.showUpdateSubmit = false;
+          // this.showApproveReject = false;
         }
-
-      });
-
+      },
+      error: () => {
+        this.snackBar.open('Transaction not found', 'Close', {
+          duration: 3000,
+        });
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-screen/inquiries',
+        ]);
+      },
+    });
   }
-
-
-  // ============================================================
-  // FORM GETTERS
-  // ============================================================
-
+  // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
-
-    return this.importForm.get(
-      'generalDetails'
-    ) as FormGroup;
-
+    return this.importForm.get('generalDetails') as FormGroup;
   }
-
-
   get applicantForm(): FormGroup {
-
-    return this.importForm.get(
-      'applicantForm'
-    ) as FormGroup;
-
+    return this.importForm.get('applicantForm') as FormGroup;
   }
-
-
   get bankForm(): FormGroup {
-
-    return this.importForm.get(
-      'bankForm'
-    ) as FormGroup;
-
+    return this.importForm.get('bankForm') as FormGroup;
   }
-
-
   get amountChargeForm(): FormGroup {
-
-    return this.importForm.get(
-      'amountChargeForm'
-    ) as FormGroup;
-
+    return this.importForm.get('amountChargeForm') as FormGroup;
   }
-
-
   get paymentDetailsForm(): FormGroup {
-
-    return this.importForm.get(
-      'paymentDetailsForm'
-    ) as FormGroup;
-
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
   }
-
-
   get shipmentForm(): FormGroup {
-
-    return this.importForm.get(
-      'shipmentForm'
-    ) as FormGroup;
-
+    return this.importForm.get('shipmentForm') as FormGroup;
   }
-
-
   get narrativeForm(): FormGroup {
-
-    return this.importForm.get(
-      'narrativeForm'
-    ) as FormGroup;
-
+    return this.importForm.get('narrativeForm') as FormGroup;
   }
-
-
   get instructionForm(): FormGroup {
-
-    return this.importForm.get(
-      'instructionForm'
-    ) as FormGroup;
-
+    return this.importForm.get('instructionForm') as FormGroup;
   }
-
-
   get attachmentsArray(): FormArray {
-
-    return this.importForm.get(
-      'attachments'
-    ) as FormArray;
-
+    return this.importForm.get('attachments') as FormArray;
   }
 
-
-  // ============================================================
-  // PATCH FORM
-  // ============================================================
-
-  private patchForm(
-    tx: ImportLcTransaction
-  ): void {
-
+  private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
 
       generalDetails: tx,
@@ -883,8 +540,7 @@ export class ImportScreen implements OnInit {
       shipmentForm: tx,
 
       narrativeForm: tx,
-
-      instructionForm: tx
+      instructionForm: tx,
     });
 
   }
@@ -921,266 +577,132 @@ export class ImportScreen implements OnInit {
     ImportLcTransaction {
 
     return {
-
-      companyId:
-        this.companyId,
-
-      ...this.importForm.value
-        .generalDetails,
-
-      ...this.importForm.value
-        .applicantForm,
-
-      ...this.importForm.value
-        .bankForm,
-
-      ...this.importForm.value
-        .amountChargeForm,
-
-      ...this.importForm.value
-        .paymentDetailsForm,
-
-      ...this.importForm.value
-        .shipmentForm,
-
-      ...this.importForm.value
-        .narrativeForm,
-
-      ...this.importForm.value
-        .instructionForm,
-
-      attachments:
-        this.importForm.value
-          .attachments
+      companyId: this.companyId,
+      ...this.importForm.value.generalDetails,
+      ...this.importForm.value.applicantForm,
+      ...this.importForm.value.bankForm,
+      ...this.importForm.value.amountChargeForm,
+      ...this.importForm.value.paymentDetailsForm,
+      ...this.importForm.value.shipmentForm,
+      ...this.importForm.value.narrativeForm,
+      ...this.importForm.value.instructionForm,
+      attachments: this.importForm.value.attachments,
     };
 
   }
 
-
-  // ============================================================
-  // CREATE / SAVE
-  // Permission: ILC_CreateSave
-  // ============================================================
-
   saveForm(): void {
 
-    if (
-      !this.hasPermission(
-        'ILC_CreateSave'
-      )
-    ) {
-
-      this.snackBar.open(
-        'You do not have permission to create an Import LC.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-    }
-
-
-    if (this.importForm.invalid) {
-
-      this.importForm
-        .markAllAsTouched();
-
-      this.snackBar.open(
-        'Please complete all required fields before saving.',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-    }
-
-
-    const payload =
-      this.flattenForm();
-
-
-    console.log(
-      'Payload before saving draft:',
-      payload
+  if (!this.hasPermission('ILC_CreateSave')) {
+    this.snackBar.open(
+      'You do not have permission to create an Import LC.',
+      'Close',
+      {
+        duration: 3000,
+      },
     );
 
-
-    this.api
-      .savePending(payload)
-      .subscribe({
-
-        next:
-          (res: ImportLcTransaction) => {
-
-            this.snackBar.open(
-              `Draft saved successfully (TNX ID: ${res.tnxId})`,
-              'Close',
-              {
-                duration: 5000
-              }
-            );
-
-
-            setTimeout(() => {
-
-              this.router.navigate([
-                '/dashboard/Trade-Services/import-screen/inquiries'
-              ]);
-
-            }, 50);
-
-          },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Error saving draft',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
+    return;
   }
 
 
-  // ============================================================
-  // SUBMIT
-  // Permission: ILC_InquirySubmit
-  // ============================================================
-
-  submitLc(): void {
-
-    if (
-      !this.hasPermission(
-        'ILC_InquirySubmit'
-      )
-    ) {
-
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
       this.snackBar.open(
-        'You do not have permission to submit this transaction.',
+        'Please complete all required fields before saving.',
         'Close',
-        {
-          duration: 3000
-        }
+        { duration: 3000 },
       );
-
       return;
     }
 
+    // Flatten nested form groups into single object
+    const payload = this.flattenForm();
+    console.log('Payload before saving draft:', payload);
 
-    const tnxId =
-      this.currentTx?.tnxId;
+    this.api.savePending(payload).subscribe({
+      next: (res: ImportLcTransaction) => {
+        // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
+        // this.transactionService.addOrUpdateTransaction(res);
+        this.snackBar.open(
+          `Draft saved successfully (TNX ID: ${res.tnxId})`,
+          'Close',
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-screen/inquiries',
+            ]),
+          50,
+        );
+      },
+      error: () =>
+        this.snackBar.open('Error saving draft', 'Close', { duration: 3000 }),
+    });
+  }
 
+  submitLc(): void {
 
-    const companyId =
-      this.currentTx?.companyId;
+      if (!this.hasPermission('ILC_InquirySubmit')) {
+        this.snackBar.open(
+          'You do not have permission to submit this transaction.',
+          'Close',
+          {
+            duration: 3000,
+          },
+        );
 
+        return;
+      }
 
+    const tnxId = this.currentTx?.tnxId;
+    const companyId = this.currentTx?.companyId;
     if (!tnxId) {
-
       this.snackBar.open(
         'Transaction ID not found. Please save the draft first.',
         'Close',
-        {
-          duration: 3000
-        }
+        { duration: 3000 },
       );
-
       return;
     }
 
 
     if (!companyId) {
-
       this.snackBar.open(
         'Company ID not found. Please save the draft first.',
         'Close',
-        {
-          duration: 3000
-        }
+        { duration: 3000 },
       );
-
       return;
     }
 
 
     const payload = {
-
-      ...this.flattenForm(),
-
+      ...this.flattenForm(), // merge current form data
       event: 'CRE',
-
-      tnxId: this.tnxId
+      tnxId: this.tnxId,
     };
-
-
-    this.api
-      .submitTransaction(
-        tnxId,
-        payload
-      )
-      .subscribe({
-
-        next:
-          (res: ImportLcTransaction) => {
-
-            this.transactionService
-              .addOrUpdateTransaction(res);
-
-
-            this.router.navigate([
-              '/dashboard/Trade-Services/import-screen/success'
-            ], {
-
-              state: {
-
-                source: 'IMPORT_LC',
-
-                transaction: res
-              }
-
-            });
-
+    this.api.submitTransaction(tnxId, payload).subscribe({
+      next: (res: ImportLcTransaction) => {
+        this.transactionService.addOrUpdateTransaction(res);
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-screen/success'],
+          {
+            state: { source: 'IMPORT_LC', transaction: res },
           },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Error submitting transaction',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
+        );
+      },
+      error: () => {
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
-
-  // ============================================================
-  // BACK
-  // ============================================================
-
-  back(): void {
-
-    this.router.navigate([
-      '/dashboard'
-    ]);
-
+  back() {
+    this.router.navigate(['/dashboard']);
   }
 
 
@@ -1199,62 +721,39 @@ export class ImportScreen implements OnInit {
 
 
     arr.clear();
-
-
-    files.forEach(file => {
-
+    files.forEach((file) =>
       arr.push(
-
         this.fb.group({
-
-          title:
-            file.name.replace(
-              /\.[^/.]+$/,
-              ''
-            ),
-
-          fileName:
-            file.name,
-
-          size:
-            file.size,
-
-          type:
-            file.type,
-
-          file:
-            file
-
-        })
-
-      );
-
-    });
-
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
   }
 
 
-  // ============================================================
-  // UPDATE / AMEND
-  // Permission: ILC_InquiryPendingUpdate
-  // ============================================================
-
   update(): void {
 
-    if (
-      !this.hasPermission(
-        'ILC_InquiryPendingUpdate'
-      )
-    ) {
-
+    
+    if (!this.hasPermission('ILC_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
         'Close',
         {
-          duration: 3000
-        }
+          duration: 3000,
+        },
       );
 
+      return;
+    }
+
+    if (this.importForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -1298,48 +797,46 @@ export class ImportScreen implements OnInit {
 
       return;
     }
+    // ImportLcTransaction = {
+    //   id: this.currentTx.id,
 
+    //   // ===== FLATTEN FORM VALUES =====
+    //   ...this.importForm.value.generalDetails,
+    //   ...this.importForm.value.applicantForm,
+    //   ...this.importForm.value.bankForm,
+    //   ...this.importForm.value.amountChargeForm,
+    //   ...this.importForm.value.paymentDetailsForm,
+    //   ...this.importForm.value.shipmentForm,
+    //   ...this.importForm.value.narrativeForm,
+    //   ...this.importForm.value.instructionForm,
 
-    this.api
-      .updatePendingByTnxId(payload)
-      .subscribe({
+    //   attachments: this.attachmentsArray.value,
+    //   tnxId: this.currentTx?.tnxId
+    // };
 
-        next: res => {
+    this.api.updatePendingByTnxId(payload).subscribe({
+      next: (res) => {
+        // this.transactionService.addOrUpdateTransaction(res);
+        this.snackBar.open(
+          `Data successfully updated (${res.tnxId})`,
+          'Close',
+          { duration: 3000 },
+        );
 
-          this.snackBar.open(
-            `Data successfully updated (${res.tnxId})`,
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-
-          setTimeout(() => {
-
+        setTimeout(
+          () =>
             this.router.navigate([
-              '/dashboard/Trade-Services/import-screen/inquiries'
-            ]);
-
-          }, 300);
-
-        },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Error updating transaction',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
+              '/dashboard/Trade-Services/import-screen/inquiries',
+            ]),
+          300,
+        );
+      },
+      error: () => {
+        this.snackBar.open('Error updating transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
 
@@ -1356,171 +853,82 @@ export class ImportScreen implements OnInit {
 
   approve(): void {
 
-    if (
-      !this.hasPermission(
-        'ILC_InquiryApprove'
-      )
-    ) {
-
+    
+    if (!this.hasPermission('ILC_InquiryApprove')) {
       this.snackBar.open(
         'You do not have permission to approve this transaction.',
         'Close',
         {
-          duration: 3000
-        }
+          duration: 3000,
+        },
       );
 
       return;
     }
 
-
     this.api
-      .approveTransaction(
-        this.currentTx.tnxId!,
-        this.currentTx
-      )
+      .approveTransaction(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
-
-        next: () => {
-
-          this.navigateBack(
-            'approved'
-          );
-
-        },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Approval failed',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
+        next: () => this.navigateBack('approved'),
+        error: () =>
+          this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
       });
-
   }
-
-
-  // ============================================================
-  // REJECT
-  // Permission: ILC_InquiryReject
-  // ============================================================
-
   openReject(): void {
-
-    if (
-      !this.hasPermission(
-        'ILC_InquiryReject'
-      )
-    ) {
-
+    
+    if (!this.hasPermission('ILC_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
         'Close',
         {
-          duration: 3000
-        }
+          duration: 3000,
+        },
       );
 
       return;
     }
 
 
-    const dialogRef =
-      this.dialog.open(
-        RejectDialogComponent,
-        {
-          width: '400px'
-        }
-      );
 
-
-    dialogRef
-      .afterClosed()
-      .subscribe(
-        (
-          reason:
-            string | undefined
-        ) => {
-
-          if (!reason) {
-            return;
-          }
-
-
-          this.api
-            .rejectTransaction(
-              this.currentTx.tnxId!,
-              reason
-            )
-            .subscribe({
-
-              next: () => {
-
-                this.snackBar.open(
-                  'Transaction rejected successfully',
-                  'Close',
-                  {
-                    duration: 3000
-                  }
-                );
-
-
-                this.navigateBack(
-                  'rejected'
-                );
-
-              },
-
-
-              error: () => {
-
-                this.snackBar.open(
-                  'Failed to reject transaction',
-                  'Close',
-                  {
-                    duration: 3000
-                  }
-                );
-
-              }
-
-            });
-
-        }
-      );
-
-  }
-
-
-  // ============================================================
-  // NAVIGATE BACK
-  // ============================================================
-
-  private navigateBack(
-    tab: string
-  ): void {
-
-    this.router.navigate([
-      '/dashboard/Trade-Services/import-screen/inquiries'
-    ], {
-
-      relativeTo: this.route,
-
-      queryParamsHandling: 'merge',
-
-      queryParams: {
-        tab
-      }
-
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
     });
 
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+
+      this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.navigateBack('rejected'); // send user to rejected tab
+        },
+        error: () => {
+          this.snackBar.open('Failed to reject transaction', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
+    });
+  }
+
+  // reject(): void {
+  //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
+  //     next: () => this.navigateBack('rejected'),
+  //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
+  //   });
+  // }
+
+  private navigateBack(tab: string) {
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-screen/inquiries'],
+      {
+        relativeTo: this.route,
+        queryParamsHandling: 'merge',
+        queryParams: { tab },
+      },
+    );
   }
 
 
@@ -1531,20 +939,23 @@ export class ImportScreen implements OnInit {
 
   updateRejected(): void {
 
-    if (
-      !this.hasPermission(
-        'ILC_InquiryRejectUpdate'
-      )
-    ) {
-
+    
+    if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
         'Close',
         {
-          duration: 3000
-        }
+          duration: 3000,
+        },
       );
 
+      return;
+    }
+
+    if (this.importForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -1574,418 +985,24 @@ export class ImportScreen implements OnInit {
       this.currentTx.tnxId;
 
 
-    this.api
-      .updateRejectedTransaction(
-        payload.tnxId,
-        payload
-      )
-      .subscribe({
-
-        next: res => {
-
-          this.snackBar.open(
-            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-
-          this.router.navigate([
-            '/dashboard/Trade-Services/import-screen/inquiries'
-          ], {
-            queryParams: {
-              tab: 'pending'
-            }
-          });
-
-        },
-
-
-        error: () => {
-
-          this.snackBar.open(
-            'Failed to update rejected transaction',
-            'Close',
-            {
-              duration: 3000
-            }
-          );
-
-        }
-
-      });
-
-  }
-
-
-  // ============================================================
-  // INQUIRY TAB
-  // ============================================================
-
-  setActiveTab(
-    tab:
-      | 'live'
-      | 'pending'
-      | 'submitted'
-      | 'approved'
-      | 'rejected'
-  ): void {
-
-    this.activeTab = tab;
-
-    this.currentPage = 1;
-
-    this.applyFilters();
-
-  }
-
-
-  // ============================================================
-  // SEARCH / FILTER
-  // ============================================================
-
-  applyFilters(): void {
-
-    let result =
-      [...this.transactions];
-
-
-    const search =
-      this.searchQuery
-        .trim()
-        .toLowerCase();
-
-
-    if (search) {
-
-      result =
-        result.filter(tx => {
-
-          return (
-
-            String(
-              tx.tnxId ?? ''
-            )
-              .toLowerCase()
-              .includes(search)
-
-            ||
-
-            String(
-              tx.beneficiaryName ?? ''
-            )
-              .toLowerCase()
-              .includes(search)
-
-            ||
-
-            String(
-              tx.issuingBankName ?? ''
-            )
-              .toLowerCase()
-              .includes(search)
-
-            ||
-
-            String(
-              tx.currency ?? ''
-            )
-              .toLowerCase()
-              .includes(search)
-
-          );
-
-        });
-
-    }
-
-
-    const currency =
-      this.currencyFilter
-        .trim()
-        .toLowerCase();
-
-
-    if (currency) {
-
-      result =
-        result.filter(tx =>
-          String(
-            tx.currency ?? ''
-          )
-            .toLowerCase()
-            .includes(currency)
+    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
+      next: (res) => {
+        this.snackBar.open(
+          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+          'Close',
+          { duration: 3000 },
         );
 
-    }
-
-
-    result =
-      result.filter(tx => {
-
-        const status =
-          String(
-            tx.status ?? ''
-          )
-            .toUpperCase();
-
-
-        switch (
-          this.activeTab
-        ) {
-
-          case 'pending':
-            return status === 'I';
-
-          case 'submitted':
-            return status === 'S';
-
-          case 'approved':
-            return status === 'A';
-
-          case 'rejected':
-            return status === 'R';
-
-          case 'live':
-            return true;
-
-          default:
-            return true;
-        }
-
-      });
-
-
-    this.filteredTransactions =
-      result;
-
-
-    this.updatePagination();
-
+        // Navigate back to inquiries with Pending tab
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-screen/inquiries',
+        ]);
+      },
+      error: () => {
+        this.snackBar.open('Failed to update rejected transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
-
-
-  // ============================================================
-  // CLEAR SEARCH
-  // ============================================================
-
-  clearSearch(): void {
-
-    this.searchQuery = '';
-
-    this.applyFilters();
-
-  }
-
-
-  // ============================================================
-  // PAGINATION
-  // ============================================================
-
-  private updatePagination(): void {
-
-    this.totalPages =
-      Math.max(
-        1,
-        Math.ceil(
-          this.filteredTransactions.length /
-          this.pageSize
-        )
-      );
-
-
-    if (
-      this.currentPage >
-      this.totalPages
-    ) {
-
-      this.currentPage =
-        this.totalPages;
-
-    }
-
-
-    const start =
-      (this.currentPage - 1) *
-      this.pageSize;
-
-
-    const end =
-      start + this.pageSize;
-
-
-    this.pagedTransactions =
-      this.filteredTransactions.slice(
-        start,
-        end
-      );
-
-  }
-
-
-  previousPage(): void {
-
-    if (this.currentPage > 1) {
-
-      this.currentPage--;
-
-      this.updatePagination();
-
-    }
-
-  }
-
-
-  nextPage(): void {
-
-    if (
-      this.currentPage <
-      this.totalPages
-    ) {
-
-      this.currentPage++;
-
-      this.updatePagination();
-
-    }
-
-  }
-
-
-  // ============================================================
-  // SORT
-  // ============================================================
-
-  sortBy(
-    column: string
-  ): void {
-
-    if (
-      this.sortColumn === column
-    ) {
-
-      this.sortDirection =
-        this.sortDirection === 'asc'
-          ? 'desc'
-          : 'asc';
-
-    } else {
-
-      this.sortColumn =
-        column;
-
-      this.sortDirection =
-        'asc';
-
-    }
-
-
-    this.filteredTransactions.sort(
-      (a: any, b: any) => {
-
-        const valueA =
-          a?.[column];
-
-        const valueB =
-          b?.[column];
-
-
-        if (
-          valueA == null &&
-          valueB == null
-        ) {
-          return 0;
-        }
-
-
-        if (valueA == null) {
-          return 1;
-        }
-
-
-        if (valueB == null) {
-          return -1;
-        }
-
-
-        const comparison =
-          String(valueA)
-            .localeCompare(
-              String(valueB),
-              undefined,
-              {
-                numeric: true,
-                sensitivity: 'base'
-              }
-            );
-
-
-        return this.sortDirection === 'asc'
-          ? comparison
-          : -comparison;
-
-      }
-    );
-
-
-    this.updatePagination();
-
-  }
-
-
-  // ============================================================
-  // TRACK BY
-  // ============================================================
-
-  trackByTnxId(
-    index: number,
-    tx: ImportLcTransaction
-  ): string | number {
-
-    return tx.tnxId || index;
-
-  }
-
-
-  // ============================================================
-  // OPEN IMPORT LC
-  // ============================================================
-
-  openImportLc(
-    tx: ImportLcTransaction
-  ): void {
-
-    if (!tx?.tnxId) {
-
-      console.warn(
-        'Transaction does not contain TNX ID:',
-        tx
-      );
-
-      return;
-    }
-
-
-    this.router.navigate([
-      '/dashboard/Trade-Services/import-screen',
-      tx.tnxId
-    ]);
-
-  }
-
-
-  // ============================================================
-  // VIEW TRANSACTION
-  // ============================================================
-
-  viewTransaction(
-    tx: ImportLcTransaction
-  ): void {
-
-    this.openImportLc(tx);
-
-  }
-
 }

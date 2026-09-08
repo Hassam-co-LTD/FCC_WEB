@@ -102,135 +102,46 @@
 
         <!-- ================================================= -->
         <!-- CREATE -->
-        <!-- Permission: SG_CreateSave -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="mode === 'CREATE'">
-
-          <!-- BACK -->
-
+        <ng-container *ngIf="mode === 'CREATE'">
+          <button mat-stroked-button color="primary" (click)="back()">Back</button>
           <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-
-          <!-- SAVE -->
-
-          <button
-            *ngIf="hasPermission('SG_CreateSave')"
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()">
-
-            Save
-
-          </button>
-
+          *ngIf="hasPermission('SG_CreateSave')" mat-flat-button color="accent" (click)="saveForm()">Save</button>
         </ng-container>
 
-
-
-        <!-- ================================================= -->
-        <!-- EDIT / PENDING -->
-        <!-- ================================================= -->
-
-        <ng-container
+        <!-- EDIT -->
+        <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
+          <button 
           *ngIf="
-            screenMode === 'EDIT' &&
-            mode === 'UPDATE'
-          ">
-
-
-          <!-- UPDATE -->
-          <!-- Permission: SG_InquiryPendingUpdate -->
-
-          <button
-            *ngIf="
               hasPermission(
                 'SG_InquiryPendingUpdate'
               )
-            "
-            mat-stroked-button
-            color="primary"
-            (click)="update()">
-
-            Update
-
-          </button>
-
-
-          <!-- SUBMIT -->
-          <!-- Permission: SG_InquirySubmit -->
-
-          <button
-            *ngIf="
+            "mat-stroked-button color="primary" (click)="update()">Update</button>
+          <button 
+          *ngIf="
               hasPermission(
                 'SG_InquirySubmit'
               )
-            "
-            mat-flat-button
-            color="accent"
-            (click)="submitGuarantee()">
-
-            Submit
-
-          </button>
-
+            "mat-flat-button color="accent" (click)="submitGuarantee()">Submit</button>
         </ng-container>
 
 
 
         <!-- ================================================= -->
         <!-- APPROVAL -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'SUBMITTED'
-          ">
-
-
-          <!-- REJECT -->
-          <!-- Permission: SG_InquiryReject -->
-
+        <ng-container *ngIf="screenMode === 'SUBMITTED'">
           <button
-            *ngIf="
+           *ngIf="
               hasPermission(
                 'SG_InquiryReject'
               )
-            "
-            mat-stroked-button
-            color="primary"
-            (click)="openReject()">
+            "mat-stroked-button color="primary" (click)="openReject()">Reject</button>
 
-            Reject
-
-          </button>
-
-
-          <!-- APPROVE -->
-          <!-- Permission: SG_InquiryApprove -->
-
-          <button
-            *ngIf="
+          <button 
+           *ngIf="
               hasPermission(
                 'SG_InquiryApprove'
               )
-            "
-            mat-flat-button
-            color="accent"
-            (click)="approve()">
-
-            Approve
-
-          </button>
-
+            "mat-flat-button color="accent" (click)="approve()">Approve</button>
         </ng-container>
 
 
@@ -259,44 +170,14 @@
 
         <!-- ================================================= -->
         <!-- REJECTED -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'EDIT' &&
-            mode === 'REJECTED'
-          ">
-
-
-          <!-- BACK -->
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-
-          <!-- UPDATE REJECTED -->
-          <!-- Permission: SG_InquiryRejectUpdate -->
-
-          <button
+        <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
+          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button 
             *ngIf="
               hasPermission(
                 'SG_InquiryRejectUpdate'
               )
-            "
-            mat-flat-button
-            color="primary"
-            (click)="updateRejected()">
-
-            Update
-
-          </button>
-
+            "mat-flat-button color="primary" (click)="updateRejected()">Update</button>
         </ng-container>
 
 

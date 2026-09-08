@@ -3,6 +3,8 @@
     <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+    @if (isOpen) {
     <div class="form-grid-2">
         <!-- Product Type -->
         <div class="field-group">
@@ -47,4 +49,5 @@
         <mat-radio-button value="clundertaking">Counter And Local Undertaking</mat-radio-button>
         <mat-radio-button value="cccundertaking">Counter-Counter And Counter Undertaking</mat-radio-button>
     </mat-radio-group>
+}
 </div>

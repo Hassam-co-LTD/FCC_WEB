@@ -15,7 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
 import { SessionTimeoutService } from '../../../core/services/session-timeout-service/session-timeout-service';
- 
+
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState =
   | 'LOGIN'
@@ -24,7 +24,7 @@ export type AuthState =
   | 'RESET_PASSWORD'
   | 'EXPIRED'
   | 'SUCCESS';
- 
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -108,7 +108,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const urlToken = params['token'];
- 
+
       // Protection against secondary router stabilization events where token might be undefined
       if (!urlToken) {
         if (
@@ -199,11 +199,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   toggleConfirmPassword(): void {
     this.hideConfirmPassword = !this.hideConfirmPassword;
   }
- 
+
   loginHandler(): void {
     this.loginApi();
   }
- 
+
   loginApi(): void {
     this.api
       .userLogin(
@@ -215,14 +215,14 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         'clientUsers',
       )
- 
+
       .subscribe({
         next: (res) => {
           console.log(res.body);
           console.log(res.headers);
           const loginData = res.body;
- 
- 
+
+
           // Save Permission Group Name
 sessionStorage.setItem(
   'permissionGroupName',
@@ -236,20 +236,20 @@ sessionStorage.setItem(
  
           // Save user information
           sessionStorage.setItem('userData', JSON.stringify(loginData));
- 
+
           // Save JWT
           sessionStorage.setItem('token', loginData.token);
- 
+
           // Save Refresh Token
           sessionStorage.setItem('refreshToken', loginData.refreshToken);
- 
+
           // START SESSION TIMEOUT WATCHER
           // this.sessionTimeOut.startWatching();
- 
+
           const companyType = this.auth.getCompanyType();
- 
+
           const customerType = this.auth.getUserCategory();
- 
+
           if (companyType === 'B') {
             this.router.navigate(['/customer-user']);
           } else if (companyType === 'C' && customerType === 'A') {
@@ -264,7 +264,7 @@ sessionStorage.setItem(
             });
           }
         },
- 
+
         error: (err) => {
           Swal.fire({
             icon: 'error',
@@ -285,7 +285,7 @@ sessionStorage.setItem(
       });
       return;
     }
- 
+
     this.api
       .forgotPassword({
         loginId: this.forgotLoginId,
@@ -296,11 +296,11 @@ sessionStorage.setItem(
           const data =
             typeof response === 'string' ? JSON.parse(response) : response;
           this.maskedUser = this.maskEmail(data?.email || this.forgotLoginId);
- 
+
           this.transitionTo('EMAIL_SENT');
           this.startExpiryTimer();
           this.startResendTimer();
- 
+
           Swal.fire({
             icon: 'success',
             title: 'Link Dispatched',
@@ -319,7 +319,7 @@ sessionStorage.setItem(
  
   resendEmail(): void {
     if (!this.canResend) return;
- 
+
     this.api
       .forgotPassword({
         loginId: this.forgotLoginId,
@@ -350,7 +350,7 @@ sessionStorage.setItem(
   updatePassword(): void {
     if (this.isPasswordInvalid || this.newPassword !== this.confirmPassword)
       return;
- 
+
     this.api
       .resetPassword({ token: this.token, newPassword: this.newPassword })
       .subscribe({
@@ -440,7 +440,7 @@ sessionStorage.setItem(
     this.hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
       password,
     );
- 
+
     // Global variable toggle assignment check logic
     this.isPasswordInvalid = !(
       this.hasMinLength &&
@@ -449,7 +449,7 @@ sessionStorage.setItem(
       this.hasNumber &&
       this.hasSpecialChar
     );
- 
+
     let passedRulesCount = 0;
     if (this.hasMinLength) passedRulesCount++;
     if (this.hasUppercase) passedRulesCount++;
@@ -483,4 +483,3 @@ sessionStorage.setItem(
     this.hasSpecialChar = false;
   }
 }
- 

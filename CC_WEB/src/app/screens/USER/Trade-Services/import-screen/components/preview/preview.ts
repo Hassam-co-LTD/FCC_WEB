@@ -15,9 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../../../../../core/services/api.service';
 
 import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-
-import { ImportLcTransaction } from '../../../../../../core/models/import-lc';
-
+import { ImportLcTransaction } from "../../../../../../core/models/import-lc";
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 
 @Component({
@@ -29,11 +27,10 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
     MatIcon,
     DecimalPipe,
     MatCard,
-    MatButtonModule,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class Preview implements OnInit {
   @Input() transaction!: ImportLcTransaction;
@@ -49,6 +46,8 @@ export class Preview implements OnInit {
   isPdf = false;
   currentTx: ImportLcTransaction | null = null;
 
+  // pageName1 = 'Update';
+  // pageName2 = 'Submit';
   permissionNames: string[] = [];
 
   constructor(
@@ -57,20 +56,20 @@ export class Preview implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: ImportlcFormTransactionService
+    private transactionService: ImportlcFormTransactionService,
   ) {}
 
   ngOnInit(): void {
-    // Get permissions from session
     const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
     this.permissionNames = userData.permissionNames || [];
 
     this.currentTx =
-      this.transaction || this.transactionService.getCurrentTransaction();
+      this.transaction || //  Priority: @Input() transaction (Success page)
+      this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
-      this.router.navigate(['/import-screen']);
+      this.router.navigate(['/dashboard/Trade-Services/import-screen']);
       return;
     }
 
@@ -112,6 +111,7 @@ export class Preview implements OnInit {
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
       beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
       beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
       beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
       issuingBankName: [this.currentTx!.issuingBankName],
@@ -121,10 +121,12 @@ export class Preview implements OnInit {
 
       currency: [this.currentTx!.currency],
       amount: [this.currentTx!.amount],
-      additionalAmount: [this.currentTx!.additionalAmount],
       variationType: [this.currentTx!.variationType],
       variationPlus: [this.currentTx!.variationPlus],
       variationMinus: [this.currentTx!.variationMinus],
+      issuingBankCharges: [this.currentTx!.issuingBankCharges],
+      outsideCountryCharges: [this.currentTx!.outsideCountryCharges],
+      additionalAmount: [this.currentTx!.additionalAmount],
 
       creditAvailableWith: [this.currentTx!.creditAvailableWith],
       bankName: [this.currentTx!.bankName],
@@ -148,8 +150,7 @@ export class Preview implements OnInit {
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
-
-      attachments: this.fb.array(this.currentTx!.attachments ?? [])
+      attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
 
     if (this.viewMode === 'readonly') {
@@ -161,20 +162,12 @@ export class Preview implements OnInit {
     return this.importForm.get('attachments') as FormArray;
   }
 
-  back(): void {
-    if (!this.hasPermission('ILC_Inquiry')) {
-      this.snackBar.open(
-        'You do not have permission to view Import LC records.',
-        'Close',
-        { duration: 3000 },
-      );
-      return;
-    }
-
+  back() {
     this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
   }
 
   submitLc(): void {
+
     if (!this.hasPermission('ILC_InquirySubmit')) {
       this.snackBar.open(
         'You do not have permission to submit an Import LC.',
@@ -197,62 +190,70 @@ export class Preview implements OnInit {
       next: (res) => {
         this.router.navigate(
           ['/dashboard/Trade-Services/import-screen/success'],
-          { state: { transaction: res } },
+          {
+            state: { transaction: res },
+          },
         );
       },
-      error: (error) => {
-        console.error('Error submitting transaction:', error);
+      error: () => {
         this.snackBar.open('Error submitting transaction', 'Close', {
           duration: 3000,
         });
-      }
+      },
     });
   }
 
   approveTransaction(): void {
-    if (!this.hasPermission('ILC_InquiryApprove')) {
-      this.snackBar.open(
-        'You do not have permission to approve an Import LC.',
-        'Close',
-        { duration: 3000 },
-      );
-      return;
-    }
-
-    const tnxId = this.currentTx?.tnxId;
-
-    if (!tnxId) {
-      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
-      return;
-    }
-
-    this.api.approveTransaction(tnxId, this.currentTx!).subscribe({
-      next: (res) => {
-        this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
-
-        this.router.navigate(
-          ['/dashboard/Trade-Services/import-screen/success'],
-          { state: { transaction: res } },
+      if (!this.hasPermission('ILC_InquiryApprove')) {
+        this.snackBar.open(
+          'You do not have permission to approve an Import LC.',
+          'Close',
+          { duration: 3000 },
         );
-      },
-      error: (error) => {
-        console.error('Error approving transaction:', error);
-        this.snackBar.open('Error approving transaction', 'Close', {
-          duration: 3000,
-        });
+        return;
       }
-    });
+
+    if (!this.currentTx?.tnxId) return;
+
+    this.api
+      .approveTransaction(this.currentTx.tnxId, this.currentTx)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction approved', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/import-screen/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error approving transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
 
+  // rejectTransaction(): void {
+  //   if (!this.currentTx?.tnxId) return;
+
+  //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
+  //     next: (res) => {
+  //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
+  //       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+  //     },
+  //     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+  //   });
+  // }
   rejectTransaction(): void {
-    if (!this.hasPermission('ILC_InquiryReject')) {
-      this.snackBar.open(
-        'You do not have permission to reject an Import LC.',
-        'Close',
-        { duration: 3000 },
-      );
-      return;
-    }
+      if (!this.hasPermission('ILC_InquiryReject')) {
+        this.snackBar.open(
+          'You do not have permission to reject an Import LC.',
+          'Close',
+          { duration: 3000 },
+        );
+        return;
+      }
 
     const tnxId = this.currentTx?.tnxId;
 
@@ -263,50 +264,46 @@ export class Preview implements OnInit {
 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
-      hasBackdrop: true,
-      backdropClass: 'cdk-overlay-dark-backdrop',
-      panelClass: 'custom-dialog-container'
+      hasBackdrop: true, // ensure overlay backdrop
+      backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
+      panelClass: 'custom-dialog-container', // white dialog box
     });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
-      if (!reason) return;
-
+      if (!reason) return; // user cancelled
       this.api.rejectTransaction(tnxId, reason).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', {
             duration: 3000,
           });
-
           this.router.navigate(
             ['/dashboard/Trade-Services/import-screen/success'],
             { state: { transaction: res } },
           );
         },
-        error: (error) => {
-          console.error('Error rejecting transaction:', error);
+        error: () =>
           this.snackBar.open('Error rejecting transaction', 'Close', {
             duration: 3000,
-          });
-        }
+          }),
       });
     });
   }
 
-  downloadFile(index: number): void {
-    if (!this.hasPermission('ILC_InquiryPreview')) {
-      this.snackBar.open(
-        'You do not have permission to download attachments.',
-        'Close',
-        { duration: 3000 },
-      );
-      return;
-    }
+  downloadFile(index: number) {
 
-    const currentAttachment = this.attachmentsArray.at(index)?.value;
+     if (!this.hasPermission('ILC_InquiryPreview')) {
+       this.snackBar.open(
+         'You do not have permission to download attachments.',
+         'Close',
+         { duration: 3000 },
+       );
+       return;
+     }
 
-    if (!currentAttachment) return;
+    const currentTx = this.attachmentsArray.at(index)?.value;
+    if (!currentTx) return;
 
-    const { file, fileName } = currentAttachment;
+    const { file, fileName } = currentTx;
 
     if (file instanceof Blob) {
       const url = URL.createObjectURL(file);
@@ -318,40 +315,26 @@ export class Preview implements OnInit {
     if (typeof file === 'string' && file.startsWith('currentTx:')) {
       const arr = file.split(',');
       const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
-
-      try {
-        const bstr = atob(arr[1]);
-        const u8arr = new Uint8Array(bstr.length);
-
-        for (let n = 0; n < bstr.length; n++) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-
-        const blob = new Blob([u8arr], { type: mime });
-        const url = URL.createObjectURL(blob);
-
-        this.triggerDownload(url, fileName);
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Error decoding attachment:', error);
-        this.snackBar.open('Unable to download attachment', 'Close', {
-          duration: 3000,
-        });
+      const bstr = atob(arr[1]);
+      const u8arr = new Uint8Array(bstr.length);
+      for (let n = 0; n < bstr.length; n++) {
+        u8arr[n] = bstr.charCodeAt(n);
       }
+      const blob = new Blob([u8arr], { type: mime });
+      const url = URL.createObjectURL(blob);
+      this.triggerDownload(url, fileName);
+      URL.revokeObjectURL(url);
       return;
     }
 
     console.error('Unsupported file format', file);
-    this.snackBar.open('Unsupported file format', 'Close', { duration: 3000 });
   }
 
-  private triggerDownload(url: string, fileName: string): void {
+  private triggerDownload(url: string, fileName: string) {
     const a = document.createElement('a');
     a.href = url;
-    a.download = fileName || 'attachment';
-    document.body.appendChild(a);
+    a.download = fileName;
     a.click();
-    document.body.removeChild(a);
   }
 
   trackByIndex(index: number, item: any): any {

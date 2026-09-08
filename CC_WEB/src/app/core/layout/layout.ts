@@ -3,12 +3,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RouterOutlet } from '@angular/router';
 import { RouterLinkWithHref } from '@angular/router';
-import { MatIconModule } from "@angular/material/icon";
-import { TopbarComponent } from "../topbar/topbar";
+import { MatIconModule } from '@angular/material/icon';
+import { TopbarComponent } from '../topbar/topbar';
 import { CommonModule } from '@angular/common';
-import { MatMenuModule } from "@angular/material/menu";
+import { MatMenuModule } from '@angular/material/menu';
 import { filter } from 'rxjs/operators';
-
 
 interface MenuItem {
   label: string;
@@ -19,7 +18,6 @@ interface MenuItem {
   manualOpen?: boolean; //
 }
 
-
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.html',
@@ -29,7 +27,7 @@ interface MenuItem {
     RouterOutlet,
     TopbarComponent,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
   ],
 })
 export class LayoutComponent implements OnInit {
@@ -38,12 +36,10 @@ export class LayoutComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-
   currentMenu: 'DEFAULT' | 'SYSTEM' | 'MIDDLE' = 'DEFAULT';
   collapsed = false;
   shippingGuaranteeOpen = false;
   menuItems: MenuItem[] = [];
-
 
   systemOverviewMenu: MenuItem[] = [
     { label: 'Change Profile', route: '/system-overview/profile' },
@@ -51,67 +47,117 @@ export class LayoutComponent implements OnInit {
       label: 'Jurisdiction Maintenance',
       open: false,
       children: [
-        { label: 'Roles', route: '/system-overview/jurisdiction-maintenance/role' },
-        { label: 'Authorization', route: '/system-overview/jurisdiction-maintenance/authorization' },
-      ]
+        {
+          label: 'Roles',
+          route: '/system-overview/jurisdiction-maintenance/role',
+        },
+        {
+          label: 'Authorization',
+          route: '/system-overview/jurisdiction-maintenance/authorization',
+        },
+      ],
     },
     {
       label: 'Customer Maintenance',
       open: false,
       children: [
-        { label: 'Profiles', route: '/system-overview/customer-maintenance/customer-profile' },
-        { label: 'Customer Entities', route: '/system-overview/customer-maintenance/customer-entities' },
-        { label: 'User Profile', route: '/system-overview/customer-maintenance/user-profile' },
-        { label: 'User Accounts', route: '/system-overview/customer-maintenance/user-accounts' }
-      ]
+        {
+          label: 'Profiles',
+          route: '/system-overview/customer-maintenance/customer-profile',
+        },
+        {
+          label: 'Customer Entities',
+          route: '/system-overview/customer-maintenance/customer-entities',
+        },
+        {
+          label: 'User Profile',
+          route: '/system-overview/customer-maintenance/user-profile',
+        },
+        {
+          label: 'User Accounts',
+          route: '/system-overview/customer-maintenance/user-accounts',
+        },
+      ],
     },
     {
       label: 'User Maintenance',
       open: false,
       children: [
-        { label: 'Profiles', route: '/system-overview/customer-maintenance/customer-profile' },
-        { label: 'Authentication', route: '/system-overview/customer-maintenance/authentication' },
-      ]
+        {
+          label: 'Profiles',
+          route: '/system-overview/customer-maintenance/customer-profile',
+        },
+        {
+          label: 'Authentication',
+          route: '/system-overview/customer-maintenance/authentication',
+        },
+      ],
     },
   ];
-
 
   middleOfficeMenu: MenuItem[] = [
     {
       label: 'Pending Approvals',
       open: false,
       children: [
-        { label: 'List of Records', route: '/middle-office/pending-approvals/list-of-records' },
-        { label: 'Edit Transaction', route: '/middle-office/pending-approvals/edit-transaction' },
-        { label: 'Retrieve Unsigned', route: '/middle-office/pending-approvals/retrieve-unsigned' },
-        { label: 'Pending Loans', route: '/middle-office/pending-approvals/pending-loans' },
-        { label: 'Approve / Reject', route: '/middle-office/pending-approvals/approve-reject' },
-        { label: 'Transactions', route: '/middle-office/pending-approvals/transactions' },
-      ]
+        {
+          label: 'List of Records',
+          route: '/middle-office/pending-approvals/list-of-records',
+        },
+        {
+          label: 'Edit Transaction',
+          route: '/middle-office/pending-approvals/edit-transaction',
+        },
+        {
+          label: 'Retrieve Unsigned',
+          route: '/middle-office/pending-approvals/retrieve-unsigned',
+        },
+        {
+          label: 'Pending Loans',
+          route: '/middle-office/pending-approvals/pending-loans',
+        },
+        {
+          label: 'Approve / Reject',
+          route: '/middle-office/pending-approvals/approve-reject',
+        },
+        {
+          label: 'Transactions',
+          route: '/middle-office/pending-approvals/transactions',
+        },
+      ],
     },
     {
       label: 'Existing Records',
       open: false,
       children: [
-        { label: 'List of Records', route: '/middle-office/existing-records/list-of-records' },
-        { label: 'Edit Transaction', route: '/middle-office/existing-records/edit-transaction' },
-        { label: 'Retrieve Unsigned', route: '/middle-office/existing-records/retrieve-unsigned' },
-      ]
-    }
+        {
+          label: 'List of Records',
+          route: '/middle-office/existing-records/list-of-records',
+        },
+        {
+          label: 'Edit Transaction',
+          route: '/middle-office/existing-records/edit-transaction',
+        },
+        {
+          label: 'Retrieve Unsigned',
+          route: '/middle-office/existing-records/retrieve-unsigned',
+        },
+      ],
+    },
   ];
 
-
-  constructor(private router: Router, private authService: AuthService) { }
-
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
   ngOnInit() {
-
     const role = this.authService.getUserCategory();
     const companyType = this.authService.getCompanyType();
     this.loadMenu(role, companyType);
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         const url = event.urlAfterRedirects;
         this.activeRoute = url;
@@ -131,20 +177,15 @@ export class LayoutComponent implements OnInit {
         // Open menus according to current route
         this.updateMenuOpenState(this.menuItems, url);
       });
-
-
   }
-
 
   toggleSidebar() {
     this.collapsed = !this.collapsed;
   }
 
-
   isCollapsed(): boolean {
     return this.collapsed;
   }
-
 
   onParentClick(item: MenuItem) {
     // Toggle this parent ONLY
@@ -152,7 +193,7 @@ export class LayoutComponent implements OnInit {
 
     // Ensure all direct children are initially closed when opening
     if (item.open && item.children) {
-      item.children.forEach(child => child.open = false);
+      item.children.forEach((child) => (child.open = false));
     }
   }
 
@@ -162,11 +203,13 @@ export class LayoutComponent implements OnInit {
   }
 
   loadMenu(role: 'A' | 'U' | null, companyType: 'B' | 'C' | null) {
-
     if (companyType === 'C' && role === 'A') {
       this.menuItems = [
-
-        { label: 'System Features', icon: 'insights', route: '/system-overview' },
+        {
+          label: 'System Features',
+          icon: 'insights',
+          route: '/system-overview',
+        },
         { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
         // { label: 'System Features', icon: 'insights', route: '/system-overview' },
         // { label: 'Middle-Office', icon: 'group', route: '/middle-office' },
@@ -179,7 +222,6 @@ export class LayoutComponent implements OnInit {
           icon: 'storage',
           open: false,
           children: [
-
             {
               label: 'Customers',
               icon: 'group',
@@ -187,8 +229,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-customer' },
-                { label: 'Inquiry', route: '/admin/customer-list' }
-              ]
+                { label: 'Inquiry', route: '/admin/customer-list' },
+              ],
             },
 
             {
@@ -198,8 +240,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-branch' },
-                { label: 'Inquiry', route: '/admin/branch-inquiry' }
-              ]
+                { label: 'Inquiry', route: '/admin/branch-inquiry' },
+              ],
             },
 
             {
@@ -209,8 +251,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-city' },
-                { label: 'Inquiry', route: '/admin/city-inquiry' }
-              ]
+                { label: 'Inquiry', route: '/admin/city-inquiry' },
+              ],
             },
 
             {
@@ -220,8 +262,11 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-dropdown-option' },
-                { label: 'Inquiry', route: '/admin/dynamic-dropdown-option-inquiry' }
-              ]
+                {
+                  label: 'Inquiry',
+                  route: '/admin/dynamic-dropdown-option-inquiry',
+                },
+              ],
             },
             {
               label: 'Dynamic Field Options',
@@ -229,11 +274,16 @@ export class LayoutComponent implements OnInit {
               route: '/admin/create-dynamic-field-options',
               open: false,
               children: [
-                { label: 'Create New', route: '/admin/create-dynamic-field-options' },
-                { label: 'Inquiry', route: '/admin/dynamic-field-options-inquiry' }
-              ]
+                {
+                  label: 'Create New',
+                  route: '/admin/create-dynamic-field-options',
+                },
+                {
+                  label: 'Inquiry',
+                  route: '/admin/dynamic-field-options-inquiry',
+                },
+              ],
             },
-
 
             {
               label: 'Account Types',
@@ -242,11 +292,10 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-account-types' },
-                { label: 'Inquiry', route: '/admin/account-types-inquiry' }
-              ]
-            }
-
-          ]
+                { label: 'Inquiry', route: '/admin/account-types-inquiry' },
+              ],
+            },
+          ],
         },
 
         // ================================
@@ -257,7 +306,6 @@ export class LayoutComponent implements OnInit {
           icon: 'security',
           open: false,
           children: [
-
             {
               label: 'Client User',
               icon: 'person',
@@ -265,8 +313,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-client-user' },
-                { label: 'Inquiry', route: '/admin/user-client-inquiry' }
-              ]
+                { label: 'Inquiry', route: '/admin/user-client-inquiry' },
+              ],
             },
 
             {
@@ -276,8 +324,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-company' },
-                { label: 'Inquiry', route: '/admin/company-inquiry' }
-              ]
+                { label: 'Inquiry', route: '/admin/company-inquiry' },
+              ],
             },
 
             {
@@ -287,8 +335,8 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-role-master' },
-                { label: 'Inquiry', route: '/admin/role-master-inquiry' }
-              ]
+                { label: 'Inquiry', route: '/admin/role-master-inquiry' },
+              ],
             },
             {
               label: 'Permission Master',
@@ -298,16 +346,31 @@ export class LayoutComponent implements OnInit {
               children: [
                 {
                   label: 'Create New',
-                  route: '/admin/create-permission'
+                  route: '/admin/create-permission',
                 },
                 {
                   label: 'Inquiry',
-                  route: '/admin/permission-master-inquiry'
-                }
-              ]
-            }
-
-          ]
+                  route: '/admin/permission-master-inquiry',
+                },
+              ],
+            },
+            {
+              label: 'Permission Group',
+              icon: 'group',
+              route: '/admin/permission-group',
+              open: false,
+              children: [
+                {
+                  label: 'Create New',
+                  route: '/admin/create-permission-group',
+                },
+                {
+                  label: 'Inquiry',
+                  route: '/admin/permission-group-inquiry',
+                },
+              ],
+            },
+          ],
         },
         {
           label: 'Dynamic Fields',
@@ -316,8 +379,8 @@ export class LayoutComponent implements OnInit {
           open: false,
           children: [
             { label: 'Create New', route: '/admin/create-dynamic-fields' },
-            { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' }
-          ]
+            { label: 'Inquiry', route: '/admin/dynamic-field-inquiry' },
+          ],
         },
         {
           label: 'Security',
@@ -327,19 +390,16 @@ export class LayoutComponent implements OnInit {
           children: [
             {
               label: 'Change Password',
-              route: '/admin/change-password'
-            }
-          ]
-        }
-        ,
+              route: '/admin/change-password',
+            },
+          ],
+        },
         { label: 'Users', icon: 'person', route: '/users' },
-        { label: 'Logout', icon: 'logout', route: '/login' }
+        { label: 'Logout', icon: 'logout', route: '/login' },
       ];
-    }
-    else if (companyType === "B") {
-      console.log("Loading Customer User Menu", companyType, role);
+    } else if (companyType === 'B') {
+      console.log('Loading Customer User Menu', companyType, role);
       this.menuItems = [
-
         {
           label: 'CustomerUser',
           icon: 'dashboard',
@@ -348,7 +408,7 @@ export class LayoutComponent implements OnInit {
           children: [
             {
               label: 'Create New',
-              route: '/customer-user/create-customer-user'
+              route: '/customer-user/create-customer-user',
             },
             {
               label: 'Inquiry',
@@ -361,691 +421,126 @@ export class LayoutComponent implements OnInit {
       ]
     }
 
-else if (companyType === 'C' && role === 'U') {
-
-  // =========================================================
-  // GET ALL PERMISSIONS
-  // =========================================================
-
-  let permissionNames: string[] = [];
-
-  const storedPermissionNames =
-    sessionStorage.getItem('permissionNames');
-
-  if (storedPermissionNames) {
-
-    try {
-
-      const parsedPermissions =
-        JSON.parse(storedPermissionNames);
-
-      if (Array.isArray(parsedPermissions)) {
-
-        permissionNames = parsedPermissions
-          .filter(
-            (permission): permission is string =>
-              typeof permission === 'string'
-          );
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        'Error parsing permissionNames:',
-        error
-      );
-
-    }
-
-  }
-
-
-  console.log(
-    'Permission Names:',
-    permissionNames
-  );
-
-
-  // =========================================================
-  // NORMALIZE PERMISSIONS
-  // =========================================================
-
-  const normalizedPermissions =
-    permissionNames.map(
-      permission =>
-        permission.trim().toLowerCase()
-    );
-
-
-  // =========================================================
-  // HELPER FUNCTION
-  // =========================================================
-
-  const hasPermission = (
-    permission: string
-  ): boolean => {
-
-    return normalizedPermissions.includes(
-      permission.trim().toLowerCase()
-    );
-
-  };
-
-
-  // =========================================================
-  // MENU ITEMS
-  // =========================================================
-
-  const menuItems: any[] = [];
-
-
-  // =========================================================
-  // DASHBOARD
-  // =========================================================
-
-  menuItems.push({
-
-    label: 'Dashboard',
-
-    icon: 'dashboard',
-
-    route: '/dashboard'
-
-  });
-
-
-  // =========================================================
-  // TRADE SERVICES
-  // =========================================================
-
-  const tradeServicesChildren: any[] = [];
-
-
-  // =========================================================
-  // IMPORT LC
-  // =========================================================
-
-  if (hasPermission('Import_lc')) {
-
-    const importLCChildren: any[] = [];
-
-
-    // CREATE
-    if (hasPermission('ILC_Create')) {
-
-      importLCChildren.push({
-
-        label: 'Create',
-
-        route:
-          '/dashboard/Trade-Services/import-screen'
-
-      });
-
-    }
-
-
-    // AMEND
-    if (hasPermission('ILC_Amend')) {
-
-      importLCChildren.push({
-
-        label: 'Amend',
-
-        route:
-          '/dashboard/Trade-Services/import-screen/approved-inquiry-records'
-
-      });
-
-    }
-
-
-    // INQUIRY
-    if (hasPermission('ILC_Inquiry')) {
-
-      importLCChildren.push({
-
-        label: 'Inquiries',
-
-        route:
-          '/dashboard/Trade-Services/import-screen/inquiries'
-
-      });
-
-    }
-
-
-    // Only add Import LC if it has
-    // at least one child permission
-
-    if (importLCChildren.length > 0) {
-
-      tradeServicesChildren.push({
-
-        label: 'Import LC',
-
-        route:
-          '/dashboard/Trade-Services/import-welcome',
-
-        open: false,
-
-        children: importLCChildren
-
-      });
-
-    }
-
-  }
-
-
-  // =========================================================
-  // EXPORT LC
-  // =========================================================
-
-  if (hasPermission('Export_lc')) {
-
-    const exportLCChildren: any[] = [];
-
-
-    // CREATE
-    if (hasPermission('ELC_Create')) {
-
-      exportLCChildren.push({
-
-        label: 'Create',
-
-        route:
-          '/dashboard/Trade-Services/export-screen'
-
-      });
-
-    }
-
-
-    // AMEND
-    if (hasPermission('ELC_Amend')) {
-
-      exportLCChildren.push({
-
-        label: 'Amend',
-
-        route:
-          '/dashboard/Trade-Services/export-screen/amend'
-
-      });
-
-    }
-
-
-    // INQUIRY
-    if (hasPermission('ELC_Inquiry')) {
-
-      exportLCChildren.push({
-
-        label: 'Inquiries',
-
-        route:
-          '/dashboard/Trade-Services/export-screen/inquiries'
-
-      });
-
-    }
-
-
-    if (exportLCChildren.length > 0) {
-
-      tradeServicesChildren.push({
-
-        label: 'Export LC',
-
-        route:
-          '/dashboard/Trade-Services/exportlc-welcome',
-
-        open: false,
-
-        children: exportLCChildren
-
-      });
-
-    }
-
-  }
-
-
-  // =========================================================
-  // SHIPPING GUARANTEE
-  // =========================================================
-
-  if (hasPermission('Shipping_guarantee')) {
-
-    const shippingGuaranteeChildren: any[] = [];
-
-
-    // CREATE
-    if (hasPermission('SG_Create')) {
-
-      shippingGuaranteeChildren.push({
-
-        label: 'Create',
-
-        route:
-          '/dashboard/Trade-Services/shipping-guarantee'
-
-      });
-
-    }
-
-
-    // AMEND
-    if (hasPermission('SG_Amend')) {
-
-      shippingGuaranteeChildren.push({
-
-        label: 'Amend',
-
-        route:
-          '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'
-
-      });
-
-    }
-
-
-    // INQUIRY
-    if (hasPermission('SG_Inquiry')) {
-
-      shippingGuaranteeChildren.push({
-
-        label: 'Inquiries',
-
-        route:
-          '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
-
-      });
-
-    }
-
-
-    if (shippingGuaranteeChildren.length > 0) {
-
-      tradeServicesChildren.push({
-
-        label: 'Shipping Guarantee',
-
-        route:
-          '/dashboard/Trade-Services/shipping-welcome',
-
-        open: false,
-
-        children: shippingGuaranteeChildren
-
-      });
-
-    }
-
-  }
-
-
-  // =========================================================
-  // EXPORT COLLECTION
-  // =========================================================
-
-  if (hasPermission('Export_collection')) {
-
-    const exportCollectionChildren: any[] = [];
-
-
-    // CREATE
-    if (hasPermission('EC_Create')) {
-
-      exportCollectionChildren.push({
-
-        label: 'Create',
-
-        route:
-          '/dashboard/Trade-Services/export-collection'
-
-      });
-
-    }
-
-
-    // AMEND
-    if (hasPermission('EC_Amend')) {
-
-      exportCollectionChildren.push({
-
-        label: 'Amend',
-
-        route:
-          '/dashboard/Trade-Services/export-collection/approved-inquiry-records'
-
-      });
-
-    }
-
-
-    // INQUIRY
-    if (hasPermission('EC_Inquiry')) {
-
-      exportCollectionChildren.push({
-
-        label: 'Inquiries',
-
-        route:
-          '/dashboard/Trade-Services/export-collection/inquiries-records'
-
-      });
-
-    }
-
-
-    if (exportCollectionChildren.length > 0) {
-
-      tradeServicesChildren.push({
-
-        label: 'Export Collection',
-
-        route:
-          '/dashboard/Trade-Services/export-collection-welcome',
-
-        open: false,
-
-        children: exportCollectionChildren
-
-      });
-
-    }
-
-  }
-
-
-  // =========================================================
-  // UNDERTAKING ISSUANCE
-  // =========================================================
-
-  if (hasPermission('Undertaking_issuance')) {
-
-    const undertakingChildren: any[] = [];
-
-
-    // CREATE
-    if (hasPermission('UI_Create')) {
-
-      undertakingChildren.push({
-
-        label: 'Create',
-
-        route:
-          '/dashboard/Trade-Services/undertaking-issuance'
-
-      });
-
-    }
-
-
-    // AMEND
-    if (hasPermission('UI_Amend')) {
-
-      undertakingChildren.push({
-
-        label: 'Amend',
-
-        route:
-          '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records'
-
-      });
-
-    }
-
-
-    // INQUIRY
-    if (hasPermission('UI_Inquiry')) {
-
-      undertakingChildren.push({
-
-        label: 'Inquiries',
-
-        route:
-          '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
-
-      });
-
-    }
-
-
-    if (undertakingChildren.length > 0) {
-
-      tradeServicesChildren.push({
-
-        label: 'Undertaking Issuance',
-
-        route:
-          '/dashboard/Trade-Services/undertaking-welcome',
-
-        open: false,
-
-        children: undertakingChildren
-
-      });
-
-    }
-
-  }
-
-
-  // =========================================================
-  // ADD TRADE SERVICES TO MENU
-  // =========================================================
-
-  if (tradeServicesChildren.length > 0) {
-
-    menuItems.push({
-
-      label: 'Trade Services',
-
-      icon: 'group',
-
-      route:
-        '/dashboard/Trade-Services',
-
-      open: false,
-
-      children: tradeServicesChildren
-
-    });
-
-  }
-
-
-  // =========================================================
-  // PAYMENT SERVICES
-  // =========================================================
-
-  const paymentServicesChildren: any[] = [];
-
-
-  // IBFT
-  if (hasPermission('IBFT')) {
-
-    paymentServicesChildren.push({
-
-      label: 'IBFT',
-
-      route:
-        '/dashboard/IBFT'
-
-    });
-
-  }
-
-
-  // WITH-IN BANK
-  if (hasPermission('With_In_Bank')) {
-
-    paymentServicesChildren.push({
-
-      label: 'With-In Bank',
-
-      route:
-        '/dashboard/fund-transfer/with-in'
-
-    });
-
-  }
-
-
-  // MY ACCOUNTS
-  if (hasPermission('My_Accounts')) {
-
-    paymentServicesChildren.push({
-
-      label: 'My Accounts',
-
-      route:
-        '/dashboard/my-accounts'
-
-    });
-
-  }
-
-
-  // INQUIRY
-  if (hasPermission('Payment_Inquiry')) {
-
-    paymentServicesChildren.push({
-
-      label: 'Inquiries',
-
-      route:
-        '/dashboard/fund-transfer/fund-transfer-records'
-
-    });
-
-  }
-
-
-  if (paymentServicesChildren.length > 0) {
-
-    menuItems.push({
-
-      label: 'Payments Services',
-
-      icon: 'account_balance_wallet',
-
-      open: false,
-
-      children: [
-
+    else if (companyType === 'C' && role === 'U') {
+      this.menuItems = [
+        { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         {
-
-          label: 'Fund Transfer',
-
-          route:
-            '/dashboard/fund-transfer-welcome',
-
+          label: 'Trade Services',
+          icon: 'group',
+          route: '/dashboard/Trade-Services',
           open: false,
+          children: [
 
-          children: paymentServicesChildren
+            // -------------------------
+            // IMPORT LC
+            // -------------------------
+            {
+              label: 'Import LC',
+              route: '/dashboard/Trade-Services/import-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/import-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/import-screen/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
+              ]
+            },
 
+            // -------------------------
+            // EXPORT LC
+            // -------------------------
+            {
+              label: 'Export LC',
+              route: '/dashboard/Trade-Services/exportlc-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
+              ]
+            },
+
+            // -------------------------
+            // SHIPPING GUARANTEE
+            // -------------------------
+            {
+              label: 'Shipping Guarantee',
+              route: '/dashboard/Trade-Services/shipping-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/shipping-guarantee' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records' },
+              ]
+            },
+
+            // -------------------------
+            // EXPORT COLLECTION
+            // -------------------------
+            {
+              label: 'Export Collection',
+              route: '/dashboard/Trade-Services/export-collection-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/export-collection' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/export-collection/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-collection/inquiries-records' },
+              ]
+            },
+
+            // -------------------------
+            // UNDERTAKING ISSUANCE
+            // -------------------------
+            {
+              label: 'Undertaking Issuance',
+              route: '/dashboard/Trade-Services/undertaking-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/undertaking-issuance' },
+                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/amend' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records' },
+              ]
+            },
+
+          ],
+        },
+        {
+          label: 'Payments Services',
+          icon: 'account_balance_wallet',
+          open: false,
+          children: [
+            {
+              label: 'Fund Transfer',
+              route: '/dashboard/fund-transfer-welcome',
+              open: false,
+              children: [
+                { label: 'IBFT', route: '/dashboard/IBFT' },
+                { label: 'With-In Bank', route: '/dashboard/fund-transfer/with-in' },
+                { label: 'My Accounts', route: '/dashboard/my-accounts' },
+                { label: 'Inquiries', route: '/dashboard/fund-transfer/fund-transfer-records' },
+              ]
+            },
+          ],
+        },
+        {
+          label: 'Beneficiary Management',
+          icon: 'person',
+          open: false,
+          children: [
+            { label: 'Add Beneficiary', route: '/dashboard/Trade-Services/undertaking-issuance' },
+            { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
+          ],
+        },
+        {
+          label: 'Logout',
+          icon: 'logout',
+          route: '/login'
         }
-
-      ]
-
-    });
-
+      ];
+    }
   }
-
-
-  // =========================================================
-  // BENEFICIARY MANAGEMENT
-  // =========================================================
-
-  const beneficiaryChildren: any[] = [];
-
-
-  // ADD BENEFICIARY
-  if (hasPermission('Add_Beneficiary')) {
-
-    beneficiaryChildren.push({
-
-      label: 'Add Beneficiary',
-
-      route:
-        '/dashboard/Trade-Services/undertaking-issuance'
-
-    });
-
-  }
-
-
-  // INQUIRY
-  if (hasPermission('Beneficiary_Inquiry')) {
-
-    beneficiaryChildren.push({
-
-      label: 'Inquiries',
-
-      route:
-        '/dashboard/Trade-Services/import-screen/inquiries'
-
-    });
-
-  }
-
-
-  if (beneficiaryChildren.length > 0) {
-
-    menuItems.push({
-
-      label: 'Beneficiary Management',
-
-      icon: 'person',
-
-      open: false,
-
-      children: beneficiaryChildren
-
-    });
-
-  }
-
-
-  // =========================================================
-  // LOGOUT
-  // =========================================================
-
-  menuItems.push({
-
-    label: 'Logout',
-
-    icon: 'logout',
-
-    route: '/login'
-
-  });
-
-
-  // =========================================================
-  // SET MENU
-  // =========================================================
-
-  this.menuItems = menuItems;
-
-
-  console.log(
-    'Final Menu Items:',
-    this.menuItems
-  );
-
-}
-
-} // closes ELSE IF
   // Ameen function
   onCustomerClick(item: MenuItem) {
     const currentUrl = this.router.url;
-
 
     if (currentUrl.startsWith('/admin/create-customer')) {
       // Force navigation back to /admin
@@ -1058,47 +553,43 @@ else if (companyType === 'C' && role === 'U') {
     }
   }
 
-
   activeRoute: string = '';
   isExactActive(route?: string): boolean {
     return !!route && this.activeRoute === route;
   }
 
   isAnyChildActive(item: MenuItem): boolean {
-    return !!item.children?.some(child =>
-      this.activeRoute.startsWith(child.route || '')
+    return !!item.children?.some((child) =>
+      this.activeRoute.startsWith(child.route || ''),
     );
   }
 
   isAnyGrandChildActive(item: MenuItem): boolean {
-    return !!item.children?.some(child =>
-      child.children?.some(sub =>
-        this.activeRoute.startsWith(sub.route || '')
-      )
+    return !!item.children?.some((child) =>
+      child.children?.some((sub) =>
+        this.activeRoute.startsWith(sub.route || ''),
+      ),
     );
   }
-
-
-
 
   /**
    * Returns true if any grandchild (child's child) of the given item is active
    */
 
-
   /**
    * Helper: check if item has any grandchild
    */
   hasGrandChildren(item: MenuItem): boolean {
-    return !!item.children?.some(child => child.children && child.children.length > 0);
+    return !!item.children?.some(
+      (child) => child.children && child.children.length > 0,
+    );
   }
-
 
   /**
    * Automatically open parent/child menus if current route matches
    */
   updateMenuOpenState(items: MenuItem[], url: string) {
-    items.forEach(item => {
+    items.forEach((item) => {
       if (item.children) {
         // Respect manualOpen first
         if (item.manualOpen !== undefined) {
@@ -1108,7 +599,7 @@ else if (companyType === 'C' && role === 'U') {
           item.open = this.isAnyDescendantActive(item);
         }
 
-        item.children.forEach(child => {
+        item.children.forEach((child) => {
           if (child.children) {
             if (child.manualOpen !== undefined) {
               child.open = child.manualOpen;
@@ -1121,17 +612,16 @@ else if (companyType === 'C' && role === 'U') {
     });
   }
 
-
   // Check if any child or grandchild route is active
   isAnyDescendantActive(item: MenuItem): boolean {
     if (!item.children) return false;
 
-    return item.children.some(child =>
-      this.activeRoute === child.route || // exact match
-      (child.children ? this.isAnyDescendantActive(child) : false)
+    return item.children.some(
+      (child) =>
+        this.activeRoute === child.route || // exact match
+        (child.children ? this.isAnyDescendantActive(child) : false),
     );
   }
-
 
   /**
    * Returns true if this item, any child, or any grandchild matches the active route
@@ -1151,7 +641,10 @@ else if (companyType === 'C' && role === 'U') {
    * Returns true if this item should be highlighted
    * level: 'parent' | 'child' | 'grandchild'
    */
-  isActive(item: MenuItem, level: 'parent' | 'child' | 'grandchild' = 'parent'): boolean {
+  isActive(
+    item: MenuItem,
+    level: 'parent' | 'child' | 'grandchild' = 'parent',
+  ): boolean {
     if (!item) return false;
 
     // Exact match
@@ -1160,12 +653,15 @@ else if (companyType === 'C' && role === 'U') {
     if (item.children) {
       if (level === 'parent') {
         // Parent is active ONLY if **direct child** matches route
-        return item.children.some(child => child.route === this.activeRoute);
+        return item.children.some((child) => child.route === this.activeRoute);
       }
 
       if (level === 'child') {
         // Child is active if its route matches OR any grandchild matches
-        return item.route === this.activeRoute || item.children.some(sub => sub.route === this.activeRoute);
+        return (
+          item.route === this.activeRoute ||
+          item.children.some((sub) => sub.route === this.activeRoute)
+        );
       }
 
       if (level === 'grandchild') {
@@ -1176,14 +672,13 @@ else if (companyType === 'C' && role === 'U') {
     return false;
   }
 
-
   /**
    * Child active check (used in template for nested submenu)
    */
   isChildActive(item: MenuItem): boolean {
     if (!item.children) return false;
 
-    return item.children.some(child => child.route === this.activeRoute);
+    return item.children.some((child) => child.route === this.activeRoute);
   }
 
   /**
@@ -1192,8 +687,8 @@ else if (companyType === 'C' && role === 'U') {
   isGrandChildActive(item: MenuItem): boolean {
     if (!item.children) return false;
 
-    return item.children.some(child =>
-      child.children?.some(sub => sub.route === this.activeRoute)
+    return item.children.some((child) =>
+      child.children?.some((sub) => sub.route === this.activeRoute),
     );
   }
 
@@ -1203,9 +698,9 @@ else if (companyType === 'C' && role === 'U') {
 
   toggleMenuu(item: MenuItem) {
     // Close all sibling parents
-    this.menuItems.forEach(m => {
+    this.menuItems.forEach((m) => {
       if (m !== item) {
-        this.closeAllChildren(m);  // close their children recursively
+        this.closeAllChildren(m); // close their children recursively
         m.open = false;
       }
     });
@@ -1219,8 +714,6 @@ else if (companyType === 'C' && role === 'U') {
     }
   }
 
-
-
   // Toggle only this item, do NOT close siblings
   // -----------------------------
   toggleOnlyChildren(item: MenuItem) {
@@ -1231,7 +724,7 @@ else if (companyType === 'C' && role === 'U') {
   // Recursive close function (you already have)
   closeAllChildren(item: MenuItem) {
     if (!item.children) return;
-    item.children.forEach(child => {
+    item.children.forEach((child) => {
       child.open = false;
       if (child.children) {
         this.closeAllChildren(child);
@@ -1244,7 +737,7 @@ else if (companyType === 'C' && role === 'U') {
 
     this.router.navigateByUrl(item.route).then(() => {
       // Only highlight active branches; do NOT close other branches
-      this.menuItems.forEach(m => {
+      this.menuItems.forEach((m) => {
         this.keepActiveOpen(m); // recursive open only for active path
       });
     });
@@ -1256,15 +749,18 @@ else if (companyType === 'C' && role === 'U') {
       item.open = true; // expand only the active path
     }
     if (item.children) {
-      item.children.forEach(child => this.keepActiveOpen(child));
+      item.children.forEach((child) => this.keepActiveOpen(child));
     }
   }
 
   closeInactiveChildren(item: MenuItem) {
     if (!item.children) return;
 
-    item.children.forEach(child => {
-      if (!this.isAnyDescendantActive(child) && this.activeRoute !== child.route) {
+    item.children.forEach((child) => {
+      if (
+        !this.isAnyDescendantActive(child) &&
+        this.activeRoute !== child.route
+      ) {
         child.open = false;
       }
       if (child.children) this.closeInactiveChildren(child);
@@ -1287,12 +783,10 @@ else if (companyType === 'C' && role === 'U') {
     }
   }
 
-
   onGrandChildClick(sub: any, event: Event) {
     event.stopPropagation();
     this.goTo(sub);
   }
-
 
   // Returns true if this child is the current active route
   isChildLinkActive(child: MenuItem): boolean {

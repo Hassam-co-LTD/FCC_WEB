@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject} from 'rxjs';
 import { UndertakingGuarantee } from '../../../models/undertaking-lc';
- 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,20 +14,20 @@ export class UndertakingIssuanceService {
   addOrUpdateTransaction(tx: UndertakingGuarantee): void {
     const transactions = [...this.savetransactions$.value];
     const index = transactions.findIndex(t => t.tnxId === tx.tnxId);
- 
+
     if (index > -1) {
       // Merge new data with existing transaction to avoid nulls
       transactions[index] = { ...transactions[index], ...tx };
     } else {
       transactions.push(tx);
     }
- 
+
     this.savetransactions$.next(transactions);
     // this.persist(transactions);
   }
- 
+
   /* ================= GETTERS ================= */
- 
+  
   getAllTransactions(): UndertakingGuarantee[] {
       return this.savetransactions$.value;
     }

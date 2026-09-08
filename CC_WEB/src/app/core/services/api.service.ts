@@ -8,7 +8,7 @@ import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
- 
+
 @Injectable({
   providedIn: 'root',
 })
@@ -24,32 +24,32 @@ export class ApiService {
   private get baseSgEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/shippingguarantee/events`;
   }
- 
+
   private get baseUtgEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/utg/events`;
   }
- 
+
   private get baseECEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/export-collection/events`;
   }
- 
+
   // Admin/Security System (Login, Roles, Users)
   private get adminBaseUrl(): string {
-    return `${environment.gatewayUrl}/api/v1/`;
+    return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
- 
+
   private get loginBaseUrl(): string {
     return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
- 
+
   // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
- 
+
   constructor(private http: HttpClient) {}
- 
+
   /* ------------------------------------- Error Handler ------------------------------------- */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unexpected error occurred. Please try again later.';
- 
+
     if (error.error instanceof ErrorEvent) {
       // Client-side / network error
       console.error('Client-side error:', error.error.message);
@@ -57,7 +57,7 @@ export class ApiService {
     } else {
       // Backend error
       console.error(`Backend error [${error.status}]:`, error.error);
- 
+
       if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.status === 0) {
@@ -68,39 +68,39 @@ export class ApiService {
         errorMessage = 'Internal server error.';
       }
     }
- 
+
     return throwError(() => new Error(errorMessage));
   }
   /* ------------------------------------- Helper methods ------------------------------------- */
   private get userData() {
     return JSON.parse(sessionStorage.getItem('userData') || '{}');
   }
- 
+
   private get companyId(): string {
     return this.userData.companyId || '';
   }
- 
+
   private get loginId(): string {
     return this.userData.loginId || '';
   }
- 
+
   private get userCategory(): string {
     return this.userData.userCategory || '';
   }
- 
+
   private get companyType(): string {
     return this.userData.companyType || '';
   }
- 
+
   private get headers(): HttpHeaders {
     return new HttpHeaders({
       companyid: this.companyId,
     });
   }
- 
+
   /* -------------------- API Methods -------------------- */
   // Save LC Record (pending record) - status "I"
- 
+
   // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
   //   console.log('Saving draft:', data);
   //   const companyId = sessionStorage.getItem('userData.companyId')
@@ -111,7 +111,7 @@ export class ApiService {
   //     { headers })
   //     .pipe(catchError(this.handleError));
   // }
- 
+
   savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
     return this.http
       .post<ImportLcTransaction>(`${this.baseUrl}/importlc/save`, data, {
@@ -119,7 +119,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get full transactions by status
   // getTransactionsByStatus(status: string): Observable<ImportLcTransaction[]> {
   //   const companyId = sessionStorage.getItem('companyId')
@@ -132,7 +132,7 @@ export class ApiService {
   //   )
   //     .pipe(catchError(this.handleError));
   // }
- 
+
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getRecordTransactionsByStatus(
     status: string,
@@ -143,12 +143,12 @@ export class ApiService {
       >(`${this.baseUrl}/importlc/records/${status}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // getPendingByTnxId(tnxId: string): Observable<ImportLcTransaction> {
   //   return this.http.get<ImportLcTransaction>(`${this.baseUrl}importlc/pending/${tnxId}`)
   //     .pipe(catchError(this.handleError));
   // }
- 
+
   // Update draft (pending record) by Tnx ID
   updatePendingByTnxId(
     payload: ImportLcTransaction,
@@ -161,9 +161,9 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Submit transaction (status "S") with full data
- 
+
   submitTransaction(
     tnxId: string,
     data: ImportLcTransaction,
@@ -179,7 +179,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get Transaction by TNX ID for READ-ONLY view for approved/rejected records
   getTransactionByTnxId(tnxId: string): Observable<ImportLcTransaction> {
     return this.http
@@ -188,7 +188,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Approve transaction */
   approveTransaction(
     tnxId: string,
@@ -205,7 +205,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Reject Reason */
   rejectTransaction(
     tnxId: string,
@@ -233,9 +233,9 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /* -------------------- IMPORT LC AMENDMENT API Methods  -------------------- */
- 
+
   // getLatestApprovedEvent(tnxId: string): Observable<ImportLcTransaction> {
   //   const companyId = JSON.parse(sessionStorage.getItem('userData') || '{}')?.companyId ?? '';
   //   const headers = new HttpHeaders({ companyid: companyId });
@@ -252,7 +252,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   saveamendTransaction(
     tnxId: string,
     data: ImportLcTransaction,
@@ -273,7 +273,7 @@ export class ApiService {
   //     `${this.baseeventUrl}/amend/live-records`, { headers }
   //   );
   // }
- 
+
   // same as  getApprovedLcForAmend() just change name to show relevance
   getLiveEventHistory(): Observable<ImportLcTransaction[]> {
     return this.http
@@ -322,7 +322,7 @@ export class ApiService {
       >(`${this.baseeventUrl}/amend/records/${eventLcStatus}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getAmendmentByEventRefNo(
     eventRefNo: string,
   ): Observable<ImportLcTransaction> {
@@ -332,7 +332,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   submitAmendment(
     eventRefNo: string,
     data: ImportLcTransaction,
@@ -345,7 +345,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   approveAmendment(
     eventRefNo: string,
     data: ImportLcTransaction,
@@ -368,7 +368,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   updateRejectedAmendmentTransaction(
     eventRefNo: string,
     payload: ImportLcTransaction,
@@ -382,12 +382,12 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
   /* -------------------- IMPORT LC API Methods END -------------------- */
- 
+
   // =================================================================
   // API Methods For SHIPPING GUARANTEE MODULE START
   // =================================================================
   // Save LC Record (pending record) - status "I"
- 
+
   savePendingSg(
     data: ShippingGuaranteeTransaction,
   ): Observable<ShippingGuaranteeTransaction> {
@@ -399,7 +399,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------} --- List so using ShippingGuaranteeTransaction[] -> "[]"
   getRecordTransactionsByStatusSg(
     status: string,
@@ -422,9 +422,9 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Submit transaction (status "S") with full data
- 
+
   submitSgByTnxId(
     tnxId: string,
     data: ShippingGuaranteeTransaction,
@@ -440,7 +440,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get Transaction by TNX ID for record clicking for READ-ONLY view for approved/rejected records --- NOT a List so not using ShippingGuaranteeTransaction X -> []
   getTransactionSgByTnxId(
     tnxId: string,
@@ -454,7 +454,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Approve transaction */
   approveTransactionSg(
     tnxId: string,
@@ -471,7 +471,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Reject Reason */
   rejectTransactionSg(
     tnxId: string,
@@ -502,9 +502,9 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /* -------------------- SHIPPING GUARANTEE AMENDMENT API Methods -------------------- */
- 
+
   getAmendmentByTnxIdSg(
     tnxId: string,
   ): Observable<ShippingGuaranteeTransaction> {
@@ -515,7 +515,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   saveAmendTransactionSg(
     tnxId: string,
     data: ShippingGuaranteeTransaction,
@@ -528,7 +528,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Live tab: full event history for approved SGs under amendment
   getLiveEventHistorySg(): Observable<ShippingGuaranteeTransaction[]> {
     return this.http
@@ -537,7 +537,7 @@ export class ApiService {
       >(`${this.baseSgEventUrl}/amend/live-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Master SG records — one row per SG, no event history
   getApprovedMasterSgRecords(): Observable<ShippingGuaranteeTransaction[]> {
     return this.http
@@ -546,7 +546,7 @@ export class ApiService {
       >(`${this.baseSgEventUrl}/amend/live-master-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getAmendRecordTransactionsByStatusSg(
     eventSgStatus: string,
@@ -557,7 +557,7 @@ export class ApiService {
       >(`${this.baseSgEventUrl}/amend/records/${eventSgStatus}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getAmendmentByEventRefNoSg(
     eventRefNo: string,
   ): Observable<ShippingGuaranteeTransaction> {
@@ -568,7 +568,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   submitAmendmentSg(
     eventRefNo: string,
     data: ShippingGuaranteeTransaction,
@@ -581,7 +581,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   approveAmendmentSg(
     eventRefNo: string,
     data: ShippingGuaranteeTransaction,
@@ -594,7 +594,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   rejectAmendmentSg(eventRefNo: string, reason: string): Observable<any> {
     return this.http
       .post<any>(
@@ -604,13 +604,13 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
- 
+
   // =================================================================
   // API Methods For EXPORT COLLECTION MODULE START
   // =================================================================
- 
+
   // Save LC Record (pending record) - status "I"
   savePendingExportCollection(
     data: ExportCollectionTransaction,
@@ -623,7 +623,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getRecordTransactionsByStatusExportCollection(
     status: string,
@@ -634,7 +634,7 @@ export class ApiService {
       >(`${this.baseUrl}/exportcollection/records/${status}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Update draft (pending record) by Tnx ID
   updatePendingByTnxIdExportCollection(
     payload: ExportCollectionTransaction,
@@ -649,7 +649,7 @@ export class ApiService {
   }
  
   // Submit transaction (status "S") with full data
- 
+
   submitTransactionExportCollection(
     tnxId: string,
     data: ExportCollectionTransaction,
@@ -665,7 +665,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get Transaction by TNX ID for READ-ONLY view for approved/rejected records
   getTransactionByTnxIdExportCollection(
     tnxId: string,
@@ -696,7 +696,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   /** Reject Reason */
   rejectTransactionExportCollection(
     tnxId: string,
@@ -727,7 +727,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   getAmendmentByTnxIdExportCollection(
     tnxId: string,
   ): Observable<ExportCollectionTransaction> {
@@ -738,7 +738,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   saveamendTransactionExportCollection(
     tnxId: string,
     data: ExportCollectionTransaction,
@@ -753,7 +753,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // same as  getApprovedLcForAmend() just change name to show relevance
   getLiveEventHistoryExportCollection(): Observable<
     ExportCollectionTransaction[]
@@ -764,7 +764,7 @@ export class ApiService {
       >(`${this.baseECEventUrl}/amend/live-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Points to master LC records — one row per LC, no event history
   getApprovedMasterLcRecordsExportCollection(): Observable<
     ExportCollectionTransaction[]
@@ -775,7 +775,7 @@ export class ApiService {
       >(`${this.baseECEventUrl}/amend/live-master-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   // Get lightweight records by status (DTO) {-------FOR TABS VIEW-------}
   getAmendRecordTransactionsByStatusExportCollection(
     eventLcStatus: string,
@@ -786,7 +786,7 @@ export class ApiService {
       >(`${this.baseECEventUrl}/amend/records/${eventLcStatus}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getAmendmentByEventRefNoExportCollection(
     eventRefNo: string,
   ): Observable<ExportCollectionTransaction> {
@@ -797,7 +797,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   submitAmendmentExportCollection(
     eventRefNo: string,
     data: ExportCollectionTransaction,
@@ -810,7 +810,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   approveAmendmentExportCollection(
     eventRefNo: string,
     data: ExportCollectionTransaction,
@@ -823,7 +823,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   rejectAmendmentExportCollection(
     eventRefNo: string,
     reason: string,
@@ -836,7 +836,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgAmendmentByTnxIdExportCollection(
     tnxId: string,
   ): Observable<ExportCollectionTransaction> {
@@ -847,7 +847,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   saveUtgAmendTransactionExportCollection(
     tnxId: string,
     data: ExportCollectionTransaction,
@@ -862,7 +862,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgLiveEventHistoryExportCollection(): Observable<
     ExportCollectionTransaction[]
   > {
@@ -872,7 +872,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/live-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getApprovedUtgMasterLcRecordsExportCollection(): Observable<
     ExportCollectionTransaction[]
   > {
@@ -882,7 +882,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/live-master-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgAmendRecordsByStatusExportCollection(
     eventGuaranteeStatus: string,
   ): Observable<ExportCollectionTransaction[]> {
@@ -892,7 +892,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/records/${eventGuaranteeStatus}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgAmendmentByEventRefNoExportCollection(
     eventRefNo: string,
   ): Observable<ExportCollectionTransaction> {
@@ -903,7 +903,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   submitUtgAmendmentExportCollection(
     eventRefNo: string,
     data: ExportCollectionTransaction,
@@ -916,7 +916,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   approveUtgAmendmentExportCollection(
     eventRefNo: string,
     data: ExportCollectionTransaction,
@@ -929,7 +929,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   rejectUtgAmendmentExportCollection(
     eventRefNo: string,
     reason: string,
@@ -942,11 +942,11 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   //=================================================================
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
- 
+
   saveUndertakingPending(
     data: UndertakingGuarantee,
   ): Observable<UndertakingGuarantee> {
@@ -956,7 +956,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUndertakingRecordTransactionsByStatus(
     status: string,
   ): Observable<UndertakingGuarantee[]> {
@@ -966,7 +966,7 @@ export class ApiService {
       >(`${this.baseUrl}/utg/records/${status}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   updateUndertakingPendingByTnxId(
     payload: UndertakingGuarantee,
   ): Observable<UndertakingGuarantee> {
@@ -978,7 +978,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   submitUndertaking(
     tnxId: string,
     data: UndertakingGuarantee,
@@ -990,7 +990,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUndertakingByTnxId(tnxId: string): Observable<UndertakingGuarantee> {
     return this.http
       .get<UndertakingGuarantee>(`${this.baseUrl}/utg/${tnxId}`, {
@@ -998,7 +998,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   approveUndertaking(
     tnxId: string,
     data: UndertakingGuarantee,
@@ -1012,7 +1012,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   rejectUndertaking(
     tnxId: string,
     reason: string,
@@ -1025,7 +1025,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   updateRejectedUndertaking(tnxId: string, payload: UndertakingGuarantee) {
     return this.http
       .put<UndertakingGuarantee>(
@@ -1035,16 +1035,16 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   // getUndertakingByStatus(status: string): Observable<UndertakingGuarantee[]> {
   //   return this.http.get<UndertakingGuarantee[]>(
   //     `${this.baseUrl}/undertaking_lc/status/${status}`,
   //     { headers: this.headers }
   //   ).pipe(catchError(this.handleError));
   // }
- 
+
   /* -------------------- UNDERTAKING GUARANTEE AMENDMENT API Methods  -------------------- */
- 
+
   getUtgAmendmentByTnxId(tnxId: string): Observable<UndertakingGuarantee> {
     return this.http
       .get<UndertakingGuarantee>(`${this.baseUtgEventUrl}/amend/${tnxId}`, {
@@ -1052,7 +1052,7 @@ export class ApiService {
       })
       .pipe(catchError(this.handleError));
   }
- 
+
   saveUtgAmendTransaction(
     tnxId: string,
     data: UndertakingGuarantee,
@@ -1067,7 +1067,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgLiveEventHistory(): Observable<UndertakingGuarantee[]> {
     return this.http
       .get<
@@ -1075,7 +1075,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/live-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getApprovedUtgMasterLcRecords(): Observable<UndertakingGuarantee[]> {
     return this.http
       .get<
@@ -1083,7 +1083,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/live-master-records`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgAmendRecordsByStatus(
     eventGuaranteeStatus: string,
   ): Observable<UndertakingGuarantee[]> {
@@ -1093,7 +1093,7 @@ export class ApiService {
       >(`${this.baseUtgEventUrl}/amend/records/${eventGuaranteeStatus}`, { headers: this.headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getUtgAmendmentByEventRefNo(
     eventRefNo: string,
   ): Observable<UndertakingGuarantee> {
@@ -1104,7 +1104,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   submitUtgAmendment(
     eventRefNo: string,
     data: UndertakingGuarantee,
@@ -1117,7 +1117,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   approveUtgAmendment(
     eventRefNo: string,
     data: UndertakingGuarantee,
@@ -1130,7 +1130,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   rejectUtgAmendment(eventRefNo: string, reason: string): Observable<any> {
     return this.http
       .post<any>(
@@ -1147,9 +1147,9 @@ export class ApiService {
   saveTransferDraft(data: TransferDTO): Observable<TransferDTO> {
     const companyId = sessionStorage.getItem('companyId') || 'ABC';
     const headers = new HttpHeaders().set('companyid', companyId);
- 
+
     console.log('Sending to Backend -> companyid:', companyId);
- 
+
     return this.http
       .post<TransferDTO>(`${this.baseUrl}/transfers/save`, data, { headers })
       .pipe(catchError(this.handleError));
@@ -1165,7 +1165,7 @@ export class ApiService {
       >(`${this.baseUrl}/transfers/status/${status}`, { headers })
       .pipe(catchError(this.handleError));
   }
- 
+
   getTransferRecordsByStatus(
     status: string,
   ): Observable<RecordsListTransferDTO[]> {
@@ -1181,7 +1181,7 @@ export class ApiService {
       .get<TransferDTO>(`${this.baseUrl}/transfers/${tnxId}`)
       .pipe(catchError(this.handleError));
   }
- 
+
   updateTransferDraft(
     tnxId: string,
     data: TransferDTO,
@@ -1213,7 +1213,7 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
- 
+
   updateRejectedTransfer(
     tnxId: string,
     data: TransferDTO,
@@ -1241,7 +1241,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .get<
         AccountsMaster[]
@@ -1260,7 +1260,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .get<
         AccountsMaster[]
@@ -1279,7 +1279,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .get<
         AccountsMaster[]
@@ -1301,7 +1301,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .get<boolean>(
         `${this.baseUrl}accounts/check-access?accountNumber=${accountNumber}&companyId=${companyId}&userId=${userId}&userRole=${userRole}&accessType=${accessType}`,
@@ -1317,7 +1317,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .get<
         AccountsMaster[]
@@ -1342,7 +1342,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .post<string>(`${this.baseUrl}accounts/save`, accountData, { headers })
       .pipe(catchError(this.handleError));
@@ -1355,7 +1355,7 @@ export class ApiService {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
- 
+
     return this.http
       .put<string>(`${this.baseUrl}accounts/update`, accountData, { headers })
       .pipe(catchError(this.handleError));
@@ -1411,9 +1411,9 @@ export class ApiService {
   //     observer.complete();
   //   });
   // }
- 
+
   // vs side generic methods
- 
+
   // save transaction
   saveTnx(tnx: any, name: String) {
     return this.http.post<any>(`${this.adminBaseUrl}${name}`, tnx);
@@ -1422,9 +1422,9 @@ export class ApiService {
   getTnxByStatus(status: String, Tnx: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${Tnx}/status/${status}`);
   }
- 
+
   // get transaction by id
- 
+
   getTnxById(id: Number | String, name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}/id/${id}`);
   }
@@ -1443,19 +1443,19 @@ export class ApiService {
   // set transaction status by id
   setTnxByStatus(status: string, id: number | string, name: string) {
     console.log('Setting status:', status, 'for ID:', id, 'on', name);
- 
+
     const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
- 
+
     return this.http.put<any>(url, null, {
       params: { status },
     });
   }
- 
+
   //get list of data
   getDatalist(name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}/list`);
   }
- 
+
   deleteTnx(payload: any, name: string) {
     return this.http.delete<any>(`${this.adminBaseUrl}${name}`, {
       body: payload,
@@ -1473,19 +1473,19 @@ export class ApiService {
     const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
     return this.http.put<any>(url, status);
   }
- 
+
   userLogin(payload: any, name: string) {
     return this.http.post<any>(`${this.loginBaseUrl}${name}/login`, payload);
   }
- 
+
   getCustomerAccounts(custId: String, name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}/${custId}`);
   }
- 
+
   deleteAccount(id: Number, apiName: String) {
     return this.http.delete<any>(`${this.adminBaseUrl}${apiName}/delete/${id}`);
   }
- 
+
   getFieldsByScreenAndStatus(
     screen: string,
     status: string,
@@ -1494,7 +1494,7 @@ export class ApiService {
       `${this.adminBaseUrl}dynamic-fields/screen/${screen}/status/${status}`,
     );
   }
- 
+
   getDropdownOptionsByScreenAndType(
     screen: string,
     dropdownType: string,
@@ -1507,7 +1507,7 @@ export class ApiService {
       { params },
     );
   }
- 
+
   findByRecordStatusAndScreenAndDropDown(
     recordStatus: string,
     screen: string,
@@ -1521,7 +1521,7 @@ export class ApiService {
       params,
     });
   }
- 
+
   // forgot user
   forgotPassword(payload: any) {
     return this.http.post(
@@ -1530,7 +1530,7 @@ export class ApiService {
       { responseType: 'text' },
     );
   }
- 
+
   resetPassword(payload: { token: string | null; newPassword: string }) {
     return this.http.post(
       'http://localhost:8051/api/v1/clientUsers/reset-password',
@@ -1538,7 +1538,7 @@ export class ApiService {
       { responseType: 'text' },
     );
   }
- 
+
   validateResetToken(token: string) {
     return this.http.get<any>(
       `${environment.gatewayUrl}/api/v1/clientUsers/validate-reset-token`,
@@ -1550,31 +1550,31 @@ export class ApiService {
     );
   }
   // user change password
- 
+
   changePassword(payload: any, sign: String) {
     return this.http.post(
       `${environment.gatewayUrl}/api/v1/clientUsers/${sign}`,
       payload,
     );
   }
- 
+
   getAllTnx(name: String) {
     return this.http.get<any>(`${this.adminBaseUrl}${name}`);
   }
   // Implementation to fetch dropdown options based on the provided parameters
- 
+
   // Implementation to fetch dropdown options based on the provided parameters
- 
+
   importCustomers(formData: FormData) {
     return this.http.post(
       `${environment.gatewayUrl}/api/v1/customer/import`,
       formData,
     );
   }
- 
+
   refreshToken() {
     const refreshToken = sessionStorage.getItem('refreshToken');
- 
+
     return this.http.post<any>(
       environment.gatewayUrl + '/api/v1/auth/refresh-token',
       {

@@ -26,9 +26,12 @@
     "@fortawesome/fontawesome-free": "^7.1.0",
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "rxjs": "~7.8.0",
     "sweetalert2": "^11.26.23",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

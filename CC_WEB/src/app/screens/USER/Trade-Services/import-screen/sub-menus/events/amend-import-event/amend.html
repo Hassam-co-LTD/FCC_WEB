@@ -78,143 +78,54 @@
         <router-outlet></router-outlet>
       </section>
 
-      <!-- Footer Buttons -->
-      <div class="actions">
-
-        <!-- LIVE TAB -->
-        <ng-container *ngIf="sourceTab === 'live'">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-            Back
-          </button>
-
-          <button
-            *ngIf="hasPermission('ILC_AmendSave')"
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()"
-            [disabled]="isSaving">
-
-            {{ isSaving ? 'Saving...' : 'Save' }}
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- PENDING + CRE -->
-        <ng-container
-          *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-            Back
-          </button>
-
-        </ng-container>
-
-
-        <!-- PENDING + AMD -->
-        <ng-container
-          *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-            Back
-          </button>
-
-          <button
-            *ngIf="hasPermission('ILC_AmendSubmit')"
-            mat-flat-button
-            color="accent"
-            (click)="submitLc()">
-
-            Submit
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- SUBMITTED + AMD -->
-        <ng-container
-          *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
-
-          <button
-            *ngIf="hasPermission('ILC_AmendPendingReject')"
-            mat-stroked-button
-            color="primary"
-            (click)="openReject()">
-
-            Reject
-
-          </button>
-
-          <button
-            *ngIf="hasPermission('ILC_AmendApprove')"
-            mat-flat-button
-            color="accent"
-            (click)="approve()">
-
-            Approve
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- APPROVED + AMD -->
-        <ng-container
-          *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- REJECTED -->
-        <ng-container
-          *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-          <button
-            *ngIf="hasPermission('ILC_AmendUpdateReject')"
-            mat-flat-button
-            color="primary"
-            (click)="updateRejected()">
-
-            Update
-
-          </button>
-
-        </ng-container>
-
-      </div>
-
+            <!-- Footer Buttons -->
+            <div class="actions">
+            
+                <!-- LIVE TAB: Always Save + Back -->
+                <ng-container *ngIf="sourceTab === 'live'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <button 
+                    *ngIf="hasPermission('ILC_AmendSave')"
+                    mat-flat-button color="accent" (click)="saveForm()" [disabled]="isSaving">
+                        {{ isSaving ? 'Saving...' : 'Save' }}
+                    </button>
+                </ng-container>
+            
+                <!-- PENDING TAB + CRE: Back only (read-only view) -->
+                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                </ng-container>
+            
+                <!-- PENDING TAB + AMD: Update + Submit -->
+                <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
+                    <button
+                    *ngIf="hasPermission('ILC_AmendSubmit')" mat-flat-button color="accent" (click)="submitLc()">Submit</button>
+                </ng-container>
+            
+                <!-- SUBMITTED: Approve + Reject -->
+                <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
+                    <button
+                    *ngIf="hasPermission('ILC_AmendPendingReject')" mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+                    <button
+                    *ngIf="hasPermission('ILC_AmendApprove')" mat-flat-button color="accent" (click)="approve()">Approve</button>
+                </ng-container>
+            
+                <!-- APPROVED: Back only -->
+                <ng-container *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                </ng-container>
+            
+                <!-- REJECTED: Back + Update -->
+                <ng-container *ngIf="sourceTab === 'rejected' && eventType === 'AMD'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
+                    <button 
+                    *ngIf="hasPermission('ILC_AmendUpdateReject')"mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+                </ng-container>
+            
+            </div>
+            
+        </div>
     </div>
-
-  </div>
-
 </div>

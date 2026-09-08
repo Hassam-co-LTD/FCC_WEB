@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PaymentDetails } from './payment-details';
+import { PermissionsGroupsInquiry } from './permissions-groups-inquiry';
 
-describe('PaymentDetails', () => {
-  let component: PaymentDetails;
-  let fixture: ComponentFixture<PaymentDetails>;
+describe('PermissionsGroupsInquiry', () => {
+  let component: PermissionsGroupsInquiry;
+  let fixture: ComponentFixture<PermissionsGroupsInquiry>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaymentDetails]
+      imports: [PermissionsGroupsInquiry]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PaymentDetails);
+    fixture = TestBed.createComponent(PermissionsGroupsInquiry);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

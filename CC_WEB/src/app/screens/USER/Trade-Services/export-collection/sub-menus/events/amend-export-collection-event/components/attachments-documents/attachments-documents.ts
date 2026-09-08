@@ -7,12 +7,12 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './attachments-documents.html',
-  styleUrls: ['./attachments-documents.scss']
+  styleUrls: ['./attachments-documents.scss'],
 })
 export class AttachmentsDocuments {
   isOpen = true;
   files: File[] = [];
-  @Output() filesChange = new EventEmitter<File[]>(); 
+  @Output() filesChange = new EventEmitter<File[]>();
 
   toggle() {
     this.isOpen = !this.isOpen;
@@ -47,11 +47,11 @@ export class AttachmentsDocuments {
       this.files.push(file);
     }
 
-    this.filesChange.emit(this.files);  
+    this.filesChange.emit(this.files);
   }
 
   removeFile(index: number) {
     this.files.splice(index, 1);
-    this.filesChange.emit(this.files);  
+    this.filesChange.emit(this.files);
   }
 }

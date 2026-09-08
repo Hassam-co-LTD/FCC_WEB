@@ -6,7 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIcon } from "@angular/material/icon";
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from '@angular/material/core';
@@ -30,18 +30,8 @@ import { MatNativeDateModule } from '@angular/material/core';
   styleUrl: './general-details.scss',
 })
 export class GeneralDetails{
-
-  @Input() form!: FormGroup;
-
   isOpen = true;
-  previewamend: any = {};
-
-  formatDateForPreview(date: string): string {
-    if (!date) return '-';
-
-    return formatDate(date, 'dd MMM yyyy', 'en-US');
-    // Example: 2025-02-12 → "12 Feb 2025"
-  }
+  @Input() form!: FormGroup;
 
   toggle() {
     this.isOpen = !this.isOpen;

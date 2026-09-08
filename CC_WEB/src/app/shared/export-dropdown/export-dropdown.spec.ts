@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShipmentDetails } from './shipment-details';
+import { ExportDropdown } from './export-dropdown';
 
-describe('ShipmentDetails', () => {
-  let component: ShipmentDetails;
-  let fixture: ComponentFixture<ShipmentDetails>;
+describe('ExportDropdown', () => {
+  let component: ExportDropdown;
+  let fixture: ComponentFixture<ExportDropdown>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShipmentDetails]
+      imports: [ExportDropdown]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ShipmentDetails);
+    fixture = TestBed.createComponent(ExportDropdown);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

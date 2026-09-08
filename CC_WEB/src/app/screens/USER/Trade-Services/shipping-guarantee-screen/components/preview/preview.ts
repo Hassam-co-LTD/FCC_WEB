@@ -22,7 +22,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatDialogModule
   ],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
 })
 export class Preview implements OnInit {
 
@@ -58,58 +58,50 @@ export class Preview implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: ShippingGuaranteeFormTransactionService
-  ) { }
+    private transactionService: ShippingGuaranteeFormTransactionService,
+  ) {}
 
-  ngOnInit(): void {
+  permissionNames: string[] = [];
 
-    // =========================================================
-    // LOAD PERMISSIONS
-    // =========================================================
-
+  private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
 
     if (storedPermissions) {
       try {
-        const parsedPermissions = JSON.parse(storedPermissions);
+        this.permissionNames = JSON.parse(storedPermissions);
 
-        if (Array.isArray(parsedPermissions)) {
-          this.permissionNames = parsedPermissions;
-        } else {
-          this.permissionNames = [];
-        }
-
-      } catch (error) {
-        console.error(
-          'Failed to parse permissionNames from sessionStorage',
-          error
+        console.log(
+          'Shipping Guarantee Permission Names:',
+          this.permissionNames,
         );
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
 
         this.permissionNames = [];
       }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
     }
+  }
 
-    console.log(
-      'Shipping Guarantee Preview Permissions:',
-      this.permissionNames
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
+  }
 
-    // =========================================================
-    // GET TRANSACTION
-    // =========================================================
-
+  ngOnInit(): void {
+    this.loadPermissions();
     this.currentTx =
-      this.transaction ||
-      this.transactionService.getCurrentTransaction();
+      this.transaction || //  Priority: @Input() transaction (Success page)
+      this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
     if (!this.currentTx) {
 
       console.error('Preview: No transaction data found');
-
-      this.router.navigate([
-        '/dashboard/Trade-Services/shipping-guarantee'
-      ]);
-
+      this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee']);
       return;
     }
 
@@ -135,78 +127,26 @@ export class Preview implements OnInit {
       createdOn: [this.currentTx!.createdOn],
 
       expiryDate: [this.currentTx!.expiryDate],
+      beneficiaryReference: [this.currentTx!.beneficiaryReference],
+      customerReference: [this.currentTx!.customerReference],
+      billoflading: [this.currentTx!.billoflading],
+      modeOfShipment: [this.currentTx!.modeOfShipment],
+      shippingDetails: [this.currentTx!.shippingDetails],
+      description: [this.currentTx!.description],
 
-      beneficiaryReference: [
-        this.currentTx!.beneficiaryReference
-      ],
+      applicantName: [this.currentTx!.applicantName],
+      applicantAddress1: [this.currentTx!.applicantAddress1],
+      applicantAddress2: [this.currentTx!.applicantAddress2],
+      applicantAddress3: [this.currentTx!.applicantAddress3],
+      applicantAddress4: [this.currentTx!.applicantAddress4],
+      applicantCountry: [this.currentTx!.applicantCountry],
 
-      customerReference: [
-        this.currentTx!.customerReference
-      ],
-
-      billoflading: [
-        this.currentTx!.billoflading
-      ],
-
-      modeOfShipment: [
-        this.currentTx!.modeOfShipment
-      ],
-
-      shippingDetails: [
-        this.currentTx!.shippingDetails
-      ],
-
-      description: [
-        this.currentTx!.description
-      ],
-
-      applicantName: [
-        this.currentTx!.applicantName
-      ],
-
-      applicantAddress1: [
-        this.currentTx!.applicantAddress1
-      ],
-
-      applicantAddress2: [
-        this.currentTx!.applicantAddress2
-      ],
-
-      applicantAddress3: [
-        this.currentTx!.applicantAddress3
-      ],
-
-      applicantAddress4: [
-        this.currentTx!.applicantAddress4
-      ],
-
-      applicantCountry: [
-        this.currentTx!.applicantCountry
-      ],
-
-      beneficiaryName: [
-        this.currentTx!.beneficiaryName
-      ],
-
-      beneficiaryAddress1: [
-        this.currentTx!.beneficiaryAddress1
-      ],
-
-      beneficiaryAddress2: [
-        this.currentTx!.beneficiaryAddress2
-      ],
-
-      beneficiaryAddress3: [
-        this.currentTx!.beneficiaryAddress3
-      ],
-
-      beneficiaryAddress4: [
-        this.currentTx!.beneficiaryAddress4
-      ],
-
-      beneficiaryCountry: [
-        this.currentTx!.beneficiaryCountry
-      ],
+      beneficiaryName: [this.currentTx!.beneficiaryName],
+      beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
+      beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
+      beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
+      beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
+      beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
 
       bankName: [
         this.currentTx!.bankName
@@ -236,16 +176,9 @@ export class Preview implements OnInit {
         this.currentTx!.otherInstructions
       ],
 
-      attachments: this.fb.array(
-        this.currentTx!.attachments ?? []
-      )
-
+      attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
-
-    // =========================================================
-    // READ ONLY MODE
-    // =========================================================
-
+    // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
 
       this.ShippingGuaranteeForm.disable({
@@ -260,23 +193,13 @@ export class Preview implements OnInit {
   // =========================================================
 
   get attachmentsArray(): FormArray {
-
-    return this.ShippingGuaranteeForm.get(
-      'attachments'
-    ) as FormArray;
-
+    return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
 
-  // =========================================================
-  // BACK
-  // =========================================================
-
-  back(): void {
-
+  back() {
     this.router.navigate([
-      '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
+      '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
     ]);
-
   }
 
   // =========================================================
@@ -284,18 +207,13 @@ export class Preview implements OnInit {
   // =========================================================
 
   submit(): void {
-
     // Permission check
     if (!this.hasPermission('SG_AmendSubmit')) {
-      console.warn(
-        'User does not have SG_AmendSubmit permission'
-      );
+      console.warn('User does not have SG_AmendSubmit permission');
       return;
     }
 
-    if (this.viewMode === 'readonly') {
-      return;
-    }
+    if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
 
@@ -316,103 +234,65 @@ export class Preview implements OnInit {
     ).subscribe({
 
       next: (res) => {
-
         this.router.navigate(
-          [
-            '/dashboard/Trade-Services/shipping-guarantee/success'
-          ],
+          ['/dashboard/Trade-Services/shipping-guarantee/success'],
           {
-            state: {
-              transaction: res
-            }
-          }
+            state: { transaction: res },
+          },
         );
-
       },
 
       error: () => {
-
-        this.snackBar.open(
-          'Error submitting transaction',
-          'Close',
-          { duration: 3000 }
-        );
-
-      }
-
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-
   }
-
-  // =========================================================
-  // APPROVE
-  // =========================================================
 
   approveTransaction(): void {
-
     // Permission check
     if (!this.hasPermission('SG_AmendApprove')) {
-      console.warn(
-        'User does not have SG_AmendApprove permission'
-      );
+      console.warn('User does not have SG_AmendApprove permission');
       return;
     }
 
-    if (!this.currentTx?.tnxId) {
-      return;
-    }
+    if (!this.currentTx?.tnxId) return;
 
-    this.api.approveTransactionSg(
-      this.currentTx.tnxId,
-      this.currentTx
-    ).subscribe({
-
-      next: (res) => {
-
-        this.snackBar.open(
-          'Transaction approved',
-          'Close',
-          { duration: 3000 }
-        );
-
-        this.router.navigate(
-          [
-            '/dashboard/Trade-Services/shipping-guarantee/success'
-          ],
-          {
-            state: {
-              transaction: res
-            }
-          }
-        );
-
-      },
-
-      error: () => {
-
-        this.snackBar.open(
-          'Error approving transaction',
-          'Close',
-          { duration: 3000 }
-        );
-
-      }
-
-    });
-
+    this.api
+      .approveTransactionSg(this.currentTx.tnxId, this.currentTx)
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction approved', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/shipping-guarantee/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error approving transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
 
-  // =========================================================
-  // REJECT
-  // =========================================================
+  // rejectTransaction(): void {
+  //   if (!this.currentTx?.tnxId) return;
 
+  //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
+  //     next: (res) => {
+  //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
+  //       this.router.navigate(['/import-screen/success'], { state: { transaction: res } });
+  //     },
+  //     error: () => this.snackBar.open('Error rejecting transaction', 'Close', { duration: 3000 })
+  //   });
+  // }
   rejectTransaction(): void {
-
     // Permission check
     if (!this.hasPermission('SG_AmendPendingReject')) {
-      console.warn(
-        'User does not have SG_AmendPendingReject permission'
-      );
+      console.warn('User does not have SG_AmendPendingReject permission');
       return;
     }
 
@@ -422,69 +302,32 @@ export class Preview implements OnInit {
       return;
     }
 
-    const dialogRef = this.dialog.open(
-      RejectDialogComponent,
-      {
-        width: '400px',
-        hasBackdrop: true,
-        backdropClass: 'cdk-overlay-dark-backdrop',
-        panelClass: 'custom-dialog-container'
-      }
-    );
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+      hasBackdrop: true, // ensure overlay backdrop
+      backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
+      panelClass: 'custom-dialog-container', // white dialog box
+    });
 
-    dialogRef.afterClosed().subscribe(
-      (reason: string | undefined) => {
-
-        if (!reason) {
-          return;
-        }
-
-        this.api.rejectTransactionSg(
-          tnxId,
-          reason
-        ).subscribe({
-
-          next: (res) => {
-
-            this.snackBar.open(
-              'Transaction rejected successfully',
-              'Close',
-              { duration: 3000 }
-            );
-
-            this.router.navigate(
-              [
-                '/dashboard/Trade-Services/shipping-guarantee/success'
-              ],
-              {
-                state: {
-                  transaction: res
-                }
-              }
-            );
-
-          },
-
-          error: () => {
-
-            this.snackBar.open(
-              'Error rejecting transaction',
-              'Close',
-              { duration: 3000 }
-            );
-
-          }
-
-        });
-
-      }
-    );
-
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+      this.api.rejectTransactionSg(tnxId, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.router.navigate(
+            ['/dashboard/Trade-Services/shipping-guarantee/success'],
+            { state: { transaction: res } },
+          );
+        },
+        error: () =>
+          this.snackBar.open('Error rejecting transaction', 'Close', {
+            duration: 3000,
+          }),
+      });
+    });
   }
-
-  // =========================================================
-  // DOWNLOAD ATTACHMENT
-  // =========================================================
 
   downloadFile(index: number): void {
 
@@ -561,25 +404,11 @@ export class Preview implements OnInit {
       return;
     }
 
-    console.error(
-      'Unsupported file format',
-      file
-    );
-
+    console.error('Unsupported file format', file);
   }
 
-  // =========================================================
-  // TRIGGER DOWNLOAD
-  // =========================================================
-
-  private triggerDownload(
-    url: string,
-    fileName: string
-  ): void {
-
-    const a =
-      document.createElement('a');
-
+  private triggerDownload(url: string, fileName: string) {
+    const a = document.createElement('a');
     a.href = url;
 
     a.download = fileName;
@@ -600,5 +429,4 @@ export class Preview implements OnInit {
     return item?.id || index;
 
   }
-
 }

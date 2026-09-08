@@ -1,118 +1,66 @@
-<div
-  class="preview-page"
-  *ngIf="ShippingGuaranteeForm"
->
-
-  <h2 class="page-title">
-    Preview
-  </h2>
+<div class="preview-page" *ngIf="ShippingGuaranteeForm">
+  <h2 class="page-title">Preview</h2>
 
   <div class="preview-container">
-
     <!-- =================================================
          ROW 1 → GENERAL + APPLICANT / BENEFICIARY
     ================================================== -->
-
     <div class="preview-row">
-
       <!-- GENERAL DETAILS -->
 
       <mat-card class="preview-card">
-
-        <h3 class="section-title">
-          General Details
-        </h3>
+        <h3 class="section-title">General Details</h3>
 
         <div class="preview-grid">
-
           <div class="preview-item">
-
-            <div class="preview-label">
-              Expiry Date
-            </div>
-
+            <div class="preview-label">Expiry Date</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.expiryDate || '—' }}
             </div>
-
           </div>
 
-
           <div class="preview-item">
-
-            <div class="preview-label">
-              Beneficiary Reference
-            </div>
-
+            <div class="preview-label">Beneficiary Reference</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.beneficiaryReference || '—' }}
             </div>
-
           </div>
 
 
           <div class="preview-item">
-
-            <div class="preview-label">
-              Customer Reference
-            </div>
-
+            <div class="preview-label">Customer Reference</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.customerReference || '—' }}
             </div>
-
           </div>
 
 
           <div class="preview-item">
-
-            <div class="preview-label">
-              Bill Of Lading
-            </div>
-
+            <div class="preview-label">Bill Of Lading</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.billoflading || '—' }}
             </div>
-
           </div>
 
-
           <div class="preview-item">
-
-            <div class="preview-label">
-              Mode Of Shipment
-            </div>
-
+            <div class="preview-label">Mode Of Shipment</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.modeOfShipment || '—' }}
             </div>
-
           </div>
 
-
           <div class="preview-item">
-
-            <div class="preview-label">
-              Shipping Details
-            </div>
-
+            <div class="preview-label">Shipping Details</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.shippingDetails || '—' }}
             </div>
-
           </div>
 
-
           <div class="preview-item full-width">
-
-            <div class="preview-label">
-              Description
-            </div>
-
+            <div class="preview-label">Description</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.description || '—' }}
             </div>
-
           </div>
 
         </div>
@@ -123,13 +71,9 @@
       <!-- APPLICANT / BENEFICIARY -->
 
       <mat-card class="preview-card">
-
-        <h3 class="section-title">
-          Applicant / Beneficiary
-        </h3>
+        <h3 class="section-title">Applicant / Beneficiary</h3>
 
         <div class="preview-grid">
-
           <div class="preview-item">
 
             <div class="preview-label">
@@ -137,11 +81,10 @@
             </div>
 
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.applicantName }}
+              {{ ShippingGuaranteeForm.value.applicantName || '—' }}
             </div>
 
           </div>
-
 
           <div class="preview-item">
 
@@ -150,19 +93,13 @@
             </div>
 
             <div class="preview-value">
-
-              {{ ShippingGuaranteeForm.value.applicantAddress1 }}
-
-              {{ ShippingGuaranteeForm.value.applicantAddress2 }}
-
-              {{ ShippingGuaranteeForm.value.applicantAddress3 }}
-
-              {{ ShippingGuaranteeForm.value.applicantAddress4 }}
-
+              {{ ShippingGuaranteeForm.value.applicantAddress1 }} {{
+              ShippingGuaranteeForm.value.applicantAddress2 }} {{
+              ShippingGuaranteeForm.value.applicantAddress3 }} {{
+              ShippingGuaranteeForm.value.applicantAddress4 }}
             </div>
 
           </div>
-
 
           <div class="preview-item">
 
@@ -171,11 +108,10 @@
             </div>
 
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.applicantCountry }}
+              {{ ShippingGuaranteeForm.value.applicantCountry || '—' }}
             </div>
 
           </div>
-
 
           <div class="preview-item">
 
@@ -184,11 +120,10 @@
             </div>
 
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.beneficiaryName }}
+              {{ ShippingGuaranteeForm.value.beneficiaryName || '—' }}
             </div>
 
           </div>
-
 
           <div class="preview-item">
 
@@ -197,19 +132,13 @@
             </div>
 
             <div class="preview-value">
-
-              {{ ShippingGuaranteeForm.value.beneficiaryAddress1 }}
-
-              {{ ShippingGuaranteeForm.value.beneficiaryAddress2 }}
-
-              {{ ShippingGuaranteeForm.value.beneficiaryAddress3 }}
-
-              {{ ShippingGuaranteeForm.value.beneficiaryAddress4 }}
-
+              {{ ShippingGuaranteeForm.value.beneficiaryAddress1 }} {{
+              ShippingGuaranteeForm.value.beneficiaryAddress2 }} {{
+              ShippingGuaranteeForm.value.beneficiaryAddress3 }} {{
+              ShippingGuaranteeForm.value.beneficiaryAddress4 }}
             </div>
 
           </div>
-
 
           <div class="preview-item">
 
@@ -218,42 +147,29 @@
             </div>
 
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.beneficiaryCountry }}
+              {{ ShippingGuaranteeForm.value.beneficiaryCountry || '—' }}
             </div>
 
           </div>
-
         </div>
 
       </mat-card>
-
     </div>
-
 
     <!-- =================================================
          ROW 2 → BANK + AMOUNT + INSTRUCTIONS
     ================================================== -->
-
     <div class="preview-row three-column-row">
-
       <!-- BANK DETAILS -->
 
       <mat-card class="preview-card">
-
-        <h3 class="section-title">
-          Bank Details
-        </h3>
+        <h3 class="section-title">Bank Details</h3>
 
         <div class="preview-grid">
-
           <div class="preview-item">
-
-            <div class="preview-label">
-              Bank Name
-            </div>
-
+            <div class="preview-label">Bank Name</div>
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.bankName }}
+              {{ ShippingGuaranteeForm.value.bankName || '—' }}
             </div>
 
           </div>
@@ -266,7 +182,7 @@
             </div>
 
             <div class="preview-value">
-              {{ ShippingGuaranteeForm.value.issuerReference }}
+              {{ ShippingGuaranteeForm.value.issuerReference || '—' }}
             </div>
 
           </div>
@@ -279,23 +195,15 @@
       <!-- AMOUNT & CHARGES -->
 
       <mat-card class="preview-card">
-
-        <h3 class="section-title">
-          Amount & Charges
-        </h3>
+        <h3 class="section-title">Amount & Charges</h3>
 
         <div class="preview-grid">
 
           <div class="preview-item">
-
-            <div class="preview-label">
-              Currency
-            </div>
-
+            <div class="preview-label">Currency</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.currency || '—' }}
             </div>
-
           </div>
 
 
@@ -310,71 +218,47 @@
             </div>
 
           </div>
-
         </div>
 
       </mat-card>
 
-
       <!-- INSTRUCTIONS TO BANK -->
-
       <mat-card class="preview-card">
-
-        <h3 class="section-title">
-          Instructions to Bank
-        </h3>
+        <h3 class="section-title">Instructions to Bank</h3>
 
         <div class="preview-grid">
 
           <div class="preview-item">
-
-            <div class="preview-label">
-              Principal Account
-            </div>
-
+            <div class="preview-label">Principal Account</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.principalAccount || '—' }}
             </div>
-
           </div>
 
 
           <div class="preview-item">
-
-            <div class="preview-label">
-              Fee Account
-            </div>
-
+            <div class="preview-label">Fee Account</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.feeAccount || '—' }}
             </div>
-
           </div>
 
 
           <div class="preview-item full-width">
-
-            <div class="preview-label">
-              Other Instructions
-            </div>
-
+            <div class="preview-label">Other Instructions</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.otherInstructions || '—' }}
             </div>
-
           </div>
 
         </div>
 
       </mat-card>
-
     </div>
-
 
     <!-- =================================================
          ROW 3 → ATTACHMENTS
     ================================================== -->
-
     <mat-card class="preview-card full-width">
 
       <h3 class="section-title">
@@ -387,9 +271,7 @@
       >
 
         <div class="preview-attachments-container">
-
           <!-- HEADER -->
-
           <div class="attachment-grid header">
 
             <div>
@@ -414,9 +296,7 @@
 
           </div>
 
-
           <!-- FILES -->
-
           <div
             class="attachment-grid"
             *ngFor="
@@ -425,16 +305,10 @@
               trackBy: trackByIndex
             "
           >
-
             <div>
-
-              <mat-icon
-                *ngIf="f.value.type?.includes('pdf')"
-                class="pdf-icon"
-              >
+              <mat-icon *ngIf="f.value.type?.includes('pdf')" class="pdf-icon">
                 picture_as_pdf
               </mat-icon>
-
 
               <mat-icon
                 *ngIf="f.value.type?.includes('image')"
@@ -442,34 +316,18 @@
               >
                 image
               </mat-icon>
-
             </div>
 
+            <div>{{ f.value.title || '—' }}</div>
+
+            <div>{{ f.value.fileName || '—' }}</div>
+
+            <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
 
             <div>
-              {{ f.value.title || '—' }}
-            </div>
-
-
-            <div>
-              {{ f.value.fileName || '—' }}
-            </div>
-
-
-            <div>
-              {{ (f.value.size / 1024) | number:'1.0-2' }} KB
-            </div>
-
-
-            <div>
-
-              <mat-icon
-                class="action-icon"
-                (click)="downloadFile(i)"
-              >
+              <mat-icon class="action-icon" (click)="downloadFile(i)">
                 download
               </mat-icon>
-
             </div>
 
           </div>
@@ -480,15 +338,10 @@
 
 
       <ng-template #noAttachments>
-
-        <p class="no-attachments">
-          No attachments uploaded.
-        </p>
-
+        <p class="no-attachments">No attachments uploaded.</p>
       </ng-template>
 
     </mat-card>
-
   </div>
 
 </div>
@@ -499,7 +352,6 @@
 ====================================================== -->
 
 <div class="actions">
-
   <!-- ALWAYS -->
 
   <button
@@ -510,75 +362,43 @@
   </button>
 
 
-  <!-- =================================================
-       SUBMIT
-       Permission: SG_AmendSubmit
-  ================================================== -->
-
-  <ng-container
-    *ngIf="
-      viewMode === 'submit' &&
-      currentTx?.status === 'I' &&
-      hasPermission('SG_AmendSubmit')
-    "
-  >
-
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
     <button
       mat-flat-button
       color="primary"
       (click)="submit()"
+       *ngIf="
+      viewMode === 'submit' &&
+      currentTx?.status === 'I' &&
+      hasPermission('SG_AmendSubmit')
+    "
     >
       Submit
     </button>
-
-  </ng-container>
-
-
-  <!-- =================================================
-       REJECT
-       Permission: SG_AmendPendingReject
-  ================================================== -->
-
-  <ng-container
-    *ngIf="
-      viewMode === 'submit' &&
-      currentTx?.status === 'S' &&
-      hasPermission('SG_AmendPendingReject')
-    "
-  >
 
     <button
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
+          *ngIf="
+      currentTx?.status === 'S' &&
+      hasPermission('SG_AmendPendingReject')
+    "
     >
       Reject
     </button>
-
-  </ng-container>
-
-
-  <!-- =================================================
-       APPROVE
-       Permission: SG_AmendApprove
-  ================================================== -->
-
-  <ng-container
-    *ngIf="
-      viewMode === 'submit' &&
-      currentTx?.status === 'S' &&
-      hasPermission('SG_AmendApprove')
-    "
-  >
 
     <button
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
+    *ngIf="
+      currentTx?.status === 'S' &&
+      hasPermission('SG_AmendApprove')
+    "
     >
       Approve
     </button>
-
   </ng-container>
-
 </div>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Licenses } from './licenses';
+import { PermissionGroup } from './permissions-group';
 
-describe('Licenses', () => {
-  let component: Licenses;
-  let fixture: ComponentFixture<Licenses>;
+describe('PermissionGroup', () => {
+  let component: PermissionGroup;
+  let fixture: ComponentFixture<PermissionGroup>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Licenses]
+      imports: [PermissionGroup]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Licenses);
+    fixture = TestBed.createComponent(PermissionGroup);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
