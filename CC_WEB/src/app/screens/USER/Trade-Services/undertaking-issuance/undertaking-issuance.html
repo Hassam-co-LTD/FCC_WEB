@@ -35,58 +35,102 @@
       <hr class="section-divider" />
       <section id="section-5"><app-attachments></app-attachments></section>
       <hr class="section-divider" />
-      
+
       <!-- Dynamic Fields -->
+      <!-- 
+      <ng-container *ngIf="fields?.length">
+        <app-dynamic-fields
+          [form]="dynamicFieldsForm"
+          [fields]="fields"
+          [isOpen]="isDynamicFieldsOpen"
+        >
+        </app-dynamic-fields>
+      </ng-container> -->
 
-    <ng-container *ngIf="fields?.length">
-      <app-dynamic-fields
-        [form]="dynamicFieldsForm"
-        [fields]="fields"
-        [isOpen]="isDynamicFieldsOpen"
-      >
-      </app-dynamic-fields>
-    </ng-container>
-    
       <div class="actions">
-
         <!-- CREATE -->
         <ng-container *ngIf="mode === 'CREATE'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
-          <button *ngIf="hasPermission('UTG_CreateSave')"mat-flat-button color="accent" (click)="saveForm()">Save</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
+          <button
+            *ngIf="hasPermission('UTG_CreateSave')"
+            mat-flat-button
+            color="accent"
+            (click)="saveForm()"
+          >
+            Save
+          </button>
         </ng-container>
 
         <!-- EDIT -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
-          <button  *ngIf="hasPermission('UTG_InquiryPendingUpdate')"mat-stroked-button color="primary" (click)="updateForm()">Update</button>
-          <button *ngIf="hasPermission('UTG_InquirySubmit')"mat-flat-button color="accent" (click)="submitForm()">Submit</button>
+          <button
+            *ngIf="hasPermission('UTG_InquiryPendingUpdate')"
+            mat-stroked-button
+            color="primary"
+            (click)="updateForm()"
+          >
+            Update
+          </button>
+          <button
+            *ngIf="hasPermission('UTG_InquirySubmit')"
+            mat-flat-button
+            color="accent"
+            (click)="submitForm()"
+          >
+            Submit
+          </button>
         </ng-container>
 
         <!-- APPROVAL -->
         <ng-container *ngIf="screenMode === 'SUBMITTED'">
-          <button  *ngIf="hasPermission('UTG_InquiryReject')"mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+          <button
+            *ngIf="hasPermission('UTG_InquiryReject')"
+            mat-stroked-button
+            color="primary"
+            (click)="openReject()"
+          >
+            Reject
+          </button>
 
-          <button  *ngIf="hasPermission('UTG_InquiryApprove')"mat-flat-button color="accent" (click)="approve()">Approve</button>
+          <button
+            *ngIf="hasPermission('UTG_InquiryApprove')"
+            mat-flat-button
+            color="accent"
+            (click)="approve()"
+          >
+            Approve
+          </button>
         </ng-container>
 
         <!-- APPROVED -->
         <ng-container *ngIf="screenMode === 'APPROVED'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
           <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button> -->
         </ng-container>
 
         <!-- REJECTED -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
-          <button *ngIf="hasPermission('UTG_InquiryRejectUpdate')" mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
+          <button
+            *ngIf="hasPermission('UTG_InquiryRejectUpdate')"
+            mat-flat-button
+            color="primary"
+            (click)="updateRejected()"
+          >
+            Update
+          </button>
         </ng-container>
-
       </div>
-
     </div>
   </div>
-<<<<<<< HEAD
 
-  <div class="ui-tabs">
+  <!-- <div class="ui-tabs">
     <div *ngFor="let tab of tabs" 
          class="tab" 
          [class.active]="activeTab === tab.id" 
@@ -170,8 +214,7 @@
       </button>
     </div>
   </div>
+</div> 
+</div>
 </div> -->
 </div>
-=======
-</div>
->>>>>>> f22734033093e3e6751e023390598eac6dab8f26

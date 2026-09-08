@@ -169,6 +169,23 @@ export class CreateClientUser implements OnInit {
               });
             this.clientUserForm.disable();
           }
+
+          // getting rejected transaction
+
+          if (this.storeClientUser.recordStatus == 'S') {
+            this.api
+              .getRejectedTransaction(this.storeClientUser.id, 'clientUsers')
+              .subscribe({
+                next: (rejectedData: any) => {
+                  console.log('Fetched rejected data:', rejectedData);
+                  this.storeRejectedClientUser = rejectedData;
+                  this.comparelientUserData();
+                  this.comparelientUserDynamicFields();
+                },
+                error: (err) =>
+                  console.error('Error fetching rejected data', err),
+              });
+          }
         },
         error: (err) =>
           console.error('Error fetching client user detailsss', err),
@@ -352,7 +369,7 @@ export class CreateClientUser implements OnInit {
             res?.message || 'Client User rejected successfully',
             'success',
           ).then(() => {
-            this.router.navigate(['/admin/user-client-list'], {
+            this.router.navigate(['/admin/user-client-inquiry'], {
               queryParams: {
                 tabName: 'rejected',
               },
@@ -405,7 +422,7 @@ export class CreateClientUser implements OnInit {
           res?.message || 'Client User Amended successfully',
           'success',
         ).then(() => {
-          this.router.navigate(['/admin/user-client-list'], {
+          this.router.navigate(['/admin/user-client-inquiry'], {
             queryParams: {
               tabName: 'amend',
             },
@@ -427,7 +444,7 @@ export class CreateClientUser implements OnInit {
   fetchAllRoles(): void {
     this.api.getTnxByStatus('A', 'roles').subscribe({
       next: (roles: RoleMasterResponseDTO[]) => {
-        this.userRoles = roles.filter((r) => r.roleDest === 'C'); // Only BANK roles for client users
+        this.userRoles = roles.filter((r) => r.roleDest === 'A'); // Only BANK roles for client users
         console.log('Fetched all roles:', this.userRoles);
         this.fetchAssignedRoles();
       },

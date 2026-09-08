@@ -20,7 +20,12 @@ import { ApiService } from '../../../../../../../core/services/api.service';
 @Component({
   selector: 'app-enquiries-of-records',
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule, ExportDropdown],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    FormsModule,
+    ExportDropdown
+  ],
   templateUrl: './enquiries-of-records.html',
   styleUrls: ['./enquiries-of-records.scss'],
 })
@@ -72,9 +77,7 @@ export class EnquiriesOfRecords implements OnInit {
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-
     const storedPermissions = sessionStorage.getItem('permissionNames');
-
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
@@ -82,9 +85,7 @@ export class EnquiriesOfRecords implements OnInit {
         this.permissionNames = [];
       }
     }
-
     console.log('Import LC Permissions:', this.permissionNames);
-
     this.route.queryParamMap.subscribe((params) => {
       const tab = params.get('tab');
       if (tab && this.tabs.some((t) => t.key === tab)) {

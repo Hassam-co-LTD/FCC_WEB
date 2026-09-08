@@ -1474,9 +1474,7 @@ export class ApiService {
 
     const url = `${this.adminBaseUrl}${name}/setStatus/${id}`;
 
-    return this.http.put<any>(url, null, {
-      params: { status },
-    });
+    return this.http.put<any>(url, payload);
   }
 
   //get list of data
@@ -1610,9 +1608,9 @@ export class ApiService {
       },
     );
   }
-  getRejectedTransaction(custId: string, module: string) {
+  getRejectedTransaction(id: string, module: string) {
     return this.http.get<any>(
-      `${environment.gatewayUrl}/api/v1/${module}/${custId}/rejected-history`,
+      `${this.adminBaseUrl}${module}/${id}/rejected-history`,
     );
   }
 }

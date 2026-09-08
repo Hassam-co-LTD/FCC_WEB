@@ -88,16 +88,7 @@
           <button mat-stroked-button color="primary" (click)="back()">
             Back
           </button>
-          <button
-            *ngIf="
-              hasPermission('ILC_CreateSave')
-            "
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()"
-          >
-            Save
-          </button>
+          <button (click)="saveForm()">Save</button>
         </ng-container>
 
         <!-- EDIT -->

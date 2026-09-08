@@ -99,18 +99,20 @@ export class CreateCompany implements OnInit {
         this.patchDynamicValues();
 
         if (this.storeCompany.recordStatus === 'S') {
-          this.api.getRejectedTransaction(id, 'company').subscribe({
-            next: (res: any) => {
-              this.storeRejectedCompany = res;
-              this.compareCompanyData();
-              this.compareCompanyDynamicFields();
-              console.log(
-                'Loaded Rejected Company:',
-                this.storeRejectedCompany,
-              );
-            },
-            error: (err) => console.error('Load failed', err),
-          });
+          this.api
+            .getRejectedTransaction(this.storeCompany.companyId, 'company')
+            .subscribe({
+              next: (res: any) => {
+                this.storeRejectedCompany = res;
+                this.compareCompanyData();
+                this.compareCompanyDynamicFields();
+                console.log(
+                  'Loaded Rejected Company:',
+                  this.storeRejectedCompany,
+                );
+              },
+              error: (err) => console.error('Load failed', err),
+            });
         }
       },
       error: (err) => console.error('Load failed', err),
@@ -220,45 +222,38 @@ export class CreateCompany implements OnInit {
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeCompany?.companyId) return;
-    const payload = this.authService.getSubmitPayload();
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to submit this company?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Submit',
-      cancelButtonText: 'Cancel',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Submitting...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-        });
 
-        this.api
-          .setTnxByStatus(payload, this.storeCompany.companyId, 'company')
-          .subscribe({
-            next: () => {
-              Swal.fire(
-                'Submitted!',
-                'Company submitted successfully',
-                'success',
-              ).then(() =>
-                this.router.navigate(['/admin/company-inquiry'], {
-                  queryParams: { tabName: 'submitted' },
-                }),
-              );
-            },
-            error: (err) => {
-              console.error('Submit failed', err);
-              Swal.fire('Error', 'Failed to submit company', 'error');
-            },
-          });
-      }
-    });
+    let payload = this.authService.getSubmitPayload();
+
+    console.log('payload laoded from submmit method', payload);
+
+    // =========================
+    // SUBMIT API
+    // =========================
+    this.api
+      .setTnxByStatus(payload, this.storeCompany.companyId, 'company')
+      .subscribe({
+        next: (res: any) => {
+          console.log('Company submitted successfully:', res);
+
+          Swal.fire(
+            'Submitted!',
+            'Company submitted successfully',
+            'success',
+          ).then(() =>
+            this.router.navigate(['/admin/company-inquiry'], {
+              queryParams: { tabName: 'submitted' },
+            }),
+          );
+        },
+
+        error: (err: any) => {
+          console.error('Submit failed:', err);
+
+          Swal.fire('Error', err?.error?.message || 'Submit failed', 'error');
+        },
+      });
   }
-
   reject(id: number): void {
     if (!id) return;
 
