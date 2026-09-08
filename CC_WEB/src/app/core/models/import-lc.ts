@@ -17,12 +17,14 @@ export interface ImportLcTransaction {
     applicantAddress1?: string;
     applicantAddress2?: string;
     applicantAddress3?: string;
+    applicantAddress4?: string;
     applicantCountry?: string;
     // Beneficiary
     beneficiaryName?: string;
     beneficiaryAddress1?: string;
     beneficiaryAddress2?: string;
     beneficiaryAddress3?: string;
+    beneficiaryAddress4?: string;
     beneficiaryCountry?: string;
 
     // Bank

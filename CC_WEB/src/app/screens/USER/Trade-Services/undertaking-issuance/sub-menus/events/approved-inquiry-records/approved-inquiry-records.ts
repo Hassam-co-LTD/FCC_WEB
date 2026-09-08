@@ -107,7 +107,8 @@ export class ApprovedInquiryRecords {
   constructor(
     private transactionService: UndertakingIssuanceService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private api: ApiService
   ) {}
 
   // =========================================================

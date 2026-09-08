@@ -1,8 +1,6 @@
 export const environment = {
     production: false,
-    gatewayUrl: 'http://localhost:8057' // our gateway url
-    ,  
-    loginBaseUrl: 'http://localhost:8057/api/v1/',
+    gatewayUrl: 'http://localhost:8050' // our gateway url, 
 };
 // export const environment = {
 //     production: false,

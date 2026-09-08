@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
+import {  FormsModule, Validators,  } from '@angular/forms';
 import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { finalize } from 'rxjs';
 
-import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { finalize } from 'rxjs';
+import{ UndertakingGuarantee } from '../../../../../../../core/models/undertaking-lc';
+import { UndertakingIssuanceService } from '../../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { Attachments } from '../../../components/attachments/attachments';
-import { generalDetails } from '../../../components/general-details/general-details';
 import { ApplicationBeneficiary } from '../../../components/application-beneficiary/application-beneficiary';
 import { generalDetails } from '../../../components/general-details/general-details';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -27,6 +24,7 @@ import { BankDetails } from '../../../components/bank-details/bank-details';
 import { UndertakingDetails } from '../../../components/undertaking-details/undertaking-details';
 import { InstructionsBank } from '../../../components/instructions-bank/instructions-bank';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
+import { ApiService } from '../../../../../../../core/services/api.service';
 
 @Component({
   selector: 'app-amend',
@@ -43,7 +41,6 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
     Attachments,
     MatDialogModule,
     Sidebar,
-    RouterOutlet,
   ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss']
@@ -104,7 +101,7 @@ export class AmendScreen implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
-    private api: UndertakingIssuanceService,
+    private api: ApiService,
     private route: ActivatedRoute,
     private dialog: MatDialog
   ) {

@@ -9,10 +9,11 @@ import { MatCard } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import{ShippingGuaranteeTransaction} from '../../../../../../../../../core/models/shipping-guarantee';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
+import{ShippingGuaranteeFormTransactionService} from '../../../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 
 @Component({
   selector: 'app-preview',
@@ -23,7 +24,8 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
     MatIcon,
     MatCard,
     HttpClientModule,
-    MatDialogModule
+    MatDialogModule,
+    
   ],
   standalone: true,
 })

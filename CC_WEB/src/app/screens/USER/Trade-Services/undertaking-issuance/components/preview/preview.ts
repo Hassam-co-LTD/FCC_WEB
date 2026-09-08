@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule, DecimalPipe,DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -32,7 +32,6 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
     MatCardModule,
     MatButtonModule,
     DecimalPipe,
-    DatePipe,
     MatDividerModule
   ],
   templateUrl: './preview.html',
@@ -96,7 +95,8 @@ export class Preview implements OnInit {
     private snackBar: MatSnackBar,
     private api: ApiService,
     private dialog: MatDialog,
-    private transactionService: UndertakingIssuanceService
+    private transactionService: UndertakingIssuanceService,
+    private fb: FormBuilder
   ) {}
 
   // =========================================================

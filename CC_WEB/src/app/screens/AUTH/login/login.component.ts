@@ -3,7 +3,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
  
- 
 // Angular Material Module Imports
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
- 
  
 // Core Application Service Providers
 import { AuthService } from '../../../core/services/auth.service';
@@ -48,7 +46,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   // Centralized Finite State Machine Core
   public authState: AuthState = 'LOGIN';
  
- 
   // =========================
   // LOGIN FORM STATE
   // =========================
@@ -58,7 +55,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   userStatus = 'A';
   hidePassword = true;
   isDummyLogin = true;
- 
  
   // =========================
   // RESET PASSWORD - FORGOT FLOW STATE
@@ -72,7 +68,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   hideNewPassword = true;
   hideConfirmPassword = true;
  
- 
   // =========================
   // BACKGROUND UTILITY COUNTERS
   // =========================
@@ -80,12 +75,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   expiryDisplay = '15:00';
   private expiryInterval: any;
  
- 
   resendSeconds = 60;
   resendDisplay = '60';
   canResend = false;
   private resendInterval: any;
- 
  
   // =========================
   // PASSWORD COMPLEXITY & REQUIREMENT TRACKERS
@@ -94,7 +87,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   passwordStrengthColor = '';
   passwordStrengthProgress = 0;
   isPasswordInvalid = true;
- 
  
   hasMinLength = false;
   hasUppercase = false;
@@ -107,32 +99,38 @@ export class LoginComponent implements OnInit, OnDestroy {
     protected router: Router,
     private api: ApiService,
     private route: ActivatedRoute,
-    //private sessionTimeOut:SessionTimeoutService
+    private sessionTimeOut: SessionTimeoutService,
   ) {}
  
   /**
    * Safe Component Initialization Hook with Race-Condition Protection
    */
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const urlToken = params['token'];
-     
+ 
       // Protection against secondary router stabilization events where token might be undefined
       if (!urlToken) {
-        if (this.authState !== 'RESET_PASSWORD' && this.authState !== 'EXPIRED' && this.authState !== 'SUCCESS') {
+        if (
+          this.authState !== 'RESET_PASSWORD' &&
+          this.authState !== 'EXPIRED' &&
+          this.authState !== 'SUCCESS'
+        ) {
           this.transitionTo('LOGIN');
         }
         return;
       }
  
- 
       this.token = urlToken;
- 
  
       // Proactively evaluate external query tokens via server backend
       this.api.validateResetToken(urlToken).subscribe({
         next: (response: any) => {
-          const isValid = response && (response.valid === true || response.status === 'success' || response.isValid === true);
+          const isValid =
+            response &&
+            (response.valid === true ||
+              response.status === 'success' ||
+              response.isValid === true);
           if (isValid) {
             this.transitionTo('RESET_PASSWORD');
           } else {
@@ -142,11 +140,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Token validation network exception:', err);
           this.transitionTo('EXPIRED');
-        }
+        },
       });
     });
   }
- 
  
   /**
    * Component destruction hook lifecycle interception
@@ -154,7 +151,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.clearAllTimers();
   }
- 
  
   /**
    * Central routing mechanism for View Layout Transitions
@@ -164,7 +160,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authState = targetState;
   }
  
- 
   /**
    * State Management configuration engine to decouple running variables
    */
@@ -172,7 +167,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (targetState !== 'EMAIL_SENT') {
       this.clearAllTimers();
     }
- 
  
     switch (targetState) {
       case 'LOGIN':
@@ -190,221 +184,192 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
  
- 
   private clearAllTimers(): void {
     if (this.expiryInterval) clearInterval(this.expiryInterval);
     if (this.resendInterval) clearInterval(this.resendInterval);
   }
  
   // Password Display Visibility Switch Toggles
-  togglePassword(): void { this.hidePassword = !this.hidePassword; }
-  toggleNewPassword(): void { this.hideNewPassword = !this.hideNewPassword; }
-  toggleConfirmPassword(): void { this.hideConfirmPassword = !this.hideConfirmPassword; }
+  togglePassword(): void {
+    this.hidePassword = !this.hidePassword;
+  }
+  toggleNewPassword(): void {
+    this.hideNewPassword = !this.hideNewPassword;
+  }
+  toggleConfirmPassword(): void {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
  
   loginHandler(): void {
-     this.loginApi();
+    this.loginApi();
   }
  
-  private loginDummy(): void {
-    console.log('Dummy login called');
+  loginApi(): void {
+    this.api
+      .userLogin(
+        {
+          loginId: this.loginId,
+          companyId: this.companyId,
+          password: this.password,
+          userStatus: this.userStatus,
+        },
+        'clientUsers',
+      )
  
-    const dummyUser = {
-      loginId: 'NBP01',
-      companyId: 'NBP',
-      companyType: 'C',
-      userCategory: 'U',
-      userStatus: 'A'
-    };
- 
-    sessionStorage.setItem('userData', JSON.stringify(dummyUser));
- 
-    console.log('Before navigation');
- 
-    this.router.navigate(['/dashboard']).then(result => {
-      console.log('Navigation Result:', result);
-    });
-  }
- 
-   loginApi(): void {
- 
-  this.api.userLogin({
-    loginId: this.loginId,
-    companyId: this.companyId,
-    password: this.password,
-    userStatus: this.userStatus
- 
-  }, 'clientUsers')
- 
-  .subscribe({
- 
-    next: (res) => {
+      .subscribe({
+        next: (res) => {
+          console.log(res.body);
+          console.log(res.headers);
+          const loginData = res.body;
  
  
-      console.log(res.body);
-      console.log(res.headers)
-      const loginData = res.body;
-
-// Save user information
-sessionStorage.setItem(
-  'userData',
-  JSON.stringify(loginData)
-);
-
-// Save Permission Group Name
+          // Save Permission Group Name
 sessionStorage.setItem(
   'permissionGroupName',
   loginData.permissionGroupName
 );
-
+ 
 sessionStorage.setItem(
   'permissionNames',
   JSON.stringify(loginData.permissionNames)
 );
  
+          // Save user information
+          sessionStorage.setItem('userData', JSON.stringify(loginData));
  
-      // Save JWT
-      sessionStorage.setItem(
-        'token',
-        loginData.token
-      );
+          // Save JWT
+          sessionStorage.setItem('token', loginData.token);
  
+          // Save Refresh Token
+          sessionStorage.setItem('refreshToken', loginData.refreshToken);
  
+          // START SESSION TIMEOUT WATCHER
+          // this.sessionTimeOut.startWatching();
  
-      // Save Refresh Token
-      sessionStorage.setItem(
-        'refreshToken',
-        loginData.refreshToken
-      );
+          const companyType = this.auth.getCompanyType();
  
+          const customerType = this.auth.getUserCategory();
  
+          if (companyType === 'B') {
+            this.router.navigate(['/customer-user']);
+          } else if (companyType === 'C' && customerType === 'A') {
+            this.router.navigate(['/admin']);
+          } else if (companyType === 'C' && customerType === 'U') {
+            this.router.navigate(['/dashboard']);
+          } else {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Login Warning',
+              text: 'Undefined user category. Contact system support hierarchy.',
+            });
+          }
+        },
  
-      // START SESSION TIMEOUT WATCHER
-      // this.sessionTimeOut.startWatching();
- 
-      const companyType = this.auth.getCompanyType();
- 
-      const customerType = this.auth.getUserCategory();
- 
- 
- 
-      if (companyType === 'B') {
- 
- 
-        this.router.navigate([
-          '/customer-user'
-        ]);
- 
- 
-      } else if (
-          companyType === 'C' &&
-          customerType === 'A'
-      ) {
- 
- 
-        this.router.navigate([
-          '/admin'
-        ]);
- 
- 
-      } else if (
-          companyType === 'C' &&
-          customerType === 'U'
-      ) {
- 
- 
-        this.router.navigate([
-          '/dashboard'
-        ]);
- 
- 
-      } else {
- 
- 
-        Swal.fire({
- 
-          icon: 'warning',
-          title: 'Login Warning',
-          text: 'Undefined user category. Contact system support hierarchy.'
- 
-        });
- 
- 
-      }
- 
- 
-    },
- 
- 
-    error: (err) => {
- 
- 
-      Swal.fire({
- 
-        icon: 'error',
-        title: 'Authentication Failed',
-        text:
-          err?.error?.message ||
-          'Invalid enterprise access configurations.'
- 
+        error: (err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Authentication Failed',
+            text:
+              err?.error?.message ||
+              'Invalid enterprise access configurations.',
+          });
+        },
       });
- 
- 
-    }
- 
-  });
- 
-}
+  }
   sendResetLink(): void {
     if (!this.forgotLoginId || !this.forgotCompanyId) {
-      Swal.fire({ icon: 'warning', title: 'Missing Identity Parameters', text: 'Login ID and Company ID are required.' });
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Identity Parameters',
+        text: 'Login ID and Company ID are required.',
+      });
       return;
     }
  
-    this.api.forgotPassword({ loginId: this.forgotLoginId, companyId: this.forgotCompanyId }).subscribe({
-      next: (response: any) => {
-        const data = typeof response === 'string' ? JSON.parse(response) : response;
-        this.maskedUser = this.maskEmail(data?.email || this.forgotLoginId);
+    this.api
+      .forgotPassword({
+        loginId: this.forgotLoginId,
+        companyId: this.forgotCompanyId,
+      })
+      .subscribe({
+        next: (response: any) => {
+          const data =
+            typeof response === 'string' ? JSON.parse(response) : response;
+          this.maskedUser = this.maskEmail(data?.email || this.forgotLoginId);
  
-        this.transitionTo('EMAIL_SENT');
-        this.startExpiryTimer();
-        this.startResendTimer();
+          this.transitionTo('EMAIL_SENT');
+          this.startExpiryTimer();
+          this.startResendTimer();
  
-        Swal.fire({ icon: 'success', title: 'Link Dispatched', text: data?.message || 'Secure access credentials routed.' });
-      },
-      error: (error) => {
-        Swal.fire({ icon: 'error', title: 'Request Dispatch Failed', text: error?.error?.message || 'System verification error.' });
-      }
-    });
+          Swal.fire({
+            icon: 'success',
+            title: 'Link Dispatched',
+            text: data?.message || 'Secure access credentials routed.',
+          });
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Request Dispatch Failed',
+            text: error?.error?.message || 'System verification error.',
+          });
+        },
+      });
   }
  
   resendEmail(): void {
     if (!this.canResend) return;
  
-    this.api.forgotPassword({ loginId: this.forgotLoginId, companyId: this.forgotCompanyId }).subscribe({
-      next: (response: any) => {
-        const data = typeof response === 'string' ? JSON.parse(response) : response;
-        this.startExpiryTimer();
-        this.startResendTimer();
-        Swal.fire({ icon: 'success', title: 'Token Refreshed', text: data?.message || 'New validation token generated.' });
-      },
-      error: (error) => {
-        Swal.fire({ icon: 'error', title: 'Resend Interrupted', text: error?.error?.message || 'Please try again later.' });
-      }
-    });
+    this.api
+      .forgotPassword({
+        loginId: this.forgotLoginId,
+        companyId: this.forgotCompanyId,
+      })
+      .subscribe({
+        next: (response: any) => {
+          const data =
+            typeof response === 'string' ? JSON.parse(response) : response;
+          this.startExpiryTimer();
+          this.startResendTimer();
+          Swal.fire({
+            icon: 'success',
+            title: 'Token Refreshed',
+            text: data?.message || 'New validation token generated.',
+          });
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Resend Interrupted',
+            text: error?.error?.message || 'Please try again later.',
+          });
+        },
+      });
   }
  
   updatePassword(): void {
-    if (this.isPasswordInvalid || this.newPassword !== this.confirmPassword) return;
+    if (this.isPasswordInvalid || this.newPassword !== this.confirmPassword)
+      return;
  
-    this.api.resetPassword({ token: this.token, newPassword: this.newPassword }).subscribe({
-      next: () => {
-        this.transitionTo('SUCCESS');
-        Swal.fire({ icon: 'success', title: 'Success', text: 'Credentials updated successfully.' });
-      },
-      error: () => {
-        Swal.fire({ icon: 'error', title: 'Transaction Refused', text: 'Your authorization token sequence is stale or corrupted.' });
-      }
-    });
+    this.api
+      .resetPassword({ token: this.token, newPassword: this.newPassword })
+      .subscribe({
+        next: () => {
+          this.transitionTo('SUCCESS');
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Credentials updated successfully.',
+          });
+        },
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Transaction Refused',
+            text: 'Your authorization token sequence is stale or corrupted.',
+          });
+        },
+      });
   }
  
   startExpiryTimer(): void {
@@ -472,10 +437,18 @@ sessionStorage.setItem(
     this.hasUppercase = /[A-Z]/.test(password);
     this.hasLowercase = /[a-z]/.test(password);
     this.hasNumber = /\d/.test(password);
-    this.hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+    this.hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+      password,
+    );
  
     // Global variable toggle assignment check logic
-    this.isPasswordInvalid = !(this.hasMinLength && this.hasUppercase && this.hasLowercase && this.hasNumber && this.hasSpecialChar);
+    this.isPasswordInvalid = !(
+      this.hasMinLength &&
+      this.hasUppercase &&
+      this.hasLowercase &&
+      this.hasNumber &&
+      this.hasSpecialChar
+    );
  
     let passedRulesCount = 0;
     if (this.hasMinLength) passedRulesCount++;
@@ -484,9 +457,7 @@ sessionStorage.setItem(
     if (this.hasNumber) passedRulesCount++;
     if (this.hasSpecialChar) passedRulesCount++;
  
- 
     this.passwordStrengthProgress = (passedRulesCount / 5) * 100;
- 
  
     if (passedRulesCount <= 2) {
       this.passwordStrength = 'Weak Security Profile';

@@ -36,7 +36,8 @@ import { ApiService } from '../../../../../../../core/services/api.service';
     MatButtonModule,
     MatTooltipModule,
     FormsModule,
-    DecimalPipe,
+    
+    
     DatePipe,
     TitleCasePipe
   ],
@@ -65,7 +66,6 @@ export class inquiriesRecords implements OnInit {
   currencyFilter = '';
 
   activeTab = 'pending';
-  showAdvanced = false;
 
   // =========================
   // TABS
@@ -118,7 +118,8 @@ export class inquiriesRecords implements OnInit {
   constructor(
     private transactionService: UndertakingIssuanceService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private api: ApiService
   ) {}
 
   // =========================================================
@@ -655,7 +656,6 @@ export class inquiriesRecords implements OnInit {
         ],
         {
           queryParams: {
-            transactionId: identifier,
             mode: 'READ_ONLY',
             tab: 'live',
             eventRefNo:

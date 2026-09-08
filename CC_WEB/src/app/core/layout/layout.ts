@@ -361,19 +361,10 @@ export class LayoutComponent implements OnInit {
       ]
     }
 
-    
 else if (companyType === 'C' && role === 'U') {
 
   // =========================================================
-  // GET PERMISSION GROUP
-  // =========================================================
-
-  const permissionGroupName =
-    sessionStorage.getItem('permissionGroupName');
-
-
-  // =========================================================
-  // GET PERMISSION NAMES
+  // GET ALL PERMISSIONS
   // =========================================================
 
   let permissionNames: string[] = [];
@@ -389,7 +380,13 @@ else if (companyType === 'C' && role === 'U') {
         JSON.parse(storedPermissionNames);
 
       if (Array.isArray(parsedPermissions)) {
-        permissionNames = parsedPermissions;
+
+        permissionNames = parsedPermissions
+          .filter(
+            (permission): permission is string =>
+              typeof permission === 'string'
+          );
+
       }
 
     } catch (error) {
@@ -403,11 +400,6 @@ else if (companyType === 'C' && role === 'U') {
 
   }
 
-
-  console.log(
-    'Permission Group:',
-    permissionGroupName
-  );
 
   console.log(
     'Permission Names:',
@@ -442,86 +434,107 @@ else if (companyType === 'C' && role === 'U') {
 
 
   // =========================================================
+  // MENU ITEMS
+  // =========================================================
+
+  const menuItems: any[] = [];
+
+
+  // =========================================================
+  // DASHBOARD
+  // =========================================================
+
+  menuItems.push({
+
+    label: 'Dashboard',
+
+    icon: 'dashboard',
+
+    route: '/dashboard'
+
+  });
+
+
+  // =========================================================
+  // TRADE SERVICES
+  // =========================================================
+
+  const tradeServicesChildren: any[] = [];
+
+
+  // =========================================================
   // IMPORT LC
   // =========================================================
 
-  if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'import_lc'
-  ) {
+  if (hasPermission('Import_lc')) {
 
-    const children: any[] = [];
+    const importLCChildren: any[] = [];
 
 
-    if (hasPermission('Create')) {
+    // CREATE
+    if (hasPermission('ILC_Create')) {
 
-      children.push({
+      importLCChildren.push({
+
         label: 'Create',
+
         route:
           '/dashboard/Trade-Services/import-screen'
+
       });
 
     }
 
 
-    if (hasPermission('Amend')) {
+    // AMEND
+    if (hasPermission('ILC_Amend')) {
 
-      children.push({
+      importLCChildren.push({
+
         label: 'Amend',
+
         route:
           '/dashboard/Trade-Services/import-screen/approved-inquiry-records'
+
       });
 
     }
 
 
-    if (hasPermission('Inquiry')) {
+    // INQUIRY
+    if (hasPermission('ILC_Inquiry')) {
 
-      children.push({
+      importLCChildren.push({
+
         label: 'Inquiries',
+
         route:
           '/dashboard/Trade-Services/import-screen/inquiries'
+
       });
 
     }
 
 
-    this.menuItems = [
+    // Only add Import LC if it has
+    // at least one child permission
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+    if (importLCChildren.length > 0) {
 
-      {
-        label: 'Trade Services',
-        icon: 'group',
-        route: '/dashboard/Trade-Services',
+      tradeServicesChildren.push({
+
+        label: 'Import LC',
+
+        route:
+          '/dashboard/Trade-Services/import-welcome',
+
         open: false,
 
-        children: [
+        children: importLCChildren
 
-          {
-            label: 'Import LC',
-            route:
-              '/dashboard/Trade-Services/import-welcome',
+      });
 
-            open: false,
-
-            children: children
-          }
-
-        ]
-      },
-
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
-
-    ];
+    }
 
   }
 
@@ -530,83 +543,72 @@ else if (companyType === 'C' && role === 'U') {
   // EXPORT LC
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'export_lc'
-  ) {
+  if (hasPermission('Export_lc')) {
 
-    const children: any[] = [];
+    const exportLCChildren: any[] = [];
 
 
-    if (hasPermission('Create')) {
+    // CREATE
+    if (hasPermission('ELC_Create')) {
 
-      children.push({
+      exportLCChildren.push({
+
         label: 'Create',
+
         route:
           '/dashboard/Trade-Services/export-screen'
+
       });
 
     }
 
 
-    if (hasPermission('Amend')) {
+    // AMEND
+    if (hasPermission('ELC_Amend')) {
 
-      children.push({
+      exportLCChildren.push({
+
         label: 'Amend',
+
         route:
           '/dashboard/Trade-Services/export-screen/amend'
+
       });
 
     }
 
 
-    if (hasPermission('Inquiry')) {
+    // INQUIRY
+    if (hasPermission('ELC_Inquiry')) {
 
-      children.push({
+      exportLCChildren.push({
+
         label: 'Inquiries',
+
         route:
           '/dashboard/Trade-Services/export-screen/inquiries'
+
       });
 
     }
 
 
-    this.menuItems = [
+    if (exportLCChildren.length > 0) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+      tradeServicesChildren.push({
 
-      {
-        label: 'Trade Services',
-        icon: 'group',
-        route: '/dashboard/Trade-Services',
+        label: 'Export LC',
+
+        route:
+          '/dashboard/Trade-Services/exportlc-welcome',
+
         open: false,
 
-        children: [
+        children: exportLCChildren
 
-          {
-            label: 'Export LC',
-            route:
-              '/dashboard/Trade-Services/exportlc-welcome',
+      });
 
-            open: false,
-
-            children: children
-          }
-
-        ]
-      },
-
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
-
-    ];
+    }
 
   }
 
@@ -615,83 +617,72 @@ else if (companyType === 'C' && role === 'U') {
   // SHIPPING GUARANTEE
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'shipping_guarantee'
-  ) {
+  if (hasPermission('Shipping_guarantee')) {
 
-    const children: any[] = [];
+    const shippingGuaranteeChildren: any[] = [];
 
 
-    if (hasPermission('Create')) {
+    // CREATE
+    if (hasPermission('SG_Create')) {
 
-      children.push({
+      shippingGuaranteeChildren.push({
+
         label: 'Create',
+
         route:
           '/dashboard/Trade-Services/shipping-guarantee'
+
       });
 
     }
 
 
-    if (hasPermission('Amend')) {
+    // AMEND
+    if (hasPermission('SG_Amend')) {
 
-      children.push({
+      shippingGuaranteeChildren.push({
+
         label: 'Amend',
+
         route:
           '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'
+
       });
 
     }
 
 
-    if (hasPermission('Inquiry')) {
+    // INQUIRY
+    if (hasPermission('SG_Inquiry')) {
 
-      children.push({
+      shippingGuaranteeChildren.push({
+
         label: 'Inquiries',
+
         route:
           '/dashboard/Trade-Services/shipping-guarantee/inquiries-records'
+
       });
 
     }
 
 
-    this.menuItems = [
+    if (shippingGuaranteeChildren.length > 0) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+      tradeServicesChildren.push({
 
-      {
-        label: 'Trade Services',
-        icon: 'group',
-        route: '/dashboard/Trade-Services',
+        label: 'Shipping Guarantee',
+
+        route:
+          '/dashboard/Trade-Services/shipping-welcome',
+
         open: false,
 
-        children: [
+        children: shippingGuaranteeChildren
 
-          {
-            label: 'Shipping Guarantee',
-            route:
-              '/dashboard/Trade-Services/shipping-welcome',
+      });
 
-            open: false,
-
-            children: children
-          }
-
-        ]
-      },
-
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
-
-    ];
+    }
 
   }
 
@@ -700,83 +691,72 @@ else if (companyType === 'C' && role === 'U') {
   // EXPORT COLLECTION
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'export_collection'
-  ) {
+  if (hasPermission('Export_collection')) {
 
-    const children: any[] = [];
+    const exportCollectionChildren: any[] = [];
 
 
-    if (hasPermission('Create')) {
+    // CREATE
+    if (hasPermission('EC_Create')) {
 
-      children.push({
+      exportCollectionChildren.push({
+
         label: 'Create',
+
         route:
           '/dashboard/Trade-Services/export-collection'
+
       });
 
     }
 
 
-    if (hasPermission('Amend')) {
+    // AMEND
+    if (hasPermission('EC_Amend')) {
 
-      children.push({
+      exportCollectionChildren.push({
+
         label: 'Amend',
+
         route:
           '/dashboard/Trade-Services/export-collection/approved-inquiry-records'
+
       });
 
     }
 
 
-    if (hasPermission('Inquiry')) {
+    // INQUIRY
+    if (hasPermission('EC_Inquiry')) {
 
-      children.push({
+      exportCollectionChildren.push({
+
         label: 'Inquiries',
+
         route:
           '/dashboard/Trade-Services/export-collection/inquiries-records'
+
       });
 
     }
 
 
-    this.menuItems = [
+    if (exportCollectionChildren.length > 0) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+      tradeServicesChildren.push({
 
-      {
-        label: 'Trade Services',
-        icon: 'group',
-        route: '/dashboard/Trade-Services',
+        label: 'Export Collection',
+
+        route:
+          '/dashboard/Trade-Services/export-collection-welcome',
+
         open: false,
 
-        children: [
+        children: exportCollectionChildren
 
-          {
-            label: 'Export Collection',
-            route:
-              '/dashboard/Trade-Services/export-collection-welcome',
+      });
 
-            open: false,
-
-            children: children
-          }
-
-        ]
-      },
-
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
-
-    ];
+    }
 
   }
 
@@ -785,83 +765,96 @@ else if (companyType === 'C' && role === 'U') {
   // UNDERTAKING ISSUANCE
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'undertaking_issuance'
-  ) {
+  if (hasPermission('Undertaking_issuance')) {
 
-    const children: any[] = [];
+    const undertakingChildren: any[] = [];
 
 
-    if (hasPermission('Create')) {
+    // CREATE
+    if (hasPermission('UI_Create')) {
 
-      children.push({
+      undertakingChildren.push({
+
         label: 'Create',
+
         route:
           '/dashboard/Trade-Services/undertaking-issuance'
+
       });
 
     }
 
 
-    if (hasPermission('Amend')) {
+    // AMEND
+    if (hasPermission('UI_Amend')) {
 
-      children.push({
+      undertakingChildren.push({
+
         label: 'Amend',
+
         route:
           '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records'
+
       });
 
     }
 
 
-    if (hasPermission('Inquiry')) {
+    // INQUIRY
+    if (hasPermission('UI_Inquiry')) {
 
-      children.push({
+      undertakingChildren.push({
+
         label: 'Inquiries',
+
         route:
           '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
+
       });
 
     }
 
 
-    this.menuItems = [
+    if (undertakingChildren.length > 0) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+      tradeServicesChildren.push({
 
-      {
-        label: 'Trade Services',
-        icon: 'group',
-        route: '/dashboard/Trade-Services',
+        label: 'Undertaking Issuance',
+
+        route:
+          '/dashboard/Trade-Services/undertaking-welcome',
+
         open: false,
 
-        children: [
+        children: undertakingChildren
 
-          {
-            label: 'Undertaking Issuance',
-            route:
-              '/dashboard/Trade-Services/undertaking-welcome',
+      });
 
-            open: false,
+    }
 
-            children: children
-          }
+  }
 
-        ]
-      },
 
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
+  // =========================================================
+  // ADD TRADE SERVICES TO MENU
+  // =========================================================
 
-    ];
+  if (tradeServicesChildren.length > 0) {
+
+    menuItems.push({
+
+      label: 'Trade Services',
+
+      icon: 'group',
+
+      route:
+        '/dashboard/Trade-Services',
+
+      open: false,
+
+      children: tradeServicesChildren
+
+    });
 
   }
 
@@ -870,113 +863,97 @@ else if (companyType === 'C' && role === 'U') {
   // PAYMENT SERVICES
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'payment_services'
-  ) {
-
-    const children: any[] = [];
+  const paymentServicesChildren: any[] = [];
 
 
-    // -------------------------
-    // IBFT
-    // -------------------------
+  // IBFT
+  if (hasPermission('IBFT')) {
 
-    if (hasPermission('IBFT')) {
+    paymentServicesChildren.push({
 
-      children.push({
-        label: 'IBFT',
-        route:
-          '/dashboard/IBFT'
-      });
+      label: 'IBFT',
 
-    }
+      route:
+        '/dashboard/IBFT'
 
+    });
 
-    // -------------------------
-    // WITH-IN BANK
-    // -------------------------
-
-    if (
-      hasPermission('With_In_Bank')
-    ) {
-
-      children.push({
-        label: 'With-In Bank',
-        route:
-          '/dashboard/fund-transfer/with-in'
-      });
-
-    }
+  }
 
 
-    // -------------------------
-    // MY ACCOUNTS
-    // -------------------------
+  // WITH-IN BANK
+  if (hasPermission('With_In_Bank')) {
 
-    if (
-      hasPermission('My_Accounts')
-    ) {
+    paymentServicesChildren.push({
 
-      children.push({
-        label: 'My Accounts',
-        route:
-          '/dashboard/my-accounts'
-      });
+      label: 'With-In Bank',
 
-    }
+      route:
+        '/dashboard/fund-transfer/with-in'
+
+    });
+
+  }
 
 
-    // -------------------------
-    // INQUIRY
-    // -------------------------
+  // MY ACCOUNTS
+  if (hasPermission('My_Accounts')) {
 
-    if (hasPermission('Inquiry')) {
+    paymentServicesChildren.push({
 
-      children.push({
-        label: 'Inquiries',
-        route:
-          '/dashboard/fund-transfer/fund-transfer-records'
-      });
+      label: 'My Accounts',
 
-    }
+      route:
+        '/dashboard/my-accounts'
+
+    });
+
+  }
 
 
-    this.menuItems = [
+  // INQUIRY
+  if (hasPermission('Payment_Inquiry')) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+    paymentServicesChildren.push({
 
-      {
-        label: 'Payments Services',
-        icon: 'account_balance_wallet',
-        open: false,
+      label: 'Inquiries',
 
-        children: [
+      route:
+        '/dashboard/fund-transfer/fund-transfer-records'
 
-          {
-            label: 'Fund Transfer',
-            route:
-              '/dashboard/fund-transfer-welcome',
+    });
 
-            open: false,
+  }
 
-            children: children
-          }
 
-        ]
-      },
+  if (paymentServicesChildren.length > 0) {
 
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
+    menuItems.push({
 
-    ];
+      label: 'Payments Services',
+
+      icon: 'account_balance_wallet',
+
+      open: false,
+
+      children: [
+
+        {
+
+          label: 'Fund Transfer',
+
+          route:
+            '/dashboard/fund-transfer-welcome',
+
+          open: false,
+
+          children: paymentServicesChildren
+
+        }
+
+      ]
+
+    });
 
   }
 
@@ -985,103 +962,86 @@ else if (companyType === 'C' && role === 'U') {
   // BENEFICIARY MANAGEMENT
   // =========================================================
 
-  else if (
-    permissionGroupName?.trim().toLowerCase() ===
-    'beneficiary_management'
-  ) {
-
-    const children: any[] = [];
+  const beneficiaryChildren: any[] = [];
 
 
-    // -------------------------
-    // ADD BENEFICIARY
-    // -------------------------
+  // ADD BENEFICIARY
+  if (hasPermission('Add_Beneficiary')) {
 
-    if (
-      hasPermission('Add_Beneficiary')
-    ) {
+    beneficiaryChildren.push({
 
-      children.push({
-        label: 'Add Beneficiary',
-        route:
-          '/dashboard/Trade-Services/undertaking-issuance'
-      });
+      label: 'Add Beneficiary',
 
-    }
+      route:
+        '/dashboard/Trade-Services/undertaking-issuance'
+
+    });
+
+  }
 
 
-    // -------------------------
-    // INQUIRY
-    // -------------------------
+  // INQUIRY
+  if (hasPermission('Beneficiary_Inquiry')) {
 
-    if (hasPermission('Inquiry')) {
+    beneficiaryChildren.push({
 
-      children.push({
-        label: 'Inquiries',
-        route:
-          '/dashboard/Trade-Services/import-screen/inquiries'
-      });
+      label: 'Inquiries',
 
-    }
+      route:
+        '/dashboard/Trade-Services/import-screen/inquiries'
+
+    });
+
+  }
 
 
-    this.menuItems = [
+  if (beneficiaryChildren.length > 0) {
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+    menuItems.push({
 
-      {
-        label: 'Beneficiary Management',
-        icon: 'person',
-        open: false,
+      label: 'Beneficiary Management',
 
-        children: children
-      },
+      icon: 'person',
 
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
+      open: false,
 
-    ];
+      children: beneficiaryChildren
+
+    });
 
   }
 
 
   // =========================================================
-  // UNKNOWN / NO PERMISSION GROUP
+  // LOGOUT
   // =========================================================
 
-  else {
+  menuItems.push({
 
-    console.log(
-      '❌ No recognized permission group:',
-      permissionGroupName
-    );
+    label: 'Logout',
 
-    this.menuItems = [
+    icon: 'logout',
 
-      {
-        label: 'Dashboard',
-        icon: 'dashboard',
-        route: '/dashboard'
-      },
+    route: '/login'
 
-      {
-        label: 'Logout',
-        icon: 'logout',
-        route: '/login'
-      }
+  });
 
-    ];
 
-  }
+  // =========================================================
+  // SET MENU
+  // =========================================================
 
-}} // closes ELSE IF
+  this.menuItems = menuItems;
+
+
+  console.log(
+    'Final Menu Items:',
+    this.menuItems
+  );
+
+}
+
+} // closes ELSE IF
   // Ameen function
   onCustomerClick(item: MenuItem) {
     const currentUrl = this.router.url;

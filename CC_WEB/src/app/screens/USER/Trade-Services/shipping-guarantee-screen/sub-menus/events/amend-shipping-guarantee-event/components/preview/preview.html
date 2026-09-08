@@ -1,4 +1,4 @@
-<div class="preview-page" *ngIf="importForm">
+<div class="preview-page" *ngIf="ShippingGuaranteeForm">
 
 <!-- ...existing code... -->
 <h2 class="page-title">Preview</h2>
@@ -162,7 +162,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Country</div>
-            <div class="preview-value">{{ importForm.value.beneficiaryCountry }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.beneficiaryCountry }}</div>
           </div>
 
         </div>
@@ -183,22 +183,22 @@
 
           <div class="preview-item">
             <div class="preview-label">Issuing Bank</div>
-            <div class="preview-value">{{ importForm.value.issuingBankName }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.issuingBankName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Issuer Reference</div>
-            <div class="preview-value">{{ importForm.value.issuerReference }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.issuerReference }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Advising Bank</div>
-            <div class="preview-value">{{ importForm.value.advisingBankName }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.advisingBankName }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Advise Through Bank</div>
-            <div class="preview-value">{{ importForm.value.adviseThroughBankName }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.adviseThroughBankName }}</div>
           </div>
 
         </div>
@@ -212,7 +212,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Currency</div>
-            <div class="preview-value">{{ importForm.value.currency }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.currency }}</div>
           </div>
 
           <div class="preview-item">
@@ -233,17 +233,17 @@
 
           <div class="preview-item">
             <div class="preview-label">Principal Account</div>
-            <div class="preview-value">{{ importForm.value.principalAccount }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.principalAccount }}</div>
           </div>
 
           <div class="preview-item">
             <div class="preview-label">Fee Account</div>
-            <div class="preview-value">{{ importForm.value.feeAccount }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.feeAccount }}</div>
           </div>
 
           <div class="preview-item full-width">
             <div class="preview-label">Other Instructions</div>
-            <div class="preview-value">{{ importForm.value.otherInstructions }}</div>
+            <div class="preview-value">{{ ShippingGuaranteeForm.value.otherInstructions }}</div>
           </div>
 
         </div>

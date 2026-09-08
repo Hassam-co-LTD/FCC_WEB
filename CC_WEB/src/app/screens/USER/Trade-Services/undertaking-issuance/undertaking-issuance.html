@@ -1,287 +1,212 @@
 <div class="screen">
-
-  <!-- ===================================================== -->
-  <!-- SIDEBAR -->
-  <!-- ===================================================== -->
-
+  <!-- Sidebar -->
   <app-sidebar
     [steps]="undertakingSteps"
     [currentStep]="currentStep"
-    (stepChange)="scrollToSection($event)">
+    (stepChange)="scrollToSection($event)"
+  >
   </app-sidebar>
 
-
-  <!-- ===================================================== -->
-  <!-- MAIN CONTENT -->
-  <!-- ===================================================== -->
-
+  <!-- Main Content -->
   <div class="content">
-
     <div class="scroll-area">
 
-
-      <!-- ================================================= -->
-      <!-- GENERAL DETAILS -->
-      <!-- ================================================= -->
-
+      <!-- General Details -->
       <section id="section-0">
-
         <app-general-details
-          [form]="generalDetails">
-        </app-general-details>
-
+          [form]="generalDetails"
+        ></app-general-details>
       </section>
 
       <hr class="section-divider" />
 
-
-      <!-- ================================================= -->
-      <!-- APPLICANT & BENEFICIARY -->
-      <!-- ================================================= -->
-
+      <!-- Applicant & Beneficiary -->
       <section id="section-1">
-
         <app-application-beneficiary
-          [form]="applicantBeneficiary">
-        </app-application-beneficiary>
-
+          [form]="applicantBeneficiary"
+        ></app-application-beneficiary>
       </section>
 
       <hr class="section-divider" />
 
-
-      <!-- ================================================= -->
-      <!-- BANK DETAILS -->
-      <!-- ================================================= -->
-
+      <!-- Bank Details -->
       <section id="section-2">
-
         <app-bank-details
-          [form]="bankForm">
-        </app-bank-details>
-
+          [form]="bankForm"
+        ></app-bank-details>
       </section>
 
       <hr class="section-divider" />
 
-
-      <!-- ================================================= -->
-      <!-- UNDERTAKING DETAILS -->
-      <!-- ================================================= -->
-
+      <!-- Undertaking Details -->
       <section id="section-3">
-
         <app-undertaking-details
-          [form]="undertakingDetails">
-        </app-undertaking-details>
-
+          [form]="undertakingDetails"
+        ></app-undertaking-details>
       </section>
 
       <hr class="section-divider" />
 
-
-      <!-- ================================================= -->
-      <!-- INSTRUCTIONS -->
-      <!-- ================================================= -->
-
+      <!-- Instructions -->
       <section id="section-4">
-
         <app-instructions-bank
-          [form]="instructions">
-        </app-instructions-bank>
-
+          [form]="instructions"
+        ></app-instructions-bank>
       </section>
 
       <hr class="section-divider" />
 
-
-      <!-- ================================================= -->
-      <!-- ATTACHMENTS -->
-      <!-- ================================================= -->
-
+      <!-- Attachments -->
       <section id="section-5">
-
-        <app-attachments>
-        </app-attachments>
-
+        <app-attachments></app-attachments>
       </section>
 
       <hr class="section-divider" />
 
-
       <!-- ================================================= -->
-      <!-- FOOTER ACTIONS -->
+      <!-- ACTION BUTTONS -->
       <!-- ================================================= -->
 
       <div class="actions">
 
-
-        <!-- ================================================= -->
-        <!-- CREATE -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="mode === 'CREATE'">
-
-          <!-- Back is not permission controlled -->
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-
-          <!-- Create / Save Permission -->
-          <button
-            *ngIf="hasPermission('UI_CreateSave')"
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()">
-
-            Save
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- ================================================= -->
-        <!-- EDIT / PENDING -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'EDIT' &&
-            mode === 'UPDATE'
-          ">
-
-
-          <!-- Pending Update / Amend -->
-          <button
-            *ngIf="hasPermission('UI_InquiryPendingUpdate')"
-            mat-stroked-button
-            color="primary"
-            (click)="updateForm()">
-
-            Update
-
-          </button>
-
-
-          <!-- Submit -->
-          <button
-            *ngIf="hasPermission('UI_InquirySubmit')"
-            mat-flat-button
-            color="accent"
-            (click)="submitForm()">
-
-            Submit
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- ================================================= -->
-        <!-- SUBMITTED / APPROVAL -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'SUBMITTED'
-          ">
-
-
-          <!-- Reject -->
-          <button
-            *ngIf="hasPermission('UI_InquiryReject')"
-            mat-stroked-button
-            color="primary"
-            (click)="openReject()">
-
-            Reject
-
-          </button>
-
-
-          <!-- Approve -->
-          <button
-            *ngIf="hasPermission('UI_InquiryApprove')"
-            mat-flat-button
-            color="accent"
-            (click)="approve()">
-
-            Approve
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- ================================================= -->
-        <!-- APPROVED -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'APPROVED'
-          ">
-
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="back()">
-
-            Back
-
-          </button>
-
-        </ng-container>
-
-
-        <!-- ================================================= -->
-        <!-- REJECTED -->
-        <!-- ================================================= -->
-
-        <ng-container
-          *ngIf="
-            screenMode === 'EDIT' &&
-            mode === 'REJECTED'
-          ">
-
+        <!-- ==================== CREATE ==================== -->
+        <ng-container *ngIf="mode === 'CREATE'">
 
           <!-- Back -->
           <button
             mat-stroked-button
             color="primary"
-            (click)="back()">
-
+            (click)="back()"
+          >
             Back
-
           </button>
 
-
-          <!-- Update Rejected -->
+          <!-- Save -->
           <button
-            *ngIf="hasPermission('UI_InquiryRejectUpdate')"
+            *ngIf="hasPermission('UTG_CreateSave')"
             mat-flat-button
-            color="primary"
-            (click)="updateRejected()">
-
-            Update
-
+            color="accent"
+            (click)="saveForm()"
+          >
+            Save
           </button>
 
         </ng-container>
 
 
+        <!-- ==================== EDIT / PENDING ==================== -->
+        <ng-container
+          *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'"
+        >
+
+          <!-- Update -->
+          <button
+            *ngIf="hasPermission('UTG_InquiryPendingUpdate')"
+            mat-stroked-button
+            color="primary"
+            (click)="updateForm()"
+          >
+            Update
+          </button>
+
+          <!-- Submit -->
+          <button
+            *ngIf="hasPermission('UTG_InquirySubmit')"
+            mat-flat-button
+            color="accent"
+            (click)="submitForm()"
+          >
+            Submit
+          </button>
+
+        </ng-container>
+
+
+        <!-- ==================== APPROVAL ==================== -->
+        <ng-container
+          *ngIf="screenMode === 'SUBMITTED'"
+        >
+
+          <!-- Reject -->
+          <button
+            *ngIf="hasPermission('UTG_InquiryReject')"
+            mat-stroked-button
+            color="primary"
+            (click)="openReject()"
+          >
+            Reject
+          </button>
+
+          <!-- Approve -->
+          <button
+            *ngIf="hasPermission('UTG_InquiryApprove')"
+            mat-flat-button
+            color="accent"
+            (click)="approve()"
+          >
+            Approve
+          </button>
+
+        </ng-container>
+
+
+        <!-- ==================== APPROVED ==================== -->
+        <ng-container
+          *ngIf="screenMode === 'APPROVED'"
+        >
+
+          <!-- Back -->
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()"
+          >
+            Back
+          </button>
+
+          <!-- Amend can be added later -->
+          <!--
+          <button
+            *ngIf="hasPermission('UTG_Amend')"
+            mat-flat-button
+            color="accent"
+            (click)="amend()"
+          >
+            Amend
+          </button>
+          -->
+
+        </ng-container>
+
+
+        <!-- ==================== REJECTED ==================== -->
+        <ng-container
+          *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'"
+        >
+
+          <!-- Back -->
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="back()"
+          >
+            Back
+          </button>
+
+          <!-- Update Rejected -->
+          <button
+            *ngIf="hasPermission('UTG_InquiryRejectUpdate')"
+            mat-flat-button
+            color="primary"
+            (click)="updateRejected()"
+          >
+            Update
+          </button>
+
+        </ng-container>
+
       </div>
 
     </div>
-
   </div>
-
 </div>

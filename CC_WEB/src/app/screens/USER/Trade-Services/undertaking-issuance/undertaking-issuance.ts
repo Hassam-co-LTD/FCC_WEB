@@ -1,49 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
-
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
+  Validators,
   FormArray,
-  Validators
 } from '@angular/forms';
-
 import { MatButtonModule } from '@angular/material/button';
 import {
   MatSnackBarModule,
-  MatSnackBar
+  MatSnackBar,
 } from '@angular/material/snack-bar';
-
 import {
   MatDialogModule,
-  MatDialog
+  MatDialog,
 } from '@angular/material/dialog';
 
 import { Sidebar } from '../../../../core/sidebar/sidebar';
 
 import { generalDetails } from './../../../USER/Trade-Services/undertaking-issuance/components/general-details/general-details';
+
 import { ApplicationBeneficiary } from './../../../USER/Trade-Services/undertaking-issuance/components/application-beneficiary/application-beneficiary';
+
 import { BankDetails } from './../../../USER/Trade-Services/undertaking-issuance/components/bank-details/bank-details';
+
 import { UndertakingDetails } from './../../../USER/Trade-Services/undertaking-issuance/components/undertaking-details/undertaking-details';
+
 import { InstructionsBank } from './../../../USER/Trade-Services/undertaking-issuance/components/instructions-bank/instructions-bank';
+
 import { Attachments } from './../../../USER/Trade-Services/undertaking-issuance/components/attachments/attachments';
 
 import { UndertakingIssuanceService } from '../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+
 import { AuthService } from '../../../../core/services/auth.service';
+
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 
-// SERVICE
-import { UndertakingIssuanceService, UndertakingTransaction } from '../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
-import { AuthService } from '../../../../core/services/auth.service';
+import { ApiService } from '../../../../core/services/api.service';
+
+import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
 
 
 @Component({
   selector: 'app-undertaking-issued',
-  standalone: true,
+
   templateUrl: './undertaking-issuance.html',
+
   styleUrls: ['./undertaking-issuance.scss'],
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -56,8 +63,8 @@ import { AuthService } from '../../../../core/services/auth.service';
     BankDetails,
     UndertakingDetails,
     InstructionsBank,
-    Attachments
-  ]
+    Attachments,
+  ],
 })
 export class UndertakingIssuance implements OnInit {
 
@@ -70,15 +77,16 @@ export class UndertakingIssuance implements OnInit {
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
 
   screenMode:
-    'EDIT' |
-    'SUBMITTED' |
-    'APPROVED' |
-    'FINAL' = 'EDIT';
+    | 'EDIT'
+    | 'SUBMITTED'
+    | 'APPROVED'
+    | 'FINAL' = 'EDIT';
 
   currentTx: UndertakingGuarantee =
     {} as UndertakingGuarantee;
 
   showUpdateSubmit = false;
+
   showApproveReject = false;
 
   rejectionReason = '';
@@ -87,15 +95,22 @@ export class UndertakingIssuance implements OnInit {
 
   companyId = '';
 
-  undertakingForm!: FormGroup;
-
   isLoading = false;
+
 
   // =========================================================
   // PERMISSIONS
   // =========================================================
 
   permissionNames: string[] = [];
+
+
+  // =========================================================
+  // FORM
+  // =========================================================
+
+  undertakingForm!: FormGroup;
+
 
   // =========================================================
   // SIDEBAR STEPS
@@ -107,14 +122,16 @@ export class UndertakingIssuance implements OnInit {
     { label: 'Bank Details' },
     { label: 'Undertaking Details' },
     { label: 'Instructions' },
-    { label: 'Attachments' }
+    { label: 'Attachments' },
   ];
 
+
   // =========================================================
-  // SCROLL HANDLER
+  // SCROLL SPY
   // =========================================================
 
   private scrollSpyHandler?: () => void;
+
 
   // =========================================================
   // CONSTRUCTOR
@@ -122,150 +139,38 @@ export class UndertakingIssuance implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+
     private router: Router,
+
     private snackBar: MatSnackBar,
+
     private api: ApiService,
+
     private route: ActivatedRoute,
+
     private dialog: MatDialog,
+
     private transactionService: UndertakingIssuanceService,
-    private authservice: AuthService
+
+    private authservice: AuthService,
   ) {
     this.buildForm();
   }
 
-  // =========================================================
-  // LOAD PERMISSIONS
-  // =========================================================
-
-  private loadPermissions(): void {
-
-    const storedPermissions =
-      sessionStorage.getItem('permissionNames');
-
-    if (storedPermissions) {
-
-      try {
-
-        this.permissionNames =
-          JSON.parse(storedPermissions);
-
-        console.log(
-          'Undertaking Permission Names:',
-          this.permissionNames
-        );
-
-      } catch (error) {
-
-        console.error(
-          'Error parsing permissionNames:',
-          error
-        );
-
-        this.permissionNames = [];
-      }
-
-    } else {
-
-      console.warn(
-        'permissionNames not found in sessionStorage'
-      );
-
-      this.permissionNames = [];
-    }
-  }
 
   // =========================================================
-  // CHECK PERMISSION
-  // =========================================================
-
-  hasPermission(permission: string): boolean {
-
-    return this.permissionNames.some(
-      p =>
-        p?.trim().toLowerCase() ===
-        permission.trim().toLowerCase()
-    );
-  }
-
-  // =========================================================
-  // ON INIT
+  // INIT
   // =========================================================
 
   ngOnInit(): void {
 
-    // -------------------------------------------------------
     // Load permissions first
-    // -------------------------------------------------------
-
     this.loadPermissions();
 
-    // -------------------------------------------------------
-    // Navigation state
-    // -------------------------------------------------------
 
-    const navState = history.state;
-
-    if (navState?.mode) {
-      this.screenMode = navState.mode;
-    }
-
-    // -------------------------------------------------------
-    // Company ID
-    // -------------------------------------------------------
-
-    this.companyId =
-      this.authservice.getCompanyId() || '';
-
-    console.log(
-      'Company ID:',
-      this.companyId
-    );
-
-    // -------------------------------------------------------
-    // Transaction ID
-    // -------------------------------------------------------
-
-    this.tnxId =
-      this.route.snapshot.paramMap.get('tnxId') || '';
-
-    console.log(
-      'TNX ID:',
-      this.tnxId
-    );
-
-    // -------------------------------------------------------
-    // Scroll Spy
-    // -------------------------------------------------------
-
-    this.setupScrollSpy();
-
-    // -------------------------------------------------------
-    // Route parameters
-    // -------------------------------------------------------
-
-    this.route.paramMap.subscribe(
-      params => {
-
-        const tnxId =
-          params.get('tnxId');
-
-        if (tnxId) {
-
-          this.enterEditMode(tnxId);
-
-        } else {
-
-          this.enterCreateMode();
-        }
-      }
-    );
-  }
-
-  // =========================================================
-  // SCROLL SPY
-  // =========================================================
-
-  private setupScrollSpy(): void {
+    // =======================================================
+    // SCROLL SPY
+    // =======================================================
 
     setTimeout(() => {
 
@@ -278,15 +183,18 @@ export class UndertakingIssuance implements OnInit {
         return;
       }
 
+
       const sections = Array.from(
         scrollArea.querySelectorAll(
           'section[id^="section-"]'
-        )
+        ),
       ) as HTMLElement[];
+
 
       if (sections.length === 0) {
         return;
       }
+
 
       const updateActiveStep = () => {
 
@@ -296,10 +204,12 @@ export class UndertakingIssuance implements OnInit {
         const targetPosition =
           containerRect.top + 20;
 
+
         let closestIndex = 0;
 
         let smallestDistance =
           Infinity;
+
 
         sections.forEach(
           (section, index) => {
@@ -313,11 +223,11 @@ export class UndertakingIssuance implements OnInit {
                 targetPosition
               );
 
+
             if (
               distance <
               smallestDistance
             ) {
-
               smallestDistance =
                 distance;
 
@@ -327,22 +237,95 @@ export class UndertakingIssuance implements OnInit {
           }
         );
 
+
         this.currentStep =
           closestIndex;
       };
 
+
       this.scrollSpyHandler =
         updateActiveStep;
+
 
       scrollArea.addEventListener(
         'scroll',
         this.scrollSpyHandler
       );
 
+
       updateActiveStep();
 
-    }, 300);
+    }, 200);
+
+
+    // =======================================================
+    // NAVIGATION STATE
+    // =======================================================
+
+    const navState = history.state;
+
+
+    if (navState?.mode) {
+      this.screenMode =
+        navState.mode;
+    }
+
+
+    // =======================================================
+    // COMPANY ID
+    // =======================================================
+
+    this.companyId =
+      this.authservice.getCompanyId() || '';
+
+
+    console.log(
+      'Company ID from route:',
+      this.companyId
+    );
+
+
+    // =======================================================
+    // TNX ID
+    // =======================================================
+
+    this.tnxId =
+      this.route.snapshot.paramMap.get(
+        'tnxId'
+      ) || '';
+
+
+    console.log(
+      'TNX ID from route:',
+      this.tnxId
+    );
+
+
+    // =======================================================
+    // ROUTE PARAMETER
+    // =======================================================
+
+    this.route.paramMap.subscribe(
+      (params) => {
+
+        const tnxId =
+          params.get('tnxId');
+
+
+        if (tnxId) {
+
+          this.enterEditMode(tnxId);
+
+        } else {
+
+          this.enterCreateMode();
+
+        }
+
+      }
+    );
   }
+
 
   // =========================================================
   // DESTROY
@@ -355,6 +338,7 @@ export class UndertakingIssuance implements OnInit {
         '.scroll-area'
       ) as HTMLElement;
 
+
     if (
       scrollArea &&
       this.scrollSpyHandler
@@ -364,8 +348,89 @@ export class UndertakingIssuance implements OnInit {
         'scroll',
         this.scrollSpyHandler
       );
+
     }
   }
+
+
+  // =========================================================
+  // PERMISSION METHODS
+  // =========================================================
+
+  private loadPermissions(): void {
+
+    if (
+      typeof window === 'undefined'
+    ) {
+      return;
+    }
+
+
+    const permissions =
+      sessionStorage.getItem(
+        'permissionNames'
+      );
+
+
+    if (!permissions) {
+
+      this.permissionNames = [];
+
+      console.log(
+        'No permissions found in sessionStorage'
+      );
+
+      return;
+    }
+
+
+    try {
+
+      const parsed =
+        JSON.parse(permissions);
+
+
+      if (Array.isArray(parsed)) {
+
+        this.permissionNames =
+          parsed;
+
+      } else {
+
+        this.permissionNames =
+          [];
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        'Error parsing permissionNames:',
+        error
+      );
+
+      this.permissionNames =
+        [];
+
+    }
+
+
+    console.log(
+      'Undertaking Permissions:',
+      this.permissionNames
+    );
+  }
+
+
+  hasPermission(
+    permission: string
+  ): boolean {
+
+    return this.permissionNames.includes(
+      permission
+    );
+  }
+
 
   // =========================================================
   // BUILD FORM
@@ -375,6 +440,10 @@ export class UndertakingIssuance implements OnInit {
 
     this.undertakingForm =
       this.fb.group({
+
+        // ---------------------------------------------------
+        // GENERAL DETAILS
+        // ---------------------------------------------------
 
         generalDetails:
           this.fb.group({
@@ -389,9 +458,13 @@ export class UndertakingIssuance implements OnInit {
               [''],
 
             purpose:
-              ['']
-
+              [''],
           }),
+
+
+        // ---------------------------------------------------
+        // APPLICANT / BENEFICIARY
+        // ---------------------------------------------------
 
         applicantBeneficiary:
           this.fb.group({
@@ -430,9 +503,13 @@ export class UndertakingIssuance implements OnInit {
               [''],
 
             beneficiaryCountry:
-              ['']
-
+              [''],
           }),
+
+
+        // ---------------------------------------------------
+        // BANK DETAILS
+        // ---------------------------------------------------
 
         bankForm:
           this.fb.group({
@@ -465,9 +542,13 @@ export class UndertakingIssuance implements OnInit {
               [''],
 
             bankCountry:
-              ['']
-
+              [''],
           }),
+
+
+        // ---------------------------------------------------
+        // UNDERTAKING DETAILS
+        // ---------------------------------------------------
 
         undertakingDetails:
           this.fb.group({
@@ -557,9 +638,13 @@ export class UndertakingIssuance implements OnInit {
               [''],
 
             tsOption:
-              ['']
-
+              [''],
           }),
+
+
+        // ---------------------------------------------------
+        // INSTRUCTIONS
+        // ---------------------------------------------------
 
         instructions:
           this.fb.group({
@@ -580,15 +665,19 @@ export class UndertakingIssuance implements OnInit {
               [''],
 
             otherInstructions:
-              ['']
-
+              [''],
           }),
 
-        attachments:
-          this.fb.array([])
 
+        // ---------------------------------------------------
+        // ATTACHMENTS
+        // ---------------------------------------------------
+
+        attachments:
+          this.fb.array([]),
       });
   }
+
 
   // =========================================================
   // CREATE MODE
@@ -598,8 +687,6 @@ export class UndertakingIssuance implements OnInit {
 
     this.mode = 'CREATE';
 
-    this.screenMode = 'EDIT';
-
     this.showUpdateSubmit = false;
 
     this.showApproveReject = false;
@@ -607,10 +694,12 @@ export class UndertakingIssuance implements OnInit {
     this.currentTx =
       {} as UndertakingGuarantee;
 
+
     this.undertakingForm.reset();
 
     this.buildForm();
   }
+
 
   // =========================================================
   // EDIT MODE
@@ -622,21 +711,24 @@ export class UndertakingIssuance implements OnInit {
 
     this.mode = 'UPDATE';
 
+
     this.api
       .getUndertakingByTnxId(tnxId)
       .subscribe({
 
-        next: tx => {
+        next: (tx) => {
 
-          this.currentTx = tx;
+          this.currentTx =
+            tx;
 
           this.patchForm(tx);
 
+
           switch (tx.status) {
 
-            // ------------------------------------------------
+            // =============================================
             // PENDING
-            // ------------------------------------------------
+            // =============================================
 
             case 'I':
 
@@ -650,9 +742,10 @@ export class UndertakingIssuance implements OnInit {
 
               break;
 
-            // ------------------------------------------------
+
+            // =============================================
             // SUBMITTED
-            // ------------------------------------------------
+            // =============================================
 
             case 'S':
 
@@ -666,9 +759,10 @@ export class UndertakingIssuance implements OnInit {
 
               break;
 
-            // ------------------------------------------------
+
+            // =============================================
             // APPROVED
-            // ------------------------------------------------
+            // =============================================
 
             case 'A':
 
@@ -682,9 +776,10 @@ export class UndertakingIssuance implements OnInit {
 
               break;
 
-            // ------------------------------------------------
+
+            // =============================================
             // REJECTED
-            // ------------------------------------------------
+            // =============================================
 
             case 'R':
 
@@ -698,9 +793,10 @@ export class UndertakingIssuance implements OnInit {
 
               break;
 
-            // ------------------------------------------------
-            // FINAL
-            // ------------------------------------------------
+
+            // =============================================
+            // DEFAULT
+            // =============================================
 
             default:
 
@@ -716,22 +812,26 @@ export class UndertakingIssuance implements OnInit {
           }
         },
 
+
         error: () => {
 
           this.snackBar.open(
             'Transaction not found',
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
           );
 
+
           this.router.navigate([
-            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
           ]);
-        }
+        },
+
       });
   }
+
 
   // =========================================================
   // FORM GETTERS
@@ -744,12 +844,14 @@ export class UndertakingIssuance implements OnInit {
     ) as FormGroup;
   }
 
+
   get applicantBeneficiary(): FormGroup {
 
     return this.undertakingForm.get(
       'applicantBeneficiary'
     ) as FormGroup;
   }
+
 
   get bankForm(): FormGroup {
 
@@ -758,6 +860,7 @@ export class UndertakingIssuance implements OnInit {
     ) as FormGroup;
   }
 
+
   get undertakingDetails(): FormGroup {
 
     return this.undertakingForm.get(
@@ -765,12 +868,14 @@ export class UndertakingIssuance implements OnInit {
     ) as FormGroup;
   }
 
+
   get instructions(): FormGroup {
 
     return this.undertakingForm.get(
       'instructions'
     ) as FormGroup;
   }
+
 
   // =========================================================
   // PATCH FORM
@@ -795,39 +900,41 @@ export class UndertakingIssuance implements OnInit {
         tx,
 
       instructions:
-        tx
-
+        tx,
     });
   }
+
 
   // =========================================================
   // SCROLL
   // =========================================================
 
   scrollToSection(
-    index: number
+    i: number
   ): void {
 
     this.currentStep =
-      index;
+      i;
+
 
     const section =
       document.getElementById(
-        `section-${index}`
+        `section-${i}`
       );
+
 
     section?.scrollIntoView({
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
     });
   }
+
 
   // =========================================================
   // FLATTEN FORM
   // =========================================================
 
-  private flattenForm():
-    UndertakingGuarantee {
+  private flattenForm(): UndertakingGuarantee {
 
     return {
 
@@ -851,34 +958,36 @@ export class UndertakingIssuance implements OnInit {
 
       attachments:
         this.undertakingForm.value
-          .attachments
-
+          .attachments,
     };
   }
 
+
   // =========================================================
   // SAVE
-  // Permission: UI_CreateSave
+  // Permission: UTG_CreateSave
   // =========================================================
 
   saveForm(): void {
 
+    // Extra TS-side permission protection
     if (
       !this.hasPermission(
-        'UI_CreateSave'
+        'UTG_CreateSave'
       )
     ) {
 
       this.snackBar.open(
-        'You do not have permission to create an Undertaking.',
+        'You do not have permission to save this transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
+
 
     if (
       this.undertakingForm.invalid
@@ -887,81 +996,82 @@ export class UndertakingIssuance implements OnInit {
       this.undertakingForm
         .markAllAsTouched();
 
+
       this.snackBar.open(
         'Please complete all required fields before saving.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
 
+
     const payload =
       this.flattenForm();
+
 
     console.log(
       'Payload before saving draft:',
       payload
     );
 
+
     this.api
       .saveUndertakingPending(payload)
       .subscribe({
 
-        next:
-          (res: UndertakingGuarantee) => {
+        next: (
+          res: UndertakingGuarantee
+        ) => {
 
-            this.snackBar.open(
-              `Draft saved successfully (TNX ID: ${res.tnxId})`,
-              'Close',
-              {
-                duration: 5000
-              }
-            );
+          this.snackBar.open(
+            `Draft saved successfully (TNX ID: ${res.tnxId})`,
+            'Close',
+            {
+              duration: 5000,
+            }
+          );
 
-            setTimeout(
-              () =>
-                this.router.navigate(
-                  [
-                    '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
-                  ],
-                  {
-                    queryParams: {
-                      tab: 'pending'
-                    }
-                  }
-                ),
-              50
-            );
-          },
 
-        error:
-          (err) => {
+          setTimeout(
+            () =>
+              this.router.navigate([
+                '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+              ]),
+            50
+          );
+        },
 
-            this.snackBar.open(
-              'Error saving draft: ' +
+
+        error: (err) => {
+
+          this.snackBar.open(
+            'Error saving draft: ' +
               err.message,
-              'Close',
-              {
-                duration: 5000
-              }
-            );
-          }
+            'Close',
+            {
+              duration: 5000,
+            }
+          );
+        },
+
       });
   }
 
+
   // =========================================================
   // SUBMIT
-  // Permission: UI_InquirySubmit
+  // Permission: UTG_InquirySubmit
   // =========================================================
 
   submitForm(): void {
 
     if (
       !this.hasPermission(
-        'UI_InquirySubmit'
+        'UTG_InquirySubmit'
       )
     ) {
 
@@ -969,15 +1079,17 @@ export class UndertakingIssuance implements OnInit {
         'You do not have permission to submit this transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
 
+
     const tnxId =
       this.currentTx?.tnxId;
+
 
     if (!tnxId) {
 
@@ -985,12 +1097,13 @@ export class UndertakingIssuance implements OnInit {
         'Transaction ID not found. Please save the draft first.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
+
 
     const payload = {
 
@@ -999,9 +1112,9 @@ export class UndertakingIssuance implements OnInit {
       event: 'CRE',
 
       tnxId:
-        this.tnxId
-
+        this.tnxId,
     };
+
 
     this.api
       .submitUndertaking(
@@ -1010,27 +1123,32 @@ export class UndertakingIssuance implements OnInit {
       )
       .subscribe({
 
-        next:
-          (res: UndertakingGuarantee) => {
+        next: (
+          res: UndertakingGuarantee
+        ) => {
 
-            this.transactionService
-              .addOrUpdateTransaction(res);
-
-            this.router.navigate(
-              [
-                '/dashboard/Trade-Services/undertaking-issuance/success'
-              ],
-              {
-                state: {
-                  source:
-                    'UNDERTAKING_ISSUANCE',
-
-                  transaction:
-                    res
-                }
-              }
+          this.transactionService
+            .addOrUpdateTransaction(
+              res
             );
-          },
+
+
+          this.router.navigate(
+            [
+              '/dashboard/Trade-Services/undertaking-issuance/success',
+            ],
+            {
+              state: {
+                source:
+                  'UNDERTAKING_ISSUANCE',
+
+                transaction:
+                  res,
+              },
+            }
+          );
+        },
+
 
         error: () => {
 
@@ -1038,12 +1156,14 @@ export class UndertakingIssuance implements OnInit {
             'Error submitting transaction',
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
           );
-        }
+        },
+
       });
   }
+
 
   // =========================================================
   // BACK
@@ -1052,9 +1172,10 @@ export class UndertakingIssuance implements OnInit {
   back(): void {
 
     this.router.navigate([
-      '/dashboard'
+      '/dashboard',
     ]);
   }
+
 
   // =========================================================
   // ATTACHMENTS
@@ -1069,60 +1190,67 @@ export class UndertakingIssuance implements OnInit {
         'attachments'
       ) as FormArray;
 
+
     arr.clear();
 
-    files.forEach(file => {
 
-      arr.push(
+    files.forEach(
+      (file) => {
 
-        this.fb.group({
+        arr.push(
 
-          title:
-            file.name.replace(
-              /\.[^/.]+$/,
-              ''
-            ),
+          this.fb.group({
 
-          fileName:
-            file.name,
+            title:
+              file.name.replace(
+                /\.[^/.]+$/,
+                ''
+              ),
 
-          size:
-            file.size,
+            fileName:
+              file.name,
 
-          type:
-            file.type,
+            size:
+              file.size,
 
-          file:
-            file
+            type:
+              file.type,
 
-        })
-      );
-    });
+            file:
+              file,
+          })
+
+        );
+
+      }
+    );
   }
 
+
   // =========================================================
-  // UPDATE / AMEND
-  // Permission: UI_InquiryPendingUpdate
+  // UPDATE PENDING
+  // Permission: UTG_InquiryPendingUpdate
   // =========================================================
 
   updateForm(): void {
 
     if (
       !this.hasPermission(
-        'UI_InquiryPendingUpdate'
+        'UTG_InquiryPendingUpdate'
       )
     ) {
 
       this.snackBar.open(
-        'You do not have permission to amend this transaction.',
+        'You do not have permission to update this transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
+
 
     if (
       this.undertakingForm.invalid ||
@@ -1133,23 +1261,27 @@ export class UndertakingIssuance implements OnInit {
         'Invalid form or missing transaction ID',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
 
+
     const payload =
       this.flattenForm();
 
+
     payload.tnxId =
       this.tnxId;
+
 
     console.log(
       'Payload before update:',
       payload
     );
+
 
     if (!payload.tnxId) {
 
@@ -1159,6 +1291,7 @@ export class UndertakingIssuance implements OnInit {
 
       return;
     }
+
 
     this.api
       .updateUndertakingPendingByTnxId(
@@ -1172,25 +1305,20 @@ export class UndertakingIssuance implements OnInit {
             `Data successfully updated (${payload.tnxId})`,
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
           );
 
+
           setTimeout(
             () =>
-              this.router.navigate(
-                [
-                  '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
-                ],
-                {
-                  queryParams: {
-                    tab: 'pending'
-                  }
-                }
-              ),
+              this.router.navigate([
+                '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+              ]),
             300
           );
         },
+
 
         error: () => {
 
@@ -1198,23 +1326,25 @@ export class UndertakingIssuance implements OnInit {
             'Error updating transaction',
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
           );
-        }
+        },
+
       });
   }
 
+
   // =========================================================
   // APPROVE
-  // Permission: UI_InquiryApprove
+  // Permission: UTG_InquiryApprove
   // =========================================================
 
   approve(): void {
 
     if (
       !this.hasPermission(
-        'UI_InquiryApprove'
+        'UTG_InquiryApprove'
       )
     ) {
 
@@ -1222,12 +1352,13 @@ export class UndertakingIssuance implements OnInit {
         'You do not have permission to approve this transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
+
 
     this.api
       .approveUndertaking(
@@ -1246,22 +1377,23 @@ export class UndertakingIssuance implements OnInit {
             'Approval failed',
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
-          )
+          ),
       });
   }
 
+
   // =========================================================
   // REJECT
-  // Permission: UI_InquiryReject
+  // Permission: UTG_InquiryReject
   // =========================================================
 
   openReject(): void {
 
     if (
       !this.hasPermission(
-        'UI_InquiryReject'
+        'UTG_InquiryReject'
       )
     ) {
 
@@ -1269,20 +1401,22 @@ export class UndertakingIssuance implements OnInit {
         'You do not have permission to reject this transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
 
+
     const dialogRef =
       this.dialog.open(
         RejectDialogComponent,
         {
-          width: '400px'
+          width: '400px',
         }
       );
+
 
     dialogRef
       .afterClosed()
@@ -1295,6 +1429,7 @@ export class UndertakingIssuance implements OnInit {
           if (!reason) {
             return;
           }
+
 
           this.api
             .rejectUndertaking(
@@ -1309,14 +1444,16 @@ export class UndertakingIssuance implements OnInit {
                   'Transaction rejected successfully',
                   'Close',
                   {
-                    duration: 3000
+                    duration: 3000,
                   }
                 );
+
 
                 this.navigateBack(
                   'rejected'
                 );
               },
+
 
               error: () => {
 
@@ -1324,38 +1461,41 @@ export class UndertakingIssuance implements OnInit {
                   'Failed to reject transaction',
                   'Close',
                   {
-                    duration: 3000
+                    duration: 3000,
                   }
                 );
-              }
+              },
+
             });
         }
       );
   }
 
+
   // =========================================================
   // UPDATE REJECTED
-  // Permission: UI_InquiryRejectUpdate
+  // Permission: UTG_InquiryRejectUpdate
   // =========================================================
 
   updateRejected(): void {
 
     if (
       !this.hasPermission(
-        'UI_InquiryRejectUpdate'
+        'UTG_InquiryRejectUpdate'
       )
     ) {
 
       this.snackBar.open(
-        'You do not have permission to amend this transaction.',
+        'You do not have permission to update this rejected transaction.',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
+
 
     if (
       this.undertakingForm.invalid ||
@@ -1366,18 +1506,21 @@ export class UndertakingIssuance implements OnInit {
         'Invalid form or missing transaction ID',
         'Close',
         {
-          duration: 3000
+          duration: 3000,
         }
       );
 
       return;
     }
 
+
     const payload =
       this.flattenForm();
 
+
     payload.tnxId =
       this.currentTx.tnxId;
+
 
     this.api
       .updateRejectedUndertaking(
@@ -1386,28 +1529,22 @@ export class UndertakingIssuance implements OnInit {
       )
       .subscribe({
 
-        next:
-          (res) => {
+        next: (res) => {
 
-            this.snackBar.open(
-              `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
-              'Close',
-              {
-                duration: 3000
-              }
-            );
+          this.snackBar.open(
+            `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+            'Close',
+            {
+              duration: 3000,
+            }
+          );
 
-            this.router.navigate(
-              [
-                '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
-              ],
-              {
-                queryParams: {
-                  tab: 'pending'
-                }
-              }
-            );
-          },
+
+          this.router.navigate([
+            '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+          ]);
+        },
+
 
         error: () => {
 
@@ -1415,15 +1552,17 @@ export class UndertakingIssuance implements OnInit {
             'Failed to update rejected transaction',
             'Close',
             {
-              duration: 3000
+              duration: 3000,
             }
           );
-        }
+        },
+
       });
   }
 
+
   // =========================================================
-  // NAVIGATE BACK
+  // NAVIGATION HELPER
   // =========================================================
 
   private navigateBack(
@@ -1432,14 +1571,20 @@ export class UndertakingIssuance implements OnInit {
 
     this.router.navigate(
       [
-        '/dashboard/Trade-Services/undertaking-issuance/inquiries-records'
+        '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
       ],
       {
-        queryParamsHandling: 'merge',
+
+        relativeTo:
+          this.route,
+
+        queryParamsHandling:
+          'merge',
 
         queryParams: {
-          tab
-        }
+          tab,
+        },
+
       }
     );
   }

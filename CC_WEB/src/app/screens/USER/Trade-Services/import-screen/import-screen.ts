@@ -73,7 +73,6 @@ import { AuthService } from '../../../../core/services/auth.service';
 
     MatDialogModule,
     Sidebar,
-    RouterOutlet,
     MatIconModule,
 
     Sidebar

@@ -17,7 +17,7 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
 
 @Component({
   selector: 'app-preview',
-  imports: [],
+  imports: [MatDividerModule,MatButtonModule,MatCardModule,MatIconModule,CommonModule,DecimalPipe],
   templateUrl: './preview.html',
   styleUrl: './preview.scss',
 })
