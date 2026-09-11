@@ -70,6 +70,13 @@ export interface ImportLcTransaction {
   feeAccount?: string;
   otherInstructions?: string;
 
+  // dynamic fields
+  // Dynamic Fields
+  dynamicFields?: {
+    fieldId: string | number;
+    value: string;
+  }[];
+
   attachments?: {
     id?: number;
     fileName: string;

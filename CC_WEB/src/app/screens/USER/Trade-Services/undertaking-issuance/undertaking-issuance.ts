@@ -577,7 +577,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { ApiService } from '../../../../core/services/api.service';
 import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
-
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-undertaking-issued',
   templateUrl: './undertaking-issuance.html',
@@ -595,6 +595,7 @@ import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
     UndertakingDetails,
     InstructionsBank,
     Attachments,
+    DynamicFields,
   ],
 })
 export class UndertakingIssuance implements OnInit {
@@ -619,6 +620,7 @@ export class UndertakingIssuance implements OnInit {
     { label: 'Undertaking Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic fields' },
   ];
 
   // private scrollSpyObserver?: IntersectionObserver;
@@ -729,6 +731,10 @@ export class UndertakingIssuance implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // load dynamic fields
+
+    this.loadDynamicFields();
   }
 
   ngOnDestroy(): void {
@@ -900,6 +906,12 @@ export class UndertakingIssuance implements OnInit {
       undertakingDetails: tx,
       instructions: tx,
     });
+
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
   }
 
   scrollToSection(i: number) {
@@ -909,6 +921,12 @@ export class UndertakingIssuance implements OnInit {
   }
 
   private flattenForm(): UndertakingGuarantee {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldName] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.undertakingForm.value.generalDetails,
@@ -916,6 +934,8 @@ export class UndertakingIssuance implements OnInit {
       ...this.undertakingForm.value.bankForm,
       ...this.undertakingForm.value.undertakingDetails,
       ...this.undertakingForm.value.instructions,
+      dynamicFields: dynamicFields,
+
       attachments: this.undertakingForm.value.attachments,
     };
   }
@@ -1044,17 +1064,17 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateForm(): void {
-    if (!this.hasPermission('UTG_InquiryPendingUpdate')) {
-      this.snackBar.open(
-        'You do not have permission to update this transaction.',
-        'Close',
-        {
-          duration: 3000,
-        },
-      );
+    // if (!this.hasPermission('UTG_InquiryPendingUpdate')) {
+    //   this.snackBar.open(
+    //     'You do not have permission to update this transaction.',
+    //     'Close',
+    //     {
+    //       duration: 3000,
+    //     },
+    //   );
 
-      return;
-    }
+    //   return;
+    // }
 
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
@@ -1220,5 +1240,63 @@ export class UndertakingIssuance implements OnInit {
         queryParams: { tab },
       },
     );
+  }
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('UndertakingIssuance', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }

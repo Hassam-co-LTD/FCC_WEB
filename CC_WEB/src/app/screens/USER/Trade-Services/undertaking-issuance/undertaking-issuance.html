@@ -37,7 +37,7 @@
       <hr class="section-divider" />
 
       <!-- Dynamic Fields -->
-      <!-- 
+
       <ng-container *ngIf="fields?.length">
         <app-dynamic-fields
           [form]="dynamicFieldsForm"
@@ -45,7 +45,7 @@
           [isOpen]="isDynamicFieldsOpen"
         >
         </app-dynamic-fields>
-      </ng-container> -->
+      </ng-container>
 
       <div class="actions">
         <!-- CREATE -->
@@ -53,26 +53,12 @@
           <button mat-stroked-button color="primary" (click)="back()">
             Back
           </button>
-          <button
-            *ngIf="hasPermission('UTG_CreateSave')"
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()"
-          >
-            Save
-          </button>
+          <button (click)="saveForm()">Save</button>
         </ng-container>
 
         <!-- EDIT -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
-          <button
-            *ngIf="hasPermission('UTG_InquiryPendingUpdate')"
-            mat-stroked-button
-            color="primary"
-            (click)="updateForm()"
-          >
-            Update
-          </button>
+          <button (click)="updateForm()">Update</button>
           <button
             *ngIf="hasPermission('UTG_InquirySubmit')"
             mat-flat-button

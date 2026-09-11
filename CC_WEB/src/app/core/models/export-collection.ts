@@ -63,6 +63,12 @@ export interface ExportCollectionTransaction {
   acceptanceMayBeDeferredPendingArrival?: Boolean;
   warehouseOrInsureGoodsIfNecessary?: Boolean;
 
+  // Dynamic Fields
+  dynamicFields?: {
+    fieldId: string | number;
+    value: string;
+  }[];
+
   openingCharges?: ChargeBearer;
   outsideCountryCharges?: ChargeBearer;
   referTo?: string;

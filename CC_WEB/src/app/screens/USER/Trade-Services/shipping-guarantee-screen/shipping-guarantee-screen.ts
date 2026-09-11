@@ -54,6 +54,7 @@ export class ShippingGuarantee implements OnInit {
     { label: 'Bank Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' },
   ];
 
   constructor(
@@ -267,6 +268,12 @@ export class ShippingGuarantee implements OnInit {
       issuingbankForm: tx,
       instructionForm: tx,
     });
+
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic field values into dynamic fields form
+    this.patchDynamicValues();
   }
 
   scrollToSection(index: number) {
@@ -276,12 +283,19 @@ export class ShippingGuarantee implements OnInit {
   }
 
   private flattenForm(): ShippingGuaranteeTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldName] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.ShippingGuaranteeForm.value.generalDetailsForm,
       ...this.ShippingGuaranteeForm.value.applicantBeneficiaryForm,
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
+      dynamicFields: dynamicFields,
       attachments: this.ShippingGuaranteeForm.value.attachments,
     };
   }
@@ -550,7 +564,7 @@ export class ShippingGuarantee implements OnInit {
     console.log(
       'Loading dynamic fields for ExportCollection screen with status A...',
     );
-    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+    this.api.getFieldsByScreenAndStatus('shippingGuarntee', 'A').subscribe({
       next: (res: any) => {
         console.log('Field definitions:', res);
 

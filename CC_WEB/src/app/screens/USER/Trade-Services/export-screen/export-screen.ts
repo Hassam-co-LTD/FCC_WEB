@@ -15,7 +15,7 @@ import { Upload } from './components/upload/upload';
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../core/sidebar/sidebar';
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
-
+import { ApiService } from '../../../../core/services/api.service';
 @Component({
   selector: 'app-export-screen',
   standalone: true,
@@ -48,6 +48,7 @@ export class ExportScreen implements AfterViewInit {
     private fb: FormBuilder,
     private router: Router,
     private sharedService: SharedService,
+    private api: ApiService,
   ) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
@@ -182,5 +183,63 @@ export class ExportScreen implements AfterViewInit {
 
   save() {
     alert('Form saved successfully!');
+  }
+
+  //============= dynamic fields =================
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('ExporTScreen', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }

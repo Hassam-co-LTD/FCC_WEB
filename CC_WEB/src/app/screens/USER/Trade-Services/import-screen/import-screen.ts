@@ -83,6 +83,7 @@ export class ImportScreen implements OnInit {
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
+    { label: 'Dynamic fields' },
   ];
 
   constructor(
@@ -256,6 +257,7 @@ export class ImportScreen implements OnInit {
     this.api.getTransactionByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
+        console.log('transaction loaded from backend ', tx);
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -342,8 +344,13 @@ export class ImportScreen implements OnInit {
       narrativeForm: tx,
       instructionForm: tx,
     });
-  }
 
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
+  }
   // scrollToSection(i: number) {
   //   this.currentStep = i;
   //   document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -355,8 +362,16 @@ export class ImportScreen implements OnInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   private flattenForm(): ImportLcTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldName] ?? '',
+    }));
+
     return {
       companyId: this.companyId,
+
       ...this.importForm.value.generalDetails,
       ...this.importForm.value.applicantForm,
       ...this.importForm.value.bankForm,
@@ -365,6 +380,9 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
+
+      dynamicFields: dynamicFields,
+
       attachments: this.importForm.value.attachments,
     };
   }

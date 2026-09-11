@@ -104,6 +104,14 @@ export interface UndertakingGuarantee {
   underlyingTransactionInfo?: string;
   presentationInfo?: string;
 
+  // ========= dynamic fields
+
+  //Dynamic Fields
+  dynamicFields?: {
+    fieldId: string | number;
+    value: string;
+  }[];
+
   // ================================
   // 8. INSTRUCTIONS
   // ================================
