@@ -293,7 +293,7 @@ UserData = {
   fetchAllRoles(): void {
     this.api.getTnxByStatus('A',"roles").subscribe({
       next: (roles: RoleMasterResponseDTO[]) => {
-        this.userRoles = roles.filter(r => r.roleDest === 'C'); // Only BANK roles for client users
+        this.userRoles = roles.filter(r => r.roleDest === 'A'); // Only BANK roles for client users
         console.log('Fetched all roles:', this.userRoles);
         this.fetchAssignedRoles();
       },

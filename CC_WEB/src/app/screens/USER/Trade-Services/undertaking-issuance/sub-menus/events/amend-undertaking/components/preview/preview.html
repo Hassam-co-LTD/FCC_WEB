@@ -554,7 +554,7 @@
       (click)="submitForm()"
       *ngIf="
       currentTx?.status === 'I' &&
-      hasPermission('UTG_AmendPreviewSubmit')
+      hasPermission('UI_AmendPreviewSubmit')
     "
     >
       Submit
@@ -566,7 +566,7 @@
       (click)="rejectTransaction()"
        *ngIf="
       currentTx?.status === 'S' &&
-      hasPermission('UTG_AmendPreviewReject')
+      hasPermission('UI_AmendPreviewReject')
     "
     >
       Reject
@@ -578,7 +578,7 @@
       (click)="approveTransaction()"
          *ngIf="
       currentTx?.status === 'S' &&
-      hasPermission('UTG_AmendPreviewApprove')
+      hasPermission('UI_AmendPreviewApprove')
     "
     >
       Approve

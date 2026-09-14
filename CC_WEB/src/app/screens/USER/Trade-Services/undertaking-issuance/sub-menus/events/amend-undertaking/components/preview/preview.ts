@@ -189,8 +189,8 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
-     if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
-       console.warn('User does not have UTG_AmendPreviewSubmit permission');
+     if (!this.hasPermission('UI_AmendPreviewSubmit')) {
+       console.warn('User does not have UI_AmendPreviewSubmit permission');
 
        this.snackBar.open(
          'You do not have permission to submit this transaction',
@@ -230,8 +230,8 @@ export class Preview implements OnInit {
 
   approveTransaction(): void {
 
-    if (!this.hasPermission('UTG_AmendPreviewApprove')) {
-      console.warn('User does not have UTG_AmendPreviewApprove permission');
+    if (!this.hasPermission('UI_AmendPreviewApprove')) {
+      console.warn('User does not have UI_AmendPreviewApprove permission');
 
       this.snackBar.open(
         'You do not have permission to approve this transaction',
@@ -278,8 +278,8 @@ export class Preview implements OnInit {
   // }
   rejectTransaction(): void {
 
-    if (!this.hasPermission('UTG_AmendPreviewReject')) {
-      console.warn('User does not have UTG_AmendPreviewReject permission');
+    if (!this.hasPermission('UI_AmendPreviewReject')) {
+      console.warn('User does not have UI_AmendPreviewReject permission');
 
       this.snackBar.open(
         'You do not have permission to reject this transaction',

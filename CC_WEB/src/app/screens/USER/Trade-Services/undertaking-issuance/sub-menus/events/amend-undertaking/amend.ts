@@ -116,7 +116,7 @@ export class AmendScreen implements OnInit {
     );
   }
   ngOnInit() {
-    this.loadPermissions(); 
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
@@ -256,15 +256,26 @@ export class AmendScreen implements OnInit {
     this.undertakingForm.reset();
     this.buildForm();
   }
-
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
+
+    // ── SCENARIO 3 (computed early so Scenario 1's guard can use it) ────────
+    // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
+    // ────────────────────────────────────────────────────────────────────────
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      this.sourceTab === 'pending' ||
+      this.sourceTab === 'submitted' ||
+      this.sourceTab === 'approved' ||
+      this.sourceTab === 'rejected';
 
     // ── SCENARIO 1 ─────────────────────────────────────────────────────────
     // eventRefNo present → specific historical event snapshot, always read-only
     // Triggered from Inquiries Live tab row click
+    // Skipped when on an amendment status tab (pending/submitted/approved/rejected),
+    // since there eventRefNo should drive editability via its real status, not force read-only
     // ────────────────────────────────────────────────────────────────────────
-    if (this.eventRefNo) {
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
       this.api.getUtgAmendmentByEventRefNo(this.eventRefNo).subscribe({
         next: (event) => {
@@ -299,14 +310,13 @@ export class AmendScreen implements OnInit {
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.undertakingForm.enable();
-          } else {
-            // AMD already submitted/approved — shouldn't normally happen from Live tab
-            // but handle defensively: show read-only
+          if (event.status === 'S') {
+            // AMD actively submitted/awaiting approval — read-only
             this.screenMode = 'SUBMITTED';
             this.undertakingForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.undertakingForm.enable();
           }
         },
         error: () => {
@@ -337,18 +347,17 @@ export class AmendScreen implements OnInit {
     // ── SCENARIO 3 ─────────────────────────────────────────────────────────
     // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
     // Triggered from ApprovedInquiryRecords non-live tabs
+    // Uses eventRefNo (when present) to fetch the exact amendment clicked,
+    // instead of tnxId alone which can resolve to the latest amendment only
     // ────────────────────────────────────────────────────────────────────────
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
-
     if (isAmendmentTab) {
       this.isHistoricalView = false;
 
-      this.api.getUtgAmendmentByTnxId(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getUtgAmendmentByEventRefNo(this.eventRefNo)
+        : this.api.getUtgAmendmentByTnxId(tnxId);
+
+      amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
@@ -489,16 +498,15 @@ export class AmendScreen implements OnInit {
   }
 
   saveForm(): void {
+    if (!this.hasPermission('UI_AmendSave')) {
+      this.snackBar.open(
+        'You do not have permission to amend Undertaking.',
+        'Close',
+        { duration: 3000 },
+      );
 
-     if (!this.hasPermission('UTG_Amend')) {
-       this.snackBar.open(
-         'You do not have permission to amend Undertaking.',
-         'Close',
-         { duration: 3000 },
-       );
-
-       return;
-     }
+      return;
+    }
 
     if (this.isSaving) return;
     this.isSaving = true;
@@ -557,15 +565,15 @@ export class AmendScreen implements OnInit {
   }
 
   submitForm(): void {
-     if (!this.hasPermission('UTG_Amend')) {
-       this.snackBar.open(
-         'You do not have permission to submit Undertaking amendments.',
-         'Close',
-         { duration: 3000 },
-       );
+    if (!this.hasPermission('UI_AmendSubmit')) {
+      this.snackBar.open(
+        'You do not have permission to submit Undertaking amendments.',
+        'Close',
+        { duration: 3000 },
+      );
 
-       return;
-     }
+      return;
+    }
 
     const eventRefNo = this.currentTx?.eventRefNo;
     console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
@@ -632,15 +640,15 @@ export class AmendScreen implements OnInit {
   }
 
   update(): void {
-     if (!this.hasPermission('UTG_Amend')) {
-       this.snackBar.open(
-         'You do not have permission to update Undertaking.',
-         'Close',
-         { duration: 3000 },
-       );
+    if (!this.hasPermission('UI_AmendUpdatePending')) {
+      this.snackBar.open(
+        'You do not have permission to update Undertaking.',
+        'Close',
+        { duration: 3000 },
+      );
 
-       return;
-     }
+      return;
+    }
 
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
@@ -659,8 +667,7 @@ export class AmendScreen implements OnInit {
   }
 
   approve(): void {
-
-    if (!this.hasPermission('UTG_Approve')) {
+    if (!this.hasPermission('UI_AmendApprove')) {
       this.snackBar.open(
         'You do not have permission to approve Undertaking amendments.',
         'Close',
@@ -701,8 +708,7 @@ export class AmendScreen implements OnInit {
   }
 
   openReject(): void {
-    
-    if (!this.hasPermission('UTG_Approve')) {
+    if (!this.hasPermission('UI_AmendReject')) {
       this.snackBar.open(
         'You do not have permission to reject Undertaking amendments.',
         'Close',
@@ -753,8 +759,7 @@ export class AmendScreen implements OnInit {
   }
 
   updateRejected(): void {
-    
-    if (!this.hasPermission('UTG_Amend')) {
+    if (!this.hasPermission('UI_AmendUpdateRejected')) {
       this.snackBar.open(
         'You do not have permission to update rejected Undertaking.',
         'Close',

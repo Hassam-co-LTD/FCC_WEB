@@ -317,7 +317,7 @@ export class inquiriesRecords implements OnInit {
 
   viewTransaction(tx: UndertakingGuarantee): void {
     if (!this.hasPermission('UI_InquiryPreview')) {
-      console.warn('User does not have UTG_Inquiry permission');
+      console.warn('User does not have UI_Inquiry permission');
 
       return;
     }

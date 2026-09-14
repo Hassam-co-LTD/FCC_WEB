@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -21,7 +21,6 @@ import { Sidebar } from "../../../../core/sidebar/sidebar";
 import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
 import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -92,6 +91,7 @@ export class ImportScreen implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(

@@ -43,7 +43,7 @@
             Back
           </button>
           <button
-          *ngIf="hasPermission('UTG_Amend')"
+          *ngIf="hasPermission('UI_AmendSave')"
             mat-flat-button
             color="accent"
             (click)="saveForm()"
@@ -66,17 +66,17 @@
             Back
           </button>
           <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
-          <button *ngIf="hasPermission('UTG_Amend')" mat-flat-button color="accent" (click)="submitForm()">
+          <button *ngIf="hasPermission('UI_AmendSubmit')" mat-flat-button color="accent" (click)="submitForm()">
             Submit
           </button>
         </ng-container>
 
         <!-- SUBMITTED: Approve + Reject -->
         <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
-          <button *ngIf="hasPermission('UTG_Approve')"mat-stroked-button color="primary" (click)="openReject()">
+          <button *ngIf="hasPermission('UI_AmendReject')"mat-stroked-button color="primary" (click)="openReject()">
             Reject
           </button>
-          <button *ngIf="hasPermission('UTG_Approve')"mat-flat-button color="accent" (click)="approve()">
+          <button *ngIf="hasPermission('UI_AmendApprove')"mat-flat-button color="accent" (click)="approve()">
             Approve
           </button>
         </ng-container>
@@ -93,7 +93,7 @@
           <button mat-stroked-button color="primary" (click)="back()">
             Back
           </button>
-          <button *ngIf="hasPermission('UTG_Amend')"mat-flat-button color="primary" (click)="updateRejected()">
+          <button *ngIf="hasPermission('UI_AmendUpdatePending')"mat-flat-button color="primary" (click)="updateRejected()">
             Update
           </button>
         </ng-container>

@@ -2,120 +2,142 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const http = inject(HttpClient);
 
   const token = sessionStorage.getItem('token');
+  const refreshToken = sessionStorage.getItem('refreshToken');
 
-  const refreshUrl = '/api/v1/auth/refresh-token';
+  const refreshUrl =
+    `${environment.gatewayUrl}/secondAdmin/api/v1/auth/refresh-token`;
 
-  // Do not attach access token to refresh API
-  if (req.url.includes(refreshUrl)) {
+  const isValidToken = (value: string | null): boolean => {
+    return !!value &&
+      value !== 'undefined' &&
+      value !== 'null' &&
+      value.trim() !== '';
+  };
+
+  /*
+   * Do not attach access token to refresh-token request.
+   * Otherwise the refresh request itself can cause authentication problems.
+   */
+  if (req.url === refreshUrl) {
     return next(req);
   }
 
-  let clonedRequest = req;
-
-  // Attach JWT only if it is valid
-  if (token && token !== 'undefined' && token !== 'null') {
-    clonedRequest = req.clone({
+  /*
+   * Attach access token if one exists.
+   *
+   * No token is NOT necessarily an error.
+   * Login requests and other public APIs can legitimately have no token.
+   */
+  if (isValidToken(token)) {
+    req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,
       },
     });
-  } else {
-    console.log('NO VALID ACCESS TOKEN FOUND');
   }
 
-  return next(clonedRequest).pipe(
+  return next(req).pipe(
     catchError((error) => {
-      console.log('HTTP ERROR STATUS:', error.status);
 
-      // Access token expired
-      if (error.status === 401) {
-        const refreshToken = sessionStorage.getItem('refreshToken');
+      /*
+       * Only try refresh for 401 Unauthorized.
+       */
+      if (error.status !== 401) {
+        return throwError(() => error);
+      }
 
-        if (!refreshToken || refreshToken === 'undefined') {
-          console.log('NO REFRESH TOKEN AVAILABLE');
+      /*
+       * Do not try to refresh if there is no refresh token.
+       */
+      if (!isValidToken(refreshToken)) {
+        console.warn('No refresh token available.');
 
-          sessionStorage.clear();
+        sessionStorage.clear();
 
-          return throwError(() => error);
-        }
+        return throwError(() => error);
+      }
 
-        console.log('Calling Refresh Token API...');
+      console.log('Access token expired. Refreshing...');
 
-        return http
-          .post<any>(
-            'http://localhost:8050/secondAdmin/api/v1/auth/refresh-token',
+      /*
+       * Call refresh endpoint.
+       */
+      return http
+        .post<any>(
+          refreshUrl,
+          {
+            refreshToken: refreshToken,
+          },
+        )
+        .pipe(
 
-            {
-              refreshToken: refreshToken,
-            },
-          )
+          switchMap((response) => {
 
-          .pipe(
-            switchMap((response) => {
-              console.log('FULL REFRESH RESPONSE:', response);
+            console.log('Refresh response received.');
 
-              /*
-                 Supports both:
- 
-                 {
-                    token:"xxxxx"
-                 }
- 
-                 and
- 
-                 {
-                    body:{
-                       token:"xxxxx"
-                    }
-                 }
- 
-              */
+            /*
+             * Support different backend response formats.
+             */
+            const newToken =
+              response?.accessToken ??
+              response?.token ??
+              response?.body?.accessToken ??
+              response?.body?.token;
 
-              const newToken =
-                response.accessToken ??
-                response.token ??
-                response.body?.accessToken ??
-                response.body?.token;
+            if (!isValidToken(newToken)) {
 
-              if (!newToken || newToken === 'undefined') {
-                console.log('REFRESH RESPONSE DOES NOT CONTAIN TOKEN');
-
-                sessionStorage.clear();
-
-                return throwError(() => new Error('No access token returned'));
-              }
-
-              console.log('NEW ACCESS TOKEN:', newToken);
-
-              sessionStorage.setItem('token', newToken);
-
-              const retryRequest = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken}`,
-                },
-              });
-
-              console.log('RETRYING ORIGINAL REQUEST');
-
-              return next(retryRequest);
-            }),
-
-            catchError((refreshError) => {
-              console.log('REFRESH TOKEN FAILED:', refreshError);
+              console.error(
+                'Refresh succeeded but no access token was returned.'
+              );
 
               sessionStorage.clear();
 
-              return throwError(() => refreshError);
-            }),
-          );
-      }
+              return throwError(
+                () => new Error('No access token returned from refresh API'),
+              );
+            }
 
-      return throwError(() => error);
+            /*
+             * Store new access token.
+             */
+            sessionStorage.setItem('token', newToken);
+
+            console.log('Access token refreshed successfully.');
+
+            /*
+             * Retry original request with new token.
+             */
+            const retryRequest = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${newToken}`,
+              },
+            });
+
+            return next(retryRequest);
+          }),
+
+          catchError((refreshError) => {
+
+            console.error(
+              'Refresh token request failed:',
+              refreshError,
+            );
+
+            /*
+             * Refresh token is no longer usable.
+             * Clear session and force user to login again.
+             */
+            sessionStorage.clear();
+
+            return throwError(() => refreshError);
+          }),
+        );
     }),
   );
 };

@@ -1,9 +1,18 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
-import { TransferDTO, RecordsListTransferDTO, AccountsMaster } from '../models/my-accounts';
+import {
+  TransferDTO,
+  RecordsListTransferDTO,
+  AccountsMaster,
+} from '../models/my-accounts';
 import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
@@ -94,7 +103,9 @@ export class ApiService {
 
   private get headers(): HttpHeaders {
     return new HttpHeaders({
+      'Content-Type': 'application/json',
       companyid: this.companyId,
+      loginid: this.loginId,
     });
   }
 
@@ -158,6 +169,9 @@ export class ApiService {
       .put<ImportLcTransaction>(
         `${this.baseUrl}/importlc/${payload.tnxId}`,
         payload,
+        {
+          headers: this.headers,
+        },
       )
       .pipe(catchError(this.handleError));
   }
@@ -174,7 +188,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/submit/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -200,7 +214,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/approve/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -216,7 +230,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/rejectReason/${tnxId}`,
         { rejectionReason: reason },
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -228,7 +242,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/updateRejected/${tnxId}`,
         payload,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -372,7 +386,7 @@ export class ApiService {
   updateRejectedAmendmentTransaction(
     eventRefNo: string,
     payload: ImportLcTransaction,
-  ){
+  ) {
     return this.http
       .put<ImportLcTransaction>(
         `${this.baseeventUrl}/amend/updateRejected/${eventRefNo}`,

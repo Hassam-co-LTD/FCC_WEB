@@ -965,16 +965,30 @@ export class Amend implements OnInit {
         shippingFrom: [''],
         shippingTo: [''],
         shipmentDate: [''],
+        incotermsRules: [''],
+        incoterms: [''],
       }),
       CollectionInstruction: this.fb.group({
+        adviceAcceptanceDate: [''],
+        waiveCharges: [''],
+        adviceReasonRefusal: [''],
+          protestNonAcceptance: [''],
+          acceptanceDeferred: [''],
+          warehouseInsurance: [''],
+        protestNonPayment: [''],
         advicePaymentBy: [''],
         adviceAcceptanceAndDueDateBy: [''],
         adviceReasonOfRefusalBy: [''],
+
         waiveAllChargesIfRefusedByDrawee: [''],
+
         protestInCaseOfNonPayment: [''],
         protestInCaseOfNonAcceptance: [''],
+
         acceptanceMayBeDeferredPendingArrival: ['Allowed'],
+
         warehouseOrInsureGoodsIfNecessary: ['Not Allowed'],
+
         openingCharges: [''],
         outsideCountryCharges: [''],
         referTo: [''],
@@ -999,11 +1013,20 @@ export class Amend implements OnInit {
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
 
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      this.sourceTab === 'pending' ||
+      this.sourceTab === 'submitted' ||
+      this.sourceTab === 'approved' ||
+      this.sourceTab === 'rejected';
+
     // ── SCENARIO 1 ─────────────────────────────────────────────────────────
     // eventRefNo present → specific historical event snapshot, always read-only
     // Triggered from Inquiries Live tab row click
+    // Skipped when on an amendment status tab (pending/submitted/approved/rejected),
+    // since there eventRefNo should drive editability via its real status, not force read-only
     // ────────────────────────────────────────────────────────────────────────
-    if (this.eventRefNo) {
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
       this.api
         .getAmendmentByEventRefNoExportCollection(this.eventRefNo)
@@ -1040,14 +1063,13 @@ export class Amend implements OnInit {
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.ExportCollectionForm.enable();
-          } else {
-            // AMD already submitted/approved — shouldn't normally happen from Live tab
-            // but handle defensively: show read-only
+          if (event.status === 'S') {
+            // AMD actively submitted/awaiting approval — read-only
             this.screenMode = 'SUBMITTED';
             this.ExportCollectionForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.ExportCollectionForm.enable();
           }
         },
         error: () => {
@@ -1080,18 +1102,17 @@ export class Amend implements OnInit {
     // ── SCENARIO 3 ─────────────────────────────────────────────────────────
     // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
     // Triggered from ApprovedInquiryRecords non-live tabs
+    // Uses eventRefNo (when present) to fetch the exact amendment clicked,
+    // instead of tnxId alone which can resolve to the latest amendment only
     // ────────────────────────────────────────────────────────────────────────
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
-
     if (isAmendmentTab) {
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxIdExportCollection(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getAmendmentByEventRefNoExportCollection(this.eventRefNo)
+        : this.api.getAmendmentByTnxIdExportCollection(tnxId);
+
+      amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);

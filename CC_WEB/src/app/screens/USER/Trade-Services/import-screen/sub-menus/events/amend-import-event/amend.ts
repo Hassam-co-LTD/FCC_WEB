@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
-import { ApiService } from "../../../../../../../core/services/api.service";
+import { ApiService } from '../../../../../../../core/services/api.service';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Attachments } from '../../../components/attachments/attachments';
@@ -91,8 +97,7 @@ export class AmendScreen implements OnInit {
   }
 
   ngOnInit() {
-
-        this.loadPermissions();
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
@@ -428,12 +433,21 @@ export class AmendScreen implements OnInit {
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
 
-    // ── SCENARIO 1 ─────────────────────────────────────────────────────────
-    // eventRefNo present → specific historical event snapshot, always read-only
-    // Triggered from Inquiries Live tab row click
-    // ────────────────────────────────────────────────────────────────────────
-    if (this.eventRefNo) {
+    const normalizedSourceTab = (this.sourceTab ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
+
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      normalizedSourceTab === 'pending' ||
+      normalizedSourceTab === 'submitted' ||
+      normalizedSourceTab === 'approved' ||
+      normalizedSourceTab === 'rejected';
+
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
+
       this.api.getAmendmentByEventRefNo(this.eventRefNo).subscribe({
         next: (event) => {
           this.currentTx = event;
@@ -441,6 +455,7 @@ export class AmendScreen implements OnInit {
           this.importForm.disable();
           this.patchForm(event);
         },
+
         error: () => {
           this.snackBar.open('Event snapshot not found', 'Close', {
             duration: 3000,
@@ -450,44 +465,39 @@ export class AmendScreen implements OnInit {
           ]);
         },
       });
+
       return;
     }
 
-    // ── SCENARIO 2 ─────────────────────────────────────────────────────────
-    // sourceTab='live', no eventRefNo → user wants to initiate/continue an amendment
-    // Triggered from ApprovedInquiryRecords Live tab row click
-    // Try to load existing AMD draft; if none exists, pre-populate from master LC
-    // ────────────────────────────────────────────────────────────────────────
     if (this.sourceTab === 'live') {
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxId(tnxId).subscribe({
         next: (event) => {
-          // Existing AMD draft found — load it
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.importForm.enable();
-          } else {
-            // AMD already submitted/approved — shouldn't normally happen from Live tab
-            // but handle defensively: show read-only
+          if (event.status === 'S') {
             this.screenMode = 'SUBMITTED';
             this.importForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.importForm.enable();
           }
         },
+
         error: () => {
-          // No existing AMD draft — load master LC data to pre-populate form
-          // The AMD event will only be created when user clicks Save
           this.api.getTransactionByTnxId(tnxId).subscribe({
             next: (tx) => {
-              // Only store tnxId on currentTx — no eventRefNo exists yet
-              this.currentTx = { tnxId: tx.tnxId } as ImportLcTransaction;
+              this.currentTx = {
+                tnxId: tx.tnxId,
+              } as ImportLcTransaction;
+
               this.patchForm(tx);
               this.screenMode = 'EDIT';
               this.importForm.enable();
             },
+
             error: () => {
               this.snackBar.open('Transaction not found', 'Close', {
                 duration: 3000,
@@ -499,24 +509,18 @@ export class AmendScreen implements OnInit {
           });
         },
       });
+
       return;
     }
-
-    // ── SCENARIO 3 ─────────────────────────────────────────────────────────
-    // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
-    // Triggered from ApprovedInquiryRecords non-live tabs
-    // ────────────────────────────────────────────────────────────────────────
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
 
     if (isAmendmentTab) {
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxId(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getAmendmentByEventRefNo(this.eventRefNo)
+        : this.api.getAmendmentByTnxId(tnxId);
+
+      amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
@@ -527,27 +531,32 @@ export class AmendScreen implements OnInit {
               this.screenMode = 'EDIT';
               this.importForm.enable();
               break;
+
             case 'S':
               this.mode = 'UPDATE';
               this.screenMode = 'SUBMITTED';
               this.importForm.disable();
               break;
+
             case 'A':
               this.mode = 'UPDATE';
               this.screenMode = 'APPROVED';
               this.importForm.disable();
               break;
+
             case 'R':
               this.mode = 'REJECTED';
               this.screenMode = 'EDIT';
               this.importForm.enable();
               break;
+
             default:
               this.mode = 'UPDATE';
               this.screenMode = 'FINAL';
               this.importForm.disable();
           }
         },
+
         error: () => {
           this.snackBar.open('Amendment not found', 'Close', {
             duration: 3000,
@@ -557,13 +566,12 @@ export class AmendScreen implements OnInit {
           ]);
         },
       });
+
       return;
     }
 
-    // ── SCENARIO 4 ─────────────────────────────────────────────────────────
-    // Master LC (Enquiries non-live tabs with eventType=CRE or unset)
-    // ────────────────────────────────────────────────────────────────────────
     this.isHistoricalView = false;
+
     this.api.getTransactionByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
@@ -575,13 +583,16 @@ export class AmendScreen implements OnInit {
             this.screenMode = 'EDIT';
             this.importForm.enable();
             break;
+
           case 'S':
             this.mode = 'UPDATE';
             this.screenMode = 'SUBMITTED';
             this.importForm.disable();
             break;
+
           case 'A':
             this.mode = 'UPDATE';
+
             if (this.requestedMode === 'EDIT') {
               this.screenMode = 'EDIT';
               this.importForm.enable();
@@ -589,18 +600,22 @@ export class AmendScreen implements OnInit {
               this.screenMode = 'APPROVED';
               this.importForm.disable();
             }
+
             break;
+
           case 'R':
             this.mode = 'REJECTED';
             this.screenMode = 'EDIT';
             this.importForm.enable();
             break;
+
           default:
             this.mode = 'UPDATE';
             this.screenMode = 'FINAL';
             this.importForm.disable();
         }
       },
+
       error: () => {
         this.snackBar.open('Transaction not found', 'Close', {
           duration: 3000,
@@ -611,7 +626,6 @@ export class AmendScreen implements OnInit {
       },
     });
   }
-
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
     return this.importForm.get('generalDetails') as FormGroup;
@@ -835,7 +849,9 @@ export class AmendScreen implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([
+      '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+    ]);
   }
 
   updateAttachments(files: File[]) {

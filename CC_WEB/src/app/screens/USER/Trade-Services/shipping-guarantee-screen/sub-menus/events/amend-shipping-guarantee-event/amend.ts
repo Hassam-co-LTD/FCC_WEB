@@ -202,15 +202,29 @@ export class Amend implements OnInit {
     this.ShippingGuaranteeForm.reset();
     this.buildForm();
   }
-
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
 
-    // ── SCENARIO 1 ─────────────────────────────────────────────────────────
-    // eventRefNo present → specific historical event snapshot, always read-only
-    // Triggered from Inquiries Live tab row click
-    // ────────────────────────────────────────────────────────────────────────
-    if (this.eventRefNo) {
+    // =======================================================
+    // SCENARIO 3 (computed early so Scenario 1's guard can use it)
+    // AMENDMENT TABS
+    // =======================================================
+
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      this.sourceTab === 'pending' ||
+      this.sourceTab === 'submitted' ||
+      this.sourceTab === 'approved' ||
+      this.sourceTab === 'rejected';
+
+    // =======================================================
+    // SCENARIO 1
+    // HISTORICAL EVENT
+    // Skipped when on an amendment status tab (pending/submitted/approved/rejected),
+    // since there eventRefNo should drive editability via its real status, not force read-only
+    // =======================================================
+
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
       this.api.getAmendmentByEventRefNoSg(this.eventRefNo).subscribe({
         next: (event) => {
@@ -230,11 +244,12 @@ export class Amend implements OnInit {
       });
       return;
     }
-    // ── SCENARIO 2 ─────────────────────────────────────────────────────────
-    // sourceTab='live', no eventRefNo → user wants to initiate/continue an amendment
-    // Triggered from ApprovedInquiryRecords Live tab row click
-    // Try to load existing AMD draft; if none exists, pre-populate from master LC
-    // ────────────────────────────────────────────────────────────────────────
+
+    // =======================================================
+    // SCENARIO 2
+    // LIVE TAB
+    // =======================================================
+
     if (this.sourceTab === 'live') {
       this.isHistoricalView = false;
 
@@ -244,14 +259,13 @@ export class Amend implements OnInit {
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.ShippingGuaranteeForm.enable();
-          } else {
-            // AMD already submitted/approved — shouldn't normally happen from Live tab
-            // but handle defensively: show read-only
+          if (event.status === 'S') {
+            // AMD actively submitted/awaiting approval — read-only
             this.screenMode = 'SUBMITTED';
             this.ShippingGuaranteeForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
           }
         },
         error: () => {
@@ -281,21 +295,21 @@ export class Amend implements OnInit {
       return;
     }
 
-    // ── SCENARIO 3 ─────────────────────────────────────────────────────────
-    // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
-    // Triggered from ApprovedInquiryRecords non-live tabs
-    // ────────────────────────────────────────────────────────────────────────
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
+    // =======================================================
+    // SCENARIO 3
+    // AMENDMENT TABS
+    // Uses eventRefNo (when present) to fetch the exact amendment clicked,
+    // instead of tnxId alone which can resolve to the latest amendment only
+    // =======================================================
 
     if (isAmendmentTab) {
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getAmendmentByEventRefNoSg(this.eventRefNo)
+        : this.api.getAmendmentByTnxIdSg(tnxId);
+
+      amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
@@ -339,9 +353,11 @@ export class Amend implements OnInit {
       return;
     }
 
-    // ── SCENARIO 4 ─────────────────────────────────────────────────────────
-    // Master LC (Enquiries non-live tabs with eventType=CRE or unset)
-    // ────────────────────────────────────────────────────────────────────────
+    // =======================================================
+    // SCENARIO 4
+    // MASTER TRANSACTION
+    // =======================================================
+
     this.isHistoricalView = false;
     this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
