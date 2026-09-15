@@ -1613,4 +1613,11 @@ export class ApiService {
       `${this.adminBaseUrl}${module}/${id}/rejected-history`,
     );
   }
+
+  // verify customer account from core banking api
+  verifyCustomerAccount(accountNumber: String, name: String) {
+    return this.http.get<any>(
+      `${this.adminBaseUrl}customer-registration/customer/${name}/${accountNumber}`,
+    );
+  }
 }

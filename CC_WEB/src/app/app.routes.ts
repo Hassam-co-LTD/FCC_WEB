@@ -36,6 +36,15 @@ export const routes: Routes = [
       ),
   },
 
+  // ============= customer register page lik =============
+  {
+    path: 'customer-registration',
+    loadComponent: () =>
+      import('./screens/AUTH/register-customer/register-customer').then(
+        (m) => m.RegisterCustomer,
+      ),
+  },
+
   // Protected routes (with layout)
   {
     path: '',

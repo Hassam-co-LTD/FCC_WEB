@@ -19,8 +19,9 @@ import { SessionTimeoutService } from '../../../core/services/admin-service/sess
 export type AuthState =
   | 'LOGIN'
   | 'FORGOT_PASSWORD'
-  | 'EMAIL_SENT'
   | 'RESET_PASSWORD'
+  | 'CUSTOMER_REGISTRATION'
+  | 'EMAIL_SENT'
   | 'EXPIRED'
   | 'SUCCESS';
 
@@ -171,18 +172,25 @@ export class LoginComponent implements OnInit, OnDestroy {
       case 'LOGIN':
         this.password = '';
         break;
+
+      case 'FORGOT_PASSWORD':
+        break;
+
       case 'RESET_PASSWORD':
         this.newPassword = '';
         this.confirmPassword = '';
         this.resetPasswordChecklist();
         break;
-      case 'FORGOT_PASSWORD':
+
+      case 'CUSTOMER_REGISTRATION':
+        this.router.navigate(['/customer-registration']);
+        break;
+
       case 'EXPIRED':
       case 'SUCCESS':
         break;
     }
   }
-
   private clearAllTimers(): void {
     if (this.expiryInterval) clearInterval(this.expiryInterval);
     if (this.resendInterval) clearInterval(this.resendInterval);
@@ -221,18 +229,17 @@ export class LoginComponent implements OnInit, OnDestroy {
           console.log(res.headers);
           const loginData = res.body;
 
-
           // Save Permission Group Name
-sessionStorage.setItem(
-  'permissionGroupName',
-  loginData.permissionGroupName
-);
- 
-sessionStorage.setItem(
-  'permissionNames',
-  JSON.stringify(loginData.permissionNames)
-);
- 
+          sessionStorage.setItem(
+            'permissionGroupName',
+            loginData.permissionGroupName,
+          );
+
+          sessionStorage.setItem(
+            'permissionNames',
+            JSON.stringify(loginData.permissionNames),
+          );
+
           // Save user information
           sessionStorage.setItem('userData', JSON.stringify(loginData));
 

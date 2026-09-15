@@ -1,0 +1,492 @@
+/* ============================
+   Global Theme Colors (Blue UI)
+   ============================ */
+
+ @use 'sass:color';
+@use '../../../../styles/theme' as theme;
+
+/* Primary Brand Colors */
+$primary-color: #0b4eb3; // Main Blue
+$primary-hover: #1565d8; // Hover Blue
+$primary-light: #e9f2ff; // Very light blue background
+$primary-border: #d7e3ff; // Soft blue border
+$primary-shadow: rgba(13, 71, 161, 0.08); // Blue tinted shadow
+
+/* Dropdown / Menu Colors */
+$dropdown-border: #c8dafc;
+$dropdown-hover-bg: #e8f0ff;
+$dropdown-hover-text: #0b4eb3;
+
+/* Text Colors */
+$text-dark: #2c3e50;
+$text-medium: #1f2d3d;
+
+/* Background */
+$white: #ffffff;
+
+/* ===== Background & Sidebar Shades ===== */
+$bg-body: #f2f6ff; // body background soft blue
+$bg-content: #f6f9ff; // content section lighter blue
+
+/* Sidebar */
+$sidebar-bg: #ffffff;
+$sidebar-border: $primary-border; // already #d7e3ff
+$sidebar-hover-bg: $dropdown-hover-bg; // #e8f0ff
+$sidebar-hover-border: #bcd6ff;
+$sidebar-active-bg: #d9e7ff;
+$sidebar-active-border: #a8c9ff;
+
+/* Text */
+$sidebar-text: #334;
+$sidebar-subtext: #556;
+
+/* Accent Indication Border */
+$submenu-line: #bcd6ff;
+$submenu-hover-bg: #eaf2ff;
+$submenu-active-bg: #d7e6ff;
+
+/* ===== Import Screen / Stepper Theme ===== */
+
+/* Screen Backgrounds */
+$screen-bg: #f4f8ff;
+$screen-content-bg: #f1f6ff;
+
+/* Step Sidebar */
+$step-border: $primary-border;
+$step-hover-bg: $sidebar-hover-bg;
+$step-hover-text: $primary-hover;
+$step-active-bg: $sidebar-active-bg;
+$step-active-text: $primary-hover;
+
+/* Step Number Badge */
+$step-badge-bg: #c6dafd;
+$step-badge-text: #003c8f;
+$step-badge-active-bg: $primary-hover; // #1565d8
+$step-badge-active-text: #ffffff;
+
+/* Buttons */
+$primary-btn-bg: $primary-color;
+$primary-btn-hover-bg: $primary-hover;
+$primary-btn-shadow: rgba(21, 101, 217, 0.25);
+
+$secondary-btn-text: $primary-color;
+$secondary-btn-border: $primary-color;
+$secondary-btn-hover-bg: rgba(21, 101, 217, 0.15);
+
+/* ============================
+   GLOBAL BRAND COLOR SYSTEM
+   Blue Fintech Theme
+============================ */
+
+/* Primary Palette */
+$primary: #0b4eb3; // Primary blue
+$primary-dark: #08408f; // Darker hover blue
+$primary-light: #e9f2ff; // Ultra light blue background
+
+/* Backgrounds */
+$light-bg: #f8faff; // Form section bg
+$screen-bg: #f4f8ff; // Screen outer bg
+$white: #ffffff;
+
+/* Borders */
+$border-light: #d7e3ff; // Light subtle border
+$border-primary: #a8c9ff;
+
+/* Text Colors */
+$text-dark: #2c3e50;
+$text-medium: #4b5563;
+$text-light: #ffffff;
+
+/* Hover & Active */
+$hover-bg: #e8f0ff;
+$hover-border: #bcd6ff;
+
+/* Shadows */
+$shadow-primary: 0 3px 8px rgba(13, 71, 161, 0.18);
+$button-shadow: 0 2px 6px rgba(13, 71, 161, 0.22);
+
+/* Button Colors */
+$primary-btn: $primary;
+$primary-btn-hover: $primary-dark;
+
+/* Spacing variables (for consistency) */
+$radius-default: 6px;
+$radius-large: 8px;
+$gap-default: 16px;
+
+// my color 
+$danger: #d32f2f; // Material Red 700
+
+
+// Layout & Background
+.registration-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bg-body;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(11, 78, 179, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, $bg-content 0%, $bg-body 100%);
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+// Main Card Container
+.registration-container {
+  width: 100%;
+  max-width: 580px;
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-large;
+  box-shadow: 0 12px 32px $primary-shadow, 0 2px 6px rgba(0, 0, 0, 0.02);
+  padding: 2.5rem;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+
+  @media (max-width: 640px) {
+    padding: 1.5rem;
+    border-radius: $radius-default;
+  }
+}
+
+// Header Section
+.registration-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid $border-light;
+
+  .brand-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    background-color: $primary-light;
+    border: 1px solid $border-primary;
+    border-radius: $radius-default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .brand-icon {
+      color: $primary-color;
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  .header-text {
+    .page-title {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: $text-dark;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      margin: 0.25rem 0 0 0;
+      font-size: 0.875rem;
+      color: $text-medium;
+      font-weight: 500;
+    }
+  }
+}
+
+// Progress Stepper
+.stepper-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+  padding: 0 0.5rem;
+
+  .stepper-track {
+    position: absolute;
+    top: 16px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background-color: $border-light;
+    z-index: 1;
+  }
+
+  .step-item {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    background: $white;
+    padding: 0 0.25rem;
+
+    .step-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: $step-badge-bg;
+      border: 2px solid $border-primary;
+      color: $step-badge-text;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.25s ease;
+    }
+
+    .step-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: $sidebar-subtext;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    // Active State
+    &.active {
+      .step-badge {
+        background-color: $step-badge-active-bg;
+        border-color: $step-badge-active-bg;
+        color: $step-badge-active-text;
+        box-shadow: $shadow-primary;
+      }
+
+      .step-label {
+        color: $step-active-text;
+        font-weight: 700;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .step-label {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+// Main Content Section
+.registration-content {
+  .content-header {
+    margin-bottom: 1.5rem;
+
+    .content-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: $text-dark;
+      margin: 0 0 0.35rem 0;
+    }
+
+    .content-description {
+      font-size: 0.875rem;
+      color: $text-medium;
+      margin: 0;
+      line-height: 1.45;
+    }
+  }
+}
+
+// Form & Input Field Styling
+.registration-form {
+  display: flex;
+  flex-direction: column;
+
+  .form-field-group {
+    margin-bottom: 1rem;
+  }
+
+  .custom-form-field {
+    width: 100%;
+
+    .field-icon {
+      color: $sidebar-subtext;
+      margin-right: 0.5rem;
+    }
+
+    // Material Overrides for Premium Banking Aesthetic
+    ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background-color: $light-bg;
+        border-radius: $radius-default;
+        transition: background-color 0.2s ease;
+      }
+
+      .mat-mdc-text-field-wrapper:hover {
+        background-color: $hover-bg;
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: $border-light !important;
+      }
+
+      .mat-mdc-form-field-focus-overlay {
+        background-color: transparent;
+      }
+
+      // Focused State
+      &.mat-focused {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: $primary-color !important;
+          border-width: 2px !important;
+        }
+
+        .field-icon {
+          color: $primary-color;
+        }
+      }
+
+      // Input Text styling
+      .mat-mdc-form-field-input-control input {
+        color: $text-dark;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+      }
+
+      .mat-mdc-form-field-error {
+        color: $danger;
+        font-size: 0.775rem;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// Information Box
+.info-callout {
+  display: flex;
+  gap: 0.875rem;
+  background-color: $primary-light;
+  border: 1px solid $border-primary;
+  border-radius: $radius-default;
+  padding: 1rem;
+  margin-bottom: 1.75rem;
+
+  .info-icon {
+    color: $primary-color;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .info-text {
+    .info-heading {
+      display: block;
+      font-size: 0.825rem;
+      color: $primary-dark;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.825rem;
+      color: $text-medium;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Action Buttons
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.875rem;
+
+  button {
+    height: 44px;
+    padding: 0 1.5rem;
+    border-radius: $radius-default;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary {
+    color: $secondary-btn-text;
+    border-color: $secondary-btn-border;
+
+    &:hover:not([disabled]) {
+      background-color: $secondary-btn-hover-bg;
+      border-color: $hover-border;
+    }
+  }
+
+  .btn-primary {
+    background-color: $primary-btn-bg;
+    color: $white;
+    box-shadow: $button-shadow;
+
+    .btn-icon-right {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-left: 0.35rem;
+      vertical-align: middle;
+    }
+
+    &:hover:not([disabled]) {
+      background-color: $primary-btn-hover-bg;
+      box-shadow: $shadow-primary;
+    }
+
+    &:disabled {
+      background-color: color.adjust(theme.$primary-btn-bg, $lightness: 25%);
+      color: $white;
+      box-shadow: none;
+    }
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .spinner-light ::ng-deep circle {
+      stroke: $white !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Footer Section
+.registration-footer {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid $border-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: $sidebar-subtext;
+  font-size: 0.775rem;
+
+  .security-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    color: $primary-color;
+  }
+}
