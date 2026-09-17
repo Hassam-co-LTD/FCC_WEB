@@ -1620,4 +1620,15 @@ export class ApiService {
       `${this.adminBaseUrl}customer-registration/customer/${name}/${accountNumber}`,
     );
   }
+
+  // send an user prompt
+
+  sendMessage(payload: {
+    loginId: string;
+    message: string;
+  }): Observable<string> {
+    return this.http.post(`${this.adminBaseUrl}chatbot/chat`, payload, {
+      responseType: 'text',
+    });
+  }
 }
