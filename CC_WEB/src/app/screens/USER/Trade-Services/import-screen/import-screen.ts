@@ -9,13 +9,7 @@ import {
 } from '@angular/forms';
 
 import { ReactiveFormsModule } from '@angular/forms';
-
-import {
-  Router,
-  RouterOutlet,
-  ActivatedRoute
-} from '@angular/router';
-
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -45,7 +39,6 @@ import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
 
 import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 
 import { AuthService } from '../../../../core/services/auth.service';
@@ -224,24 +217,8 @@ export class ImportScreen implements OnInit {
     this.buildForm();
   }
 
-
-  // ============================================================
-  // ON INIT
-  // ============================================================
-
-  ngOnInit(): void {
-
-    // ----------------------------------------------------------
-    // LOAD PERMISSIONS
-    // ----------------------------------------------------------
-
+  ngOnInit() {
     this.loadPermissions();
-
-
-    // ----------------------------------------------------------
-    // SCROLL LOGIC
-    // ----------------------------------------------------------
-
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(

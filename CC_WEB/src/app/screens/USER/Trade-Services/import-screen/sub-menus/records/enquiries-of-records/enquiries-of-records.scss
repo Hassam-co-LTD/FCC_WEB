@@ -149,7 +149,6 @@
   }
 }
 
-
 /* ==============================
    Download Report Button
 ================================*/
@@ -273,10 +272,7 @@
   }
 
   &:hover {
-    background: color.scale(
-      theme.$primary,
-      $lightness: -8%
-    );
+    background: color.scale(theme.$primary, $lightness: -8%);
 
     transform: translateY(-1px);
 
@@ -408,10 +404,7 @@
 
     border-width: 2px;
 
-    border-top-color: color.scale(
-      theme.$primary,
-      $lightness: -12%
-    );
+    border-top-color: color.scale(theme.$primary, $lightness: -12%);
 
     animation-duration: 0.7s;
     animation-direction: reverse;

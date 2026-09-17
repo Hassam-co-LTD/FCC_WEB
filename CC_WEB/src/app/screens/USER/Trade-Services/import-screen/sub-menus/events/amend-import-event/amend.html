@@ -99,13 +99,14 @@
                 <!-- PENDING TAB + AMD: Update + Submit -->
                 <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
+                    <button  *ngIf="hasPermission('ILC_InquiryPendingUpdate')" mat-flat-button color="primary" (click)="update()">Update</button>
                     <button
                     *ngIf="hasPermission('ILC_AmendSubmit')" mat-flat-button color="accent" (click)="submitLc()">Submit</button>
                 </ng-container>
             
                 <!-- SUBMITTED: Approve + Reject -->
                 <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
+                    <button mat-stroked-button color="primary" (click)="back()">Back</button>
                     <button
                     *ngIf="hasPermission('ILC_AmendPendingReject')" mat-stroked-button color="primary" (click)="openReject()">Reject</button>
                     <button

@@ -58,7 +58,9 @@
     Load {{ activeTab | titlecase }} Records
   </button>
 
-  <span> Click to retrieve the latest {{ activeTab }} Export Collection records </span>
+  <span>
+    Click to retrieve the latest {{ activeTab }} Export Collection records
+  </span>
 </div>
 
 <!-- RESULTS -->
@@ -70,7 +72,7 @@
     <strong>{{ filteredTransactions.length }}</strong>
     export collection records
   </div>
-    <app-export-dropdown
+  <app-export-dropdown
     [disabled]="filteredTransactions.length === 0"
     (exportSelected)="onExportSelected($event)"
   >
@@ -78,15 +80,15 @@
 </div>
 
 <!-- TABLE -->
-<div class="table-wrapper"*ngIf="hasLoadedData || isLoading">
+<div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
   <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">
     <mat-icon>database</mat-icon>
 
     <h3>Records not loaded</h3>
 
     <p>
-      Click the button below to retrieve {{ activeTab | titlecase }} Export Collection
-      records.
+      Click the button below to retrieve {{ activeTab | titlecase }} Export
+      Collection records.
     </p>
 
     <button

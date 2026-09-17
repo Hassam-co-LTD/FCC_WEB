@@ -1,13 +1,19 @@
 
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
-import { ApiService } from "../../../../../../../core/services/api.service";
+import { ApiService } from '../../../../../../../core/services/api.service';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Attachments } from '../../../components/attachments/attachments';
@@ -97,8 +103,7 @@ export class AmendScreen implements OnInit {
   }
 
   ngOnInit() {
-
-        this.loadPermissions();
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
@@ -448,8 +453,19 @@ export class AmendScreen implements OnInit {
 
     this.mode = 'UPDATE';
 
-    if (this.eventRefNo) {
+    const normalizedSourceTab = (this.sourceTab ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
 
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      normalizedSourceTab === 'pending' ||
+      normalizedSourceTab === 'submitted' ||
+      normalizedSourceTab === 'approved' ||
+      normalizedSourceTab === 'rejected';
+
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
 
       this.api.getAmendmentByEventRefNo(this.eventRefNo).subscribe({
@@ -479,29 +495,24 @@ export class AmendScreen implements OnInit {
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxId(tnxId).subscribe({
-
-        next: event => {
-
+        next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.importForm.enable();
-          } else {
+          if (event.status === 'S') {
             this.screenMode = 'SUBMITTED';
             this.importForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.importForm.enable();
           }
         },
 
         error: () => {
-
           this.api.getTransactionByTnxId(tnxId).subscribe({
-
-            next: tx => {
-
+            next: (tx) => {
               this.currentTx = {
-                tnxId: tx.tnxId
+                tnxId: tx.tnxId,
               } as ImportLcTransaction;
 
               this.patchForm(tx);
@@ -524,21 +535,16 @@ export class AmendScreen implements OnInit {
       return;
     }
 
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
-
     if (isAmendmentTab) {
 
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxId(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getAmendmentByEventRefNo(this.eventRefNo)
+        : this.api.getAmendmentByTnxId(tnxId);
 
-        next: event => {
-
+      amendment$.subscribe({
+        next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
 
@@ -647,7 +653,6 @@ export class AmendScreen implements OnInit {
       },
     });
   }
-
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
     return this.importForm.get('generalDetails') as FormGroup;
@@ -876,7 +881,9 @@ export class AmendScreen implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([
+      '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+    ]);
   }
 
   updateAttachments(files: File[]) {
