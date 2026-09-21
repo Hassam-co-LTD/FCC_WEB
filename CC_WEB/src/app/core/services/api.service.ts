@@ -103,7 +103,9 @@ export class ApiService {
 
   private get headers(): HttpHeaders {
     return new HttpHeaders({
+      'Content-Type': 'application/json',
       companyid: this.companyId,
+      loginid: this.loginId,
     });
   }
 
@@ -167,6 +169,9 @@ export class ApiService {
       .put<ImportLcTransaction>(
         `${this.baseUrl}/importlc/${payload.tnxId}`,
         payload,
+        {
+          headers: this.headers,
+        },
       )
       .pipe(catchError(this.handleError));
   }
@@ -183,7 +188,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/submit/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -193,7 +198,7 @@ export class ApiService {
   getTransactionByTnxId(tnxId: string): Observable<ImportLcTransaction> {
     return this.http
       .get<ImportLcTransaction>(`${this.baseUrl}/importlc/${tnxId}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.headers,
       })
       .pipe(catchError(this.handleError));
   }
@@ -209,7 +214,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/approve/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -225,7 +230,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/rejectReason/${tnxId}`,
         { rejectionReason: reason },
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -237,7 +242,7 @@ export class ApiService {
         `${this.baseUrl}/importlc/updateRejected/${tnxId}`,
         payload,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -268,7 +273,7 @@ export class ApiService {
   ): Observable<ImportLcTransaction> {
     return this.http
       .put<ImportLcTransaction>(`${this.baseeventUrl}/amend/${tnxId}`, data, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.headers,
       })
       .pipe(catchError(this.handleError));
   }
@@ -444,7 +449,7 @@ export class ApiService {
         `${this.baseUrl}/shippingguarantee/submit/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -458,7 +463,7 @@ export class ApiService {
       .get<ShippingGuaranteeTransaction>(
         `${this.baseUrl}/shippingguarantee/${tnxId}`,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -475,7 +480,7 @@ export class ApiService {
         `${this.baseUrl}/shippingguarantee/approve/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -491,7 +496,7 @@ export class ApiService {
         `${this.baseUrl}/shippingguarantee/rejectReason/${tnxId}`,
         { rejectionReason: reason },
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -506,7 +511,7 @@ export class ApiService {
         `${this.baseUrl}/shippingguarantee/updateRejected/${tnxId}`,
         payload,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -533,7 +538,7 @@ export class ApiService {
       .put<ShippingGuaranteeTransaction>(
         `${this.baseSgEventUrl}/amend/${tnxId}`,
         data,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -669,7 +674,7 @@ export class ApiService {
         `${this.baseUrl}/exportcollection/submit/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -683,7 +688,7 @@ export class ApiService {
       .get<ExportCollectionTransaction>(
         `${this.baseUrl}/exportcollection/${tnxId}`,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -700,7 +705,7 @@ export class ApiService {
         `${this.baseUrl}/exportcollection/approve/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -716,7 +721,7 @@ export class ApiService {
         `${this.baseUrl}/exportcollection/rejectReason/${tnxId}`,
         { rejectionReason: reason },
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -731,7 +736,7 @@ export class ApiService {
         `${this.baseUrl}/exportcollection/updateRejected/${tnxId}`,
         payload,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -757,7 +762,7 @@ export class ApiService {
         `${this.baseECEventUrl}/amend/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -866,7 +871,7 @@ export class ApiService {
         `${this.baseUtgEventUrl}/amend/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));
@@ -995,7 +1000,7 @@ export class ApiService {
     console.log('Submitting transaction:', tnxId, data);
     return this.http
       .post<UndertakingGuarantee>(`${this.baseUrl}/utg/submit/${tnxId}`, data, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.headers,
       })
       .pipe(catchError(this.handleError));
   }
@@ -1003,7 +1008,7 @@ export class ApiService {
   getUndertakingByTnxId(tnxId: string): Observable<UndertakingGuarantee> {
     return this.http
       .get<UndertakingGuarantee>(`${this.baseUrl}/utg/${tnxId}`, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.headers,
       })
       .pipe(catchError(this.handleError));
   }
@@ -1017,7 +1022,7 @@ export class ApiService {
       .post<UndertakingGuarantee>(
         `${this.baseUrl}/utg/approve/${tnxId}`,
         data,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -1030,7 +1035,7 @@ export class ApiService {
       .post<UndertakingGuarantee>(
         `${this.baseUrl}/utg/rejectReason/${tnxId}`,
         { rejectionReason: reason },
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -1040,7 +1045,7 @@ export class ApiService {
       .put<UndertakingGuarantee>(
         `${this.baseUrl}/utg/updateRejected/${tnxId}`,
         payload,
-        { headers: { 'Content-Type': 'application/json' } },
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -1071,7 +1076,7 @@ export class ApiService {
         `${this.baseUtgEventUrl}/amend/${tnxId}`,
         data,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers: this.headers,
         },
       )
       .pipe(catchError(this.handleError));

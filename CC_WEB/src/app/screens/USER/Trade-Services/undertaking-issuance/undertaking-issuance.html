@@ -53,14 +53,28 @@
           <button mat-stroked-button color="primary" (click)="back()">
             Back
           </button>
-          <button (click)="saveForm()">Save</button>
+          <button
+            *ngIf="hasPermission('UI_CreateSave')"
+            mat-flat-button
+            color="accent"
+            (click)="saveForm()"
+          >
+            Save
+          </button>
         </ng-container>
 
         <!-- EDIT -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
-          <button (click)="updateForm()">Update</button>
           <button
-            *ngIf="hasPermission('UTG_InquirySubmit')"
+            *ngIf="hasPermission('UI_InquiryPendingUpdate')"
+            mat-stroked-button
+            color="primary"
+            (click)="updateForm()"
+          >
+            Update
+          </button>
+          <button
+            *ngIf="hasPermission('UI_InquirySubmit')"
             mat-flat-button
             color="accent"
             (click)="submitForm()"
@@ -72,7 +86,7 @@
         <!-- APPROVAL -->
         <ng-container *ngIf="screenMode === 'SUBMITTED'">
           <button
-            *ngIf="hasPermission('UTG_InquiryReject')"
+            *ngIf="hasPermission('UI_InquiryReject')"
             mat-stroked-button
             color="primary"
             (click)="openReject()"
@@ -81,7 +95,7 @@
           </button>
 
           <button
-            *ngIf="hasPermission('UTG_InquiryApprove')"
+            *ngIf="hasPermission('UI_InquiryApprove')"
             mat-flat-button
             color="accent"
             (click)="approve()"
@@ -104,7 +118,7 @@
             Back
           </button>
           <button
-            *ngIf="hasPermission('UTG_InquiryRejectUpdate')"
+            *ngIf="hasPermission('UI_InquiryRejectUpdate')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()"

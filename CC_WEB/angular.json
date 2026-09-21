@@ -67,7 +67,7 @@
           "options": {
             "host": "localhost",
             "allowedHosts": [
-              
+              "muhammadtalha",
               "localhost"
             ]
           },

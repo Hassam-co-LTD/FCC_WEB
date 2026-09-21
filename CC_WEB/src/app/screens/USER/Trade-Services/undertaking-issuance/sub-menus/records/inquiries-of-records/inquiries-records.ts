@@ -6,6 +6,7 @@ import {
 } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
+
 import { Router, ActivatedRoute } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -41,6 +42,7 @@ export class inquiriesRecords implements OnInit {
   showAdvanced = false;
   searchQuery = '';
   currencyFilter = '';
+
   activeTab = 'pending';
 
   // Tabs Configuration
@@ -205,8 +207,11 @@ export class inquiriesRecords implements OnInit {
       const matchesCurrency =
         !currency || tx.currency?.toLowerCase() === currency;
 
-      return matchesSearch && matchesCurrency;
-    });
+        return (
+          matchesSearch &&
+          matchesCurrency
+        );
+      });
 
     this.applySorting(filtered);
   }
@@ -229,19 +234,36 @@ export class inquiriesRecords implements OnInit {
   }
 
   clearSearch(): void {
+
     this.searchQuery = '';
+
     this.applyFilters();
+
   }
 
   sortBy(column: typeof this.sortColumn): void {
     if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
+
       this.sortDirection = 'asc';
+
     }
+
     this.applyFilters();
+
   }
+
+  // =========================================================
+  // APPLY SORTING
+  // =========================================================
 
   private applySorting(
     source: UndertakingGuarantee[] = this.allTransactions,
@@ -300,6 +322,7 @@ export class inquiriesRecords implements OnInit {
       this.filteredTransactions.length / this.itemsPerPage,
     );
     return count < 1 ? 1 : count;
+
   }
 
   get pagedTransactions(): UndertakingGuarantee[] {
@@ -308,16 +331,25 @@ export class inquiriesRecords implements OnInit {
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+
+    if (
+      this.currentPage <
+      this.totalPages
+    ) {
+      this.currentPage++;
+    }
   }
 
   viewTransaction(tx: UndertakingGuarantee): void {
     if (!this.hasPermission('UI_InquiryPreview')) {
-      console.warn('User does not have UTG_Inquiry permission');
+      console.warn('User does not have UI_Inquiry permission');
 
       return;
     }

@@ -4,9 +4,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
-import { ApiService } from '../../../../../../../core/services/api.service';
-import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import {
   ExportDropdown,
   ExportFormat,
@@ -14,7 +11,10 @@ import {
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-
+import { ApiService } from '../../../../../../../core/services/api.service';
+import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+ 
 @Component({
   selector: 'app-approved-inquiry-records',
   standalone: true,
@@ -25,7 +25,7 @@ import * as XLSX from 'xlsx';
 export class ApprovedInquiryRecords implements OnInit {
   isLoading = false;
   hasLoadedData = false;
-
+ 
   currentPage = 1;
   itemsPerPage = 10;
   allTransactions: ImportLcTransaction[] = [];
@@ -42,33 +42,33 @@ export class ApprovedInquiryRecords implements OnInit {
     { key: 'rejected', label: 'Rejected' },
     // { key: 'response awaited', label: 'Response Awaited'}
   ];
-
+ 
   permissionNames: string[] = [];
-
+ 
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p.trim().toLowerCase() === permission.toLowerCase(),
     );
   }
-
+ 
   sortColumn: keyof ImportLcTransaction = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
-
+ 
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
-
+ 
   constructor(
     private api: ApiService,
     private transactionService: ImportlcFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
   ) {}
-
+ 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-
+ 
     const storedPermissions = sessionStorage.getItem('permissionNames');
-
+ 
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
@@ -76,37 +76,37 @@ export class ApprovedInquiryRecords implements OnInit {
         this.permissionNames = [];
       }
     }
-
+ 
     this.route.queryParamMap.subscribe((params) => {
       const tab = params.get('tab');
       if (tab && this.tabs.some((t) => t.key === tab)) {
         this.activeTab = tab;
       }
-
+ 
       this.hasLoadedData = false;
       this.allTransactions = [];
       this.filteredTransactions = [];
       // this.currentPage = 1;
       // this.loadApprovedTransactions();
     });
-
+ 
     // this.transactionService.transactionsStream$.subscribe((txList) => {
     //   this.allTransactions = txList;
     //   this.applyFilters();
     // });
   }
-
+ 
   loadApprovedTransactions(): void {
     if (this.isLoading) {
       return;
     }
-
+ 
     this.isLoading = true;
     this.hasLoadedData = false;
-
+ 
     this.allTransactions = [];
     this.filteredTransactions = [];
-
+ 
     if (this.activeTab === 'live') {
       this.api
         .getApprovedMasterLcRecords()
@@ -123,12 +123,12 @@ export class ApprovedInquiryRecords implements OnInit {
           },
           error: (error) => {
             console.error('Failed to load transactions:', error);
-
+ 
             this.allTransactions = [];
             this.filteredTransactions = [];
           },
         });
-
+ 
       return;
     }
     const backend = this.mapTabToBackendStatus(this.activeTab);
@@ -151,18 +151,18 @@ export class ApprovedInquiryRecords implements OnInit {
             `Failed to load ${this.activeTab} transactions:`,
             error,
           );
-
+ 
           this.allTransactions = [];
           this.filteredTransactions = [];
         },
       });
   }
-
+ 
   get pagedTransactions(): ImportLcTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
-
+ 
   get totalPages(): number {
     const count = Math.ceil(
       this.filteredTransactions.length / this.itemsPerPage,
@@ -172,7 +172,7 @@ export class ApprovedInquiryRecords implements OnInit {
   applyFilters(): void {
     const query = this.searchQuery.toLowerCase().trim();
     const currency = this.currencyFilter.toLowerCase().trim();
-
+ 
     const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
         !query ||
@@ -180,39 +180,39 @@ export class ApprovedInquiryRecords implements OnInit {
         tx.beneficiaryName?.toLowerCase().includes(query) ||
         tx.issuingBankName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
-
+ 
       const matchesCurrency =
         !currency || tx.currency?.toLowerCase() === currency;
-
+ 
       return matchesSearch && matchesCurrency;
     });
-
+ 
     this.applySorting(filtered);
   }
-
+ 
   private applySorting(
     source: ImportLcTransaction[] = this.allTransactions,
   ): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
       let bVal = this.resolveColumn(b, this.sortColumn);
-
+ 
       // Handle null or undefined
       if (aVal == null) return 1;
       if (bVal == null) return -1;
-
+ 
       // Handle Dates
       if (aVal instanceof Date && bVal instanceof Date) {
         return this.sortDirection === 'asc'
           ? aVal.getTime() - bVal.getTime()
           : bVal.getTime() - aVal.getTime();
       }
-
+ 
       // Handle numbers
       if (typeof aVal === 'number' && typeof bVal === 'number') {
         return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
       }
-
+ 
       // Everything else: convert to string and use localeCompare
       const aStr = String(aVal);
       const bStr = String(bVal);
@@ -220,11 +220,11 @@ export class ApprovedInquiryRecords implements OnInit {
         ? aStr.localeCompare(bStr)
         : bStr.localeCompare(aStr);
     });
-
+ 
     this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
-
+ 
   private resolveColumn(tx: ImportLcTransaction, column: string): any {
     switch (column) {
       case 'tnxId':
@@ -249,18 +249,18 @@ export class ApprovedInquiryRecords implements OnInit {
     if (this.activeTab === tab) {
       return;
     }
-
+ 
     this.activeTab = tab;
     this.currentPage = 1;
-
+ 
     // Clear existing data.
     // User must explicitly click Load Records.
     this.allTransactions = [];
     this.filteredTransactions = [];
-
+ 
     this.hasLoadedData = false;
   }
-
+ 
   // simple sorting helper
   toggleSort(column: keyof ImportLcTransaction): void {
     if (this.sortColumn === column) {
@@ -271,7 +271,7 @@ export class ApprovedInquiryRecords implements OnInit {
     }
     this.applySort();
   }
-
+ 
   private applySort(): void {
     const dir = this.sortDirection === 'asc' ? 1 : -1;
     this.filteredTransactions.sort((a, b) => {
@@ -282,17 +282,17 @@ export class ApprovedInquiryRecords implements OnInit {
       return 0;
     });
   }
-
+ 
   trackByTnxId(_: number, tx: ImportLcTransaction): string {
     return tx.tnxId!;
   }
-
+ 
   viewTransaction(tx: ImportLcTransaction): void {
     if (!this.hasPermission('ILC_AmendPreview')) {
       return;
     }
     const readOnly = ['A', 'R'].includes(tx.status!);
-
+ 
     this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
         this.transactionService.setCurrentTransaction(freshTx, readOnly);
@@ -308,12 +308,12 @@ export class ApprovedInquiryRecords implements OnInit {
       },
     });
   }
-
+ 
   openApprovedAmendTransaction(tx: ImportLcTransaction): void {
     if (!this.hasPermission('ILC_Amend')) {
       return;
     }
-
+ 
     this.router.navigate(
       ['/dashboard/Trade-Services/import-screen/amend', tx.tnxId],
       {
@@ -331,11 +331,11 @@ export class ApprovedInquiryRecords implements OnInit {
   previousPage(): void {
     if (this.currentPage > 1) this.currentPage--;
   }
-
+ 
   nextPage(): void {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
-
+ 
   private mapTabToBackendStatus(tab: string): string {
     switch (tab) {
       case 'pending':
@@ -350,12 +350,12 @@ export class ApprovedInquiryRecords implements OnInit {
         return 'i';
     }
   }
-
+ 
   async downloadReport(): Promise<void> {
     if (!this.filteredTransactions.length) {
       return;
     }
-
+ 
     // =========================
     // Colors
     // =========================
@@ -366,7 +366,7 @@ export class ApprovedInquiryRecords implements OnInit {
     const borderColor: [number, number, number] = [190, 190, 190];
     const alternateRowColor: [number, number, number] = [245, 248, 252];
     const white: [number, number, number] = [255, 255, 255];
-
+ 
     // =========================
     // PDF
     // =========================
@@ -375,57 +375,57 @@ export class ApprovedInquiryRecords implements OnInit {
       unit: 'mm',
       format: 'a4',
     });
-
+ 
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-
+ 
     const reportTitle = 'Import LC Amended Records Report';
     const statusTitle = this.activeTab.toUpperCase();
-
+ 
     // =========================
     // Status color
     // =========================
     let statusColor: [number, number, number];
-
+ 
     switch (this.activeTab.toLowerCase()) {
       case 'live':
         statusColor = [40, 167, 69];
         break;
-
+ 
       case 'pending':
         statusColor = [255, 193, 7];
         break;
-
+ 
       case 'submitted':
         statusColor = [0, 123, 255];
         break;
-
+ 
       case 'approved':
         statusColor = [40, 167, 69];
         break;
-
+ 
       case 'rejected':
         statusColor = [220, 53, 69];
         break;
-
+ 
       default:
         statusColor = [108, 117, 125];
     }
-
+ 
     // =========================
     // Top Header
     // =========================
     doc.setFillColor(...primaryColor);
-
+ 
     doc.rect(0, 0, pageWidth, 20, 'F');
-
+ 
     try {
       const logo = await this.loadImageAsDataURL('/branding/infotech-logo.jpg');
-
+ 
       const logoWidth = 28;
-
+ 
       const logoHeight = (logo.height / logo.width) * logoWidth;
-
+ 
       doc.addImage(
         logo.dataUrl,
         'PNG',
@@ -437,16 +437,16 @@ export class ApprovedInquiryRecords implements OnInit {
     } catch (error) {
       console.error('Unable to load report logo:', error);
     }
-
+ 
     // Report title
     doc.setTextColor(...white);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-
+ 
     doc.text(reportTitle, pageWidth / 2, 13, {
       align: 'center',
     });
-
+ 
     // =========================
     // Status Badge
     // =========================
@@ -454,91 +454,91 @@ export class ApprovedInquiryRecords implements OnInit {
     const badgeHeight = 8;
     const badgeX = pageWidth - badgeWidth - 14;
     const badgeY = 6;
-
+ 
     doc.setFillColor(...statusColor);
-
+ 
     doc.roundedRect(badgeX, badgeY, badgeWidth, badgeHeight, 2, 2, 'F');
-
+ 
     doc.setTextColor(...white);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
-
+ 
     doc.text(statusTitle, badgeX + badgeWidth / 2, badgeY + 5.5, {
       align: 'center',
     });
-
+ 
     // =========================
     // Report Information Box
     // =========================
     const infoBoxY = 25;
     const infoBoxHeight =
       this.searchQuery?.trim() || this.currencyFilter?.trim() ? 27 : 19;
-
+ 
     doc.setFillColor(...secondaryColor);
-
+ 
     doc.roundedRect(10, infoBoxY, pageWidth - 20, infoBoxHeight, 3, 3, 'F');
-
+ 
     // Labels
     doc.setTextColor(...mutedTextColor);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-
+ 
     doc.text('Generated', 15, infoBoxY + 7);
-
+ 
     doc.text('Total Records', 95, infoBoxY + 7);
-
+ 
     doc.text('Status', 180, infoBoxY + 7);
-
+ 
     // Values
     doc.setTextColor(...textColor);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-
+ 
     doc.text(this.formatReportDate(new Date()), 15, infoBoxY + 13);
-
+ 
     doc.text(String(this.filteredTransactions.length), 95, infoBoxY + 13);
-
+ 
     doc.text(statusTitle, 180, infoBoxY + 13);
-
+ 
     // =========================
     // Filters
     // =========================
     let filterText = '';
-
+ 
     if (this.searchQuery?.trim()) {
       filterText += `Search: ${this.searchQuery.trim()}`;
     }
-
+ 
     if (this.currencyFilter?.trim()) {
       if (filterText) {
         filterText += '  |  ';
       }
-
+ 
       filterText += `Currency: ${this.currencyFilter.trim()}`;
     }
-
+ 
     if (filterText) {
       doc.setTextColor(...mutedTextColor);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
-
+ 
       doc.text(filterText, 15, infoBoxY + 22);
     }
-
+ 
     // =========================
     // Table Data
     // =========================
     const headers = this.getReportHeaders();
-
+ 
     const rows = this.filteredTransactions.map((tx) => this.getReportRow(tx));
-
+ 
     // =========================
     // Column Styles
     // =========================
     const columnStyles: {
       [key: number]: any;
     } = {};
-
+ 
     if (this.activeTab === 'live') {
       Object.assign(columnStyles, {
         0: { cellWidth: 30 }, // TNX ID
@@ -567,82 +567,82 @@ export class ApprovedInquiryRecords implements OnInit {
         11: { cellWidth: 30, halign: 'left' }, // Beneficiary
       });
     }
-
+ 
     // =========================
     // Table
     // =========================
     autoTable(doc, {
       head: [headers],
       body: rows,
-
+ 
       startY: infoBoxY + infoBoxHeight + 7,
-
+ 
       theme: 'grid',
-
+ 
       styles: {
         font: 'helvetica',
         fontSize: 7,
         cellPadding: 2.5,
         valign: 'middle',
         halign: 'center',
-
+ 
         textColor: textColor,
         lineColor: borderColor,
         lineWidth: 0.2,
       },
-
+ 
       headStyles: {
         fillColor: primaryColor,
         textColor: white,
-
+ 
         fontSize: 7,
         fontStyle: 'bold',
-
+ 
         halign: 'center',
         valign: 'middle',
-
+ 
         cellPadding: 3,
-
+ 
         lineColor: primaryColor,
         lineWidth: 0.3,
       },
-
+ 
       bodyStyles: {
         fontSize: 7,
         textColor: textColor,
       },
-
+ 
       alternateRowStyles: {
         fillColor: alternateRowColor,
       },
-
+ 
       columnStyles,
-
+ 
       margin: {
         top: 10,
         right: 10,
         bottom: 18,
         left: 10,
       },
-
+ 
       // Prevent awkward row splitting
       rowPageBreak: 'avoid',
-
+ 
       didDrawPage: () => {
         // =========================
         // Footer
         // =========================
         doc.setDrawColor(...borderColor);
         doc.setLineWidth(0.3);
-
+ 
         doc.line(10, pageHeight - 13, pageWidth - 10, pageHeight - 13);
-
+ 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8);
         doc.setTextColor(...mutedTextColor);
-
+ 
         doc.text('Import LC Records', 10, pageHeight - 7);
-
+ 
         doc.text(
           `Generated: ${this.formatReportDate(new Date())}`,
           pageWidth / 2,
@@ -653,19 +653,19 @@ export class ApprovedInquiryRecords implements OnInit {
         );
       },
     });
-
+ 
     // =========================
     // Page Numbers
     // =========================
     const totalPages = doc.getNumberOfPages();
-
+ 
     for (let page = 1; page <= totalPages; page++) {
       doc.setPage(page);
-
+ 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(...mutedTextColor);
-
+ 
       doc.text(
         `Page ${page} of ${totalPages}`,
         pageWidth - 10,
@@ -675,15 +675,15 @@ export class ApprovedInquiryRecords implements OnInit {
         },
       );
     }
-
+ 
     // =========================
     // File Name
     // =========================
     const fileName = `Import_LC_${this.activeTab}_Report_${this.getCurrentDate()}.pdf`;
-
+ 
     doc.save(fileName);
   }
-
+ 
   private getReportHeaders(): string[] {
     if (this.activeTab === 'live') {
       return [
@@ -698,7 +698,7 @@ export class ApprovedInquiryRecords implements OnInit {
         'Beneficiary',
       ];
     }
-
+ 
     return [
       'TNX ID',
       'Event',
@@ -714,7 +714,7 @@ export class ApprovedInquiryRecords implements OnInit {
       'Beneficiary',
     ];
   }
-
+ 
   private loadImageAsDataURL(imagePath: string): Promise<{
     dataUrl: string;
     width: number;
@@ -722,37 +722,37 @@ export class ApprovedInquiryRecords implements OnInit {
   }> {
     return new Promise((resolve, reject) => {
       const image = new Image();
-
+ 
       image.onload = () => {
         const canvas = document.createElement('canvas');
-
+ 
         canvas.width = image.width;
         canvas.height = image.height;
-
+ 
         const context = canvas.getContext('2d');
-
+ 
         if (!context) {
           reject(new Error('Could not create canvas context'));
           return;
         }
-
+ 
         context.drawImage(image, 0, 0);
-
+ 
         resolve({
           dataUrl: canvas.toDataURL('image/png'),
           width: image.width,
           height: image.height,
         });
       };
-
+ 
       image.onerror = () => {
         reject(new Error(`Could not load image: ${imagePath}`));
       };
-
+ 
       image.src = imagePath;
     });
   }
-
+ 
   private getReportRow(tx: ImportLcTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
@@ -767,7 +767,7 @@ export class ApprovedInquiryRecords implements OnInit {
         tx.beneficiaryName ?? '',
       ];
     }
-
+ 
     return [
       tx.tnxId ?? '',
       tx.eventType ?? '',
@@ -783,50 +783,50 @@ export class ApprovedInquiryRecords implements OnInit {
       tx.beneficiaryName ?? '',
     ];
   }
-
+ 
   private formatReportAmount(amount: any): string {
     if (amount === null || amount === undefined || amount === '') {
       return '';
     }
-
+ 
     const numericAmount = Number(amount);
-
+ 
     if (isNaN(numericAmount)) {
       return String(amount);
     }
-
+ 
     return numericAmount.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
   }
-
+ 
   private formatReportDate(date: any): string {
     if (!date) {
       return '';
     }
-
+ 
     const parsedDate = new Date(date);
-
+ 
     if (isNaN(parsedDate.getTime())) {
       return String(date);
     }
-
+ 
     const day = String(parsedDate.getDate()).padStart(2, '0');
-
+ 
     const month = parsedDate.toLocaleString('en-US', {
       month: 'short',
     });
-
+ 
     const year = parsedDate.getFullYear();
-
+ 
     return `${day}-${month}-${year}`;
   }
-
+ 
   private getCurrentDate(): string {
     return new Date().toISOString().split('T')[0];
   }
-
+ 
   private getExcelRow(tx: ImportLcTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
@@ -842,7 +842,7 @@ export class ApprovedInquiryRecords implements OnInit {
         tx.beneficiaryName ?? '',
       ];
     }
-
+ 
     return [
       tx.tnxId ?? '',
       tx.eventType ?? '',
@@ -858,38 +858,39 @@ export class ApprovedInquiryRecords implements OnInit {
       tx.beneficiaryName ?? '',
     ];
   }
-
+ 
   private downloadExcel(): void {
     if (!this.filteredTransactions.length) {
       return;
     }
-
+ 
     const headers = this.getReportHeaders();
-
+ 
     const rows = this.filteredTransactions.map((tx) => this.getExcelRow(tx));
-
+ 
     const worksheetData = [headers, ...rows];
-
+ 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-
+ 
     const workbook = XLSX.utils.book_new();
-
+ 
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Import LC Records');
-
+ 
     const fileName = `Import_LC_${this.activeTab}_Report_${this.getCurrentDate()}.xlsx`;
-
+ 
     XLSX.writeFile(workbook, fileName);
   }
-
+ 
   onExportSelected(format: ExportFormat): void {
     switch (format) {
       case 'excel':
         this.downloadExcel();
         break;
-
+ 
       case 'pdf':
         this.downloadReport();
         break;
     }
   }
 }
+ 

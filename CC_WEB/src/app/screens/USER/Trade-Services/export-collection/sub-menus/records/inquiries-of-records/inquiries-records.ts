@@ -255,6 +255,7 @@ export class InquiriesRecords implements OnInit {
     this.currentPage = 1;
   }
 
+
   private resolveColumn(tx: ExportCollectionTransaction, column: string): any {
     switch (column) {
       case 'tnxId':

@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExportCollectionComponent } from './export-collection';
+import { ExportCollection} from './export-collection';
 
 describe('ExportCollection', () => {
-  let component: ExportCollectionComponent;
-  let fixture: ComponentFixture<ExportCollectionComponent>;
+  let component: ExportCollection;
+  let fixture: ComponentFixture<ExportCollection>;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExportCollectionComponent]
+      imports: [ExportCollection]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ExportCollectionComponent);
+    fixture = TestBed.createComponent(ExportCollection);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

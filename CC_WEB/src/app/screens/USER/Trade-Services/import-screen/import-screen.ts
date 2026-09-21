@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -27,7 +27,6 @@ import { Sidebar } from '../../../../core/sidebar/sidebar';
 import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
 import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -100,6 +99,7 @@ export class ImportScreen implements OnInit {
   }
 
   ngOnInit() {
+    this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
@@ -351,6 +351,7 @@ export class ImportScreen implements OnInit {
     // Patch dynamic fields if definitions are already loaded
     this.patchDynamicValues();
   }
+
   // scrollToSection(i: number) {
   //   this.currentStep = i;
   //   document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -388,17 +389,17 @@ export class ImportScreen implements OnInit {
   }
 
   saveForm(): void {
-    // if (!this.hasPermission('ILC_CreateSave')) {
-    //   this.snackBar.open(
-    //     'You do not have permission to create an Import LC.',
-    //     'Close',
-    //     {
-    //       duration: 3000,
-    //     },
-    //   );
+    if (!this.hasPermission('ILC_CreateSave')) {
+      this.snackBar.open(
+        'You do not have permission to create an Import LC.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-    //   return;
-    // }
+      return;
+    }
 
     if (this.importForm.invalid) {
       this.importForm.markAllAsTouched();

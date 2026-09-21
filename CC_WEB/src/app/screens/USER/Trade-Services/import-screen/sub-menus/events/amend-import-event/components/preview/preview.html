@@ -44,6 +44,7 @@
         <h3 class="section-title">General Details</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Product Type</div>
             <div class="preview-value">
@@ -106,14 +107,15 @@
               {{ importForm.value.featureTransferable ? 'Yes' : 'No' }}
             </div>
           </div>
+
         </div>
       </mat-card>
 
-      <!-- APPLICANT / BENEFICIARY -->
       <mat-card class="preview-card">
         <h3 class="section-title">Applicant Details</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Applicant Name</div>
             <div class="preview-value">
@@ -155,13 +157,12 @@
               {{ importForm.value.applicantCountry || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 2 → BANK + AMOUNT         -->
-    <!-- ============================== -->
+    <!-- BENEFICIARY + BANK -->
     <div class="preview-row">
       <!-- BENEFICIARY DETAILS -->
       <mat-card class="preview-card">
@@ -217,6 +218,7 @@
         <h3 class="section-title">Bank Details</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Issuing Bank Name</div>
             <div class="preview-value">
@@ -244,6 +246,7 @@
               {{ importForm.value.adviseThroughBankName || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
@@ -257,6 +260,7 @@
         <h3 class="section-title">Amount & Charges</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Currency</div>
             <div class="preview-value">
@@ -334,6 +338,7 @@
               <ng-template #noAdditionalAmount>-</ng-template>
             </div>
           </div>
+
         </div>
       </mat-card>
 
@@ -344,6 +349,7 @@
         <h3 class="section-title">Payment Details</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Credit Available With</div>
             <div class="preview-value">
@@ -371,6 +377,7 @@
               {{ importForm.value.paymentDraftAt || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
@@ -384,6 +391,21 @@
         <h3 class="section-title">Shipment Details</h3>
 
         <div class="preview-grid">
+
+          <div class="preview-item">
+            <div class="preview-label">Shipment From</div>
+            <div class="preview-value">
+              {{ importForm.value.shipmentFrom || '-' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Shipment To</div>
+            <div class="preview-value">
+              {{ importForm.value.shipmentTo || '-' }}
+            </div>
+          </div>
+
           <div class="preview-item">
             <div class="preview-label">Shipment From</div>
             <div class="preview-value">
@@ -439,6 +461,7 @@
               {{ importForm.value.transhipment || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
 
@@ -449,6 +472,7 @@
         <h3 class="section-title">Narrative</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item full-width">
             <div class="preview-label">Description of Goods</div>
             <div class="preview-value">
@@ -476,6 +500,7 @@
               {{ importForm.value.otherDetails || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
@@ -488,6 +513,7 @@
         <h3 class="section-title">Instructions to Bank</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Principal Account</div>
             <div class="preview-value">
@@ -508,18 +534,22 @@
               {{ importForm.value.otherInstructions || '-' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 5 → ATTACHMENTS           -->
-    <!-- ============================== -->
+    <!-- ATTACHMENTS -->
     <mat-card class="preview-card full-width">
+
       <h3 class="section-title">Attachments</h3>
 
-      <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
+      <ng-container
+        *ngIf="attachmentsArray.length > 0; else noAttachments"
+      >
+
         <div class="preview-attachments-container">
+
           <div class="attachment-grid header">
             <div>Type</div>
             <div>Title</div>
@@ -538,26 +568,50 @@
               >
               <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
             </div>
+
             <div>{{ f.value.title }}</div>
+
             <div>{{ f.value.fileName }}</div>
-            <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+
             <div>
-              <mat-icon (click)="downloadFile(i)">download</mat-icon>
+              {{ (f.value.size / 1024) | number:'1.0-2' }} KB
             </div>
+
+            <div>
+
+              <mat-icon
+                *ngIf="
+                  hasPermission('ILC_AmendPreview')
+                "
+                (click)="downloadFile(i)"
+                class="action-icon"
+              >
+                download
+              </mat-icon>
+
+            </div>
+
           </div>
+
         </div>
+
       </ng-container>
 
       <ng-template #noAttachments>
         <p>No attachments uploaded.</p>
       </ng-template>
+
     </mat-card>
   </div>
 </div>
 
 <div class="actions">
   <!-- ALWAYS -->
-  <button mat-stroked-button (click)="back()">Back</button>
+  <button
+    mat-stroked-button
+    (click)="back()">
+    Back
+  </button>
 
   <!-- ONLY FOR SUBMITTED / PENDING -->
   <ng-container *ngIf="viewMode === 'submit'">
@@ -565,17 +619,19 @@
       mat-flat-button
       color="primary"
       (click)="submitLc()"
-      *ngIf="currentTx?.status === 'I' &&                hasPermission('ILC_AmendPreview')" 
-      
+      *ngIf="currentTx?.status === 'I' &&
+      hasPermission('ILC_AmendPreview')"
     >
       Submit
     </button>
+  </ng-container>
 
     <button
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-      *ngIf="currentTx?.status === 'S' &&        hasPermission('ILC_AmendReject')"
+      *ngIf="currentTx?.status === 'S' &&        
+      hasPermission('ILC_AmendPendingReject')"
     >
       Reject
     </button>
@@ -588,5 +644,4 @@
     >
       Approve
     </button>
-  </ng-container>
 </div>

@@ -29,6 +29,7 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
 })
 export class Preview {
   @Input() transaction!: ImportLcTransaction;
+
   viewMode: 'submit' | 'readonly' = 'submit';
   importForm!: FormGroup;
 
@@ -66,19 +67,8 @@ export class Preview {
       this.router.navigate(['/dashboard/Trade-Services/import-screen/amend']);
       return;
     }
+
     this.viewMode = this.transactionService.getViewMode();
-    // ✅ Always fetch latest approved event metadata to show correct
-    // eventType and eventRefNo — works for both CRE and AMD
-    // if (this.currentTx.tnxId && !this.currentTx.eventRefNo) {
-    //   this.api.getLatestApprovedEvent(this.currentTx.tnxId).subscribe({
-    //     next: (event) => {
-    //       this.currentTx!.eventType = event.eventType;
-    //       this.currentTx!.eventRefNo = event.eventRefNo;
-    //       this.currentTx!.eventSequence = event.eventSequence;
-    //     },
-    //     error: () => { } // badge shows '—' if nothing found yet
-    //   });
-    // }
     this.initForm();
   }
 
@@ -158,7 +148,6 @@ export class Preview {
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
 
-    // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
       this.importForm.disable({ emitEvent: false });
     }
@@ -181,8 +170,11 @@ export class Preview {
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
+
     if (!tnxId) {
-      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      this.snackBar.open('Transaction ID missing', 'Close', {
+        duration: 3000
+      });
       return;
     }
 
@@ -209,7 +201,10 @@ export class Preview {
 
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveAmendment(this.currentTx.tnxId, this.currentTx).subscribe({
+    this.api.approveAmendment(
+      this.currentTx.tnxId,
+      this.currentTx
+    ).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
         this.router.navigate(
@@ -264,6 +259,7 @@ export class Preview {
     }
 
     const data = this.attachmentsArray.at(index)?.value;
+
     if (!data) return;
 
     const { file, fileName } = data;
@@ -275,15 +271,25 @@ export class Preview {
       return;
     }
 
-    if (typeof file === 'string' && file.startsWith('data:')) {
+    if (
+      typeof file === 'string' &&
+      file.startsWith('data:')
+    ) {
       const arr = file.split(',');
-      const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
+      const mime =
+        arr[0].match(/:(.*?);/)?.[1] ?? '';
+
       const bstr = atob(arr[1]);
       const u8arr = new Uint8Array(bstr.length);
+
       for (let n = 0; n < bstr.length; n++) {
         u8arr[n] = bstr.charCodeAt(n);
       }
-      const blob = new Blob([u8arr], { type: mime });
+
+      const blob = new Blob([u8arr], {
+        type: mime
+      });
+
       const url = URL.createObjectURL(blob);
       this.triggerDownload(url, fileName);
       URL.revokeObjectURL(url);
@@ -293,13 +299,20 @@ export class Preview {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(url: string, fileName: string) {
+  private triggerDownload(
+    url: string,
+    fileName: string
+  ): void {
     const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
     a.click();
   }
-  trackByIndex(index: number, item: any): any {
+
+  trackByIndex(
+    index: number,
+    item: any
+  ): any {
     return item?.id || index;
   }
 }

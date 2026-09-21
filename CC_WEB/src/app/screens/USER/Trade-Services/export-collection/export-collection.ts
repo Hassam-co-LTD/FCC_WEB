@@ -189,9 +189,9 @@ export class ExportCollection implements OnInit {
 
     const navState = history.state;
 
-    if (navState?.mode) {
-      this.screenMode = navState.mode;
-    }
+  if (navState?.mode) {
+    this.screenMode = navState.mode;
+  }
 
     this.companyId = this.authservice.getCompanyId() || '';
 
@@ -258,6 +258,7 @@ export class ExportCollection implements OnInit {
   // FORM CREATION
   // -----------------------------
   private buildForm(): void {
+    // Always initialize the form to avoid null bindings
     this.ExportCollectionForm = this.fb.group({
       generalDetails: this.fb.group({
         collectionType: [''],

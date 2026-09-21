@@ -71,14 +71,23 @@ export class inquiriesRecords implements OnInit {
     | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
+  // =========================================================
+  // PLATFORM
+  // =========================================================
+
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly isBrowser =
+    isPlatformBrowser(this.platformId);
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
     private api: ApiService,
     private transactionService: ShippingGuaranteeFormTransactionService,
     private router: Router,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {}
 
   // CHECK PERMISSION
@@ -211,8 +220,16 @@ export class inquiriesRecords implements OnInit {
   // --- FILTERING ---
 
   applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
+
+    const query =
+      this.searchQuery
+        .toLowerCase()
+        .trim();
+
+    const currency =
+      this.currencyFilter
+        .toLowerCase()
+        .trim();
 
     const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
@@ -221,29 +238,51 @@ export class inquiriesRecords implements OnInit {
         tx.beneficiaryName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
 
-      const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+        const matchesCurrency =
+          !currency ||
+          tx.currency
+            ?.toLowerCase() === currency;
 
-      return matchesSearch && matchesCurrency;
-    });
+        return (
+          matchesSearch &&
+          matchesCurrency
+        );
+      });
 
     this.applySorting(filtered);
   }
 
   clearSearch(): void {
+
     this.searchQuery = '';
+
     this.applyFilters();
   }
 
-  // --- SORTING ---
+  // =========================================================
+  // SORTING
+  // =========================================================
 
-  sortBy(column: typeof this.sortColumn): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  sortBy(
+    column: typeof this.sortColumn
+  ): void {
+
+    if (
+      this.sortColumn === column
+    ) {
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
       this.sortDirection = 'asc';
+
     }
+
     this.applyFilters();
   }
 
@@ -270,19 +309,29 @@ export class inquiriesRecords implements OnInit {
         return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
       }
 
-      // Everything else: convert to string and use localeCompare
-      const aStr = String(aVal);
-      const bStr = String(bVal);
-      return this.sortDirection === 'asc'
-        ? aStr.localeCompare(bStr)
-        : bStr.localeCompare(aStr);
-    });
+        const aStr =
+          String(aVal);
 
-    this.filteredTransactions = sorted;
+        const bStr =
+          String(bVal);
+
+        return this.sortDirection === 'asc'
+          ? aStr.localeCompare(bStr)
+          : bStr.localeCompare(aStr);
+
+      });
+
+    this.filteredTransactions =
+      sorted;
+
     this.currentPage = 1;
   }
 
-  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
+  private resolveColumn(
+    tx: ShippingGuaranteeTransaction,
+    column: string
+  ): any {
+
     switch (column) {
       case 'tnxId':
         return tx.tnxId;
@@ -299,7 +348,9 @@ export class inquiriesRecords implements OnInit {
     }
   }
 
-  // --- PAGINATION ---
+  // =========================================================
+  // PAGINATION
+  // =========================================================
 
   get totalPages(): number {
     const count = Math.ceil(
@@ -308,17 +359,36 @@ export class inquiriesRecords implements OnInit {
     return count < 1 ? 1 : count;
   }
 
-  get pagedTransactions(): ShippingGuaranteeTransaction[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
+  get pagedTransactions():
+    ShippingGuaranteeTransaction[] {
+
+    const start =
+      (this.currentPage - 1) *
+      this.itemsPerPage;
+
+    return this.filteredTransactions
+      .slice(
+        start,
+        start + this.itemsPerPage
+      );
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+
+    if (
+      this.currentPage <
+      this.totalPages
+    ) {
+
+      this.currentPage++;
+    }
   }
 
   // --- NAVIGATION ACTIONS ---
@@ -348,6 +418,11 @@ export class inquiriesRecords implements OnInit {
     });
   }
 
+  // =========================================================
+  // OPEN SHIPPING GUARANTEE
+  // Permission: View
+  // =========================================================
+
   openShippingGuarantee(tx: ShippingGuaranteeTransaction) {
     if (!this.hasPermission('SG_InquiryPreview')) {
       console.warn('User does not have permission to open Shipping Guarantee.');
@@ -356,7 +431,16 @@ export class inquiriesRecords implements OnInit {
     }
 
     if (this.activeTab === 'live') {
-      // Live tab rows are event records — navigate by eventRefNo
+
+      if (!this.hasPermission('SG_InquiryLive')) {
+
+        console.warn(
+          'User does not have Live inquiry permission.'
+        );
+
+        return;
+      }
+
       this.router.navigate(
         ['/dashboard/Trade-Services/shipping-guarantee/amend', tx.tnxId],
         {
@@ -367,6 +451,7 @@ export class inquiriesRecords implements OnInit {
           },
         },
       );
+
       return;
     }
     // Store transaction in service for import screen to pick up
@@ -391,25 +476,40 @@ export class inquiriesRecords implements OnInit {
 
   private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
     switch (tab) {
+
       case 'pending':
         return 'EDIT';
+
       case 'submitted':
         return 'APPROVAL';
+
       default:
         return 'READ_ONLY';
     }
   }
 
-  private mapTabToBackendStatus(tab: string): string {
+  // =========================================================
+  // BACKEND STATUS
+  // =========================================================
+
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
     switch (tab) {
+
       case 'pending':
         return 'i';
+
       case 'submitted':
         return 's';
+
       case 'approved':
         return 'a';
+
       case 'rejected':
         return 'r';
+
       default:
         return 'i';
     }

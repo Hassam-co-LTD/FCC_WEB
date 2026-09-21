@@ -51,6 +51,28 @@
         <h3 class="section-title">General Details</h3>
 
         <div class="preview-grid">
+
+          <div class="preview-item">
+            <div class="preview-label">Expiry Date</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.expiryDate || '—' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Reference</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.beneficiaryReference || '—' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Customer Reference</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.customerReference || '—' }}
+            </div>
+          </div>
+
           <div class="preview-item">
             <div class="preview-label">Expiry Date</div>
             <div class="preview-value">
@@ -99,14 +121,17 @@
               {{ ShippingGuaranteeForm.value.description || '—' }}
             </div>
           </div>
+
         </div>
       </mat-card>
+
 
       <!-- APPLICANT / BENEFICIARY -->
       <mat-card class="preview-card">
         <h3 class="section-title">Applicant / Beneficiary</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Applicant Name</div>
             <div class="preview-value">
@@ -154,6 +179,7 @@
               {{ ShippingGuaranteeForm.value.beneficiaryCountry || '—' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
@@ -167,6 +193,7 @@
         <h3 class="section-title">Bank Details</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Bank Name</div>
             <div class="preview-value">
@@ -180,14 +207,17 @@
               {{ ShippingGuaranteeForm.value.issuerReference || '—' }}
             </div>
           </div>
+
         </div>
       </mat-card>
+
 
       <!-- AMOUNT & CHARGES -->
       <mat-card class="preview-card">
         <h3 class="section-title">Amount & Charges</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Currency</div>
             <div class="preview-value">
@@ -209,6 +239,7 @@
         <h3 class="section-title">Instructions to Bank</h3>
 
         <div class="preview-grid">
+
           <div class="preview-item">
             <div class="preview-label">Principal Account</div>
             <div class="preview-value">
@@ -229,6 +260,7 @@
               {{ ShippingGuaranteeForm.value.otherInstructions || '—' }}
             </div>
           </div>
+
         </div>
       </mat-card>
     </div>
@@ -237,9 +269,13 @@
          ROW 3 → ATTACHMENTS
     ================================================== -->
     <mat-card class="preview-card full-width">
+
       <h3 class="section-title">Attachments</h3>
 
-      <ng-container *ngIf="attachmentsArray.length > 0; else noAttachments">
+      <ng-container
+        *ngIf="attachmentsArray.length > 0; else noAttachments"
+      >
+
         <div class="preview-attachments-container">
           <!-- HEADER -->
           <div class="attachment-grid header">
@@ -283,13 +319,18 @@
                 download
               </mat-icon>
             </div>
+
           </div>
+
         </div>
+
       </ng-container>
+
 
       <ng-template #noAttachments>
         <p class="no-attachments">No attachments uploaded.</p>
       </ng-template>
+
     </mat-card>
   </div>
 </div>

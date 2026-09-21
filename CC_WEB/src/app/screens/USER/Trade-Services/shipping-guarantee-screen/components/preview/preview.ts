@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { Dialog } from '@angular/cdk/dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+ 
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -23,16 +23,16 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 export class Preview implements OnInit {
   @Input() transaction!: ShippingGuaranteeTransaction;
   viewMode: 'submit' | 'readonly' = 'submit';
-
+ 
   ShippingGuaranteeForm!: FormGroup;
-
+ 
   isOpen = true;
   viewerOpen = false;
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
   currentTx: ShippingGuaranteeTransaction | null = null;
-
+ 
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -41,44 +41,44 @@ export class Preview implements OnInit {
     private dialog: MatDialog,
     private transactionService: ShippingGuaranteeFormTransactionService,
   ) {}
-
+ 
   permissionNames: string[] = [];
-
+ 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
-
+ 
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
-
+ 
         console.log(
           'Shipping Guarantee Permission Names:',
           this.permissionNames,
         );
       } catch (error) {
         console.error('Error parsing permissionNames:', error);
-
+ 
         this.permissionNames = [];
       }
     } else {
       console.warn('permissionNames not found in sessionStorage');
-
+ 
       this.permissionNames = [];
     }
   }
-
+ 
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
   }
-
+ 
   ngOnInit(): void {
     this.loadPermissions();
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
-
+ 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
       this.router.navigate(['/dashboard/Trade-Services/shipping-guarantee']);
@@ -87,7 +87,7 @@ export class Preview implements OnInit {
     this.viewMode = this.transactionService.getViewMode();
     this.initForm();
   }
-
+ 
   private initForm(): void {
     this.ShippingGuaranteeForm = this.fb.group({
       id: [this.currentTx!.id],
@@ -95,7 +95,7 @@ export class Preview implements OnInit {
       status: [this.currentTx!.status],
       createdOn: [this.currentTx!.createdOn],
       // createdBy: [this.currentTx!.createdBy],
-
+ 
       expiryDate: [this.currentTx!.expiryDate],
       beneficiaryReference: [this.currentTx!.beneficiaryReference],
       customerReference: [this.currentTx!.customerReference],
@@ -103,30 +103,30 @@ export class Preview implements OnInit {
       modeOfShipment: [this.currentTx!.modeOfShipment],
       shippingDetails: [this.currentTx!.shippingDetails],
       description: [this.currentTx!.description],
-
+ 
       applicantName: [this.currentTx!.applicantName],
       applicantAddress1: [this.currentTx!.applicantAddress1],
       applicantAddress2: [this.currentTx!.applicantAddress2],
       applicantAddress3: [this.currentTx!.applicantAddress3],
       applicantAddress4: [this.currentTx!.applicantAddress4],
       applicantCountry: [this.currentTx!.applicantCountry],
-
+ 
       beneficiaryName: [this.currentTx!.beneficiaryName],
       beneficiaryAddress1: [this.currentTx!.beneficiaryAddress1],
       beneficiaryAddress2: [this.currentTx!.beneficiaryAddress2],
       beneficiaryAddress3: [this.currentTx!.beneficiaryAddress3],
       beneficiaryAddress4: [this.currentTx!.beneficiaryAddress4],
       beneficiaryCountry: [this.currentTx!.beneficiaryCountry],
-
+ 
       bankName: [this.currentTx!.bankName],
       issuerReference: [this.currentTx!.issuerReference],
       currency: [this.currentTx!.currency],
       amount: [this.currentTx!.amount],
-
+ 
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
-
+ 
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
     // 🔒 Read-only mode (Success page)
@@ -134,17 +134,17 @@ export class Preview implements OnInit {
       this.ShippingGuaranteeForm.disable({ emitEvent: false });
     }
   }
-
+ 
   get attachmentsArray(): FormArray {
     return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
-
+ 
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
     ]);
   }
-
+ 
   /** SUBMIT */
   submit(): void {
     // Permission check
@@ -152,15 +152,15 @@ export class Preview implements OnInit {
       console.warn('User does not have SG_AmendSubmit permission');
       return;
     }
-
+ 
     if (this.viewMode === 'readonly') return;
-
+ 
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) {
       this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
       return;
     }
-
+ 
     this.api.submitSgByTnxId(tnxId, this.currentTx!).subscribe({
       next: (res) => {
         this.router.navigate(
@@ -177,16 +177,16 @@ export class Preview implements OnInit {
       },
     });
   }
-
+ 
   approveTransaction(): void {
     // Permission check
     if (!this.hasPermission('SG_AmendApprove')) {
       console.warn('User does not have SG_AmendApprove permission');
       return;
     }
-
+ 
     if (!this.currentTx?.tnxId) return;
-
+ 
     this.api
       .approveTransactionSg(this.currentTx.tnxId, this.currentTx)
       .subscribe({
@@ -205,10 +205,10 @@ export class Preview implements OnInit {
           }),
       });
   }
-
+ 
   // rejectTransaction(): void {
   //   if (!this.currentTx?.tnxId) return;
-
+ 
   //   this.api.rejectTransaction(this.currentTx.tnxId, {rejectionReason: this.rejectionReason! }).subscribe({
   //     next: (res) => {
   //       this.snackBar.open('Transaction rejected', 'Close', { duration: 3000 });
@@ -223,17 +223,17 @@ export class Preview implements OnInit {
       console.warn('User does not have SG_AmendPendingReject permission');
       return;
     }
-
+ 
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
-
+ 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
       hasBackdrop: true, // ensure overlay backdrop
       backdropClass: 'cdk-overlay-dark-backdrop', // dark semi-transparent backdrop
       panelClass: 'custom-dialog-container', // white dialog box
     });
-
+ 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
       this.api.rejectTransactionSg(tnxId, reason).subscribe({
@@ -253,20 +253,20 @@ export class Preview implements OnInit {
       });
     });
   }
-
+ 
   downloadFile(index: number) {
     const currentTx = this.attachmentsArray.at(index)?.value;
     if (!currentTx) return;
-
+ 
     const { file, fileName } = currentTx;
-
+ 
     if (file instanceof Blob) {
       const url = URL.createObjectURL(file);
       this.triggerDownload(url, fileName);
       URL.revokeObjectURL(url);
       return;
     }
-
+ 
     if (typeof file === 'string' && file.startsWith('currentTx:')) {
       const arr = file.split(',');
       const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
@@ -281,18 +281,19 @@ export class Preview implements OnInit {
       URL.revokeObjectURL(url);
       return;
     }
-
+ 
     console.error('Unsupported file format', file);
   }
-
+ 
   private triggerDownload(url: string, fileName: string) {
     const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
     a.click();
   }
-
+ 
   trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }
 }
+ 

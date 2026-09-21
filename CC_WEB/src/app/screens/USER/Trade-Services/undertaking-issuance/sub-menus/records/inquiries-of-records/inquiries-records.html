@@ -1,9 +1,18 @@
+<!-- ========================================================= -->
+<!-- PAGE HEADER                                                -->
+<!-- ========================================================= -->
+
 <div class="page-header">
   <div class="title">
     <h2>{{ activeTab | titlecase }} Undertaking Records</h2>
     <p>Manage and track all Undertaking {{ activeTab }} transactions</p>
   </div>
 </div>
+
+
+<!-- ========================================================= -->
+<!-- SEARCH                                                     -->
+<!-- ========================================================= -->
 
 <div class="search-system">
   <div class="search-input-group">
@@ -35,6 +44,11 @@
     />
   </div>
 </div>
+
+
+<!-- ========================================================= -->
+<!-- TABS                                                       -->
+<!-- ========================================================= -->
 
 <div class="ui-tabs">
   <div
@@ -70,6 +84,11 @@
   >
   </app-export-dropdown>
 </div>
+
+
+<!-- ========================================================= -->
+<!-- TABLE                                                      -->
+<!-- ========================================================= -->
 
 <div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
   <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">

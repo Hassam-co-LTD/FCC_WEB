@@ -1,19 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule } from '@angular/forms';
-import { ShippingGuaranteeTransaction } from '../../../../../../../core/models/shipping-guarantee';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ApiService } from '../../../../../../../core/services/api.service';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { finalize } from 'rxjs';
-import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
+
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+import {
+  Router,
+  RouterOutlet,
+  ActivatedRoute
+} from '@angular/router';
+
 import { CommonModule } from '@angular/common';
+
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { finalize } from 'rxjs';
+
+import { ApiService } from '../../../../../../../core/services/api.service';
+
+import { ShippingGuaranteeTransaction } from '../../../../../../../core/models/shipping-guarantee';
+
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { ApplicantBeneficiary } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/applicant-beneficiary/applicant-beneficiary';
 import { GeneralDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/general-details/general-details';
 import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/instruction-to-bank/instruction-to-bank';
 import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
 import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
+import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 
 
 @Component({
@@ -32,25 +51,70 @@ import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/eve
   ],
   standalone: true,
   templateUrl: './amend.html',
-  styleUrl: './amend.scss',
+
+  styleUrls: ['./amend.scss']
 })
 export class Amend implements OnInit {
   currentStep = 0;
+
   ShippingGuaranteeForm!: FormGroup;
+
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
-  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
-  currentTx: ShippingGuaranteeTransaction = {} as ShippingGuaranteeTransaction;
+
+  screenMode:
+    | 'EDIT'
+    | 'SUBMITTED'
+    | 'APPROVED'
+    | 'FINAL' = 'EDIT';
+
+  currentTx: ShippingGuaranteeTransaction =
+    {} as ShippingGuaranteeTransaction;
+
+
   showUpdateSubmit = false;
+
   showApproveReject = false;
+
   rejectionReason = '';
+
   tnxId = '';
+
   companyId = '';
-  eventType: string = '';
-  eventRefNo: string = '';
-  requestedMode: string = '';
-  sourceTab: string = '';
+
+  eventType = '';
+
+  eventRefNo = '';
+
+  requestedMode = '';
+
+  sourceTab = '';
+
   isSaving = false;
+
   isHistoricalView = false;
+
+
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+
+  hasPermission(permission: string): boolean {
+
+    return this.permissionNames.some(
+      p =>
+        p.trim().toLowerCase() ===
+        permission.toLowerCase()
+    );
+
+  }
+
+
+  // =========================================================
+  // SIDEBAR STEPS
+  // =========================================================
 
   shippingGuaranteeSteps = [
     { label: 'General Details' },
@@ -60,6 +124,11 @@ export class Amend implements OnInit {
     { label: 'Attachments' },
   ];
 
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -68,10 +137,11 @@ export class Amend implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
   ) {
+
     this.buildForm();
+
   }
 
-  permissionNames: string[] = [];
 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
@@ -93,11 +163,7 @@ export class Amend implements OnInit {
     }
   }
 
-  hasPermission(permission: string): boolean {
-    return this.permissionNames.some(
-      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
-    );
-  }
+  
 
   ngOnInit() {
     this.loadPermissions();
@@ -122,13 +188,24 @@ export class Amend implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
-    this.companyId = sessionData.companyId ?? '';
+    const sessionData =
+      JSON.parse(
+        sessionStorage.getItem('userData') || '{}'
+      );
 
-    // this.companyId = this.authservice.getCompanyId() || '';
-    console.log('Company ID from route:', this.companyId);
-    this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
-    console.log('TNX ID from route:', this.tnxId);
+    this.companyId =
+      sessionData.companyId ?? '';
+
+
+    console.log(
+      'Company ID:',
+      this.companyId
+    );
+
+
+    // =======================================================
+    // ROUTE
+    // =======================================================
 
     this.route.paramMap.subscribe((params) => {
       this.tnxId = params.get('tnxId') || '';
@@ -145,12 +222,21 @@ export class Amend implements OnInit {
         console.log('eventRefNo:', this.eventRefNo);
 
         if (this.tnxId) {
-          this.enterEditMode(this.tnxId);
+
+          this.enterEditMode(
+            this.tnxId
+          );
+
         } else {
+
           this.enterCreateMode();
+
         }
+
       });
+
     });
+
   }
 
   private buildForm(): void {
@@ -193,24 +279,52 @@ export class Amend implements OnInit {
     });
   }
 
-  private enterCreateMode(): void {
-    this.mode = 'CREATE';
-    this.showUpdateSubmit = false;
-    this.showApproveReject = false;
-    this.isHistoricalView = false;
-    this.currentTx = {} as ShippingGuaranteeTransaction;
-    this.ShippingGuaranteeForm.reset();
-    this.buildForm();
-  }
 
+  // =========================================================
+  // CREATE MODE
+  // =========================================================
+
+  private enterCreateMode(): void {
+
+    this.mode = 'CREATE';
+
+    this.showUpdateSubmit = false;
+
+    this.showApproveReject = false;
+
+    this.isHistoricalView = false;
+
+    this.currentTx =
+      {} as ShippingGuaranteeTransaction;
+
+    this.ShippingGuaranteeForm.reset();
+
+    this.buildForm();
+
+  }
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
 
-    // ── SCENARIO 1 ─────────────────────────────────────────────────────────
-    // eventRefNo present → specific historical event snapshot, always read-only
-    // Triggered from Inquiries Live tab row click
-    // ────────────────────────────────────────────────────────────────────────
-    if (this.eventRefNo) {
+    // =======================================================
+    // SCENARIO 3 (computed early so Scenario 1's guard can use it)
+    // AMENDMENT TABS
+    // =======================================================
+
+    const isAmendmentTab =
+      this.eventType === 'AMD' ||
+      this.sourceTab === 'pending' ||
+      this.sourceTab === 'submitted' ||
+      this.sourceTab === 'approved' ||
+      this.sourceTab === 'rejected';
+
+    // =======================================================
+    // SCENARIO 1
+    // HISTORICAL EVENT
+    // Skipped when on an amendment status tab (pending/submitted/approved/rejected),
+    // since there eventRefNo should drive editability via its real status, not force read-only
+    // =======================================================
+
+    if (this.eventRefNo && !isAmendmentTab) {
       this.isHistoricalView = true;
       this.api.getAmendmentByEventRefNoSg(this.eventRefNo).subscribe({
         next: (event) => {
@@ -230,12 +344,14 @@ export class Amend implements OnInit {
       });
       return;
     }
-    // ── SCENARIO 2 ─────────────────────────────────────────────────────────
-    // sourceTab='live', no eventRefNo → user wants to initiate/continue an amendment
-    // Triggered from ApprovedInquiryRecords Live tab row click
-    // Try to load existing AMD draft; if none exists, pre-populate from master LC
-    // ────────────────────────────────────────────────────────────────────────
+
+    // =======================================================
+    // SCENARIO 2
+    // LIVE TAB
+    // =======================================================
+
     if (this.sourceTab === 'live') {
+
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
@@ -244,14 +360,13 @@ export class Amend implements OnInit {
           this.currentTx = event;
           this.patchForm(event);
 
-          if (event.status === 'I') {
-            this.screenMode = 'EDIT';
-            this.ShippingGuaranteeForm.enable();
-          } else {
-            // AMD already submitted/approved — shouldn't normally happen from Live tab
-            // but handle defensively: show read-only
+          if (event.status === 'S') {
+            // AMD actively submitted/awaiting approval — read-only
             this.screenMode = 'SUBMITTED';
             this.ShippingGuaranteeForm.disable();
+          } else {
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
           }
         },
         error: () => {
@@ -281,21 +396,23 @@ export class Amend implements OnInit {
       return;
     }
 
-    // ── SCENARIO 3 ─────────────────────────────────────────────────────────
-    // AMD event tabs (pending/submitted/approved/rejected with eventType=AMD)
-    // Triggered from ApprovedInquiryRecords non-live tabs
-    // ────────────────────────────────────────────────────────────────────────
-    const isAmendmentTab =
-      this.eventType === 'AMD' ||
-      this.sourceTab === 'pending' ||
-      this.sourceTab === 'submitted' ||
-      this.sourceTab === 'approved' ||
-      this.sourceTab === 'rejected';
+    // =======================================================
+    // SCENARIO 3
+    // AMENDMENT TABS
+    // Uses eventRefNo (when present) to fetch the exact amendment clicked,
+    // instead of tnxId alone which can resolve to the latest amendment only
+    // =======================================================
+
 
     if (isAmendmentTab) {
+
       this.isHistoricalView = false;
 
-      this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
+      const amendment$ = this.eventRefNo
+        ? this.api.getAmendmentByEventRefNoSg(this.eventRefNo)
+        : this.api.getAmendmentByTnxIdSg(tnxId);
+
+      amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
@@ -339,9 +456,11 @@ export class Amend implements OnInit {
       return;
     }
 
-    // ── SCENARIO 4 ─────────────────────────────────────────────────────────
-    // Master LC (Enquiries non-live tabs with eventType=CRE or unset)
-    // ────────────────────────────────────────────────────────────────────────
+    // =======================================================
+    // SCENARIO 4
+    // MASTER TRANSACTION
+    // =======================================================
+
     this.isHistoricalView = false;
     this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
@@ -412,11 +531,15 @@ export class Amend implements OnInit {
 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
+
       generalDetailsForm: tx,
+
       applicantBeneficiaryForm: tx,
+
       issuingbankForm: tx,
       instructionForm: tx,
     });
+
   }
 
   scrollToSection(index: number) {
@@ -444,12 +567,15 @@ export class Amend implements OnInit {
     if (this.isSaving) return;
     this.isSaving = true;
 
+
     if (!this.companyId) {
       this.snackBar.open('Session expired or company not found.', 'Close', {
         duration: 3000,
       });
       this.isSaving = false;
+
       return;
+
     }
 
     const payload = this.flattenForm();
@@ -461,8 +587,11 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       this.isSaving = false;
+
       return;
+
     }
+
 
     this.api
       .saveAmendTransactionSg(tnxId, payload)
@@ -510,10 +639,14 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
+
     }
 
+
     const payload = {
-      ...this.flattenForm(), // merge current form data
+
+      ...this.flattenForm(),
+
       event: 'AMD',
       tnxId: this.tnxId,
     };
@@ -592,9 +725,14 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
+
     }
+
+
     const payload = {
-      ...this.flattenForm(), // merge current form data
+
+      ...this.flattenForm(),
+
       event: 'AMD',
       tnxId: this.tnxId,
     };
@@ -627,6 +765,7 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
+
     }
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
@@ -670,8 +809,32 @@ export class Amend implements OnInit {
       return;
     }
 
-    const payload = this.flattenForm(); // flatten form values
-    payload.tnxId = this.currentTx.tnxId;
+
+    if (
+      this.ShippingGuaranteeForm.invalid ||
+      !this.currentTx?.tnxId
+    ) {
+
+      this.snackBar.open(
+        'Invalid form or missing transaction ID',
+        'Close',
+        {
+          duration: 3000
+        }
+      );
+
+      return;
+
+    }
+
+
+    const payload =
+      this.flattenForm();
+
+
+    payload.tnxId =
+      this.currentTx.tnxId;
+
 
     this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
       next: (res) => {

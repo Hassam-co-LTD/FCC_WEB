@@ -196,49 +196,4 @@ export class AuthService {
     parsed.companyType = value;
     sessionStorage.setItem('userData', JSON.stringify(parsed));
   }
-
-  // get userName()
-  getUserName(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.userName || null;
-  }
-
-  //  get LoginId()
-  getLoginId(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.loginId || null;
-  }
-
-  getSubmitPayload() {
-    return {
-      recordStatus: 'S',
-      inputterId: this.getLoginId()!,
-    };
-  }
-
-  getApprovePayload() {
-    return {
-      recordStatus: 'A',
-      authorizerId: this.getLoginId()!,
-    };
-  }
-
-  getRejectPayload(rejectReason: string) {
-    return {
-      recordStatus: 'R',
-      rejectReason: rejectReason,
-      rejectedBy: this.getLoginId()!,
-    };
-  }
-
-  getAmendPayload() {
-    return {
-      recordStatus: 'I',
-      updatedBy: this.getLoginId()!,
-    };
-  }
 }

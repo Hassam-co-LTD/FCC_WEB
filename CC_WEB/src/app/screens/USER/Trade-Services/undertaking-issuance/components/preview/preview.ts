@@ -192,10 +192,9 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
-    if (!this.hasPermission('UTG_AmendPreviewSubmit')) {
-      console.warn('Submit blocked: missing UTG_AmendPreviewSubmit permission');
+    if (!this.hasPermission('UI_AmendPreviewSubmit')) {
+      console.warn('Submit blocked: missing UI_AmendPreviewSubmit permission');
 
-     
       return;
     }
 
@@ -225,9 +224,9 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-    if (!this.hasPermission('UTG_AmendPreviewApprove')) {
+    if (!this.hasPermission('UI_AmendPreviewApprove')) {
       console.warn(
-        'Approve blocked: missing UTG_AmendPreviewApprove permission',
+        'Approve blocked: missing UI_AmendPreviewApprove permission',
       );
 
       this.snackBar.open(
@@ -271,8 +270,8 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
-    if (!this.hasPermission('UTG_AmendPreviewReject')) {
-      console.warn('Reject blocked: missing UTG_AmendPreviewReject permission');
+    if (!this.hasPermission('UI_AmendPreviewReject')) {
+      console.warn('Reject blocked: missing UI_AmendPreviewReject permission');
 
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
@@ -366,10 +365,17 @@ export class Preview implements OnInit {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(url: string, fileName: string) {
-    const a = document.createElement('a');
+  private triggerDownload(
+    url: string,
+    fileName: string
+  ): void {
+
+    const a =
+      document.createElement('a');
+
     a.href = url;
     a.download = fileName;
+
     a.click();
   }
 

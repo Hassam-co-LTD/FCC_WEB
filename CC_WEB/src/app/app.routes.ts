@@ -445,8 +445,10 @@ export const routes: Routes = [
               ),
           },
 
+          // ==============================
           // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
           // Export Collection, Undertaking Issuance ONLY
+          // ==============================
           {
             path: 'Trade-Services',
             loadComponent: () =>
@@ -475,8 +477,7 @@ export const routes: Routes = [
                   import('./shared/success/success').then((m) => m.Success),
               },
               {
-                matcher: transactionIdMatcher,
-
+                path: 'export-screen/:tnxId',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-screen/export-screen').then(
                     (m) => m.ExportScreen,
@@ -976,51 +977,8 @@ export const routes: Routes = [
           },
         ],
       },
-      // User side Generate Fields Routes
-      // {
-      //   path: 'dynamic-fields/create',
-      //   loadComponent: () =>
-      //     import('./screens/USER/create-generate-fields/create-generate-fields').then(
-      //       (m) => m.CreateGenerateFields,
-      //     ),
-      // },
-      // {
-      //   path: 'dynamic-fields/inquiries',
-      //   loadComponent: () =>
-      //     import('./screens/USER/create-generate-fields/list-generate-fields/list-generate-fields').then(
-      //       (m) => m.ListGenerateFields,
-      //     ),
-      // },
-      // {
-      //   path: 'dynamic-fields/:id',
-      //   loadComponent: () =>
-      //     import('./screens/USER/create-generate-fields/create-generate-fields').then(
-      //       (m) => m.CreateGenerateFields,
-      //     ),
-      // },
-      // {
-      //   path: 'dynamic-dropdowns/create',
-      //   loadComponent: () =>
-      //     import('./screens/USER/create-generate-fields/create-dropDown-option/create-dropDown-option').then(
-      //       (m) => m.CreateDynamicFieldOptions,
-      //     ),
-      // },
-      // {
-      //   path: 'dynamic-dropdowns-inque/inquiries',
-      //   loadComponent: () =>
-      //     import('./screens/USER/create-generate-fields/dynamic-dropdown-option-inquiry/dynamic-dropdown-option-inquiry').then(
-      //       (m) => m.DynamicDropdownOptionInquiry,
-      //     ),
-      // },
-      // {
-      //   path: 'dynamic-dropdowns/create/:id',
-      //   loadComponent: () =>
-      //     import('./screens/ADMIN/admin-dashboard/components/create-dropDown-option/create-dropDown-option').then(
-      //       (m) => m.CreateDynamicFieldOptions,
-      //     ),
-      // },
 
-      // Default child redirect
+      // Default child redirect for '/'
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

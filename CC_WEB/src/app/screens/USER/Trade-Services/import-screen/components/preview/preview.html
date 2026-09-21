@@ -1,6 +1,12 @@
-<div class="preview-page" *ngIf="importForm">
+<div
+  class="preview-page"
+  *ngIf="importForm"
+>
 
-  <h2 class="page-title">Preview</h2>
+  <h2 class="page-title">
+    Preview
+  </h2>
+
 
   <div class="preview-container">
 
@@ -9,7 +15,11 @@
     <!-- ===================================================== -->
     <div class="preview-row">
 
-      <!-- GENERAL DETAILS -->
+
+      <!-- =================================================== -->
+      <!-- GENERAL DETAILS                                    -->
+      <!-- =================================================== -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">General Details</h3>
 
@@ -29,12 +39,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Expiry Date</div>
             <div class="preview-value">
               {{ importForm.value.expiryDate || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Place of Expiry</div>
@@ -79,6 +91,7 @@
           </div>
 
         </div>
+
       </mat-card>
 
 
@@ -116,12 +129,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Address 4</div>
             <div class="preview-value">
               {{ importForm.value.applicantAddress4 || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Country</div>
@@ -131,6 +146,7 @@
           </div>
 
         </div>
+
       </mat-card>
 
     </div>
@@ -206,6 +222,7 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Issuer Reference</div>
             <div class="preview-value">
@@ -213,12 +230,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Advising Bank Name</div>
             <div class="preview-value">
               {{ importForm.value.advisingBankName || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Advise Through Bank Name</div>
@@ -228,6 +247,7 @@
           </div>
 
         </div>
+
       </mat-card>
 
     </div>
@@ -251,8 +271,13 @@
             </div>
           </div>
 
+
           <div class="preview-item">
-            <div class="preview-label">Amount</div>
+
+            <div class="preview-label">
+              Issuer Reference
+            </div>
+
             <div class="preview-value">
               <ng-container
                 *ngIf="
@@ -295,14 +320,18 @@
             <div class="preview-value">
               {{ importForm.value.issuingBankCharges || '-' }}
             </div>
+
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Outside Country Charges</div>
             <div class="preview-value">
               {{ importForm.value.outsideCountryCharges || '-' }}
             </div>
+
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Additional Amount</div>
@@ -322,13 +351,19 @@
               <ng-template #noAdditionalAmount>-</ng-template>
 
             </div>
+
           </div>
 
         </div>
+
       </mat-card>
 
 
-      <!-- PAYMENT DETAILS -->
+
+      <!-- =================================================== -->
+      <!-- AMOUNT & CHARGES                                   -->
+      <!-- =================================================== -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">Payment Details</h3>
 
@@ -341,6 +376,7 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Bank Name</div>
             <div class="preview-value">
@@ -348,12 +384,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Credit Available By</div>
             <div class="preview-value">
               {{ importForm.value.creditAvailableBy || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Draft At</div>
@@ -363,6 +401,7 @@
           </div>
 
         </div>
+
       </mat-card>
 
     </div>
@@ -400,12 +439,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Place of Discharge</div>
             <div class="preview-value">
               {{ importForm.value.placeOfDischarge || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item">
             <div class="preview-label">Last Shipment Date</div>
@@ -421,8 +462,13 @@
             </div>
           </div>
 
+
           <div class="preview-item">
-            <div class="preview-label">Partial Shipment</div>
+
+            <div class="preview-label">
+              Draft At
+            </div>
+
             <div class="preview-value">
               {{ importForm.value.partialShipment || '-' }}
             </div>
@@ -433,9 +479,11 @@
             <div class="preview-value">
               {{ importForm.value.transhipment || '-' }}
             </div>
+
           </div>
 
         </div>
+
       </mat-card>
 
 
@@ -451,6 +499,7 @@
               {{ importForm.value.descriptionOfGoods || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item full-width">
             <div class="preview-label">Documents Required</div>
@@ -474,6 +523,7 @@
           </div>
 
         </div>
+
       </mat-card>
 
     </div>
@@ -497,12 +547,14 @@
             </div>
           </div>
 
+
           <div class="preview-item">
             <div class="preview-label">Fee Account</div>
             <div class="preview-value">
               {{ importForm.value.feeAccount || '-' }}
             </div>
           </div>
+
 
           <div class="preview-item full-width">
             <div class="preview-label">Other Instructions</div>
@@ -632,10 +684,15 @@
 
 
       <ng-template #noAttachments>
-        <p>No attachments uploaded.</p>
+
+        <p>
+          No attachments uploaded.
+        </p>
+
       </ng-template>
 
     </mat-card>
+
 
   </div>
 </div>
@@ -691,5 +748,6 @@
     </button>
 
   </ng-container>
+
 
 </div>

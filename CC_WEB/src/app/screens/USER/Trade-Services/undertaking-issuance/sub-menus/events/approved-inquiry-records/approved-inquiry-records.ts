@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
   standalone: true,
   imports: [CommonModule, MatIconModule, FormsModule, ExportDropdown],
   templateUrl: './approved-inquiry-records.html',
-  styleUrls: ['./approved-inquiry-records.scss'],
+  styleUrls: ['./approved-inquiry-records.scss']
 })
 export class ApprovedInquiryRecords implements OnInit {
   isLoading = false;
@@ -34,6 +34,34 @@ export class ApprovedInquiryRecords implements OnInit {
   searchQuery = '';
   currencyFilter = '';
   activeTab = 'live';
+
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionNames: string[] = [];
+
+  /**
+   * Checks whether the logged-in user has the requested permission.
+   *
+   * Example:
+   * hasPermission('UTG_Inquiry')
+   * hasPermission('UTG_Amend')
+   */
+  hasPermission(permission: string): boolean {
+
+    return this.permissionNames.some(
+      p =>
+        p.trim().toLowerCase() ===
+        permission.trim().toLowerCase()
+    );
+
+  }
+
+  // =========================================================
+  // TABS
+  // =========================================================
+
   tabs = [
     { key: 'live', label: 'Live' },
     { key: 'pending', label: 'Pending' },
@@ -52,7 +80,6 @@ export class ApprovedInquiryRecords implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
   ) {}
-  permissionNames: string[] = [];
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
 
@@ -74,12 +101,6 @@ export class ApprovedInquiryRecords implements OnInit {
 
       this.permissionNames = [];
     }
-  }
-
-  hasPermission(permission: string): boolean {
-    return this.permissionNames.some(
-      (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
-    );
   }
 
   ngOnInit(): void {
@@ -133,6 +154,7 @@ export class ApprovedInquiryRecords implements OnInit {
         });
 
       return;
+
     }
     const backend = this.mapTabToBackendStatus(this.activeTab);
     this.api
@@ -163,6 +185,10 @@ export class ApprovedInquiryRecords implements OnInit {
       });
   }
 
+  // =========================================================
+  // PAGINATION
+  // =========================================================
+
   get pagedTransactions(): UndertakingGuarantee[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
@@ -174,9 +200,22 @@ export class ApprovedInquiryRecords implements OnInit {
     );
     return count < 1 ? 1 : count;
   }
+
+  // =========================================================
+  // FILTERING
+  // =========================================================
+
   applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
+
+    const query =
+      this.searchQuery
+        .toLowerCase()
+        .trim();
+
+    const currency =
+      this.currencyFilter
+        .toLowerCase()
+        .trim();
 
     const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
@@ -185,11 +224,17 @@ export class ApprovedInquiryRecords implements OnInit {
         tx.beneficiaryName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
 
-      const matchesCurrency =
-        !currency || tx.currency?.toLowerCase() === currency;
+        const matchesCurrency =
+          !currency ||
+          tx.currency
+            ?.toLowerCase() === currency;
 
-      return matchesSearch && matchesCurrency;
-    });
+        return (
+          matchesSearch &&
+          matchesCurrency
+        );
+
+      });
 
     this.applySorting(filtered);
   }
@@ -246,15 +291,24 @@ export class ApprovedInquiryRecords implements OnInit {
     }
   }
   clearSearch(): void {
+
     this.searchQuery = '';
+
     this.applyFilters();
+
   }
+
+  // =========================================================
+  // TAB SWITCHING
+  // =========================================================
+
   setActiveTab(tab: string): void {
     if (this.activeTab === tab) {
       return;
     }
 
     this.activeTab = tab;
+
     this.currentPage = 1;
 
     this.allTransactions = [];
@@ -266,27 +320,62 @@ export class ApprovedInquiryRecords implements OnInit {
   // simple sorting helper
   toggleSort(column: keyof UndertakingGuarantee): void {
     if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+
+      this.sortDirection =
+        this.sortDirection === 'asc'
+          ? 'desc'
+          : 'asc';
+
     } else {
+
       this.sortColumn = column;
+
       this.sortDirection = 'asc';
+
     }
+
     this.applySort();
+
   }
 
   private applySort(): void {
-    const dir = this.sortDirection === 'asc' ? 1 : -1;
-    this.filteredTransactions.sort((a, b) => {
-      const va: any = a[this.sortColumn] ?? '';
-      const vb: any = b[this.sortColumn] ?? '';
-      if (va < vb) return -1 * dir;
-      if (va > vb) return 1 * dir;
-      return 0;
-    });
+
+    const dir =
+      this.sortDirection === 'asc'
+        ? 1
+        : -1;
+
+    this.filteredTransactions.sort(
+      (a, b) => {
+
+        const va: any =
+          a[this.sortColumn] ?? '';
+
+        const vb: any =
+          b[this.sortColumn] ?? '';
+
+        if (va < vb) {
+          return -1 * dir;
+        }
+
+        if (va > vb) {
+          return 1 * dir;
+        }
+
+        return 0;
+
+      }
+    );
+
   }
+
+  // =========================================================
+  // TRACK BY
+  // =========================================================
 
   trackByTnxId(_: number, tx: UndertakingGuarantee): string {
     return tx.tnxId!;
+
   }
 
   viewTransaction(tx: UndertakingGuarantee): void {
@@ -312,12 +401,18 @@ export class ApprovedInquiryRecords implements OnInit {
     });
   }
 
+  // =========================================================
+  // OPEN AMEND TRANSACTION
+  // =========================================================
+
   openApprovedAmendTransaction(tx: UndertakingGuarantee): void {
     // Navigate to import screen
     this.router.navigate(
       ['/dashboard/Trade-Services/undertaking-issuance/amend', tx.tnxId],
       {
+
         queryParams: {
+
           mode: 'EDIT',
           tab: this.activeTab,
           eventType:
@@ -330,26 +425,53 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) this.currentPage--;
+
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+
+    if (
+      this.currentPage <
+      this.totalPages
+    ) {
+
+      this.currentPage++;
+
+    }
+
   }
 
-  private mapTabToBackendStatus(tab: string): string {
+  // =========================================================
+  // BACKEND STATUS MAPPER
+  // =========================================================
+
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
     switch (tab) {
+
       case 'pending':
         return 'i';
+
       case 'submitted':
         return 's';
+
       case 'approved':
         return 'a';
+
       case 'rejected':
         return 'r';
+
       default:
         return 'i';
+
     }
+
   }
 
   async downloadReport(): Promise<void> {
