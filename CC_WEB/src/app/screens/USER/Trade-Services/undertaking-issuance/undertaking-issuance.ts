@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -441,8 +441,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   submitForm(): void {
-
-    
     if (!this.hasPermission('UI_InquirySubmit')) {
       this.snackBar.open(
         'You do not have permission to submit this transaction.',
@@ -513,8 +511,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateForm(): void {
-
-    
     if (!this.hasPermission('UI_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to update this transaction.',
@@ -526,7 +522,6 @@ export class UndertakingIssuance implements OnInit {
 
       return;
     }
->>>>>>> 2dc175deb027508b4c7bff5f8fad9db17925515b
 
     if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
@@ -569,44 +564,38 @@ export class UndertakingIssuance implements OnInit {
   }
 
   approve(): void {
+    if (!this.hasPermission('UI_InquiryApprove')) {
+      this.snackBar.open(
+        'You do not have permission to approve this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-     if (!this.hasPermission('UI_InquiryApprove')) {
-       this.snackBar.open(
-         'You do not have permission to approve this transaction.',
-         'Close',
-         {
-           duration: 3000,
-         },
-       );
+      if (!this.hasPermission('UI_InquiryApprove')) {
+        this.snackBar.open(
+          'You do not have permission to approve this transaction.',
+          'Close',
+          {
+            duration: 3000,
+          },
+        );
 
-<<<<<<< HEAD
-      return;
+        return;
+      }
+
+      this.api
+        .approveUndertaking(this.currentTx.tnxId!, this.currentTx)
+        .subscribe({
+          next: () => this.navigateBack('approved'),
+          error: () =>
+            this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
+        });
     }
-=======
-     if (!this.hasPermission('UI_InquiryApprove')) {
-       this.snackBar.open(
-         'You do not have permission to approve this transaction.',
-         'Close',
-         {
-           duration: 3000,
-         },
-       );
-
-       return;
-     }
->>>>>>> 2dc175deb027508b4c7bff5f8fad9db17925515b
-
-    this.api
-      .approveUndertaking(this.currentTx.tnxId!, this.currentTx)
-      .subscribe({
-        next: () => this.navigateBack('approved'),
-        error: () =>
-          this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
-      });
   }
 
   openReject(): void {
-
     if (!this.hasPermission('UI_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
@@ -643,8 +632,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateRejected(): void {
-
-    
     if (!this.hasPermission('UI_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to update this rejected transaction.',

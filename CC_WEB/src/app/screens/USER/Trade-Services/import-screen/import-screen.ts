@@ -50,7 +50,6 @@ import { DynamicFields } from '../../../../core/services/admin-service/dynamic-f
     Attachments,
     MatDialogModule,
     Sidebar,
-    RouterOutlet,
     DynamicFields,
   ],
   templateUrl: './import-screen.html',
