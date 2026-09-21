@@ -80,7 +80,6 @@ export class ApprovedInquiryRecords implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
   ) {}
-  permissionNames: string[] = [];
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
 
@@ -102,12 +101,6 @@ export class ApprovedInquiryRecords implements OnInit {
 
       this.permissionNames = [];
     }
-  }
-
-  hasPermission(permission: string): boolean {
-    return this.permissionNames.some(
-      (p) => p.trim().toLowerCase() === permission.trim().toLowerCase(),
-    );
   }
 
   ngOnInit(): void {
@@ -342,102 +335,6 @@ export class ApprovedInquiryRecords implements OnInit {
     }
 
     this.applySort();
-
-  }
-
-  private applySorting(
-    source: UndertakingGuarantee[] =
-      this.allTransactions
-  ): void {
-
-    const sorted =
-      [...source].sort((a, b) => {
-
-        const aVal =
-          this.resolveColumn(
-            a,
-            this.sortColumn
-          );
-
-        const bVal =
-          this.resolveColumn(
-            b,
-            this.sortColumn
-          );
-
-        if (aVal == null) {
-          return 1;
-        }
-
-        if (bVal == null) {
-          return -1;
-        }
-
-        if (
-          aVal instanceof Date &&
-          bVal instanceof Date
-        ) {
-
-          return this.sortDirection === 'asc'
-            ? aVal.getTime() -
-              bVal.getTime()
-            : bVal.getTime() -
-              aVal.getTime();
-
-        }
-
-        if (
-          typeof aVal === 'number' &&
-          typeof bVal === 'number'
-        ) {
-
-          return this.sortDirection === 'asc'
-            ? aVal - bVal
-            : bVal - aVal;
-
-        }
-
-        const aStr = String(aVal);
-        const bStr = String(bVal);
-
-        return this.sortDirection === 'asc'
-          ? aStr.localeCompare(bStr)
-          : bStr.localeCompare(aStr);
-
-      });
-
-    this.filteredTransactions = sorted;
-
-    this.currentPage = 1;
-
-  }
-
-  private resolveColumn(
-    tx: UndertakingGuarantee,
-    column: string
-  ): any {
-
-    switch (column) {
-
-      case 'tnxId':
-        return tx.tnxId;
-
-      case 'currency':
-        return tx.currency;
-
-      case 'undertakingAmount':
-        return tx.undertakingAmount;
-
-      case 'expiryDate':
-        return tx.expiryDate;
-
-      case 'createdOn':
-        return tx.createdOn;
-
-      default:
-        return null;
-
-    }
 
   }
 

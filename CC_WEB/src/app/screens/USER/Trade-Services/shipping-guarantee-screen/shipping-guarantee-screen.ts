@@ -1,43 +1,25 @@
 import { OnInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { GeneralDetails } from './components/general-details/general-details';
 import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from './components/bank-details/bank-details';
 import { InstructionsComponent } from './components/instructions/instructions';
 import { Attachments } from './components/attachments/attachments';
-
 import { Sidebar } from '../../../../core/sidebar/sidebar';
-
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup
-} from '@angular/forms';
-
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ShippingGuaranteeTransaction } from '../../../../core/models/shipping-guarantee';
-
 import { ApiService } from '../../../../core/services/api.service';
-
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { AuthService } from '../../../../core/services/auth.service';
-
 import { ShippingGuaranteeFormTransactionService } from '../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
-
+import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
-
-import {
-  MatDialog,
-  MatDialogModule
-} from '@angular/material/dialog';
-
-
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+ 
 @Component({
   selector: 'app-shipping-guarantee',
   standalone: true,
-
   imports: [
     CommonModule,
     GeneralDetails,
@@ -46,45 +28,25 @@ import {
     InstructionsComponent,
     MatDialogModule,
     Attachments,
-    Sidebar
+    Sidebar,
   ],
-
   templateUrl: './shipping-guarantee-screen.html',
   styleUrls: ['./shipping-guarantee-screen.scss'],
 })
 export class ShippingGuarantee implements OnInit {
-
-  // =========================================================
-  // BASIC VARIABLES
-  // =========================================================
-
   currentStep = 0;
-
   ShippingGuaranteeForm!: FormGroup;
-
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
-
-  screenMode:
-    'EDIT' |
-    'SUBMITTED' |
-    'APPROVED' |
-    'FINAL' = 'EDIT';
-
-  currentTx: ShippingGuaranteeTransaction =
-    {} as ShippingGuaranteeTransaction;
-
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
+  currentTx: ShippingGuaranteeTransaction = {} as ShippingGuaranteeTransaction;
   showUpdateSubmit = false;
-
   showApproveReject = false;
-
   rejectionReason = '';
-
   tnxId = '';
-
   companyId = '';
-
+ 
   permissionNames: string[] = [];
-
+ 
   shippingGuaranteeSteps = [
     { label: 'General Details' },
     { label: 'Applicant & Beneficiary' },
@@ -92,65 +54,53 @@ export class ShippingGuarantee implements OnInit {
     { label: 'Instructions' },
     { label: 'Attachments' },
   ];
-
-
-  // =========================================================
-  // CONSTRUCTOR
-  // =========================================================
-
+ 
   constructor(
     private fb: FormBuilder,
-
     private router: Router,
-
     private snackbar: MatSnackBar,
-
     private api: ApiService,
-
     private authservice: AuthService,
-
     private route: ActivatedRoute,
-
     private dialog: MatDialog,
     private transactionService: ShippingGuaranteeFormTransactionService,
   ) {
-
     this.buildForm();
   }
-
+ 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
-
+ 
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
-
+ 
         console.log(
           'Shipping Guarantee Permission Names:',
           this.permissionNames,
         );
       } catch (error) {
         console.error('Error parsing permissionNames:', error);
-
+ 
         this.permissionNames = [];
       }
     } else {
       console.warn('permissionNames not found in sessionStorage');
-
+ 
       this.permissionNames = [];
     }
   }
-
+ 
   // =========================================================
   // CHECK PERMISSION
   // =========================================================
-
+ 
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
   }
-
+ 
   ngOnInit() {
     this.loadPermissions();
     setTimeout(() => {
@@ -169,21 +119,13 @@ export class ShippingGuarantee implements OnInit {
       );
       sections.forEach((section) => observer.observe(section));
     }, 200);
-
-
-    // -------------------------------------------------------
-    // NAVIGATION STATE
-    // -------------------------------------------------------
-
+ 
     const navState = history.state;
-
+ 
     if (navState?.mode) {
-
-      this.screenMode =
-        navState.mode;
-
+      this.screenMode = navState.mode;
     }
-
+ 
     this.companyId = this.authservice.getCompanyId() || '';
     console.log('Company ID from route:', this.companyId);
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
@@ -197,20 +139,9 @@ export class ShippingGuarantee implements OnInit {
       } else {
         this.enterCreateMode();
       }
-    );
-
+    });
   }
-
-
-  // =========================================================
-  // BUILD FORM
-  // =========================================================
-
-
-  // =========================================================
-  // BUILD FORM
-  // =========================================================
-
+ 
   private buildForm(): void {
     this.ShippingGuaranteeForm = this.fb.group({
       generalDetailsForm: this.fb.group({
@@ -250,90 +181,40 @@ export class ShippingGuarantee implements OnInit {
       attachments: this.fb.array([]),
     });
   }
-
-
-  // =========================================================
-  // CREATE MODE
-  // =========================================================
-
+ 
   private enterCreateMode(): void {
-
     this.mode = 'CREATE';
-
     this.showUpdateSubmit = false;
-
     this.showApproveReject = false;
-
-    this.currentTx =
-      {} as ShippingGuaranteeTransaction;
-
+    this.currentTx = {} as ShippingGuaranteeTransaction;
     this.ShippingGuaranteeForm.reset();
-
     this.buildForm();
-
   }
-
-
-  // =========================================================
-  // EDIT MODE
-  // =========================================================
-
-  private enterEditMode(
-    tnxId: string
-  ): void {
-
+ 
+  private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
     this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
-
-          switch (tx.status) {
-
-            // ------------------------------------------------
-            // PENDING
-            // ------------------------------------------------
-
-            case 'I':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode = 'EDIT';
-
-              this.ShippingGuaranteeForm.enable();
-
-              break;
-
-
-            // ------------------------------------------------
-            // SUBMITTED
-            // ------------------------------------------------
-
-            case 'S':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode = 'SUBMITTED';
-
-              this.ShippingGuaranteeForm.disable();
-
-              break;
-
-
-            // ------------------------------------------------
-            // APPROVED
-            // ------------------------------------------------
-
-            case 'A':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode = 'APPROVED';
-
-              this.ShippingGuaranteeForm.disable();
-
-              break;
-
+ 
+        switch (tx.status) {
+          case 'I': // pending
+            this.mode = 'UPDATE';
+            this.screenMode = 'EDIT';
+            this.ShippingGuaranteeForm.enable();
+            break;
+          case 'S': // submitted
+            this.mode = 'UPDATE';
+            this.screenMode = 'SUBMITTED';
+            this.ShippingGuaranteeForm.disable();
+            break;
+          case 'A': // Approved
+            this.mode = 'UPDATE';
+            this.screenMode = 'APPROVED';
+            this.ShippingGuaranteeForm.disable();
+            break;
+ 
           case 'R': // Rejected
             this.mode = 'REJECTED';
             this.screenMode = 'EDIT';
@@ -355,7 +236,7 @@ export class ShippingGuarantee implements OnInit {
       },
     });
   }
-
+ 
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
     return this.ShippingGuaranteeForm.get('generalDetailsForm') as FormGroup;
@@ -374,54 +255,23 @@ export class ShippingGuarantee implements OnInit {
   get attachmentsArray(): FormArray {
     return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
-
+ 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
-
       generalDetailsForm: tx,
-
       applicantBeneficiaryForm: tx,
-
       issuingbankForm: tx,
       instructionForm: tx,
     });
-
   }
-
-
-  // =========================================================
-  // SCROLL
-  // =========================================================
-
-  scrollToSection(
-    index: number
-  ): void {
-
+ 
+  scrollToSection(index: number) {
     this.currentStep = index;
-
-    const section =
-      document.getElementById(
-        `section-${index}`
-      );
-
-    section?.scrollIntoView({
-
-      behavior: 'smooth',
-
-      block: 'start'
-
-    });
-
+    const section = document.getElementById(`section-${index}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-
-
-  // =========================================================
-  // FLATTEN FORM
-  // =========================================================
-
-  private flattenForm():
-    ShippingGuaranteeTransaction {
-
+ 
+  private flattenForm(): ShippingGuaranteeTransaction {
     return {
       companyId: this.companyId,
       ...this.ShippingGuaranteeForm.value.generalDetailsForm,
@@ -430,15 +280,7 @@ export class ShippingGuarantee implements OnInit {
       ...this.ShippingGuaranteeForm.value.instructionForm,
       attachments: this.ShippingGuaranteeForm.value.attachments,
     };
-
   }
-
-
-  // =========================================================
-  // SAVE
-  // Permission: SG_CreateSave
-  // =========================================================
-
   saveForm(): void {
     if (!this.hasPermission('SG_CreateSave'))
       if (this.ShippingGuaranteeForm.invalid) {
@@ -450,11 +292,11 @@ export class ShippingGuarantee implements OnInit {
         );
         return;
       }
-
+ 
     // Flatten nested form groups into single object
     const payload = this.flattenForm();
     console.log('Payload before saving draft:', payload);
-
+ 
     this.api.savePendingSg(payload).subscribe({
       next: (res: ShippingGuaranteeTransaction) => {
         this.snackbar.open(
@@ -492,14 +334,7 @@ export class ShippingGuarantee implements OnInit {
         { duration: 3000 },
       );
       return;
-
     }
-
-
-    // -------------------------------------------------------
-    // COMPANY ID CHECK
-    // -------------------------------------------------------
-
     if (!companyId) {
       this.snackbar.open(
         'Company ID not found. Please save the draft first.',
@@ -507,18 +342,9 @@ export class ShippingGuarantee implements OnInit {
         { duration: 3000 },
       );
       return;
-
     }
-
-
-    // -------------------------------------------------------
-    // PAYLOAD
-    // -------------------------------------------------------
-
     const payload = {
-
-      ...this.flattenForm(),
-
+      ...this.flattenForm(), // merge current form data
       event: 'CRE',
       tnxId: this.tnxId,
     };
@@ -539,34 +365,12 @@ export class ShippingGuarantee implements OnInit {
       },
     });
   }
-
-
-  // =========================================================
-  // BACK
-  // =========================================================
-
-  back(): void {
-
-    this.router.navigate([
-      '/dashboard'
-    ]);
-
+  back() {
+    this.router.navigate(['/dashboard']);
   }
-
-
-  // =========================================================
-  // ATTACHMENTS
-  // =========================================================
-
-  updateAttachments(
-    files: File[]
-  ): void {
-
-    const arr =
-      this.ShippingGuaranteeForm.get(
-        'attachments'
-      ) as FormArray;
-
+ 
+  updateAttachments(files: File[]) {
+    const arr = this.ShippingGuaranteeForm.get('attachments') as FormArray;
     arr.clear();
     files.forEach((file) =>
       arr.push(
@@ -580,15 +384,8 @@ export class ShippingGuarantee implements OnInit {
       ),
     );
   }
-
-
-  // =========================================================
-  // UPDATE / AMEND
-  // Permission: SG_InquiryPendingUpdate
-  // =========================================================
-
   update(): void {
-
+ 
         if (!this.hasPermission('SG_InquiryPendingUpdate'))
           if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
             this.snackbar.open(
@@ -600,53 +397,13 @@ export class ShippingGuarantee implements OnInit {
             );
             return;
           }
-
-    // -------------------------------------------------------
-    // VALIDATION
-    // -------------------------------------------------------
-
-    if (
-      this.ShippingGuaranteeForm.invalid ||
-      !this.currentTx?.tnxId
-    ) {
-
-      this.snackbar.open(
-        'Invalid form or missing transaction ID',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // PAYLOAD
-    // -------------------------------------------------------
-
-    const payload =
-      this.flattenForm();
-
-    payload.tnxId =
-      this.tnxId;
-
-    console.log(
-      'Payload before update:',
-      payload
-    );
-
-
+ 
+    const payload = this.flattenForm();
+    payload.tnxId = this.tnxId;
+    console.log('Payload before update:', payload);
     if (!payload.tnxId) {
-
-      console.error(
-        'TNX ID is missing!'
-      );
-
+      console.error('TNX ID is missing!');
       return;
-
     }
     this.api.updatePendingByTnxIdSg(payload.tnxId!, payload).subscribe({
       next: (res) => {
@@ -656,7 +413,7 @@ export class ShippingGuarantee implements OnInit {
           'Close',
           { duration: 3000 },
         );
-
+ 
         setTimeout(
           () =>
             this.router.navigate([
@@ -672,10 +429,10 @@ export class ShippingGuarantee implements OnInit {
       },
     });
   }
-
+ 
   approve(): void {
-
-    if (!this.hasPermission('SG_InquiryApprove'))
+ 
+    
       this.api
         .approveTransactionSg(this.currentTx.tnxId!, this.currentTx)
         .subscribe({
@@ -693,18 +450,18 @@ export class ShippingGuarantee implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
-
-    
+ 
+   
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
     });
-
+ 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-
+ 
       this.api.rejectTransactionSg(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
           this.snackbar.open('Transaction rejected successfully', 'Close', {
@@ -720,14 +477,14 @@ export class ShippingGuarantee implements OnInit {
       });
     });
   }
-
+ 
   // reject(): void {
   //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
   //     next: () => this.navigateBack('rejected'),
   //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
   //   });
   // }
-
+ 
   private navigateBack(tab: string) {
     this.router.navigate(
       ['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'],
@@ -738,21 +495,9 @@ export class ShippingGuarantee implements OnInit {
       },
     );
   }
-
-
-  // =========================================================
-  // UPDATE REJECTED
-  // Permission: SG_InquiryRejectUpdate
-  // =========================================================
-
-
-  // =========================================================
-  // UPDATE REJECTED
-  // Permission: SG_InquiryRejectUpdate
-  // =========================================================
-
+ 
   updateRejected(): void {
-
+ 
     if (!this.hasPermission('SG_InquiryRejectUpdate')) {
       this.snackbar.open(
         'You do not have permission to amend this rejected transaction.',
@@ -761,7 +506,7 @@ export class ShippingGuarantee implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
     if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
@@ -769,47 +514,11 @@ export class ShippingGuarantee implements OnInit {
         duration: 3000,
       });
       return;
-
     }
-
-
-    // -------------------------------------------------------
-    // VALIDATION
-    // -------------------------------------------------------
-
-    if (
-      this.ShippingGuaranteeForm.invalid ||
-      !this.currentTx?.tnxId
-    ) {
-
-      this.snackbar.open(
-        'Invalid form or missing transaction ID',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // PAYLOAD
-    // -------------------------------------------------------
-
-    const payload =
-      this.flattenForm();
-
-    payload.tnxId =
-      this.currentTx.tnxId;
-
-
-    // -------------------------------------------------------
-    // API
-    // -------------------------------------------------------
-
+ 
+    const payload = this.flattenForm(); // flatten form values
+    payload.tnxId = this.currentTx.tnxId;
+ 
     this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
       next: (res) => {
         this.snackbar.open(
@@ -817,7 +526,7 @@ export class ShippingGuarantee implements OnInit {
           'Close',
           { duration: 3000 },
         );
-
+ 
         // Navigate back to inquiries with Pending tab
         this.router.navigate(
           ['/dashboard/Trade-Services/shipping-guarantee/inquiries-records'],
@@ -833,5 +542,4 @@ export class ShippingGuarantee implements OnInit {
       },
     });
   }
-
 }

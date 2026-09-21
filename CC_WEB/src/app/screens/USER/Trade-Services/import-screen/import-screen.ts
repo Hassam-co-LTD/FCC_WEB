@@ -1,58 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  Validators
-} from '@angular/forms';
-
+import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-import {
-  MatDialog,
-  MatDialogModule
-} from '@angular/material/dialog';
-
-import { MatIconModule } from '@angular/material/icon';
-
-import { GeneralDetails } from './components/general-details/general-details';
-import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
+import { ActivatedRoute } from '@angular/router';
+ 
+import { GeneralDetails } from "./components/general-details/general-details";
+import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
 import { BankDetails } from './components/bank-details/bank-details';
 import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
 import { PaymentDetails } from './components/payment-details/payment-details';
 import { ShipmentDetails } from './components/shipment-details/shipment-details';
 import { NarrativeDetails } from './components/narrative-details/narrative-details';
-import { Licenses } from './components/licenses/licenses';
-import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
-import { Attachments } from './components/attachments/attachments';
-
-import { Sidebar } from '../../../../core/sidebar/sidebar';
-
+import { Licenses } from "./components/licenses/licenses";
+import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
+import { Attachments } from "./components/attachments/attachments";
+import { Sidebar } from "../../../../core/sidebar/sidebar";
+ 
 import { ApiService } from '../../../../core/services/api.service';
-
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
-
 import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
-
 import { AuthService } from '../../../../core/services/auth.service';
-
-
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+ 
+ 
 @Component({
   selector: 'app-import-lc',
   standalone: true,
-
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-
     GeneralDetails,
     ApplicantBeneficiary,
     BankDetails,
@@ -63,50 +43,27 @@ import { AuthService } from '../../../../core/services/auth.service';
     Licenses,
     InstructionToBank,
     Attachments,
-
     MatDialogModule,
     Sidebar,
   ],
-
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss'],
 })
-
-
 export class ImportScreen implements OnInit {
-
-  // ============================================================
-  // FORM STATE
-  // ============================================================
-
   currentStep = 0;
-
   importForm!: FormGroup;
-
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
-
-  screenMode:
-    | 'EDIT'
-    | 'SUBMITTED'
-    | 'APPROVED'
-    | 'FINAL' = 'EDIT';
-
-  currentTx: ImportLcTransaction =
-    {} as ImportLcTransaction;
-
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
+  currentTx: ImportLcTransaction = {} as ImportLcTransaction;
   showUpdateSubmit = false;
-
   showApproveReject = false;
-
   rejectionReason = '';
-
   tnxId = '';
-
   companyId = '';
-
+ 
   //permissions
   permissionNames: string[] = [];
-
+ 
   importSteps = [
     { label: 'General Details' },
     { label: 'Applicant Details' },
@@ -119,104 +76,20 @@ export class ImportScreen implements OnInit {
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
   ];
-
-
-  // ============================================================
-  // INQUIRY SCREEN STATE
-  // ============================================================
-
-  activeTab:
-    | 'live'
-    | 'pending'
-    | 'submitted'
-    | 'approved'
-    | 'rejected' = 'live';
-
-  searchQuery = '';
-
-  currencyFilter = '';
-
-  showAdvanced = false;
-
-
-  tabs = [
-    {
-      key: 'live' as const,
-      label: 'Live'
-    },
-
-    {
-      key: 'pending' as const,
-      label: 'Pending'
-    },
-
-    {
-      key: 'submitted' as const,
-      label: 'Submitted'
-    },
-
-    {
-      key: 'approved' as const,
-      label: 'Approved'
-    },
-
-    {
-      key: 'rejected' as const,
-      label: 'Rejected'
-    }
-  ];
-
-
-  transactions: ImportLcTransaction[] = [];
-
-  filteredTransactions: ImportLcTransaction[] = [];
-
-  pagedTransactions: ImportLcTransaction[] = [];
-
-
-  // ============================================================
-  // PAGINATION
-  // ============================================================
-
-  currentPage = 1;
-
-  pageSize = 10;
-
-  totalPages = 1;
-
-
-  // ============================================================
-  // SORTING
-  // ============================================================
-
-  sortColumn = '';
-
-  sortDirection: 'asc' | 'desc' = 'asc';
-
-
-  // ============================================================
-  // CONSTRUCTOR
-  // ============================================================
-
+ 
   constructor(
     private fb: FormBuilder,
-
     private router: Router,
-
     private snackBar: MatSnackBar,
-
     private api: ApiService,
-
     private route: ActivatedRoute,
-
     private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService,
   ) {
-
     this.buildForm();
   }
-
+ 
   ngOnInit() {
     this.loadPermissions();
     setTimeout(() => {
@@ -235,20 +108,13 @@ export class ImportScreen implements OnInit {
       );
       sections.forEach((section) => observer.observe(section));
     }, 200);
-
-
-    // ----------------------------------------------------------
-    // ROUTE STATE
-    // ----------------------------------------------------------
-
+ 
     const navState = history.state;
-
+ 
     if (navState?.mode) {
-
-      this.screenMode =
-        navState.mode;
+      this.screenMode = navState.mode;
     }
-
+ 
     this.companyId = this.authservice.getCompanyId() || '';
     console.log('Company ID from route:', this.companyId);
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
@@ -258,44 +124,39 @@ export class ImportScreen implements OnInit {
     this.route.paramMap.subscribe((params) => {
       const tnxId = params.get('tnxId');
       if (tnxId) {
-
         this.enterEditMode(tnxId);
-
       } else {
-
         this.enterCreateMode();
       }
-
     });
-
   }
-
+ 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
-
+ 
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
-
+ 
         console.log('Import LC Permission Names:', this.permissionNames);
       } catch (error) {
         console.error('Error parsing permissionNames:', error);
-
+ 
         this.permissionNames = [];
       }
     } else {
       console.warn('permissionNames not found in sessionStorage');
-
+ 
       this.permissionNames = [];
     }
   }
-
+ 
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
   }
-
+ 
   private buildForm(): void {
     // Always initialize the form to avoid null bindings
     this.importForm = this.fb.group({
@@ -370,85 +231,43 @@ export class ImportScreen implements OnInit {
       attachments: this.fb.array([]),
     });
   }
-
-
-  // ============================================================
-  // CREATE MODE
-  // ============================================================
-
-
-  // ============================================================
-  // CREATE MODE
-  // ============================================================
-
+ 
   private enterCreateMode(): void {
-
     this.mode = 'CREATE';
-
-    this.screenMode = 'EDIT';
-
     this.showUpdateSubmit = false;
-
     this.showApproveReject = false;
-
-    this.currentTx =
-      {} as ImportLcTransaction;
-
+    this.currentTx = {} as ImportLcTransaction;
+    this.importForm.reset();
     this.buildForm();
-
   }
-
-
-  // ============================================================
-  // EDIT MODE
-  // ============================================================
-
-  private enterEditMode(
-    tnxId: string
-  ): void {
-
+  private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
     this.api.getTransactionByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
-
-          switch (tx.status) {
-
-            case 'I':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode = 'EDIT';
-
-              this.importForm.enable();
-
-              break;
-
-
-            case 'S':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode =
-                'SUBMITTED';
-
-              this.importForm.disable();
-
-              break;
-
-
-            case 'A':
-
-              this.mode = 'UPDATE';
-
-              this.screenMode =
-                'APPROVED';
-
-              this.importForm.disable();
-
-              break;
-
+ 
+        switch (tx.status) {
+          case 'I': // pending
+            this.mode = 'UPDATE';
+            this.screenMode = 'EDIT';
+            this.importForm.enable();
+            // this.showUpdateSubmit = true;
+            // this.showApproveReject = false;
+            break;
+          case 'S': // submitted
+            this.mode = 'UPDATE';
+            this.screenMode = 'SUBMITTED';
+            this.importForm.disable();
+            // this.showUpdateSubmit = false;
+            // this.showApproveReject = true;
+            break;
+          case 'A': // Approved
+            this.mode = 'UPDATE';
+            this.screenMode = 'APPROVED';
+            this.importForm.disable();
+            break;
+ 
           case 'R': // Rejected
             this.mode = 'REJECTED';
             this.screenMode = 'EDIT';
@@ -500,59 +319,31 @@ export class ImportScreen implements OnInit {
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
   }
-
+ 
   private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
-
       generalDetails: tx,
-
       applicantForm: tx,
-
       bankForm: tx,
-
       amountChargeForm: tx,
-
       paymentDetailsForm: tx,
-
       shipmentForm: tx,
-
       narrativeForm: tx,
       instructionForm: tx,
     });
-
   }
-
-
-  // ============================================================
-  // SCROLL
-  // ============================================================
-
-  scrollToSection(
-    index: number
-  ): void {
-
+ 
+  // scrollToSection(i: number) {
+  //   this.currentStep = i;
+  //   document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
+ 
+  scrollToSection(index: number) {
     this.currentStep = index;
-
-    const section =
-      document.getElementById(
-        `section-${index}`
-      );
-
-    section?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-
+    const section = document.getElementById(`section-${index}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-
-
-  // ============================================================
-  // FLATTEN FORM
-  // ============================================================
-
-  private flattenForm():
-    ImportLcTransaction {
-
+  private flattenForm(): ImportLcTransaction {
     return {
       companyId: this.companyId,
       ...this.importForm.value.generalDetails,
@@ -565,11 +356,10 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.instructionForm,
       attachments: this.importForm.value.attachments,
     };
-
   }
-
+ 
   saveForm(): void {
-
+ 
   if (!this.hasPermission('ILC_CreateSave')) {
     this.snackBar.open(
       'You do not have permission to create an Import LC.',
@@ -578,11 +368,11 @@ export class ImportScreen implements OnInit {
         duration: 3000,
       },
     );
-
+ 
     return;
   }
-
-
+ 
+ 
     if (this.importForm.invalid) {
       this.importForm.markAllAsTouched();
       this.snackBar.open(
@@ -592,11 +382,11 @@ export class ImportScreen implements OnInit {
       );
       return;
     }
-
+ 
     // Flatten nested form groups into single object
     const payload = this.flattenForm();
     console.log('Payload before saving draft:', payload);
-
+ 
     this.api.savePending(payload).subscribe({
       next: (res: ImportLcTransaction) => {
         // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
@@ -618,9 +408,9 @@ export class ImportScreen implements OnInit {
         this.snackBar.open('Error saving draft', 'Close', { duration: 3000 }),
     });
   }
-
+ 
   submitLc(): void {
-
+ 
       if (!this.hasPermission('ILC_InquirySubmit')) {
         this.snackBar.open(
           'You do not have permission to submit this transaction.',
@@ -629,10 +419,10 @@ export class ImportScreen implements OnInit {
             duration: 3000,
           },
         );
-
+ 
         return;
       }
-
+ 
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
     if (!tnxId) {
@@ -643,8 +433,6 @@ export class ImportScreen implements OnInit {
       );
       return;
     }
-
-
     if (!companyId) {
       this.snackBar.open(
         'Company ID not found. Please save the draft first.',
@@ -653,8 +441,6 @@ export class ImportScreen implements OnInit {
       );
       return;
     }
-
-
     const payload = {
       ...this.flattenForm(), // merge current form data
       event: 'CRE',
@@ -677,26 +463,13 @@ export class ImportScreen implements OnInit {
       },
     });
   }
-
+ 
   back() {
     this.router.navigate(['/dashboard']);
   }
-
-
-  // ============================================================
-  // ATTACHMENTS
-  // ============================================================
-
-  updateAttachments(
-    files: File[]
-  ): void {
-
-    const arr =
-      this.importForm.get(
-        'attachments'
-      ) as FormArray;
-
-
+ 
+  updateAttachments(files: File[]) {
+    const arr = this.importForm.get('attachments') as FormArray;
     arr.clear();
     files.forEach((file) =>
       arr.push(
@@ -710,11 +483,11 @@ export class ImportScreen implements OnInit {
       ),
     );
   }
-
-
+ 
+ 
   update(): void {
-
-    
+ 
+   
     if (!this.hasPermission('ILC_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
@@ -723,60 +496,27 @@ export class ImportScreen implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
-
+ 
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,
       });
       return;
     }
-
-
-    if (
-      this.importForm.invalid ||
-      !this.currentTx?.tnxId
-    ) {
-
-      this.snackBar.open(
-        'Invalid form or missing transaction ID',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-    }
-
-
-    const payload =
-      this.flattenForm();
-
-
-    payload.tnxId =
-      this.tnxId;
-
-
-    console.log(
-      'Payload before update:',
-      payload
-    );
-
-
+ 
+    const payload = this.flattenForm();
+    payload.tnxId = this.tnxId;
+    console.log('Payload before update:', payload);
     if (!payload.tnxId) {
-
-      console.error(
-        'TNX ID is missing!'
-      );
-
+      console.error('TNX ID is missing!');
       return;
     }
     // ImportLcTransaction = {
     //   id: this.currentTx.id,
-
+ 
     //   // ===== FLATTEN FORM VALUES =====
     //   ...this.importForm.value.generalDetails,
     //   ...this.importForm.value.applicantForm,
@@ -786,11 +526,11 @@ export class ImportScreen implements OnInit {
     //   ...this.importForm.value.shipmentForm,
     //   ...this.importForm.value.narrativeForm,
     //   ...this.importForm.value.instructionForm,
-
+ 
     //   attachments: this.attachmentsArray.value,
     //   tnxId: this.currentTx?.tnxId
     // };
-
+ 
     this.api.updatePendingByTnxId(payload).subscribe({
       next: (res) => {
         // this.transactionService.addOrUpdateTransaction(res);
@@ -799,7 +539,7 @@ export class ImportScreen implements OnInit {
           'Close',
           { duration: 3000 },
         );
-
+ 
         setTimeout(
           () =>
             this.router.navigate([
@@ -815,22 +555,10 @@ export class ImportScreen implements OnInit {
       },
     });
   }
-
-
-  // ============================================================
-  // APPROVE
-  // Permission: ILC_InquiryApprove
-  // ============================================================
-
-
-  // ============================================================
-  // APPROVE
-  // Permission: ILC_InquiryApprove
-  // ============================================================
-
+ 
   approve(): void {
-
-    
+ 
+   
     if (!this.hasPermission('ILC_InquiryApprove')) {
       this.snackBar.open(
         'You do not have permission to approve this transaction.',
@@ -839,10 +567,10 @@ export class ImportScreen implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
-
+ 
     this.api
       .approveTransaction(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
@@ -852,7 +580,7 @@ export class ImportScreen implements OnInit {
       });
   }
   openReject(): void {
-    
+   
     if (!this.hasPermission('ILC_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
@@ -861,19 +589,19 @@ export class ImportScreen implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
-
-
-
+ 
+ 
+ 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
     });
-
+ 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-
+ 
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', {
@@ -889,14 +617,14 @@ export class ImportScreen implements OnInit {
       });
     });
   }
-
+ 
   // reject(): void {
   //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
   //     next: () => this.navigateBack('rejected'),
   //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
   //   });
   // }
-
+ 
   private navigateBack(tab: string) {
     this.router.navigate(
       ['/dashboard/Trade-Services/import-screen/inquiries'],
@@ -907,16 +635,10 @@ export class ImportScreen implements OnInit {
       },
     );
   }
-
-
-  // ============================================================
-  // UPDATE REJECTED
-  // Permission: ILC_InquiryRejectUpdate
-  // ============================================================
-
+ 
   updateRejected(): void {
-
-    
+ 
+   
     if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
@@ -925,43 +647,20 @@ export class ImportScreen implements OnInit {
           duration: 3000,
         },
       );
-
+ 
       return;
     }
-
+ 
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
         duration: 3000,
       });
       return;
     }
-
-
-    if (
-      this.importForm.invalid ||
-      !this.currentTx?.tnxId
-    ) {
-
-      this.snackBar.open(
-        'Invalid form or missing transaction ID',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
-
-      return;
-    }
-
-
-    const payload =
-      this.flattenForm();
-
-
-    payload.tnxId =
-      this.currentTx.tnxId;
-
-
+ 
+    const payload = this.flattenForm(); // flatten form values
+    payload.tnxId = this.currentTx.tnxId;
+ 
     this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
       next: (res) => {
         this.snackBar.open(
@@ -969,7 +668,7 @@ export class ImportScreen implements OnInit {
           'Close',
           { duration: 3000 },
         );
-
+ 
         // Navigate back to inquiries with Pending tab
         this.router.navigate([
           '/dashboard/Trade-Services/import-screen/inquiries',
@@ -983,3 +682,4 @@ export class ImportScreen implements OnInit {
     });
   }
 }
+ 

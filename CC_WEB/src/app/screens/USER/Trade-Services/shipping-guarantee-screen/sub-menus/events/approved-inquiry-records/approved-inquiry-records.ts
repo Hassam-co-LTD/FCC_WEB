@@ -117,30 +117,26 @@ export class ApprovedInquiryRecords implements OnInit {
       (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
   }
+private loadPermissions(): void {
+  const storedPermissions = sessionStorage.getItem('permissionNames');
 
-  private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
-
-    if (storedPermissions) {
-      try {
-        this.permissionNames = JSON.parse(storedPermissions);
-
-        console.log(
-          'Shipping Guarantee Permission Names:',
-          this.permissionNames,
-        );
-      } catch (error) {
-        console.error('Error parsing permissionNames:', error);
-
-        this.permissionNames = [];
-      }
-    } else {
-      console.warn('permissionNames not found in sessionStorage');
-
+  if (storedPermissions) {
+    try {
+      this.permissionNames = JSON.parse(storedPermissions);
+    } catch (error) {
+      console.error('Error parsing permissionNames:', error);
       this.permissionNames = [];
     }
+  } else {
+    console.warn('permissionNames not found in sessionStorage');
+    this.permissionNames = [];
   }
 
+  // Add this:
+  this.canInquiry = this.hasPermission('SG_Inquiry'); // use your actual permission name
+  this.canAmend = this.hasPermission('SG_Amend');
+  this.canCreate = this.hasPermission('SG_Create');
+}
 
   // =========================================================
   // ON INIT

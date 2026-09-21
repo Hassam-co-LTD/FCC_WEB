@@ -32,6 +32,7 @@ import { GeneralDetails } from '../../../../shipping-guarantee-screen/sub-menus/
 import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/instruction-to-bank/instruction-to-bank';
 import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
 import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
+import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 
 
 @Component({
@@ -141,7 +142,6 @@ export class Amend implements OnInit {
 
   }
 
-  permissionNames: string[] = [];
 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
@@ -163,11 +163,7 @@ export class Amend implements OnInit {
     }
   }
 
-  hasPermission(permission: string): boolean {
-    return this.permissionNames.some(
-      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
-    );
-  }
+  
 
   ngOnInit() {
     this.loadPermissions();
