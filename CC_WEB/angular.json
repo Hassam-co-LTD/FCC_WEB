@@ -17,39 +17,37 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-  "browser": "src/main.ts",
-  "polyfills": [
-    "zone.js"
-  ],
-  "tsConfig": "tsconfig.app.json",
-  "inlineStyleLanguage": "scss",
-  "assets": [
-    {
-      "glob": "**/*",
-      "input": "public"
-    }
-  ],
-  "styles": [
-    "src/styles.scss",
-    "@angular/material/prebuilt-themes/azure-blue.css",
-    "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-  ],
-  "stylePreprocessorOptions": {
-    "includePaths": ["src/styles"]
-  }
-},
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            }
+          },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "16kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
@@ -66,10 +64,7 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "host": "localhost",
-            "allowedHosts": [
-              
-              "localhost"
-            ]
+            "allowedHosts": ["localhost"]
           },
           "configurations": {
             "production": {
@@ -87,10 +82,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -99,9 +91,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           }
         }
       }

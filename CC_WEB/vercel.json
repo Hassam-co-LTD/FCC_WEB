@@ -1,0 +1,9 @@
+{
+    "outputDirectory": "dist/CC_WEB/browser",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ]
+}
