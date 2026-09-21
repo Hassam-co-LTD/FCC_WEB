@@ -63,20 +63,10 @@
           (filesChange)="updateAttachments($event)"
         ></app-attachments>
       </section>
-
-      <!-- dynamic Fields section  -->
-
-      <ng-container *ngIf="fields?.length">
-        <app-dynamic-fields
-          [form]="dynamicFieldsForm"
-          [fields]="fields"
-          [isOpen]="isDynamicFieldsOpen"
-        >
-        </app-dynamic-fields>
-      </ng-container>
       <hr class="section-divider" />
       <!-- Footer Buttons -->
       <div class="actions">
+
         <button mat-stroked-button (click)="back()">Back</button>
 
         <!-- CREATE -->
@@ -85,6 +75,7 @@
             *ngIf="
               hasPermission('ILC_CreateSave')
             "
+            
             mat-flat-button
             color="accent"
             (click)="saveForm()"
