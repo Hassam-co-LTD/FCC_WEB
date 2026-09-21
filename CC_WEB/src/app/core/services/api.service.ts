@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
+import { ChatRequest, ChatResponse, IngestResult } from '../models/chatbot';
 import {
   TransferDTO,
   RecordsListTransferDTO,
@@ -36,6 +37,10 @@ export class ApiService {
 
   private get baseUtgEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/utg/events`;
+  }
+
+  private get chatbotBaseUrl(): string {
+    return `${environment.gatewayUrl}/chatbot/api/chatbot`;
   }
 
   private get baseECEventUrl(): string {
@@ -110,6 +115,48 @@ export class ApiService {
   }
 
   /* -------------------- API Methods -------------------- */
+  // CHATBOT METHODS
+  // =================================================================
+  // CHATBOT (RAG) API Methods
+  // =================================================================
+
+  askChatbot(request: ChatRequest): Observable<ChatResponse> {
+    return this.http
+      .post<ChatResponse>(`${this.chatbotBaseUrl}/ask`, request, {
+        headers: this.headers,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  ingestChatbotFolder(): Observable<IngestResult> {
+    return this.http
+      .post<IngestResult>(
+        `${this.chatbotBaseUrl}/ingest/folder`,
+        {},
+        {
+          headers: this.headers,
+        },
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  ingestChatbotUpload(file: File): Observable<IngestResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Do NOT set Content-Type here — the browser must set the
+    // multipart boundary itself. Overriding it breaks the upload.
+    return this.http
+      .post<IngestResult>(`${this.chatbotBaseUrl}/ingest/upload`, formData, {
+        headers: new HttpHeaders({
+          companyid: this.companyId,
+          loginid: this.loginId,
+        }),
+      })
+      .pipe(catchError(this.handleError));
+  }
+  // ============== XXXXXXXXXXXXXX ================================
+
   // Save LC Record (pending record) - status "I"
 
   // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
