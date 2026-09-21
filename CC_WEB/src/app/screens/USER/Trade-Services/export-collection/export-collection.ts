@@ -91,6 +91,7 @@ export class ExportCollection implements OnInit {
     { label: 'Collection Instruction' },
     { label: 'License' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' },
   ];
 
   constructor(
@@ -189,9 +190,9 @@ export class ExportCollection implements OnInit {
 
     const navState = history.state;
 
-  if (navState?.mode) {
-    this.screenMode = navState.mode;
-  }
+    if (navState?.mode) {
+      this.screenMode = navState.mode;
+    }
 
     this.companyId = this.authservice.getCompanyId() || '';
 

@@ -66,6 +66,17 @@
         </app-attachments>
       </section>
 
+      <!-- dynamic Fields section  -->
+
+      <ng-container *ngIf="fields?.length">
+        <app-dynamic-fields
+          [form]="dynamicFieldsForm"
+          [fields]="fields"
+          [isOpen]="isDynamicFieldsOpen"
+        >
+        </app-dynamic-fields>
+      </ng-container>
+
       <!-- ================================================= -->
       <!-- FOOTER BUTTONS -->
       <!-- ================================================= -->
