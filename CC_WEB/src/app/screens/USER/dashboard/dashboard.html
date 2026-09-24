@@ -52,71 +52,379 @@
        OPERATIONS OVERVIEW
   ====================================================== -->
 
+  html
   <div class="metrics-section">
+    <!-- =========================================================
+       HEADER
+       ========================================================= -->
+
     <div class="section-header">
       <h2>Operations Overview</h2>
+    </div>
 
+    <!-- =========================================================
+       EXISTING CARDS — KEEP THESE AS THEY ARE
+       ========================================================= -->
+
+    <div class="metrics-grid">
+      <!-- Import LC -->
+      <div class="metric-card card-import-lc">
+        <div class="metric-icon">
+          <mat-icon>description</mat-icon>
+        </div>
+
+        <div class="metric-content">
+          <div class="metric-value">{{getAllStatus?.importLc?.total}}</div>
+
+          <div class="metric-title">Import LC</div>
+
+          <div class="metric-status">
+            <span>I: {{ getAllStatus?.importLc?.I }}</span>
+            <span>S: {{ getAllStatus?.importLc?.S }}</span>
+            <span>A: {{ getAllStatus?.importLc?.A }}</span>
+            <span>R: {{ getAllStatus?.importLc?.R }}</span>
+          </div>
+        </div>
+
+        <div class="metric-action">
+          <a routerLink="/dashboard/Trade-Services/import-screen/inquiries">
+            View Details
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Shipping Guarantee -->
+      <div class="metric-card card-shipping-guarantee">
+        <div class="metric-icon">
+          <mat-icon>local_shipping</mat-icon>
+        </div>
+
+        <div class="metric-content">
+          <div class="metric-value">
+            {{getAllStatus?.shippingGuarantee?.total}}
+          </div>
+
+          <div class="metric-title">Shipping Guarantee</div>
+
+          <div class="metric-status">
+            <span>I: {{ getAllStatus?.shippingGuarantee?.I || 0 }}</span>
+            <span>S: {{ getAllStatus?.shippingGuarantee?.S || 0 }}</span>
+            <span>A: {{ getAllStatus?.shippingGuarantee?.A || 0 }}</span>
+            <span>R: {{ getAllStatus?.shippingGuarantee?.R || 0 }}</span>
+          </div>
+        </div>
+
+        <div class="metric-action">
+          <a
+            routerLink="/dashboard/Trade-Services/shipping-guarantee/inquiries"
+          >
+            View Details
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Undertaking -->
+      <div class="metric-card card-undertaking">
+        <div class="metric-icon">
+          <mat-icon>assignment</mat-icon>
+        </div>
+
+        <div class="metric-content">
+          <div class="metric-value">{{getAllStatus?.undertaking?.total}}</div>
+
+          <div class="metric-title">Undertaking</div>
+
+          <div class="metric-status">
+            <span>I: {{ getAllStatus?.undertaking?.I || 0 }}</span>
+            <span>S: {{ getAllStatus?.undertaking?.S || 0 }}</span>
+            <span>A: {{ getAllStatus?.undertaking?.A || 0 }}</span>
+            <span>R: {{ getAllStatus?.undertaking?.R || 0 }}</span>
+          </div>
+        </div>
+
+        <div class="metric-action">
+          <a
+            routerLink="/dashboard/Trade-Services/undertaking-issuance/inquiries-records"
+          >
+            View Details
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Export Collection -->
+      <div class="metric-card card-export-collection">
+        <div class="metric-icon">
+          <mat-icon>collections_bookmark</mat-icon>
+        </div>
+
+        <div class="metric-content">
+          <div class="metric-value">
+            {{getAllStatus?.exportCollection?.total}}
+          </div>
+
+          <div class="metric-title">Export Collection</div>
+
+          <div class="metric-status">
+            <span>I: {{ getAllStatus?.exportCollection?.I || 0 }}</span>
+            <span>S: {{ getAllStatus?.exportCollection?.S || 0 }}</span>
+            <span>A: {{ getAllStatus?.exportCollection?.A || 0 }}</span>
+            <span>R: {{ getAllStatus?.exportCollection?.R || 0 }}</span>
+          </div>
+        </div>
+
+        <div class="metric-action">
+          <a
+            routerLink="/dashboard/Trade-Services/export-collection/inquiries-records"
+          >
+            View Details
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+       FILTERED TRANSACTIONS SECTION
+       ========================================================= -->
+
+    <div class="filtered-transactions-section">
+      <!-- TIME FILTER -->
       <div class="time-filter">
         <button
           mat-button
-          [class.active]="timeFilter === 'today'"
-          (click)="setTimeFilter('today')"
+          [class.active]="timeFilterr === 'today'"
+          (click)="setTimeFilterr('today')"
         >
           Today
         </button>
 
         <button
           mat-button
-          [class.active]="timeFilter === 'week'"
-          (click)="setTimeFilter('week')"
+          [class.active]="timeFilterr === 'week'"
+          (click)="setTimeFilterr('week')"
         >
           This Week
         </button>
 
         <button
           mat-button
-          [class.active]="timeFilter === 'month'"
-          (click)="setTimeFilter('month')"
+          [class.active]="timeFilterr === 'month'"
+          (click)="setTimeFilterr('month')"
         >
           This Month
         </button>
 
         <button
           mat-button
-          [class.active]="timeFilter === 'quarter'"
-          (click)="setTimeFilter('quarter')"
+          [class.active]="timeFilterr === 'quarter'"
+          (click)="setTimeFilterr('quarter')"
         >
           Quarter
         </button>
       </div>
-    </div>
 
-    <div class="metrics-grid">
-      @for (card of cards; track card.id) {
+      <!-- FILTERED SECTION HEADER -->
+      <div class="filtered-section-header">
+        <div class="filtered-section-title">
+          <h2>Transaction Activity</h2>
 
-      <div class="metric-card" [class]="'card-' + card.type">
-        <div class="metric-icon">
-          <mat-icon> {{ card.icon }} </mat-icon>
+          <p>
+            {{ timeFilterr === 'today' ? 'Today' : timeFilterr === 'week' ?
+            'This Week' : timeFilterr === 'month' ? 'This Month' : 'This
+            Quarter' }}
+          </p>
         </div>
 
-        <div class="metric-content">
-          <div class="metric-value">
-            {{ formatValue(card.value, card.format) }}
-          </div>
+        <div class="filtered-total">
+          <span>Total Transactions</span>
 
-          <div class="metric-title">{{ card.title }}</div>
-        </div>
-
-        <div class="metric-action">
-          <a [routerLink]="card.link">
-            View Details
-
-            <mat-icon> arrow_forward </mat-icon>
-          </a>
+          <strong> {{ getTotalFilteredTransactions() }} </strong>
         </div>
       </div>
 
-      }
+      <!-- =======================================================
+         FILTERED TRANSACTION CARDS
+         ======================================================= -->
+
+      html
+      <!-- =========================================================
+     FILTERED TRANSACTION CARDS
+     ========================================================= -->
+
+      <div class="filtered-transaction-grid">
+        <!-- =======================================================
+       IMPORT LC
+       ======================================================= -->
+
+        <div class="filtered-transaction-card">
+          <div class="filtered-card-top">
+            <div class="filtered-card-icon">
+              <mat-icon>description</mat-icon>
+            </div>
+
+            <div>
+              <h3>Import LC</h3>
+
+              <span>
+                {{ getTransactionCountByType('IMPORT_LC') }} Transactions
+              </span>
+            </div>
+          </div>
+
+          <div class="filtered-status-row">
+            <div>
+              <span>I</span>
+              <strong> {{ getStatusCount('IMPORT_LC', 'I') }} </strong>
+            </div>
+
+            <div>
+              <span>R</span>
+              <strong> {{ getStatusCount('IMPORT_LC', 'R') }} </strong>
+            </div>
+
+            <div>
+              <span>S</span>
+              <strong> {{ getStatusCount('IMPORT_LC', 'S') }} </strong>
+            </div>
+
+            <div>
+              <span>A</span>
+              <strong> {{ getStatusCount('IMPORT_LC', 'A') }} </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======================================================
+       SHIPPING GUARANTEE
+       ======================================================= -->
+
+        <div class="filtered-transaction-card">
+          <div class="filtered-card-top">
+            <div class="filtered-card-icon">
+              <mat-icon>local_shipping</mat-icon>
+            </div>
+
+            <div>
+              <h3>Shipping Guarantee</h3>
+
+              <span>
+                {{ getTransactionCountByType('SHIPPING_GUARANTEE') }}
+                Transactions
+              </span>
+            </div>
+          </div>
+
+          <div class="filtered-status-row">
+            <div>
+              <span>I</span>
+              <strong> {{ getStatusCount('SHIPPING_GUARANTEE', 'I') }} </strong>
+            </div>
+
+            <div>
+              <span>R</span>
+              <strong> {{ getStatusCount('SHIPPING_GUARANTEE', 'R') }} </strong>
+            </div>
+
+            <div>
+              <span>S</span>
+              <strong> {{ getStatusCount('SHIPPING_GUARANTEE', 'S') }} </strong>
+            </div>
+
+            <div>
+              <span>A</span>
+              <strong> {{ getStatusCount('SHIPPING_GUARANTEE', 'A') }} </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======================================================
+       UNDERTAKING
+       ======================================================= -->
+
+        <div class="filtered-transaction-card">
+          <div class="filtered-card-top">
+            <div class="filtered-card-icon">
+              <mat-icon>assignment</mat-icon>
+            </div>
+
+            <div>
+              <h3>Undertaking</h3>
+
+              <span>
+                {{ getTransactionCountByType('UNDERTAKING') }} Transactions
+              </span>
+            </div>
+          </div>
+
+          <div class="filtered-status-row">
+            <div>
+              <span>I</span>
+              <strong> {{ getStatusCount('UNDERTAKING', 'I') }} </strong>
+            </div>
+
+            <div>
+              <span>R</span>
+              <strong> {{ getStatusCount('UNDERTAKING', 'R') }} </strong>
+            </div>
+
+            <div>
+              <span>S</span>
+              <strong> {{ getStatusCount('UNDERTAKING', 'S') }} </strong>
+            </div>
+
+            <div>
+              <span>A</span>
+              <strong> {{ getStatusCount('UNDERTAKING', 'A') }} </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- =======================================================
+       EXPORT COLLECTION
+       ======================================================= -->
+
+        <div class="filtered-transaction-card">
+          <div class="filtered-card-top">
+            <div class="filtered-card-icon">
+              <mat-icon>collections_bookmark</mat-icon>
+            </div>
+
+            <div>
+              <h3>Export Collection</h3>
+
+              <span>
+                {{ getTransactionCountByType('EXPORT_COLLECTION') }}
+                Transactions
+              </span>
+            </div>
+          </div>
+
+          <div class="filtered-status-row">
+            <div>
+              <span>I</span>
+              <strong> {{ getStatusCount('EXPORT_COLLECTION', 'I') }} </strong>
+            </div>
+
+            <div>
+              <span>R</span>
+              <strong> {{ getStatusCount('EXPORT_COLLECTION', 'R') }} </strong>
+            </div>
+
+            <div>
+              <span>S</span>
+              <strong> {{ getStatusCount('EXPORT_COLLECTION', 'S') }} </strong>
+            </div>
+
+            <div>
+              <span>A</span>
+              <strong> {{ getStatusCount('EXPORT_COLLECTION', 'A') }} </strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -243,6 +551,151 @@
               {{ shippingStats.completed }} completed
             </span>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================
+     COMPANY TRANSACTION DASHBOARD
+====================================================== -->
+
+  <div class="dashboard-transactions-section">
+    <!-- TRANSACTIONS EXPIRING SOON -->
+
+    <div class="transaction-panel">
+      <div class="transaction-panel-header">
+        <div>
+          <h2>Transactions Expiring Soon</h2>
+          <p>Transactions expiring within the next 5 days</p>
+        </div>
+      </div>
+
+      <div class="transaction-list">
+        @if (dashboardData.recentExpired.length > 0) { @for (transaction of
+        dashboardData.recentExpired; track transaction.tnxId) {
+
+        <div class="dashboard-transaction-item">
+          <div class="dashboard-transaction-icon expired">
+            <mat-icon>
+              {{ getDashboardTransactionIcon(transaction.transactionType) }}
+            </mat-icon>
+          </div>
+
+          <div class="dashboard-transaction-content">
+            <div class="dashboard-transaction-title">
+              {{ transaction.transactionType }}
+            </div>
+
+            <div
+              class="dashboard-transaction-reference"
+              (click)="openExpiredTransaction(transaction)"
+              style="cursor: pointer"
+            >
+              {{ transaction.tnxId }}
+            </div>
+
+            <div class="dashboard-transaction-meta">
+              <span>
+                Created: {{ transaction.createdOn | date:'MMM d, yyyy h:mm a' }}
+              </span>
+
+              @if (transaction.expiryDate) {
+              <span>
+                Expires: {{ transaction.expiryDate | date:'MMM d, yyyy' }}
+              </span>
+              }
+            </div>
+          </div>
+        </div>
+
+        } } @else {
+
+        <div class="dashboard-empty-state">
+          <mat-icon>event_available</mat-icon>
+          <p>No transactions expiring within the next 5 days</p>
+        </div>
+
+        }
+      </div>
+    </div>
+
+    <!-- MONTHLY CALENDAR -->
+
+    <!-- MONTHLY CALENDAR -->
+
+    <div class="transaction-calendar-panel">
+      <div class="transaction-panel-header calendar-header">
+        <div>
+          <h2>Monthly Transactions</h2>
+          <p>Transactions created during the selected month</p>
+        </div>
+
+        <div class="calendar-navigation">
+          <button
+            mat-icon-button
+            type="button"
+            (click)="previousDashboardMonth()"
+            matTooltip="Previous Month"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <span class="calendar-month-title">
+            {{ getDashboardCalendarMonth() }}
+          </span>
+
+          <button
+            mat-icon-button
+            type="button"
+            (click)="nextDashboardMonth()"
+            matTooltip="Next Month"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="dashboard-calendar">
+        <div class="calendar-weekdays">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+
+        <div class="calendar-grid">
+          @for (day of calendarDays; track day.dateKey || $index) {
+
+          <div
+            class="calendar-day"
+            [class.empty-day]="day.day === null"
+            [class.today]="day.isToday"
+            [matTooltip]="getCalendarTransactionTooltip(day)"
+            matTooltipPosition="above"
+          >
+            @if (day.day !== null) {
+
+            <div class="calendar-day-number">{{ day.day }}</div>
+
+            @if (day.transactions && day.transactions.length > 0) {
+
+            <div class="calendar-day-transactions">
+              <mat-icon
+                class="calendar-transaction-icon"
+                matTooltip="Transactions available"
+              >
+                event_note
+              </mat-icon>
+            </div>
+
+            } }
+          </div>
+
+          }
         </div>
       </div>
     </div>

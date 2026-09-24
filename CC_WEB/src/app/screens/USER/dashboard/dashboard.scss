@@ -189,117 +189,622 @@
 /* =========================================================
    METRICS
 ========================================================= */
-
+/* =========================================================
+   METRICS
+========================================================= */
 .metrics-section {
+
   margin-bottom: 38px;
-}
 
-.metrics-grid {
-  display: grid;
+  /* =========================================================
+     SECTION HEADER & TIME FILTER CONTROLS
+     ========================================================= */
 
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  .section-header {
 
-  gap: 16px;
-}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
 
-.metric-card {
-  position: relative;
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #28415d;
+    }
 
-  display: flex;
+    .time-filter {
 
-  align-items: center;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0f4f9;
+      padding: 4px;
+      border-radius: 6px;
 
-  gap: 15px;
+      button[mat-button] {
 
-  min-height: 94px;
+        min-width: unset;
+        line-height: 28px;
+        padding: 0 12px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #69788c;
+        border-radius: 4px;
 
-  padding: 18px;
+        &.active {
+          background: #ffffff;
+          color: #1458b8;
+          font-weight: 600;
+          box-shadow: 0 2px 5px rgba(20, 70, 140, 0.08);
+        }
+      }
+    }
+  }
 
-  background: #ffffff;
 
-  border: 1px solid #dce6f7;
+  /* =========================================================
+     EXISTING METRICS GRID
+     ========================================================= */
 
-  border-radius: 7px;
+  .metrics-grid {
 
-  transition: 0.2s ease;
-}
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
 
-.metric-card:hover {
-  transform: translateY(-2px);
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-  box-shadow: 0 7px 20px rgba(20, 70, 140, 0.09);
-}
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
 
-.metric-icon {
-  width: 42px;
-  height: 42px;
 
-  flex-shrink: 0;
+  /* =========================================================
+     EXISTING METRIC CARDS
+     ========================================================= */
 
-  display: flex;
+  .metric-card {
 
-  align-items: center;
-  justify-content: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+    min-height: 140px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #dce6f7;
+    border-radius: 7px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  border-radius: 6px;
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(20, 70, 140, 0.09);
+    }
 
-  background: #f3f7fd;
 
-  color: #1458b8;
-}
+    /* Top row containing icon and metric content */
 
-.metric-icon mat-icon {
-  font-size: 23px;
+    .metric-icon {
 
-  width: 23px;
-  height: 23px;
-}
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
 
-.metric-content {
-  min-width: 0;
-}
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-.metric-value {
-  font-size: 24px;
+      border-radius: 6px;
+      background: #f3f7fd;
+      color: #1458b8;
 
-  font-weight: 700;
+      mat-icon {
+        font-size: 23px;
+        width: 23px;
+        height: 23px;
+      }
+    }
 
-  color: #28415d;
-}
 
-.metric-title {
-  margin-top: 2px;
+    .metric-content {
 
-  font-size: 13px;
+      min-width: 0;
 
-  color: #69788c;
-}
+      .metric-value {
 
-.metric-action {
-  margin-left: auto;
-}
+        font-size: 24px;
+        font-weight: 700;
+        color: #28415d;
+        line-height: 1.2;
+      }
 
-.metric-action a {
-  display: flex;
+      .metric-title {
 
-  align-items: center;
+        margin-top: 2px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #69788c;
+      }
 
-  gap: 2px;
 
-  white-space: nowrap;
+      /* Status indicators */
 
-  color: #1259ba;
+      .metric-status {
 
-  text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        flex-wrap: wrap;
 
-  font-size: 12px;
-}
+        span {
 
-.metric-action mat-icon {
-  font-size: 16px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #475569;
+          background: #f1f5f9;
+          padding: 2px 6px;
+          border-radius: 4px;
+          border: 1px solid #e2e8f0;
+        }
+      }
+    }
 
-  width: 16px;
-  height: 16px;
+
+    /* Bottom action link */
+
+    .metric-action {
+
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px dashed #e2e8f0;
+
+      a {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        white-space: nowrap;
+
+        color: #1259ba;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+
+        transition: color 0.2s ease;
+
+        mat-icon {
+
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+
+          color: #0d3d82;
+
+          mat-icon {
+            transform: translateX(3px);
+          }
+        }
+      }
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED TRANSACTION SECTION
+     ========================================================= */
+
+  .filtered-transactions-section {
+
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #e5ebf3;
+  }
+
+
+  /* =========================================================
+     FILTER BUTTONS FOR FILTERED SECTION
+     ========================================================= */
+
+  .filtered-transactions-section .time-filter {
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    width: fit-content;
+
+    margin-bottom: 20px;
+
+    background: #f0f4f9;
+    padding: 4px;
+    border-radius: 7px;
+
+    button[mat-button] {
+
+      min-width: unset;
+      min-height: 32px;
+
+      padding: 0 14px;
+
+      line-height: 32px;
+
+      font-size: 12px;
+      font-weight: 500;
+
+      color: #69788c;
+
+      border-radius: 5px;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+
+      &:hover {
+        color: #1458b8;
+        background: #e7eef8;
+      }
+
+      &.active {
+
+        background: #ffffff;
+        color: #1458b8;
+
+        font-weight: 600;
+
+        box-shadow:
+          0 2px 6px rgba(20, 70, 140, 0.10);
+      }
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED SECTION HEADER
+     ========================================================= */
+
+  .filtered-section-header {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 16px;
+
+    gap: 15px;
+
+    .filtered-section-title {
+
+      h2 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        color: #28415d;
+      }
+
+      p {
+        margin: 4px 0 0;
+        font-size: 12px;
+        color: #7a899b;
+      }
+    }
+
+
+    .filtered-total {
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      padding: 9px 15px;
+
+      background: #f5f8fc;
+      border: 1px solid #e1e8f2;
+      border-radius: 7px;
+
+      span {
+
+        font-size: 11px;
+        font-weight: 600;
+        color: #7a899b;
+      }
+
+      strong {
+
+        margin-top: 2px;
+
+        font-size: 20px;
+        line-height: 1.2;
+
+        color: #1458b8;
+      }
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED TRANSACTION CARDS GRID
+     ========================================================= */
+
+  .filtered-transaction-grid {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 650px) {
+      grid-template-columns:
+        repeat(1, minmax(0, 1fr));
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED TRANSACTION CARD
+     ========================================================= */
+
+  .filtered-transaction-card {
+
+    position: relative;
+
+    padding: 17px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce6f7;
+    border-radius: 8px;
+
+    box-shadow:
+      0 2px 8px rgba(30, 70, 120, 0.04);
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+
+    &:hover {
+
+      transform: translateY(-2px);
+
+      border-color: #cbdaf0;
+
+      box-shadow:
+        0 7px 20px rgba(20, 70, 140, 0.08);
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED CARD TOP
+     ========================================================= */
+
+  .filtered-card-top {
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 16px;
+
+    .filtered-card-icon {
+
+      width: 40px;
+      height: 40px;
+
+      flex-shrink: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 7px;
+
+      background: #f3f7fd;
+      color: #1458b8;
+
+      mat-icon {
+
+        width: 21px;
+        height: 21px;
+
+        font-size: 21px;
+      }
+    }
+
+
+    h3 {
+
+      margin: 0;
+
+      font-size: 14px;
+      font-weight: 700;
+
+      color: #28415d;
+    }
+
+
+    span {
+
+      display: block;
+
+      margin-top: 3px;
+
+      font-size: 11px;
+
+      color: #8492a3;
+    }
+  }
+
+
+  /* =========================================================
+     FILTERED STATUS ROW
+     ========================================================= */
+
+  .filtered-status-row {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 6px;
+
+    padding-top: 12px;
+
+    border-top: 1px dashed #e2e8f0;
+
+
+    > div {
+
+      display: flex;
+
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      min-height: 45px;
+
+      background: #f7f9fc;
+
+      border: 1px solid #e7edf5;
+
+      border-radius: 6px;
+
+
+      span {
+
+        font-size: 10px;
+        font-weight: 700;
+
+        color: #69788c;
+      }
+
+
+      strong {
+
+        margin-top: 3px;
+
+        font-size: 15px;
+        font-weight: 700;
+
+        color: #28415d;
+      }
+
+
+      &:hover {
+
+        background: #f0f5fb;
+
+        border-color: #d7e3f3;
+      }
+    }
+  }
+
+
+  /* =========================================================
+     NO TRANSACTIONS
+     ========================================================= */
+
+  .no-transactions {
+
+    margin-top: 16px;
+
+    padding: 28px 20px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #7a899b;
+
+    background: #f8fafc;
+
+    border: 1px dashed #d9e2ee;
+
+    border-radius: 8px;
+  }
+
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+
+  @media (max-width: 768px) {
+
+    .section-header {
+
+      align-items: flex-start;
+
+      .time-filter {
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+
+    .filtered-section-header {
+
+      align-items: flex-start;
+
+      flex-direction: column;
+
+      .filtered-total {
+        align-items: flex-start;
+      }
+    }
+  }
+
+
+  @media (max-width: 480px) {
+
+    .filtered-transactions-section {
+
+      margin-top: 22px;
+      padding-top: 18px;
+    }
+
+    .filtered-transactions-section .time-filter {
+
+      width: 100%;
+
+      button[mat-button] {
+
+        flex: 1;
+
+        padding: 0 8px;
+
+        font-size: 11px;
+      }
+    }
+
+    .filtered-status-row {
+
+      gap: 4px;
+    }
+  }
+
 }
 
 /* =========================================================
@@ -753,4 +1258,420 @@
 
     gap: 8px;
   }
+}
+
+
+// ameend user side transaction activities code 
+
+/* =========================================================
+   COMPANY TRANSACTION DASHBOARD
+   ========================================================= */
+
+.dashboard-transactions-section {
+display: grid;
+grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+gap: 24px;
+margin-top: 24px;
+margin-bottom: 20px;
+}
+
+/* =========================================================
+COMMON PANELS
+========================================================= */
+
+.transaction-panel,
+.transaction-calendar-panel {
+background: #ffffff;
+border: 1px solid #e5eaf1;
+border-radius: 16px;
+overflow: hidden;
+}
+
+.transaction-panel {
+min-height: 300px;
+}
+
+/* =========================================================
+PANEL HEADER
+========================================================= */
+
+.transaction-panel-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 20px 22px;
+border-bottom: 1px solid #edf0f5;
+
+h2 {
+margin: 0;
+font-size: 18px;
+font-weight: 600;
+color: #1f2937;
+}
+
+p {
+margin: 5px 0 0;
+font-size: 13px;
+color: #718096;
+}
+}
+
+/* =========================================================
+EXPIRING TRANSACTIONS
+========================================================= */
+
+.transaction-list {
+padding: 8px 0;
+}
+
+.dashboard-transaction-item {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 14px 22px;
+transition: background-color 0.2s ease;
+
+&:hover {
+background: #f8fafc;
+}
+}
+
+.dashboard-transaction-icon {
+width: 42px;
+height: 42px;
+min-width: 42px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+border-radius: 10px;
+background: #e9f2ff;
+color: #0b4eb3;
+
+&.expired {
+background: #fff1f1;
+color: #c62828;
+}
+
+mat-icon {
+font-size: 21px;
+width: 21px;
+height: 21px;
+}
+}
+
+.dashboard-transaction-content {
+min-width: 0;
+flex: 1;
+}
+
+.dashboard-transaction-title {
+font-size: 14px;
+font-weight: 600;
+color: #1f2937;
+}
+
+.dashboard-transaction-reference {
+margin-top: 3px;
+font-size: 13px;
+font-weight: 500;
+color: #0b4eb3;
+cursor: pointer;
+
+&:hover {
+text-decoration: underline;
+}
+}
+
+.dashboard-transaction-meta {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+margin-top: 5px;
+font-size: 12px;
+color: #718096;
+}
+
+/* =========================================================
+EMPTY STATE
+========================================================= */
+
+.dashboard-empty-state {
+min-height: 220px;
+
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+color: #94a3b8;
+
+mat-icon {
+font-size: 36px;
+width: 36px;
+height: 36px;
+margin-bottom: 8px;
+}
+
+p {
+margin: 0;
+font-size: 13px;
+}
+}
+
+/* =========================================================
+CALENDAR
+========================================================= */
+
+.transaction-calendar-panel {
+min-width: 0;
+}
+
+.calendar-header {
+min-height: 64px;
+}
+
+.calendar-navigation {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.calendar-month-title {
+min-width: 140px;
+text-align: center;
+font-size: 15px;
+font-weight: 600;
+color: #1f2937;
+}
+
+.dashboard-calendar {
+padding: 18px 22px 22px;
+}
+
+.calendar-weekdays {
+display: grid;
+grid-template-columns: repeat(7, minmax(0, 1fr));
+margin-bottom: 8px;
+
+ div {
+ padding: 8px;
+ text-align: center;
+ font-size: 12px;
+ font-weight: 600;
+ color: #718096;
+ }
+ }
+
+.calendar-grid {
+display: grid;
+grid-template-columns: repeat(7, minmax(0, 1fr));
+border-top: 1px solid #edf0f5;
+border-left: 1px solid #edf0f5;
+}
+
+.calendar-day {
+min-height: 105px;
+padding: 8px;
+
+border-right: 1px solid #edf0f5;
+border-bottom: 1px solid #edf0f5;
+
+background: #ffffff;
+
+cursor: default;
+
+&.empty-day {
+background: #fafbfc;
+}
+
+&.today {
+background: #f0f6ff;
+
+
+.calendar-day-number {
+  background: #0b4eb3;
+  color: #ffffff;
+}
+
+
+}
+
+&:hover:not(.empty-day) {
+background: #f8fbff;
+}
+}
+
+.calendar-day-number {
+width: 26px;
+height: 26px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+margin-bottom: 7px;
+
+border-radius: 50%;
+
+font-size: 12px;
+font-weight: 600;
+color: #1f2937;
+}
+
+.calendar-day-transactions {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.calendar-transaction {
+display: flex;
+align-items: center;
+justify-content: center;
+
+gap: 4px;
+min-width: 0;
+
+padding: 4px 5px;
+
+border-radius: 5px;
+
+background: #e9f2ff;
+color: #0b4eb3;
+
+cursor: default;
+
+mat-icon {
+flex-shrink: 0;
+font-size: 14px;
+width: 14px;
+height: 14px;
+}
+
+span {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+
+
+font-size: 10px;
+font-weight: 500;
+
+
+}
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+.dashboard-transactions-section {
+grid-template-columns: 1fr 1fr;
+gap: 18px;
+}
+
+.transaction-panel-header {
+padding: 18px;
+}
+
+.dashboard-calendar {
+padding: 14px;
+}
+
+.calendar-day {
+min-height: 90px;
+padding: 6px;
+}
+
+.calendar-month-title {
+min-width: 120px;
+}
+}
+
+@media (max-width: 900px) {
+.dashboard-transactions-section {
+grid-template-columns: 1fr;
+}
+
+.transaction-calendar-panel {
+width: 100%;
+}
+
+.calendar-day {
+min-height: 85px;
+}
+}
+
+@media (max-width: 600px) {
+.transaction-panel-header {
+align-items: flex-start;
+flex-direction: column;
+gap: 12px;
+}
+
+.calendar-header {
+align-items: center;
+}
+
+.calendar-navigation {
+width: 100%;
+justify-content: center;
+}
+
+.calendar-day {
+min-height: 70px;
+padding: 5px;
+}
+
+.calendar-transaction span {
+display: none;
+}
+
+.dashboard-calendar {
+padding: 12px;
+}
+
+.calendar-weekdays  div {
+padding: 5px 2px;
+font-size: 10px;
+}
+
+.calendar-day-number {
+width: 22px;
+height: 22px;
+font-size: 11px;
+}
+}
+
+// icon scss 
+.calendar-day-transactions {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-top: 8px;
+}
+
+.calendar-transaction-icon {
+width: 28px;
+height: 28px;
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+padding: 5px;
+border-radius: 7px;
+
+background: #e9f2ff;
+color: #0b4eb3;
+
+font-size: 18px;
+cursor: pointer;
+
+&:hover {
+background: #d7e8ff;
+}
 }

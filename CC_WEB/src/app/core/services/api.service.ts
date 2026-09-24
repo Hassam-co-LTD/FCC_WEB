@@ -17,7 +17,7 @@ import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
-
+import { UserDashboardResponse } from '../models/user-dashboard-transaction-activities';
 @Injectable({
   providedIn: 'root',
 })
@@ -1635,5 +1635,31 @@ export class ApiService {
     return this.http.post(`${this.adminBaseUrl}chatbot/chat`, payload, {
       responseType: 'text',
     });
+  }
+
+  // user dashboard transaction activities work
+
+  getDashboardData(
+    year: number,
+    month: number,
+    companyid: string,
+  ): Observable<UserDashboardResponse> {
+    const params = new HttpParams()
+      .set('year', year.toString())
+      .set('month', month.toString())
+      .set('companyid', companyid);
+
+    return this.http.get<UserDashboardResponse>(
+      `${this.baseUrl}/user-dashboard`,
+      {
+        params,
+      },
+    );
+  }
+
+  // fetch all screens record status count
+
+  getCountAllStatus() {
+    return this.http.get<any>(`${this.baseUrl}/user-dashboard/count-by-status`);
   }
 }
