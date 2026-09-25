@@ -428,6 +428,8 @@ export class Dashboard implements OnInit {
         console.log('dashboard calender transactions ', this.dashboardData);
 
         this.buildCalendarDays();
+        // Build Recent Activity from backend data
+        this.buildRecentActivities();
 
         this.lastUpdated = new Date();
 
@@ -941,5 +943,127 @@ export class Dashboard implements OnInit {
         transactionDate < startOfNextQuarter
       );
     });
+  }
+
+  private buildRecentActivities(): void {
+    const transactions = this.dashboardData?.calendarTransactions || [];
+
+    this.recentActivities = [...transactions]
+      .filter((transaction: any) => transaction?.createdOn)
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime(),
+      )
+      .slice(0, 5)
+      .map((transaction: any, index: number) => ({
+        id: transaction.id ?? transaction.tnxId ?? index,
+
+        type: this.getActivityType(transaction.transactionType),
+
+        title: this.getActivityTitle(transaction.transactionType),
+
+        status: this.getActivityStatus(transaction.status),
+
+        reference: transaction.tnxId ?? '',
+
+        time: new Date(transaction.createdOn),
+
+        amount: Number(transaction.amount ?? 0),
+
+        currency: transaction.currency ?? 'USD',
+
+        link: this.getActivityLink(
+          transaction.transactionType,
+          transaction.tnxId,
+        ),
+      }));
+  }
+
+  private getActivityType(transactionType: string): string {
+    const type = this.normalizeTransactionType(transactionType);
+
+    if (type.includes('IMPORT') || type.includes('LC')) {
+      return 'import';
+    }
+
+    if (type.includes('EXPORT') || type.includes('COLLECTION')) {
+      return 'export';
+    }
+
+    if (type.includes('SHIPPING') || type.includes('GUARANTEE')) {
+      return 'shipping';
+    }
+
+    if (type.includes('UNDERTAKING')) {
+      return 'undertaking';
+    }
+
+    return 'other';
+  }
+
+  private getActivityTitle(transactionType: string): string {
+    const type = this.normalizeTransactionType(transactionType);
+
+    if (type.includes('IMPORT') || type.includes('LC')) {
+      return 'Import LC Transaction';
+    }
+
+    if (type.includes('EXPORT') || type.includes('COLLECTION')) {
+      return 'Export Collection Transaction';
+    }
+
+    if (type.includes('SHIPPING') || type.includes('GUARANTEE')) {
+      return 'Shipping Guarantee Transaction';
+    }
+
+    if (type.includes('UNDERTAKING')) {
+      return 'Undertaking Issuance Transaction';
+    }
+
+    return transactionType || 'Transaction';
+  }
+
+  private getActivityStatus(status: string): string {
+    switch ((status || '').trim().toUpperCase()) {
+      case 'A':
+        return 'Approved';
+
+      case 'S':
+        return 'Submitted';
+
+      case 'R':
+        return 'Rejected';
+
+      case 'I':
+        return 'In Progress';
+
+      default:
+        return status || 'Unknown';
+    }
+  }
+
+  private getActivityLink(transactionType: string, tnxId: string): string {
+    const type = this.normalizeTransactionType(transactionType);
+
+    switch (type) {
+      case 'IMPORT_LC':
+      case 'IMPORTLC':
+        return `/dashboard/Trade-Services/import-screen/${tnxId}`;
+
+      case 'EXPORT_COLLECTION':
+      case 'EXPORTCOLLECTION':
+        return `/dashboard/Trade-Services/export-collection/${tnxId}`;
+
+      case 'UNDERTAKING':
+      case 'UNDERTAKING_ISSUANCE':
+        return `/dashboard/Trade-Services/undertaking-issuance/${tnxId}`;
+
+      case 'SHIPPING_GUARANTEE':
+      case 'SHIPPINGGUARANTEE':
+        return `/dashboard/Trade-Services/shipping-guarantee/${tnxId}`;
+
+      default:
+        return '/dashboard/search-by-id';
+    }
   }
 }

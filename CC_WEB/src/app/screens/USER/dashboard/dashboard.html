@@ -52,7 +52,6 @@
        OPERATIONS OVERVIEW
   ====================================================== -->
 
-  html
   <div class="metrics-section">
     <!-- =========================================================
        HEADER
@@ -249,7 +248,6 @@
          FILTERED TRANSACTION CARDS
          ======================================================= -->
 
-      html
       <!-- =========================================================
      FILTERED TRANSACTION CARDS
      ========================================================= -->
@@ -709,25 +707,26 @@
     <div class="activity-header">
       <div>
         <h2>Recent Activity</h2>
-
         <p>Latest transactions across your operations</p>
       </div>
 
       <button mat-button color="primary" routerLink="/dashboard/search-by-id">
         View All Activity
-
-        <mat-icon> arrow_forward </mat-icon>
+        <mat-icon>arrow_forward</mat-icon>
       </button>
     </div>
 
     <div class="activity-list">
-      @for ( activity of recentActivities; track activity.id ) {
+      @if (recentActivities.length > 0) { @for (activity of recentActivities;
+      track activity.id) {
 
       <div class="activity-item" [class]="'activity-' + activity.type">
+        <!-- Activity Icon -->
         <div class="activity-icon">
           <mat-icon> {{ getActivityIcon(activity.type) }} </mat-icon>
         </div>
 
+        <!-- Activity Content -->
         <div class="activity-content">
           <div class="activity-title">
             {{ activity.title }}
@@ -741,26 +740,40 @@
           </div>
 
           <div class="activity-meta">
+            <!-- Transaction ID -->
             <span class="activity-ref"> {{ activity.reference }} </span>
 
+            <!-- Created Date/Time -->
             <span> {{ activity.time | date:'MMM d, h:mm a' }} </span>
 
+            <!-- Amount -->
+            @if (activity.amount !== null && activity.amount !== undefined) {
             <span class="activity-amount">
               {{ activity.amount | currency:activity.currency:'symbol':'1.2-2'
               }}
             </span>
+            }
           </div>
         </div>
 
+        <!-- View Details -->
         <div class="activity-actions">
           <button
             mat-icon-button
             [routerLink]="activity.link"
             matTooltip="View Details"
           >
-            <mat-icon> visibility </mat-icon>
+            <mat-icon>visibility</mat-icon>
           </button>
         </div>
+      </div>
+
+      } } @else {
+
+      <!-- No Recent Activity -->
+      <div class="activity-empty">
+        <mat-icon>history</mat-icon>
+        <p>No recent transactions found.</p>
       </div>
 
       }
