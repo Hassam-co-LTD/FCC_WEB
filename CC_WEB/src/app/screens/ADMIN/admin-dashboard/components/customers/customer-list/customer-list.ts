@@ -11,12 +11,17 @@ import { AuthService } from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTabsModule, MatIconModule, RouterLink],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTabsModule,
+    MatIconModule,
+    RouterLink,
+  ],
   templateUrl: './customer-list.html',
-  styleUrls: ['./customer-list.scss']
+  styleUrls: ['./customer-list.scss'],
 })
 export class CustomerList implements OnInit {
-
   selectedTabIndex = 0;
 
   draftCustomers: any[] = [];
@@ -33,11 +38,11 @@ export class CustomerList implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       const tab = params['tabName'];
       if (tab === 'submitted') this.onTabChange(2);
       else if (tab === 'approved') this.onTabChange(1);
@@ -57,64 +62,77 @@ export class CustomerList implements OnInit {
 
   // ================== Load Customers ==================
   loadDraftCustomers() {
-    this.api.getTnxByStatus('I','customer').subscribe({
-      next: res => {
+    this.api.getTnxByStatus('I', 'customer').subscribe({
+      next: (res) => {
         console.log('Draft customers response:', res);
         this.draftCustomers = res;
-        this.storeFilteredDraftCustomers = [...res];  
+        this.storeFilteredDraftCustomers = [...res];
       },
-      error: err => console.error('Error fetching draft customers', err)
+      error: (err) => console.error('Error fetching draft customers', err),
     });
   }
 
   loadApprovedCustomers() {
-    this.api.getTnxByStatus('A','customer').subscribe({
-      next: res => {
+    this.api.getTnxByStatus('A', 'customer').subscribe({
+      next: (res) => {
         this.approvedCustomers = res;
+        console.log('approved customer loaded', this.approvedCustomers);
         this.storeFilteredApprovedCustomers = [...res];
       },
-      error: err => console.error('Error fetching approved customers', err)
+      error: (err) => console.error('Error fetching approved customers', err),
     });
   }
 
   loadSubmittedCustomers() {
-    this.api.getTnxByStatus('S','customer').subscribe({
-      next: res => {
+    this.api.getTnxByStatus('S', 'customer').subscribe({
+      next: (res) => {
         this.submittedCustomers = res;
         this.storeFilteredSubmittedCustomers = [...res];
       },
-      error: err => console.error('Error fetching submitted customers', err)
+      error: (err) => console.error('Error fetching submitted customers', err),
     });
   }
 
   // ================== Filter Customers ==================
   filterDraftCustomers(search: string) {
-    if (!search) { this.storeFilteredDraftCustomers = [...this.draftCustomers]; return; }
+    if (!search) {
+      this.storeFilteredDraftCustomers = [...this.draftCustomers];
+      return;
+    }
     const value = search.toLowerCase();
-    this.storeFilteredDraftCustomers = this.draftCustomers.filter(c =>
-      c.cId?.toLowerCase().includes(value) ||
-      c.name?.toLowerCase().includes(value) ||
-      c.email?.toLowerCase().includes(value)
+    this.storeFilteredDraftCustomers = this.draftCustomers.filter(
+      (c) =>
+        c.cId?.toLowerCase().includes(value) ||
+        c.name?.toLowerCase().includes(value) ||
+        c.email?.toLowerCase().includes(value),
     );
   }
 
   filterApprovedCustomers(search: string) {
-    if (!search) { this.storeFilteredApprovedCustomers = [...this.approvedCustomers]; return; }
+    if (!search) {
+      this.storeFilteredApprovedCustomers = [...this.approvedCustomers];
+      return;
+    }
     const value = search.toLowerCase();
-    this.storeFilteredApprovedCustomers = this.approvedCustomers.filter(c =>
-      c.cId?.toLowerCase().includes(value) ||
-      c.name?.toLowerCase().includes(value) ||
-      c.email?.toLowerCase().includes(value)
+    this.storeFilteredApprovedCustomers = this.approvedCustomers.filter(
+      (c) =>
+        c.cId?.toLowerCase().includes(value) ||
+        c.name?.toLowerCase().includes(value) ||
+        c.email?.toLowerCase().includes(value),
     );
   }
 
   filterSubmittedCustomers(search: string) {
-    if (!search) { this.storeFilteredSubmittedCustomers = [...this.submittedCustomers]; return; }
+    if (!search) {
+      this.storeFilteredSubmittedCustomers = [...this.submittedCustomers];
+      return;
+    }
     const value = search.toLowerCase();
-    this.storeFilteredSubmittedCustomers = this.submittedCustomers.filter(c =>
-      c.cId?.toLowerCase().includes(value) ||
-      c.name?.toLowerCase().includes(value) ||
-      c.email?.toLowerCase().includes(value)
+    this.storeFilteredSubmittedCustomers = this.submittedCustomers.filter(
+      (c) =>
+        c.cId?.toLowerCase().includes(value) ||
+        c.name?.toLowerCase().includes(value) ||
+        c.email?.toLowerCase().includes(value),
     );
   }
 
@@ -123,18 +141,29 @@ export class CustomerList implements OnInit {
     this.router.navigate(['/admin/create-customer/' + customer.id]);
   }
 
- 
   // ================== Track By ==================
   trackById(index: number, item: any) {
     return item.id;
   }
 
   // ================== Counts ==================
-  get draftCount(): number { return this.draftCustomers.length; }
-  get approvedCount(): number { return this.approvedCustomers.length; }
-  get submittedCount(): number { return this.submittedCustomers.length; }
+  get draftCount(): number {
+    return this.draftCustomers.length;
+  }
+  get approvedCount(): number {
+    return this.approvedCustomers.length;
+  }
+  get submittedCount(): number {
+    return this.submittedCustomers.length;
+  }
 
-  get filteredDraftCount(): number { return this.storeFilteredDraftCustomers.length; }
-  get filteredApprovedCount(): number { return this.storeFilteredApprovedCustomers.length; }
-  get filteredSubmittedCount(): number { return this.storeFilteredSubmittedCustomers.length; }
+  get filteredDraftCount(): number {
+    return this.storeFilteredDraftCustomers.length;
+  }
+  get filteredApprovedCount(): number {
+    return this.storeFilteredApprovedCustomers.length;
+  }
+  get filteredSubmittedCount(): number {
+    return this.storeFilteredSubmittedCustomers.length;
+  }
 }

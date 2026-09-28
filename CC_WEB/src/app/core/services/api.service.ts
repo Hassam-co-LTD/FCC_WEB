@@ -1597,10 +1597,7 @@ export class ApiService {
   // Implementation to fetch dropdown options based on the provided parameters
 
   importCustomers(formData: FormData) {
-    return this.http.post(
-      `${environment.gatewayUrl}/api/v1/customer/import`,
-      formData,
-    );
+    return this.http.post(`${this.adminBaseUrl}customer/import`, formData);
   }
 
   refreshToken() {

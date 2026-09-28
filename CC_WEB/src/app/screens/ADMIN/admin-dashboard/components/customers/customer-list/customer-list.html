@@ -2,14 +2,14 @@
   <div class="page-title-container">
     <h1 class="page-title">Customer Records</h1>
   </div>
+
   <mat-tab-group
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
-    ```
     <!-- =====================================================
-     DRAFT TAB
-====================================================== -->
+         DRAFT TAB
+    ====================================================== -->
 
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
@@ -42,6 +42,7 @@
             <thead>
               <tr>
                 <!-- Customer Fields -->
+
                 <th>ID</th>
                 <th>Customer ID</th>
                 <th>Name</th>
@@ -59,18 +60,18 @@
                 <th>Address 3</th>
 
                 <!-- Audit Fields -->
+
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
-
                 <th>Inputter ID</th>
                 <th>Inputter Date</th>
-
                 <th>Authorizer ID</th>
                 <th>Authorizer Date</th>
 
                 <!-- Rejection Fields -->
+
                 <th>Reject Reason</th>
                 <th>Rejected By</th>
                 <th>Rejected On</th>
@@ -80,18 +81,20 @@
             <tbody>
               <tr
                 *ngFor="
-              let c of storeFilteredDraftCustomers;
-              trackBy: trackById
-            "
+                  let c of storeFilteredDraftCustomers;
+                  trackBy: trackById
+                "
               >
+                <!-- Customer Fields -->
+
                 <td>{{ c.id }}</td>
 
                 <td>
                   <a
                     [routerLink]="[
-                  '/admin/create-customer',
-                  c.custId
-                ]"
+                      '/admin/create-customer',
+                      c.custId
+                    ]"
                   >
                     {{ c.custId }}
                   </a>
@@ -101,7 +104,6 @@
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
                 <td>{{ c.legalId }}</td>
-
                 <td>{{ c.customerStatus }}</td>
 
                 <td>
@@ -114,25 +116,23 @@
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
                 <td>{{ c.customerCategory }}</td>
-
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
 
-                <!-- Audit -->
+                <!-- Audit Fields -->
+
                 <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
-
                 <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
-
                 <td>{{ c.inputterId }}</td>
                 <td>{{ c.inputterDttm | date:'short' }}</td>
-
                 <td>{{ c.authorizerId }}</td>
                 <td>{{ c.authorizerDttm | date:'short' }}</td>
 
-                <!-- Rejection -->
+                <!-- Rejection Fields -->
+
                 <td>{{ c.rejectReason }}</td>
                 <td>{{ c.rejectedBy }}</td>
                 <td>{{ c.rejectedOn | date:'short' }}</td>
@@ -148,8 +148,8 @@
     </mat-tab>
 
     <!-- =====================================================
-     APPROVED TAB
-====================================================== -->
+         APPROVED TAB
+    ====================================================== -->
 
     <mat-tab label="Approved ({{ filteredApprovedCount }})">
       <div class="search-bar">
@@ -178,9 +178,9 @@
         <div
           class="table-wrapper"
           *ngIf="
-        storeFilteredApprovedCustomers?.length;
-        else noApproved
-      "
+            storeFilteredApprovedCustomers?.length;
+            else noApproved
+          "
         >
           <table class="customer-table">
             <thead>
@@ -205,10 +205,8 @@
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
-
                 <th>Inputter ID</th>
                 <th>Inputter Date</th>
-
                 <th>Authorizer ID</th>
                 <th>Authorizer Date</th>
 
@@ -221,18 +219,18 @@
             <tbody>
               <tr
                 *ngFor="
-              let c of storeFilteredApprovedCustomers;
-              trackBy: trackById
-            "
+                  let c of storeFilteredApprovedCustomers;
+                  trackBy: trackById
+                "
               >
                 <td>{{ c.id }}</td>
 
                 <td>
                   <a
                     [routerLink]="[
-                  '/admin/create-customer',
-                  c.custId
-                ]"
+                      '/admin/create-customer',
+                      c.custId
+                    ]"
                   >
                     {{ c.custId }}
                   </a>
@@ -242,7 +240,6 @@
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
                 <td>{{ c.legalId }}</td>
-
                 <td>{{ c.customerStatus }}</td>
 
                 <td>
@@ -255,25 +252,19 @@
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
                 <td>{{ c.customerCategory }}</td>
-
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
 
-                <!-- Audit -->
                 <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
-
                 <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
-
                 <td>{{ c.inputterId }}</td>
                 <td>{{ c.inputterDttm | date:'short' }}</td>
-
                 <td>{{ c.authorizerId }}</td>
                 <td>{{ c.authorizerDttm | date:'short' }}</td>
 
-                <!-- Rejection -->
                 <td>{{ c.rejectReason }}</td>
                 <td>{{ c.rejectedBy }}</td>
                 <td>{{ c.rejectedOn | date:'short' }}</td>
@@ -289,8 +280,8 @@
     </mat-tab>
 
     <!-- =====================================================
-     SUBMITTED TAB
-====================================================== -->
+         SUBMITTED TAB
+    ====================================================== -->
 
     <mat-tab label="Submitted ({{ filteredSubmittedCount }})">
       <div class="search-bar">
@@ -319,9 +310,9 @@
         <div
           class="table-wrapper"
           *ngIf="
-        storeFilteredSubmittedCustomers?.length;
-        else noSubmitted
-      "
+            storeFilteredSubmittedCustomers?.length;
+            else noSubmitted
+          "
         >
           <table class="customer-table">
             <thead>
@@ -346,10 +337,8 @@
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
-
                 <th>Inputter ID</th>
                 <th>Inputter Date</th>
-
                 <th>Authorizer ID</th>
                 <th>Authorizer Date</th>
 
@@ -362,18 +351,18 @@
             <tbody>
               <tr
                 *ngFor="
-              let c of storeFilteredSubmittedCustomers;
-              trackBy: trackById
-            "
+                  let c of storeFilteredSubmittedCustomers;
+                  trackBy: trackById
+                "
               >
                 <td>{{ c.id }}</td>
 
                 <td>
                   <a
                     [routerLink]="[
-                  '/admin/create-customer',
-                  c.custId
-                ]"
+                      '/admin/create-customer',
+                      c.custId
+                    ]"
                   >
                     {{ c.custId }}
                   </a>
@@ -383,7 +372,6 @@
                 <td>{{ c.email }}</td>
                 <td>{{ c.contact }}</td>
                 <td>{{ c.legalId }}</td>
-
                 <td>{{ c.customerStatus }}</td>
 
                 <td>
@@ -396,25 +384,19 @@
                 <td>{{ c.countryCity }}</td>
                 <td>{{ c.customerType }}</td>
                 <td>{{ c.customerCategory }}</td>
-
                 <td>{{ c.address1 }}</td>
                 <td>{{ c.address2 }}</td>
                 <td>{{ c.address3 }}</td>
 
-                <!-- Audit -->
                 <td>{{ c.createdBy }}</td>
                 <td>{{ c.createdOn | date:'short' }}</td>
-
                 <td>{{ c.updatedBy }}</td>
                 <td>{{ c.updatedOn | date:'short' }}</td>
-
                 <td>{{ c.inputterId }}</td>
                 <td>{{ c.inputterDttm | date:'short' }}</td>
-
                 <td>{{ c.authorizerId }}</td>
                 <td>{{ c.authorizerDttm | date:'short' }}</td>
 
-                <!-- Rejection -->
                 <td>{{ c.rejectReason }}</td>
                 <td>{{ c.rejectedBy }}</td>
                 <td>{{ c.rejectedOn | date:'short' }}</td>
@@ -428,6 +410,5 @@
         </ng-template>
       </div>
     </mat-tab>
-    ```
   </mat-tab-group>
 </div>

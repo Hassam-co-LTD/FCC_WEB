@@ -670,6 +670,7 @@ export class CreateCustomer implements OnInit {
   onCustomerFileSelected(event: any): void {
     const file = event.target.files[0];
 
+    console.log('customer file selected ', file);
     if (!file) {
       return;
     }
