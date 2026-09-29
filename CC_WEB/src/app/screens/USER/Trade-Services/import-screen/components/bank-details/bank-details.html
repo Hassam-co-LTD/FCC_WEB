@@ -1,101 +1,188 @@
+
 <div class="section-header" (click)="toggle()">
   <h2>Bank Details</h2>
-  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+  <mat-icon>
+    {{ isOpen ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
 </div>
 
+
 <div class="collapsible" [class.open]="isOpen">
+
   <form [formGroup]="form">
 
     <!-- ========== Issuing Bank ========== -->
     <h4>Issuing Bank</h4>
+
     <div class="form-grid">
+
       <!-- Bank Name -->
       <div class="field-wrap">
+
         <mat-form-field appearance="outline">
+
           <mat-label>Bank Name*</mat-label>
+
           <mat-select formControlName="issuingBankName">
+
             @for (bank of bankList; track bank) {
-              <mat-option [value]="bank">{{ bank }}</mat-option>
+              <mat-option [value]="bank">
+                {{ bank }}
+              </mat-option>
             }
+
           </mat-select>
-          @if (form.get('issuingBankName')?.touched && form.get('issuingBankName')?.invalid) {
-            <mat-error>Error: You must select Bank Name</mat-error>
+
+          @if (
+            form.get('issuingBankName')?.touched &&
+            form.get('issuingBankName')?.invalid
+          ) {
+            <mat-error>
+              Error: You must select Bank Name
+            </mat-error>
           }
+
         </mat-form-field>
 
-        @if (previousValues['issuingBankName']) {
+
+        @if (hasPreviousValue('issuingBankName')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
-            <span class="previous-text">{{ previousValues['issuingBankName'] }}</span>
+
+            <span class="previous-text">
+              {{ getPreviousValue('issuingBankName') }}
+            </span>
           </div>
         }
+
       </div>
+
 
       <!-- Issuer's Reference -->
       <div class="field-wrap">
+
         <mat-form-field appearance="outline">
+
           <mat-label>Issuer's Reference*</mat-label>
+
           <mat-select formControlName="issuerReference">
-            <mat-option value="Ref-001">Ref-001</mat-option>
-            <mat-option value="Ref-002">Ref-002</mat-option>
+
+            <mat-option value="Ref-001">
+              Ref-001
+            </mat-option>
+
+            <mat-option value="Ref-002">
+              Ref-002
+            </mat-option>
+
           </mat-select>
-          @if (form.get('issuerReference')?.touched && form.get('issuerReference')?.invalid) {
-            <mat-error>Error: You must select Issuer's Reference</mat-error>
+
+          @if (
+            form.get('issuerReference')?.touched &&
+            form.get('issuerReference')?.invalid
+          ) {
+            <mat-error>
+              Error: You must select Issuer's Reference
+            </mat-error>
           }
+
         </mat-form-field>
 
-        @if (previousValues['issuerReference']) {
+
+        @if (hasPreviousValue('issuerReference')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
-            <span class="previous-text">{{ previousValues['issuerReference'] }}</span>
+
+            <span class="previous-text">
+              {{ getPreviousValue('issuerReference') }}
+            </span>
           </div>
         }
+
       </div>
+
     </div>
+
 
     <!-- ========== Advising Bank ========== -->
     <h4>Advising Bank</h4>
+
     <div class="form-grid">
+
       <div class="field-wrap">
+
         <mat-form-field appearance="outline">
+
           <mat-label>Advising Bank Name</mat-label>
+
           <mat-select formControlName="advisingBankName">
+
             @for (bank of bankList; track bank) {
-              <mat-option [value]="bank">{{ bank }}</mat-option>
+              <mat-option [value]="bank">
+                {{ bank }}
+              </mat-option>
             }
+
           </mat-select>
+
         </mat-form-field>
 
-        @if (previousValues['advisingBankName']) {
+
+        @if (hasPreviousValue('advisingBankName')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
-            <span class="previous-text">{{ previousValues['advisingBankName'] }}</span>
+
+            <span class="previous-text">
+              {{ getPreviousValue('advisingBankName') }}
+            </span>
           </div>
         }
+
       </div>
+
     </div>
+
 
     <!-- ========== Advise Through Bank ========== -->
     <h4>Advise Through Bank</h4>
+
     <div class="form-grid">
+
       <div class="field-wrap">
+
         <mat-form-field appearance="outline">
+
           <mat-label>Advise Through Bank</mat-label>
+
           <mat-select formControlName="adviseThroughBankName">
+
             @for (bank of bankList; track bank) {
-              <mat-option [value]="bank">{{ bank }}</mat-option>
+              <mat-option [value]="bank">
+                {{ bank }}
+              </mat-option>
             }
+
           </mat-select>
+
         </mat-form-field>
 
-        @if (previousValues['adviseThroughBankName']) {
+
+        @if (hasPreviousValue('adviseThroughBankName')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
-            <span class="previous-text">{{ previousValues['adviseThroughBankName'] }}</span>
+
+            <span class="previous-text">
+              {{ getPreviousValue('adviseThroughBankName') }}
+            </span>
           </div>
         }
+
       </div>
+
     </div>
 
   </form>
+
 </div>
+

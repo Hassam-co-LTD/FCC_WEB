@@ -10,27 +10,28 @@
   <div class="content">
     <div class="scroll-area">
       <section id="section-0">
-        <app-general-details [form]="generalDetails"></app-general-details>
+        <app-general-details [form]="generalDetails" [previousValues]="previousValues"></app-general-details>
       </section>
       <hr class="section-divider" />
       <section id="section-1">
         <app-application-beneficiary
-          [form]="applicantBeneficiary"
+          [form]="applicantBeneficiary" [previousValues]="previousValues"
         ></app-application-beneficiary>
       </section>
       <hr class="section-divider" />
       <section id="section-2">
-        <app-bank-details [form]="bankForm"></app-bank-details>
+        <app-bank-details [form]="bankForm" [previousValues]="previousValues"></app-bank-details>
       </section>
       <hr class="section-divider" />
       <section id="section-3">
         <app-undertaking-details
-          [form]="undertakingDetails"
+          [form]="undertakingDetails" 
+
         ></app-undertaking-details>
       </section>
       <hr class="section-divider" />
       <section id="section-4">
-        <app-instructions-bank [form]="instructions"></app-instructions-bank>
+        <app-instructions-bank [form]="instructions" [previousValues]="previousValues"></app-instructions-bank>
       </section>
       <hr class="section-divider" />
       <section id="section-5"><app-attachments></app-attachments></section>

@@ -1,6 +1,9 @@
+
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,6 +16,7 @@ import { MatRadioModule } from '@angular/material/radio';
   selector: 'app-applicant-beneficiary',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -21,18 +25,21 @@ import { MatRadioModule } from '@angular/material/radio';
     MatButtonModule,
     MatIconModule,
     MatRadioModule
-],
+  ],
   templateUrl: './applicant-beneficiary.html',
   styleUrls: ['./applicant-beneficiary.scss']
 })
 export class ApplicantBeneficiary {
 
   @Input() form!: FormGroup;
-@Input() previousValues: { [key: string]: any } = {};
+
+  @Input() previousValues: { [key: string]: any } = {};
+
   isOpen: boolean = true;
+
   showAlternate: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   toggle() {
     this.isOpen = !this.isOpen;
@@ -41,4 +48,23 @@ export class ApplicantBeneficiary {
   toggleAlternate() {
     this.showAlternate = !this.showAlternate;
   }
+
+  // ==========================================
+  // Previous Value Helpers
+  // ==========================================
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
 }
+

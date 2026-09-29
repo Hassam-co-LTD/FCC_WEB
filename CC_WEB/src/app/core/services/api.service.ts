@@ -1000,7 +1000,7 @@ export class ApiService {
     return this.http
       .put<UndertakingGuarantee>(
         `${this.baseUrl}/utg/${payload.tnxId}`,
-        payload,
+        payload,{ headers: this.headers }
       )
       .pipe(catchError(this.handleError));
   }

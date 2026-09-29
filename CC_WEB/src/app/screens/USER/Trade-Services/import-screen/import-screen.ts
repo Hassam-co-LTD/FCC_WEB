@@ -87,7 +87,7 @@ export class ImportScreen implements OnInit {
     { label: 'Dynamic fields' },
   ];
   storeRejectedTx: ImportLcTransaction | null = null;
-previousValues: { [key: string]: any } = {};
+
 previousDynamicValues: { [key: string]: any } = {};
 
   constructor(
@@ -100,6 +100,7 @@ previousDynamicValues: { [key: string]: any } = {};
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService,
     private comparisonService: TransactionComparisonService,
+    private transactionComparisonService: TransactionComparisonService
   ) {
     this.buildForm();
   }
@@ -264,6 +265,19 @@ previousDynamicValues: { [key: string]: any } = {};
       next: (tx) => {
         this.currentTx = tx;
         console.log('transaction loaded from backend ', tx);
+        if(tx.status === 'S'){
+             this.api.getRejectedTransaction(tnxId, 'importlc').subscribe({
+               next: (rejectedTx) => {
+                 this.storeRejectedTransaction = rejectedTx;
+                 console.log('Rejected transaction data:', rejectedTx);
+                 this.compareImportLcData();
+               },
+               error: (err:any) => {  
+                   console.log('Error fetching rejected transaction:', err);
+               }
+             });
+        }
+        
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -278,7 +292,7 @@ previousDynamicValues: { [key: string]: any } = {};
   this.mode = 'UPDATE';
   this.screenMode = 'SUBMITTED';
   this.importForm.disable();
-  this.loadRejectedHistory(tx);
+  
   break;
           case 'A': // Approved
             this.mode = 'UPDATE';
@@ -311,32 +325,7 @@ previousDynamicValues: { [key: string]: any } = {};
 
     
   }
-  private loadRejectedHistory(tx: ImportLcTransaction): void {
-  this.previousValues = {};
-  this.previousDynamicValues = {};
-
-  this.api.getRejectedImportLc(tx.tnxId!).subscribe({
-    next: (rejected) => {
-      if (!rejected) return;                 // 204: never rejected
-      this.storeRejectedTx = rejected;
-
-      this.previousValues = this.comparisonService.compare(
-        tx,
-        rejected,
-        this.getAllFormFieldNames(),
-      );
-
-      if (tx.dynamicFields && rejected.dynamicFields) {
-        this.previousDynamicValues = this.comparisonService.compareDynamicFields(
-          tx.dynamicFields,
-          rejected.dynamicFields,
-        );
-      }
-    },
-    error: (err) => console.error('Rejected history load failed', err),
-  });
-}
-
+  
 // Reuses the form itself as the field list, so there's nothing to hardcode.
 // This works because flattenForm() already merges all groups into one flat object.
 private getAllFormFieldNames(): string[] {
@@ -349,11 +338,7 @@ private getAllFormFieldNames(): string[] {
   );
 }
 
-hasPreviousValue(field: string): boolean {
-  const v = this.previousValues?.[field];
-  return v !== null && v !== undefined && String(v).trim() !== '';
-}
-getPreviousValue(field: string): any { return this.previousValues?.[field] ?? ''; }
+
 
 hasPreviousDynamicValue(fieldId: string): boolean {
   const v = this.previousDynamicValues?.[fieldId];
@@ -637,17 +622,7 @@ getPreviousDynamicValue(fieldId: string): any { return this.previousDynamicValue
   }
 
   approve(): void {
-    if (!this.hasPermission('ILC_InquiryApprove')) {
-      this.snackBar.open(
-        'You do not have permission to approve this transaction.',
-        'Close',
-        {
-          duration: 3000,
-        },
-      );
-
-      return;
-    }
+    
 
     this.api
       .approveTransaction(this.currentTx.tnxId!, this.currentTx)
@@ -855,7 +830,110 @@ private getFormValidationErrors(form: any = this.importForm, path: string = ''):
   }
 
 
-  //  old and new values working 
+  // old and new values working
 
-  
+  storeRejectedTransaction:  any[] = [];
+
+    previousValues: { [key: string]: any } = {};
+    private readonly ImportLcFields = [
+  // General Details
+  'productType',
+  'modeOfTransmission',
+  'expiryDate',
+  'placeOfExpiry',
+  'featureIrrevocable',
+  'featureRevolving',
+  'featureTransferable',
+  'applicableRules',
+  'confirmationInstruction',
+
+  // Applicant / Beneficiary Details
+  'applicantName',
+  'applicantAddress1',
+  'applicantAddress2',
+  'applicantAddress3',
+  'applicantAddress4',
+  'applicantCountry',
+  'beneficiaryName',
+  'beneficiaryAddress1',
+  'beneficiaryAddress2',
+  'beneficiaryAddress3',
+  'beneficiaryAddress4',
+  'beneficiaryCountry',
+
+  // Bank Details
+  'issuingBankName',
+  'issuerReference',
+  'advisingBankName',
+  'adviseThroughBankName',
+
+  // Amount / Charges Details
+  'currency',
+  'amount',
+  'variationType',
+  'variationPlus',
+  'variationMinus',
+  'issuingBankCharges',
+  'outsideCountryCharges',
+  'additionalAmount',
+
+  // Payment Details
+  'creditAvailableWith',
+  'bankName',
+  'creditAvailableBy',
+  'paymentDraftAt',
+
+  // Shipment Details
+  'shipmentFrom',
+  'shipmentTo',
+  'placeOfLoading',
+  'placeOfDischarge',
+  'lastShipmentDate',
+  'shipmentPeriodNarrative',
+  'partialShipment',
+  'transhipment',
+
+  // Narrative Details
+  'descriptionOfGoods',
+  'documentsRequired',
+  'additionalInstructions',
+  'otherDetails',
+
+  // Instructions
+  'principalAccount',
+  'feeAccount',
+  'otherInstructions',
+];
+  private compareImportLcData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.ImportLcFields,
+    );
+
+    console.log('Previous import LC values:', this.previousValues);
+  }
+
+    hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+
 }
+
+
+

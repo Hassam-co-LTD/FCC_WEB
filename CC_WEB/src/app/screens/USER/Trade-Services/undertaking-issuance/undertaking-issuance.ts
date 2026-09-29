@@ -23,6 +23,8 @@ import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-d
 import { ApiService } from '../../../../core/services/api.service';
 import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import {TransactionComparisonService} from '../../../../core/services/admin-service/transaction-comparison.service';
+
 @Component({
   selector: 'app-undertaking-issued',
 
@@ -81,6 +83,7 @@ export class UndertakingIssuance implements OnInit {
     private dialog: MatDialog,
     private transactionService: UndertakingIssuanceService,
     private authservice: AuthService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -95,7 +98,7 @@ export class UndertakingIssuance implements OnInit {
         this.permissionNames = JSON.parse(storedPermissions);
 
         console.log(
-          'Shipping Guarantee Permission Names:',
+          'Undertaking Issuance Permission Names:',
           this.permissionNames,
         );
       } catch (error) {
@@ -282,6 +285,19 @@ export class UndertakingIssuance implements OnInit {
     this.api.getUndertakingByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
+
+         if(tx.status === 'S'){
+             this.api.getRejectedTransaction(tnxId, 'utg').subscribe({
+               next: (rejectedTx) => {
+                 this.storeRejectedTransaction = rejectedTx;
+                 console.log('Rejected transaction data:', rejectedTx);
+                 this.compareUndertakingIssuanceData();
+               },
+               error: (err:any) => {  
+                   console.log('Error fetching rejected transaction:', err);
+               }
+             });
+        }
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -564,26 +580,9 @@ export class UndertakingIssuance implements OnInit {
   }
 
   approve(): void {
-    if (!this.hasPermission('UI_InquiryApprove')) {
-      this.snackBar.open(
-        'You do not have permission to approve this transaction.',
-        'Close',
-        {
-          duration: 3000,
-        },
-      );
+    
 
-      if (!this.hasPermission('UI_InquiryApprove')) {
-        this.snackBar.open(
-          'You do not have permission to approve this transaction.',
-          'Close',
-          {
-            duration: 3000,
-          },
-        );
-
-        return;
-      }
+      
 
       this.api
         .approveUndertaking(this.currentTx.tnxId!, this.currentTx)
@@ -592,7 +591,7 @@ export class UndertakingIssuance implements OnInit {
           error: () =>
             this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
         });
-    }
+    
   }
 
   openReject(): void {
@@ -756,4 +755,115 @@ export class UndertakingIssuance implements OnInit {
 
     this.dynamicFieldsForm.patchValue(patchObj);
   }
+
+
+
+  // old and new values working
+
+  storeRejectedTransaction:  any[] = [];
+
+    previousValues: { [key: string]: any } = {};
+private readonly UndertakingIssuanceFields = [
+  // General Details
+  'productType',
+  'modeOfTransmission',
+  'formOfUndertaking',
+  'purpose',
+
+  // Applicant / Beneficiary Details
+  'applicantName',
+  'applicantAddress1',
+  'applicantAddress2',
+  'applicantAddress3',
+  'applicantAddress4',
+  'applicantCountry',
+  'beneficiaryName',
+  'beneficiaryAddress1',
+  'beneficiaryAddress2',
+  'beneficiaryAddress3',
+  'beneficiaryAddress4',
+  'beneficiaryCountry',
+
+  // Bank Form Details
+  'recipientBankName',
+  'issuerReference',
+  'issuanceType',
+  'swiftcode',
+  'bankName',
+  'bankAddress1',
+  'bankAddress2',
+  'bankAddress3',
+  'bankAddress4',
+  'bankCountry',
+
+  // Undertaking Details
+  'typeOfUndertaking',
+  'effectiveOption',
+  'expiryType',
+  'expiryDate',
+  'currency',
+  'undertakingAmount',
+  'variationPlus',
+  'variationMinus',
+  'issuanceCharges',
+  'correspondentCharges',
+  'supplementaryInfo',
+  'textOfUndertakingInfo',
+  'underlyingTransactionInfo',
+  'presentationInfo',
+  'basicExtensionType',
+  'increaseDecreaseType',
+  'contractType',
+  'contractDate',
+  'contractCurrency',
+  'contractAmount',
+  'percentageCovered',
+  'contractNarrative',
+  'applicableRules',
+  'countrySubdivision',
+  'jurisdiction',
+  'demandOption',
+  'governingLawsType',
+  'languageType',
+  'tsOption',
+
+  // Instructions
+  'deliveryType',
+  'deliveryMode',
+  'deliveryTo',
+  'principalAccount',
+  'feeAccount',
+  'otherInstructions',
+];
+  private compareUndertakingIssuanceData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.UndertakingIssuanceFields,
+    );
+
+    console.log('Previous undertaking issuance values:', this.previousValues);
+  }
+
+    hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+
 }
+
+

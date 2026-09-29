@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
 
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -12,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
   selector: 'app-payment-details',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -19,22 +22,51 @@ import { MatIconModule } from '@angular/material/icon';
     MatRadioModule,
     MatButtonModule,
     MatIconModule
-],
+  ],
   templateUrl: './payment-details.html',
   styleUrls: ['./payment-details.scss']
 })
 export class PaymentDetails {
+
   @Input() form!: FormGroup;
+
   @Input() previousValues: { [key: string]: any } = {};
+
   isOpen = true;
 
+  creditAvailableWithOptions = [
+    'Issuing Bank',
+    'Advising Bank',
+    'Any Bank in Country'
+  ];
 
-  creditAvailableWithOptions = ['Issuing Bank', 'Advising Bank', 'Any Bank in Country'];
-  creditAvailableByOptions = ['Payment', 'Acceptance', 'Negotiation', 'Deferred Payment'];
-  paymentDraftOptions = ['Sight', 'Usance', 'Deferred'];
+  creditAvailableByOptions = [
+    'Payment',
+    'Acceptance',
+    'Negotiation',
+    'Deferred Payment'
+  ];
 
-  constructor() {
-    
+  paymentDraftOptions = [
+    'Sight',
+    'Usance',
+    'Deferred'
+  ];
+
+  constructor() {}
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 
   toggle() {

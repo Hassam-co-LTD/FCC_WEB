@@ -1,5 +1,7 @@
+
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators,  } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,18 +14,22 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-instructions-bank',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
     MatRadioModule,
     MatInputModule
-],
+  ],
   templateUrl: './instructions-bank.html',
   styleUrls: ['./instructions-bank.scss']
 })
 export class InstructionsBank {
   @Input() form!: FormGroup;
+
+  @Input() previousValues: { [key: string]: any } = {};
+
   @Output() formChange = new EventEmitter<FormGroup>();
   @Output() toggleCollapse = new EventEmitter<boolean>();
 
@@ -52,7 +58,7 @@ export class InstructionsBank {
     { value: 'other', label: 'Other' }
   ];
 
-  // Account options (would typically come from API)
+  // Account options
   accounts = [
     'Current Account - 1234567890',
     'Savings Account - 0987654321',
@@ -62,7 +68,8 @@ export class InstructionsBank {
 
   // Other instructions character limit
   readonly MAX_CHARS = 210;
-instructionsForm: any;
+
+  instructionsForm: any;
 
   constructor(private fb: FormBuilder) {}
 
@@ -91,7 +98,28 @@ instructionsForm: any;
     this.toggleCollapse.emit(this.isOpen);
   }
 
+  // ================================
+  // Previous Value Helpers
+  // ================================
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+  // ================================
   // Getter for character count
+  // ================================
+
   get charCount(): number {
     return this.instructionsControl?.value?.length || 0;
   }
@@ -101,7 +129,10 @@ instructionsForm: any;
     return this.MAX_CHARS - this.charCount;
   }
 
+  // ================================
   // Getter methods for form controls
+  // ================================
+
   get deliveryTypeControl() {
     return this.form.get('deliveryType');
   }
@@ -126,35 +157,52 @@ instructionsForm: any;
     return this.form.get('otherInstructions');
   }
 
+  // ================================
   // Format for preview display
+  // ================================
+
   getDisplayValue(fieldName: string): string {
     const value = this.form.get(fieldName)?.value;
-    
+
     if (!value) return '—';
 
     switch (fieldName) {
       case 'deliveryType':
-        return this.deliveryTypeOptions.find(opt => opt.value === value)?.label || value;
-      
+        return (
+          this.deliveryTypeOptions.find(opt => opt.value === value)?.label ||
+          value
+        );
+
       case 'deliveryMode':
-        return this.deliveryModeOptions.find(opt => opt.value === value)?.label || value;
-      
+        return (
+          this.deliveryModeOptions.find(opt => opt.value === value)?.label ||
+          value
+        );
+
       case 'deliveryTo':
-        return this.deliveryToOptions.find(opt => opt.value === value)?.label || value;
-      
+        return (
+          this.deliveryToOptions.find(opt => opt.value === value)?.label ||
+          value
+        );
+
       case 'principalAccount':
       case 'feeAccount':
         return value;
-      
+
       case 'otherInstructions':
-        return value.length > 50 ? value.substring(0, 50) + '...' : value;
-      
+        return value.length > 50
+          ? value.substring(0, 50) + '...'
+          : value;
+
       default:
         return String(value);
     }
   }
 
+  // ================================
   // Get all instructions for preview
+  // ================================
+
   getInstructionsPreview(): any {
     return {
       deliveryType: this.getDisplayValue('deliveryType'),
@@ -166,7 +214,10 @@ instructionsForm: any;
     };
   }
 
+  // ================================
   // Reset form
+  // ================================
+
   resetForm() {
     this.form.reset({
       deliveryType: '',
@@ -176,16 +227,23 @@ instructionsForm: any;
       feeAccount: '',
       otherInstructions: ''
     });
+
     this.emitFormChange();
   }
 
+  // ================================
   // Validate form
+  // ================================
+
   validateForm(): boolean {
     this.form.markAllAsTouched();
     return this.form.valid;
   }
 
+  // ================================
   // Get form values
+  // ================================
+
   getFormValues() {
     return this.form.value;
   }
@@ -194,3 +252,4 @@ instructionsForm: any;
     this.formChange.emit(this.form);
   }
 }
+

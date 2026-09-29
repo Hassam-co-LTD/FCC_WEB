@@ -1,7 +1,12 @@
+
 <div class="section-header" (click)="toggle()">
     <h2>Applicant and Beneficiary Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+    <mat-icon>
+        {{ isOpen ? 'expand_less' : 'expand_more' }}
+    </mat-icon>
 </div>
+
 
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
@@ -9,46 +14,149 @@
     <h4>Applicant</h4>
 
     <div class="form-grid">
+
+        <!-- Applicant Name -->
         <mat-form-field appearance="outline">
             <mat-label>Name *</mat-label>
-            <input matInput formControlName="applicantName">
+
+            <input
+                matInput
+                formControlName="applicantName">
         </mat-form-field>
 
+        @if (hasPreviousValue('applicantName')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantName') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Applicant Address 1 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 1 *</mat-label>
-            <input matInput formControlName="applicantAddress1">
+
+            <input
+                matInput
+                formControlName="applicantAddress1">
         </mat-form-field>
 
+        @if (hasPreviousValue('applicantAddress1')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantAddress1') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Applicant Address 2 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 2</mat-label>
-            <input matInput formControlName="applicantAddress2">
+
+            <input
+                matInput
+                formControlName="applicantAddress2">
         </mat-form-field>
 
+        @if (hasPreviousValue('applicantAddress2')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantAddress2') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Applicant Address 3 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 3</mat-label>
-            <input matInput formControlName="applicantAddress3">
+
+            <input
+                matInput
+                formControlName="applicantAddress3">
         </mat-form-field>
-          <mat-form-field appearance="outline">
+
+        @if (hasPreviousValue('applicantAddress3')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantAddress3') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Applicant Address 4 -->
+        <mat-form-field appearance="outline">
             <mat-label>Address 4</mat-label>
-            <input matInput formControlName="applicantAddress4">
+
+            <input
+                matInput
+                formControlName="applicantAddress4">
         </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Country *</mat-label>
-                    <mat-select formControlName="applicantCountry">
-                        <mat-option value="Pakistan">Pakistan</mat-option>
-                        <mat-option value="UAE">UAE</mat-option>
-                        <mat-option value="USA">USA</mat-option>
-                        <mat-option value="UK">UK</mat-option>
-                    </mat-select>
-                </mat-form-field>
+
+        @if (hasPreviousValue('applicantAddress4')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantAddress4') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Applicant Country -->
+        <mat-form-field appearance="outline">
+
+            <mat-label>Country *</mat-label>
+
+            <mat-select formControlName="applicantCountry">
+
+                <mat-option value="Pakistan">
+                    Pakistan
+                </mat-option>
+
+                <mat-option value="UAE">
+                    UAE
+                </mat-option>
+
+                <mat-option value="USA">
+                    USA
+                </mat-option>
+
+                <mat-option value="UK">
+                    UK
+                </mat-option>
+
+            </mat-select>
+
+        </mat-form-field>
+
+        @if (hasPreviousValue('applicantCountry')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('applicantCountry') }}
+                </span>
+            </div>
+        }
+
     </div>
 
+
     <!-- ========================= Alternate Applicant ========================= -->
-    <!-- <mat-slide-toggle (change)="toggleAlternate()">
+    <!--
+    <mat-slide-toggle (change)="toggleAlternate()">
         Alternate Applicant
     </mat-slide-toggle>
 
     <div *ngIf="showAlternate" class="form-grid alternate">
+
         <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
             <input matInput formControlName="alternateName">
@@ -68,45 +176,148 @@
             <mat-label>Address 3</mat-label>
             <input matInput formControlName="alternateAddress3">
         </mat-form-field>
-    </div> -->
+
+    </div>
+    -->
+
 
     <!-- ========================= Beneficiary ========================= -->
     <h4>Beneficiary</h4>
 
     <div class="form-grid">
+
+        <!-- Beneficiary Name -->
         <mat-form-field appearance="outline">
             <mat-label>Name *</mat-label>
-            <input matInput formControlName="beneficiaryName">
+
+            <input
+                matInput
+                formControlName="beneficiaryName">
         </mat-form-field>
 
+        @if (hasPreviousValue('beneficiaryName')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryName') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Beneficiary Address 1 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 1 *</mat-label>
-            <input matInput formControlName="beneficiaryAddress1">
+
+            <input
+                matInput
+                formControlName="beneficiaryAddress1">
         </mat-form-field>
 
+        @if (hasPreviousValue('beneficiaryAddress1')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryAddress1') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Beneficiary Address 2 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 2</mat-label>
-            <input matInput formControlName="beneficiaryAddress2">
+
+            <input
+                matInput
+                formControlName="beneficiaryAddress2">
         </mat-form-field>
 
+        @if (hasPreviousValue('beneficiaryAddress2')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryAddress2') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Beneficiary Address 3 -->
         <mat-form-field appearance="outline">
             <mat-label>Address 3</mat-label>
-            <input matInput formControlName="beneficiaryAddress3">
-        </mat-form-field>
-         <mat-form-field appearance="outline">
-            <mat-label>Address 4</mat-label>
-            <input matInput formControlName="beneficiaryAddress4">
+
+            <input
+                matInput
+                formControlName="beneficiaryAddress3">
         </mat-form-field>
 
+        @if (hasPreviousValue('beneficiaryAddress3')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryAddress3') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Beneficiary Address 4 -->
         <mat-form-field appearance="outline">
-            <mat-label>Country *</mat-label>
-            <mat-select formControlName="beneficiaryCountry">
-                <mat-option value="Pakistan">Pakistan</mat-option>
-                <mat-option value="UAE">UAE</mat-option>
-                <mat-option value="USA">USA</mat-option>
-                <mat-option value="UK">UK</mat-option>
-            </mat-select>
+            <mat-label>Address 4</mat-label>
+
+            <input
+                matInput
+                formControlName="beneficiaryAddress4">
         </mat-form-field>
+
+        @if (hasPreviousValue('beneficiaryAddress4')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryAddress4') }}
+                </span>
+            </div>
+        }
+
+
+        <!-- Beneficiary Country -->
+        <mat-form-field appearance="outline">
+
+            <mat-label>Country *</mat-label>
+
+            <mat-select formControlName="beneficiaryCountry">
+
+                <mat-option value="Pakistan">
+                    Pakistan
+                </mat-option>
+
+                <mat-option value="UAE">
+                    UAE
+                </mat-option>
+
+                <mat-option value="USA">
+                    USA
+                </mat-option>
+
+                <mat-option value="UK">
+                    UK
+                </mat-option>
+
+            </mat-select>
+
+        </mat-form-field>
+
+        @if (hasPreviousValue('beneficiaryCountry')) {
+            <div class="previous-value">
+                <span class="previous-label">Previous Value:</span>
+                <span class="previous-text">
+                    {{ getPreviousValue('beneficiaryCountry') }}
+                </span>
+            </div>
+        }
+
     </div>
 
 </div>
+
