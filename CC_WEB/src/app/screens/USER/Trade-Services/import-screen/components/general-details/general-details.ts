@@ -32,6 +32,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class GeneralDetails {
 
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
+  
   tomorrow: string = new Date(Date.now() + 86400000)
     .toISOString()
     .split('T')[0];

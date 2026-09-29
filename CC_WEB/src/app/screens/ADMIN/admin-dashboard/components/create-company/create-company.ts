@@ -58,7 +58,8 @@ export class CreateCompany implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private authService: AuthService,
-    private comparisonService: TransactionComparisonService,
+    private comparisonService: 
+    TransactionComparisonService,
   ) {}
 
   ngOnInit(): void {

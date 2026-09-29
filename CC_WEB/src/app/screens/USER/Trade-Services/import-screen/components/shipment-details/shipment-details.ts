@@ -28,7 +28,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class ShipmentDetails {
   isOpen = true;
   @Input() form!: FormGroup;
-
+@Input() previousValues: { [key: string]: any } = {};
   constructor() {  }
 
   toggle() {

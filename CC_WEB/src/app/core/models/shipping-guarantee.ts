@@ -12,6 +12,16 @@ export interface ShippingGuaranteeTransaction {
   shippingDetails?: string;
   //Description of Goods
   description?: string;
+//bank details
+remittingBankName?: string;
+presentingBankName?: string;
+bankAddress1?: string;
+bankAddress2?: string;
+bankAddress3?: string;
+bankAddress4?: string;
+collectingBankName?: string;
+swiftCode?: string;
+collectingReference?: string;
 
   // Applicant
   applicantName?: string;

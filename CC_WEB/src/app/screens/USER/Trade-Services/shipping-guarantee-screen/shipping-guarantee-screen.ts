@@ -17,6 +17,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import {TransactionComparisonService} from '../../../../core/services/admin-service/transaction-comparison.service';
 @Component({
   selector: 'app-shipping-guarantee',
   standalone: true,
@@ -66,6 +67,7 @@ export class ShippingGuarantee implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private transactionService: ShippingGuaranteeFormTransactionService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -178,6 +180,18 @@ export class ShippingGuarantee implements OnInit {
         currency: [''],
         amount: [''],
       }),
+      bankDetailsForm: this.fb.group({
+  remittingBankName: [''],
+  issuerReference: [''],
+  presentingBankName: [''],
+  bankAddress1: [''],
+  bankAddress2: [''],
+  bankAddress3: [''],
+  bankAddress4: [''],
+  collectingBankName: [''],
+  swiftCode: [''],
+  collectingReference: [''],
+}),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
@@ -201,6 +215,20 @@ export class ShippingGuarantee implements OnInit {
     this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
+
+        
+        if(tx.status === 'S'){
+             this.api.getRejectedTransaction(tnxId, 'shippingguarantee').subscribe({
+               next: (rejectedTx) => {
+                 this.storeRejectedTransaction = rejectedTx;
+                 console.log('Rejected transaction data:', rejectedTx);
+                 this.compareShippingGuaranteeData();
+               },
+               error: (err:any) => {  
+                   console.log('Error fetching rejected transaction:', err);
+               }
+             });
+        }
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -254,6 +282,9 @@ export class ShippingGuarantee implements OnInit {
   get issuingbankForm(): FormGroup {
     return this.ShippingGuaranteeForm.get('issuingbankForm') as FormGroup;
   }
+  get bankDetailsForm(): FormGroup {
+    return this.ShippingGuaranteeForm.get('bankDetailsForm') as FormGroup;
+  }
   get instructionForm(): FormGroup {
     return this.ShippingGuaranteeForm.get('instructionForm') as FormGroup;
   }
@@ -263,12 +294,12 @@ export class ShippingGuarantee implements OnInit {
 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
-      generalDetailsForm: tx,
-      applicantBeneficiaryForm: tx,
-      issuingbankForm: tx,
-      instructionForm: tx,
-    });
-
+  generalDetailsForm: tx,
+  applicantBeneficiaryForm: tx,
+  issuingbankForm: tx,
+  bankDetailsForm: tx,       // add
+  instructionForm: tx,
+});
     // Store existing dynamic field values
     this.storeDynamicFieldsResponse = tx.dynamicFields || [];
 
@@ -295,6 +326,13 @@ export class ShippingGuarantee implements OnInit {
       ...this.ShippingGuaranteeForm.value.applicantBeneficiaryForm,
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
+      // flattenForm()
+...this.ShippingGuaranteeForm.value.issuingbankForm,
+...this.ShippingGuaranteeForm.value.bankDetailsForm,
+...this.ShippingGuaranteeForm.value.instructionForm,
+
+// shippingGuaranteeFields: add
+
       dynamicFields: dynamicFields,
       attachments: this.ShippingGuaranteeForm.value.attachments,
     };
@@ -444,7 +482,8 @@ export class ShippingGuarantee implements OnInit {
   }
 
   approve(): void {
-    if (!this.hasPermission('SG_InquiryApprove'))
+    console.log('Attempting to approve transaction:', this.currentTx);
+    
       this.api
         .approveTransactionSg(this.currentTx.tnxId!, this.currentTx)
         .subscribe({
@@ -610,4 +649,88 @@ export class ShippingGuarantee implements OnInit {
 
     this.dynamicFieldsForm.patchValue(patchObj);
   }
+
+  
+
+  // old and new values working
+
+  storeRejectedTransaction:  any[] = [];
+
+    previousValues: { [key: string]: any } = {};
+private readonly shippingGuaranteeFields = [
+  // General Details
+  'expiryDate',
+  'beneficiaryReference',
+  'customerReference',
+  'billoflading',
+  'modeOfShipment',
+  'shippingDetails',
+  'description',
+
+  // Applicant / Beneficiary Details
+  'applicantName',
+  'applicantAddress1',
+  'applicantAddress2',
+  'applicantAddress3',
+  'applicantAddress4',
+  'applicantCountry',
+  'beneficiaryName',
+  'beneficiaryAddress1',
+  'beneficiaryAddress2',
+  'beneficiaryAddress3',
+  'beneficiaryAddress4',
+  'beneficiaryCountry',
+
+  // Issuing Bank Details
+  'bankName',
+  'issuerReference',
+  'currency',
+  'amount',
+'presentingBankName',
+ 'bankAddress1',
+  'bankAddress2',
+   'bankAddress3',
+'bankAddress4', 
+'collectingBankName', 
+'swiftCode',
+ 'collectingReference',
+  //bank Details
+  'remittingBankName',
+  'issuerReference',
+
+  // Instructions
+  'principalAccount',
+  'feeAccount',
+  'otherInstructions',
+];
+  private compareShippingGuaranteeData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.shippingGuaranteeFields,
+    );
+
+    console.log('Previous shipping guarantee values:', this.previousValues);
+  }
+
+    hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+
 }
+

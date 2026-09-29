@@ -334,6 +334,7 @@ export class CreateGenerateFields implements OnInit {
           Swal.fire('Approved!', 'Field approved', 'success').then(() =>
             this.router.navigate(['/admin/dynamic-field-inquiry'], {
               queryParams: { tabName: 'Approved' },
+              
             }),
           ),
         error: (err) => Swal.fire('Error', 'Approval failed', 'error'),

@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class InstructionToBank {
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
   constructor() {
 

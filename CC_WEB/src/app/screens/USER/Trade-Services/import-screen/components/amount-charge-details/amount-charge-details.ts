@@ -27,6 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class AmountChargeDetails {
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
   variationType: string = 'percent';
   resultText: string = '';

@@ -23,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class NarrativeDetails {
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
   activeTabIndex = 0;
   constructor() {

@@ -1,17 +1,15 @@
 @use '../../../../../../../styles/_theme.scss' as theme;
 
-/* ===========================
-   Section Header
-=========================== */
+/* Section Header (same as other sections) */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: theme.$primary;
   padding: 14px 18px;
-  border-radius: 8px;
+  border-radius: theme.$radius-large;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
   color: theme.$text-light;
 
@@ -20,41 +18,160 @@
     box-shadow: theme.$shadow-primary;
   }
 
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: theme.$white;
+  }
+
   mat-icon {
-    color: theme.$text-light;
+    color: theme.$white;
     font-size: 22px;
   }
 }
 
 /* ===========================
-   Collapsible
+   Collapsible Wrapper
 =========================== */
 .collapsible {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: all 0.35s ease-in-out;
   transform: translateY(-5px);
+  transition: all 0.35s ease;
 }
 
 .collapsible.open {
-  max-height: 1500px;
+  max-height: 2000px;
   opacity: 1;
   transform: translateY(0);
-  padding: 15px 10px;
+  padding: 20px;
   background: theme.$light-bg;
-  border-radius: 6px;
+  border-radius: theme.$radius-default;
   border: 1px solid theme.$border-light;
 }
 
-/* Headings */
-h2 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: theme.$white;
+/* ===========================
+   Text Hints
+=========================== */
+.hint,
+.extensions {
+  font-size: 0.85rem;
+  color: #4d4d4d;
+  margin: 2px 0 6px;
 }
 
+/* ===========================
+   Dropzone (Responsive)
+=========================== */
+.dropzone {
+  border: 2px dashed #c5cae9;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #fff;
+  cursor: pointer;
+  margin: 1.2rem 0;
+  transition: 0.2s ease;
+
+  mat-icon {
+    font-size: 3.2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: theme.$primary;
+  }
+
+  &:hover {
+    background: #f4f5fb;
+    border-color: theme.$primary;
+  }
+}
+
+/* ===========================
+   File List (Row-wise)
+=========================== */
+.file-list {
+  margin-top: 1rem;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background: #fff;
+    transition: 0.2s ease;
+
+    &:hover {
+      border-color: theme.$primary-light;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #333;
+      word-break: break-all;
+    }
+
+    button {
+      color: #e53935;
+    }
+  }
+}
+
+/* ===========================
+   Reference Text
+=========================== */
+.reference {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1rem;
+}
+
+/* ===========================
+   Responsive Breakpoints
+=========================== */
+@media (max-width: 768px) {
+  .dropzone {
+    padding: 1.5rem 1rem;
+  }
+
+  .file-list {
+    grid-template-columns: 1fr 1fr;
+    /* 2 columns */
+  }
+}
+
+@media (max-width: 480px) {
+  .file-list {
+    grid-template-columns: 1fr;
+    /* single column */
+  }
+
+  .file-item {
+    font-size: 0.85rem;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+}
+
+/* Wrapper: stack header above content */
+.section-card {
+  display: block;
+  width: 100%;
+}
+
+/* Headings */
 h4 {
   font-size: 16px;
   margin: 20px 0 10px;
@@ -64,23 +181,7 @@ h4 {
   padding-left: 8px;
 }
 
-/* ===========================
-   Form
-=========================== */
-.details-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-grid-2.unequal {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  /* Currency smaller, Amount bigger */
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
+/* Form layout */
 .form-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -94,49 +195,59 @@ h4 {
   flex-direction: column;
   gap: 8px;
 }
+
 mat-form-field {
   width: 100%;
+  font-size: 14px;
 }
 
-.full {
-  width: 100%;
-}
-
-/* ===========================
-   Actions
-=========================== */
-.actions {
-  margin-top: 10px;
+/* Previous value (rejected transaction comparison) */
+.previous-value {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
+  gap: 6px;
+  font-size: 12px;
 
-button[mat-flat-button] {
-  background: theme.$primary !important;
-  color: theme.$text-light !important;
-  box-shadow: theme.$button-shadow;
-  border-radius: 6px;
+  .previous-label {
+    font-weight: 600;
+    color: #b26a00;
+  }
 
-  &:hover {
-    background: theme.$primary-dark !important;
+  .previous-text {
+    color: #6b6b6b;
+    text-decoration: line-through;
   }
 }
 
-/* ===========================
-   Responsive
-=========================== */
-@media (max-width: 480px) {
-  .collapsible.open {
-    padding: 10px 6px;
+@media (max-width: 992px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
   }
+}
 
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
 
-  button[mat-flat-button] {
-    width: 100%;
-  }
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

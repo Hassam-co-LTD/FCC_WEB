@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,10 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class CollectionInstructionsComponent {
 
-  @Input() form!: FormGroup; // Parent-provided form
+  @Input() form!: FormGroup;
+
+  @Input() previousValues: { [key: string]: any } = {};
+
   activeSection: string | null = 'adviceCharges';
 
   advicePaymentOptions = [
@@ -37,7 +40,22 @@ export class CollectionInstructionsComponent {
   ];
 
   toggleSection(section: string) {
-    this.activeSection = this.activeSection === section ? null : section;
+    this.activeSection =
+      this.activeSection === section ? null : section;
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 
   onSubmit() {

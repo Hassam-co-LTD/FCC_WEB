@@ -225,6 +225,7 @@ export class ApiService {
     tnxId: string,
     reason: string,
   ): Observable<ImportLcTransaction> {
+    console.log('Rejecting transaction ID:', tnxId, 'with reason:', reason);
     return this.http
       .post<ImportLcTransaction>(
         `${this.baseUrl}/importlc/rejectReason/${tnxId}`,
@@ -248,6 +249,14 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  getRejectedImportLc(tnxId: string): Observable<ImportLcTransaction | null> {
+  return this.http
+    .get<ImportLcTransaction>(
+      `${this.baseUrl}/importlc/rejectedSnapshot/${tnxId}`,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
   /* -------------------- IMPORT LC AMENDMENT API Methods  -------------------- */
 
   // getLatestApprovedEvent(tnxId: string): Observable<ImportLcTransaction> {
@@ -433,6 +442,7 @@ export class ApiService {
       .put<ShippingGuaranteeTransaction>(
         `${this.baseUrl}/shippingguarantee/${tnxId}`,
         payload,
+        { headers: this.headers }
       )
       .pipe(catchError(this.handleError));
   }
@@ -657,7 +667,9 @@ export class ApiService {
     return this.http
       .put<ExportCollectionTransaction>(
         `${this.baseUrl}/exportcollection/${payload.tnxId}`,
+        
         payload,
+        { headers: this.headers }
       )
       .pipe(catchError(this.handleError));
   }
@@ -1615,7 +1627,7 @@ export class ApiService {
   }
   getRejectedTransaction(id: string, module: string) {
     return this.http.get<any>(
-      `${this.adminBaseUrl}${module}/${id}/rejected-history`,
+      `${this.baseUrl}/${module}/${id}/rejected-history`,
     );
   }
 

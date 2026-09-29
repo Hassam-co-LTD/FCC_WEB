@@ -25,6 +25,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class PaymentDetails {
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
 
 

@@ -1,14 +1,10 @@
-
 import { Component, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatOptionModule } from '@angular/material/core';
-import { MatError } from '@angular/material/form-field';
-import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -21,17 +17,17 @@ import { MatIcon } from '@angular/material/icon';
     MatSelectModule,
     MatInputModule,
     MatOptionModule,
-    MatIcon
-],
+    MatIcon,
+  ],
   templateUrl: './bank-details.html',
   styleUrl: './bank-details.scss',
 })
 export class BankDetails {
-
   selectedTab = 0;
   isOpen = true;
 
-  @Input() form!: FormGroup;  
+  @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
 
   bankList: string[] = [
     'National Bank Of Pakistan (NBP)',
@@ -39,7 +35,7 @@ export class BankDetails {
     'United Bank Limited (UBL)',
     'MCB Bank',
     'Standard Chartered Bank',
-    'Bank Alfalah'
+    'Bank Alfalah',
   ];
 
   constructor() {}
@@ -47,5 +43,4 @@ export class BankDetails {
   toggle() {
     this.isOpen = !this.isOpen;
   }
-
 }

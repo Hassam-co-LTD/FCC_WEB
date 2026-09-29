@@ -28,7 +28,7 @@ import { MatRadioModule } from '@angular/material/radio';
 export class ApplicantBeneficiary {
 
   @Input() form!: FormGroup;
-
+@Input() previousValues: { [key: string]: any } = {};
   isOpen: boolean = true;
   showAlternate: boolean = false;
 

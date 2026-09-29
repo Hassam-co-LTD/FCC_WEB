@@ -7,79 +7,367 @@
 
   @if (!isOpen) {
     <div class="preview-block">
+
       <div class="preview-column">
         <h4 class="preview-sub-title">Drawer</h4>
-        <div><strong>Name:</strong> {{ form.value.drawerName || '—' }}</div>
-        <div><strong>Address1:</strong> {{ form.value.drawerAddress1 || '—' }}</div>
-        <div><strong>Address2:</strong> {{ form.value.drawerAddress2 || '—' }}</div>
-        <div><strong>Address3:</strong> {{ form.value.drawerAddress3 || '—' }}</div>
-        <div><strong>Address4:</strong> {{ form.value.drawerAddress4 || '—' }}</div>
+
+        <div>
+          <strong>Name:</strong>
+          {{ form.value.drawerName || '—' }}
+        </div>
+
+        <div>
+          <strong>Address1:</strong>
+          {{ form.value.drawerAddress1 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address2:</strong>
+          {{ form.value.drawerAddress2 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address3:</strong>
+          {{ form.value.drawerAddress3 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address4:</strong>
+          {{ form.value.drawerAddress4 || '—' }}
+        </div>
       </div>
+
+
       <div class="preview-column">
         <h4 class="preview-sub-title">Drawee</h4>
-        <div><strong>Name:</strong> {{ form.value.draweeName || '—' }}</div>
-        <div><strong>Address1:</strong> {{ form.value.draweeAddress1 || '—' }}</div>
-        <div><strong>Address2:</strong> {{ form.value.draweeAddress2 || '—' }}</div>
-        <div><strong>Address3:</strong> {{ form.value.draweeAddress3 || '—' }}</div>
-        <div><strong>Address4:</strong> {{ form.value.draweeAddress4 || '—' }}</div>
+
+        <div>
+          <strong>Name:</strong>
+          {{ form.value.draweeName || '—' }}
+        </div>
+
+        <div>
+          <strong>Address1:</strong>
+          {{ form.value.draweeAddress1 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address2:</strong>
+          {{ form.value.draweeAddress2 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address3:</strong>
+          {{ form.value.draweeAddress3 || '—' }}
+        </div>
+
+        <div>
+          <strong>Address4:</strong>
+          {{ form.value.draweeAddress4 || '—' }}
+        </div>
       </div>
+
     </div>
   }
 
+
   <div class="form-content">
-    
+
+    <!-- ================= DRAWER ================= -->
+
     <h4 class="sub-title">Drawer Details</h4>
+
     <div class="form-grid-2">
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Drawer Name *</mat-label>
-        <input matInput type="text" formControlName="drawerName" placeholder="Enter Drawer Name">
-      </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 1 *</mat-label>
-        <input matInput type="text" formControlName="drawerAddress1" placeholder="Enter Address 1">
-      </mat-form-field>
+      <!-- Drawer Name -->
+      <div class="field-group">
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 2</mat-label>
-        <input matInput type="text" formControlName="drawerAddress2" placeholder="Enter Address 2">
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Drawer Name *</mat-label>
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 3</mat-label>
-        <input matInput type="text" formControlName="drawerAddress3" placeholder="Enter Address 3">
-      </mat-form-field>
-       <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 4</mat-label>
-        <input matInput type="text" formControlName="drawerAddress4" placeholder="Enter Address 4">
-      </mat-form-field>
+          <input
+            matInput
+            type="text"
+            formControlName="drawerName"
+            placeholder="Enter Drawer Name"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('drawerName')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['drawerName'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawer Address 1 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 1 *</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="drawerAddress1"
+            placeholder="Enter Address 1"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('drawerAddress1')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['drawerAddress1'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawer Address 2 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 2</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="drawerAddress2"
+            placeholder="Enter Address 2"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('drawerAddress2')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['drawerAddress2'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawer Address 3 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 3</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="drawerAddress3"
+            placeholder="Enter Address 3"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('drawerAddress3')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['drawerAddress3'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawer Address 4 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 4</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="drawerAddress4"
+            placeholder="Enter Address 4"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('drawerAddress4')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['drawerAddress4'] }}
+          </span>
+        </div>
+
+      </div>
+
     </div>
+
+
+    <!-- ================= DRAWEE ================= -->
 
     <h4 class="sub-title">Drawee Details</h4>
+
     <div class="form-grid-2">
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Drawee Name *</mat-label>
-        <input matInput type="text" formControlName="draweeName" placeholder="Enter Drawee Name">
-      </mat-form-field>
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 1 *</mat-label>
-        <input matInput type="text" formControlName="draweeAddress1" placeholder="Enter Address 1">
-      </mat-form-field>
+      <!-- Drawee Name -->
+      <div class="field-group">
 
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 2</mat-label>
-        <input matInput type="text" formControlName="draweeAddress2" placeholder="Enter Address 2">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 3</mat-label>
-        <input matInput type="text" formControlName="draweeAddress3" placeholder="Enter Address 3">
-      </mat-form-field>
         <mat-form-field appearance="outline" class="full">
-        <mat-label>Address 4</mat-label>
-        <input matInput type="text" formControlName="draweeAddress4" placeholder="Enter Address 4">
-      </mat-form-field>
+          <mat-label>Drawee Name *</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="draweeName"
+            placeholder="Enter Drawee Name"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('draweeName')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['draweeName'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawee Address 1 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 1 *</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="draweeAddress1"
+            placeholder="Enter Address 1"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('draweeAddress1')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['draweeAddress1'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawee Address 2 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 2</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="draweeAddress2"
+            placeholder="Enter Address 2"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('draweeAddress2')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['draweeAddress2'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawee Address 3 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 3</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="draweeAddress3"
+            placeholder="Enter Address 3"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('draweeAddress3')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['draweeAddress3'] }}
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- Drawee Address 4 -->
+      <div class="field-group">
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Address 4</mat-label>
+
+          <input
+            matInput
+            type="text"
+            formControlName="draweeAddress4"
+            placeholder="Enter Address 4"
+          />
+        </mat-form-field>
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('draweeAddress4')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['draweeAddress4'] }}
+          </span>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
+
 </div>

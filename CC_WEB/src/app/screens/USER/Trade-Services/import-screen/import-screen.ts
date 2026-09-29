@@ -31,6 +31,8 @@ import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-d
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+
 @Component({
   selector: 'app-import-lc',
   standalone: true,
@@ -51,6 +53,7 @@ import { DynamicFields } from '../../../../core/services/admin-service/dynamic-f
     MatDialogModule,
     Sidebar,
     DynamicFields,
+    
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss'],
@@ -83,6 +86,9 @@ export class ImportScreen implements OnInit {
     { label: 'Attachments' },
     { label: 'Dynamic fields' },
   ];
+  storeRejectedTx: ImportLcTransaction | null = null;
+previousValues: { [key: string]: any } = {};
+previousDynamicValues: { [key: string]: any } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -93,6 +99,7 @@ export class ImportScreen implements OnInit {
     private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService,
+    private comparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -267,13 +274,12 @@ export class ImportScreen implements OnInit {
             // this.showUpdateSubmit = true;
             // this.showApproveReject = false;
             break;
-          case 'S': // submitted
-            this.mode = 'UPDATE';
-            this.screenMode = 'SUBMITTED';
-            this.importForm.disable();
-            // this.showUpdateSubmit = false;
-            // this.showApproveReject = true;
-            break;
+          case 'S':
+  this.mode = 'UPDATE';
+  this.screenMode = 'SUBMITTED';
+  this.importForm.disable();
+  this.loadRejectedHistory(tx);
+  break;
           case 'A': // Approved
             this.mode = 'UPDATE';
             this.screenMode = 'APPROVED';
@@ -302,7 +308,58 @@ export class ImportScreen implements OnInit {
         ]);
       },
     });
+
+    
   }
+  private loadRejectedHistory(tx: ImportLcTransaction): void {
+  this.previousValues = {};
+  this.previousDynamicValues = {};
+
+  this.api.getRejectedImportLc(tx.tnxId!).subscribe({
+    next: (rejected) => {
+      if (!rejected) return;                 // 204: never rejected
+      this.storeRejectedTx = rejected;
+
+      this.previousValues = this.comparisonService.compare(
+        tx,
+        rejected,
+        this.getAllFormFieldNames(),
+      );
+
+      if (tx.dynamicFields && rejected.dynamicFields) {
+        this.previousDynamicValues = this.comparisonService.compareDynamicFields(
+          tx.dynamicFields,
+          rejected.dynamicFields,
+        );
+      }
+    },
+    error: (err) => console.error('Rejected history load failed', err),
+  });
+}
+
+// Reuses the form itself as the field list, so there's nothing to hardcode.
+// This works because flattenForm() already merges all groups into one flat object.
+private getAllFormFieldNames(): string[] {
+  const groups = [
+    'generalDetails', 'applicantForm', 'bankForm', 'amountChargeForm',
+    'paymentDetailsForm', 'shipmentForm', 'narrativeForm', 'instructionForm',
+  ];
+  return groups.flatMap((g) =>
+    Object.keys((this.importForm.get(g) as FormGroup).controls),
+  );
+}
+
+hasPreviousValue(field: string): boolean {
+  const v = this.previousValues?.[field];
+  return v !== null && v !== undefined && String(v).trim() !== '';
+}
+getPreviousValue(field: string): any { return this.previousValues?.[field] ?? ''; }
+
+hasPreviousDynamicValue(fieldId: string): boolean {
+  const v = this.previousDynamicValues?.[fieldId];
+  return v !== null && v !== undefined && String(v).trim() !== '';
+}
+getPreviousDynamicValue(fieldId: string): any { return this.previousDynamicValues?.[fieldId] ?? ''; }
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
     return this.importForm.get('generalDetails') as FormGroup;
@@ -619,7 +676,7 @@ export class ImportScreen implements OnInit {
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-
+console.log('Rejection reason:', reason);
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', {
@@ -654,7 +711,38 @@ export class ImportScreen implements OnInit {
     );
   }
 
+private getFormValidationErrors(form: any = this.importForm, path: string = ''): any {
+  const result: any = {};
+
+  if (!form) {
+    return result;
+  }
+
+  result[path || '(root)'] = { status: form.status, errors: form.errors };
+
+  if (form.controls) {
+    const keys = Array.isArray(form.controls)
+      ? form.controls.map((_: any, i: number) => i)
+      : Object.keys(form.controls);
+
+    keys.forEach((key: any) => {
+      const control = form.controls[key];
+      const currentPath = path ? `${path}.${key}` : String(key);
+
+      if (control && control.controls) {
+        Object.assign(result, this.getFormValidationErrors(control, currentPath));
+      } else if (control) {
+        result[currentPath] = { status: control.status, errors: control.errors };
+      }
+    });
+  }
+
+  return result;
+}
+
   updateRejected(): void {
+
+    
     if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
@@ -666,6 +754,13 @@ export class ImportScreen implements OnInit {
 
       return;
     }
+    console.log('expiryDate errors:', this.importForm.get('generalDetails.expiryDate')?.errors);
+    console.log('Form errors:', JSON.stringify(this.getFormValidationErrors(), null, 2));
+    console.log('Form status:', this.importForm.status);
+      console.log('Form valid?', this.importForm.valid);
+  console.log('Form errors:', this.getFormValidationErrors()); // see helper below
+  console.log('currentTx:', this.currentTx);
+  console.log('tnxId:', this.currentTx?.tnxId);
 
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
@@ -729,7 +824,10 @@ export class ImportScreen implements OnInit {
 
       error: (err: any) => console.error('Error loading dynamic fields:', err),
     });
+
+   
   }
+  
   // ---------------- PATCH DYNAMIC VALUES ----------------
   private patchDynamicValues(): void {
     if (
@@ -755,4 +853,9 @@ export class ImportScreen implements OnInit {
 
     this.dynamicFieldsForm.patchValue(patchObj);
   }
+
+
+  //  old and new values working 
+
+  
 }

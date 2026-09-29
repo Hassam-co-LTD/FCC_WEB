@@ -21,7 +21,7 @@
       <!-- ================================================= -->
 
       <section id="section-0">
-        <app-general-details [form]="generalDetailsForm"> </app-general-details>
+        <app-general-details [form]="generalDetailsForm" [previousValues]="previousValues"> </app-general-details>
       </section>
 
       <hr class="section-divider" />
@@ -31,7 +31,7 @@
       <!-- ================================================= -->
 
       <section id="section-1">
-        <app-applicant-beneficiary [form]="applicantBeneficiaryForm">
+        <app-applicant-beneficiary [form]="applicantBeneficiaryForm" [previousValues]="previousValues">
         </app-applicant-beneficiary>
       </section>
 
@@ -42,7 +42,7 @@
       <!-- ================================================= -->
 
       <section id="section-2">
-        <app-bank-details [form]="issuingbankForm"> </app-bank-details>
+       <app-bank-details [form]="bankDetailsForm" [previousValues]="previousValues"> </app-bank-details>
       </section>
 
       <hr class="section-divider" />
@@ -52,7 +52,8 @@
       <!-- ================================================= -->
 
       <section id="section-3">
-        <app-instructions [form]="instructionForm"> </app-instructions>
+        <app-instructions [form]="instructionForm"[previousValues]="previousValues"
+        > </app-instructions>
       </section>
 
       <hr class="section-divider" />

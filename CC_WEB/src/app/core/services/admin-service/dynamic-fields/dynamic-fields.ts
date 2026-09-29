@@ -28,7 +28,7 @@ export class DynamicFields {
   @Input() form!: FormGroup;
 
   @Input() isOpen = true;
-
+@Input() previousDynamicValues: { [key: string]: any } = {};
   toggleDynamicFields(): void {
     this.isOpen = !this.isOpen;
   }

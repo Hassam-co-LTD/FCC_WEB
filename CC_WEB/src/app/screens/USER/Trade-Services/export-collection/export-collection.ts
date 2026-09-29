@@ -29,6 +29,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ExportCollectionTransaction } from '../../../../core/models/export-collection';
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import {TransactionComparisonService} from '../../../../core/services/admin-service/transaction-comparison.service';
 @Component({
   selector: 'app-export-collection',
   standalone: true,
@@ -103,6 +104,7 @@ export class ExportCollection implements OnInit {
     private dialog: MatDialog,
     private transactionService: ExportCollectionFormTransactionService,
     private authservice: AuthService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -374,6 +376,19 @@ export class ExportCollection implements OnInit {
 
         console.log('loading transaction  from backend ', tx);
 
+
+        if(tx.status === 'S'){
+             this.api.getRejectedTransaction(tnxId, 'exportcollection').subscribe({
+               next: (rejectedTx) => {
+                 this.storeRejectedTransaction = rejectedTx;
+                 console.log('Rejected transaction data:', rejectedTx);
+                 this.compareExportCollectionData();
+               },
+               error: (err:any) => {  
+                   console.log('Error fetching rejected transaction:', err);
+               }
+             });
+        }
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -960,4 +975,103 @@ export class ExportCollection implements OnInit {
 
     this.dynamicFieldsForm.patchValue(patchObj);
   }
+
+  // old and new values working
+
+  storeRejectedTransaction:  any[] = [];
+
+    previousValues: { [key: string]: any } = {};
+
+  private readonly exportCollectionFields = [
+  // General Details
+  'collectionType',
+  'customerReference',
+  'draweeReference',
+
+  // Drawer / Drawee Details
+  'drawerName',
+  'drawerAddress1',
+  'drawerAddress2',
+  'drawerAddress3',
+  'drawerAddress4',
+  'draweeName',
+  'beneficiaryName',
+  'draweeAddress1',
+  'draweeAddress2',
+  'draweeAddress3',
+  'draweeAddress4',
+
+  // Bank Details
+  'remittingBankName',
+  'issuerReference',
+  'principalAccount',
+  'feeAccount',
+  'presentingBankName',
+  'bankAddress1',
+  'bankAddress2',
+  'bankAddress3',
+  'bankAddress4',
+  'collectingBankName',
+  'swiftCode',
+  'collectingReference',
+
+  // Payment and Amount
+  'currency',
+  'amount',
+  'paymentType',
+  'tenor',
+  'paymentReference',
+
+  // Shipment Details
+  'shippingMethod',
+  'shipmentReference',
+  'shippingFrom',
+  'shippingTo',
+  'shipmentDate',
+  'incotermsRules',
+  'incoterms',
+
+  // Collection Instruction
+  'advicePaymentBy',
+  'adviceAcceptanceAndDueDateBy',
+  'adviceReasonOfRefusalBy',
+  'waiveAllChargesIfRefusedByDrawee',
+  'protestInCaseOfNonPayment',
+  'protestInCaseOfNonAcceptance',
+  'acceptanceMayBeDeferredPendingArrival',
+  'warehouseOrInsureGoodsIfNecessary',
+  'openingCharges',
+  'outsideCountryCharges',
+  'referTo',
+];
+
+  private compareExportCollectionData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.exportCollectionFields,
+    );
+
+    console.log('Previous export collection values:', this.previousValues);
+  }
+
+    hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+
+
 }

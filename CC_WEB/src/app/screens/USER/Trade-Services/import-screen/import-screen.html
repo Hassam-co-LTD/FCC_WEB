@@ -10,41 +10,58 @@
   <div class="content">
     <div class="scroll-area">
       <section id="section-0">
-        <app-general-details [form]="generalDetailsForm"></app-general-details>
+        <app-general-details
+          [form]="generalDetailsForm"
+          [previousValues]="previousValues"
+        ></app-general-details>
       </section>
       <hr class="section-divider" />
 
       <section id="section-1">
         <app-applicant-beneficiary
           [form]="applicantForm"
+          [previousValues]="previousValues"
         ></app-applicant-beneficiary>
       </section>
       <hr class="section-divider" />
 
       <section id="section-2">
-        <app-bank-details [form]="bankForm"></app-bank-details>
+        <app-bank-details
+          [form]="bankForm"
+          [previousValues]="previousValues"
+        ></app-bank-details>
       </section>
       <hr class="section-divider" />
 
       <section id="section-3">
         <app-amount-charge-details
           [form]="amountChargeForm"
+          [previousValues]="previousValues"
         ></app-amount-charge-details>
       </section>
       <hr class="section-divider" />
 
       <section id="section-4">
-        <app-payment-details [form]="paymentDetailsForm"></app-payment-details>
+        <app-payment-details
+          [form]="paymentDetailsForm"
+          [previousValues]="previousValues"
+        ></app-payment-details>
       </section>
       <hr class="section-divider" />
 
       <section id="section-5">
-        <app-shipment-details [form]="shipmentForm"></app-shipment-details>
+        <app-shipment-details
+          [form]="shipmentForm"
+          [previousValues]="previousValues"
+        ></app-shipment-details>
       </section>
       <hr class="section-divider" />
 
       <section id="section-6">
-        <app-narrative-details [form]="narrativeForm"></app-narrative-details>
+        <app-narrative-details
+          [form]="narrativeForm"
+          [previousValues]="previousValues"
+        ></app-narrative-details>
       </section>
       <hr class="section-divider" />
 
@@ -54,6 +71,7 @@
       <section id="section-8">
         <app-instruction-to-bank
           [form]="instructionForm"
+          [previousValues]="previousValues"
         ></app-instruction-to-bank>
       </section>
       <hr class="section-divider" />
@@ -62,20 +80,28 @@
         <app-attachments
           (filesChange)="updateAttachments($event)"
         ></app-attachments>
+
+        <!-- dynamic Fields section  -->
+        <ng-container *ngIf="fields?.length">
+          <app-dynamic-fields
+            [form]="dynamicFieldsForm"
+            [fields]="fields"
+            [isOpen]="isDynamicFieldsOpen"
+            [previousDynamicValues]="previousDynamicValues"
+          >
+          </app-dynamic-fields>
+        </ng-container>
       </section>
       <hr class="section-divider" />
+
       <!-- Footer Buttons -->
       <div class="actions">
-
         <button mat-stroked-button (click)="back()">Back</button>
 
         <!-- CREATE -->
         <ng-container *ngIf="mode === 'CREATE'">
           <button
-            *ngIf="
-              hasPermission('ILC_CreateSave')
-            "
-            
+            *ngIf="hasPermission('ILC_CreateSave')"
             mat-flat-button
             color="accent"
             (click)="saveForm()"
@@ -87,11 +113,7 @@
         <!-- EDIT -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
           <button
-            *ngIf="
-              hasPermission(
-                'ILC_InquiryPendingUpdate'
-              )
-            "
+            *ngIf="hasPermission('ILC_InquiryPendingUpdate')"
             mat-stroked-button
             color="primary"
             (click)="update()"
@@ -99,11 +121,7 @@
             Update
           </button>
           <button
-            *ngIf="
-              hasPermission(
-                'ILC_InquirySubmit'
-              )
-            "
+            *ngIf="hasPermission('ILC_InquirySubmit')"
             mat-flat-button
             color="accent"
             (click)="submitLc()"
@@ -115,11 +133,7 @@
         <!-- APPROVAL -->
         <ng-container *ngIf="screenMode === 'SUBMITTED'">
           <button
-            *ngIf="
-              hasPermission(
-                'ILC_InquiryReject'
-              )
-            "
+            *ngIf="hasPermission('ILC_InquiryReject')"
             mat-stroked-button
             color="primary"
             (click)="openReject()"
@@ -128,11 +142,7 @@
           </button>
 
           <button
-            *ngIf="
-              hasPermission(
-                'ILC_InquiryApprove'
-              )
-            "
+            *ngIf="hasPermission('ILC_InquiryApprove')"
             mat-flat-button
             color="accent"
             (click)="approve()"
@@ -141,24 +151,10 @@
           </button>
         </ng-container>
 
-        <!-- APPROVED -->
-        <!-- <ng-container *ngIf="screenMode === 'APPROVED'">
-          <button mat-stroked-button color="primary" (click)="back()">
-            Back
-          </button>
-        </ng-container> -->
-
         <!-- REJECTED -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-          <!-- <button mat-stroked-button color="primary" (click)="back()">
-            Back
-          </button> -->
           <button
-            *ngIf="
-              hasPermission(
-                'ILC_InquiryRejectUpdate'
-              )
-            "
+            *ngIf="hasPermission('ILC_InquiryRejectUpdate')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()"
