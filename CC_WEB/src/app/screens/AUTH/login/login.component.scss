@@ -22,7 +22,7 @@ input::-ms-clear {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 2rem 1.5rem;
+padding: 1rem 1.5rem;
   font-family: 'Poppins', sans-serif;
   position: relative;
   overflow: hidden;
@@ -101,12 +101,12 @@ input::-ms-clear {
 }
 
 .auth-header {
-  margin-bottom: 2.25rem;
+  margin-bottom: 1.25rem;
   text-align: center;
   font-family: poppins;
   
   h2 {
-    font-size: 1.8rem;
+    font-size: 1.65rem;
     color: theme.$primary;
     margin: 0 0 0.5rem 0;
     font-weight: 700;
@@ -118,7 +118,7 @@ input::-ms-clear {
     color: theme.$text-medium;
     margin: 0;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.25;
     font-style: poppins;
   }
 }
@@ -134,7 +134,7 @@ input::-ms-clear {
 
 .full-width {
   width: 100%;
-  margin-bottom: 1.15rem;
+  margin-bottom: 0.75rem;
 }
 
 .field-icon {
@@ -221,8 +221,8 @@ button[mat-flat-button].action-btn {
   font-size: 0.975rem;
   letter-spacing: 0.01em;
   border-radius: theme.$radius-default;
-  padding: 1.45rem 0 !important;
-  margin: 0.75rem 0 1rem 0;
+   padding: 1.15rem 0 !important;
+  margin: 0.5rem 0 0.7rem 0;
   box-shadow: theme.$button-shadow;
   display: flex;
   align-items: center;
@@ -257,7 +257,7 @@ button[mat-flat-button].action-btn {
   align-items: center;
   justify-content: center;
   gap: 0.25rem; // Space between the links
-  margin-top: 0.5rem;
+ margin-top: 0.3rem;
   width: 100%;
 
   p {
@@ -297,7 +297,7 @@ button[mat-flat-button].action-btn {
    8. REAL-TIME FINTECH PASSWORD STRENGTH VISUAL INDICATOR SYSTEM
 ========================================================================= */
 .password-field-container {
-  margin-bottom: 1.5rem !important;
+  margin-bottom:0.9rem !important;
 }
 
 .strength-indicator-wrapper {
@@ -560,7 +560,7 @@ button[mat-flat-button].action-btn {
     padding: 1rem;
     
     .auth-card {
-      padding: 2.5rem 1.75rem !important;
+       padding: 1.75rem 2.25rem !important;
     }
   }
 
@@ -647,3 +647,510 @@ button[mat-flat-button].action-btn {
     }
   }
 }
+
+scss
+/* ==========================================================
+   CAPTCHA / HUMAN VERIFICATION
+   ========================================================== */
+
+.captcha-section {
+  width: 100%;
+  margin: 0.35rem 0 0.65rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* ==========================================================
+   I'M NOT A ROBOT
+   ========================================================== */
+
+.robot-check {
+  width: 100%;
+  height: 42px;
+
+  padding: 0 0.75rem;
+  margin: 0.1rem 0 0.4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  background: #f8fafc;
+  border: 1px solid #dbe3ec;
+  border-radius: 6px;
+
+  color: #334155;
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #ffffff;
+    border-color: theme.$primary;
+    box-shadow: 0 2px 7px rgba(0, 51, 102, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* ==========================================================
+   EMPTY / UNCHECKED CHECKBOX
+   ========================================================== */
+
+.robot-checkbox {
+  width: 19px;
+  height: 19px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  background: #ffffff;
+  border: 1.5px solid #94a3b8;
+  border-radius: 3px;
+
+  box-sizing: border-box;
+
+  /*
+   * IMPORTANT:
+   * The checkbox is EMPTY initially.
+   * Do not display the check icon here.
+   */
+
+  mat-icon {
+    display: none !important;
+  }
+}
+
+/* ==========================================================
+   ROBOT TEXT
+   ========================================================== */
+
+.robot-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #334155;
+}
+
+/* ==========================================================
+   SECURITY ICON
+   ========================================================== */
+
+.robot-security-icon {
+  margin-left: auto;
+
+  font-size: 17px;
+  width: 17px;
+  height: 17px;
+
+  color: theme.$primary;
+
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   CAPTCHA BOX
+   ========================================================== */
+
+.captcha-content {
+  width: 100%;
+
+  padding: 0.35rem 0;
+
+  box-sizing: border-box;
+
+  animation: captchaReveal 0.2s ease-out;
+}
+
+/* ==========================================================
+   CAPTCHA HEADER
+   ========================================================== */
+
+.captcha-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  margin-bottom: 0.45rem;
+
+  text-align: center;
+
+  .captcha-security-icon {
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: theme.$primary-light;
+    color: theme.$primary;
+
+    font-size: 15px;
+
+    &.mat-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+  h3 {
+    margin: 0;
+
+    color: theme.$primary;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 15px;
+  }
+
+  p {
+    margin: 1px 0 0;
+
+    color: theme.$text-medium;
+
+    font-size: 0.62rem;
+    line-height: 11px;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA LOADING
+   ========================================================== */
+
+.captcha-loading {
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  color: theme.$text-medium;
+
+  font-size: 0.68rem;
+  line-height: 1;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA QUESTION
+   ========================================================== */
+
+.captcha-question {
+  width: 100%;
+  min-height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 0.45rem;
+
+  background: theme.$light-bg;
+  border: 1px solid theme.$border-light;
+  border-radius: 5px;
+
+  .question-text {
+    color: theme.$text-dark;
+
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 14px;
+
+    text-align: center;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA OPTIONS
+   ========================================================== */
+
+.captcha-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.35rem;
+
+  margin: 0 0 0.45rem;
+}
+
+.captcha-item {
+  min-width: 42px;
+  height: 28px;
+
+  padding: 0 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid theme.$border-light;
+  border-radius: 4px;
+
+  background: theme.$white;
+  color: theme.$text-dark;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: theme.$primary-light;
+    border-color: theme.$primary;
+    color: theme.$primary;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &.selected {
+    background: theme.$primary;
+    border-color: theme.$primary;
+    color: theme.$white;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA ERROR
+   ========================================================== */
+
+.captcha-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  min-height: 25px;
+
+  padding: 0.25rem 0.4rem;
+  margin-bottom: 0.4rem;
+
+  box-sizing: border-box;
+
+  border-radius: 4px;
+
+  color: theme.$danger;
+  background: rgba(211, 47, 47, 0.05);
+  border: 1px solid rgba(211, 47, 47, 0.15);
+
+  font-size: 0.62rem;
+  line-height: 11px;
+
+  mat-icon {
+    flex-shrink: 0;
+
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+  }
+
+  span {
+    text-align: center;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA ACTIONS
+   ========================================================== */
+
+.captcha-actions {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+}
+
+/* ==========================================================
+   VERIFY BUTTON
+   ========================================================== */
+
+.captcha-verify-btn {
+  flex: 1;
+
+  height: 29px;
+  min-height: 29px;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border-radius: 4px;
+
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 29px;
+
+  box-sizing: border-box;
+}
+
+/* ==========================================================
+   REFRESH BUTTON
+   ========================================================== */
+
+.captcha-refresh {
+  height: 29px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  padding: 0 6px;
+  margin: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: theme.$primary;
+
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    color: theme.$primary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ==========================================================
+   VERIFIED STATE
+   ========================================================== */
+
+.robot-verified {
+  width: 100%;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  margin: 0.2rem 0 0.4rem;
+
+  box-sizing: border-box;
+
+  background: rgba(22, 163, 74, 0.06);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  border-radius: 6px;
+
+  color: #15803d;
+
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+}
+
+/* ==========================================================
+   CAPTCHA OPEN ANIMATION
+   ========================================================== */
+
+@keyframes captchaReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 480px) {
+
+  .robot-check {
+    height: 40px;
+  }
+
+  .robot-text {
+    font-size: 0.75rem;
+  }
+
+  .captcha-question {
+    padding: 0.35rem 0.4rem;
+  }
+
+  .captcha-item {
+    min-width: 40px;
+    height: 27px;
+    font-size: 0.68rem;
+  }
+
+  .captcha-actions {
+    gap: 4px;
+  }
+
+  .captcha-refresh {
+    padding: 0 4px;
+    font-size: 0.6rem;
+  }
+}
+

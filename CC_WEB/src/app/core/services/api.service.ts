@@ -13,6 +13,10 @@ import {
   RecordsListTransferDTO,
   AccountsMaster,
 } from '../models/my-accounts';
+import {
+  CaptchaResponse,
+  CaptchaVerifyResponse,
+} from '../../core/models/captcha';
 import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
@@ -1596,8 +1600,8 @@ export class ApiService {
 
   // Implementation to fetch dropdown options based on the provided parameters
 
-  importCustomers(formData: FormData) {
-    return this.http.post(`${this.adminBaseUrl}customer/import`, formData);
+  importCustomers(formData: FormData, screenName: String) {
+    return this.http.post(`${this.adminBaseUrl}${screenName}/import`, formData);
   }
 
   refreshToken() {
@@ -1658,5 +1662,23 @@ export class ApiService {
 
   getCountAllStatus() {
     return this.http.get<any>(`${this.baseUrl}/user-dashboard/count-by-status`);
+  }
+
+  // Captcha
+
+  getCaptchaChallenge() {
+    return this.http.get<CaptchaResponse>(
+      `${this.adminBaseUrl}captcha/challenge`,
+    );
+  }
+
+  verifyCaptcha(challengeId: string, answer: string) {
+    return this.http.post<CaptchaVerifyResponse>(
+      `${this.adminBaseUrl}captcha/verify`,
+      {
+        challengeId,
+        answer,
+      },
+    );
   }
 }

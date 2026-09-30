@@ -2,15 +2,25 @@
   <mat-card class="auth-card">
     @if (authState === "LOGIN") {
       <div class="auth-flow-wrapper">
+        <!-- =========================
+         LOGIN HEADER
+    ========================= -->
         <div class="auth-header">
           <h2>Login</h2>
+
           <p class="auth-subtitle">Access your enterprise dashboard</p>
         </div>
 
+        <!-- =========================
+         LOGIN FIELDS
+    ========================= -->
         <div class="form-grid">
+          <!-- Login ID -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Login ID</mat-label>
-            <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
+
+            <mat-icon matPrefix class="field-icon"> account_circle </mat-icon>
+
             <input
               matInput
               [(ngModel)]="loginId"
@@ -19,9 +29,12 @@
             />
           </mat-form-field>
 
+          <!-- Company ID -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Company ID</mat-label>
-            <mat-icon matPrefix class="field-icon">business</mat-icon>
+
+            <mat-icon matPrefix class="field-icon"> business </mat-icon>
+
             <input
               matInput
               [(ngModel)]="companyId"
@@ -29,9 +42,12 @@
             />
           </mat-form-field>
 
+          <!-- Password -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
-            <mat-icon matPrefix class="field-icon">lock</mat-icon>
+
+            <mat-icon matPrefix class="field-icon"> lock </mat-icon>
+
             <input
               matInput
               [type]="hidePassword ? 'password' : 'text'"
@@ -39,20 +55,153 @@
               placeholder="Enter Password"
               autocomplete="current-password"
             />
+
             <button
               mat-icon-button
               matSuffix
-              (click)="togglePassword()"
               type="button"
               class="visibility-toggle"
+              (click)="togglePassword()"
             >
-              <mat-icon>{{
-                hidePassword ? "visibility_off" : "visibility"
-              }}</mat-icon>
+              <mat-icon>
+                {{ hidePassword ? "visibility_off" : "visibility" }}
+              </mat-icon>
             </button>
           </mat-form-field>
         </div>
 
+        <!-- =========================
+         CAPTCHA / HUMAN VERIFICATION
+    ========================= -->
+        <div class="captcha-section">
+          <!-- =========================
+           I'M NOT A ROBOT
+      ========================= -->
+          @if (!captchaVerified) {
+            <button
+              type="button"
+              class="robot-check"
+              [disabled]="captchaLoading"
+              (click)="showCaptcha()"
+            >
+              <span class="robot-checkbox">
+                <mat-icon>check</mat-icon>
+              </span>
+
+              <span class="robot-text"> I'm not a robot </span>
+
+              <mat-icon class="robot-security-icon"> verified_user </mat-icon>
+            </button>
+          }
+
+          <!-- =========================
+           CAPTCHA BOX
+      ========================= -->
+          @if (showCaptchaBox && !captchaVerified) {
+            <div class="captcha-content">
+              <!-- CAPTCHA HEADER -->
+              <div class="captcha-header">
+                <mat-icon class="captcha-security-icon">
+                  verified_user
+                </mat-icon>
+
+                <div>
+                  <h3>Security Verification</h3>
+
+                  <p>Select the correct answer</p>
+                </div>
+              </div>
+
+              <!-- CAPTCHA LOADING -->
+              @if (captchaLoading) {
+                <div class="captcha-loading">
+                  <mat-icon> sync </mat-icon>
+
+                  <span> Loading... </span>
+                </div>
+              }
+
+              <!-- CAPTCHA CONTENT -->
+              @if (!captchaLoading && captcha) {
+                <!-- QUESTION -->
+                <div class="captcha-question">
+                  <span class="question-text">
+                    {{ captcha.question }}
+                  </span>
+                </div>
+
+                <!-- OPTIONS -->
+                <div class="captcha-items">
+                  @for (item of captcha.items; track item) {
+                    <button
+                      type="button"
+                      class="captcha-item"
+                      [class.selected]="selectedCaptchaItem === item"
+                      (click)="selectCaptchaItem(item)"
+                    >
+                      {{ item }}
+                    </button>
+                  }
+                </div>
+
+                <!-- CAPTCHA ERROR -->
+                @if (captchaError) {
+                  <div class="captcha-error">
+                    <mat-icon> error_outline </mat-icon>
+
+                    <span>
+                      {{ captchaError }}
+                    </span>
+                  </div>
+                }
+
+                <!-- CAPTCHA ACTIONS -->
+                <div class="captcha-actions">
+                  <!-- VERIFY -->
+                  <!-- <button
+                    type="button"
+                    mat-flat-button
+                    class="captcha-verify-btn"
+                    [disabled]="!selectedCaptchaItem || captchaVerifying"
+                    (click)="verifyCaptcha()"
+                  >
+                    @if (captchaVerifying) {
+                      Verifying...
+                    } @else {
+                      Verify
+                    }
+                  </button> -->
+
+                  <!-- REFRESH -->
+                  <button
+                    type="button"
+                    class="captcha-refresh"
+                    [disabled]="captchaLoading || captchaVerifying"
+                    (click)="loadCaptcha()"
+                  >
+                    <mat-icon> refresh </mat-icon>
+
+                    New Challenge
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- =========================
+           CAPTCHA VERIFIED
+      ========================= -->
+          @if (captchaVerified) {
+            <div class="robot-verified">
+              <mat-icon>check_circle</mat-icon>
+              <span>Verification completed</span>
+            </div>
+          }
+        </div>
+
+        <!-- =========================
+         LOGIN BUTTON
+    ========================= -->
         <button
           mat-flat-button
           color="primary"
@@ -62,23 +211,28 @@
           Login
         </button>
 
+        <!-- =========================
+         FOOTER
+    ========================= -->
         <div class="auth-footer-actions">
           <p>
             <a
               class="interactive-link"
               (click)="transitionTo('FORGOT_PASSWORD')"
-              >Forgot Password?</a
             >
+              Forgot Password?
+            </a>
+
             <a
               class="interactive-link"
               (click)="transitionTo('CUSTOMER_REGISTRATION')"
-              >New customer</a
             >
+              New customer
+            </a>
           </p>
         </div>
       </div>
     }
-
     @if (authState === "FORGOT_PASSWORD") {
       <div class="auth-flow-wrapper">
         <div class="auth-header">
