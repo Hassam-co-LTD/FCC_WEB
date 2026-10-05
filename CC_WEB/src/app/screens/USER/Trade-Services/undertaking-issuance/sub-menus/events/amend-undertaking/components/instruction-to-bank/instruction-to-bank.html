@@ -1,50 +1,90 @@
+<ng-template #prev let-field>
+  @if (hasPreviousValue(field)) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">{{ getPreviousValue(field) }}</span>
+    </div>
+  }
+</ng-template>
+
 <div class="section-header" (click)="toggle()">
   <h2>Instructions to Bank</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen">
-  <form class="instruction-form" [formGroup]="instructionForm" (ngSubmit)="onSubmit()">
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+  <div class="form-row">
+    <div class="field-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery Type</mat-label>
+        <mat-select formControlName="deliveryType">
+          @for (o of deliveryTypes; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryType' }"></ng-container>
+    </div>
 
-    <!-- Accounts Row -->
-    <div class="form-row">
+    <div class="field-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery Mode</mat-label>
+        <mat-select formControlName="deliveryMode">
+          @for (o of deliveryModes; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryMode' }"></ng-container>
+    </div>
+
+    <div class="field-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Delivery To</mat-label>
+        <mat-select formControlName="deliveryTo">
+          @for (o of deliveryTargets; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryTo' }"></ng-container>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="field-group">
       <mat-form-field appearance="outline">
         <mat-label>Principal Account</mat-label>
         <mat-select formControlName="principalAccount">
-          <mat-option value="account1">Account 1</mat-option>
-          <mat-option value="account2">Account 2</mat-option>
+          @for (a of accounts; track a) {
+            <mat-option [value]="a">{{ a }}</mat-option>
+          }
         </mat-select>
-        @if (instructionForm.get('principalAccount')?.hasError('required')) {
-          <mat-error>
-            Required
-          </mat-error>
-        }
       </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'principalAccount' }"></ng-container>
+    </div>
 
+    <div class="field-group">
       <mat-form-field appearance="outline">
         <mat-label>Fee Account</mat-label>
         <mat-select formControlName="feeAccount">
-          <mat-option value="fee1">Fee Account 1</mat-option>
-          <mat-option value="fee2">Fee Account 2</mat-option>
+          @for (a of accounts; track a) {
+            <mat-option [value]="a">{{ a }}</mat-option>
+          }
         </mat-select>
-        @if (instructionForm.get('feeAccount')?.hasError('required')) {
-          <mat-error>
-            Required
-          </mat-error>
-        }
       </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'feeAccount' }"></ng-container>
     </div>
+  </div>
 
-    <!-- Other Instructions -->
-    <div class="form-row full-width">
+  <div class="form-row full-width">
+    <div class="field-group">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Other Instructions</mat-label>
         <textarea matInput formControlName="otherInstructions" rows="4" maxlength="31525"></textarea>
-        <mat-hint align="end">
-          {{ instructionForm.get('otherInstructions')?.value?.length || 0 }}/31525
-        </mat-hint>
+        <mat-hint align="end">{{ form.get('otherInstructions')?.value?.length || 0 }}/31525</mat-hint>
       </mat-form-field>
+      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'otherInstructions' }"></ng-container>
     </div>
-
-  </form>
+  </div>
 </div>

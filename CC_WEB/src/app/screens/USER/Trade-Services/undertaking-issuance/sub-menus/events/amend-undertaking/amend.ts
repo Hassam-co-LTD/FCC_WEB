@@ -4,12 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
-import { InstructionsBank } from '../../../components/instructions-bank/instructions-bank';
-import { UndertakingDetails } from '../../../components/undertaking-details/undertaking-details';
-import { ApplicationBeneficiary } from '../../../components/application-beneficiary/application-beneficiary';
-import { generalDetails } from '../../../components/general-details/general-details';
+import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
+import { UndertakingDetails } from './components/undertaking-details/undertaking-details';
+import {ApplicantBeneficiary} from './components/applicant-beneficiary/applicant-beneficiary';
+import { GeneralDetails } from './components/general-details/general-details';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
+
 import {
   FormArray,
   FormBuilder,
@@ -17,7 +19,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BankDetails } from '../../../components/bank-details/bank-details';
+import { BankDetails } from './components/bank-details/bank-details';
 import { UndertakingGuarantee } from '../../../../../../../core/models/undertaking-lc';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../../../../core/services/api.service';
@@ -34,11 +36,11 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
     MatSnackBarModule,
     MatDialogModule,
     Sidebar,
-    generalDetails,
-    ApplicationBeneficiary,
+    GeneralDetails,
+    ApplicantBeneficiary,
     BankDetails,
     UndertakingDetails,
-    InstructionsBank,
+    InstructionToBank,
     Attachments,
   ],
   templateUrl: './amend.html',
@@ -78,6 +80,7 @@ export class AmendScreen implements OnInit {
     private api: ApiService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -91,7 +94,7 @@ export class AmendScreen implements OnInit {
         this.permissionNames = JSON.parse(storedPermissions);
 
         console.log(
-          'Shipping Guarantee Permission Names:',
+          'Undertaking Amend Permission Names:',
           this.permissionNames,
         );
       } catch (error) {
@@ -118,7 +121,6 @@ export class AmendScreen implements OnInit {
   ngOnInit() {
     this.loadPermissions();
     setTimeout(() => {
-
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
         (entries) => {
@@ -142,7 +144,6 @@ export class AmendScreen implements OnInit {
     const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
     this.companyId = sessionData.companyId ?? '';
 
-    // this.companyId = this.authservice.getCompanyId() || '';
     console.log('Company ID from route:', this.companyId);
     this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
     console.log('TNX ID from route:', this.tnxId);
@@ -179,7 +180,6 @@ export class AmendScreen implements OnInit {
         purpose: [''],
       }),
       applicantBeneficiary: this.fb.group({
-        // applicantName: ['', Validators.required],
         applicantName: [''],
         applicantAddress1: [''],
         applicantAddress2: [''],
@@ -309,6 +309,11 @@ export class AmendScreen implements OnInit {
         next: (event) => {
           // Existing AMD draft found — load it
           this.currentTx = event;
+
+          if (event.status === 'S') {
+            this.loadRejectedHistory(event);
+          }
+
           this.patchForm(event);
 
           if (event.status === 'S') {
@@ -361,6 +366,11 @@ export class AmendScreen implements OnInit {
       amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
+
+          if (event.status === 'S') {
+            this.loadRejectedHistory(event);
+          }
+
           this.patchForm(event);
 
           switch (event.status) {
@@ -481,7 +491,6 @@ export class AmendScreen implements OnInit {
   }
 
   scrollToSection(i: number) {
-
     this.currentStep = i;
 
     const section = document.getElementById(`section-${i}`);
@@ -524,7 +533,7 @@ export class AmendScreen implements OnInit {
 
     const payload = this.flattenForm();
     console.log('Payload before saving draft:', payload);
-    const tnxId = this.currentTx?.tnxId; // ← master LC tnxId, used for PUT /amend/{tnxId}
+    const tnxId = this.currentTx?.tnxId; // master LC tnxId, used for PUT /amend/{tnxId}
 
     if (!tnxId) {
       this.snackBar.open('Transaction ID missing. Cannot amend.', 'Close', {
@@ -544,7 +553,7 @@ export class AmendScreen implements OnInit {
           console.log(
             'Saved amendment, eventRefNo:',
             this.currentTx.eventRefNo,
-          ); // verify here
+          );
 
           this.snackBar.open(
             `Amendment saved (Ref: ${res.eventRefNo ?? res.tnxId})`,
@@ -643,30 +652,41 @@ export class AmendScreen implements OnInit {
   }
 
   update(): void {
-    if (!this.hasPermission('UI_AmendUpdatePending')) {
-      this.snackBar.open(
-        'You do not have permission to update Undertaking.',
-        'Close',
-        { duration: 3000 },
-      );
+    
 
-      return;
-    }
+    const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
 
-    if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+    if (this.undertakingForm.invalid || !eventRefNo) {
+      this.snackBar.open('Invalid form or missing event reference', 'Close', {
         duration: 3000,
       });
       return;
     }
 
+    if (this.isSaving) return;
+    this.isSaving = true;
+
     const payload = this.flattenForm();
-    payload.tnxId = this.tnxId;
-    console.log('Payload before update:', payload);
-    if (!payload.tnxId) {
-      console.error('TNX ID is missing!');
-      return;
-    }
+    payload.tnxId = this.currentTx?.tnxId || this.tnxId;
+
+    this.api
+      .updatePendingUtgAmendment(eventRefNo, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: (res) => {
+          this.currentTx = { ...this.currentTx, ...res };
+          this.snackBar.open(
+            `Amendment updated successfully (Ref: ${res.eventRefNo})`,
+            'Close',
+            { duration: 3000 },
+          );
+          setTimeout(() => this.navigateBack('pending'), 300);
+        },
+        error: () =>
+          this.snackBar.open('Error updating amendment', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
 
   approve(): void {
@@ -764,42 +784,167 @@ export class AmendScreen implements OnInit {
   updateRejected(): void {
     if (!this.hasPermission('UI_AmendUpdateRejected')) {
       this.snackBar.open(
-        'You do not have permission to update rejected Undertaking.',
+        'You do not have permission to update this rejected amendment.',
         'Close',
         { duration: 3000 },
       );
-
       return;
     }
 
-    if (this.undertakingForm.invalid || !this.currentTx?.tnxId) {
-      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+    const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
+
+    if (this.undertakingForm.invalid || !eventRefNo) {
+      this.snackBar.open('Invalid form or missing event reference', 'Close', {
         duration: 3000,
       });
       return;
     }
 
-    const payload = this.flattenForm(); // flatten form values
-    payload.tnxId = this.currentTx.tnxId;
+    if (this.isSaving) return;
+    this.isSaving = true;
 
-    this.api.updateRejectedUndertaking(payload.tnxId, payload).subscribe({
-      next: (res) => {
-        this.snackBar.open(
-          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
-          'Close',
-          { duration: 3000 },
-        );
+    const payload = this.flattenForm();
+    payload.tnxId = this.currentTx?.tnxId || this.tnxId;
 
-        // Navigate back to inquiries with Pending tab
-        this.router.navigate([
-          '/dashboard/Trade-Services/undertaking-issuance/inquiries',
-        ]);
+    this.api
+      .updateRejectedUtgAmendment(eventRefNo, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: (res) => {
+          this.snackBar.open(
+            `Rejected amendment updated and moved back to Pending (Ref: ${res.eventRefNo})`,
+            'Close',
+            { duration: 3000 },
+          );
+          this.navigateBack('pending');
+        },
+        error: () =>
+          this.snackBar.open('Failed to update rejected amendment', 'Close', {
+            duration: 3000,
+          }),
+      });
+  }
+
+  // =====================================================
+  // OLD AND NEW VALUES (rejected history comparison)
+  // =====================================================
+
+  storeRejectedTransaction: UndertakingGuarantee | null = null;
+  previousValues: { [key: string]: any } = {};
+
+  private readonly UndertakingAmendFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'formOfUndertaking',
+    'purpose',
+
+    // Applicant / Beneficiary
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
+
+    // Bank
+    'recipientBankName',
+    'issuerReference',
+    'issuanceType',
+    'swiftcode',
+    'bankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'bankCountry',
+
+    // Undertaking Details
+    'typeOfUndertaking',
+    'effectiveOption',
+    'expiryType',
+    'expiryDate',
+    'currency',
+    'undertakingAmount',
+    'variationPlus',
+    'variationMinus',
+    'issuanceCharges',
+    'correspondentCharges',
+    'supplementaryInfo',
+    'textOfUndertakingInfo',
+    'underlyingTransactionInfo',
+    'presentationInfo',
+    'basicExtensionType',
+    'increaseDecreaseType',
+    'contractType',
+    'contractDate',
+    'contractCurrency',
+    'contractAmount',
+    'percentageCovered',
+    'contractNarrative',
+    'applicableRules',
+    'countrySubdivision',
+    'jurisdiction',
+    'demandOption',
+    'governingLawsType',
+    'languageType',
+    'tsOption',
+
+    // Instructions
+    'deliveryType',
+    'deliveryMode',
+    'deliveryTo',
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
+
+  private loadRejectedHistory(event: UndertakingGuarantee): void {
+    const refNo = event.eventRefNo || this.eventRefNo;
+    if (!refNo) return;
+
+    this.api.getEventRejectedTransactionUtg(refNo).subscribe({
+      next: (rejectedTx) => {
+        this.storeRejectedTransaction = rejectedTx;
+        console.log('Rejected transaction data:', rejectedTx);
+        this.compareUndertakingData();
       },
-      error: () => {
-        this.snackBar.open('Failed to update rejected transaction', 'Close', {
-          duration: 3000,
-        });
+      error: (err: any) => {
+        console.log('Error fetching rejected transaction:', err);
       },
     });
+  }
+
+  private compareUndertakingData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.UndertakingAmendFields,
+    );
+
+    console.log('Previous undertaking amendment values:', this.previousValues);
+       console.log('CURRENT', this.currentTx.applicantName, this.currentTx.applicantAddress2);
+   console.log('REJECTED', this.storeRejectedTransaction?.applicantName, this.storeRejectedTransaction?.applicantAddress2);
+   console.log('KEYS', Object.keys(this.previousValues));
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

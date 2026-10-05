@@ -927,7 +927,7 @@ export class ExportCollection implements OnInit {
     console.log(
       'Loading dynamic fields for ExportCollection screen with status A...',
     );
-    this.api.getFieldsByScreenAndStatus('ExportScreen', 'A').subscribe({
+    this.api.getFieldsByScreenAndStatus('ExportCollection', 'A').subscribe({
       next: (res: any) => {
         console.log('Field definitions:', res);
 
@@ -978,10 +978,10 @@ export class ExportCollection implements OnInit {
 
   // old and new values working
 
-  storeRejectedTransaction:  any[] = [];
 
+storeRejectedTransaction: ExportCollectionTransaction | null = null;
     previousValues: { [key: string]: any } = {};
-
+previousDynamicValues: { [key: string]: any } = {};
   private readonly exportCollectionFields = [
   // General Details
   'collectionType',
@@ -1045,15 +1045,22 @@ export class ExportCollection implements OnInit {
   'referTo',
 ];
 
-  private compareExportCollectionData(): void {
-    this.previousValues = this.transactionComparisonService.compare(
-      this.currentTx,
-      this.storeRejectedTransaction,
-      this.exportCollectionFields,
+ private compareExportCollectionData(): void {
+  this.previousValues = this.transactionComparisonService.compare(
+    this.currentTx,
+    this.storeRejectedTransaction,
+    this.exportCollectionFields,
+  );
+
+  this.previousDynamicValues =
+    this.transactionComparisonService.compareDynamicFields(
+      this.currentTx?.dynamicFields ?? [],
+      this.storeRejectedTransaction?.dynamicFields ?? [],
     );
 
-    console.log('Previous export collection values:', this.previousValues);
-  }
+  console.log('Previous export collection values:', this.previousValues);
+  console.log('Previous dynamic values:', this.previousDynamicValues);
+}
 
     hasPreviousValue(field: string): boolean {
     return (

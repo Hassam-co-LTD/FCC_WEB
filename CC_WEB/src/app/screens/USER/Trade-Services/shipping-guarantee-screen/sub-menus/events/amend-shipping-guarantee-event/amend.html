@@ -10,23 +10,23 @@
 
         <div class="scroll-area">
 
-            <section id="section-0"><app-general-details [form]="generalDetailsForm"></app-general-details></section>
+            <section id="section-0"><app-general-details [form]="generalDetailsForm" [previousValues]="previousValues"></app-general-details></section>
             <hr class="section-divider" />
 
-            <section id="section-1"><app-applicant-beneficiary [form]="applicantBeneficiaryForm"></app-applicant-beneficiary>
+            <section id="section-1"><app-applicant-beneficiary [form]="applicantBeneficiaryForm" [previousValues]="previousValues"></app-applicant-beneficiary>
             </section>
 
             <hr class="section-divider" />
 
             <section id="section-2">
                 <app-bank-details
-                    [form]="issuingbankForm">
+                    [form]="issuingbankForm" [previousValues]="previousValues">
                 </app-bank-details>
             </section>
 
             <hr class="section-divider" />
 
-            <section id="section-3"><app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank></section>
+            <section id="section-3"><app-instruction-to-bank [form]="instructionForm" [previousValues]="previousValues"></app-instruction-to-bank></section>
             <hr class="section-divider" />
 
             <section id="section-4">
@@ -79,7 +79,7 @@
                 <!-- PENDING TAB + AMD: Update + Submit -->
                 <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
                     <button mat-stroked-button color="primary" (click)="back()">Back</button>
-                    <!-- <button mat-flat-button color="primary" (click)="update()">Update</button> -->
+                    <button mat-flat-button color="primary" (click)="update()">Update</button> 
                     <button 
                                             *ngIf="hasPermission('SG_AmendSubmit')"
                                             mat-flat-button color="accent" (click)="submitLc()">Submit</button>

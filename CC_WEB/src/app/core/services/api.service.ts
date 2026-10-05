@@ -356,6 +356,18 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  updatePendingAmendmentTransaction(
+  eventRefNo: string,
+  payload: ImportLcTransaction,
+): Observable<ImportLcTransaction> {
+  return this.http
+    .put<ImportLcTransaction>(
+      `${this.baseeventUrl}/amend/updatePending/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
   submitAmendment(
     eventRefNo: string,
     data: ImportLcTransaction,
@@ -582,6 +594,32 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+
+  updatePendingAmendmentSg(
+  eventRefNo: string,
+  payload: ShippingGuaranteeTransaction,
+): Observable<ShippingGuaranteeTransaction> {
+  return this.http
+    .put<ShippingGuaranteeTransaction>(
+      `${this.baseSgEventUrl}/amend/updatePending/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
+
+updateRejectedAmendmentSg(
+  eventRefNo: string,
+  payload: ShippingGuaranteeTransaction,
+): Observable<ShippingGuaranteeTransaction> {
+  return this.http
+    .put<ShippingGuaranteeTransaction>(
+      `${this.baseSgEventUrl}/amend/updateRejected/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
   getAmendmentByEventRefNoSg(
     eventRefNo: string,
   ): Observable<ShippingGuaranteeTransaction> {
@@ -628,6 +666,13 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
+
+  getEventRejectedTransactionSg(eventRefNo: string) {
+  return this.http.get<any>(
+    `${this.baseSgEventUrl}/amend/${eventRefNo}/rejected-history`,
+    { headers: this.headers },
+  );
+}
 
   // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
 
@@ -862,6 +907,12 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
+  getEventRejectedTransactionExportCollection(eventRefNo: string) {
+  return this.http.get<any>(
+    `${this.baseECEventUrl}/amend/${eventRefNo}/rejected-history`,
+    { headers: this.headers },
+  );
+}
 
   getUtgAmendmentByTnxIdExportCollection(
     tnxId: string,
@@ -968,7 +1019,30 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
-
+updateRejectedAmendmentExportCollection(
+  eventRefNo: string,
+  payload: any,
+): Observable<ExportCollectionTransaction> {
+  return this.http
+    .put<ExportCollectionTransaction>(
+      `${this.baseECEventUrl}/amend/updateRejected/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
+updatePendingAmendmentExportCollection(
+  eventRefNo: string,
+  payload: ExportCollectionTransaction,
+): Observable<ExportCollectionTransaction> {
+  return this.http
+    .put<ExportCollectionTransaction>(
+      `${this.baseECEventUrl}/amend/updatePending/${eventRefNo}`, // use your real base url
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
   //=================================================================
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
@@ -1144,6 +1218,32 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  updatePendingUtgAmendment(
+  eventRefNo: string,
+  payload: UndertakingGuarantee,
+): Observable<UndertakingGuarantee> {
+  return this.http
+    .put<UndertakingGuarantee>(
+      `${this.baseUtgEventUrl}/amend/updatePending/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
+
+updateRejectedUtgAmendment(
+  eventRefNo: string,
+  payload: UndertakingGuarantee,
+): Observable<UndertakingGuarantee> {
+  return this.http
+    .put<UndertakingGuarantee>(
+      `${this.baseUtgEventUrl}/amend/updateRejected/${eventRefNo}`,
+      payload,
+      { headers: this.headers },
+    )
+    .pipe(catchError(this.handleError));
+}
+
   approveUtgAmendment(
     eventRefNo: string,
     data: UndertakingGuarantee,
@@ -1166,6 +1266,13 @@ export class ApiService {
       )
       .pipe(catchError(this.handleError));
   }
+
+  getEventRejectedTransactionUtg(eventRefNo: string) {
+  return this.http.get<any>(
+    `${this.baseUtgEventUrl}/amend/${eventRefNo}/rejected-history`,
+    { headers: this.headers },
+  );
+}
   // =================================================================
   // TRANSFERS API Methods
   // =================================================================
@@ -1630,7 +1737,11 @@ export class ApiService {
       `${this.baseUrl}/${module}/${id}/rejected-history`,
     );
   }
-
+ getEventRejectedTransaction(eventRefNo: string) {
+    return this.http.get<any>(
+      `${this.baseeventUrl}/amend/${eventRefNo}/rejected-history`,
+    );
+  }
   // verify customer account from core banking api
   verifyCustomerAccount(accountNumber: String, name: String) {
     return this.http.get<any>(

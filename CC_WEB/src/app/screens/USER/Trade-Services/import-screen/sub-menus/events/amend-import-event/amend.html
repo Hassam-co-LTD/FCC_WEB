@@ -13,43 +13,43 @@
     <div class="scroll-area">
 
       <section id="section-0">
-        <app-general-details [form]="generalDetailsForm"></app-general-details>
+        <app-general-details [form]="generalDetailsForm"[previousValues]="previousValues"></app-general-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-1">
-        <app-applicant-beneficiary [form]="applicantForm"></app-applicant-beneficiary>
+        <app-applicant-beneficiary [form]="applicantForm"[previousValues]="previousValues"></app-applicant-beneficiary>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-2">
-        <app-bank-details [form]="bankForm"></app-bank-details>
+        <app-bank-details [form]="bankForm"[previousValues]="previousValues"></app-bank-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-3">
-        <app-amount-charge-details [form]="amountChargeForm"></app-amount-charge-details>
+        <app-amount-charge-details [form]="amountChargeForm"[previousValues]="previousValues"></app-amount-charge-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-4">
-        <app-payment-details [form]="paymentDetailsForm"></app-payment-details>
+        <app-payment-details [form]="paymentDetailsForm"[previousValues]="previousValues"></app-payment-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-5">
-        <app-shipment-details [form]="shipmentForm"></app-shipment-details>
+        <app-shipment-details [form]="shipmentForm"[previousValues]="previousValues"></app-shipment-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-6">
-        <app-narrative-details [form]="narrativeForm"></app-narrative-details>
+        <app-narrative-details [form]="narrativeForm"[previousValues]="previousValues"></app-narrative-details>
       </section>
 
       <hr class="section-divider" />
@@ -61,7 +61,7 @@
       <hr class="section-divider" />
 
       <section id="section-8">
-        <app-instruction-to-bank [form]="instructionForm"></app-instruction-to-bank>
+        <app-instruction-to-bank [form]="instructionForm"[previousValues]="previousValues"></app-instruction-to-bank>
       </section>
 
       <hr class="section-divider" />

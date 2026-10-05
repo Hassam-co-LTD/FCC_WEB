@@ -48,7 +48,7 @@ export class ShippingGuarantee implements OnInit {
   companyId = '';
 
   permissionNames: string[] = [];
-
+previousDynamicValues: { [key: string]: any } = {};
   shippingGuaranteeSteps = [
     { label: 'General Details' },
     { label: 'Applicant & Beneficiary' },
@@ -654,7 +654,7 @@ export class ShippingGuarantee implements OnInit {
 
   // old and new values working
 
-  storeRejectedTransaction:  any[] = [];
+ storeRejectedTransaction: ShippingGuaranteeTransaction | null = null;
 
     previousValues: { [key: string]: any } = {};
 private readonly shippingGuaranteeFields = [
@@ -704,14 +704,21 @@ private readonly shippingGuaranteeFields = [
   'otherInstructions',
 ];
   private compareShippingGuaranteeData(): void {
-    this.previousValues = this.transactionComparisonService.compare(
-      this.currentTx,
-      this.storeRejectedTransaction,
-      this.shippingGuaranteeFields,
+  this.previousValues = this.transactionComparisonService.compare(
+    this.currentTx,
+    this.storeRejectedTransaction,
+    this.shippingGuaranteeFields,
+  );
+
+  this.previousDynamicValues =
+    this.transactionComparisonService.compareDynamicFields(
+      this.currentTx?.dynamicFields ?? [],
+      this.storeRejectedTransaction?.dynamicFields ?? [],
     );
 
-    console.log('Previous shipping guarantee values:', this.previousValues);
-  }
+  console.log('Previous shipping guarantee values:', this.previousValues);
+  console.log('Previous dynamic values:', this.previousDynamicValues);
+}
 
     hasPreviousValue(field: string): boolean {
     return (

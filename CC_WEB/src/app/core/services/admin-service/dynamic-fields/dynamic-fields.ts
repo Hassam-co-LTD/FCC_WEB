@@ -32,4 +32,20 @@ export class DynamicFields {
   toggleDynamicFields(): void {
     this.isOpen = !this.isOpen;
   }
+  hasPreviousDynamicValue(fieldId: string): boolean {
+  return (
+    this.previousDynamicValues &&
+    Object.prototype.hasOwnProperty.call(
+      this.previousDynamicValues,
+      fieldId
+    ) &&
+    this.previousDynamicValues[fieldId] !== null &&
+    this.previousDynamicValues[fieldId] !== undefined &&
+    String(this.previousDynamicValues[fieldId]).trim() !== ''
+  );
+}
+
+getPreviousDynamicValue(fieldId: string): any {
+  return this.previousDynamicValues?.[fieldId] ?? '';
+}
 }

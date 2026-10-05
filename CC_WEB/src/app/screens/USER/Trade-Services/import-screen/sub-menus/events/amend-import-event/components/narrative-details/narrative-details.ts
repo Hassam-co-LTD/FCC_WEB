@@ -23,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class NarrativeDetails {
   @Input() form!: FormGroup;
+   @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
   activeTabIndex = 0;
   constructor() {
@@ -34,5 +35,18 @@ export class NarrativeDetails {
 
   onTabChange(index: number) {
     this.activeTabIndex = index;
+  }
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

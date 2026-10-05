@@ -1,3 +1,4 @@
+
 <!-- Accordion Header -->
 <div class="section-header" (click)="toggle()">
   <h2>Payment & Amount</h2>
@@ -7,40 +8,75 @@
 <!-- Collapsed Preview -->
 @if (!isOpen && form) {
   <div class="preview-block">
+
     <div class="preview-row">
       <div class="preview-label">Amount:</div>
-      <div class="preview-value">{{ form.get('amount')?.value || '—' }}</div>
+      <div class="preview-value">
+        {{ form.get('amount')?.value || '—' }}
+      </div>
     </div>
+
     <div class="preview-row">
       <div class="preview-label">Currency:</div>
-      <div class="preview-value">{{ form.get('currency')?.value || '—' }}</div>
+      <div class="preview-value">
+        {{ form.get('currency')?.value || '—' }}
+      </div>
     </div>
+
     <div class="preview-row">
       <div class="preview-label">Payment Type:</div>
-      <div class="preview-value">{{ form.get('paymentType')?.value || '—' }}</div>
+      <div class="preview-value">
+        {{ form.get('paymentType')?.value || '—' }}
+      </div>
     </div>
+
     <div class="preview-row">
       <div class="preview-label">Tenor:</div>
-      <div class="preview-value">{{ form.get('tenor')?.value || '—' }}</div>
+      <div class="preview-value">
+        {{ form.get('tenor')?.value || '—' }}
+      </div>
     </div>
+
     <div class="preview-row">
       <div class="preview-label">Payment Reference:</div>
-      <div class="preview-value">{{ form.get('paymentReference')?.value || '—' }}</div>
+      <div class="preview-value">
+        {{ form.get('paymentReference')?.value || '—' }}
+      </div>
     </div>
+
   </div>
 }
 
 <!-- Full Form -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
   <form class="form-grid-2">
 
+    <!-- Amount -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Amount *</mat-label>
-      <input matInput type="number" formControlName="amount" placeholder="Enter amount" />
+
+      <input
+        matInput
+        type="number"
+        formControlName="amount"
+        placeholder="Enter amount"
+      />
     </mat-form-field>
 
+    @if (hasPreviousValue('amount')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('amount') }}
+        </span>
+      </div>
+    }
+
+    <!-- Currency -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Currency *</mat-label>
+
       <mat-select formControlName="currency">
         @for (c of currencies; track c) {
           <mat-option [value]="c">{{ c }}</mat-option>
@@ -48,29 +84,95 @@
       </mat-select>
     </mat-form-field>
 
+    @if (hasPreviousValue('currency')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('currency') }}
+        </span>
+      </div>
+    }
+
+    <!-- Payment Type -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Payment Type *</mat-label>
+
       <mat-select formControlName="paymentType">
-        <mat-option value="Documentagainstpayment">Sight / Document Against Payment</mat-option>
-        <mat-option value="DocumentagainstAcceptance">Document Against Acceptance</mat-option>
-        <mat-option value="PourAval">Pour Aval</mat-option>
+        <mat-option value="Documentagainstpayment">
+          Sight / Document Against Payment
+        </mat-option>
+
+        <mat-option value="DocumentagainstAcceptance">
+          Document Against Acceptance
+        </mat-option>
+
+        <mat-option value="PourAval">
+          Pour Aval
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
+    @if (hasPreviousValue('paymentType')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('paymentType') }}
+        </span>
+      </div>
+    }
+
+    <!-- Tenor -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Tenor *</mat-label>
+
       <mat-select formControlName="tenor">
-        <mat-option value="billOfLading">Bill of Lading</mat-option>
-        <mat-option value="invoice">Invoice</mat-option>
-        <mat-option value="shipmentDate">Shipment Date</mat-option>
-        <mat-option value="Sight">Sight</mat-option>
+        <mat-option value="billOfLading">
+          Bill of Lading
+        </mat-option>
+
+        <mat-option value="invoice">
+          Invoice
+        </mat-option>
+
+        <mat-option value="shipmentDate">
+          Shipment Date
+        </mat-option>
+
+        <mat-option value="Sight">
+          Sight
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
+    @if (hasPreviousValue('tenor')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('tenor') }}
+        </span>
+      </div>
+    }
+
+    <!-- Payment Reference -->
     <mat-form-field appearance="outline" class="full">
       <mat-label>Payment Reference</mat-label>
-      <input matInput type="text" formControlName="paymentReference" placeholder="Enter payment reference" />
+
+      <input
+        matInput
+        type="text"
+        formControlName="paymentReference"
+        placeholder="Enter payment reference"
+      />
     </mat-form-field>
+
+    @if (hasPreviousValue('paymentReference')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('paymentReference') }}
+        </span>
+      </div>
+    }
 
   </form>
 </div>

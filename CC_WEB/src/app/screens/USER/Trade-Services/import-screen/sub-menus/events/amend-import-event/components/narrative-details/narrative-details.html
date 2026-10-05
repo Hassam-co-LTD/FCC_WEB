@@ -1,6 +1,9 @@
 <div class="section-header" (click)="toggle()">
+
   <h2>Narrative Details</h2>
+
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
@@ -10,7 +13,10 @@
 
     <h3 class="sub-heading">Narrative Details</h3>
 
-    <mat-tab-group (selectedIndexChange)="onTabChange($event)" class="tab-container">
+    <mat-tab-group
+      (selectedIndexChange)="onTabChange($event)"
+      class="tab-container"
+    >
 
       <!-- TAB 1 -->
       <mat-tab label="Goods and Documents">
@@ -19,12 +25,19 @@
 
           <!-- Subtab 1 -->
           <mat-tab label="Description of Goods">
+
             <div class="tab-content">
 
               <mat-form-field appearance="outline" class="full-width">
+
                 <mat-label>Description of Goods *</mat-label>
-                <textarea matInput formControlName="descriptionOfGoods" rows="6" maxlength="6500">
-                </textarea>
+
+                <textarea
+                  matInput
+                  formControlName="descriptionOfGoods"
+                  rows="6"
+                  maxlength="6500"
+                ></textarea>
 
                 <mat-hint align="end">
                   {{ form.get('descriptionOfGoods')?.value?.length || 0 }}/6500
@@ -35,19 +48,38 @@
                     You must enter Description of Goods
                   </mat-error>
                 }
+
               </mat-form-field>
 
+              @if (hasPreviousValue('descriptionOfGoods')) {
+                <div class="previous-value">
+                  <span class="previous-label">Previous Value:</span>
+                  <span class="previous-text">
+                    {{ getPreviousValue('descriptionOfGoods') }}
+                  </span>
+                </div>
+              }
+
             </div>
+
           </mat-tab>
+
 
           <!-- Subtab 2 -->
           <mat-tab label="Documents Required">
+
             <div class="tab-content">
 
               <mat-form-field appearance="outline" class="full-width">
+
                 <mat-label>Documents Required *</mat-label>
-                <textarea matInput formControlName="documentsRequired" rows="6" maxlength="6500">
-                </textarea>
+
+                <textarea
+                  matInput
+                  formControlName="documentsRequired"
+                  rows="6"
+                  maxlength="6500"
+                ></textarea>
 
                 <mat-hint align="end">
                   {{ form.get('documentsRequired')?.value?.length || 0 }}/6500
@@ -58,50 +90,101 @@
                     You must enter Documents Required
                   </mat-error>
                 }
+
               </mat-form-field>
 
+              @if (hasPreviousValue('documentsRequired')) {
+                <div class="previous-value">
+                  <span class="previous-label">Previous Value:</span>
+                  <span class="previous-text">
+                    {{ getPreviousValue('documentsRequired') }}
+                  </span>
+                </div>
+              }
+
             </div>
+
           </mat-tab>
+
 
           <!-- Subtab 3 -->
           <mat-tab label="Additional Instructions">
+
             <div class="tab-content">
 
               <mat-form-field appearance="outline" class="full-width">
+
                 <mat-label>Additional Instructions</mat-label>
-                <textarea matInput formControlName="additionalInstructions" rows="4" maxlength="2000">
-                </textarea>
+
+                <textarea
+                  matInput
+                  formControlName="additionalInstructions"
+                  rows="4"
+                  maxlength="2000"
+                ></textarea>
 
                 <mat-hint align="end">
                   {{ form.get('additionalInstructions')?.value?.length || 0 }}/2000
                 </mat-hint>
+
               </mat-form-field>
 
+              @if (hasPreviousValue('additionalInstructions')) {
+                <div class="previous-value">
+                  <span class="previous-label">Previous Value:</span>
+                  <span class="previous-text">
+                    {{ getPreviousValue('additionalInstructions') }}
+                  </span>
+                </div>
+              }
+
             </div>
+
           </mat-tab>
 
         </mat-tab-group>
 
       </mat-tab>
 
+
       <!-- TAB 2 -->
       <mat-tab label="Other Details">
+
         <div class="tab-content">
 
           <mat-form-field appearance="outline" class="full-width">
+
             <mat-label>Other Details</mat-label>
-            <textarea matInput formControlName="otherDetails" rows="4" maxlength="2000">
-            </textarea>
+
+            <textarea
+              matInput
+              formControlName="otherDetails"
+              rows="4"
+              maxlength="2000"
+            ></textarea>
 
             <mat-hint align="end">
               {{ form.get('otherDetails')?.value?.length || 0 }}/2000
             </mat-hint>
+
           </mat-form-field>
 
+          @if (hasPreviousValue('otherDetails')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">
+                {{ getPreviousValue('otherDetails') }}
+              </span>
+            </div>
+          }
+
         </div>
+
       </mat-tab>
 
     </mat-tab-group>
 
   </form>
+
 </div>
+

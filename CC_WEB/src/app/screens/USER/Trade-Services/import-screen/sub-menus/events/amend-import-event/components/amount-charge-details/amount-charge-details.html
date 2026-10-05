@@ -4,98 +4,243 @@
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
+
   <form [formGroup]="form">
 
-    <!-- Currency and Amount in one line -->
-    <h4>Currency and Amount</h4>
-    <div class="form-grid-2 unequal">
-      <mat-form-field appearance="outline" class="currency-field">
-        <mat-label>Currency *</mat-label>
-        <mat-select formControlName="currency">
-          @for (c of currencies; track c) {
-          <mat-option [value]="c">{{ c }}</mat-option>
-          }
-        </mat-select>
-        @if (form.get('currency')?.hasError('required')) {
-        <mat-error>
-          Currency is required
-        </mat-error>
-        }
-      </mat-form-field>
+<!-- Currency and Amount -->
+<h4>Currency and Amount</h4>
 
-      <mat-form-field appearance="outline" class="amount-field">
-        <mat-label>Amount *</mat-label>
-        <input matInput formControlName="amount" placeholder="Enter amount" />
-        @if (form.get('amount')?.hasError('required')) {
-        <mat-error>
-          Amount is required
-        </mat-error>
-        }
-        @if (form.get('amount')?.hasError('pattern')) {
-        <mat-error>
-          Enter a valid number
-        </mat-error>
-        }
-      </mat-form-field>
+<div class="form-grid-2 unequal">
+
+  <!-- Currency -->
+  <mat-form-field appearance="outline" class="currency-field">
+    <mat-label>Currency *</mat-label>
+
+    <mat-select formControlName="currency">
+      @for (c of currencies; track c) {
+        <mat-option [value]="c">{{ c }}</mat-option>
+      }
+    </mat-select>
+
+    @if (form.get('currency')?.hasError('required')) {
+      <mat-error>
+        Currency is required
+      </mat-error>
+    }
+  </mat-form-field>
+
+  @if (hasPreviousValue('currency')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('currency') }}
+      </span>
     </div>
+  }
 
-    <!-- Variation with type selector -->
-    <div class="form-grid-3">
-      <mat-form-field appearance="outline">
-        <mat-label>Variation Type</mat-label>
-        <mat-select formControlName="variationType" (selectionChange)="onVariationTypeChange($event.value)">
-          <mat-option value="percent">Percentage (%)</mat-option>
-          <mat-option value="amount">Amount</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <!-- Amount -->
+  <mat-form-field appearance="outline" class="amount-field">
+    <mat-label>Amount *</mat-label>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Variation (+)</mat-label>
-        <input matInput [placeholder]="variationType === 'percent' ? 'Enter percentage (+)' : 'Enter amount (+)'"
-          formControlName="variationPlus" />
-      </mat-form-field>
+    <input
+      matInput
+      formControlName="amount"
+      placeholder="Enter amount"
+    />
 
-      <mat-form-field appearance="outline">
-        <mat-label>Variation (-)</mat-label>
-        <input matInput [placeholder]="variationType === 'percent' ? 'Enter percentage (-)' : 'Enter amount (-)'"
-          formControlName="variationMinus" />
-      </mat-form-field>
+    @if (form.get('amount')?.hasError('required')) {
+      <mat-error>
+        Amount is required
+      </mat-error>
+    }
+
+    @if (form.get('amount')?.hasError('pattern')) {
+      <mat-error>
+        Enter a valid number
+      </mat-error>
+    }
+  </mat-form-field>
+
+  @if (hasPreviousValue('amount')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('amount') }}
+      </span>
     </div>
+  }
 
-    <!-- Result OUTPUT -->
-    <div class="result-box" style="margin-top: 20px;">
-      <strong>Calculated Result:</strong>
-      <p>{{ resultText }}</p>
-    </div>
+</div>
 
-    <!-- Issuing Bank Charges -->
-    <div class="row radio-section">
-      <label class="radio-label">Issuing Bank Charges:</label>
-      <mat-radio-group formControlName="issuingBankCharges">
-        <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-        <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-      </mat-radio-group>
-    </div>
+<!-- Variation Details -->
+<div class="form-grid-3">
 
-    <!-- Outside Country Charges -->
-    <div class="row radio-section">
-      <label class="radio-label">Outside Country Charges:</label>
-      <mat-radio-group formControlName="outsideCountryCharges">
-        <mat-radio-button value="Applicant">Applicant</mat-radio-button>
-        <mat-radio-button value="Beneficiary">Beneficiary</mat-radio-button>
-      </mat-radio-group>
-    </div>
+  <!-- Variation Type -->
+  <mat-form-field appearance="outline">
+    <mat-label>Variation Type</mat-label>
 
-    <!-- Additional Details -->
-    <div class="row">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Additional Amount Details</mat-label>
-        <textarea matInput formControlName="additionalAmount" placeholder="Additional Amount Covered"
-          maxlength="140"></textarea>
-        <mat-hint align="end">
-          {{ form.get('additionalAmount')?.value?.length || 0 }}/140
-        </mat-hint>
-      </mat-form-field>
+    <mat-select
+      formControlName="variationType"
+      (selectionChange)="onVariationTypeChange($event.value)"
+    >
+      <mat-option value="percent">
+        Percentage (%)
+      </mat-option>
+
+      <mat-option value="amount">
+        Amount
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  @if (hasPreviousValue('variationType')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('variationType') }}
+      </span>
     </div>
+  }
+
+  <!-- Variation Plus -->
+  <mat-form-field appearance="outline">
+    <mat-label>Variation (+)</mat-label>
+
+    <input
+      matInput
+      [placeholder]="variationType === 'percent'
+        ? 'Enter percentage (+)'
+        : 'Enter amount (+)'"
+      formControlName="variationPlus"
+    />
+  </mat-form-field>
+
+  @if (hasPreviousValue('variationPlus')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('variationPlus') }}
+      </span>
+    </div>
+  }
+
+  <!-- Variation Minus -->
+  <mat-form-field appearance="outline">
+    <mat-label>Variation (-)</mat-label>
+
+    <input
+      matInput
+      [placeholder]="variationType === 'percent'
+        ? 'Enter percentage (-)'
+        : 'Enter amount (-)'"
+      formControlName="variationMinus"
+    />
+  </mat-form-field>
+
+  @if (hasPreviousValue('variationMinus')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('variationMinus') }}
+      </span>
+    </div>
+  }
+
+</div>
+
+<!-- Result OUTPUT -->
+<div class="result-box" style="margin-top: 20px;">
+  <strong>Calculated Result:</strong>
+  <p>{{ resultText }}</p>
+</div>
+
+<!-- Issuing Bank Charges -->
+<div class="row radio-section">
+
+  <label class="radio-label">
+    Issuing Bank Charges:
+  </label>
+
+  <mat-radio-group formControlName="issuingBankCharges">
+    <mat-radio-button value="Applicant">
+      Applicant
+    </mat-radio-button>
+
+    <mat-radio-button value="Beneficiary">
+      Beneficiary
+    </mat-radio-button>
+  </mat-radio-group>
+
+</div>
+
+@if (hasPreviousValue('issuingBankCharges')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('issuingBankCharges') }}
+    </span>
+  </div>
+}
+
+<!-- Outside Country Charges -->
+<div class="row radio-section">
+
+  <label class="radio-label">
+    Outside Country Charges:
+  </label>
+
+  <mat-radio-group formControlName="outsideCountryCharges">
+    <mat-radio-button value="Applicant">
+      Applicant
+    </mat-radio-button>
+
+    <mat-radio-button value="Beneficiary">
+      Beneficiary
+    </mat-radio-button>
+  </mat-radio-group>
+
+</div>
+
+@if (hasPreviousValue('outsideCountryCharges')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('outsideCountryCharges') }}
+    </span>
+  </div>
+}
+
+<!-- Additional Details -->
+<div class="row">
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Additional Amount Details</mat-label>
+
+    <textarea
+      matInput
+      formControlName="additionalAmount"
+      placeholder="Additional Amount Covered"
+      maxlength="140"
+    ></textarea>
+
+    <mat-hint align="end">
+      {{ form.get('additionalAmount')?.value?.length || 0 }}/140
+    </mat-hint>
+
+  </mat-form-field>
+
+</div>
+
+@if (hasPreviousValue('additionalAmount')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('additionalAmount') }}
+    </span>
+  </div>
+}
+
+
   </form>
+
 </div>

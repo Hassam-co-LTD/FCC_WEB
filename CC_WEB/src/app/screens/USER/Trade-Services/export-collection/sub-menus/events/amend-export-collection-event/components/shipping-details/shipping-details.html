@@ -1,74 +1,218 @@
 <!-- Shipment Details Accordion -->
+
 <div class="section-header" (click)="toggle()">
   <h2>Shipment Details</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
-  <!-- COLLAPSED PREVIEW -->
-  @if (!isOpen) {
-    <div class="preview-block">
-      <div><strong>Shipping Method:</strong> {{ form.value.shippingMethod }}</div>
-      <div><strong>Shipment Ref:</strong> {{ form.value.shipmentReference }}</div>
-      <div><strong>From:</strong> {{ form.value.shippingFrom }}</div>
-      <div><strong>To:</strong> {{ form.value.shippingTo }}</div>
-      <div><strong>Date:</strong> {{ form.value.shipmentDate }}</div>
-      <div><strong>Incoterms Rules:</strong> {{ form.value.incotermsRules }}</div>
-      <div><strong>Incoterms:</strong> {{ form.value.incoterms }}</div>
-    </div>
-  }
+<!-- Collapsed Preview -->
 
+@if (!isOpen && form) {
+
+  <div class="preview-block">
+
+
+<div class="preview-row">
+  <div class="preview-label">Shipping Method:</div>
+  <div class="preview-value">
+    {{ form.get('shippingMethod')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Shipment Reference:</div>
+  <div class="preview-value">
+    {{ form.get('shipmentReference')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Shipping From:</div>
+  <div class="preview-value">
+    {{ form.get('shippingFrom')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Shipping To:</div>
+  <div class="preview-value">
+    {{ form.get('shippingTo')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Shipment Date:</div>
+  <div class="preview-value">
+    {{ form.get('shipmentDate')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Incoterms Rules:</div>
+  <div class="preview-value">
+    {{ form.get('incotermsRules')?.value || '—' }}
+  </div>
+</div>
+
+<div class="preview-row">
+  <div class="preview-label">Incoterms:</div>
+  <div class="preview-value">
+    {{ form.get('incoterms')?.value || '—' }}
+  </div>
+</div>
+```
+
+  </div>
+}
+
+<!-- Full Form -->
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
   <form class="form-grid-2">
 
-    <!-- Two-column fields -->
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Shipping Method</mat-label>
-      <mat-select formControlName="shippingMethod">
-        @for (m of shippingMethods; track m) {
-          <mat-option [value]="m">{{ m }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Shipment Reference</mat-label>
-      <input matInput type="text" formControlName="shipmentReference" placeholder="Enter shipment reference" />
-    </mat-form-field>
+<!-- Shipping Method -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Shipping Method</mat-label>
 
-    <!-- Full-width fields (two-column layout continues) -->
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Shipping From</mat-label>
-      <input matInput formControlName="shippingFrom" placeholder="Enter shipping from" />
-    </mat-form-field>
+  <mat-select formControlName="shippingMethod">
+    @for (m of shippingMethods; track m) {
+      <mat-option [value]="m">{{ m }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Shipping To</mat-label>
-      <input matInput formControlName="shippingTo" placeholder="Enter shipping to" />
-    </mat-form-field>
+@if (hasPreviousValue('shippingMethod')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('shippingMethod') }}
+    </span>
+  </div>
+}
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Shipment Date</mat-label>
-      <input matInput type="date" formControlName="shipmentDate" />
-    </mat-form-field>
+<!-- Shipment Reference -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Shipment Reference</mat-label>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Incoterms Rules</mat-label>
-      <mat-select formControlName="incotermsRules">
-        @for (rule of incotermsRules; track rule) {
-          <mat-option [value]="rule">{{ rule }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+  <input
+    matInput
+    type="text"
+    formControlName="shipmentReference"
+    placeholder="Enter shipment reference"
+  />
+</mat-form-field>
 
-    <mat-form-field appearance="outline" class="full">
-      <mat-label>Incoterms</mat-label>
-      <mat-select formControlName="incoterms">
-        @for (i of incoterms; track i) {
-          <mat-option [value]="i">{{ i }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+@if (hasPreviousValue('shipmentReference')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('shipmentReference') }}
+    </span>
+  </div>
+}
+
+<!-- Shipping From -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Shipping From</mat-label>
+
+  <input
+    matInput
+    formControlName="shippingFrom"
+    placeholder="Enter shipping from"
+  />
+</mat-form-field>
+
+@if (hasPreviousValue('shippingFrom')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('shippingFrom') }}
+    </span>
+  </div>
+}
+
+<!-- Shipping To -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Shipping To</mat-label>
+
+  <input
+    matInput
+    formControlName="shippingTo"
+    placeholder="Enter shipping to"
+  />
+</mat-form-field>
+
+@if (hasPreviousValue('shippingTo')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('shippingTo') }}
+    </span>
+  </div>
+}
+
+<!-- Shipment Date -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Shipment Date</mat-label>
+
+  <input
+    matInput
+    type="date"
+    formControlName="shipmentDate"
+  />
+</mat-form-field>
+
+@if (hasPreviousValue('shipmentDate')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('shipmentDate') }}
+    </span>
+  </div>
+}
+
+<!-- Incoterms Rules -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Incoterms Rules</mat-label>
+
+  <mat-select formControlName="incotermsRules">
+    @for (rule of incotermsRules; track rule) {
+      <mat-option [value]="rule">{{ rule }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (hasPreviousValue('incotermsRules')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('incotermsRules') }}
+    </span>
+  </div>
+}
+
+<!-- Incoterms -->
+<mat-form-field appearance="outline" class="full">
+  <mat-label>Incoterms</mat-label>
+
+  <mat-select formControlName="incoterms">
+    @for (i of incoterms; track i) {
+      <mat-option [value]="i">{{ i }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (hasPreviousValue('incoterms')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('incoterms') }}
+    </span>
+  </div>
+}
+
 
   </form>
 </div>

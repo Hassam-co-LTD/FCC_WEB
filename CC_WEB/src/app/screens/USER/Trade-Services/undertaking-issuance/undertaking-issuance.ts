@@ -760,9 +760,10 @@ export class UndertakingIssuance implements OnInit {
 
   // old and new values working
 
-  storeRejectedTransaction:  any[] = [];
+  storeRejectedTransaction: UndertakingGuarantee | null = null;
 
     previousValues: { [key: string]: any } = {};
+    previousDynamicValues: { [key: string]: any } = {};
 private readonly UndertakingIssuanceFields = [
   // General Details
   'productType',
@@ -835,15 +836,22 @@ private readonly UndertakingIssuanceFields = [
   'feeAccount',
   'otherInstructions',
 ];
-  private compareUndertakingIssuanceData(): void {
-    this.previousValues = this.transactionComparisonService.compare(
-      this.currentTx,
-      this.storeRejectedTransaction,
-      this.UndertakingIssuanceFields,
+private compareUndertakingIssuanceData(): void {
+  this.previousValues = this.transactionComparisonService.compare(
+    this.currentTx,
+    this.storeRejectedTransaction,
+    this.UndertakingIssuanceFields,
+  );
+
+  this.previousDynamicValues =
+    this.transactionComparisonService.compareDynamicFields(
+      this.currentTx?.dynamicFields ?? [],
+      this.storeRejectedTransaction?.dynamicFields ?? [],
     );
 
-    console.log('Previous undertaking issuance values:', this.previousValues);
-  }
+  console.log('Previous undertaking issuance values:', this.previousValues);
+  console.log('Previous dynamic values:', this.previousDynamicValues);
+}
 
     hasPreviousValue(field: string): boolean {
     return (

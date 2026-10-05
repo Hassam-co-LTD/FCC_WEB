@@ -106,6 +106,7 @@ previousDynamicValues: { [key: string]: any } = {};
   }
 
   ngOnInit() {
+   
     this.loadPermissions();
     setTimeout(() => {
       const sections = document.querySelectorAll('section');
@@ -344,6 +345,7 @@ hasPreviousDynamicValue(fieldId: string): boolean {
   const v = this.previousDynamicValues?.[fieldId];
   return v !== null && v !== undefined && String(v).trim() !== '';
 }
+
 getPreviousDynamicValue(fieldId: string): any { return this.previousDynamicValues?.[fieldId] ?? ''; }
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
@@ -374,6 +376,7 @@ getPreviousDynamicValue(fieldId: string): any { return this.previousDynamicValue
     return this.importForm.get('attachments') as FormArray;
   }
 
+  
   private patchForm(tx: ImportLcTransaction): void {
     this.importForm.patchValue({
       generalDetails: tx,
@@ -832,8 +835,7 @@ private getFormValidationErrors(form: any = this.importForm, path: string = ''):
 
   // old and new values working
 
-  storeRejectedTransaction:  any[] = [];
-
+storeRejectedTransaction: ImportLcTransaction | null = null;
     previousValues: { [key: string]: any } = {};
     private readonly ImportLcFields = [
   // General Details
@@ -905,14 +907,21 @@ private getFormValidationErrors(form: any = this.importForm, path: string = ''):
   'otherInstructions',
 ];
   private compareImportLcData(): void {
-    this.previousValues = this.transactionComparisonService.compare(
-      this.currentTx,
-      this.storeRejectedTransaction,
-      this.ImportLcFields,
+  this.previousValues = this.transactionComparisonService.compare(
+    this.currentTx,
+    this.storeRejectedTransaction,
+    this.ImportLcFields,
+  );
+
+  this.previousDynamicValues =
+    this.transactionComparisonService.compareDynamicFields(
+      this.currentTx?.dynamicFields ?? [],
+      this.storeRejectedTransaction?.dynamicFields ?? [],
     );
 
-    console.log('Previous import LC values:', this.previousValues);
-  }
+  console.log('Previous import LC values:', this.previousValues);
+  console.log('Previous dynamic values:', this.previousDynamicValues);
+}
 
     hasPreviousValue(field: string): boolean {
     return (
