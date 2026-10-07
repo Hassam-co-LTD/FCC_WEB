@@ -23,7 +23,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { finalize } from 'rxjs';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-amend',
   standalone: true,
@@ -40,6 +40,7 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
     UndertakingDetails,
     InstructionsBank,
     Attachments,
+    DynamicFields, // Import the DynamicFields component
   ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss'],
@@ -69,6 +70,7 @@ export class AmendScreen implements OnInit {
     { label: 'Undertaking Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' }, // New step for dynamic fields
   ];
 
   constructor(
@@ -118,7 +120,6 @@ export class AmendScreen implements OnInit {
   ngOnInit() {
     this.loadPermissions();
     setTimeout(() => {
-
       const sections = document.querySelectorAll('section');
       const observer = new IntersectionObserver(
         (entries) => {
@@ -168,6 +169,9 @@ export class AmendScreen implements OnInit {
         }
       });
     });
+
+    // load dynamic fields
+    this.loadDynamicFields();
   }
 
   private buildForm(): void {
@@ -245,6 +249,7 @@ export class AmendScreen implements OnInit {
         otherInstructions: [''],
       }),
       attachments: this.fb.array([]),
+      dynamicFields: this.fb.array([]), // New form array for dynamic fields
     });
   }
 
@@ -477,11 +482,11 @@ export class AmendScreen implements OnInit {
       bankForm: tx,
       undertakingDetails: tx,
       instructions: tx,
+      dynamicFields: tx.dynamicFields || [],
     });
   }
 
   scrollToSection(i: number) {
-
     this.currentStep = i;
 
     const section = document.getElementById(`section-${i}`);
@@ -497,6 +502,9 @@ export class AmendScreen implements OnInit {
       ...this.undertakingForm.value.undertakingDetails,
       ...this.undertakingForm.value.instructions,
       attachments: this.undertakingForm.value.attachments,
+      dynamicFields: this.dynamicFieldsForm
+        ? this.dynamicFieldsForm.getRawValue()
+        : {},
     };
   }
 
@@ -801,5 +809,63 @@ export class AmendScreen implements OnInit {
         });
       },
     });
+  }
+
+  // dynamic fields section
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }

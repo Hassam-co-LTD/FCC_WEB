@@ -5,14 +5,10 @@ import {
   FormBuilder,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 } from '@angular/forms';
 
-import {
-  Router,
-  RouterOutlet,
-  ActivatedRoute
-} from '@angular/router';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
 
 import { CommonModule } from '@angular/common';
 
@@ -33,7 +29,7 @@ import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-men
 import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
 import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 
 @Component({
   selector: 'app-amend',
@@ -48,11 +44,12 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
     BankDetails,
     InstructionToBank,
     Attachments,
+    DynamicFields,
   ],
   standalone: true,
   templateUrl: './amend.html',
 
-  styleUrls: ['./amend.scss']
+  styleUrls: ['./amend.scss'],
 })
 export class Amend implements OnInit {
   currentStep = 0;
@@ -61,15 +58,9 @@ export class Amend implements OnInit {
 
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
 
-  screenMode:
-    | 'EDIT'
-    | 'SUBMITTED'
-    | 'APPROVED'
-    | 'FINAL' = 'EDIT';
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
 
-  currentTx: ShippingGuaranteeTransaction =
-    {} as ShippingGuaranteeTransaction;
-
+  currentTx: ShippingGuaranteeTransaction = {} as ShippingGuaranteeTransaction;
 
   showUpdateSubmit = false;
 
@@ -93,24 +84,17 @@ export class Amend implements OnInit {
 
   isHistoricalView = false;
 
-
   // =========================================================
   // PERMISSIONS
   // =========================================================
 
   permissionNames: string[] = [];
 
-
   hasPermission(permission: string): boolean {
-
     return this.permissionNames.some(
-      p =>
-        p.trim().toLowerCase() ===
-        permission.toLowerCase()
+      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
     );
-
   }
-
 
   // =========================================================
   // SIDEBAR STEPS
@@ -122,8 +106,8 @@ export class Amend implements OnInit {
     { label: 'Bank Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields ' },
   ];
-
 
   // =========================================================
   // CONSTRUCTOR
@@ -137,11 +121,8 @@ export class Amend implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
   ) {
-
     this.buildForm();
-
   }
-
 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
@@ -162,8 +143,6 @@ export class Amend implements OnInit {
       this.permissionNames = [];
     }
   }
-
-  
 
   ngOnInit() {
     this.loadPermissions();
@@ -188,20 +167,11 @@ export class Amend implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData =
-      JSON.parse(
-        sessionStorage.getItem('userData') || '{}'
-      );
+    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
 
-    this.companyId =
-      sessionData.companyId ?? '';
+    this.companyId = sessionData.companyId ?? '';
 
-
-    console.log(
-      'Company ID:',
-      this.companyId
-    );
-
+    console.log('Company ID:', this.companyId);
 
     // =======================================================
     // ROUTE
@@ -222,21 +192,15 @@ export class Amend implements OnInit {
         console.log('eventRefNo:', this.eventRefNo);
 
         if (this.tnxId) {
-
-          this.enterEditMode(
-            this.tnxId
-          );
-
+          this.enterEditMode(this.tnxId);
         } else {
-
           this.enterCreateMode();
-
         }
-
       });
-
     });
 
+    // load dynamic  fields
+    this.loadDynamicFields();
   }
 
   private buildForm(): void {
@@ -276,16 +240,15 @@ export class Amend implements OnInit {
         otherInstructions: [''],
       }),
       attachments: this.fb.array([]),
+      dynamicFields: this.fb.array([]), // New form array for dynamic fields
     });
   }
-
 
   // =========================================================
   // CREATE MODE
   // =========================================================
 
   private enterCreateMode(): void {
-
     this.mode = 'CREATE';
 
     this.showUpdateSubmit = false;
@@ -294,13 +257,11 @@ export class Amend implements OnInit {
 
     this.isHistoricalView = false;
 
-    this.currentTx =
-      {} as ShippingGuaranteeTransaction;
+    this.currentTx = {} as ShippingGuaranteeTransaction;
 
     this.ShippingGuaranteeForm.reset();
 
     this.buildForm();
-
   }
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
@@ -351,7 +312,6 @@ export class Amend implements OnInit {
     // =======================================================
 
     if (this.sourceTab === 'live') {
-
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
@@ -403,9 +363,7 @@ export class Amend implements OnInit {
     // instead of tnxId alone which can resolve to the latest amendment only
     // =======================================================
 
-
     if (isAmendmentTab) {
-
       this.isHistoricalView = false;
 
       const amendment$ = this.eventRefNo
@@ -531,15 +489,14 @@ export class Amend implements OnInit {
 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
-
       generalDetailsForm: tx,
 
       applicantBeneficiaryForm: tx,
 
       issuingbankForm: tx,
       instructionForm: tx,
+      dynamicFields: tx.dynamicFields || this.fb.array([]),
     });
-
   }
 
   scrollToSection(index: number) {
@@ -556,6 +513,9 @@ export class Amend implements OnInit {
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
       attachments: this.ShippingGuaranteeForm.value.attachments,
+      dynamicFields: this.dynamicFieldsForm
+        ? this.dynamicFieldsForm.getRawValue()
+        : {},
     };
   }
 
@@ -567,7 +527,6 @@ export class Amend implements OnInit {
     if (this.isSaving) return;
     this.isSaving = true;
 
-
     if (!this.companyId) {
       this.snackBar.open('Session expired or company not found.', 'Close', {
         duration: 3000,
@@ -575,7 +534,6 @@ export class Amend implements OnInit {
       this.isSaving = false;
 
       return;
-
     }
 
     const payload = this.flattenForm();
@@ -589,9 +547,7 @@ export class Amend implements OnInit {
       this.isSaving = false;
 
       return;
-
     }
-
 
     this.api
       .saveAmendTransactionSg(tnxId, payload)
@@ -639,12 +595,9 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
-
     }
 
-
     const payload = {
-
       ...this.flattenForm(),
 
       event: 'AMD',
@@ -725,12 +678,9 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
-
     }
 
-
     const payload = {
-
       ...this.flattenForm(),
 
       event: 'AMD',
@@ -765,7 +715,6 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
-
     }
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
@@ -809,32 +758,17 @@ export class Amend implements OnInit {
       return;
     }
 
-
-    if (
-      this.ShippingGuaranteeForm.invalid ||
-      !this.currentTx?.tnxId
-    ) {
-
-      this.snackBar.open(
-        'Invalid form or missing transaction ID',
-        'Close',
-        {
-          duration: 3000
-        }
-      );
+    if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
 
       return;
-
     }
 
+    const payload = this.flattenForm();
 
-    const payload =
-      this.flattenForm();
-
-
-    payload.tnxId =
-      this.currentTx.tnxId;
-
+    payload.tnxId = this.currentTx.tnxId;
 
     this.api.updateRejectedTransactionSg(payload.tnxId, payload).subscribe({
       next: (res) => {
@@ -855,5 +789,65 @@ export class Amend implements OnInit {
         });
       },
     });
+  }
+
+  // Dynamic Fields section starts now
+
+  // dynamic fields section
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }

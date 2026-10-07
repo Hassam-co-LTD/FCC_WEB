@@ -767,7 +767,7 @@ import { License } from './components/license/license';
 import { AttachmentsDocuments } from './components/attachments-documents/attachments-documents';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { finalize } from 'rxjs';
-
+import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { ExportCollectionTransaction } from '../../../../../../../core/models/export-collection';
 
 @Component({
@@ -788,6 +788,7 @@ import { ExportCollectionTransaction } from '../../../../../../../core/models/ex
     CommonModule,
     FormsModule,
     RouterOutlet,
+    DynamicFields,
   ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss'],
@@ -827,6 +828,7 @@ export class Amend implements OnInit {
     { label: 'Collection Instruction' },
     { label: 'License' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' }, // New step for dynamic fields
   ];
 
   constructor(
@@ -899,6 +901,9 @@ export class Amend implements OnInit {
         }
       });
     });
+
+    // load dynamic fields
+    this.loadDynamicFields();
   }
   // const txFromState = history.state.transaction;
   // console.log('Transaction from state:', txFromState);
@@ -972,9 +977,9 @@ export class Amend implements OnInit {
         adviceAcceptanceDate: [''],
         waiveCharges: [''],
         adviceReasonRefusal: [''],
-          protestNonAcceptance: [''],
-          acceptanceDeferred: [''],
-          warehouseInsurance: [''],
+        protestNonAcceptance: [''],
+        acceptanceDeferred: [''],
+        warehouseInsurance: [''],
         protestNonPayment: [''],
         advicePaymentBy: [''],
         adviceAcceptanceAndDueDateBy: [''],
@@ -995,6 +1000,7 @@ export class Amend implements OnInit {
       }),
 
       attachments: this.fb.array([]),
+      dynamicFields: this.fb.array([]),
     });
   }
 
@@ -1239,6 +1245,7 @@ export class Amend implements OnInit {
       PaymentAndAmount: tx,
       ShipmentDetails: tx,
       CollectionInstruction: tx,
+      dynamicFields: tx.dynamicFields || [],
     });
   }
 
@@ -1263,6 +1270,9 @@ export class Amend implements OnInit {
       ...this.ExportCollectionForm.value.CollectionInstruction,
       ...this.ExportCollectionForm.value.instructionForm,
       attachments: this.ExportCollectionForm.value.attachments,
+      dynamicFields: this.dynamicFieldsForm
+        ? this.dynamicFieldsForm.getRawValue()
+        : {},
     };
   }
 
@@ -1518,5 +1528,63 @@ export class Amend implements OnInit {
           });
         },
       });
+  }
+
+  // dynamic fields section
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }
