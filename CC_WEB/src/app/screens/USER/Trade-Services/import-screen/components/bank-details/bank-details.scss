@@ -62,14 +62,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 12px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
 
 /* ===========================
    Form Layout
@@ -121,9 +113,7 @@ button[mat-flat-button] {
         /* stack fields vertically */
     }
 
-    h4 {
-        font-size: 15px;
-    }
+    
 }
 
 /* Mobile ≤480px */
@@ -132,9 +122,7 @@ button[mat-flat-button] {
         padding: 12px;
     }
 
-    h4 {
-        font-size: 14px;
-    }
+   
 
     button[mat-flat-button] {
         font-size: 14px;

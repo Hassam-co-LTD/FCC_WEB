@@ -1,18 +1,17 @@
 @use '../../../../../../../../../../styles/theme' as theme;
 
-/* ===========================
-   Section Header
-=========================== */
+
+/* ===================== Section Header ===================== */
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
     padding: 14px 18px;
-    border-radius: 8px;
+    border-radius: theme.$radius-large;
     cursor: pointer;
-    color: theme.$text-light;
     margin-bottom: 10px;
+    color: theme.$text-light;
     transition: background 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
@@ -20,228 +19,134 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        color: theme.$white;
+    }
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
-        transition: transform 0.3s ease;
-    }
-
-    &.open mat-icon {
-        transform: rotate(180deg);
     }
 }
 
-/* ===========================
-   Collapsible Container
-=========================== */
+/* ===================== Collapsible ===================== */
 .collapsible {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: all 0.35s ease-in-out;
+    transition: all 0.35s ease;
     transform: translateY(-5px);
 }
 
 .collapsible.open {
-    max-height: 2000px;
+    max-height: 2500px;
     opacity: 1;
     transform: translateY(0);
-    padding: 20px;
+    padding: 15px 10px;
     background: theme.$light-bg;
-    border-radius: 8px;
+    border-radius: theme.$radius-default;
     border: 1px solid theme.$border-light;
 }
 
-/* ===========================
-   Titles
-=========================== */
-h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: theme.$white;
-}
-
-h4 {
-    font-size: 16px;
-    margin: 20px 0 12px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
-
-/* ===========================
-   Form Layout
-=========================== */
+/* ===================== Form Grid ===================== */
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 18px;
-}
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
+    margin-bottom: 12px;
 
-mat-form-field {
-    width: 100%;
-}
-
-.note-text {
-    font-size: 13px;
-    color: #666;
-    font-style: italic;
-    margin-bottom: 20px;
-}
-
-.btn-row-bottom {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-button[mat-flat-button] {
-    background: theme.$primary !important;
-    color: theme.$text-light !important;
-    border-radius: 6px;
-    box-shadow: theme.$button-shadow;
-
-    &:hover {
-        background: theme.$primary-dark !important;
+    mat-form-field {
+        width: 100%;
+        min-width: 0;
     }
 }
 
-/* ===========================
-   Responsive Adjustments
-=========================== */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
 
-/* Tablets ≤992px */
-@media (max-width: 992px) {
+/* ===================== Tabs (styled like the shared blue headings) ===================== */
+.bank-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+
+    .tab {
+        padding: 6px 14px;
+        border-radius: theme.$radius-default;
+        background: theme.$white;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.3;
+        border: 1px solid theme.$border-light;
+        color: theme.$primary;
+        transition: all 0.2s ease;
+
+        &:hover:not(.active) {
+            background: theme.$hover-bg;
+            color: theme.$primary-dark;
+        }
+
+        &.active {
+            background: theme.$primary;
+            color: theme.$white;
+            border-color: theme.$primary;
+        }
+    }
+}
+
+/* ===================== Radio Row ===================== */
+.radio-row {
+    margin-bottom: 14px;
+
+    mat-radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 20px;
+    }
+}
+
+/* ===================== Responsive ===================== */
+@media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;
-        /* stack fields vertically */
     }
 
-    h4 {
-        font-size: 15px;
-    }
-}
-
-/* Mobile ≤480px */
-@media (max-width: 480px) {
     .collapsible.open {
-        padding: 12px;
-    }
-
-    h4 {
-        font-size: 14px;
-    }
-
-    button[mat-flat-button] {
-        font-size: 14px;
-        padding: 8px 12px;
+        padding: 12px 8px;
     }
 }
 
 .previous-value {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 
-  margin-top: 5px;
-  padding: 7px 10px;
+    margin-top: 5px;
+    padding: 7px 10px;
 
-  border-left: 3px solid #f59e0b;
-  background-color: #fff7e6;
-  border-radius: 4px;
+    border-left: 3px solid #f59e0b;
+    background-color: #fff7e6;
+    border-radius: 4px;
 
-  font-size: 13px;
-  line-height: 18px;
+    font-size: 13px;
+    line-height: 18px;
 }
 
 .previous-label {
-  font-weight: 600;
-  color: #92400e;
-  margin-right: 6px;
+    font-weight: 600;
+    color: #92400e;
+    margin-right: 6px;
 }
 
 .previous-text {
-  color: #b45309;
-  font-weight: 500;
+    color: #b45309;
+    font-weight: 500;
 }
-// @use '../../../../../../src/styles/_theme.scss' as theme;
-
-// .section-header {
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     background: theme.$primary;
-//     padding: 14px 18px;
-//     border-radius: 8px;
-//     cursor: pointer;
-//     margin-bottom: 10px;
-//     transition: background 0.3s ease, box-shadow 0.3s ease;
-//     color: theme.$text-light;
-
-//     &:hover {
-//         background: theme.$primary-dark;
-//         box-shadow: theme.$shadow-primary;
-//     }
-
-//     mat-icon {
-//         color: theme.$text-light;
-//         font-size: 22px;
-//     }
-// }
-
-// .collapsible {
-//     max-height: 0;
-//     overflow: hidden;
-//     opacity: 0;
-//     transition: all 0.35s ease-in-out;
-//     transform: translateY(-5px);
-// }
-
-// .collapsible.open {
-//     max-height: 2000px;
-//     opacity: 1;
-//     transform: translateY(0);
-//     padding: 15px 10px;
-//     background: theme.$light-bg;
-//     border-radius: 6px;
-//     border: 1px solid theme.$border-light;
-// }
-
-// h2 {
-//     font-size: 20px;
-//     font-weight: 600;
-//     margin: 0;
-//     color: theme.$white;
-// }
-
-
-// // .form-grid {
-// //     display: grid;
-// //     grid-template-columns: repeat(2, 1fr);
-// //     gap: 20px;
-// // }
-
-// .form-grid {
-//     display: grid;
-//     grid-template-columns: repeat(2, 1fr);
-//     gap: theme.$gap-default;
-//     margin-top: 15px;
-// }
-
-// .note-text {
-//     margin-top: 8px;
-//     font-size: 13px;
-//     color: theme.$text-dark;
-//     // #5e5eaa
-// }
-
-// // .btn-row-bottom {
-// //     display: flex;
-// //     justify-content: flex-end;
-// //     gap: 10px;
-// //     margin-top: 30px;
-// // }

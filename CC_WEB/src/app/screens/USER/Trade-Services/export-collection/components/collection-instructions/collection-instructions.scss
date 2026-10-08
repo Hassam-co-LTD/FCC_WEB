@@ -53,16 +53,14 @@
 .field-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;   /* was 4px */
 }
-
 .checkbox-list {
     // background: theme.$white;
     padding: 16px;
     border-radius: 8px;
     border: 1px solid theme.$border-light;
     
-    h4 { margin-top: 0; border-left: 4px solid theme.$primary; padding-left: 10px; font-size: 14px; color: theme.$primary-dark; margin-bottom: 12px; }
     mat-checkbox { font-size: 13px; margin-bottom: 2px; }
 }
 

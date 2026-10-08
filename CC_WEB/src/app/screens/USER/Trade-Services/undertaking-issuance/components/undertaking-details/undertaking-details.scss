@@ -52,16 +52,7 @@ h2 {
     margin: 0;
     color: theme.$white;
 }
- 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
- 
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

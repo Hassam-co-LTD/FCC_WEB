@@ -1,5 +1,7 @@
 @use '../../../../../../../../../../styles/_theme.scss' as theme;
 
+
+
 /* ===========================
    Section Header
 =========================== */
@@ -53,14 +55,7 @@ h2 {
   color: theme.$white;
 }
 
-h4 {
-  font-size: 16px;
-  margin: 20px 0 10px;
-  font-weight: 600;
-  color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
-  padding-left: 8px;
-}
+
 
 /* Form Grids */
 .form-row {
@@ -195,9 +190,7 @@ button[mat-flat-button] {
     gap: 15px;
   }
 
-  h4 {
-    font-size: 15px;
-  }
+  
 
   .collapsible.open {
     padding: 12px 8px;
@@ -213,10 +206,6 @@ button[mat-flat-button] {
     font-size: 18px;
   }
 
-  h4 {
-    font-size: 14px;
-    margin: 15px 0 8px;
-  }
 
   .btn-row {
     flex-direction: column;
@@ -275,22 +264,18 @@ button[mat-flat-button] {
 ::ng-deep .mat-mdc-select-panel,
 ::ng-deep .mdc-menu-surface {
   padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 !important; 
   border: 1px solid #e0e0e0; // subtle professional border
-
+ 
   background-color: #ffffff !important;
-  border-radius: 5px !important;
-  /* smooth corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  /* soft shadow */
+  border-radius: 5px !important; /* smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* soft shadow */
 }
 
 /* mat-option: base styling */
 ::ng-deep .mat-mdc-option {
-  background-color: #ffffff !important;
-  /* always white */
-  color: #000 !important;
-  /* black text */
+  background-color: #ffffff !important; /* always white */
+  color: #000 !important; /* black text */
   border-radius: 4px !important;
   padding-left: 10px !important;
   min-height: 38px !important;
@@ -304,17 +289,16 @@ button[mat-flat-button] {
 /* mat-option hover */
 ::ng-deep .mat-mdc-option:hover {
   background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important; // smooth gradient
-
+ 
   color: #000 !important;
 }
 
 /* mat-option selected */
 ::ng-deep .mat-mdc-option.mat-selected {
-  background-color: #ffffff !important;
-  /* keep white even when selected */
+  background-color: #ffffff !important; /* keep white even when selected */
   color: #000 !important;
   box-shadow: none !important;
-
+  
   border: none !important;
 }
 

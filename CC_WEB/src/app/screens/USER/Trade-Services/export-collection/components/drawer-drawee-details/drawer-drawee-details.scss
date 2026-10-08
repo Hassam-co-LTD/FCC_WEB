@@ -56,14 +56,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 
-  h4 {
-    margin-top: 0;
-    border-left: none;
-    padding-left: 0;
-    color: theme.$primary;
-    text-decoration: underline;
-  }
-
   strong {
     color: theme.$primary-dark;
   }
@@ -77,14 +69,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
 
 /* Form Grids */
 .form-grid-2 {
@@ -125,7 +109,7 @@ mat-form-field {
 @media (max-width: 768px) {
     .section-header { padding: 12px 14px; }
     h2 { font-size: 18px; }
-    h4 { font-size: 14px; }
+   
 }
 
 /* ---------- Angular Material Dropdown Fix ---------- */

@@ -69,24 +69,6 @@ h2 {
     min-width: 200px; // ✅ prevent fields from shrinking too small
 }
 
-/* Radio Section */
-.radio-section {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap; // ✅ wrap radio group on smaller screens
-
-    .radio-label {
-        font-weight: 500;
-        min-width: 180px;
-    }
-
-    .radio-group {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap; // ✅ wrap radio buttons
-    }
-}
 
 .form-actions {
     display: flex;
@@ -109,14 +91,6 @@ h2 {
         min-width: 150px;
     }
 
-    .radio-label {
-        min-width: 140px;
-    }
-
-    .radio-group {
-        gap: 20px;
-    }
-
     .collapsible.open {
         padding: 12px 8px;
     }
@@ -133,16 +107,7 @@ h2 {
         min-width: 100%;
     }
 
-    .radio-section {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-
-        .radio-group {
-            flex-direction: column;
-            gap: 8px;
-        }
-    }
+  
 
     .collapsible.open {
         padding: 10px 5px;

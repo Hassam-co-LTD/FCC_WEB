@@ -1,5 +1,6 @@
 @use '../../../../../../../../../../styles/_theme.scss' as theme;
 
+
 /* ===========================
    Section Header
 =========================== */
@@ -63,23 +64,46 @@ h2 {
 }
 
 .sub-heading {
+    font-size: 14px;
     font-weight: 600;
-    color: #374151;
-    font-size: 16px;
-    margin-bottom: 12px;
+    color: theme.$primary-dark;
+    border-left: 3px solid theme.$primary;
+    padding-left: 8px;
+    margin: 14px 0 8px;
+    line-height: 1.3;
+}
+.tab-container,
+.inner-tabs {
+    --mat-tab-header-active-label-text-color: #{theme.$primary};
+    --mat-tab-header-active-focus-label-text-color: #{theme.$primary};
+    --mat-tab-header-active-hover-label-text-color: #{theme.$primary-dark};
+    --mat-tab-header-inactive-label-text-color: #{theme.$primary};
+    --mat-tab-header-inactive-focus-label-text-color: #{theme.$primary};
+    --mat-tab-header-inactive-hover-label-text-color: #{theme.$primary-dark};
+    --mat-tab-header-active-ripple-color: #{theme.$primary};
+    --mat-tab-header-inactive-ripple-color: #{theme.$primary};
+    --mdc-tab-indicator-active-indicator-color: #{theme.$primary};
+
+    /* All tabs blue (this wins over the tokens) */
+    ::ng-deep .mdc-tab .mdc-tab__text-label {
+        color: theme.$primary !important;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Selected tab: bolder, so it still stands out */
+    ::ng-deep .mdc-tab--active .mdc-tab__text-label {
+        color: theme.$primary !important;
+        font-weight: 600;
+    }
+
+    ::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+        color: theme.$primary-dark !important;
+    }
 }
 
 .tab-container {
     margin-top: 10px;
-
-    ::ng-deep .mat-mdc-tab-label-container {
-        background: #fafbff;
-    }
-
-    ::ng-deep .mat-mdc-tab-label-active {
-        color: #d81b60 !important;
-        font-weight: 600;
-    }
 
     ::ng-deep .mat-mdc-tab-header-pagination-controls-enabled .mat-mdc-tab-header-pagination {
         display: none !important;
@@ -88,13 +112,16 @@ h2 {
 
 .inner-tabs {
     margin-top: 12px;
-
-    ::ng-deep .mat-mdc-tab-label-active {
-        color: #d81b60 !important;
-        font-weight: 600;
-    }
+}
+/* inactive tabs */
+::ng-deep .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+    color: theme.$text-medium !important;
+    font-weight: 500;
 }
 
+::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+    color: theme.$primary !important;
+}
 .tab-content {
     margin-top: 16px;
 }
@@ -132,9 +159,7 @@ mat-error {
         font-size: 14px;
     }
 
-    .sub-heading {
-        font-size: 15px;
-    }
+    
 }
 
 /* Small Tablets / Large Phones ≤768px */
@@ -145,9 +170,7 @@ mat-error {
         }
     }
 
-    .sub-heading {
-        font-size: 14px;
-    }
+   
 }
 
 /* Mobile ≤480px */
@@ -174,9 +197,7 @@ mat-error {
         font-size: 13px;
     }
 
-    .sub-heading {
-        font-size: 13px;
-    }
+   
 }
 .previous-value {
   display: block;

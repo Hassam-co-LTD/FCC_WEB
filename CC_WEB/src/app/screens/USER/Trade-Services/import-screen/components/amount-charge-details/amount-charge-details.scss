@@ -53,14 +53,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-    margin: 20px 0 12px;
-}
 
 /* Form Grids */
 .form-grid-2.unequal {
@@ -150,9 +142,7 @@ textarea {
         }
     }
 
-    h4 {
-        font-size: 15px;
-    }
+  
 
     .collapsible.open {
         padding: 12px 8px;
@@ -169,10 +159,7 @@ textarea {
         font-size: 18px;
     }
 
-    h4 {
-        font-size: 14px;
-        margin: 15px 0 8px;
-    }
+    
 }
 
 /* Mobile ≤480px */

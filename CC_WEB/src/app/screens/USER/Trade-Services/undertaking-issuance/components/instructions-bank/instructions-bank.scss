@@ -62,15 +62,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
-
 
 .form-row {
     display: flex;
@@ -96,13 +87,7 @@ h4 {
     flex-direction: column;
     gap: 8px;
 
-    h4 {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0 0 6px 0;
-        color: theme.$primary-dark;
-    }
-
+   
     mat-form-field {
         width: 100%;
         font-size: 14px;
@@ -154,10 +139,7 @@ h4 {
         font-size: 18px;
     }
 
-    .field-group h4 {
-        font-size: 14px;
-    }
-
+   
     mat-form-field {
         font-size: 13px;
     }

@@ -11,10 +11,18 @@
     cursor: pointer;
     margin-bottom: 10px;
     color: theme.$text-light;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
         background: theme.$primary-dark;
         box-shadow: theme.$shadow-primary;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        color: theme.$white;
     }
 
     mat-icon {
@@ -33,7 +41,7 @@
 }
 
 .collapsible.open {
-    max-height: 2000px;
+    max-height: 2500px;
     opacity: 1;
     transform: translateY(0);
     padding: 15px 10px;
@@ -43,37 +51,47 @@
 }
 
 /* ===================== Form Grid ===================== */
-h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0;
-    color: theme.$white;
-}
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: theme.$gap-default;
-    margin-bottom: 15px;
+    gap: 12px 24px;
+    margin-bottom: 12px;
 
     mat-form-field {
         width: 100%;
+        min-width: 0;
     }
 }
 
-/* ===================== Tabs ===================== */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* ===================== Tabs (styled like the shared blue headings) ===================== */
 .bank-tabs {
     display: flex;
-    gap: 12px;
-    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
 
     .tab {
-        padding: 8px 16px;
+        padding: 6px 14px;
         border-radius: theme.$radius-default;
-        background: theme.$light-bg;
+        background: theme.$white;
         cursor: pointer;
-        font-weight: 500;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.3;
         border: 1px solid theme.$border-light;
-        color: theme.$primary-dark;
+        color: theme.$primary;
+        transition: all 0.2s ease;
+
+        &:hover:not(.active) {
+            background: theme.$hover-bg;
+            color: theme.$primary-dark;
+        }
 
         &.active {
             background: theme.$primary;
@@ -85,19 +103,13 @@ h2 {
 
 /* ===================== Radio Row ===================== */
 .radio-row {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 
-    mat-radio-button {
-        margin-right: 20px;
-        font-weight: 500;
+    mat-radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 20px;
     }
-}
-
-/* ===================== Note ===================== */
-.note {
-    font-size: 14px;
-    color: theme.$primary-dark;
-    margin: 10px 0;
 }
 
 /* ===================== Responsive ===================== */
@@ -105,30 +117,35 @@ h2 {
     .form-grid {
         grid-template-columns: 1fr;
     }
+
+    .collapsible.open {
+        padding: 12px 8px;
+    }
 }
+
 .previous-value {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 
-  margin-top: 5px;
-  padding: 7px 10px;
+    margin-top: 5px;
+    padding: 7px 10px;
 
-  border-left: 3px solid #f59e0b;
-  background-color: #fff7e6;
-  border-radius: 4px;
+    border-left: 3px solid #f59e0b;
+    background-color: #fff7e6;
+    border-radius: 4px;
 
-  font-size: 13px;
-  line-height: 18px;
+    font-size: 13px;
+    line-height: 18px;
 }
 
 .previous-label {
-  font-weight: 600;
-  color: #92400e;
-  margin-right: 6px;
+    font-weight: 600;
+    color: #92400e;
+    margin-right: 6px;
 }
 
 .previous-text {
-  color: #b45309;
-  font-weight: 500;
+    color: #b45309;
+    font-weight: 500;
 }

@@ -53,15 +53,6 @@ h2 {
   color: theme.$white;
 }
 
-h4 {
-  font-size: 16px;
-  margin: 20px 0 10px;
-  font-weight: 600;
-  color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
-  padding-left: 8px;
-}
-
 /* Form Grids */
 .form-row {
   display: flex;
@@ -195,10 +186,7 @@ button[mat-flat-button] {
     gap: 15px;
   }
 
-  h4 {
-    font-size: 15px;
-  }
-
+ 
   .collapsible.open {
     padding: 12px 8px;
   }
@@ -211,11 +199,6 @@ button[mat-flat-button] {
 
   h2 {
     font-size: 18px;
-  }
-
-  h4 {
-    font-size: 14px;
-    margin: 15px 0 8px;
   }
 
   .btn-row {
