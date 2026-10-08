@@ -1,3 +1,4 @@
+
 <!-- Drawer & Drawee Details Accordion -->
 <div class="section-header" (click)="toggle()">
   <h2>Drawer & Drawee Details</h2>
@@ -10,54 +11,177 @@
   <!-- COLLAPSED PREVIEW -->
   @if (!isOpen) {
     <div class="preview-block">
+
       <!-- Drawer Preview -->
       <h4>Drawer</h4>
-      <div><strong>Drawer Name:</strong> {{ form.value.drawerName }}</div>
-      <div><strong>Address 1:</strong> {{ form.value.drawerAddress1 }}</div>
-      <div><strong>Address 2:</strong> {{ form.value.drawerAddress2 }}</div>
+      <div>
+        <strong>Drawer Name:</strong>
+        {{ form.value.drawerName }}
+      </div>
+
+      <div>
+        <strong>Address 1:</strong>
+        {{ form.value.drawerAddress1 }}
+      </div>
+
+      <div>
+        <strong>Address 2:</strong>
+        {{ form.value.drawerAddress2 }}
+      </div>
+
       <!-- Drawee Preview -->
       <h4>Drawee</h4>
-      <div><strong>Drawee Name:</strong> {{ form.value.draweeName }}</div>
-      <div><strong>Address 1:</strong> {{ form.value.draweeAddress1 }}</div>
-      <div><strong>Address 2:</strong> {{ form.value.draweeAddress2 }}</div>
+      <div>
+        <strong>Drawee Name:</strong>
+        {{ form.value.draweeName }}
+      </div>
+
+      <div>
+        <strong>Address 1:</strong>
+        {{ form.value.draweeAddress1 }}
+      </div>
+
+      <div>
+        <strong>Address 2:</strong>
+        {{ form.value.draweeAddress2 }}
+      </div>
+
     </div>
   }
 
-  <!-- Drawer Section -->
+  <!-- ==================== DRAWER ==================== -->
+
   <h4 class="sub-title">Drawer</h4>
 
+  <!-- Drawer Name -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Drawer Name *</mat-label>
-    <input matInput type="text" formControlName="drawerName" placeholder="Enter Drawer Name">
+
+    <input
+      matInput
+      type="text"
+      formControlName="drawerName"
+      placeholder="Enter Drawer Name"
+    />
   </mat-form-field>
 
+  @if (hasPreviousValue('drawerName')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('drawerName') }}
+      </span>
+    </div>
+  }
+
+  <!-- Drawer Address 1 -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Address 1 *</mat-label>
-    <input matInput type="text" formControlName="drawerAddress1" placeholder="Enter Address 1">
+
+    <input
+      matInput
+      type="text"
+      formControlName="drawerAddress1"
+      placeholder="Enter Address 1"
+    />
   </mat-form-field>
 
+  @if (hasPreviousValue('drawerAddress1')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('drawerAddress1') }}
+      </span>
+    </div>
+  }
+
+  <!-- Drawer Address 2 -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Address 2</mat-label>
-    <input matInput type="text" formControlName="drawerAddress2" placeholder="Enter Address 2">
+
+    <input
+      matInput
+      type="text"
+      formControlName="drawerAddress2"
+      placeholder="Enter Address 2"
+    />
   </mat-form-field>
 
-  <!-- Drawee Section -->
+  @if (hasPreviousValue('drawerAddress2')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('drawerAddress2') }}
+      </span>
+    </div>
+  }
+
+  <!-- ==================== DRAWEE ==================== -->
+
   <h4 class="sub-title">Drawee</h4>
 
+  <!-- Drawee Name -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Drawee Name *</mat-label>
-    <input matInput type="text" formControlName="draweeName" placeholder="Enter Drawee Name">
+
+    <input
+      matInput
+      type="text"
+      formControlName="draweeName"
+      placeholder="Enter Drawee Name"
+    />
   </mat-form-field>
 
+  @if (hasPreviousValue('draweeName')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('draweeName') }}
+      </span>
+    </div>
+  }
+
+  <!-- Drawee Address 1 -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Address 1 *</mat-label>
-    <input matInput type="text" formControlName="draweeAddress1" placeholder="Enter Address 1">
+
+    <input
+      matInput
+      type="text"
+      formControlName="draweeAddress1"
+      placeholder="Enter Address 1"
+    />
   </mat-form-field>
 
+  @if (hasPreviousValue('draweeAddress1')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('draweeAddress1') }}
+      </span>
+    </div>
+  }
+
+  <!-- Drawee Address 2 -->
   <mat-form-field appearance="outline" class="full">
     <mat-label>Address 2</mat-label>
-    <input matInput type="text" formControlName="draweeAddress2" placeholder="Enter Address 2">
+
+    <input
+      matInput
+      type="text"
+      formControlName="draweeAddress2"
+      placeholder="Enter Address 2"
+    />
   </mat-form-field>
 
+  @if (hasPreviousValue('draweeAddress2')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('draweeAddress2') }}
+      </span>
+    </div>
+  }
 
 </div>
+

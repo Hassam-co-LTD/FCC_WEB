@@ -28,7 +28,7 @@ import { MatRadioModule } from '@angular/material/radio';
 export class ApplicantBeneficiary {
 
   @Input() form!: FormGroup;
-
+ @Input() previousValues: { [key: string]: any } = {};
   isOpen: boolean = true;
   showAlternate: boolean = false;
 
@@ -40,5 +40,23 @@ export class ApplicantBeneficiary {
 
   toggleAlternate() {
     this.showAlternate = !this.showAlternate;
+  }
+  
+  // ==========================================
+  // Previous Value Helpers
+  // ==========================================
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

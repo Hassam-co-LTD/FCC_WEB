@@ -106,14 +106,8 @@
 
   min-width: 0;
 
-  h4 {
-    margin: 0 0 6px;
+ 
 
-    font-size: 14px;
-    font-weight: 600;
-
-    color: theme.$text-medium;
-  }
 }
 
 
@@ -164,7 +158,31 @@
     gap: 14px;
   }
 
-  .field-group h4 {
-    font-size: 13px;
-  }
+
+}
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

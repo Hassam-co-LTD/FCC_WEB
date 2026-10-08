@@ -56,14 +56,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 
-  h4 {
-    margin-top: 0;
-    border-left: none;
-    padding-left: 0;
-    color: theme.$primary;
-    text-decoration: underline;
-  }
-
   strong {
     color: theme.$primary-dark;
   }
@@ -77,14 +69,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
 
 /* Form Grids */
 .form-grid-2 {
@@ -125,7 +109,7 @@ mat-form-field {
 @media (max-width: 768px) {
     .section-header { padding: 12px 14px; }
     h2 { font-size: 18px; }
-    h4 { font-size: 14px; }
+   
 }
 
 /* ---------- Angular Material Dropdown Fix ---------- */
@@ -164,4 +148,30 @@ mat-form-field {
 
 ::ng-deep .mat-mdc-option .mat-ripple-element {
   display: none !important;
+}
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

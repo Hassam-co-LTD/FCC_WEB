@@ -53,16 +53,14 @@
 .field-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;   /* was 4px */
 }
-
 .checkbox-list {
     // background: theme.$white;
     padding: 16px;
     border-radius: 8px;
     border: 1px solid theme.$border-light;
     
-    h4 { margin-top: 0; border-left: 4px solid theme.$primary; padding-left: 10px; font-size: 14px; color: theme.$primary-dark; margin-bottom: 12px; }
     mat-checkbox { font-size: 13px; margin-bottom: 2px; }
 }
 
@@ -113,4 +111,31 @@ mat-form-field { width: 100%; }
 @media (max-width: 768px) {
     .form-grid { grid-template-columns: 1fr; }
     .radio-item-box mat-radio-group { flex-direction: column; gap: 10px; }
+}
+
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

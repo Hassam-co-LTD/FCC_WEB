@@ -7,11 +7,30 @@
 
   @if (!isOpen) {
     <div class="preview-block">
-      <div><strong>Method:</strong> {{ form.value.shippingMethod || '—' }}</div>
-      <div><strong>Ref:</strong> {{ form.value.shipmentReference || '—' }}</div>
-      <div><strong>From:</strong> {{ form.value.shippingFrom || '—' }}</div>
-      <div><strong>To:</strong> {{ form.value.shippingTo || '—' }}</div>
-      <div><strong>Date:</strong> {{ form.value.shipmentDate || '—' }}</div>
+      <div>
+        <strong>Method:</strong>
+        {{ form.value.shippingMethod || '—' }}
+      </div>
+
+      <div>
+        <strong>Ref:</strong>
+        {{ form.value.shipmentReference || '—' }}
+      </div>
+
+      <div>
+        <strong>From:</strong>
+        {{ form.value.shippingFrom || '—' }}
+      </div>
+
+      <div>
+        <strong>To:</strong>
+        {{ form.value.shippingTo || '—' }}
+      </div>
+
+      <div>
+        <strong>Date:</strong>
+        {{ form.value.shipmentDate || '—' }}
+      </div>
     </div>
   }
 
@@ -19,56 +38,166 @@
     <h4 class="sub-title">Shipment Details</h4>
 
     <div class="form-grid-2">
+
+      <!-- Shipping Method -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Shipping Method</mat-label>
+
         <mat-select formControlName="shippingMethod">
           @for (m of shippingMethods; track m) {
             <mat-option [value]="m">{{ m }}</mat-option>
           }
         </mat-select>
+
+        @if (hasPreviousValue('shippingMethod')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('shippingMethod') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
+
+      <!-- Shipment Reference -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Shipment Reference</mat-label>
-        <input matInput type="text" formControlName="shipmentReference" placeholder="Enter shipment reference" />
+
+        <input
+          matInput
+          type="text"
+          formControlName="shipmentReference"
+          placeholder="Enter shipment reference"
+        />
+
+        @if (hasPreviousValue('shipmentReference')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('shipmentReference') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
+
+      <!-- Shipping From -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Shipping From</mat-label>
-        <input matInput formControlName="shippingFrom" placeholder="Enter shipping from" />
+
+        <input
+          matInput
+          formControlName="shippingFrom"
+          placeholder="Enter shipping from"
+        />
+
+        @if (hasPreviousValue('shippingFrom')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('shippingFrom') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
+
+      <!-- Shipping To -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Shipping To</mat-label>
-        <input matInput formControlName="shippingTo" placeholder="Enter shipping to" />
+
+        <input
+          matInput
+          formControlName="shippingTo"
+          placeholder="Enter shipping to"
+        />
+
+        @if (hasPreviousValue('shippingTo')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('shippingTo') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
+
+      <!-- Shipment Date -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Shipment Date</mat-label>
-        <input matInput type="date" formControlName="shipmentDate" />
+
+        <input
+          matInput
+          type="date"
+          formControlName="shipmentDate"
+        />
+
+        @if (hasPreviousValue('shipmentDate')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('shipmentDate') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
-      <div class="empty-cell"></div> <div class="full-width">
+
+      <div class="empty-cell"></div>
+
+
+      <div class="full-width">
         <h4 class="sub-title">Incoterms</h4>
       </div>
 
+
+      <!-- Applicable Rules -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Applicable Rules</mat-label>
+
         <mat-select formControlName="incotermsRules">
           @for (rule of ApplicableRules; track rule) {
-            <mat-option [value]="rule">{{ rule }}</mat-option>
+            <mat-option [value]="rule">
+              {{ rule }}
+            </mat-option>
           }
         </mat-select>
+
+        @if (hasPreviousValue('incotermsRules')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('incotermsRules') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
 
+
+      <!-- Incoterms -->
       <mat-form-field appearance="outline" class="full">
         <mat-label>Incoterms</mat-label>
+
         <mat-select formControlName="incoterms">
           @for (i of incoterms; track i) {
-            <mat-option [value]="i">{{ i }}</mat-option>
+            <mat-option [value]="i">
+              {{ i }}
+            </mat-option>
           }
         </mat-select>
+
+        @if (hasPreviousValue('incoterms')) {
+          <div class="previous-value">
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousValue('incoterms') }}
+            </span>
+          </div>
+        }
       </mat-form-field>
+
     </div>
   </div>
 </div>

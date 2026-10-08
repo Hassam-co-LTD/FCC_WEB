@@ -4,47 +4,94 @@
 </div>
 
 <div class="collapsible" [class.open]="isOpen">
-  <form class="instruction-form" [formGroup]="form" >
 
-    <!-- Accounts Row -->
-    <div class="form-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Principal Account</mat-label>
-        <mat-select formControlName="principalAccount">
-          <mat-option value="account1">Account 1</mat-option>
-          <mat-option value="account2">Account 2</mat-option>
-        </mat-select>
-        @if (form.get('principalAccount')?.hasError('required')) {
-          <mat-error>
-            Required
-          </mat-error>
-        }
-      </mat-form-field>
+  <form class="instruction-form" [formGroup]="form">
 
-      <mat-form-field appearance="outline">
-        <mat-label>Fee Account</mat-label>
-        <mat-select formControlName="feeAccount">
-          <mat-option value="fee1">Fee Account 1</mat-option>
-          <mat-option value="fee2">Fee Account 2</mat-option>
-        </mat-select>
-        @if (form.get('feeAccount')?.hasError('required')) {
-          <mat-error>
-            Required
-          </mat-error>
-        }
-      </mat-form-field>
+<!-- Accounts Row -->
+<div class="form-row">
+
+  <!-- Principal Account -->
+  <mat-form-field appearance="outline">
+    <mat-label>Principal Account</mat-label>
+
+    <mat-select formControlName="principalAccount">
+      <mat-option value="account1">Account 1</mat-option>
+      <mat-option value="account2">Account 2</mat-option>
+    </mat-select>
+
+    @if (form.get('principalAccount')?.hasError('required')) {
+      <mat-error>
+        Required
+      </mat-error>
+    }
+  </mat-form-field>
+
+  @if (hasPreviousValue('principalAccount')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('principalAccount') }}
+      </span>
     </div>
+  }
 
-    <!-- Other Instructions -->
-    <div class="form-row full-width">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Other Instructions</mat-label>
-        <textarea matInput formControlName="otherInstructions" rows="4" maxlength="31525"></textarea>
-        <mat-hint align="end">
-          {{ form.get('otherInstructions')?.value?.length || 0 }}/31525
-        </mat-hint>
-      </mat-form-field>
+  <!-- Fee Account -->
+  <mat-form-field appearance="outline">
+    <mat-label>Fee Account</mat-label>
+
+    <mat-select formControlName="feeAccount">
+      <mat-option value="fee1">Fee Account 1</mat-option>
+      <mat-option value="fee2">Fee Account 2</mat-option>
+    </mat-select>
+
+    @if (form.get('feeAccount')?.hasError('required')) {
+      <mat-error>
+        Required
+      </mat-error>
+    }
+  </mat-form-field>
+
+  @if (hasPreviousValue('feeAccount')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('feeAccount') }}
+      </span>
     </div>
+  }
+
+</div>
+
+<!-- Other Instructions -->
+<div class="form-row full-width">
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Other Instructions</mat-label>
+
+    <textarea
+      matInput
+      formControlName="otherInstructions"
+      rows="4"
+      maxlength="31525"
+    ></textarea>
+
+    <mat-hint align="end">
+      {{ form.get('otherInstructions')?.value?.length || 0 }}/31525
+    </mat-hint>
+
+  </mat-form-field>
+
+</div>
+
+@if (hasPreviousValue('otherInstructions')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('otherInstructions') }}
+    </span>
+  </div>
+}
 
   </form>
+
 </div>

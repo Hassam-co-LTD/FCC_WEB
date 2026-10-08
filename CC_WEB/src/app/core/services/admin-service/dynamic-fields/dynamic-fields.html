@@ -1,99 +1,111 @@
 <!-- =========================
-       DYNAMIC CUSTOMER FIELDS
-  ========================== -->
-  <div class="customer-form-wrapper dynamic-fields-section"
-       [formGroup]="form">
+     DYNAMIC CUSTOMER FIELDS
+========================== -->
+<div
+  class="customer-form-wrapper dynamic-fields-section"
+  [formGroup]="form"
+>
 
-    <!-- Section Header -->
-    <div class="section-header" (click)="toggleDynamicFields()">
-      <h2>Customer Additional Fields</h2>
-      <mat-icon>
-        {{ isOpen ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
-    </div>
+  <!-- Section Header -->
+  <div class="section-header" (click)="toggleDynamicFields()">
+    <h2>Customer Additional Fields</h2>
 
-    <!-- Dynamic Fields -->
-    <div class="collapsible"
-         [class.open]="isOpen"
-         [formGroup]="form">
+    <mat-icon>
+      {{ isOpen ? 'expand_less' : 'expand_more' }}
+    </mat-icon>
+  </div>
 
-      <div class="form-grid">
+  <!-- Dynamic Fields -->
+  <div class="collapsible" [class.open]="isOpen">
 
-        <ng-container *ngFor="let field of fields">
+    <div class="form-grid">
 
-          <div class="field-group">
+      <ng-container *ngFor="let field of fields">
 
-            <h4>{{ field.label || field.fieldName }}</h4>
+        <div class="field-group">
 
-            <!-- Text -->
-            <mat-form-field
-              *ngIf="field.fieldType === 'text'"
-              appearance="outline">
+          <h4>
+            {{ field.label || field.fieldName }}
+          </h4>
 
-              <input
-                matInput
-                [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
+          <!-- TEXT -->
+          <mat-form-field
+            *ngIf="field.fieldType === 'text'"
+            appearance="outline"
+          >
+            <input
+              matInput
+              [formControlName]="field.fieldName"
+              [placeholder]="field.label || field.fieldName"
+            />
+          </mat-form-field>
 
-            </mat-form-field>
+          <!-- NUMBER -->
+          <mat-form-field
+            *ngIf="field.fieldType === 'number'"
+            appearance="outline"
+          >
+            <input
+              matInput
+              type="number"
+              [formControlName]="field.fieldName"
+              [placeholder]="field.label || field.fieldName"
+            />
+          </mat-form-field>
 
-            <!-- Number -->
-            <mat-form-field
-              *ngIf="field.fieldType === 'number'"
-              appearance="outline">
+          <!-- DATE -->
+          <mat-form-field
+            *ngIf="field.fieldType === 'date'"
+            appearance="outline"
+          >
+            <input
+              matInput
+              type="date"
+              [formControlName]="field.fieldName"
+              [placeholder]="field.label || field.fieldName"
+            />
+          </mat-form-field>
 
-              <input
-                matInput
-                type="number"
-                [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
+          <!-- SELECT -->
+          <mat-form-field
+            *ngIf="field.fieldType === 'select'"
+            appearance="outline"
+          >
+            <mat-label>
+              {{ field.label || field.fieldName }}
+            </mat-label>
 
-            </mat-form-field>
+            <mat-select [formControlName]="field.fieldName">
+              <mat-option value="">
+                Select {{ field.label || field.fieldName }}
+              </mat-option>
 
-            <!-- Date -->
-            <mat-form-field
-              *ngIf="field.fieldType === 'date'"
-              appearance="outline">
+              <mat-option
+                *ngFor="let option of field.options || []"
+                [value]="option.value"
+              >
+                {{ option.text }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-              <input
-                matInput
-                type="date"
-                [formControlName]="field.fieldName"
-                placeholder="{{ field.label || field.fieldName }}" />
-
-            </mat-form-field>
-
-            <!-- Select -->
-            <mat-form-field
-              *ngIf="field.fieldType === 'select'"
-              appearance="outline">
-
-              <mat-label>
-                {{ field.label || field.fieldName }}
-              </mat-label>
-
-              <mat-select [formControlName]="field.fieldName">
-
-                <mat-option value="">
-                  Select {{ field.label || field.fieldName }}
-                </mat-option>
-
-                <ng-container *ngFor="let option of field.options || []">
-                  <mat-option [value]="option.value">
-                    {{ option.text }}
-                  </mat-option>
-                </ng-container>
-
-              </mat-select>
-
-            </mat-form-field>
-
+          <!-- PREVIOUS VALUE (shown once, for any field type) -->
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousDynamicValue(field.fieldId)"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ getPreviousDynamicValue(field.fieldId) }}
+            </span>
           </div>
 
-        </ng-container>
+        </div>
 
-      </div>
+      </ng-container>
 
     </div>
 
   </div>
+
+</div>

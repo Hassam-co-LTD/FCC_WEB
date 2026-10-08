@@ -1,77 +1,382 @@
 <form [formGroup]="form">
+
   <div class="section-header" (click)="toggleSection('adviceCharges')">
     <h2>Collection Instruction</h2>
-    <mat-icon>{{ activeSection === 'adviceCharges' ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+    <mat-icon>
+      {{ activeSection === 'adviceCharges' ? 'expand_less' : 'expand_more' }}
+    </mat-icon>
   </div>
 
-  <div class="collapsible" [class.open]="activeSection === 'adviceCharges'">
-    
+
+  <div
+    class="collapsible"
+    [class.open]="activeSection === 'adviceCharges'"
+  >
+
     @if (activeSection !== 'adviceCharges') {
       <div class="preview-block">
-        <div><strong>Advice Payment By:</strong> {{ form.value.advicePaymentBy || '—' }}</div>
-        <div><strong>Reason of Refusal:</strong> {{ form.value.adviceReasonOfRefusalBy || '—' }}</div>
-        <div><strong>Opening Charges:</strong> {{ form.value.openingCharges | titlecase }}</div>
+
+        <div>
+          <strong>Advice Payment By:</strong>
+          {{ form.value.advicePaymentBy || '—' }}
+        </div>
+
+        <div>
+          <strong>Reason of Refusal:</strong>
+          {{ form.value.adviceReasonOfRefusalBy || '—' }}
+        </div>
+
+        <div>
+          <strong>Opening Charges:</strong>
+          {{ form.value.openingCharges | titlecase }}
+        </div>
+
       </div>
     }
 
+
     <div class="form-grid">
-      
+
+
+      <!-- ================= ADVICE DETAILS ================= -->
+
       <div class="field-group">
-        <mat-form-field appearance="outline">
-          <mat-label>Advice Payment By *</mat-label>
-          <mat-select formControlName="advicePaymentBy">
-            @for (option of advicePaymentOptions; track option) {
-              <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Advice Acceptance and Due Date By</mat-label>
-          <input matInput type="text" formControlName="adviceAcceptanceAndDueDateBy" placeholder="Select option" />
-        </mat-form-field>
+        <!-- Advice Payment By -->
+        <div class="field-with-previous">
 
-        <mat-form-field appearance="outline">
-          <mat-label>Advice Reason of Refusal By *</mat-label>
-          <mat-select formControlName="adviceReasonOfRefusalBy">
-            <mat-option value="Swift">Swift</mat-option>
-            <mat-option value="couriermail">Courier Mail</mat-option>
-          </mat-select>
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+
+            <mat-label>Advice Payment By *</mat-label>
+
+            <mat-select formControlName="advicePaymentBy">
+
+              @for (option of advicePaymentOptions; track option) {
+                <mat-option [value]="option.value">
+                  {{ option.viewValue }}
+                </mat-option>
+              }
+
+            </mat-select>
+
+          </mat-form-field>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('advicePaymentBy')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['advicePaymentBy'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Advice Acceptance and Due Date By -->
+        <div class="field-with-previous">
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>
+              Advice Acceptance and Due Date By
+            </mat-label>
+
+            <input
+              matInput
+              type="text"
+              formControlName="adviceAcceptanceAndDueDateBy"
+              placeholder="Select option"
+            />
+
+          </mat-form-field>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('adviceAcceptanceAndDueDateBy')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['adviceAcceptanceAndDueDateBy'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Advice Reason of Refusal -->
+        <div class="field-with-previous">
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>
+              Advice Reason of Refusal By *
+            </mat-label>
+
+            <mat-select formControlName="adviceReasonOfRefusalBy">
+
+              <mat-option value="Swift">
+                Swift
+              </mat-option>
+
+              <mat-option value="couriermail">
+                Courier Mail
+              </mat-option>
+
+            </mat-select>
+
+          </mat-form-field>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('adviceReasonOfRefusalBy')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['adviceReasonOfRefusalBy'] }}
+            </span>
+          </div>
+
+        </div>
+
       </div>
+
+
+      <!-- ================= GENERAL INSTRUCTIONS ================= -->
 
       <div class="field-group checkbox-list">
+
         <h4>General Instructions</h4>
-        <mat-checkbox formControlName="waiveAllChargesIfRefusedByDrawee">Waive all charges if refused by Drawee</mat-checkbox>
-        <mat-checkbox formControlName="protestInCaseOfNonPayment">Protest in case of non-payment</mat-checkbox>
-        <mat-checkbox formControlName="protestInCaseOfNonAcceptance">Protest in case of non-acceptance</mat-checkbox>
-        <mat-checkbox formControlName="acceptanceMayBeDeferredPendingArrival">Acceptance may be deferred pending arrival</mat-checkbox>
-        <mat-checkbox formControlName="warehouseOrInsureGoodsIfNecessary">If necessary, warehouse/insure goods</mat-checkbox>
+
+
+        <!-- Waive Charges -->
+        <div class="checkbox-with-previous">
+
+          <mat-checkbox
+            formControlName="waiveAllChargesIfRefusedByDrawee"
+          >
+            Waive all charges if refused by Drawee
+          </mat-checkbox>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('waiveAllChargesIfRefusedByDrawee')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['waiveAllChargesIfRefusedByDrawee'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Protest Non Payment -->
+        <div class="checkbox-with-previous">
+
+          <mat-checkbox
+            formControlName="protestInCaseOfNonPayment"
+          >
+            Protest in case of non-payment
+          </mat-checkbox>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('protestInCaseOfNonPayment')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['protestInCaseOfNonPayment'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Protest Non Acceptance -->
+        <div class="checkbox-with-previous">
+
+          <mat-checkbox
+            formControlName="protestInCaseOfNonAcceptance"
+          >
+            Protest in case of non-acceptance
+          </mat-checkbox>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('protestInCaseOfNonAcceptance')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['protestInCaseOfNonAcceptance'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Acceptance Deferred -->
+        <div class="checkbox-with-previous">
+
+          <mat-checkbox
+            formControlName="acceptanceMayBeDeferredPendingArrival"
+          >
+            Acceptance may be deferred pending arrival
+          </mat-checkbox>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('acceptanceMayBeDeferredPendingArrival')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['acceptanceMayBeDeferredPendingArrival'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Warehouse / Insure -->
+        <div class="checkbox-with-previous">
+
+          <mat-checkbox
+            formControlName="warehouseOrInsureGoodsIfNecessary"
+          >
+            If necessary, warehouse/insure goods
+          </mat-checkbox>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('warehouseOrInsureGoodsIfNecessary')"
+          >
+            <span class="previous-label">Previous Value:</span>
+
+            <span class="previous-text">
+              {{ previousValues['warehouseOrInsureGoodsIfNecessary'] }}
+            </span>
+          </div>
+
+        </div>
+
       </div>
 
+
+      <!-- ================= OPENING CHARGES ================= -->
+
       <div class="radio-item-box">
-        <mat-label><strong>Opening Charges</strong></mat-label>
+
+        <mat-label>
+          <strong>Opening Charges</strong>
+        </mat-label>
+
         <mat-radio-group formControlName="openingCharges">
-          <mat-radio-button value="Drawee">Drawee</mat-radio-button>
-          <mat-radio-button value="Drawer">Drawer</mat-radio-button>
+
+          <mat-radio-button value="Drawee">
+            Drawee
+          </mat-radio-button>
+
+          <mat-radio-button value="Drawer">
+            Drawer
+          </mat-radio-button>
+
         </mat-radio-group>
+
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('openingCharges')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['openingCharges'] }}
+          </span>
+        </div>
+
       </div>
 
+
+      <!-- ================= OUTSIDE COUNTRY CHARGES ================= -->
+
       <div class="radio-item-box">
-        <mat-label><strong>Outside Country Charges</strong></mat-label>
+
+        <mat-label>
+          <strong>Outside Country Charges</strong>
+        </mat-label>
+
         <mat-radio-group formControlName="outsideCountryCharges">
-          <mat-radio-button value="Drawee">Drawee</mat-radio-button>
-          <mat-radio-button value="Drawer">Drawer</mat-radio-button>
+
+          <mat-radio-button value="Drawee">
+            Drawee
+          </mat-radio-button>
+
+          <mat-radio-button value="Drawer">
+            Drawer
+          </mat-radio-button>
+
         </mat-radio-group>
+
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('outsideCountryCharges')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['outsideCountryCharges'] }}
+          </span>
+        </div>
+
       </div>
+
+
+      <!-- ================= REFER TO ================= -->
 
       <div class="full-width">
+
         <mat-form-field appearance="outline">
-          <mat-label>In case of Need Refer To</mat-label>
-          <textarea matInput rows="4" formControlName="referTo" placeholder="Enter details..."></textarea>
+
+          <mat-label>
+            In case of Need Refer To
+          </mat-label>
+
+          <textarea
+            matInput
+            rows="4"
+            formControlName="referTo"
+            placeholder="Enter details..."
+          ></textarea>
+
         </mat-form-field>
+
+
+        <div
+          class="previous-value"
+          *ngIf="hasPreviousValue('referTo')"
+        >
+          <span class="previous-label">Previous Value:</span>
+
+          <span class="previous-text">
+            {{ previousValues['referTo'] }}
+          </span>
+        </div>
+
       </div>
 
+
     </div>
+
   </div>
+
 </form>
