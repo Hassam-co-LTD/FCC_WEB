@@ -537,6 +537,33 @@
         <p class="empty-text">No attachments uploaded.</p>
       </ng-template>
     </mat-card>
+
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="dynamicFieldsArray.length > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.label || field.value?.fieldName || field.value?.name
+            || '-' }}
+          </div>
+
+          <div class="preview-value">{{ field.value?.value || '-' }}</div>
+        </div>
+      </div>
+    </mat-card>
   </div>
 </div>
 
@@ -547,7 +574,7 @@
 <div class="actions">
   <button mat-stroked-button (click)="back()">Back</button>
 
-  <ng-container     >
+  <ng-container>
     <button
       mat-flat-button
       color="primary"
@@ -564,7 +591,7 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-       *ngIf="
+      *ngIf="
       currentTx?.status === 'S' &&
       hasPermission('UI_AmendPreviewReject')
     "
@@ -576,7 +603,7 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-         *ngIf="
+      *ngIf="
       currentTx?.status === 'S' &&
       hasPermission('UI_AmendPreviewApprove')
     "

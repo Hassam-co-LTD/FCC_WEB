@@ -124,11 +124,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedService } from '../../../../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
-
+import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    RouterModule,
+    DynamicFields,
+  ],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
@@ -165,6 +171,7 @@ export class PreviewSection {
           attachments: this.fb.array(data.attachments?.attachments || []),
           documents: this.fb.array(data.attachments?.documents || []),
         }),
+        dynamicFields: this.fb.array(data.dynamicFields || []),
       });
     }
 
@@ -187,6 +194,10 @@ export class PreviewSection {
       (this.form.get('attachments.attachments') as FormArray) ||
       new FormArray([])
     );
+  }
+
+  get dynamicFieldsArray(): FormArray {
+    return this.form.get('dynamicFields') as FormArray;
   }
 
   get documentsArray(): FormArray {

@@ -146,6 +146,7 @@ export class Preview {
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
+      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
     });
 
     if (this.viewMode === 'readonly') {
@@ -156,6 +157,9 @@ export class Preview {
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
   }
+  get dynamicFieldsArray(): FormArray {
+    return this.importForm.get('dynamicFields') as FormArray;
+  }
 
   back() {
     this.router.navigate([
@@ -164,8 +168,7 @@ export class Preview {
   }
 
   submitLc(): void {
-
-        if (!this.hasPermission('ILC_AmendSubmit')) return;
+    if (!this.hasPermission('ILC_AmendSubmit')) return;
 
     if (this.viewMode === 'readonly') return;
 
@@ -173,7 +176,7 @@ export class Preview {
 
     if (!tnxId) {
       this.snackBar.open('Transaction ID missing', 'Close', {
-        duration: 3000
+        duration: 3000,
       });
       return;
     }
@@ -196,15 +199,11 @@ export class Preview {
   }
 
   approveTransaction(): void {
-
-        if (!this.hasPermission('ILC_AmendApprove')) return;
+    if (!this.hasPermission('ILC_AmendApprove')) return;
 
     if (!this.currentTx?.tnxId) return;
 
-    this.api.approveAmendment(
-      this.currentTx.tnxId,
-      this.currentTx
-    ).subscribe({
+    this.api.approveAmendment(this.currentTx.tnxId, this.currentTx).subscribe({
       next: (res) => {
         this.snackBar.open('Transaction approved', 'Close', { duration: 3000 });
         this.router.navigate(
@@ -220,8 +219,7 @@ export class Preview {
   }
 
   rejectTransaction(): void {
-
-     if (!this.hasPermission('ILC_AmendReject')) return;
+    if (!this.hasPermission('ILC_AmendReject')) return;
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
@@ -253,7 +251,6 @@ export class Preview {
   }
 
   downloadFile(index: number) {
-
     if (!this.hasPermission('ILCAmendPreview')) {
       return;
     }
@@ -271,13 +268,9 @@ export class Preview {
       return;
     }
 
-    if (
-      typeof file === 'string' &&
-      file.startsWith('data:')
-    ) {
+    if (typeof file === 'string' && file.startsWith('data:')) {
       const arr = file.split(',');
-      const mime =
-        arr[0].match(/:(.*?);/)?.[1] ?? '';
+      const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
 
       const bstr = atob(arr[1]);
       const u8arr = new Uint8Array(bstr.length);
@@ -287,7 +280,7 @@ export class Preview {
       }
 
       const blob = new Blob([u8arr], {
-        type: mime
+        type: mime,
       });
 
       const url = URL.createObjectURL(blob);
@@ -299,20 +292,14 @@ export class Preview {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(
-    url: string,
-    fileName: string
-  ): void {
+  private triggerDownload(url: string, fileName: string): void {
     const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
     a.click();
   }
 
-  trackByIndex(
-    index: number,
-    item: any
-  ): any {
+  trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }
 }

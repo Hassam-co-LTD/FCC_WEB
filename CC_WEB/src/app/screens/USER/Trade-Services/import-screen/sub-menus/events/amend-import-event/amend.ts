@@ -27,12 +27,9 @@ import { ApplicantBeneficiary } from './components/applicant-beneficiary/applica
 import { GeneralDetails } from './components/general-details/general-details';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { finalize } from 'rxjs';
-<<<<<<< HEAD
 import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
-=======
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
 
->>>>>>> 8565a6073c837979c4755225969dacf4f6128bd4
 @Component({
   selector: 'app-amend-screen',
   standalone: true,
@@ -551,20 +548,20 @@ export class AmendScreen implements OnInit {
       amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
-          
+
           this.patchForm(event);
 
-           // Show "Previous Value" for an amendment that was rejected and then resubmitted
-    if (event.status === 'S' || event.status === 'I') {
-      this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
-        next: (rejectedTx) => {
-          if (!rejectedTx) return;
-          this.storeRejectedTransaction = rejectedTx;
-          this.compareImportLcData();
-        },
-        error: (err) => console.log('No rejected snapshot:', err),
-      });
-    }
+          // Show "Previous Value" for an amendment that was rejected and then resubmitted
+          if (event.status === 'S' || event.status === 'I') {
+            this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
+              next: (rejectedTx) => {
+                if (!rejectedTx) return;
+                this.storeRejectedTransaction = rejectedTx;
+                this.compareImportLcData();
+              },
+              error: (err) => console.log('No rejected snapshot:', err),
+            });
+          }
           switch (event.status) {
             case 'I':
               this.mode = 'UPDATE';
@@ -615,7 +612,7 @@ export class AmendScreen implements OnInit {
     this.api.getTransactionByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
-        
+
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -916,38 +913,48 @@ export class AmendScreen implements OnInit {
       ),
     );
   }
-update(): void {
-  const eventRefNo = this.currentTx?.eventRefNo;
+  update(): void {
+    const eventRefNo = this.currentTx?.eventRefNo;
 
-  if (this.importForm.invalid || !eventRefNo) {
-    this.snackBar.open('Invalid form or missing amendment reference', 'Close', {
-      duration: 3000,
-    });
-    return;
-  }
-
-  const payload = {
-    ...this.flattenForm(),
-    event: 'AMD',
-    tnxId: this.currentTx.tnxId,
-  };
-
-  this.api.updatePendingAmendmentTransaction(eventRefNo, payload).subscribe({
-    next: (res) => {
-      this.currentTx = { ...this.currentTx, ...res };
-      this.snackBar.open(`Amendment updated (Ref: ${res.eventRefNo})`, 'Close', {
-        duration: 3000,
-      });
-      this.router.navigate(
-        ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
-        { queryParams: { tab: 'pending' } },
+    if (this.importForm.invalid || !eventRefNo) {
+      this.snackBar.open(
+        'Invalid form or missing amendment reference',
+        'Close',
+        {
+          duration: 3000,
+        },
       );
-    },
-    error: () => {
-      this.snackBar.open('Failed to update amendment', 'Close', { duration: 3000 });
-    },
-  });
-}
+      return;
+    }
+
+    const payload = {
+      ...this.flattenForm(),
+      event: 'AMD',
+      tnxId: this.currentTx.tnxId,
+    };
+
+    this.api.updatePendingAmendmentTransaction(eventRefNo, payload).subscribe({
+      next: (res) => {
+        this.currentTx = { ...this.currentTx, ...res };
+        this.snackBar.open(
+          `Amendment updated (Ref: ${res.eventRefNo})`,
+          'Close',
+          {
+            duration: 3000,
+          },
+        );
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
+          { queryParams: { tab: 'pending' } },
+        );
+      },
+      error: () => {
+        this.snackBar.open('Failed to update amendment', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
 
   approve(): void {
     const eventRefNo = this.currentTx?.eventRefNo;
@@ -1064,7 +1071,6 @@ update(): void {
       });
   }
 
-
   // Dynamic fields section start
 
   storeDynamicFieldsResponse: any[] = [];
@@ -1123,98 +1129,97 @@ update(): void {
     this.dynamicFieldsForm.patchValue(patchObj);
   }
 
- // old and new values working
-previousDynamicValues: { [key: string]: any } = {};
-storeRejectedTransaction: ImportLcTransaction | null = null;
-    previousValues: { [key: string]: any } = {};
-    private readonly ImportLcFields = [
-  // General Details
-  'productType',
-  'modeOfTransmission',
-  'expiryDate',
-  'placeOfExpiry',
-  'featureIrrevocable',
-  'featureRevolving',
-  'featureTransferable',
-  'applicableRules',
-  'confirmationInstruction',
+  // old and new values working
+  previousDynamicValues: { [key: string]: any } = {};
+  storeRejectedTransaction: ImportLcTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  private readonly ImportLcFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'expiryDate',
+    'placeOfExpiry',
+    'featureIrrevocable',
+    'featureRevolving',
+    'featureTransferable',
+    'applicableRules',
+    'confirmationInstruction',
 
-  // Applicant / Beneficiary Details
-  'applicantName',
-  'applicantAddress1',
-  'applicantAddress2',
-  'applicantAddress3',
-  'applicantAddress4',
-  'applicantCountry',
-  'beneficiaryName',
-  'beneficiaryAddress1',
-  'beneficiaryAddress2',
-  'beneficiaryAddress3',
-  'beneficiaryAddress4',
-  'beneficiaryCountry',
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
 
-  // Bank Details
-  'issuingBankName',
-  'issuerReference',
-  'advisingBankName',
-  'adviseThroughBankName',
+    // Bank Details
+    'issuingBankName',
+    'issuerReference',
+    'advisingBankName',
+    'adviseThroughBankName',
 
-  // Amount / Charges Details
-  'currency',
-  'amount',
-  'variationType',
-  'variationPlus',
-  'variationMinus',
-  'issuingBankCharges',
-  'outsideCountryCharges',
-  'additionalAmount',
+    // Amount / Charges Details
+    'currency',
+    'amount',
+    'variationType',
+    'variationPlus',
+    'variationMinus',
+    'issuingBankCharges',
+    'outsideCountryCharges',
+    'additionalAmount',
 
-  // Payment Details
-  'creditAvailableWith',
-  'bankName',
-  'creditAvailableBy',
-  'paymentDraftAt',
+    // Payment Details
+    'creditAvailableWith',
+    'bankName',
+    'creditAvailableBy',
+    'paymentDraftAt',
 
-  // Shipment Details
-  'shipmentFrom',
-  'shipmentTo',
-  'placeOfLoading',
-  'placeOfDischarge',
-  'lastShipmentDate',
-  'shipmentPeriodNarrative',
-  'partialShipment',
-  'transhipment',
+    // Shipment Details
+    'shipmentFrom',
+    'shipmentTo',
+    'placeOfLoading',
+    'placeOfDischarge',
+    'lastShipmentDate',
+    'shipmentPeriodNarrative',
+    'partialShipment',
+    'transhipment',
 
-  // Narrative Details
-  'descriptionOfGoods',
-  'documentsRequired',
-  'additionalInstructions',
-  'otherDetails',
+    // Narrative Details
+    'descriptionOfGoods',
+    'documentsRequired',
+    'additionalInstructions',
+    'otherDetails',
 
-  // Instructions
-  'principalAccount',
-  'feeAccount',
-  'otherInstructions',
-];
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
   private compareImportLcData(): void {
-  this.previousValues = this.transactionComparisonService.compare(
-    this.currentTx,
-    this.storeRejectedTransaction,
-    this.ImportLcFields,
-  );
-
-  this.previousDynamicValues =
-    this.transactionComparisonService.compareDynamicFields(
-      this.currentTx?.dynamicFields ?? [],
-      this.storeRejectedTransaction?.dynamicFields ?? [],
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.ImportLcFields,
     );
 
-  console.log('Previous import LC values:', this.previousValues);
-  console.log('Previous dynamic values:', this.previousDynamicValues);
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
 
-}
+    console.log('Previous import LC values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
 
-    hasPreviousValue(field: string): boolean {
+  hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&
       Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
@@ -1231,7 +1236,4 @@ storeRejectedTransaction: ImportLcTransaction | null = null;
   getPreviousValue(field: string): any {
     return this.previousValues?.[field] ?? '';
   }
-
-
 }
-

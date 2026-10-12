@@ -8,16 +8,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { NgIf } from '@angular/common';
 // --- SERVICE IMPORT ---
-import { 
-  UndertakingIssuanceService
-} from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { UndertakingIssuanceService } from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 import { UndertakingGuarantee } from '../../../../../../core/models/undertaking-lc';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -171,6 +169,7 @@ export class Preview implements OnInit {
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
+      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
@@ -182,6 +181,10 @@ export class Preview implements OnInit {
 
   get attachmentsArray(): FormArray {
     return this.undertakingForm.get('attachments') as FormArray;
+  }
+
+  get dynamicFieldsArray(): FormArray {
+    return this.undertakingForm.get('dynamicFields') as FormArray;
   }
 
   back() {
@@ -365,13 +368,8 @@ export class Preview implements OnInit {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(
-    url: string,
-    fileName: string
-  ): void {
-
-    const a =
-      document.createElement('a');
+  private triggerDownload(url: string, fileName: string): void {
+    const a = document.createElement('a');
 
     a.href = url;
     a.download = fileName;

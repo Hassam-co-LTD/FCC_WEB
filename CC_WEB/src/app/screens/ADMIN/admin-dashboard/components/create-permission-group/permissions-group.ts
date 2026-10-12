@@ -284,7 +284,7 @@ export class CreatePermissionGroup implements OnInit {
       });
   }
 
-  amend(permissionGroupId: String): void {
+  amend(permissionGroupId: string): void {
     if (!this.storePermissionGroup?.permissionGroupId) return;
     const payload = this.authService.getAmendPayload();
 

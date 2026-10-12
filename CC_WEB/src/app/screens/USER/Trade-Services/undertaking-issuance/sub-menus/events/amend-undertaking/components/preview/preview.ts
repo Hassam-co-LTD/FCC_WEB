@@ -15,7 +15,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -167,6 +167,7 @@ export class Preview implements OnInit {
       deliveryTo: [this.currentTx!.deliveryTo],
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
+      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
       otherInstructions: [this.currentTx!.otherInstructions],
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
@@ -181,6 +182,10 @@ export class Preview implements OnInit {
     return this.undertakingForm.get('attachments') as FormArray;
   }
 
+  get dynamicFieldsArray(): FormArray {
+    return this.undertakingForm.get('dynamicFields') as FormArray;
+  }
+
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
@@ -189,19 +194,19 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
-     if (!this.hasPermission('UI_AmendPreviewSubmit')) {
-       console.warn('User does not have UI_AmendPreviewSubmit permission');
+    if (!this.hasPermission('UI_AmendPreviewSubmit')) {
+      console.warn('User does not have UI_AmendPreviewSubmit permission');
 
-       this.snackBar.open(
-         'You do not have permission to submit this transaction',
-         'Close',
-         {
-           duration: 3000,
-         },
-       );
+      this.snackBar.open(
+        'You do not have permission to submit this transaction',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-       return;
-     }
+      return;
+    }
 
     if (this.viewMode === 'readonly') return;
 
@@ -229,7 +234,6 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-
     if (!this.hasPermission('UI_AmendPreviewApprove')) {
       console.warn('User does not have UI_AmendPreviewApprove permission');
 
@@ -277,7 +281,6 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
-
     if (!this.hasPermission('UI_AmendPreviewReject')) {
       console.warn('User does not have UI_AmendPreviewReject permission');
 

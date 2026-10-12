@@ -10,27 +10,31 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, MatCard, MatIconModule],
   templateUrl: './preview.html',
-  styleUrls: ['./preview.scss']
+  styleUrls: ['./preview.scss'],
 })
 export class ExportPreview implements OnInit {
-
   form: any = {};
   attachmentsArray: any[] = [];
 
-  constructor(private sharedService: SharedService, private router: Router) {}
+  constructor(
+    private sharedService: SharedService,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     const data = this.sharedService.getFormData() || {};
     this.form = data;
 
     if (data.attachments?.preview?.length) {
-      this.attachmentsArray = data.attachments.preview.map((item: any, index: number) => ({
-        title: item.title,
-        fileName: item.fileName,
-        size: item.size,
-        type: item.type,
-        file: data.attachments.files[index] // actual File object
-      }));
+      this.attachmentsArray = data.attachments.preview.map(
+        (item: any, index: number) => ({
+          title: item.title,
+          fileName: item.fileName,
+          size: item.size,
+          type: item.type,
+          file: data.attachments.files[index], // actual File object
+        }),
+      );
     } else {
       this.attachmentsArray = [];
     }
@@ -52,16 +56,15 @@ export class ExportPreview implements OnInit {
   }
 
   submit() {
-  const formData = this.sharedService.getFormData();
+    const formData = this.sharedService.getFormData();
 
-  this.router.navigate(['/export-screen/success'], {
-    state: {
-      type: 'export',
-      data: formData,
-      pageName1: 'Export Collection',  // dynamic button label
-      pageName2: 'New Export Listing'  // dynamic button label
-    }
-  });
-}
-
+    this.router.navigate(['/export-screen/success'], {
+      state: {
+        type: 'export',
+        data: formData,
+        pageName1: 'Export Collection', // dynamic button label
+        pageName2: 'New Export Listing', // dynamic button label
+      },
+    });
+  }
 }
