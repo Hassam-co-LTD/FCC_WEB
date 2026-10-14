@@ -152,7 +152,12 @@ export class Preview implements OnInit {
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
-      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
     if (this.viewMode === 'readonly') {
@@ -165,7 +170,7 @@ export class Preview implements OnInit {
   }
 
   get dynamicFieldsArray(): FormArray {
-    return this.importForm.get('DynamicFields') as FormArray;
+    return this.importForm.get('dynamicFields') as FormArray;
   }
 
   back() {

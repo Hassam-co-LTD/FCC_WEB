@@ -169,7 +169,12 @@ export class Preview implements OnInit {
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
-      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
@@ -186,7 +191,6 @@ export class Preview implements OnInit {
   get dynamicFieldsArray(): FormArray {
     return this.undertakingForm.get('dynamicFields') as FormArray;
   }
-
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',

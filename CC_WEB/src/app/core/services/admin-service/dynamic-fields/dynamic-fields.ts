@@ -16,36 +16,39 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './dynamic-fields.html',
-  styleUrl: './dynamic-fields.scss'
+  styleUrl: './dynamic-fields.scss',
 })
 export class DynamicFields {
-
   @Input() fields: any[] = [];
 
   @Input() form!: FormGroup;
 
   @Input() isOpen = true;
-@Input() previousDynamicValues: { [key: string]: any } = {};
+  @Input() previousDynamicValues: { [key: string]: any } = {};
   toggleDynamicFields(): void {
     this.isOpen = !this.isOpen;
   }
   hasPreviousDynamicValue(fieldId: string): boolean {
-  return (
-    this.previousDynamicValues &&
-    Object.prototype.hasOwnProperty.call(
-      this.previousDynamicValues,
-      fieldId
-    ) &&
-    this.previousDynamicValues[fieldId] !== null &&
-    this.previousDynamicValues[fieldId] !== undefined &&
-    String(this.previousDynamicValues[fieldId]).trim() !== ''
-  );
-}
+    return (
+      this.previousDynamicValues &&
+      Object.prototype.hasOwnProperty.call(
+        this.previousDynamicValues,
+        fieldId,
+      ) &&
+      this.previousDynamicValues[fieldId] !== null &&
+      this.previousDynamicValues[fieldId] !== undefined &&
+      String(this.previousDynamicValues[fieldId]).trim() !== ''
+    );
+  }
 
-getPreviousDynamicValue(fieldId: string): any {
-  return this.previousDynamicValues?.[fieldId] ?? '';
-}
+  getPreviousDynamicValue(fieldId: string): any {
+    return this.previousDynamicValues?.[fieldId] ?? '';
+  }
+
+  trackByFieldId(index: number, field: any): string {
+    return field.fieldId;
+  }
 }

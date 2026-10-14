@@ -29,7 +29,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ExportCollectionTransaction } from '../../../../core/models/export-collection';
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
-import {TransactionComparisonService} from '../../../../core/services/admin-service/transaction-comparison.service';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
 @Component({
   selector: 'app-export-collection',
   standalone: true,
@@ -376,18 +376,17 @@ export class ExportCollection implements OnInit {
 
         console.log('loading transaction  from backend ', tx);
 
-
-        if(tx.status === 'S'){
-             this.api.getRejectedTransaction(tnxId, 'exportcollection').subscribe({
-               next: (rejectedTx) => {
-                 this.storeRejectedTransaction = rejectedTx;
-                 console.log('Rejected transaction data:', rejectedTx);
-                 this.compareExportCollectionData();
-               },
-               error: (err:any) => {  
-                   console.log('Error fetching rejected transaction:', err);
-               }
-             });
+        if (tx.status === 'S') {
+          this.api.getRejectedTransaction(tnxId, 'exportcollection').subscribe({
+            next: (rejectedTx) => {
+              this.storeRejectedTransaction = rejectedTx;
+              console.log('Rejected transaction data:', rejectedTx);
+              this.compareExportCollectionData();
+            },
+            error: (err: any) => {
+              console.log('Error fetching rejected transaction:', err);
+            },
+          });
         }
         this.patchForm(tx);
 
@@ -531,7 +530,7 @@ export class ExportCollection implements OnInit {
 
     const dynamicFields = this.fields.map((field: any) => ({
       fieldId: field.fieldId,
-      value: dynamicFormValues[field.fieldName] ?? '',
+      value: dynamicFormValues[field.fieldId] ?? '',
     }));
     return {
       companyId: this.companyId,
@@ -924,31 +923,37 @@ export class ExportCollection implements OnInit {
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log(
-      'Loading dynamic fields for ExportCollection screen with status A...',
-    );
-    this.api.getFieldsByScreenAndStatus('ExportCollection', 'A').subscribe({
-      next: (res: any) => {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+      next: (res: any[]) => {
         console.log('Field definitions:', res);
 
-        this.fields = res;
-        console.log('Dynamic fields loaded:', this.fields);
+        this.fields = res || [];
+
         const group: any = {};
 
         this.fields.forEach((field: any) => {
-          group[field.fieldName] = [''];
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
         });
 
         this.dynamicFieldsForm = this.fb.group(group);
 
-        // patch values if customer already loaded
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
         this.patchDynamicValues();
       },
 
-      error: (err: any) => console.error('Error loading dynamic fields:', err),
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
     });
   }
-
   // ---------------- PATCH DYNAMIC VALUES ----------------
 
   private patchDynamicValues(): void {
@@ -956,18 +961,20 @@ export class ExportCollection implements OnInit {
       !this.dynamicFieldsForm ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
-    )
+    ) {
       return;
+    }
 
     const patchObj: any = {};
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (f: any) => f.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 
@@ -978,91 +985,90 @@ export class ExportCollection implements OnInit {
 
   // old and new values working
 
-
-storeRejectedTransaction: ExportCollectionTransaction | null = null;
-    previousValues: { [key: string]: any } = {};
-previousDynamicValues: { [key: string]: any } = {};
+  storeRejectedTransaction: ExportCollectionTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  previousDynamicValues: { [key: string]: any } = {};
   private readonly exportCollectionFields = [
-  // General Details
-  'collectionType',
-  'customerReference',
-  'draweeReference',
+    // General Details
+    'collectionType',
+    'customerReference',
+    'draweeReference',
 
-  // Drawer / Drawee Details
-  'drawerName',
-  'drawerAddress1',
-  'drawerAddress2',
-  'drawerAddress3',
-  'drawerAddress4',
-  'draweeName',
-  'beneficiaryName',
-  'draweeAddress1',
-  'draweeAddress2',
-  'draweeAddress3',
-  'draweeAddress4',
+    // Drawer / Drawee Details
+    'drawerName',
+    'drawerAddress1',
+    'drawerAddress2',
+    'drawerAddress3',
+    'drawerAddress4',
+    'draweeName',
+    'beneficiaryName',
+    'draweeAddress1',
+    'draweeAddress2',
+    'draweeAddress3',
+    'draweeAddress4',
 
-  // Bank Details
-  'remittingBankName',
-  'issuerReference',
-  'principalAccount',
-  'feeAccount',
-  'presentingBankName',
-  'bankAddress1',
-  'bankAddress2',
-  'bankAddress3',
-  'bankAddress4',
-  'collectingBankName',
-  'swiftCode',
-  'collectingReference',
+    // Bank Details
+    'remittingBankName',
+    'issuerReference',
+    'principalAccount',
+    'feeAccount',
+    'presentingBankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'collectingBankName',
+    'swiftCode',
+    'collectingReference',
 
-  // Payment and Amount
-  'currency',
-  'amount',
-  'paymentType',
-  'tenor',
-  'paymentReference',
+    // Payment and Amount
+    'currency',
+    'amount',
+    'paymentType',
+    'tenor',
+    'paymentReference',
 
-  // Shipment Details
-  'shippingMethod',
-  'shipmentReference',
-  'shippingFrom',
-  'shippingTo',
-  'shipmentDate',
-  'incotermsRules',
-  'incoterms',
+    // Shipment Details
+    'shippingMethod',
+    'shipmentReference',
+    'shippingFrom',
+    'shippingTo',
+    'shipmentDate',
+    'incotermsRules',
+    'incoterms',
 
-  // Collection Instruction
-  'advicePaymentBy',
-  'adviceAcceptanceAndDueDateBy',
-  'adviceReasonOfRefusalBy',
-  'waiveAllChargesIfRefusedByDrawee',
-  'protestInCaseOfNonPayment',
-  'protestInCaseOfNonAcceptance',
-  'acceptanceMayBeDeferredPendingArrival',
-  'warehouseOrInsureGoodsIfNecessary',
-  'openingCharges',
-  'outsideCountryCharges',
-  'referTo',
-];
+    // Collection Instruction
+    'advicePaymentBy',
+    'adviceAcceptanceAndDueDateBy',
+    'adviceReasonOfRefusalBy',
+    'waiveAllChargesIfRefusedByDrawee',
+    'protestInCaseOfNonPayment',
+    'protestInCaseOfNonAcceptance',
+    'acceptanceMayBeDeferredPendingArrival',
+    'warehouseOrInsureGoodsIfNecessary',
+    'openingCharges',
+    'outsideCountryCharges',
+    'referTo',
+  ];
 
- private compareExportCollectionData(): void {
-  this.previousValues = this.transactionComparisonService.compare(
-    this.currentTx,
-    this.storeRejectedTransaction,
-    this.exportCollectionFields,
-  );
-
-  this.previousDynamicValues =
-    this.transactionComparisonService.compareDynamicFields(
-      this.currentTx?.dynamicFields ?? [],
-      this.storeRejectedTransaction?.dynamicFields ?? [],
+  private compareExportCollectionData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.exportCollectionFields,
     );
 
-  console.log('Previous export collection values:', this.previousValues);
-  console.log('Previous dynamic values:', this.previousDynamicValues);
-}
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
 
-    hasPreviousValue(field: string): boolean {
+    console.log('Previous export collection values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&
       Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
@@ -1079,6 +1085,4 @@ previousDynamicValues: { [key: string]: any } = {};
   getPreviousValue(field: string): any {
     return this.previousValues?.[field] ?? '';
   }
-
-
 }

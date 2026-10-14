@@ -167,7 +167,13 @@ export class Preview implements OnInit {
       deliveryTo: [this.currentTx!.deliveryTo],
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
-      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
+
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
       otherInstructions: [this.currentTx!.otherInstructions],
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });

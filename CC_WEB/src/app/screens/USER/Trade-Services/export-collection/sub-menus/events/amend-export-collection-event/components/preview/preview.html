@@ -316,14 +316,17 @@
 
     <!-- DYNAMIC FIELDS -->
     <div
+      *ngFor="let field of dynamicFieldsArray.controls; let i = index; trackBy: trackByIndex"
       class="preview-item"
-      *ngFor="let field of dynamicFieldsArray; let i = index; trackBy: trackByIndex"
     >
       <div class="preview-label">
-        {{ field?.label || field?.fieldName || field?.name || '-' }}
+        {{ field.value?.fieldName || field.value?.label || 'Dynamic Field' }}
       </div>
 
-      <div class="preview-value">{{ field?.value || '-' }}</div>
+      <div class="preview-value">
+        {{ field.value?.value ?? field.value?.fieldValue ??
+        field.value?.enteredValue ?? '—' }}
+      </div>
     </div>
 
     <div class="preview-block full-width">

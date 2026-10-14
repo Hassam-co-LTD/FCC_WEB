@@ -716,6 +716,12 @@ export class AmendScreen implements OnInit {
   }
 
   private flattenForm(): ImportLcTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
 
@@ -730,9 +736,7 @@ export class AmendScreen implements OnInit {
 
       attachments: this.importForm.value.attachments,
 
-      dynamicFields: this.dynamicFieldsForm
-        ? this.dynamicFieldsForm.getRawValue()
-        : {},
+      dynamicFields: dynamicFields,
     };
   }
 
@@ -803,6 +807,7 @@ export class AmendScreen implements OnInit {
     }
 
     const payload = this.flattenForm();
+
     console.log('Payload before saving draft:', payload);
     const tnxId = this.currentTx?.tnxId; // ← master LC tnxId, used for PUT /amend/{tnxId}
 
@@ -932,10 +937,11 @@ export class AmendScreen implements OnInit {
       event: 'AMD',
       tnxId: this.currentTx.tnxId,
     };
-
+    console.log('updated payload before ', payload);
     this.api.updatePendingAmendmentTransaction(eventRefNo, payload).subscribe({
       next: (res) => {
         this.currentTx = { ...this.currentTx, ...res };
+        console.log('updated payload after ', this.currentTx);
         this.snackBar.open(
           `Amendment updated (Ref: ${res.eventRefNo})`,
           'Close',
@@ -1079,48 +1085,58 @@ export class AmendScreen implements OnInit {
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log(
-      'Loading dynamic fields for ExportCollection screen with status A...',
-    );
-    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
-      next: (res: any) => {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+      next: (res: any[]) => {
         console.log('Field definitions:', res);
 
-        this.fields = res;
-        console.log('Dynamic fields loaded:', this.fields);
+        this.fields = res || [];
+
         const group: any = {};
 
         this.fields.forEach((field: any) => {
-          group[field.fieldName] = [''];
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
         });
 
         this.dynamicFieldsForm = this.fb.group(group);
 
-        // patch values if customer already loaded
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
         this.patchDynamicValues();
       },
 
-      error: (err: any) => console.error('Error loading dynamic fields:', err),
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
     });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
+
   private patchDynamicValues(): void {
     if (
       !this.dynamicFieldsForm ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
-    )
+    ) {
       return;
+    }
 
     const patchObj: any = {};
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (f: any) => f.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 

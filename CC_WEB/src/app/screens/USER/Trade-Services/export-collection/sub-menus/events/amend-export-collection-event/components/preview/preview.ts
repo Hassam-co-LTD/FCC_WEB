@@ -128,13 +128,7 @@ import { DynamicFields } from '../../../../../../../../../core/services/admin-se
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    RouterModule,
-    DynamicFields,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MatIconModule, RouterModule],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
@@ -153,7 +147,7 @@ export class PreviewSection {
 
   ngOnInit() {
     const data = this.dataService.getFormData();
-
+    console.log('loaded preview data ', data);
     if (data) {
       this.form = this.fb.group({
         generaldetails: this.fb.group(data.generaldetails || {}),
@@ -171,7 +165,12 @@ export class PreviewSection {
           attachments: this.fb.array(data.attachments?.attachments || []),
           documents: this.fb.array(data.attachments?.documents || []),
         }),
-        dynamicFields: this.fb.array(data.dynamicFields || []),
+
+        dynamicFields: this.fb.array(
+          (Array.isArray(data?.dynamicFields) ? data.dynamicFields : []).map(
+            (field: any) => this.fb.control(field),
+          ),
+        ),
       });
     }
 
@@ -179,6 +178,9 @@ export class PreviewSection {
     this.permissionNames = sessionData.permissionNames || [];
   }
 
+  trackByIndex(index: number): number {
+    return index;
+  }
   hasPermission(permission: string): boolean {
     return this.permissionNames.some(
       (p) => p.trim().toLowerCase() === permission.toLowerCase(),
@@ -199,7 +201,6 @@ export class PreviewSection {
   get dynamicFieldsArray(): FormArray {
     return this.form.get('dynamicFields') as FormArray;
   }
-
   get documentsArray(): FormArray {
     return (
       (this.form.get('attachments.documents') as FormArray) || new FormArray([])

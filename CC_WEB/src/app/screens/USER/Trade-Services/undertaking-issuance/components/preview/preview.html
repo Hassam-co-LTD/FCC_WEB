@@ -500,7 +500,6 @@
     </mat-card>
 
     <!-- ROW 7 → DYNAMIC FIELDS                               -->
-
     <mat-card
       class="preview-card full-width"
       *ngIf="dynamicFieldsArray.length > 0"
@@ -517,11 +516,13 @@
       "
         >
           <div class="preview-label">
-            {{ field.value?.label || field.value?.fieldName || field.value?.name
-            || '-' }}
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
           </div>
-
-          <div class="preview-value">{{ field.value?.value || '-' }}</div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
         </div>
       </div>
     </mat-card>

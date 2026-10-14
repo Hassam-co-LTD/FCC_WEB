@@ -890,53 +890,38 @@ export class Amend implements OnInit {
   // ============================================================
 
   private loadDynamicFields(): void {
-    console.log('Loading dynamic fields for Export Collection...');
+    console.log('Loading dynamic fields for ImportScreen with status A...');
 
-    /*
-     * IMPORTANT:
-     *
-     * Verify the exact screen name in your database.
-     *
-     * If your DB uses "importLcEvent" for this screen,
-     * keep that value.
-     *
-     * Otherwise use "exportCollectionEvent".
-     */
+    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
 
-    this.api
-      .getFieldsByScreenAndStatus('exportCollectionEvent', 'A')
-      .subscribe({
-        next: (res: any[]) => {
-          console.log('Field definitions:', res);
+        this.fields = res || [];
 
-          this.fields = res ?? [];
+        const group: any = {};
 
-          const group: any = {};
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
 
-          this.fields.forEach((field: any) => {
-            group[field.fieldName] = [''];
-          });
+        this.dynamicFieldsForm = this.fb.group(group);
 
-          this.dynamicFieldsForm = this.fb.group(group);
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
 
-          console.log('Dynamic fields form:', this.dynamicFieldsForm);
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
 
-          // ----------------------------------------------------
-          // Patch saved values
-          // ----------------------------------------------------
-
-          this.patchDynamicValues();
-        },
-
-        error: (err: any) => {
-          console.error('Error loading dynamic fields:', err);
-        },
-      });
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
   }
-
-  // ============================================================
-  // PATCH DYNAMIC VALUES
-  // ============================================================
+  // ---------------- PATCH DYNAMIC VALUES ----------------
 
   private patchDynamicValues(): void {
     if (
@@ -944,14 +929,6 @@ export class Amend implements OnInit {
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
     ) {
-      console.log('Dynamic values cannot be patched yet.', {
-        formReady: !!this.dynamicFieldsForm,
-
-        definitions: this.fields?.length,
-
-        savedValues: this.storeDynamicFieldsResponse?.length,
-      });
-
       return;
     }
 
@@ -959,11 +936,12 @@ export class Amend implements OnInit {
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (field: any) => field.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value ?? '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 
@@ -999,6 +977,12 @@ export class Amend implements OnInit {
   // ============================================================
 
   private flattenForm(): ExportCollectionTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
 
@@ -1017,7 +1001,7 @@ export class Amend implements OnInit {
       attachments: this.ExportCollectionForm.getRawValue().attachments,
 
       // IMPORTANT
-      dynamicFields: this.buildDynamicFieldsPayload(),
+      dynamicFields: dynamicFields,
     };
   }
 

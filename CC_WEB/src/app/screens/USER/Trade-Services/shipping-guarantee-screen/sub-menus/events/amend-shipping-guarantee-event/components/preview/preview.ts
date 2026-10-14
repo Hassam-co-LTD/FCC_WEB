@@ -146,7 +146,12 @@ export class Preview {
       otherInstructions: [this.currentTx!.otherInstructions],
 
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
-      dynamicFields: this.fb.array(this.currentTx!.dynamicFields ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
     // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {

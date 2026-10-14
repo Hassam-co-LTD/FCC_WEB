@@ -940,26 +940,29 @@ export class AmendScreen implements OnInit {
     console.log(
       'Loading dynamic fields for ExportCollection screen with status A...',
     );
-    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
-      next: (res: any) => {
-        console.log('Field definitions:', res);
+    this.api
+      .getFieldsByScreenAndStatus('undertakingIssuanceEvent', 'A')
+      .subscribe({
+        next: (res: any) => {
+          console.log('Field definitions:', res);
 
-        this.fields = res;
-        console.log('Dynamic fields loaded:', this.fields);
-        const group: any = {};
+          this.fields = res;
+          console.log('Dynamic fields loaded:', this.fields);
+          const group: any = {};
 
-        this.fields.forEach((field: any) => {
-          group[field.fieldName] = [''];
-        });
+          this.fields.forEach((field: any) => {
+            group[field.fieldName] = [''];
+          });
 
-        this.dynamicFieldsForm = this.fb.group(group);
+          this.dynamicFieldsForm = this.fb.group(group);
 
-        // patch values if customer already loaded
-        this.patchDynamicValues();
-      },
+          // patch values if customer already loaded
+          this.patchDynamicValues();
+        },
 
-      error: (err: any) => console.error('Error loading dynamic fields:', err),
-    });
+        error: (err: any) =>
+          console.error('Error loading dynamic fields:', err),
+      });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
   private patchDynamicValues(): void {

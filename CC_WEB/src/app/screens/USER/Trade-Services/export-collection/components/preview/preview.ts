@@ -347,6 +347,7 @@ export class Preview implements OnInit {
 
     this.currentTx =
       this.transaction || this.transactionService.getCurrentTransaction();
+    console.log('preview loaded ', this.currentTx);
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
@@ -435,7 +436,12 @@ export class Preview implements OnInit {
         this.currentTx!.warehouseOrInsureGoodsIfNecessary,
       ],
       referTo: [this.currentTx!.referTo],
-      dynamicFields: [this.currentTx?.dynamicFields || []],
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
     if (this.viewMode === 'readonly') {
