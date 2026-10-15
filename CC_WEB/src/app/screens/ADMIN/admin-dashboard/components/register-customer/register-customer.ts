@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Router } from '@angular/router';
-import { ApiService } from '../../../core/services/api.service';
+import { ApiService } from '../../../../../core/services/api.service';
 
 @Component({
   selector: 'app-online-registration',
@@ -60,13 +60,23 @@ export class RegisterCustomer {
 
     const accountNumber = this.accountForm.value.accountNumber;
 
-    this.api.verifyCustomerAccount(accountNumber, 'verify-account').subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.currentStep = 2;
+    this.api.verifyCustomerAccount(accountNumber).subscribe({
+      next: (response) => {
+        console.log('customer account verification respose', response);
+        if (response.valid && response.accountExists) {
+          // Redirect to the customer screen
+          this.router.navigate(['/customer']);
+        } else if (response.valid && response.nextStep === 'OTP') {
+          // Continue with OTP verification
+          // this.sendOtp();
+        } else {
+          // Show validation error
+          alert(response.message);
+        }
       },
-      error: () => {
-        this.isLoading = false;
+      error: (error) => {
+        console.error('Account verification failed:', error);
+        alert('Unable to verify account. Please try again.');
       },
     });
   }

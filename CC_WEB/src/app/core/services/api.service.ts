@@ -1744,9 +1744,10 @@ export class ApiService {
     );
   }
   // verify customer account from core banking api
-  verifyCustomerAccount(accountNumber: String, name: String) {
-    return this.http.get<any>(
-      `${this.adminBaseUrl}customer-registration/customer/${name}/${accountNumber}`,
+  verifyCustomerAccount(accountNumber: string) {
+    return this.http.post<any>(
+      `${this.adminBaseUrl}/customer-registration/verify-bank-account`,
+      { accountNumber },
     );
   }
 
