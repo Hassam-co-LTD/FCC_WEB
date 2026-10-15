@@ -81,26 +81,13 @@
   </ng-container>
 </section>
 
-<hr class="section-divider" />
+<div class="actions">
+  <button mat-stroked-button (click)="back()">Back</button>
 
-      <!-- Footer Buttons -->
-      <div class="actions">
-        <!-- CREATE -->
-
-        <ng-container *ngIf="mode === 'CREATE'">
-          <button mat-stroked-button color="primary" (click)="back()">
-            Back
-          </button>
-
-          <button
-            *ngIf="hasPermission('EC_CreateSave')"
-            mat-flat-button
-            color="accent"
-            (click)="saveForm()"
-          >
-            Save
-          </button>
-        </ng-container>
+  <!-- CREATE -->
+  <ng-container *ngIf="mode === 'CREATE'">
+    <button *ngIf="hasPermission('EC_CreateSave')" mat-flat-button color="accent" (click)="saveForm()">Save</button>
+  </ng-container>
 
         <!-- EDIT / AMEND -->
 
@@ -154,9 +141,7 @@
         <!-- APPROVED -->
 
         <ng-container *ngIf="screenMode === 'APPROVED'">
-          <button mat-stroked-button color="primary" (click)="back()">
-            Back
-          </button>
+          
         </ng-container>
 
         <!-- REJECTED -->
@@ -167,9 +152,7 @@
             mode === 'REJECTED'
           "
         >
-          <button mat-stroked-button color="primary" (click)="back()">
-            Back
-          </button>
+         
 
           <button
             *ngIf="hasPermission('EC_InquiryRejectUpdate')"

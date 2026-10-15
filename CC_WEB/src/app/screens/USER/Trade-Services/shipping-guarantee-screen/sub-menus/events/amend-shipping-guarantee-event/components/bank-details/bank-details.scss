@@ -8,8 +8,8 @@
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
-    padding: 14px 18px;
-    border-radius: 8px;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
     cursor: pointer;
     margin-bottom: 10px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -20,12 +20,21 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
+        width: 22px;
+        height: 22px;
     }
 }
-
 /* ===========================
    Collapsible
 =========================== */
@@ -41,7 +50,7 @@
     max-height: 1500px;
     opacity: 1;
     transform: translateY(0);
-    padding: 15px 10px;
+    padding: 16px 30px 20px;
     background: theme.$light-bg;
     border-radius: 6px;
     border: 1px solid theme.$border-light;
@@ -55,42 +64,39 @@ h2 {
     color: theme.$white;
 }
 
-
 /* ===========================
    Form
 =========================== */
 .details-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0;                       /* spacing comes from headings + field subscript */
 }
 
-.form-grid-2.unequal {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    /* Currency smaller, Amount bigger */
-    gap: 16px;
-    margin-bottom: 20px;
+/* Every section heading: same space above and below */
+.details-form h4 {
+    margin: 10px 0 10px !important;
 }
 
 .form-grid-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 22px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 30px;                /* row gap / column gap */
+    margin: 0;
     align-items: start;
+
+    &.unequal {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);   /* Currency smaller, Amount bigger */
+    }
 }
 
 .field-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    min-width: 0;
 }
 
-mat-form-field {
-    width: 100%;
-}
-
+mat-form-field,
 .full {
     width: 100%;
 }
@@ -117,11 +123,45 @@ button[mat-flat-button] {
 }
 
 /* ===========================
+   Previous Value Box
+=========================== */
+.previous-value {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    padding: 7px 10px;
+    border-left: 3px solid #f59e0b;
+    background-color: #fff7e6;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.previous-label {
+    font-weight: 600;
+    color: #92400e;
+    margin-right: 6px;
+}
+
+.previous-text {
+    color: #b45309;
+    font-weight: 500;
+}
+
+/* ===========================
    Responsive
 =========================== */
+@media (max-width: 700px) {
+    .form-grid-2,
+    .form-grid-2.unequal {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 480px) {
     .collapsible.open {
-        padding: 10px 6px;
+        padding: 10px 12px;
     }
 
     .actions {
@@ -132,31 +172,4 @@ button[mat-flat-button] {
     button[mat-flat-button] {
         width: 100%;
     }
-}
-
-.previous-value {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-
-  margin-top: 5px;
-  padding: 7px 10px;
-
-  border-left: 3px solid #f59e0b;
-  background-color: #fff7e6;
-  border-radius: 4px;
-
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.previous-label {
-  font-weight: 600;
-  color: #92400e;
-  margin-right: 6px;
-}
-
-.previous-text {
-  color: #b45309;
-  font-weight: 500;
 }

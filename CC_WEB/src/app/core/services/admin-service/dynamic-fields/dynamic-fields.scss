@@ -11,47 +11,38 @@
 /* ============================
    Section Header
    ============================ */
-
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
 
-  background: theme.$primary;
-  padding: 14px 18px;
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
 
-  border-radius: theme.$radius-large;
-  cursor: pointer;
-  margin-bottom: 12px;
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
 
-  transition:
-    background 0.3s ease,
-    box-shadow 0.3s ease;
-
-  color: theme.$text-light;
-
-  &:hover {
-    background: theme.$primary-dark;
-    box-shadow: theme.$shadow-primary;
-  }
-
-  h2 {
-    margin: 0;
-
-    font-size: 20px;
-    font-weight: 600;
-
-    color: theme.$white;
-  }
-
-  mat-icon {
-    color: theme.$white;
-    font-size: 22px;
-    width: 22px;
-    height: 22px;
-  }
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
 }
-
 
 /* ============================
    Collapsible Wrapper

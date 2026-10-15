@@ -427,7 +427,7 @@ export class LayoutComponent implements OnInit {
         {
           label: 'Trade Services',
           icon: 'group',
-          route: '/dashboard/Trade-Services',
+          route: '',
           open: false,
           children: [
 
