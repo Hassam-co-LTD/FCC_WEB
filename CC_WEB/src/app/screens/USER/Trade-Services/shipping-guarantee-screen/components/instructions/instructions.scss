@@ -8,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
-    padding: 14px 18px;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
     border-radius: theme.$radius-large;
     cursor: pointer;
     margin-bottom: 10px;
@@ -20,12 +20,21 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
+        width: 22px;
+        height: 22px;
     }
 }
-
 /* ===========================
    Collapsible Container
 =========================== */
@@ -41,7 +50,7 @@
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
-    padding: 15px 10px;
+    padding: 24px 30px;              /* same inset as Collecting Bank */
     background: theme.$light-bg;
     border-radius: theme.$radius-default;
     border: 1px solid theme.$border-light;
@@ -57,23 +66,30 @@ h2 {
     color: theme.$white;
 }
 
- .instruction-form {
+.instruction-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    /* remove: background, border-radius, padding, box-shadow */
 }
-.form-row {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
 
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 30px;                   /* row gap / column gap */
+
+    > .field-group,
     mat-form-field {
-        flex: 1;
+        width: 100%;
+        min-width: 0;
     }
 
-    .full-width {
-        flex: 100%;
+    > .full-width {
+        grid-column: 1 / -1;         /* textarea spans both columns */
+    }
+}
+
+@media (max-width: 700px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
     }
 }
 .previous-value {
@@ -101,16 +117,4 @@ h2 {
 .previous-text {
   color: #b45309;
   font-weight: 500;
-}
-.form-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px 24px;
-    margin-bottom: 12px;
-}
-
-.form-grid-2 > *,
-.form-grid-2 mat-form-field {
-    width: 100%;
-    min-width: 0;
 }

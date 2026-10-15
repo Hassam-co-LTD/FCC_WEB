@@ -4,26 +4,37 @@
    Accordion Header
 =========================== */
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: theme.$primary;
-  padding: 14px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  color: theme.$text-light;
-  transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
 
-  &:hover {
-    background: theme.$primary-dark;
-    box-shadow: theme.$shadow-primary;
-  }
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
 
-  h2 { font-size: 20px; font-weight: 600; margin: 0; }
-  mat-icon { font-size: 22px; }
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
 }
-
 /* ===========================
    Collapsible Logic
 =========================== */
@@ -118,4 +129,8 @@
 .previous-text {
   color: #b45309;
   font-weight: 500;
+}
+/* Headings that sit inside the grid: the row gap already adds 16px below */
+.form-grid-2 .full-width .sub-title {
+  margin-bottom: 4px;   /* 4px + 16px row gap = 20px, same as the top heading */
 }

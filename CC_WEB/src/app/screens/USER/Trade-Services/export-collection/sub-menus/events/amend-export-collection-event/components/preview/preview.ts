@@ -124,6 +124,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedService } from '../../../../../../../../../core/services/user-service/shared-form-service/shared-service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { ExportCollectionFormTransactionService } from '../../../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 
 @Component({
   selector: 'app-preview',
@@ -143,10 +144,70 @@ export class PreviewSection {
     private dataService: SharedService,
     private fb: FormBuilder,
     private router: Router,
+    private transactionService: ExportCollectionFormTransactionService,
   ) {}
 
   ngOnInit() {
     const data = this.dataService.getFormData();
+    const tx: any = this.transactionService.getCurrentTransaction();
+
+    if (!data && tx) {
+      // Opened from the amend inquiry list: the transaction is held in
+      // ExportCollectionFormTransactionService, not SharedService.
+      this.form = this.fb.group({
+        generaldetails: this.fb.group({
+          collectionType: [tx.collectionType],
+          customerReference: [tx.customerReference],
+          draweeReference: [tx.draweeReference],
+        }),
+        DrawerDraweeDetails: this.fb.group({
+          drawerName: [tx.drawerName],
+          drawerAddress1: [tx.drawerAddress1],
+          drawerAddress2: [tx.drawerAddress2],
+          draweeName: [tx.draweeName],
+          draweeAddress1: [tx.draweeAddress1],
+          draweeAddress2: [tx.draweeAddress2],
+        }),
+        bankdetails: this.fb.group({
+          remittingBankName: [tx.remittingBankName],
+          issuerReference: [tx.issuerReference],
+          principalAccount: [tx.principalAccount],
+          feeAccount: [tx.feeAccount],
+        }),
+        paymentamount: this.fb.group({
+          amount: [tx.amount],
+          currency: [tx.currency],
+          paymentType: [tx.paymentType],
+          tenor: [tx.tenor],
+        }),
+        shippingdetails: this.fb.group({
+          shippingMethod: [tx.shippingMethod],
+          shipmentReference: [tx.shipmentReference],
+          shippingFrom: [tx.shippingFrom],
+          shippingTo: [tx.shippingTo],
+          shipmentDate: [tx.shipmentDate],
+          incoterms: [tx.incoterms],
+        }),
+        collectioninstructions: this.fb.group({
+          advicePaymentBy: [tx.advicePaymentBy],
+          adviceAcceptanceDate: [tx.adviceAcceptanceAndDueDateBy],
+          openingCharges: [tx.openingCharges],
+          outsideCountryCharges: [tx.outsideCountryCharges],
+          waiveCharges: [tx.waiveAllChargesIfRefusedByDrawee],
+          protestNonPayment: [tx.protestInCaseOfNonPayment],
+          protestNonAcceptance: [tx.protestInCaseOfNonAcceptance],
+          adviceReasonRefusal: [tx.adviceReasonOfRefusalBy],
+          acceptanceDeferred: [tx.acceptanceMayBeDeferredPendingArrival],
+          warehouseInsurance: [tx.warehouseOrInsureGoodsIfNecessary],
+          referTo: [tx.referTo],
+        }),
+        license: this.fb.group({ attachments: this.fb.array([]) }),
+        attachments: this.fb.group({
+          attachments: this.fb.array([]),
+          documents: this.fb.array([]),
+        }),
+      });
+    }
 
     if (data) {
       this.form = this.fb.group({
@@ -196,7 +257,9 @@ export class PreviewSection {
   }
 
   previous() {
-    this.router.navigate(['export-collection']);
+    this.router.navigate([
+      '/dashboard/Trade-Services/export-collection/approved-inquiry-records',
+    ]);
   }
 
   submit() {

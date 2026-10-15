@@ -908,7 +908,9 @@ updateRejectedAmendmentSg(
       .pipe(catchError(this.handleError));
   }
   getEventRejectedTransactionExportCollection(eventRefNo: string) {
-  return this.http.get<any>(
+  return this.http.get<
+  
+  any>(
     `${this.baseECEventUrl}/amend/${eventRefNo}/rejected-history`,
     { headers: this.headers },
   );

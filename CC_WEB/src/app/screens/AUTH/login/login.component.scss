@@ -252,16 +252,16 @@ button[mat-flat-button].action-btn {
    7. INTERACTIVE NAV-LINKS & ACTIONFOOTER
 ========================================================================= */
 .auth-footer-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem; // Space between the links
-  margin-top: 0.5rem;
   width: 100%;
+  margin-top: 0.5rem;
 
   p {
     margin: 0;
+    display: flex;
+    flex-direction: row-reverse;   /* New customer left, Forgot Password right */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 }
 .interactive-link {

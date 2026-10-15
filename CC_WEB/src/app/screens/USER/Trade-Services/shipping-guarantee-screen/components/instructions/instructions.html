@@ -10,8 +10,7 @@
 
   <form class="instruction-form" [formGroup]="form">
 
-    <!-- Accounts Row -->
-    <div class="form-row">
+    <div class="form-grid-2">
 
       <!-- Principal Account -->
       <div class="field-group">
@@ -21,21 +20,12 @@
           <mat-label>Principal Account</mat-label>
 
           <mat-select formControlName="principalAccount">
-
-            <mat-option value="account1">
-              Account 1
-            </mat-option>
-
-            <mat-option value="account2">
-              Account 2
-            </mat-option>
-
+            <mat-option value="account1">Account 1</mat-option>
+            <mat-option value="account2">Account 2</mat-option>
           </mat-select>
 
           @if (form.get('principalAccount')?.hasError('required')) {
-            <mat-error>
-              Required
-            </mat-error>
+            <mat-error>Required</mat-error>
           }
 
         </mat-form-field>
@@ -46,7 +36,6 @@
           *ngIf="hasPreviousValue('principalAccount')"
         >
           <span class="previous-label">Previous Value:</span>
-
           <span class="previous-text">
             {{ getPreviousValue('principalAccount') }}
           </span>
@@ -62,21 +51,12 @@
           <mat-label>Fee Account</mat-label>
 
           <mat-select formControlName="feeAccount">
-
-            <mat-option value="fee1">
-              Fee Account 1
-            </mat-option>
-
-            <mat-option value="fee2">
-              Fee Account 2
-            </mat-option>
-
+            <mat-option value="fee1">Fee Account 1</mat-option>
+            <mat-option value="fee2">Fee Account 2</mat-option>
           </mat-select>
 
           @if (form.get('feeAccount')?.hasError('required')) {
-            <mat-error>
-              Required
-            </mat-error>
+            <mat-error>Required</mat-error>
           }
 
         </mat-form-field>
@@ -87,7 +67,6 @@
           *ngIf="hasPreviousValue('feeAccount')"
         >
           <span class="previous-label">Previous Value:</span>
-
           <span class="previous-text">
             {{ getPreviousValue('feeAccount') }}
           </span>
@@ -95,17 +74,10 @@
 
       </div>
 
-    </div>
-
-    <!-- Other Instructions -->
-    <div class="form-row full-width">
-
+      <!-- Other Instructions (spans both columns) -->
       <div class="field-group full-width">
 
-        <mat-form-field
-          appearance="outline"
-          class="full-width"
-        >
+        <mat-form-field appearance="outline">
 
           <mat-label>Other Instructions</mat-label>
 
@@ -113,8 +85,8 @@
             matInput
             formControlName="otherInstructions"
             rows="4"
-            maxlength="31525">
-          </textarea>
+            maxlength="31525"
+          ></textarea>
 
           <mat-hint align="end">
             {{ form.get('otherInstructions')?.value?.length || 0 }}/31525
@@ -128,7 +100,6 @@
           *ngIf="hasPreviousValue('otherInstructions')"
         >
           <span class="previous-label">Previous Value:</span>
-
           <span class="previous-text">
             {{ getPreviousValue('otherInstructions') }}
           </span>
@@ -140,4 +111,3 @@
 
   </form>
 </div>
-
