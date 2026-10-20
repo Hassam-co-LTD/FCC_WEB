@@ -798,6 +798,8 @@ update(): void {
 
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
+      
+      
       this.snackBar.open('Amendment reference not found.', 'Close', {
         duration: 3000,
       });
