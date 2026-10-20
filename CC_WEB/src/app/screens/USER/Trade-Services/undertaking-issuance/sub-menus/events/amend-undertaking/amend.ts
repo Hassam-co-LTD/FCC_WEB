@@ -426,7 +426,7 @@ export class AmendScreen implements OnInit {
       next: (tx) => {
         this.currentTx = tx;
         this.patchForm(tx);
-
+        console.log('loaded transaction by tnxId ', this.currentTx);
         switch (tx.status) {
           case 'I':
             this.mode = 'UPDATE';
@@ -495,6 +495,11 @@ export class AmendScreen implements OnInit {
       instructions: tx,
       dynamicFields: tx.dynamicFields || [],
     });
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
   }
 
   scrollToSection(i: number) {
@@ -505,6 +510,12 @@ export class AmendScreen implements OnInit {
   }
 
   private flattenForm(): UndertakingGuarantee {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.undertakingForm.value.generalDetails,
@@ -513,23 +524,11 @@ export class AmendScreen implements OnInit {
       ...this.undertakingForm.value.undertakingDetails,
       ...this.undertakingForm.value.instructions,
       attachments: this.undertakingForm.value.attachments,
-      dynamicFields: this.dynamicFieldsForm
-        ? this.dynamicFieldsForm.getRawValue()
-        : {},
+      dynamicFields: dynamicFields,
     };
   }
 
   saveForm(): void {
-    if (!this.hasPermission('UI_AmendSave')) {
-      this.snackBar.open(
-        'You do not have permission to amend Undertaking.',
-        'Close',
-        { duration: 3000 },
-      );
-
-      return;
-    }
-
     if (this.isSaving) return;
     this.isSaving = true;
 
@@ -558,6 +557,7 @@ export class AmendScreen implements OnInit {
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
         next: (res: UndertakingGuarantee) => {
+          console.log('Payload after saving draft:', payload);
           this.currentTx = { ...this.currentTx, ...res };
 
           console.log(
@@ -587,16 +587,6 @@ export class AmendScreen implements OnInit {
   }
 
   submitForm(): void {
-    if (!this.hasPermission('UI_AmendSubmit')) {
-      this.snackBar.open(
-        'You do not have permission to submit Undertaking amendments.',
-        'Close',
-        { duration: 3000 },
-      );
-
-      return;
-    }
-
     const eventRefNo = this.currentTx?.eventRefNo;
     console.log('Submitting amendment, eventRefNo:', this.currentTx.eventRefNo);
 
@@ -676,13 +666,14 @@ export class AmendScreen implements OnInit {
 
     const payload = this.flattenForm();
     payload.tnxId = this.currentTx?.tnxId || this.tnxId;
-
+    console.log('before updating the payload ', payload);
     this.api
       .updatePendingUtgAmendment(eventRefNo, payload)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
         next: (res) => {
           this.currentTx = { ...this.currentTx, ...res };
+          console.log('after updating the payload ', payload);
           this.snackBar.open(
             `Amendment updated successfully (Ref: ${res.eventRefNo})`,
             'Close',
@@ -698,16 +689,6 @@ export class AmendScreen implements OnInit {
   }
 
   approve(): void {
-    if (!this.hasPermission('UI_AmendApprove')) {
-      this.snackBar.open(
-        'You do not have permission to approve Undertaking amendments.',
-        'Close',
-        { duration: 3000 },
-      );
-
-      return;
-    }
-
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
       this.snackBar.open('Amendment reference not found.', 'Close', {
@@ -739,16 +720,6 @@ export class AmendScreen implements OnInit {
   }
 
   openReject(): void {
-    if (!this.hasPermission('UI_AmendReject')) {
-      this.snackBar.open(
-        'You do not have permission to reject Undertaking amendments.',
-        'Close',
-        { duration: 3000 },
-      );
-
-      return;
-    }
-
     const eventRefNo = this.currentTx?.eventRefNo;
     if (!eventRefNo) {
       this.snackBar.open('Amendment reference not found.', 'Close', {
@@ -790,15 +761,6 @@ export class AmendScreen implements OnInit {
   }
 
   updateRejected(): void {
-    if (!this.hasPermission('UI_AmendUpdateRejected')) {
-      this.snackBar.open(
-        'You do not have permission to update this rejected amendment.',
-        'Close',
-        { duration: 3000 },
-      );
-      return;
-    }
-
     const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
 
     if (this.undertakingForm.invalid || !eventRefNo) {
@@ -937,32 +899,36 @@ export class AmendScreen implements OnInit {
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log(
-      'Loading dynamic fields for ExportCollection screen with status A...',
-    );
-    this.api
-      .getFieldsByScreenAndStatus('undertakingIssuanceEvent', 'A')
-      .subscribe({
-        next: (res: any) => {
-          console.log('Field definitions:', res);
+    console.log('Loading dynamic fields for ImportScreen with status A...');
 
-          this.fields = res;
-          console.log('Dynamic fields loaded:', this.fields);
-          const group: any = {};
+    this.api.getFieldsByScreenAndStatus('ImportScreen', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
 
-          this.fields.forEach((field: any) => {
-            group[field.fieldName] = [''];
-          });
+        this.fields = res || [];
 
-          this.dynamicFieldsForm = this.fb.group(group);
+        const group: any = {};
 
-          // patch values if customer already loaded
-          this.patchDynamicValues();
-        },
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
 
-        error: (err: any) =>
-          console.error('Error loading dynamic fields:', err),
-      });
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
   private patchDynamicValues(): void {
@@ -970,18 +936,20 @@ export class AmendScreen implements OnInit {
       !this.dynamicFieldsForm ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
-    )
+    ) {
       return;
+    }
 
     const patchObj: any = {};
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (f: any) => f.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 

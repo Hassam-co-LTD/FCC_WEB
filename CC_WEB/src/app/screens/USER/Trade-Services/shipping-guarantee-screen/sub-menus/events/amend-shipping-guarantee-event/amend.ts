@@ -9,8 +9,7 @@ import {
 } from '@angular/forms';
 
 import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
-
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -46,6 +45,7 @@ import { DynamicFields } from '../../../../../../../core/services/admin-service/
     InstructionToBank,
     Attachments,
     DynamicFields,
+    NgIf,
   ],
   standalone: true,
   templateUrl: './amend.html',
@@ -340,6 +340,7 @@ export class Amend implements OnInit {
               this.currentTx = {
                 tnxId: tx.tnxId,
               } as ShippingGuaranteeTransaction;
+              console.log('laaded sg saved data by TnxID  ', this.currentTx);
               this.patchForm(tx);
               this.screenMode = 'EDIT';
               this.ShippingGuaranteeForm.enable();
@@ -514,6 +515,9 @@ export class Amend implements OnInit {
       instructionForm: tx,
       dynamicFields: tx.dynamicFields || this.fb.array([]),
     });
+    // Only dynamic fields
+    this.storeDynamicFieldsResponse = tx.dynamicFields ?? [];
+    this.patchDynamicValues();
   }
 
   scrollToSection(index: number) {
@@ -523,6 +527,12 @@ export class Amend implements OnInit {
   }
 
   private flattenForm(): ShippingGuaranteeTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.ShippingGuaranteeForm.value.generalDetailsForm,
@@ -530,9 +540,7 @@ export class Amend implements OnInit {
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
       attachments: this.ShippingGuaranteeForm.value.attachments,
-      dynamicFields: this.dynamicFieldsForm
-        ? this.dynamicFieldsForm.getRawValue()
-        : {},
+      dynamicFields: dynamicFields,
     };
   }
 
@@ -683,13 +691,14 @@ export class Amend implements OnInit {
 
     const payload = this.flattenForm();
     payload.tnxId = this.currentTx?.tnxId || this.tnxId;
-
+    console.log('playoad before saved ', payload);
     this.api
       .updatePendingAmendmentSg(eventRefNo, payload)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
         next: (res) => {
           this.currentTx = { ...this.currentTx, ...res };
+          console.log('loaded things ', this.currentTx);
           this.snackBar.open(
             `Amendment updated successfully (Ref: ${res.eventRefNo})`,
             'Close',
@@ -772,7 +781,6 @@ export class Amend implements OnInit {
       });
     });
   }
-
   private navigateBack(tab: string) {
     this.router.navigate(
       ['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'],
@@ -806,12 +814,13 @@ export class Amend implements OnInit {
     const payload = this.flattenForm();
     payload.tnxId = this.currentTx?.tnxId || this.tnxId;
     const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
-
+    console.log('updating reject payload ', payload);
     this.api
       .updateRejectedAmendmentSg(eventRefNo, payload)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
         next: (res) => {
+          console.log('updated reject payload ', res);
           this.snackBar.open(
             `Rejected amendment updated and moved back to Pending (Ref: ${res.eventRefNo})`,
             'Close',
@@ -922,31 +931,37 @@ export class Amend implements OnInit {
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log(
-      'Loading dynamic fields for ExportCollection screen with status A...',
-    );
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
     this.api
       .getFieldsByScreenAndStatus('shippingGuarnteeEvent', 'A')
       .subscribe({
-        next: (res: any) => {
+        next: (res: any[]) => {
           console.log('Field definitions:', res);
 
-          this.fields = res;
-          console.log('Dynamic fields loaded:', this.fields);
+          this.fields = res || [];
+
           const group: any = {};
 
           this.fields.forEach((field: any) => {
-            group[field.fieldName] = [''];
+            // Use unique fieldId instead of duplicate fieldName
+            group[field.fieldId] = [''];
           });
 
           this.dynamicFieldsForm = this.fb.group(group);
 
-          // patch values if customer already loaded
+          console.log(
+            'Dynamic form controls:',
+            this.dynamicFieldsForm.getRawValue(),
+          );
+
+          // Restore previously saved values
           this.patchDynamicValues();
         },
 
-        error: (err: any) =>
-          console.error('Error loading dynamic fields:', err),
+        error: (err: any) => {
+          console.error('Error loading dynamic fields:', err);
+        },
       });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
@@ -955,18 +970,20 @@ export class Amend implements OnInit {
       !this.dynamicFieldsForm ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
-    )
+    ) {
       return;
+    }
 
     const patchObj: any = {};
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (f: any) => f.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 

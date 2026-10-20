@@ -645,10 +645,7 @@ export class Amend implements OnInit {
           // REJECTED HISTORY
           // --------------------------------------------------
 
-          if (
-            (this.sourceTab === 'submitted' || this.sourceTab === 'pending') &&
-            event.eventRefNo
-          ) {
+          if (this.sourceTab === 'submitted' && event.eventRefNo) {
             this.loadRejectedHistory(event.eventRefNo);
           }
 
@@ -892,34 +889,36 @@ export class Amend implements OnInit {
   private loadDynamicFields(): void {
     console.log('Loading dynamic fields for ImportScreen with status A...');
 
-    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
-      next: (res: any[]) => {
-        console.log('Field definitions:', res);
+    this.api
+      .getFieldsByScreenAndStatus('exportCollectionEvent', 'A')
+      .subscribe({
+        next: (res: any[]) => {
+          console.log('Field definitions:', res);
 
-        this.fields = res || [];
+          this.fields = res || [];
 
-        const group: any = {};
+          const group: any = {};
 
-        this.fields.forEach((field: any) => {
-          // Use unique fieldId instead of duplicate fieldName
-          group[field.fieldId] = [''];
-        });
+          this.fields.forEach((field: any) => {
+            // Use unique fieldId instead of duplicate fieldName
+            group[field.fieldId] = [''];
+          });
 
-        this.dynamicFieldsForm = this.fb.group(group);
+          this.dynamicFieldsForm = this.fb.group(group);
 
-        console.log(
-          'Dynamic form controls:',
-          this.dynamicFieldsForm.getRawValue(),
-        );
+          console.log(
+            'Dynamic form controls:',
+            this.dynamicFieldsForm.getRawValue(),
+          );
 
-        // Restore previously saved values
-        this.patchDynamicValues();
-      },
+          // Restore previously saved values
+          this.patchDynamicValues();
+        },
 
-      error: (err: any) => {
-        console.error('Error loading dynamic fields:', err);
-      },
-    });
+        error: (err: any) => {
+          console.error('Error loading dynamic fields:', err);
+        },
+      });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
 

@@ -501,7 +501,7 @@ export class AmendScreen implements OnInit {
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
-
+          console.log('Saved dynamic fields from API:', event.dynamicFields);
           if (event.status === 'S') {
             this.screenMode = 'SUBMITTED';
             this.importForm.disable();
@@ -519,6 +519,7 @@ export class AmendScreen implements OnInit {
               } as ImportLcTransaction;
 
               this.patchForm(tx);
+              console.log('transactoin loaded by tnxId ', this.currentTx);
               this.screenMode = 'EDIT';
               this.importForm.enable();
             },
@@ -549,10 +550,10 @@ export class AmendScreen implements OnInit {
         next: (event) => {
           this.currentTx = event;
 
+          console.log('tranasction loaded ', this.currentTx);
           this.patchForm(event);
-
           // Show "Previous Value" for an amendment that was rejected and then resubmitted
-          if (event.status === 'S' || event.status === 'I') {
+          if (event.status === 'S') {
             this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
               next: (rejectedTx) => {
                 if (!rejectedTx) return;
@@ -704,6 +705,9 @@ export class AmendScreen implements OnInit {
       narrativeForm: tx,
       instructionForm: tx,
     });
+    // Only dynamic fields
+    this.storeDynamicFieldsResponse = tx.dynamicFields ?? [];
+    this.patchDynamicValues();
   }
 
   scrollToSection(index: number) {
@@ -1087,7 +1091,7 @@ export class AmendScreen implements OnInit {
   private loadDynamicFields(): void {
     console.log('Loading dynamic fields for ImportScreen with status A...');
 
-    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
       next: (res: any[]) => {
         console.log('Field definitions:', res);
 
@@ -1117,7 +1121,6 @@ export class AmendScreen implements OnInit {
     });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
-
   private patchDynamicValues(): void {
     if (
       !this.dynamicFieldsForm ||
@@ -1144,7 +1147,6 @@ export class AmendScreen implements OnInit {
 
     this.dynamicFieldsForm.patchValue(patchObj);
   }
-
   // old and new values working
   previousDynamicValues: { [key: string]: any } = {};
   storeRejectedTransaction: ImportLcTransaction | null = null;

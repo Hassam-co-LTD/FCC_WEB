@@ -315,19 +315,36 @@
     }
 
     <!-- DYNAMIC FIELDS -->
-    <div
-      *ngFor="let field of dynamicFieldsArray.controls; let i = index; trackBy: trackByIndex"
-      class="preview-item"
-    >
-      <div class="preview-label">
-        {{ field.value?.fieldName || field.value?.label || 'Dynamic Field' }}
-      </div>
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
 
-      <div class="preview-value">
-        {{ field.value?.value ?? field.value?.fieldValue ??
-        field.value?.enteredValue ?? '—' }}
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="(dynamicFieldsArray?.controls?.length ?? 0) > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
+          </div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
+        </div>
       </div>
-    </div>
+    </mat-card>
 
     <div class="preview-block full-width">
       <div class="actions">

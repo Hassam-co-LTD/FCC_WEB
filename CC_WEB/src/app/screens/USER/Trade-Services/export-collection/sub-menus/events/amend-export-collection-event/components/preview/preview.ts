@@ -126,11 +126,18 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { ExportCollectionFormTransactionService } from '../../../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    RouterModule,
+    MatCard,
+  ],
   templateUrl: './preview.html',
   styleUrls: ['./preview.scss'],
 })
@@ -151,7 +158,7 @@ export class PreviewSection {
   ngOnInit() {
     const data = this.dataService.getFormData();
     const tx: any = this.transactionService.getCurrentTransaction();
-
+    console.log('preview data loaded ', tx);
     if (!data && tx) {
       // Opened from the amend inquiry list: the transaction is held in
       // ExportCollectionFormTransactionService, not SharedService.

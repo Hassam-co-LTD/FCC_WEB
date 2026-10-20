@@ -110,7 +110,7 @@
         </ng-container>
         <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
           <button
-            *ngIf="hasPermission('UI_AmendReject')"
+            *ngIf="hasPermission('UI_AmendSubmit')"
             mat-stroked-button
             color="primary"
             (click)="openReject()"
@@ -138,7 +138,7 @@
             Back
           </button>
           <button
-            *ngIf="hasPermission('UI_AmendUpdateRejected')"
+            *ngIf="hasPermission('UI_AmendSubmit')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()"

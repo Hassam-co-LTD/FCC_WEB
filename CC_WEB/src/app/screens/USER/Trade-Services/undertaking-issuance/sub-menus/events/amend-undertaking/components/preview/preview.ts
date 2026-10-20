@@ -39,7 +39,7 @@ export class Preview implements OnInit {
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-
+  dynamicFields: any[] = [];
   currentTx: UndertakingGuarantee | null = null;
 
   constructor(
@@ -102,6 +102,9 @@ export class Preview implements OnInit {
   }
 
   private initForm(): void {
+    this.dynamicFields = Array.isArray(this.currentTx?.dynamicFields)
+      ? this.currentTx.dynamicFields
+      : [];
     this.undertakingForm = this.fb.group({
       id: [this.currentTx!.id],
       tnxId: [this.currentTx!.tnxId],
@@ -169,10 +172,20 @@ export class Preview implements OnInit {
       feeAccount: [this.currentTx!.feeAccount],
 
       dynamicFields: this.fb.array(
-        (Array.isArray(this.currentTx?.dynamicFields)
-          ? this.currentTx.dynamicFields
-          : []
-        ).map((field: any) => this.fb.control(field)),
+        this.dynamicFields.map((field: any) =>
+          this.fb.group({
+            fieldId: [field?.fieldId ?? ''],
+            transactionId: [field?.transactionId ?? ''],
+            fieldName: [field?.fieldName ?? ''],
+            fieldNameLabel: [field?.fieldNameLabel ?? ''],
+            fieldLabel: [field?.fieldLabel ?? ''],
+            label: [field?.label ?? ''],
+            name: [field?.name ?? ''],
+            value: [
+              field?.value ?? field?.fieldValue ?? field?.enteredValue ?? '',
+            ],
+          }),
+        ),
       ),
       otherInstructions: [this.currentTx!.otherInstructions],
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
@@ -182,6 +195,8 @@ export class Preview implements OnInit {
     if (this.viewMode === 'readonly') {
       this.undertakingForm.disable({ emitEvent: false });
     }
+
+    console.log('load the preview data ', this.currentTx);
   }
 
   get attachmentsArray(): FormArray {

@@ -456,7 +456,7 @@ export class ApiService {
   ): Observable<ShippingGuaranteeTransaction> {
     return this.http
       .put<ShippingGuaranteeTransaction>(
-        `${this.baseUrl}/shippingguarantee/${tnxId}`,
+        `${this.baseUrl}/shippingguarantee/updatePending/${tnxId}`,
         payload,
         { headers: this.headers },
       )
@@ -1744,7 +1744,7 @@ export class ApiService {
     );
   }
   // verify customer account from core banking api
-  verifyCustomerAccount(accountNumber: String, name: String) {
+  verifyCustomerAccount(accountNumber: String) {
     return this.http.get<any>(
       `${this.adminBaseUrl}customer-registration/customer/${name}/${accountNumber}`,
     );

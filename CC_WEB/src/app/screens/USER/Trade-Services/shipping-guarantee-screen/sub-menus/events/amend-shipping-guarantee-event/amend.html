@@ -149,12 +149,7 @@
           <button mat-stroked-button color="primary" (click)="back()">
             Back
           </button>
-          <button
-            *ngIf="hasPermission('SG_AmendUpdateReject')"
-            mat-flat-button
-            color="primary"
-            (click)="updateRejected()"
-          >
+          <button mat-flat-button color="primary" (click)="updateRejected()">
             Update
           </button>
         </ng-container>

@@ -92,7 +92,7 @@ export class Preview implements OnInit {
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
-
+    console.log('fetched preview data from service ', this.currentTx);
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
       this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance']);
@@ -100,6 +100,8 @@ export class Preview implements OnInit {
     }
     this.viewMode = this.transactionService.getViewMode();
     this.initForm();
+
+    console.log('dynamic array ', this.dynamicFieldsArray.getRawValue());
   }
 
   private initForm(): void {
