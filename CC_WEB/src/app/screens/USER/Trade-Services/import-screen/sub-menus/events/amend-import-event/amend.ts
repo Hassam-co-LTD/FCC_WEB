@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import {
   FormArray,
@@ -28,6 +27,7 @@ import { ApplicantBeneficiary } from './components/applicant-beneficiary/applica
 import { GeneralDetails } from './components/general-details/general-details';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { finalize } from 'rxjs';
+import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
 
 @Component({
@@ -50,12 +50,12 @@ import { TransactionComparisonService } from '../../../../../../../core/services
     MatDialogModule,
     Sidebar,
     RouterOutlet,
+    DynamicFields,
   ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss'],
 })
 export class AmendScreen implements OnInit {
-
   currentStep = 0;
   importForm!: FormGroup;
 
@@ -90,6 +90,7 @@ export class AmendScreen implements OnInit {
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields' },
   ];
 
   constructor(
@@ -127,9 +128,7 @@ export class AmendScreen implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(
-      sessionStorage.getItem('userData') || '{}'
-    );
+    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
 
     this.companyId = sessionData.companyId ?? '';
 
@@ -160,6 +159,9 @@ export class AmendScreen implements OnInit {
         }
       });
     });
+
+    // Load dynmic fields
+    this.loadDynamicFields();
   }
   // const txFromState = history.state.transaction;
   // console.log('Transaction from state:', txFromState);
@@ -203,15 +205,15 @@ export class AmendScreen implements OnInit {
   // ============================================================
 
   hasPermission(permission: string): boolean {
-    return this.permissionNames.some(
-      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
-    );
+    // return this.permissionNames.some(
+    //   (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    // );
+
+    return true;
   }
 
   private buildForm(): void {
-
     this.importForm = this.fb.group({
-
       generalDetails: this.fb.group({
         productType: ['backtoback'],
         modeOfTransmission: ['SWIFT'],
@@ -222,6 +224,7 @@ export class AmendScreen implements OnInit {
         featureTransferable: [false],
         applicableRules: ['EUCP'],
         confirmationInstruction: ['confirm'],
+        dynamicFields: this.fb.array([]),
       }),
 
       applicantForm: this.fb.group({
@@ -289,6 +292,7 @@ export class AmendScreen implements OnInit {
         otherInstructions: [''],
       }),
       attachments: this.fb.array([]),
+      dynamicFields: this.fb.array([]),
     });
   }
 
@@ -452,7 +456,6 @@ export class AmendScreen implements OnInit {
   //     (Enquiries non-live tabs)
   // ======================================================
   private enterEditMode(tnxId: string): void {
-
     this.mode = 'UPDATE';
 
     const normalizedSourceTab = (this.sourceTab ?? '')
@@ -471,8 +474,7 @@ export class AmendScreen implements OnInit {
       this.isHistoricalView = true;
 
       this.api.getAmendmentByEventRefNo(this.eventRefNo).subscribe({
-
-        next: event => {
+        next: (event) => {
           this.currentTx = event;
           this.screenMode = 'APPROVED';
           this.importForm.disable();
@@ -493,14 +495,13 @@ export class AmendScreen implements OnInit {
     }
 
     if (this.sourceTab === 'live') {
-
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxId(tnxId).subscribe({
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
-
+          console.log('Saved dynamic fields from API:', event.dynamicFields);
           if (event.status === 'S') {
             this.screenMode = 'SUBMITTED';
             this.importForm.disable();
@@ -518,6 +519,7 @@ export class AmendScreen implements OnInit {
               } as ImportLcTransaction;
 
               this.patchForm(tx);
+              console.log('transactoin loaded by tnxId ', this.currentTx);
               this.screenMode = 'EDIT';
               this.importForm.enable();
             },
@@ -538,7 +540,6 @@ export class AmendScreen implements OnInit {
     }
 
     if (isAmendmentTab) {
-
       this.isHistoricalView = false;
 
       const amendment$ = this.eventRefNo
@@ -548,22 +549,21 @@ export class AmendScreen implements OnInit {
       amendment$.subscribe({
         next: (event) => {
           this.currentTx = event;
-          
+
+          console.log('tranasction loaded ', this.currentTx);
           this.patchForm(event);
-
-           // Show "Previous Value" for an amendment that was rejected and then resubmitted
-    if (event.status === 'S' || event.status === 'I') {
-      this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
-        next: (rejectedTx) => {
-          if (!rejectedTx) return;
-          this.storeRejectedTransaction = rejectedTx;
-          this.compareImportLcData();
-        },
-        error: (err) => console.log('No rejected snapshot:', err),
-      });
-    }
+          // Show "Previous Value" for an amendment that was rejected and then resubmitted
+          if (event.status === 'S') {
+            this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
+              next: (rejectedTx) => {
+                if (!rejectedTx) return;
+                this.storeRejectedTransaction = rejectedTx;
+                this.compareImportLcData();
+              },
+              error: (err) => console.log('No rejected snapshot:', err),
+            });
+          }
           switch (event.status) {
-
             case 'I':
               this.mode = 'UPDATE';
               this.screenMode = 'EDIT';
@@ -611,15 +611,12 @@ export class AmendScreen implements OnInit {
     this.isHistoricalView = false;
 
     this.api.getTransactionByTnxId(tnxId).subscribe({
-
-      next: tx => {
-
+      next: (tx) => {
         this.currentTx = tx;
-        
+
         this.patchForm(tx);
 
         switch (tx.status) {
-
           case 'I':
             this.mode = 'UPDATE';
             this.screenMode = 'EDIT';
@@ -698,7 +695,6 @@ export class AmendScreen implements OnInit {
   }
 
   private patchForm(tx: ImportLcTransaction): void {
-
     this.importForm.patchValue({
       generalDetails: tx,
       applicantForm: tx,
@@ -709,23 +705,30 @@ export class AmendScreen implements OnInit {
       narrativeForm: tx,
       instructionForm: tx,
     });
+    // Only dynamic fields
+    this.storeDynamicFieldsResponse = tx.dynamicFields ?? [];
+    this.patchDynamicValues();
   }
 
   scrollToSection(index: number) {
     this.currentStep = index;
 
-    document
-      .getElementById(`section-${index}`)
-      ?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
+    document.getElementById(`section-${index}`)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   private flattenForm(): ImportLcTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
 
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
+
       ...this.importForm.value.generalDetails,
       ...this.importForm.value.applicantForm,
       ...this.importForm.value.bankForm,
@@ -734,7 +737,10 @@ export class AmendScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
+
       attachments: this.importForm.value.attachments,
+
+      dynamicFields: dynamicFields,
     };
   }
 
@@ -792,7 +798,6 @@ export class AmendScreen implements OnInit {
   //   });
   // }
   saveForm(): void {
-
     if (this.isSaving) return;
 
     this.isSaving = true;
@@ -806,6 +811,7 @@ export class AmendScreen implements OnInit {
     }
 
     const payload = this.flattenForm();
+
     console.log('Payload before saving draft:', payload);
     const tnxId = this.currentTx?.tnxId; // ← master LC tnxId, used for PUT /amend/{tnxId}
 
@@ -851,7 +857,6 @@ export class AmendScreen implements OnInit {
   }
 
   submitLc(): void {
-
     const eventRefNo = this.currentTx?.eventRefNo;
 
     if (!eventRefNo) {
@@ -902,7 +907,6 @@ export class AmendScreen implements OnInit {
   }
 
   updateAttachments(files: File[]) {
-
     const arr = this.importForm.get('attachments') as FormArray;
 
     arr.clear();
@@ -918,41 +922,51 @@ export class AmendScreen implements OnInit {
       ),
     );
   }
-update(): void {
-  const eventRefNo = this.currentTx?.eventRefNo;
+  update(): void {
+    const eventRefNo = this.currentTx?.eventRefNo;
 
-  if (this.importForm.invalid || !eventRefNo) {
-    this.snackBar.open('Invalid form or missing amendment reference', 'Close', {
-      duration: 3000,
+    if (this.importForm.invalid || !eventRefNo) {
+      this.snackBar.open(
+        'Invalid form or missing amendment reference',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+      return;
+    }
+
+    const payload = {
+      ...this.flattenForm(),
+      event: 'AMD',
+      tnxId: this.currentTx.tnxId,
+    };
+    console.log('updated payload before ', payload);
+    this.api.updatePendingAmendmentTransaction(eventRefNo, payload).subscribe({
+      next: (res) => {
+        this.currentTx = { ...this.currentTx, ...res };
+        console.log('updated payload after ', this.currentTx);
+        this.snackBar.open(
+          `Amendment updated (Ref: ${res.eventRefNo})`,
+          'Close',
+          {
+            duration: 3000,
+          },
+        );
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
+          { queryParams: { tab: 'pending' } },
+        );
+      },
+      error: () => {
+        this.snackBar.open('Failed to update amendment', 'Close', {
+          duration: 3000,
+        });
+      },
     });
-    return;
   }
 
-  const payload = {
-    ...this.flattenForm(),
-    event: 'AMD',
-    tnxId: this.currentTx.tnxId,
-  };
-
-  this.api.updatePendingAmendmentTransaction(eventRefNo, payload).subscribe({
-    next: (res) => {
-      this.currentTx = { ...this.currentTx, ...res };
-      this.snackBar.open(`Amendment updated (Ref: ${res.eventRefNo})`, 'Close', {
-        duration: 3000,
-      });
-      this.router.navigate(
-        ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
-        { queryParams: { tab: 'pending' } },
-      );
-    },
-    error: () => {
-      this.snackBar.open('Failed to update amendment', 'Close', { duration: 3000 });
-    },
-  });
-}
-
   approve(): void {
-
     const eventRefNo = this.currentTx?.eventRefNo;
 
     if (!eventRefNo) {
@@ -968,7 +982,6 @@ update(): void {
       tnxId: this.tnxId,
     };
     this.api.approveAmendment(eventRefNo, payload).subscribe({
-
       next: () => {
         this.snackBar.open('Amendment approved. Live LC updated.', 'Close', {
           duration: 3000,
@@ -987,7 +1000,6 @@ update(): void {
   }
 
   openReject(): void {
-
     const eventRefNo = this.currentTx?.eventRefNo;
 
     if (!eventRefNo) {
@@ -1068,97 +1080,164 @@ update(): void {
         },
       });
   }
- // old and new values working
-previousDynamicValues: { [key: string]: any } = {};
-storeRejectedTransaction: ImportLcTransaction | null = null;
-    previousValues: { [key: string]: any } = {};
-    private readonly ImportLcFields = [
-  // General Details
-  'productType',
-  'modeOfTransmission',
-  'expiryDate',
-  'placeOfExpiry',
-  'featureIrrevocable',
-  'featureRevolving',
-  'featureTransferable',
-  'applicableRules',
-  'confirmationInstruction',
 
-  // Applicant / Beneficiary Details
-  'applicantName',
-  'applicantAddress1',
-  'applicantAddress2',
-  'applicantAddress3',
-  'applicantAddress4',
-  'applicantCountry',
-  'beneficiaryName',
-  'beneficiaryAddress1',
-  'beneficiaryAddress2',
-  'beneficiaryAddress3',
-  'beneficiaryAddress4',
-  'beneficiaryCountry',
+  // Dynamic fields section start
 
-  // Bank Details
-  'issuingBankName',
-  'issuerReference',
-  'advisingBankName',
-  'adviseThroughBankName',
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
 
-  // Amount / Charges Details
-  'currency',
-  'amount',
-  'variationType',
-  'variationPlus',
-  'variationMinus',
-  'issuingBankCharges',
-  'outsideCountryCharges',
-  'additionalAmount',
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
 
-  // Payment Details
-  'creditAvailableWith',
-  'bankName',
-  'creditAvailableBy',
-  'paymentDraftAt',
+    this.api.getFieldsByScreenAndStatus('importLcEvent', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
 
-  // Shipment Details
-  'shipmentFrom',
-  'shipmentTo',
-  'placeOfLoading',
-  'placeOfDischarge',
-  'lastShipmentDate',
-  'shipmentPeriodNarrative',
-  'partialShipment',
-  'transhipment',
+        this.fields = res || [];
 
-  // Narrative Details
-  'descriptionOfGoods',
-  'documentsRequired',
-  'additionalInstructions',
-  'otherDetails',
+        const group: any = {};
 
-  // Instructions
-  'principalAccount',
-  'feeAccount',
-  'otherInstructions',
-];
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    ) {
+      return;
+    }
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (field: any) => field.fieldId === savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+  // old and new values working
+  previousDynamicValues: { [key: string]: any } = {};
+  storeRejectedTransaction: ImportLcTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  private readonly ImportLcFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'expiryDate',
+    'placeOfExpiry',
+    'featureIrrevocable',
+    'featureRevolving',
+    'featureTransferable',
+    'applicableRules',
+    'confirmationInstruction',
+
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
+
+    // Bank Details
+    'issuingBankName',
+    'issuerReference',
+    'advisingBankName',
+    'adviseThroughBankName',
+
+    // Amount / Charges Details
+    'currency',
+    'amount',
+    'variationType',
+    'variationPlus',
+    'variationMinus',
+    'issuingBankCharges',
+    'outsideCountryCharges',
+    'additionalAmount',
+
+    // Payment Details
+    'creditAvailableWith',
+    'bankName',
+    'creditAvailableBy',
+    'paymentDraftAt',
+
+    // Shipment Details
+    'shipmentFrom',
+    'shipmentTo',
+    'placeOfLoading',
+    'placeOfDischarge',
+    'lastShipmentDate',
+    'shipmentPeriodNarrative',
+    'partialShipment',
+    'transhipment',
+
+    // Narrative Details
+    'descriptionOfGoods',
+    'documentsRequired',
+    'additionalInstructions',
+    'otherDetails',
+
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
   private compareImportLcData(): void {
-  this.previousValues = this.transactionComparisonService.compare(
-    this.currentTx,
-    this.storeRejectedTransaction,
-    this.ImportLcFields,
-  );
-
-  this.previousDynamicValues =
-    this.transactionComparisonService.compareDynamicFields(
-      this.currentTx?.dynamicFields ?? [],
-      this.storeRejectedTransaction?.dynamicFields ?? [],
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.ImportLcFields,
     );
 
-  console.log('Previous import LC values:', this.previousValues);
-  console.log('Previous dynamic values:', this.previousDynamicValues);
-}
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
 
-    hasPreviousValue(field: string): boolean {
+    console.log('Previous import LC values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&
       Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
@@ -1175,7 +1254,4 @@ storeRejectedTransaction: ImportLcTransaction | null = null;
   getPreviousValue(field: string): any {
     return this.previousValues?.[field] ?? '';
   }
-
-
 }
-

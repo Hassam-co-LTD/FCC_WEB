@@ -90,6 +90,8 @@ export class CreateClientUser implements OnInit {
   fields: any[] = [];
   storeDynamicFieldsResponse: any[] = [];
   isDynamicFieldsOpen = true;
+  // hide password logic
+  hidePassword = true;
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
@@ -231,7 +233,7 @@ export class CreateClientUser implements OnInit {
 
     const payload = {
       ...this.clientUserForm.getRawValue(),
-      updatedby: this.authService.getLoginId(),
+      updatedBy: this.authService.getLoginId(),
       dynamicFields: this.getDynamicPayload(),
     };
 

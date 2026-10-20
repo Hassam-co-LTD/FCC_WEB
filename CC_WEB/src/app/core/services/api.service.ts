@@ -13,11 +13,15 @@ import {
   RecordsListTransferDTO,
   AccountsMaster,
 } from '../models/my-accounts';
+import {
+  CaptchaResponse,
+  CaptchaVerifyResponse,
+} from '../../core/models/captcha';
 import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
-
+import { UserDashboardResponse } from '../models/user-dashboard-transaction-activities';
 @Injectable({
   providedIn: 'root',
 })
@@ -250,13 +254,13 @@ export class ApiService {
   }
 
   getRejectedImportLc(tnxId: string): Observable<ImportLcTransaction | null> {
-  return this.http
-    .get<ImportLcTransaction>(
-      `${this.baseUrl}/importlc/rejectedSnapshot/${tnxId}`,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+    return this.http
+      .get<ImportLcTransaction>(
+        `${this.baseUrl}/importlc/rejectedSnapshot/${tnxId}`,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
   /* -------------------- IMPORT LC AMENDMENT API Methods  -------------------- */
 
   // getLatestApprovedEvent(tnxId: string): Observable<ImportLcTransaction> {
@@ -357,17 +361,17 @@ export class ApiService {
   }
 
   updatePendingAmendmentTransaction(
-  eventRefNo: string,
-  payload: ImportLcTransaction,
-): Observable<ImportLcTransaction> {
-  return this.http
-    .put<ImportLcTransaction>(
-      `${this.baseeventUrl}/amend/updatePending/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+    eventRefNo: string,
+    payload: ImportLcTransaction,
+  ): Observable<ImportLcTransaction> {
+    return this.http
+      .put<ImportLcTransaction>(
+        `${this.baseeventUrl}/amend/updatePending/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
   submitAmendment(
     eventRefNo: string,
     data: ImportLcTransaction,
@@ -452,9 +456,9 @@ export class ApiService {
   ): Observable<ShippingGuaranteeTransaction> {
     return this.http
       .put<ShippingGuaranteeTransaction>(
-        `${this.baseUrl}/shippingguarantee/${tnxId}`,
+        `${this.baseUrl}/shippingguarantee/updatePending/${tnxId}`,
         payload,
-        { headers: this.headers }
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -594,32 +598,31 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-
   updatePendingAmendmentSg(
-  eventRefNo: string,
-  payload: ShippingGuaranteeTransaction,
-): Observable<ShippingGuaranteeTransaction> {
-  return this.http
-    .put<ShippingGuaranteeTransaction>(
-      `${this.baseSgEventUrl}/amend/updatePending/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+    eventRefNo: string,
+    payload: ShippingGuaranteeTransaction,
+  ): Observable<ShippingGuaranteeTransaction> {
+    return this.http
+      .put<ShippingGuaranteeTransaction>(
+        `${this.baseSgEventUrl}/amend/updatePending/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
 
-updateRejectedAmendmentSg(
-  eventRefNo: string,
-  payload: ShippingGuaranteeTransaction,
-): Observable<ShippingGuaranteeTransaction> {
-  return this.http
-    .put<ShippingGuaranteeTransaction>(
-      `${this.baseSgEventUrl}/amend/updateRejected/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+  updateRejectedAmendmentSg(
+    eventRefNo: string,
+    payload: ShippingGuaranteeTransaction,
+  ): Observable<ShippingGuaranteeTransaction> {
+    return this.http
+      .put<ShippingGuaranteeTransaction>(
+        `${this.baseSgEventUrl}/amend/updateRejected/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
   getAmendmentByEventRefNoSg(
     eventRefNo: string,
   ): Observable<ShippingGuaranteeTransaction> {
@@ -668,11 +671,11 @@ updateRejectedAmendmentSg(
   }
 
   getEventRejectedTransactionSg(eventRefNo: string) {
-  return this.http.get<any>(
-    `${this.baseSgEventUrl}/amend/${eventRefNo}/rejected-history`,
-    { headers: this.headers },
-  );
-}
+    return this.http.get<any>(
+      `${this.baseSgEventUrl}/amend/${eventRefNo}/rejected-history`,
+      { headers: this.headers },
+    );
+  }
 
   // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
 
@@ -712,9 +715,9 @@ updateRejectedAmendmentSg(
     return this.http
       .put<ExportCollectionTransaction>(
         `${this.baseUrl}/exportcollection/${payload.tnxId}`,
-        
+
         payload,
-        { headers: this.headers }
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -908,13 +911,11 @@ updateRejectedAmendmentSg(
       .pipe(catchError(this.handleError));
   }
   getEventRejectedTransactionExportCollection(eventRefNo: string) {
-  return this.http.get<
-  
-  any>(
-    `${this.baseECEventUrl}/amend/${eventRefNo}/rejected-history`,
-    { headers: this.headers },
-  );
-}
+    return this.http.get<any>(
+      `${this.baseECEventUrl}/amend/${eventRefNo}/rejected-history`,
+      { headers: this.headers },
+    );
+  }
 
   getUtgAmendmentByTnxIdExportCollection(
     tnxId: string,
@@ -1021,30 +1022,30 @@ updateRejectedAmendmentSg(
       )
       .pipe(catchError(this.handleError));
   }
-updateRejectedAmendmentExportCollection(
-  eventRefNo: string,
-  payload: any,
-): Observable<ExportCollectionTransaction> {
-  return this.http
-    .put<ExportCollectionTransaction>(
-      `${this.baseECEventUrl}/amend/updateRejected/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
-updatePendingAmendmentExportCollection(
-  eventRefNo: string,
-  payload: ExportCollectionTransaction,
-): Observable<ExportCollectionTransaction> {
-  return this.http
-    .put<ExportCollectionTransaction>(
-      `${this.baseECEventUrl}/amend/updatePending/${eventRefNo}`, // use your real base url
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+  updateRejectedAmendmentExportCollection(
+    eventRefNo: string,
+    payload: any,
+  ): Observable<ExportCollectionTransaction> {
+    return this.http
+      .put<ExportCollectionTransaction>(
+        `${this.baseECEventUrl}/amend/updateRejected/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
+  updatePendingAmendmentExportCollection(
+    eventRefNo: string,
+    payload: ExportCollectionTransaction,
+  ): Observable<ExportCollectionTransaction> {
+    return this.http
+      .put<ExportCollectionTransaction>(
+        `${this.baseECEventUrl}/amend/updatePending/${eventRefNo}`, // use your real base url
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
   //=================================================================
   // API Methods For UNDERTAKING LC MODULE (ALIGNED WITH CONTROLLER)
   // =================================================================
@@ -1076,7 +1077,8 @@ updatePendingAmendmentExportCollection(
     return this.http
       .put<UndertakingGuarantee>(
         `${this.baseUrl}/utg/${payload.tnxId}`,
-        payload,{ headers: this.headers }
+        payload,
+        { headers: this.headers },
       )
       .pipe(catchError(this.handleError));
   }
@@ -1221,30 +1223,30 @@ updatePendingAmendmentExportCollection(
   }
 
   updatePendingUtgAmendment(
-  eventRefNo: string,
-  payload: UndertakingGuarantee,
-): Observable<UndertakingGuarantee> {
-  return this.http
-    .put<UndertakingGuarantee>(
-      `${this.baseUtgEventUrl}/amend/updatePending/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+    eventRefNo: string,
+    payload: UndertakingGuarantee,
+  ): Observable<UndertakingGuarantee> {
+    return this.http
+      .put<UndertakingGuarantee>(
+        `${this.baseUtgEventUrl}/amend/updatePending/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
 
-updateRejectedUtgAmendment(
-  eventRefNo: string,
-  payload: UndertakingGuarantee,
-): Observable<UndertakingGuarantee> {
-  return this.http
-    .put<UndertakingGuarantee>(
-      `${this.baseUtgEventUrl}/amend/updateRejected/${eventRefNo}`,
-      payload,
-      { headers: this.headers },
-    )
-    .pipe(catchError(this.handleError));
-}
+  updateRejectedUtgAmendment(
+    eventRefNo: string,
+    payload: UndertakingGuarantee,
+  ): Observable<UndertakingGuarantee> {
+    return this.http
+      .put<UndertakingGuarantee>(
+        `${this.baseUtgEventUrl}/amend/updateRejected/${eventRefNo}`,
+        payload,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
 
   approveUtgAmendment(
     eventRefNo: string,
@@ -1270,11 +1272,11 @@ updateRejectedUtgAmendment(
   }
 
   getEventRejectedTransactionUtg(eventRefNo: string) {
-  return this.http.get<any>(
-    `${this.baseUtgEventUrl}/amend/${eventRefNo}/rejected-history`,
-    { headers: this.headers },
-  );
-}
+    return this.http.get<any>(
+      `${this.baseUtgEventUrl}/amend/${eventRefNo}/rejected-history`,
+      { headers: this.headers },
+    );
+  }
   // =================================================================
   // TRANSFERS API Methods
   // =================================================================
@@ -1717,11 +1719,8 @@ updateRejectedUtgAmendment(
 
   // Implementation to fetch dropdown options based on the provided parameters
 
-  importCustomers(formData: FormData) {
-    return this.http.post(
-      `${environment.gatewayUrl}/api/v1/customer/import`,
-      formData,
-    );
+  importCustomers(formData: FormData, screenName: String) {
+    return this.http.post(`${this.adminBaseUrl}${screenName}/import`, formData);
   }
 
   refreshToken() {
@@ -1739,13 +1738,13 @@ updateRejectedUtgAmendment(
       `${this.baseUrl}/${module}/${id}/rejected-history`,
     );
   }
- getEventRejectedTransaction(eventRefNo: string) {
+  getEventRejectedTransaction(eventRefNo: string) {
     return this.http.get<any>(
       `${this.baseeventUrl}/amend/${eventRefNo}/rejected-history`,
     );
   }
   // verify customer account from core banking api
-  verifyCustomerAccount(accountNumber: String, name: String) {
+  verifyCustomerAccount(accountNumber: String) {
     return this.http.get<any>(
       `${this.adminBaseUrl}customer-registration/customer/${name}/${accountNumber}`,
     );
@@ -1760,5 +1759,49 @@ updateRejectedUtgAmendment(
     return this.http.post(`${this.adminBaseUrl}chatbot/chat`, payload, {
       responseType: 'text',
     });
+  }
+
+  // user dashboard transaction activities work
+
+  getDashboardData(
+    year: number,
+    month: number,
+    companyid: string,
+  ): Observable<UserDashboardResponse> {
+    const params = new HttpParams()
+      .set('year', year.toString())
+      .set('month', month.toString())
+      .set('companyid', companyid);
+
+    return this.http.get<UserDashboardResponse>(
+      `${this.baseUrl}/user-dashboard`,
+      {
+        params,
+      },
+    );
+  }
+
+  // fetch all screens record status count
+
+  getCountAllStatus() {
+    return this.http.get<any>(`${this.baseUrl}/user-dashboard/count-by-status`);
+  }
+
+  // Captcha
+
+  getCaptchaChallenge() {
+    return this.http.get<CaptchaResponse>(
+      `${this.adminBaseUrl}captcha/challenge`,
+    );
+  }
+
+  verifyCaptcha(challengeId: string, answer: string) {
+    return this.http.post<CaptchaVerifyResponse>(
+      `${this.adminBaseUrl}captcha/verify`,
+      {
+        challengeId,
+        answer,
+      },
+    );
   }
 }

@@ -20,12 +20,7 @@ import { ShippingGuaranteeFormTransactionService } from '../../../../../../../co
 @Component({
   selector: 'app-inquiries-records',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-    FormsModule,
-    ExportDropdown
-  ],
+  imports: [CommonModule, MatIconModule, FormsModule, ExportDropdown],
   templateUrl: './inquiries-records.html',
   styleUrls: ['./inquiries-records.scss'],
 })
@@ -76,8 +71,7 @@ export class inquiriesRecords implements OnInit {
   // =========================================================
 
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly isBrowser =
-    isPlatformBrowser(this.platformId);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   // =========================================================
   // CONSTRUCTOR
@@ -87,7 +81,7 @@ export class inquiriesRecords implements OnInit {
     private api: ApiService,
     private transactionService: ShippingGuaranteeFormTransactionService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   // CHECK PERMISSION
@@ -220,16 +214,9 @@ export class inquiriesRecords implements OnInit {
   // --- FILTERING ---
 
   applyFilters(): void {
+    const query = this.searchQuery.toLowerCase().trim();
 
-    const query =
-      this.searchQuery
-        .toLowerCase()
-        .trim();
-
-    const currency =
-      this.currencyFilter
-        .toLowerCase()
-        .trim();
+    const currency = this.currencyFilter.toLowerCase().trim();
 
     const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
@@ -238,22 +225,16 @@ export class inquiriesRecords implements OnInit {
         tx.beneficiaryName?.toLowerCase().includes(query) ||
         tx.currency?.toLowerCase().includes(query);
 
-        const matchesCurrency =
-          !currency ||
-          tx.currency
-            ?.toLowerCase() === currency;
+      const matchesCurrency =
+        !currency || tx.currency?.toLowerCase() === currency;
 
-        return (
-          matchesSearch &&
-          matchesCurrency
-        );
-      });
+      return matchesSearch && matchesCurrency;
+    });
 
     this.applySorting(filtered);
   }
 
   clearSearch(): void {
-
     this.searchQuery = '';
 
     this.applyFilters();
@@ -263,24 +244,12 @@ export class inquiriesRecords implements OnInit {
   // SORTING
   // =========================================================
 
-  sortBy(
-    column: typeof this.sortColumn
-  ): void {
-
-    if (
-      this.sortColumn === column
-    ) {
-
-      this.sortDirection =
-        this.sortDirection === 'asc'
-          ? 'desc'
-          : 'asc';
-
+  sortBy(column: typeof this.sortColumn): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
-
       this.sortColumn = column;
       this.sortDirection = 'asc';
-
     }
 
     this.applyFilters();
@@ -309,29 +278,21 @@ export class inquiriesRecords implements OnInit {
         return this.sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
       }
 
-        const aStr =
-          String(aVal);
+      const aStr = String(aVal);
 
-        const bStr =
-          String(bVal);
+      const bStr = String(bVal);
 
-        return this.sortDirection === 'asc'
-          ? aStr.localeCompare(bStr)
-          : bStr.localeCompare(aStr);
+      return this.sortDirection === 'asc'
+        ? aStr.localeCompare(bStr)
+        : bStr.localeCompare(aStr);
+    });
 
-      });
-
-    this.filteredTransactions =
-      sorted;
+    this.filteredTransactions = sorted;
 
     this.currentPage = 1;
   }
 
-  private resolveColumn(
-    tx: ShippingGuaranteeTransaction,
-    column: string
-  ): any {
-
+  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
     switch (column) {
       case 'tnxId':
         return tx.tnxId;
@@ -359,34 +320,20 @@ export class inquiriesRecords implements OnInit {
     return count < 1 ? 1 : count;
   }
 
-  get pagedTransactions():
-    ShippingGuaranteeTransaction[] {
+  get pagedTransactions(): ShippingGuaranteeTransaction[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
 
-    const start =
-      (this.currentPage - 1) *
-      this.itemsPerPage;
-
-    return this.filteredTransactions
-      .slice(
-        start,
-        start + this.itemsPerPage
-      );
+    return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
 
   previousPage(): void {
-
     if (this.currentPage > 1) {
       this.currentPage--;
     }
   }
 
   nextPage(): void {
-
-    if (
-      this.currentPage <
-      this.totalPages
-    ) {
-
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
     }
   }
@@ -431,16 +378,6 @@ export class inquiriesRecords implements OnInit {
     }
 
     if (this.activeTab === 'live') {
-
-      if (!this.hasPermission('SG_InquiryLive')) {
-
-        console.warn(
-          'User does not have Live inquiry permission.'
-        );
-
-        return;
-      }
-
       this.router.navigate(
         ['/dashboard/Trade-Services/shipping-guarantee/amend', tx.tnxId],
         {
@@ -476,7 +413,6 @@ export class inquiriesRecords implements OnInit {
 
   private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
     switch (tab) {
-
       case 'pending':
         return 'EDIT';
 
@@ -492,12 +428,8 @@ export class inquiriesRecords implements OnInit {
   // BACKEND STATUS
   // =========================================================
 
-  private mapTabToBackendStatus(
-    tab: string
-  ): string {
-
+  private mapTabToBackendStatus(tab: string): string {
     switch (tab) {
-
       case 'pending':
         return 'i';
 

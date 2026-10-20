@@ -301,7 +301,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-export-preview',
   standalone: true,
@@ -347,6 +347,7 @@ export class Preview implements OnInit {
 
     this.currentTx =
       this.transaction || this.transactionService.getCurrentTransaction();
+    console.log('preview loaded ', this.currentTx);
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
@@ -435,11 +436,21 @@ export class Preview implements OnInit {
         this.currentTx!.warehouseOrInsureGoodsIfNecessary,
       ],
       referTo: [this.currentTx!.referTo],
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
     if (this.viewMode === 'readonly') {
       this.ExportCollectionForm.disable({ emitEvent: false });
     }
+  }
+
+  get dynamicFieldsArray(): FormArray {
+    return this.ExportCollectionForm.get('dynamicFields') as FormArray;
   }
 
   back() {

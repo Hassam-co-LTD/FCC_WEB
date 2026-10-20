@@ -40,7 +40,7 @@ export const routes: Routes = [
   {
     path: 'customer-registration',
     loadComponent: () =>
-      import('./screens/AUTH/register-customer/register-customer').then(
+      import('./screens/ADMIN/admin-dashboard/components/register-customer/register-customer').then(
         (m) => m.RegisterCustomer,
       ),
   },

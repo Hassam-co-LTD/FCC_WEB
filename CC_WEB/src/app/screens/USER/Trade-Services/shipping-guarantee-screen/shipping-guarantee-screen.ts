@@ -17,7 +17,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
-import {TransactionComparisonService} from '../../../../core/services/admin-service/transaction-comparison.service';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
 @Component({
   selector: 'app-shipping-guarantee',
   standalone: true,
@@ -48,7 +48,7 @@ export class ShippingGuarantee implements OnInit {
   companyId = '';
 
   permissionNames: string[] = [];
-previousDynamicValues: { [key: string]: any } = {};
+  previousDynamicValues: { [key: string]: any } = {};
   shippingGuaranteeSteps = [
     { label: 'General Details' },
     { label: 'Applicant & Beneficiary' },
@@ -181,17 +181,17 @@ previousDynamicValues: { [key: string]: any } = {};
         amount: [''],
       }),
       bankDetailsForm: this.fb.group({
-  remittingBankName: [''],
-  issuerReference: [''],
-  presentingBankName: [''],
-  bankAddress1: [''],
-  bankAddress2: [''],
-  bankAddress3: [''],
-  bankAddress4: [''],
-  collectingBankName: [''],
-  swiftCode: [''],
-  collectingReference: [''],
-}),
+        remittingBankName: [''],
+        issuerReference: [''],
+        presentingBankName: [''],
+        bankAddress1: [''],
+        bankAddress2: [''],
+        bankAddress3: [''],
+        bankAddress4: [''],
+        collectingBankName: [''],
+        swiftCode: [''],
+        collectingReference: [''],
+      }),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
@@ -215,19 +215,20 @@ previousDynamicValues: { [key: string]: any } = {};
     this.api.getTransactionSgByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
-
-        
-        if(tx.status === 'S'){
-             this.api.getRejectedTransaction(tnxId, 'shippingguarantee').subscribe({
-               next: (rejectedTx) => {
-                 this.storeRejectedTransaction = rejectedTx;
-                 console.log('Rejected transaction data:', rejectedTx);
-                 this.compareShippingGuaranteeData();
-               },
-               error: (err:any) => {  
-                   console.log('Error fetching rejected transaction:', err);
-               }
-             });
+        console.log('load transaction by id', this.currentTx);
+        if (tx.status === 'S') {
+          this.api
+            .getRejectedTransaction(tnxId, 'shippingguarantee')
+            .subscribe({
+              next: (rejectedTx) => {
+                this.storeRejectedTransaction = rejectedTx;
+                console.log('Rejected transaction data:', rejectedTx);
+                this.compareShippingGuaranteeData();
+              },
+              error: (err: any) => {
+                console.log('Error fetching rejected transaction:', err);
+              },
+            });
         }
         this.patchForm(tx);
 
@@ -294,12 +295,12 @@ previousDynamicValues: { [key: string]: any } = {};
 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
-  generalDetailsForm: tx,
-  applicantBeneficiaryForm: tx,
-  issuingbankForm: tx,
-  bankDetailsForm: tx,       // add
-  instructionForm: tx,
-});
+      generalDetailsForm: tx,
+      applicantBeneficiaryForm: tx,
+      issuingbankForm: tx,
+      bankDetailsForm: tx, // add
+      instructionForm: tx,
+    });
     // Store existing dynamic field values
     this.storeDynamicFieldsResponse = tx.dynamicFields || [];
 
@@ -318,7 +319,7 @@ previousDynamicValues: { [key: string]: any } = {};
 
     const dynamicFields = this.fields.map((field: any) => ({
       fieldId: field.fieldId,
-      value: dynamicFormValues[field.fieldName] ?? '',
+      value: dynamicFormValues[field.fieldId] ?? '',
     }));
     return {
       companyId: this.companyId,
@@ -327,11 +328,11 @@ previousDynamicValues: { [key: string]: any } = {};
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
       // flattenForm()
-...this.ShippingGuaranteeForm.value.issuingbankForm,
-...this.ShippingGuaranteeForm.value.bankDetailsForm,
-...this.ShippingGuaranteeForm.value.instructionForm,
+      ...this.ShippingGuaranteeForm.value.issuingbankForm,
+      ...this.ShippingGuaranteeForm.value.bankDetailsForm,
+      ...this.ShippingGuaranteeForm.value.instructionForm,
 
-// shippingGuaranteeFields: add
+      // shippingGuaranteeFields: add
 
       dynamicFields: dynamicFields,
       attachments: this.ShippingGuaranteeForm.value.attachments,
@@ -483,14 +484,14 @@ previousDynamicValues: { [key: string]: any } = {};
 
   approve(): void {
     console.log('Attempting to approve transaction:', this.currentTx);
-    
-      this.api
-        .approveTransactionSg(this.currentTx.tnxId!, this.currentTx)
-        .subscribe({
-          next: () => this.navigateBack('approved'),
-          error: () =>
-            this.snackbar.open('Approval failed', 'Close', { duration: 3000 }),
-        });
+
+    this.api
+      .approveTransactionSg(this.currentTx.tnxId!, this.currentTx)
+      .subscribe({
+        next: () => this.navigateBack('approved'),
+        error: () =>
+          this.snackbar.open('Approval failed', 'Close', { duration: 3000 }),
+      });
   }
   openReject(): void {
     if (!this.hasPermission('SG_InquiryReject')) {
@@ -600,28 +601,35 @@ previousDynamicValues: { [key: string]: any } = {};
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log(
-      'Loading dynamic fields for ExportCollection screen with status A...',
-    );
-    this.api.getFieldsByScreenAndStatus('shippingGuarntee', 'A').subscribe({
-      next: (res: any) => {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api.getFieldsByScreenAndStatus('ImportScreen', 'A').subscribe({
+      next: (res: any[]) => {
         console.log('Field definitions:', res);
 
-        this.fields = res;
-        console.log('Dynamic fields loaded:', this.fields);
+        this.fields = res || [];
+
         const group: any = {};
 
         this.fields.forEach((field: any) => {
-          group[field.fieldName] = [''];
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
         });
 
         this.dynamicFieldsForm = this.fb.group(group);
 
-        // patch values if customer already loaded
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
         this.patchDynamicValues();
       },
 
-      error: (err: any) => console.error('Error loading dynamic fields:', err),
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
     });
   }
   // ---------------- PATCH DYNAMIC VALUES ----------------
@@ -630,18 +638,20 @@ previousDynamicValues: { [key: string]: any } = {};
       !this.dynamicFieldsForm ||
       !this.fields?.length ||
       !this.storeDynamicFieldsResponse?.length
-    )
+    ) {
       return;
+    }
 
     const patchObj: any = {};
 
     this.storeDynamicFieldsResponse.forEach((savedField: any) => {
       const fieldDefinition = this.fields.find(
-        (f: any) => f.fieldId == savedField.fieldId,
+        (field: any) => field.fieldId === savedField.fieldId,
       );
 
       if (fieldDefinition) {
-        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
       }
     });
 
@@ -650,77 +660,75 @@ previousDynamicValues: { [key: string]: any } = {};
     this.dynamicFieldsForm.patchValue(patchObj);
   }
 
-  
-
   // old and new values working
 
- storeRejectedTransaction: ShippingGuaranteeTransaction | null = null;
+  storeRejectedTransaction: ShippingGuaranteeTransaction | null = null;
 
-    previousValues: { [key: string]: any } = {};
-private readonly shippingGuaranteeFields = [
-  // General Details
-  'expiryDate',
-  'beneficiaryReference',
-  'customerReference',
-  'billoflading',
-  'modeOfShipment',
-  'shippingDetails',
-  'description',
+  previousValues: { [key: string]: any } = {};
+  private readonly shippingGuaranteeFields = [
+    // General Details
+    'expiryDate',
+    'beneficiaryReference',
+    'customerReference',
+    'billoflading',
+    'modeOfShipment',
+    'shippingDetails',
+    'description',
 
-  // Applicant / Beneficiary Details
-  'applicantName',
-  'applicantAddress1',
-  'applicantAddress2',
-  'applicantAddress3',
-  'applicantAddress4',
-  'applicantCountry',
-  'beneficiaryName',
-  'beneficiaryAddress1',
-  'beneficiaryAddress2',
-  'beneficiaryAddress3',
-  'beneficiaryAddress4',
-  'beneficiaryCountry',
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
 
-  // Issuing Bank Details
-  'bankName',
-  'issuerReference',
-  'currency',
-  'amount',
-'presentingBankName',
- 'bankAddress1',
-  'bankAddress2',
-   'bankAddress3',
-'bankAddress4', 
-'collectingBankName', 
-'swiftCode',
- 'collectingReference',
-  //bank Details
-  'remittingBankName',
-  'issuerReference',
+    // Issuing Bank Details
+    'bankName',
+    'issuerReference',
+    'currency',
+    'amount',
+    'presentingBankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'collectingBankName',
+    'swiftCode',
+    'collectingReference',
+    //bank Details
+    'remittingBankName',
+    'issuerReference',
 
-  // Instructions
-  'principalAccount',
-  'feeAccount',
-  'otherInstructions',
-];
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
   private compareShippingGuaranteeData(): void {
-  this.previousValues = this.transactionComparisonService.compare(
-    this.currentTx,
-    this.storeRejectedTransaction,
-    this.shippingGuaranteeFields,
-  );
-
-  this.previousDynamicValues =
-    this.transactionComparisonService.compareDynamicFields(
-      this.currentTx?.dynamicFields ?? [],
-      this.storeRejectedTransaction?.dynamicFields ?? [],
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.shippingGuaranteeFields,
     );
 
-  console.log('Previous shipping guarantee values:', this.previousValues);
-  console.log('Previous dynamic values:', this.previousDynamicValues);
-}
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
 
-    hasPreviousValue(field: string): boolean {
+    console.log('Previous shipping guarantee values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&
       Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
@@ -737,7 +745,4 @@ private readonly shippingGuaranteeFields = [
   getPreviousValue(field: string): any {
     return this.previousValues?.[field] ?? '';
   }
-
-
 }
-

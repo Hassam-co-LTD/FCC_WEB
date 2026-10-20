@@ -5,16 +5,11 @@ import {
   FormBuilder,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 } from '@angular/forms';
 
-import {
-  Router,
-  RouterOutlet,
-  ActivatedRoute
-} from '@angular/router';
-
-import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet, ActivatedRoute } from '@angular/router';
+import { CommonModule, NgIf } from '@angular/common';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -33,8 +28,8 @@ import { InstructionToBank } from '../../../../shipping-guarantee-screen/sub-men
 import { BankDetails } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/bank-details/bank-details';
 import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/components/attachments/attachments';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
-import {TransactionComparisonService} from '../../../../../../../core/services/admin-service/transaction-comparison.service';
-
+import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
+import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 
 @Component({
   selector: 'app-amend',
@@ -49,11 +44,13 @@ import {TransactionComparisonService} from '../../../../../../../core/services/a
     BankDetails,
     InstructionToBank,
     Attachments,
+    DynamicFields,
+    NgIf,
   ],
   standalone: true,
   templateUrl: './amend.html',
 
-  styleUrls: ['./amend.scss']
+  styleUrls: ['./amend.scss'],
 })
 export class Amend implements OnInit {
   currentStep = 0;
@@ -62,15 +59,9 @@ export class Amend implements OnInit {
 
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
 
-  screenMode:
-    | 'EDIT'
-    | 'SUBMITTED'
-    | 'APPROVED'
-    | 'FINAL' = 'EDIT';
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
 
-  currentTx: ShippingGuaranteeTransaction =
-    {} as ShippingGuaranteeTransaction;
-
+  currentTx: ShippingGuaranteeTransaction = {} as ShippingGuaranteeTransaction;
 
   showUpdateSubmit = false;
 
@@ -94,24 +85,17 @@ export class Amend implements OnInit {
 
   isHistoricalView = false;
 
-
   // =========================================================
   // PERMISSIONS
   // =========================================================
 
   permissionNames: string[] = [];
 
-
   hasPermission(permission: string): boolean {
-
     return this.permissionNames.some(
-      p =>
-        p.trim().toLowerCase() ===
-        permission.toLowerCase()
+      (p) => p.trim().toLowerCase() === permission.toLowerCase(),
     );
-
   }
-
 
   // =========================================================
   // SIDEBAR STEPS
@@ -123,8 +107,8 @@ export class Amend implements OnInit {
     { label: 'Bank Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic Fields ' },
   ];
-
 
   // =========================================================
   // CONSTRUCTOR
@@ -137,13 +121,10 @@ export class Amend implements OnInit {
     private api: ApiService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private transactionComparisonService: TransactionComparisonService  
+    private transactionComparisonService: TransactionComparisonService,
   ) {
-
     this.buildForm();
-
   }
-
 
   private loadPermissions(): void {
     const storedPermissions = sessionStorage.getItem('permissionNames');
@@ -164,8 +145,6 @@ export class Amend implements OnInit {
       this.permissionNames = [];
     }
   }
-
-  
 
   ngOnInit() {
     this.loadPermissions();
@@ -190,20 +169,11 @@ export class Amend implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData =
-      JSON.parse(
-        sessionStorage.getItem('userData') || '{}'
-      );
+    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
 
-    this.companyId =
-      sessionData.companyId ?? '';
+    this.companyId = sessionData.companyId ?? '';
 
-
-    console.log(
-      'Company ID:',
-      this.companyId
-    );
-
+    console.log('Company ID:', this.companyId);
 
     // =======================================================
     // ROUTE
@@ -224,21 +194,15 @@ export class Amend implements OnInit {
         console.log('eventRefNo:', this.eventRefNo);
 
         if (this.tnxId) {
-
-          this.enterEditMode(
-            this.tnxId
-          );
-
+          this.enterEditMode(this.tnxId);
         } else {
-
           this.enterCreateMode();
-
         }
-
       });
-
     });
 
+    // load dynamic  fields
+    this.loadDynamicFields();
   }
 
   private buildForm(): void {
@@ -278,16 +242,15 @@ export class Amend implements OnInit {
         otherInstructions: [''],
       }),
       attachments: this.fb.array([]),
+      dynamicFields: this.fb.array([]), // New form array for dynamic fields
     });
   }
-
 
   // =========================================================
   // CREATE MODE
   // =========================================================
 
   private enterCreateMode(): void {
-
     this.mode = 'CREATE';
 
     this.showUpdateSubmit = false;
@@ -296,13 +259,11 @@ export class Amend implements OnInit {
 
     this.isHistoricalView = false;
 
-    this.currentTx =
-      {} as ShippingGuaranteeTransaction;
+    this.currentTx = {} as ShippingGuaranteeTransaction;
 
     this.ShippingGuaranteeForm.reset();
 
     this.buildForm();
-
   }
   private enterEditMode(tnxId: string): void {
     this.mode = 'UPDATE';
@@ -353,7 +314,6 @@ export class Amend implements OnInit {
     // =======================================================
 
     if (this.sourceTab === 'live') {
-
       this.isHistoricalView = false;
 
       this.api.getAmendmentByTnxIdSg(tnxId).subscribe({
@@ -380,6 +340,7 @@ export class Amend implements OnInit {
               this.currentTx = {
                 tnxId: tx.tnxId,
               } as ShippingGuaranteeTransaction;
+              console.log('laaded sg saved data by TnxID  ', this.currentTx);
               this.patchForm(tx);
               this.screenMode = 'EDIT';
               this.ShippingGuaranteeForm.enable();
@@ -405,9 +366,7 @@ export class Amend implements OnInit {
     // instead of tnxId alone which can resolve to the latest amendment only
     // =======================================================
 
-
     if (isAmendmentTab) {
-
       this.isHistoricalView = false;
 
       const amendment$ = this.eventRefNo
@@ -418,22 +377,22 @@ export class Amend implements OnInit {
         next: (event) => {
           this.currentTx = event;
           this.patchForm(event);
- if (event.status === 'S') {
-  const refNo = event.eventRefNo || this.eventRefNo;
+          if (event.status === 'S') {
+            const refNo = event.eventRefNo || this.eventRefNo;
 
-  if (refNo) {
-    this.api.getEventRejectedTransactionSg(refNo).subscribe({
-      next: (rejectedTx) => {
-        this.storeRejectedTransaction = rejectedTx;
-        console.log('Rejected transaction data:', rejectedTx);
-        this.compareShippingGuaranteeData();
-      },
-      error: (err: any) => {
-        console.log('Error fetching rejected transaction:', err);
-      },
-    });
-  }
-}
+            if (refNo) {
+              this.api.getEventRejectedTransactionSg(refNo).subscribe({
+                next: (rejectedTx) => {
+                  this.storeRejectedTransaction = rejectedTx;
+                  console.log('Rejected transaction data:', rejectedTx);
+                  this.compareShippingGuaranteeData();
+                },
+                error: (err: any) => {
+                  console.log('Error fetching rejected transaction:', err);
+                },
+              });
+            }
+          }
           switch (event.status) {
             case 'I':
               this.mode = 'UPDATE';
@@ -548,15 +507,17 @@ export class Amend implements OnInit {
 
   private patchForm(tx: ShippingGuaranteeTransaction): void {
     this.ShippingGuaranteeForm.patchValue({
-
       generalDetailsForm: tx,
 
       applicantBeneficiaryForm: tx,
 
       issuingbankForm: tx,
       instructionForm: tx,
+      dynamicFields: tx.dynamicFields || this.fb.array([]),
     });
-
+    // Only dynamic fields
+    this.storeDynamicFieldsResponse = tx.dynamicFields ?? [];
+    this.patchDynamicValues();
   }
 
   scrollToSection(index: number) {
@@ -566,6 +527,12 @@ export class Amend implements OnInit {
   }
 
   private flattenForm(): ShippingGuaranteeTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.ShippingGuaranteeForm.value.generalDetailsForm,
@@ -573,6 +540,7 @@ export class Amend implements OnInit {
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
       attachments: this.ShippingGuaranteeForm.value.attachments,
+      dynamicFields: dynamicFields,
     };
   }
 
@@ -584,7 +552,6 @@ export class Amend implements OnInit {
     if (this.isSaving) return;
     this.isSaving = true;
 
-
     if (!this.companyId) {
       this.snackBar.open('Session expired or company not found.', 'Close', {
         duration: 3000,
@@ -592,7 +559,6 @@ export class Amend implements OnInit {
       this.isSaving = false;
 
       return;
-
     }
 
     const payload = this.flattenForm();
@@ -606,9 +572,7 @@ export class Amend implements OnInit {
       this.isSaving = false;
 
       return;
-
     }
-
 
     this.api
       .saveAmendTransactionSg(tnxId, payload)
@@ -656,12 +620,9 @@ export class Amend implements OnInit {
         duration: 3000,
       });
       return;
-
     }
 
-
     const payload = {
-
       ...this.flattenForm(),
 
       event: 'AMD',
@@ -715,43 +676,42 @@ export class Amend implements OnInit {
     );
   }
 
-update(): void {
- 
+  update(): void {
+    const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
 
-  const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
+    if (this.ShippingGuaranteeForm.invalid || !eventRefNo) {
+      this.snackBar.open('Invalid form or missing event reference', 'Close', {
+        duration: 3000,
+      });
+      return;
+    }
 
-  if (this.ShippingGuaranteeForm.invalid || !eventRefNo) {
-    this.snackBar.open('Invalid form or missing event reference', 'Close', {
-      duration: 3000,
-    });
-    return;
+    if (this.isSaving) return;
+    this.isSaving = true;
+
+    const payload = this.flattenForm();
+    payload.tnxId = this.currentTx?.tnxId || this.tnxId;
+    console.log('playoad before saved ', payload);
+    this.api
+      .updatePendingAmendmentSg(eventRefNo, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: (res) => {
+          this.currentTx = { ...this.currentTx, ...res };
+          console.log('loaded things ', this.currentTx);
+          this.snackBar.open(
+            `Amendment updated successfully (Ref: ${res.eventRefNo})`,
+            'Close',
+            { duration: 3000 },
+          );
+          setTimeout(() => this.navigateBack('pending'), 300);
+        },
+        error: () =>
+          this.snackBar.open('Error updating amendment', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
-
-  if (this.isSaving) return;
-  this.isSaving = true;
-
-  const payload = this.flattenForm();
-  payload.tnxId = this.currentTx?.tnxId || this.tnxId;
-
-  this.api
-    .updatePendingAmendmentSg(eventRefNo, payload)
-    .pipe(finalize(() => (this.isSaving = false)))
-    .subscribe({
-      next: (res) => {
-        this.currentTx = { ...this.currentTx, ...res };
-        this.snackBar.open(
-          `Amendment updated successfully (Ref: ${res.eventRefNo})`,
-          'Close',
-          { duration: 3000 },
-        );
-        setTimeout(() => this.navigateBack('pending'), 300);
-      },
-      error: () =>
-        this.snackBar.open('Error updating amendment', 'Close', {
-          duration: 3000,
-        }),
-    });
-}
   approve(): void {
     if (!this.hasPermission('SG_AmendApprove')) {
       return;
@@ -762,12 +722,9 @@ update(): void {
         duration: 3000,
       });
       return;
-
     }
 
-
     const payload = {
-
       ...this.flattenForm(),
 
       event: 'AMD',
@@ -804,7 +761,6 @@ update(): void {
         duration: 3000,
       });
       return;
-
     }
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
@@ -827,7 +783,6 @@ update(): void {
       });
     });
   }
-
   private navigateBack(tab: string) {
     this.router.navigate(
       ['/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records'],
@@ -837,119 +792,120 @@ update(): void {
     );
   }
 
- updateRejected(): void {
-  if (!this.hasPermission('SG_AmendUpdateReject')) {
-    this.snackBar.open(
-      'You do not have permission to update this rejected amendment.',
-      'Close',
-      { duration: 3000 },
-    );
-    return;
+  updateRejected(): void {
+    if (!this.hasPermission('SG_AmendUpdateReject')) {
+      this.snackBar.open(
+        'You do not have permission to update this rejected amendment.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+
+    if (this.ShippingGuaranteeForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
+
+      return;
+    }
+
+    if (this.isSaving) return;
+    this.isSaving = true;
+
+    const payload = this.flattenForm();
+    payload.tnxId = this.currentTx?.tnxId || this.tnxId;
+    const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
+    console.log('updating reject payload ', payload);
+    this.api
+      .updateRejectedAmendmentSg(eventRefNo, payload)
+      .pipe(finalize(() => (this.isSaving = false)))
+      .subscribe({
+        next: (res) => {
+          console.log('updated reject payload ', res);
+          this.snackBar.open(
+            `Rejected amendment updated and moved back to Pending (Ref: ${res.eventRefNo})`,
+            'Close',
+            { duration: 3000 },
+          );
+          this.navigateBack('pending');
+        },
+        error: () =>
+          this.snackBar.open('Failed to update rejected amendment', 'Close', {
+            duration: 3000,
+          }),
+      });
   }
-
-  const eventRefNo = this.currentTx?.eventRefNo || this.eventRefNo;
-
-  if (this.ShippingGuaranteeForm.invalid || !eventRefNo) {
-    this.snackBar.open('Invalid form or missing event reference', 'Close', {
-      duration: 3000,
-    });
-    return;
-  }
-
-  if (this.isSaving) return;
-  this.isSaving = true;
-
-  const payload = this.flattenForm();
-  payload.tnxId = this.currentTx?.tnxId || this.tnxId;
-
-  this.api
-    .updateRejectedAmendmentSg(eventRefNo, payload)
-    .pipe(finalize(() => (this.isSaving = false)))
-    .subscribe({
-      next: (res) => {
-        this.snackBar.open(
-          `Rejected amendment updated and moved back to Pending (Ref: ${res.eventRefNo})`,
-          'Close',
-          { duration: 3000 },
-        );
-        this.navigateBack('pending');
-      },
-      error: () =>
-        this.snackBar.open('Failed to update rejected amendment', 'Close', {
-          duration: 3000,
-        }),
-    });
-}
 
   // old and new values working
-previousDynamicValues: { [key: string]: any } = {};
- storeRejectedTransaction: ShippingGuaranteeTransaction | null = null;
+  previousDynamicValues: { [key: string]: any } = {};
+  storeRejectedTransaction: ShippingGuaranteeTransaction | null = null;
 
-    previousValues: { [key: string]: any } = {};
-private readonly shippingGuaranteeFields = [
-  // General Details
-  'expiryDate',
-  'beneficiaryReference',
-  'customerReference',
-  'billoflading',
-  'modeOfShipment',
-  'shippingDetails',
-  'description',
+  previousValues: { [key: string]: any } = {};
+  private readonly shippingGuaranteeFields = [
+    // General Details
+    'expiryDate',
+    'beneficiaryReference',
+    'customerReference',
+    'billoflading',
+    'modeOfShipment',
+    'shippingDetails',
+    'description',
 
-  // Applicant / Beneficiary Details
-  'applicantName',
-  'applicantAddress1',
-  'applicantAddress2',
-  'applicantAddress3',
-  'applicantAddress4',
-  'applicantCountry',
-  'beneficiaryName',
-  'beneficiaryAddress1',
-  'beneficiaryAddress2',
-  'beneficiaryAddress3',
-  'beneficiaryAddress4',
-  'beneficiaryCountry',
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
 
-  // Issuing Bank Details
-  'bankName',
-  'issuerReference',
-  'currency',
-  'amount',
-'presentingBankName',
- 'bankAddress1',
-  'bankAddress2',
-   'bankAddress3',
-'bankAddress4', 
-'collectingBankName', 
-'swiftCode',
- 'collectingReference',
-  //bank Details
-  'remittingBankName',
-  'issuerReference',
+    // Issuing Bank Details
+    'bankName',
+    'issuerReference',
+    'currency',
+    'amount',
+    'presentingBankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'collectingBankName',
+    'swiftCode',
+    'collectingReference',
+    //bank Details
+    'remittingBankName',
+    'issuerReference',
 
-  // Instructions
-  'principalAccount',
-  'feeAccount',
-  'otherInstructions',
-];
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
   private compareShippingGuaranteeData(): void {
-  this.previousValues = this.transactionComparisonService.compare(
-    this.currentTx,
-    this.storeRejectedTransaction,
-    this.shippingGuaranteeFields,
-  );
-
-  this.previousDynamicValues =
-    this.transactionComparisonService.compareDynamicFields(
-      this.currentTx?.dynamicFields ?? [],
-      this.storeRejectedTransaction?.dynamicFields ?? [],
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.shippingGuaranteeFields,
     );
 
-  console.log('Previous shipping guarantee values:', this.previousValues);
-  console.log('Previous dynamic values:', this.previousDynamicValues);
-}
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
 
-    hasPreviousValue(field: string): boolean {
+    console.log('Previous shipping guarantee values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&
       Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
@@ -967,7 +923,74 @@ private readonly shippingGuaranteeFields = [
     return this.previousValues?.[field] ?? '';
   }
 
+  // Dynamic Fields section starts now
 
+  // dynamic fields section
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api
+      .getFieldsByScreenAndStatus('shippingGuarnteeEvent', 'A')
+      .subscribe({
+        next: (res: any[]) => {
+          console.log('Field definitions:', res);
+
+          this.fields = res || [];
+
+          const group: any = {};
+
+          this.fields.forEach((field: any) => {
+            // Use unique fieldId instead of duplicate fieldName
+            group[field.fieldId] = [''];
+          });
+
+          this.dynamicFieldsForm = this.fb.group(group);
+
+          console.log(
+            'Dynamic form controls:',
+            this.dynamicFieldsForm.getRawValue(),
+          );
+
+          // Restore previously saved values
+          this.patchDynamicValues();
+        },
+
+        error: (err: any) => {
+          console.error('Error loading dynamic fields:', err);
+        },
+      });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    ) {
+      return;
+    }
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (field: any) => field.fieldId === savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
 }
-
-

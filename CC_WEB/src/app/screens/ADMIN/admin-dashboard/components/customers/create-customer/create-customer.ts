@@ -670,6 +670,7 @@ export class CreateCustomer implements OnInit {
   onCustomerFileSelected(event: any): void {
     const file = event.target.files[0];
 
+    console.log('customer file selected ', file);
     if (!file) {
       return;
     }
@@ -678,7 +679,7 @@ export class CreateCustomer implements OnInit {
 
     formData.append('file', file);
 
-    this.api.importCustomers(formData).subscribe({
+    this.api.importCustomers(formData, 'customer').subscribe({
       next: (response: any) => {
         console.log('Import Response', response);
 

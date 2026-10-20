@@ -60,7 +60,7 @@ export class RegisterCustomer {
 
     const accountNumber = this.accountForm.value.accountNumber;
 
-    this.api.verifyCustomerAccount(accountNumber, 'verify-account').subscribe({
+    this.api.verifyCustomerAccount(accountNumber).subscribe({
       next: () => {
         this.isLoading = false;
         this.currentStep = 2;

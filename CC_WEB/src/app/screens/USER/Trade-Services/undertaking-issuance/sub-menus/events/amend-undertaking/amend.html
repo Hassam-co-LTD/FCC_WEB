@@ -50,9 +50,24 @@
       <section id="section-5"><app-attachments></app-attachments></section>
       <hr class="section-divider" />
 
+      <!-- dynamic Fields section  -->
+
+      <ng-container *ngIf="fields?.length">
+        <app-dynamic-fields
+          [form]="dynamicFieldsForm"
+          [fields]="fields"
+          [isOpen]="isDynamicFieldsOpen"
+        >
+        </app-dynamic-fields>
+      </ng-container>
+
+      <!-- Footer Buttons -->
+
       <div class="actions">
         <ng-container *ngIf="sourceTab === 'live'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
           <button
             *ngIf="hasPermission('UI_AmendSave')"
             mat-flat-button
@@ -65,34 +80,37 @@
         </ng-container>
 
         <ng-container *ngIf="sourceTab === 'pending' && eventType === 'CRE'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
         </ng-container>
-<!-- PENDING TAB + AMD: Back + Update + Submit -->
-<ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
-  <button mat-stroked-button color="primary" (click)="back()">Back</button>
+        <!-- PENDING TAB + AMD: Back + Update + Submit -->
+        <ng-container *ngIf="sourceTab === 'pending' && eventType === 'AMD'">
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
 
-  <button
-    
-    mat-stroked-button
-    color="primary"
-    (click)="update()"
-    [disabled]="isSaving"
-  >
-    {{ isSaving ? 'Updating...' : 'Update' }}
-  </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="update()"
+            [disabled]="isSaving"
+          >
+            {{ isSaving ? 'Updating...' : 'Update' }}
+          </button>
 
-  <button
-    *ngIf="hasPermission('UI_AmendSubmit')"
-    mat-flat-button
-    color="accent"
-    (click)="submitForm()"
-  >
-    Submit
-  </button>
-</ng-container>
+          <button
+            *ngIf="hasPermission('UI_AmendSubmit')"
+            mat-flat-button
+            color="accent"
+            (click)="submitForm()"
+          >
+            Submit
+          </button>
+        </ng-container>
         <ng-container *ngIf="sourceTab === 'submitted' && eventType === 'AMD'">
           <button
-            *ngIf="hasPermission('UI_AmendReject')"
+            *ngIf="hasPermission('UI_AmendSubmit')"
             mat-stroked-button
             color="primary"
             (click)="openReject()"
@@ -110,13 +128,17 @@
         </ng-container>
 
         <ng-container *ngIf="sourceTab === 'approved' && eventType === 'AMD'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
         </ng-container>
 
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
           <button
-            *ngIf="hasPermission('UI_AmendUpdateRejected')"
+            *ngIf="hasPermission('UI_AmendSubmit')"
             mat-flat-button
             color="primary"
             (click)="updateRejected()"

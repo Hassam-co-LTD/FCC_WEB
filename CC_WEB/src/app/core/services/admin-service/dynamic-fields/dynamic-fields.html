@@ -1,32 +1,19 @@
 <!-- =========================
      DYNAMIC CUSTOMER FIELDS
 ========================== -->
-<div
-  class="customer-form-wrapper dynamic-fields-section"
-  [formGroup]="form"
->
-
+<div class="customer-form-wrapper dynamic-fields-section" [formGroup]="form">
   <!-- Section Header -->
   <div class="section-header" (click)="toggleDynamicFields()">
     <h2>Customer Additional Fields</h2>
-
-    <mat-icon>
-      {{ isOpen ? 'expand_less' : 'expand_more' }}
-    </mat-icon>
+    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
   </div>
 
   <!-- Dynamic Fields -->
   <div class="collapsible" [class.open]="isOpen">
-
     <div class="form-grid">
-
-      <ng-container *ngFor="let field of fields">
-
+      <ng-container *ngFor="let field of fields; trackBy: trackByFieldId">
         <div class="field-group">
-
-          <h4>
-            {{ field.label || field.fieldName }}
-          </h4>
+          <h4>{{ field.label || field.fieldName }}</h4>
 
           <!-- TEXT -->
           <mat-form-field
@@ -35,7 +22,7 @@
           >
             <input
               matInput
-              [formControlName]="field.fieldName"
+              [formControlName]="field.fieldId"
               [placeholder]="field.label || field.fieldName"
             />
           </mat-form-field>
@@ -48,7 +35,7 @@
             <input
               matInput
               type="number"
-              [formControlName]="field.fieldName"
+              [formControlName]="field.fieldId"
               [placeholder]="field.label || field.fieldName"
             />
           </mat-form-field>
@@ -61,7 +48,7 @@
             <input
               matInput
               type="date"
-              [formControlName]="field.fieldName"
+              [formControlName]="field.fieldId"
               [placeholder]="field.label || field.fieldName"
             />
           </mat-form-field>
@@ -71,11 +58,9 @@
             *ngIf="field.fieldType === 'select'"
             appearance="outline"
           >
-            <mat-label>
-              {{ field.label || field.fieldName }}
-            </mat-label>
+            <mat-label>{{ field.label || field.fieldName }}</mat-label>
 
-            <mat-select [formControlName]="field.fieldName">
+            <mat-select [formControlName]="field.fieldId">
               <mat-option value="">
                 Select {{ field.label || field.fieldName }}
               </mat-option>
@@ -89,7 +74,7 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- PREVIOUS VALUE (shown once, for any field type) -->
+          <!-- PREVIOUS VALUE -->
           <div
             class="previous-value"
             *ngIf="hasPreviousDynamicValue(field.fieldId)"
@@ -99,13 +84,8 @@
               {{ getPreviousDynamicValue(field.fieldId) }}
             </span>
           </div>
-
         </div>
-
       </ng-container>
-
     </div>
-
   </div>
-
 </div>

@@ -1,15 +1,18 @@
+
 @use '../../../../../../../styles/theme' as theme;
 
 /* ======================================================
    HIDE APPROVED SECTIONS
-====================================================== */
+   ====================================================== */
+
 .hide-when-approved {
   display: none !important;
 }
 
 /* ======================================================
    GLOBAL TYPOGRAPHY
-====================================================== */
+   ====================================================== */
+
 h2 {
   margin: 0;
   font-size: 20px;
@@ -20,31 +23,26 @@ h2 {
 h4 {
   margin: 20px 0 10px;
   padding-left: 8px;
-
   font-size: 16px;
   font-weight: 600;
   color: theme.$primary-dark;
-
   border-left: 4px solid theme.$primary;
 }
 
 /* ======================================================
    COMMON SECTION HEADER
-====================================================== */
+   ====================================================== */
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   margin-bottom: 10px;
   padding: 14px 18px;
-
   background: theme.$primary;
   border-radius: theme.$radius-default;
-
   color: theme.$text-light;
   cursor: pointer;
-
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease;
@@ -62,24 +60,21 @@ h4 {
 
 /* ======================================================
    COLLAPSIBLE
-====================================================== */
+   ====================================================== */
+
 .collapsible {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transform: translateY(-5px);
-
   padding: 0;
-
   transition: all 0.35s ease-in-out;
 
   &.open {
     max-height: 2000px;
     opacity: 1;
     transform: translateY(0);
-
     padding: 15px 10px;
-
     background: theme.$light-bg;
     border: 1px solid theme.$border-light;
     border-radius: theme.$radius-default;
@@ -88,11 +83,11 @@ h4 {
 
 /* ======================================================
    FORM LAYOUT
-====================================================== */
+   ====================================================== */
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-
   gap: theme.$gap-default;
   margin-bottom: 15px;
 
@@ -112,7 +107,7 @@ h4 {
 .field-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 2px;
 
   &.full {
     grid-column: span 2;
@@ -143,29 +138,99 @@ input[matInput] {
 }
 
 /* ======================================================
+   INPUT FIELD SPACING / HEIGHT CONTROL
+   ------------------------------------------------------
+   Change values ONLY HERE when you want to adjust
+   the top/bottom spacing or input height.
+   ====================================================== */
+
+/* Gap between H4, input and previous value */
+.field-group {
+  gap: 2px !important;
+}
+
+/* Field label */
+.field-group h4 {
+  margin: 4px 0 2px !important;
+  padding-left: 6px;
+  line-height: 1.2;
+}
+
+/* Angular Material form field container */
+.field-group mat-form-field {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Main Material input wrapper */
+.field-group .mat-mdc-text-field-wrapper {
+  min-height: 10px !important;
+  padding: 0 5px !important;
+}
+
+/* Material field flex container */
+.field-group .mat-mdc-form-field-flex {
+  min-height: 10px !important;
+  padding: 0 !important;
+}
+
+/* Actual input */
+.field-group input[matInput],
+.field-group textarea[matInput] {
+  min-height: 10px !important;
+  height: 10px !important;
+  padding: 8px 0 !important;
+  box-sizing: border-box;
+  font-size: 14px !important;
+}
+
+/* Remove extra bottom space created by Material */
+.field-group .mat-mdc-form-field-subscript-wrapper {
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Previous value */
+.field-group .previous-value {
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+  padding: 4px 8px !important;
+  line-height: 10px !important;
+}
+
+/* Gap between field parents */
+.form-grid {
+  row-gap: 6px !important;
+  column-gap: 6px !important;
+}
+
+/* ======================================================
+   END INPUT FIELD SPACING CONTROL
+   ====================================================== */
+
+/* ======================================================
    ACTION BUTTONS
-====================================================== */
+   ====================================================== */
+
 .customer-actions,
 .approved-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-
   margin-top: 20px;
 
   button {
     padding: 10px 18px;
-
     background: theme.$primary;
     border: none;
     border-radius: theme.$radius-default;
-
     color: theme.$text-light;
     font-weight: 500;
-
     cursor: pointer;
     box-shadow: theme.$button-shadow;
-
     transition:
       background 0.3s ease,
       box-shadow 0.3s ease;
@@ -184,32 +249,28 @@ input[matInput] {
 
 /* ======================================================
    APPROVED CONTAINER
-====================================================== */
+   ====================================================== */
+
 .approved-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
-
   max-width: 1200px;
   margin: 20px auto;
   padding: 24px;
-
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
-
   box-shadow: theme.$shadow-primary;
 
   .approved-header {
     display: flex;
     align-items: center;
     gap: 12px;
-
     margin-bottom: 20px;
 
     h3 {
       margin: 0;
-
       font-size: 18px;
       font-weight: 600;
       color: theme.$primary-dark;
@@ -218,10 +279,8 @@ input[matInput] {
 
   .approved-badge {
     padding: 6px 14px;
-
     background: theme.$primary;
     border-radius: theme.$radius-default;
-
     color: theme.$text-light;
     font-size: 13px;
     font-weight: 600;
@@ -236,9 +295,7 @@ input[matInput] {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-
       padding: 12px 16px;
-
       background: theme.$light-bg;
       border: 1px solid theme.$border-light;
       border-radius: theme.$radius-default;
@@ -271,7 +328,8 @@ input[matInput] {
 
 /* ======================================================
    CUSTOMER ACCOUNTS
-====================================================== */
+   ====================================================== */
+
 .customer-accounts {
   margin-top: 40px;
 
@@ -284,10 +342,8 @@ input[matInput] {
 
     .account-count {
       padding: 6px 12px;
-
       background: #e9f2ff;
       border-radius: 20px;
-
       color: #0b4eb3;
       font-size: 14px;
       font-weight: 500;
@@ -297,9 +353,7 @@ input[matInput] {
   .accounts-table {
     display: grid;
     width: 100%;
-
     overflow: hidden;
-
     border: 1px solid #d7e3ff;
     border-radius: 8px;
 
@@ -307,17 +361,14 @@ input[matInput] {
     .table-row {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-
       align-items: center;
       gap: 8px;
-
       padding: 10px 12px;
     }
 
     .table-header {
       background: #e9f2ff;
       border-bottom: 1px solid #d7e3ff;
-
       color: #0b4eb3;
       font-weight: 600;
     }
@@ -332,11 +383,9 @@ input[matInput] {
 
       span,
       a {
-        display: flex; // FIX ALIGNMENT
-        align-items: center; // FIX ALIGNMENT
-
+        display: flex;
+        align-items: center;
         min-height: 32px;
-
         font-size: 14px;
         color: #2c3e50;
         text-decoration: none;
@@ -355,15 +404,12 @@ input[matInput] {
 
       .active,
       .inactive {
-        display: inline-flex; // FIX ALIGNMENT
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-
         min-height: 30px;
         padding: 4px 12px;
-
         border-radius: 6px;
-
         text-align: center;
         font-weight: 600;
       }
@@ -382,15 +428,12 @@ input[matInput] {
     .card-actions {
       display: flex;
       justify-content: flex-end;
-
       margin-top: 16px;
 
       .btn-save {
         padding: 8px 16px;
-
         background: theme.$primary;
         border-radius: theme.$radius-default;
-
         color: #ffffff;
         font-weight: 500;
 
@@ -405,7 +448,6 @@ input[matInput] {
 
   @media (max-width: 992px) {
     .accounts-table {
-
       .table-header,
       .table-row {
         grid-template-columns: repeat(3, 1fr);
@@ -415,7 +457,6 @@ input[matInput] {
 
   @media (max-width: 768px) {
     .accounts-table {
-
       .table-header {
         display: none;
       }
@@ -423,7 +464,6 @@ input[matInput] {
       .table-row {
         grid-template-columns: 1fr;
         gap: 6px;
-
         padding: 12px;
 
         span {
@@ -432,63 +472,62 @@ input[matInput] {
         }
 
         .col-index::before {
-          content: "#";
+          content: '#';
           font-weight: 600;
         }
 
         .col-account::before {
-          content: "Account No";
+          content: 'Account No';
           font-weight: 600;
         }
 
         .col-title::before {
-          content: "Title";
+          content: 'Title';
           font-weight: 600;
         }
 
         .col-type::before {
-          content: "Type";
+          content: 'Type';
           font-weight: 600;
         }
 
         .col-status::before {
-          content: "Status";
+          content: 'Status';
           font-weight: 600;
         }
 
         .col-iban::before {
-          content: "IBAN";
+          content: 'IBAN';
           font-weight: 600;
         }
       }
     }
   }
 }
+
 /* ======================================================
    DYNAMIC CUSTOMER FIELDS
-====================================================== */
+   ====================================================== */
+
 /* ======================================================
    ADDITIONAL / DYNAMIC FIELDS SECTION
-====================================================== */
+   ====================================================== */
+
 .customer-form-wrapper.dynamic-fields-section {
   margin-top: 40px;
   padding: 24px;
-
   background: #ffffff;
   border: 1px solid #dbe7ff;
   border-radius: theme.$radius-large;
-
   box-shadow: 0 4px 18px rgba(11, 78, 179, 0.06);
 
   .section-header {
     margin-bottom: 20px;
-
     background: linear-gradient(
       90deg,
       theme.$primary 0%,
       theme.$primary-dark 100%
     );
-
     border-radius: theme.$radius-default;
 
     h2 {
@@ -504,17 +543,13 @@ input[matInput] {
   }
 
   .collapsible {
-
     &.open {
       display: block;
     }
 
     .form-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(auto-fit, minmax(300px, 1fr));
-
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
       align-items: start;
     }
@@ -522,9 +557,10 @@ input[matInput] {
     .field-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
 
-      padding: 16px;
+      /* Reduced */
+      gap: 2px;
+      padding: 8px;
 
       background: #fbfdff;
       border: 1px solid #e6eefc;
@@ -542,39 +578,68 @@ input[matInput] {
       }
 
       h4 {
-        margin: 0;
-
+        margin: 2px 0 1px !important;
         display: flex;
         align-items: center;
-
-        padding-left: 10px;
-
+        padding-left: 8px;
         border-left: 3px solid theme.$primary;
-
         color: theme.$primary-dark;
         font-size: 0.92rem;
         font-weight: 600;
-        line-height: 1.4;
+        line-height: 1.2;
       }
 
       mat-form-field {
         width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       .mdc-text-field {
         background: #ffffff;
         border-radius: 10px;
       }
+
+      /* Compact input specifically for dynamic fields */
+      .mat-mdc-text-field-wrapper {
+        min-height: 42px !important;
+        padding: 0 10px !important;
+      }
+
+      .mat-mdc-form-field-flex {
+        min-height: 42px !important;
+        padding: 0 !important;
+      }
+
+      input[matInput],
+      textarea[matInput] {
+        height: 42px !important;
+        min-height: 42px !important;
+        padding: 8px 0 !important;
+        box-sizing: border-box;
+      }
+
+      .mat-mdc-form-field-subscript-wrapper {
+        height: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .previous-value {
+        margin-top: 2px !important;
+        margin-bottom: 0 !important;
+        padding: 4px 8px !important;
+        line-height: 16px !important;
+      }
     }
 
     .btn-save {
       margin-top: 24px;
       padding: 10px 22px;
-
       background: theme.$primary;
       border: none;
       border-radius: theme.$radius-default;
-
       color: #ffffff;
       font-weight: 600;
       letter-spacing: 0.02em;
@@ -602,21 +667,21 @@ input[matInput] {
 
 /* ======================================================
    RESPONSIVE
-====================================================== */
-@media (max-width: 768px) {
+   ====================================================== */
 
+@media (max-width: 768px) {
   .customer-form-wrapper.dynamic-fields-section {
     padding: 18px;
 
     .collapsible {
-
       .form-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
+        gap: 8px;
       }
 
       .field-group {
-        padding: 14px;
+        gap: 2px;
+        padding: 6px;
       }
 
       .btn-save {
@@ -625,19 +690,18 @@ input[matInput] {
     }
   }
 }
+
 /* ======================================================
    DOSSIER CONTAINER
-====================================================== */
+   ====================================================== */
+
 .dossier-container {
   display: flex;
   flex-direction: column;
   gap: calc(theme.$gap-default * 1.5);
-
   padding: calc(theme.$gap-default * 2);
-
   background: theme.$screen-bg;
   border-radius: theme.$radius-large;
-
   font-family: 'Inter', sans-serif;
   color: theme.$text-dark;
 
@@ -648,20 +712,18 @@ input[matInput] {
 
 /* ======================================================
    DOSSIER HEADER
-====================================================== */
+   ====================================================== */
+
 .dossier-header {
   overflow: hidden;
-
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
-
   box-shadow: theme.$shadow-primary;
 
   .status-strip {
     width: 100%;
     height: 4px;
-
     background: theme.$border-light;
 
     &.active {
@@ -673,7 +735,6 @@ input[matInput] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding: theme.$gap-default * 1.5;
 
     @media (max-width: 768px) {
@@ -693,23 +754,18 @@ input[matInput] {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 54px;
     height: 54px;
-
     background: theme.$primary;
     border-radius: theme.$radius-default;
-
     color: theme.$text-light;
     font-size: 1.4rem;
     font-weight: 700;
   }
 
   .text-group {
-
     .customer-name {
       margin: 0;
-
       color: theme.$primary-dark;
       font-size: 1.4rem;
       font-weight: 700;
@@ -721,10 +777,8 @@ input[matInput] {
 
       code {
         padding: 2px 6px;
-
         background: theme.$primary-light;
         border-radius: 4px;
-
         color: theme.$primary;
       }
     }
@@ -732,10 +786,8 @@ input[matInput] {
 
   .status-badge {
     padding: 6px 14px;
-
     background: theme.$primary-light;
     border-radius: 20px;
-
     color: theme.$primary;
     font-size: 0.75rem;
     font-weight: 700;
@@ -749,7 +801,8 @@ input[matInput] {
 
 /* ======================================================
    DOSSIER GRID
-====================================================== */
+   ====================================================== */
+
 .dossier-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -758,11 +811,9 @@ input[matInput] {
 
 .info-card {
   padding: theme.$gap-default * 1.5;
-
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
-
   box-shadow: theme.$shadow-primary;
 }
 
@@ -770,7 +821,6 @@ input[matInput] {
   display: flex;
   align-items: center;
   gap: 10px;
-
   margin-bottom: theme.$gap-default;
 
   mat-icon {
@@ -827,12 +877,13 @@ input[matInput] {
 
 /* ======================================================
    DYNAMIC FIELDS SECTION
-====================================================== */
-/* ======================================================
-   APPROVED - DYNAMIC FIELDS (KEY-VALUE STRUCTURE)
-====================================================== */
-.dynamic-fields-section {
+   ====================================================== */
 
+/* ======================================================
+   APPROVED - DYNAMIC FIELDS
+   ====================================================== */
+
+.dynamic-fields-section {
   .additional-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -841,12 +892,9 @@ input[matInput] {
 
   .additional-card {
     background: #ffffff;
-
     border: 1px solid #e6eefc;
     border-radius: theme.$radius-default;
-
     padding: 14px 16px;
-
     transition: all 0.25s ease;
 
     &:hover {
@@ -862,56 +910,53 @@ input[matInput] {
     }
 
     /* KEY */
+
     .kv-key {
       font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-
       color: theme.$text-medium;
-
       border-left: 3px solid theme.$primary;
       padding-left: 8px;
     }
 
     /* VALUE */
+
     .kv-value {
       font-size: 0.95rem;
       font-weight: 600;
-
       color: theme.$primary-dark;
-
       word-break: break-word;
       padding-left: 12px;
     }
   }
 }
+
 /* ======================================================
    PORTFOLIO SECTION
-====================================================== */
+   ====================================================== */
+
 .portfolio-section {
   padding: theme.$gap-default * 1.5;
-
   background: theme.$white;
   border: 1px solid theme.$border-light;
   border-radius: theme.$radius-large;
-
   box-shadow: theme.$shadow-primary;
 }
 
 /* ======================================================
    DOSSIER TABLE
-====================================================== */
+   ====================================================== */
+
 .dossier-table {
   width: 100%;
   border-collapse: collapse;
 
   th {
     padding: 12px;
-
     background: #f8fbff;
     border-bottom: 2px solid theme.$border-light;
-
     color: theme.$text-medium;
     font-size: 0.75rem;
     text-align: left;
@@ -930,10 +975,8 @@ input[matInput] {
 
   .type-tag {
     padding: 2px 8px;
-
     background: theme.$primary-light;
     border-radius: 4px;
-
     color: theme.$primary;
     font-size: 0.8rem;
     font-weight: 600;
@@ -946,10 +989,8 @@ input[matInput] {
 
     &::before {
       content: '';
-
       width: 8px;
       height: 8px;
-
       background: #cbd5e1;
       border-radius: 50%;
     }
@@ -960,6 +1001,10 @@ input[matInput] {
   }
 }
 
+/* ======================================================
+   IMPORT BUTTON
+   ====================================================== */
+
 .btn-import {
   background-color: #0d6efd;
   color: white;
@@ -968,23 +1013,22 @@ input[matInput] {
 .btn-import:hover {
   background-color: #0b5ed7;
 }
+
 /* ======================================================
    DOSSIER FOOTER
-====================================================== */
+   ====================================================== */
+
 .dossier-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding-top: theme.$gap-default;
-
   border-top: 1px solid theme.$border-light;
 
   .audit-info {
     display: flex;
     align-items: center;
     gap: 8px;
-
     color: theme.$text-medium;
     font-size: 0.85rem;
   }
@@ -1003,54 +1047,46 @@ input[matInput] {
 
 /* ======================================================
    BADGE GROUP
-====================================================== */
+   ====================================================== */
+
 .badge-group {
   display: flex;
   justify-content: center;
   align-items: center;
-
   padding: 1rem 0;
 }
 
 /* ======================================================
    STATUS BADGE
-====================================================== */
+   ====================================================== */
+
 .status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-
   position: relative;
-
   padding: 8px 24px;
-
   border: 1px solid transparent;
   border-radius: 50px;
-
   box-shadow: 0 4px 10px rgba(0, 51, 102, 0.08);
-
   font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   mat-icon {
     width: 18px;
     height: 18px;
-
     font-size: 18px;
   }
 
   &.approved {
     background-color: #0052cc;
     border-color: #0047b3;
-
     color: #ffffff;
-
     box-shadow: 0 6px 15px rgba(0, 82, 204, 0.25);
 
     mat-icon {
@@ -1059,14 +1095,10 @@ input[matInput] {
 
     &:after {
       content: '';
-
       position: absolute;
-
       width: 100%;
       height: 100%;
-
       border-radius: 50px;
-
       box-shadow: 0 0 0 4px rgba(0, 82, 204, 0.1);
     }
   }
@@ -1074,7 +1106,6 @@ input[matInput] {
   &.submitted {
     background-color: #deebff;
     border-color: #b3d4ff;
-
     color: #0747a6;
 
     mat-icon {
@@ -1085,18 +1116,14 @@ input[matInput] {
   &.draft {
     background-color: #f1f5f9;
     border-color: #cbd5e1;
-
     color: #475569;
-
     box-shadow: none;
   }
 
   &.create {
     background-color: #ffffff;
     border: 1px dashed #0052cc;
-
     color: #0052cc;
-
     box-shadow: none;
   }
 
@@ -1109,7 +1136,8 @@ input[matInput] {
 
 /* ======================================================
    ANIMATIONS
-====================================================== */
+   ====================================================== */
+
 @keyframes rotation {
   from {
     transform: rotate(0deg);
@@ -1120,22 +1148,25 @@ input[matInput] {
   }
 }
 
+/* ======================================================
+   PREVIOUS VALUE
+   ====================================================== */
 
 .previous-value {
-  margin-top: 5px;
-  padding: 7px 10px;
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+  padding: 4px 8px !important;
   border-left: 3px solid #f59e0b;
   background-color: #fff7e6;
   border-radius: 4px;
   font-size: 13px;
-  line-height: 18px;
+  line-height: 16px !important;
 }
 
 .previous-label {
   font-weight: 600;
   color: #92400e;
-  margin-right: 6px;
-  
+  margin-right: 4px;
 }
 
 .previous-text {

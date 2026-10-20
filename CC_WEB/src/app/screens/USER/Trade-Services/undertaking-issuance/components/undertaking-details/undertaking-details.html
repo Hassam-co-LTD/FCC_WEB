@@ -1,242 +1,523 @@
 <!-- SECTION HEADER -->
 <div class="section-header" (click)="toggle()">
-    <h2>Undertaking Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+  <h2>Undertaking Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
 <!-- COLLAPSIBLE FORM -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
-
-    <!-- TYPE & CATEGORY -->
-    <h4>Type and Category</h4>
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Type of Undertaking</mat-label>
-            <mat-select formControlName="typeOfUndertaking">
-                <mat-option value="bid">Bid</mat-option>
-                <mat-option value="performance">Performance</mat-option>
-                <mat-option value="advance">Advance</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
-
-    <!-- EFFECTIVE DATE OPTIONS -->
-    <h4>Effective Date</h4>
-    <div class="options-row">
-        <mat-radio-group formControlName="effectiveOption">
-            <mat-radio-button value="openIssuance">Upon Issuance</mat-radio-button>
-            <mat-radio-button value="whenSigned">When contract is signed</mat-radio-button>
-            <mat-radio-button value="advancedOccur">When advance payment occurs</mat-radio-button>
-            <mat-radio-button value="other">Other</mat-radio-button>
-        </mat-radio-group>
-    </div>
-
-    <!-- EXPIRY TYPE -->
-    <h4>Expiry Type</h4>
-    <div class="options-row">
-        <mat-radio-group formControlName="expiryType">
-            <mat-radio-button value="open">Open</mat-radio-button>
-            <mat-radio-button value="fixed">Fixed</mat-radio-button>
-            <mat-radio-button value="conditional">Conditional</mat-radio-button>
-        </mat-radio-group>
-    </div>
-
-    <!-- EXPIRY DETAILS -->
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Expiry Date</mat-label>
-            <input matInput [matDatepicker]="expDate" formControlName="expiryDate" />
-            <mat-datepicker-toggle matSuffix [for]="expDate" class="date-toggle"></mat-datepicker-toggle>
-            <mat-datepicker #expDate></mat-datepicker>
-        </mat-form-field>
-    </div>
-
-    <!-- AMOUNT & CURRENCY -->
-    <h4>Amount and Charges</h4>
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Currency</mat-label>
-            <mat-select formControlName="currency">
-                <mat-option value="USD">USD</mat-option>
-                <mat-option value="EUR">EUR</mat-option>
-                <mat-option value="PKR">PKR</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Undertaking Amount</mat-label>
-            <input matInput type="number" formControlName="undertakingAmount" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Percentage (+)</mat-label>
-            <input matInput type="number" formControlName="variationPlus" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Percentage (-)</mat-label>
-            <input matInput type="number" formControlName="variationMinus" />
-        </mat-form-field>
-    </div>
-
-    <!-- CHARGES -->
-    <div class="options-row">
-        <h4>Issuance Charges</h4>
-        <mat-radio-group formControlName="issuanceCharges">
-            <mat-radio-button value="applicant">Applicant</mat-radio-button>
-            <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
-        </mat-radio-group>
-    </div>
-
-    <div class="options-row">
-        <h4>Correspondent Charges</h4>
-        <mat-radio-group formControlName="correspondentCharges">
-            <mat-radio-button value="applicant">Applicant</mat-radio-button>
-            <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
-        </mat-radio-group>
-    </div>
-
-    <!-- SUPPLEMENTARY INFO -->
-    <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Supplementary Information About Amount</mat-label>
-        <textarea matInput rows="3" formControlName="supplementaryInfo"></textarea>
+  <!-- TYPE & CATEGORY -->
+  <h4>Type and Category</h4>
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Type of Undertaking</mat-label>
+      <mat-select formControlName="typeOfUndertaking">
+        <mat-option value="bid">Bid</mat-option>
+        <mat-option value="performance">Performance</mat-option>
+        <mat-option value="advance">Advance</mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <!-- EXTENSION TYPE -->
-    <h4>Extension Date</h4>
-    <mat-radio-group formControlName="basicExtensionType">
-        <mat-radio-button value="regular">Regular</mat-radio-button>
-        <mat-radio-button value="rolling">Rolling</mat-radio-button>
+    @if (hasPreviousValue('typeOfUndertaking')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('typeOfUndertaking') }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- EFFECTIVE DATE OPTIONS -->
+  <h4>Effective Date</h4>
+  <div class="options-row">
+    <mat-radio-group formControlName="effectiveOption">
+      <mat-radio-button value="openIssuance">Upon Issuance</mat-radio-button>
+      <mat-radio-button value="whenSigned"
+        >When contract is signed</mat-radio-button
+      >
+      <mat-radio-button value="advancedOccur"
+        >When advance payment occurs</mat-radio-button
+      >
+      <mat-radio-button value="other">Other</mat-radio-button>
     </mat-radio-group>
+  </div>
 
-    <!-- INCREASE / DECREASE -->
-    <h4>Increase / Decrease Amount</h4>
-    <mat-radio-group formControlName="increaseDecreaseType">
-        <mat-radio-button value="regular">Regular</mat-radio-button>
-        <mat-radio-button value="irregular">Irregular</mat-radio-button>
+  @if (hasPreviousValue('effectiveOption')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('effectiveOption') }}
+    </span>
+  </div>
+  }
+
+  <!-- EXPIRY TYPE -->
+  <h4>Expiry Type</h4>
+  <div class="options-row">
+    <mat-radio-group formControlName="expiryType">
+      <mat-radio-button value="open">Open</mat-radio-button>
+      <mat-radio-button value="fixed">Fixed</mat-radio-button>
+      <mat-radio-button value="conditional">Conditional</mat-radio-button>
     </mat-radio-group>
+  </div>
 
-    <!-- CONTRACT INFO -->
-    <h4>Contract Information</h4>
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Contract Type</mat-label>
-            <mat-select formControlName="contractType">
-                <mat-option value="sale">Sale</mat-option>
-                <mat-option value="service">Service</mat-option>
-            </mat-select>
-        </mat-form-field>
+  @if (hasPreviousValue('expiryType')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text"> {{ getPreviousValue('expiryType') }} </span>
+  </div>
+  }
 
-        <mat-form-field appearance="outline">
-            <mat-label>Date</mat-label>
-            <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
-            <mat-datepicker-toggle matSuffix [for]="ctDate" class="date-toggle"></mat-datepicker-toggle>
-            <mat-datepicker #ctDate></mat-datepicker>
-        </mat-form-field>
+  <!-- EXPIRY DETAILS -->
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Expiry Date</mat-label>
+      <input matInput [matDatepicker]="expDate" formControlName="expiryDate" />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="expDate"
+        class="date-toggle"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #expDate></mat-datepicker>
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Contract Currency</mat-label>
-            <mat-select formControlName="contractCurrency">
-                <mat-option value="USD">USD</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Contract Amount</mat-label>
-            <input matInput type="number" formControlName="contractAmount" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Percentage Covered</mat-label>
-            <input matInput type="number" formControlName="percentageCovered" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Contract Narrative</mat-label>
-            <input matInput formControlName="contractNarrative" />
-        </mat-form-field>
+    @if (hasPreviousValue('expiryDate')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text"> {{ getPreviousValue('expiryDate') }} </span>
     </div>
+    }
+  </div>
 
-    <!-- APPLICABLE RULES -->
-    <h4>Applicable Rules</h4>
-    <div class="options-row">
-        <mat-radio-group formControlName="applicableRules">
-            <mat-radio-button value="urdg">URDG</mat-radio-button>
-            <mat-radio-button value="none">NONE</mat-radio-button>
-            <mat-radio-button value="eir">EIR</mat-radio-button>
-            <mat-radio-button value="usr">USR</mat-radio-button>
-            <mat-radio-button value="other">OTHER</mat-radio-button>
-        </mat-radio-group>
+  <!-- AMOUNT & CURRENCY -->
+  <h4>Amount and Charges</h4>
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Currency</mat-label>
+      <mat-select formControlName="currency">
+        <mat-option value="USD">USD</mat-option>
+        <mat-option value="EUR">EUR</mat-option>
+        <mat-option value="PKR">PKR</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasPreviousValue('currency')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text"> {{ getPreviousValue('currency') }} </span>
     </div>
+    }
 
-    <!-- GOVERNING LAWS -->
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Governing Laws</mat-label>
-            <mat-select formControlName="governingLawsType">
-                <mat-option value="pk">Pakistan</mat-option>
-                <mat-option value="in">India</mat-option>
-                <mat-option value="ae">UAE</mat-option>
-                <mat-option value="pl">Poland</mat-option>
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Undertaking Amount</mat-label>
+      <input matInput type="number" formControlName="undertakingAmount" />
+    </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Country Subdivision</mat-label>
-            <input matInput formControlName="countrySubdivision" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-            <mat-label>Place of Jurisdiction</mat-label>
-            <input matInput formControlName="jurisdiction" />
-        </mat-form-field>
+    @if (hasPreviousValue('undertakingAmount')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('undertakingAmount') }}
+      </span>
     </div>
+    }
 
-    <!-- DEMAND INDICATOR -->
-    <mat-radio-group formControlName="demandOption">
-        <mat-radio-button value="multipleDemandnot">Multiple demand not permitted</mat-radio-button>
-        <mat-radio-button value="multiplepartialDemandnot">Multiple & partial demands not permitted</mat-radio-button>
-        <mat-radio-button value="partialDemand">Partial demands permitted</mat-radio-button>
-        <mat-radio-button value="multiplepartialDemand">Multiple & partial demands permitted</mat-radio-button>
+    <mat-form-field appearance="outline">
+      <mat-label>Percentage (+)</mat-label>
+      <input matInput type="number" formControlName="variationPlus" />
+    </mat-form-field>
+
+    @if (hasPreviousValue('variationPlus')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('variationPlus') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Percentage (-)</mat-label>
+      <input matInput type="number" formControlName="variationMinus" />
+    </mat-form-field>
+
+    @if (hasPreviousValue('variationMinus')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('variationMinus') }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- CHARGES -->
+  <div class="options-row">
+    <h4>Issuance Charges</h4>
+    <mat-radio-group formControlName="issuanceCharges">
+      <mat-radio-button value="applicant">Applicant</mat-radio-button>
+      <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
     </mat-radio-group>
+  </div>
 
-    <!-- TEXT STANDARD -->
-    <h4>Text Standard</h4>
-    <div class="options-row">
-        <mat-radio-group formControlName="tsOption">
-            <mat-radio-button value="bkstandard">Bank Standard</mat-radio-button>
-            <mat-radio-button value="beneficiary">Beneficiary's wording</mat-radio-button>
-            <mat-radio-button value="partialDemand">Our wording</mat-radio-button>
-            <mat-radio-button value="multiplepartialDemand">Same as (Specify)</mat-radio-button>
-        </mat-radio-group>
+  @if (hasPreviousValue('issuanceCharges')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('issuanceCharges') }}
+    </span>
+  </div>
+  }
+
+  <div class="options-row">
+    <h4>Correspondent Charges</h4>
+    <mat-radio-group formControlName="correspondentCharges">
+      <mat-radio-button value="applicant">Applicant</mat-radio-button>
+      <mat-radio-button value="beneficiary">Beneficiary</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  @if (hasPreviousValue('correspondentCharges')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('correspondentCharges') }}
+    </span>
+  </div>
+  }
+
+  <!-- SUPPLEMENTARY INFO -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Supplementary Information About Amount</mat-label>
+    <textarea matInput rows="3" formControlName="supplementaryInfo"></textarea>
+  </mat-form-field>
+
+  @if (hasPreviousValue('supplementaryInfo')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('supplementaryInfo') }}
+    </span>
+  </div>
+  }
+
+  <!-- EXTENSION TYPE -->
+  <h4>Extension Date</h4>
+  <mat-radio-group formControlName="basicExtensionType">
+    <mat-radio-button value="regular">Regular</mat-radio-button>
+    <mat-radio-button value="rolling">Rolling</mat-radio-button>
+  </mat-radio-group>
+
+  @if (hasPreviousValue('basicExtensionType')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('basicExtensionType') }}
+    </span>
+  </div>
+  }
+
+  <!-- INCREASE / DECREASE -->
+  <h4>Increase / Decrease Amount</h4>
+  <mat-radio-group formControlName="increaseDecreaseType">
+    <mat-radio-button value="regular">Regular</mat-radio-button>
+    <mat-radio-button value="irregular">Irregular</mat-radio-button>
+  </mat-radio-group>
+
+  @if (hasPreviousValue('increaseDecreaseType')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('increaseDecreaseType') }}
+    </span>
+  </div>
+  }
+
+  <!-- CONTRACT INFO -->
+  <h4>Contract Information</h4>
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Contract Type</mat-label>
+      <mat-select formControlName="contractType">
+        <mat-option value="sale">Sale</mat-option>
+        <mat-option value="service">Service</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasPreviousValue('contractType')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('contractType') }}
+      </span>
     </div>
+    }
 
-    <!-- LANGUAGE -->
-    <div class="form-grid">
-        <mat-form-field appearance="outline">
-            <mat-label>Language</mat-label>
-            <mat-select formControlName="languageType">
-                <mat-option value="en">English</mat-option>
-                <mat-option value="ur">Urdu</mat-option>
-                <mat-option value="ar">Arabic</mat-option>
-            </mat-select>
-        </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="ctDate"
+        class="date-toggle"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #ctDate></mat-datepicker>
+    </mat-form-field>
+
+    @if (hasPreviousValue('contractDate')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('contractDate') }}
+      </span>
     </div>
+    }
 
-    <!-- TEXT FIELDS -->
-    <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Text of Undertaking</mat-label>
-        <textarea matInput rows="1" formControlName="textOfUndertakingInfo"></textarea>
+    <mat-form-field appearance="outline">
+      <mat-label>Contract Currency</mat-label>
+      <mat-select formControlName="contractCurrency">
+        <mat-option value="USD">USD</mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Underlying Transaction Details*</mat-label>
-        <textarea matInput rows="2" formControlName="underlyingTransactionInfo"></textarea>
+    @if (hasPreviousValue('contractCurrency')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('contractCurrency') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Contract Amount</mat-label>
+      <input matInput type="number" formControlName="contractAmount" />
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Presentation Instruction</mat-label>
-        <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
+    @if (hasPreviousValue('contractAmount')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('contractAmount') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Percentage Covered</mat-label>
+      <input matInput type="number" formControlName="percentageCovered" />
     </mat-form-field>
 
+    @if (hasPreviousValue('percentageCovered')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('percentageCovered') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Contract Narrative</mat-label>
+      <input matInput formControlName="contractNarrative" />
+    </mat-form-field>
+
+    @if (hasPreviousValue('contractNarrative')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('contractNarrative') }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- APPLICABLE RULES -->
+  <h4>Applicable Rules</h4>
+  <div class="options-row">
+    <mat-radio-group formControlName="applicableRules">
+      <mat-radio-button value="urdg">URDG</mat-radio-button>
+      <mat-radio-button value="none">NONE</mat-radio-button>
+      <mat-radio-button value="eir">EIR</mat-radio-button>
+      <mat-radio-button value="usr">USR</mat-radio-button>
+      <mat-radio-button value="other">OTHER</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  @if (hasPreviousValue('applicableRules')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('applicableRules') }}
+    </span>
+  </div>
+  }
+
+  <!-- GOVERNING LAWS -->
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Governing Laws</mat-label>
+      <mat-select formControlName="governingLawsType">
+        <mat-option value="pk">Pakistan</mat-option>
+        <mat-option value="in">India</mat-option>
+        <mat-option value="ae">UAE</mat-option>
+        <mat-option value="pl">Poland</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasPreviousValue('governingLawsType')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('governingLawsType') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Country Subdivision</mat-label>
+      <input matInput formControlName="countrySubdivision" />
+    </mat-form-field>
+
+    @if (hasPreviousValue('countrySubdivision')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('countrySubdivision') }}
+      </span>
+    </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Place of Jurisdiction</mat-label>
+      <input matInput formControlName="jurisdiction" />
+    </mat-form-field>
+
+    @if (hasPreviousValue('jurisdiction')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('jurisdiction') }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- DEMAND INDICATOR -->
+  <mat-radio-group formControlName="demandOption">
+    <mat-radio-button value="multipleDemandnot"
+      >Multiple demand not permitted</mat-radio-button
+    >
+    <mat-radio-button value="multiplepartialDemandnot"
+      >Multiple & partial demands not permitted</mat-radio-button
+    >
+    <mat-radio-button value="partialDemand"
+      >Partial demands permitted</mat-radio-button
+    >
+    <mat-radio-button value="multiplepartialDemand"
+      >Multiple & partial demands permitted</mat-radio-button
+    >
+  </mat-radio-group>
+
+  @if (hasPreviousValue('demandOption')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text"> {{ getPreviousValue('demandOption') }} </span>
+  </div>
+  }
+
+  <!-- TEXT STANDARD -->
+  <h4>Text Standard</h4>
+  <div class="options-row">
+    <mat-radio-group formControlName="tsOption">
+      <mat-radio-button value="bkstandard">Bank Standard</mat-radio-button>
+      <mat-radio-button value="beneficiary"
+        >Beneficiary's wording</mat-radio-button
+      >
+      <mat-radio-button value="partialDemand">Our wording</mat-radio-button>
+      <mat-radio-button value="multiplepartialDemand"
+        >Same as (Specify)</mat-radio-button
+      >
+    </mat-radio-group>
+  </div>
+
+  @if (hasPreviousValue('tsOption')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text"> {{ getPreviousValue('tsOption') }} </span>
+  </div>
+  }
+
+  <!-- LANGUAGE -->
+  <div class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Language</mat-label>
+      <mat-select formControlName="languageType">
+        <mat-option value="en">English</mat-option>
+        <mat-option value="ur">Urdu</mat-option>
+        <mat-option value="ar">Arabic</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (hasPreviousValue('languageType')) {
+    <div class="previous-value">
+      <span class="previous-label">Previous Value:</span>
+      <span class="previous-text">
+        {{ getPreviousValue('languageType') }}
+      </span>
+    </div>
+    }
+  </div>
+
+  <!-- TEXT FIELDS -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Text of Undertaking</mat-label>
+    <textarea
+      matInput
+      rows="1"
+      formControlName="textOfUndertakingInfo"
+    ></textarea>
+  </mat-form-field>
+
+  @if (hasPreviousValue('textOfUndertakingInfo')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('textOfUndertakingInfo') }}
+    </span>
+  </div>
+  }
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Underlying Transaction Details*</mat-label>
+    <textarea
+      matInput
+      rows="2"
+      formControlName="underlyingTransactionInfo"
+    ></textarea>
+  </mat-form-field>
+
+  @if (hasPreviousValue('underlyingTransactionInfo')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('underlyingTransactionInfo') }}
+    </span>
+  </div>
+  }
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Presentation Instruction</mat-label>
+    <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
+  </mat-form-field>
+
+  @if (hasPreviousValue('presentationInfo')) {
+  <div class="previous-value">
+    <span class="previous-label">Previous Value:</span>
+    <span class="previous-text">
+      {{ getPreviousValue('presentationInfo') }}
+    </span>
+  </div>
+  }
 </div>
