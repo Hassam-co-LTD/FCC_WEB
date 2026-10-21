@@ -1,64 +1,59 @@
-import { Component } from '@angular/core';
-
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-applicant-beneficiary',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatSlideToggleModule,
-    MatButtonModule,
     MatIconModule,
-    MatRadioModule
-],
+  ],
   templateUrl: './applicant-beneficiary.html',
-  styleUrls: ['./applicant-beneficiary.scss']
+  styleUrl: './applicant-beneficiary.scss',
 })
 export class ApplicantBeneficiary {
-  formGroup!: FormGroup;
-  isOpen: boolean = true; // default open
-  showAlternate: boolean = false;
+  @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
 
-  constructor(private fb: FormBuilder) {
-    this.createForm();
-  }
+  isOpen = true;
 
-  createForm() {
-    this.formGroup = this.fb.group({
-      applicantName: ['', Validators.required],
-      applicantAddress1: ['', Validators.required],
-      applicantAddress2: [''],
-      applicantAddress3: [''],
+  countries = ['Pakistan', 'UAE', 'USA', 'UK', 'Japan'];
 
-      alternateName: [''],
-      alternateAddress1: [''],
-      alternateAddress2: [''],
-      alternateAddress3: [''],
+  applicantFields = [
+    { key: 'applicantName', label: 'Name *' },
+    { key: 'applicantAddress1', label: 'Address 1 *' },
+    { key: 'applicantAddress2', label: 'Address 2' },
+    { key: 'applicantAddress3', label: 'Address 3' },
+    { key: 'applicantAddress4', label: 'Address 4' },
+  ];
 
-      beneficiaryName: ['', Validators.required],
-      beneficiaryAddress1: ['', Validators.required],
-      beneficiaryAddress2: [''],
-      beneficiaryAddress3: [''],
-      beneficiaryCountry: ['', Validators.required]
-    });
-  }
+  beneficiaryFields = [
+    { key: 'beneficiaryName', label: 'Name *' },
+    { key: 'beneficiaryAddress1', label: 'Address 1 *' },
+    { key: 'beneficiaryAddress2', label: 'Address 2' },
+    { key: 'beneficiaryAddress3', label: 'Address 3' },
+    { key: 'beneficiaryAddress4', label: 'Address 4' },
+  ];
 
-  toggle() {
+  toggle(): void {
     this.isOpen = !this.isOpen;
   }
 
-  toggleAlternate() {
-    this.showAlternate = !this.showAlternate;
+  hasPreviousValue(field: string): boolean {
+    const v = this.previousValues?.[field];
+    return v !== null && v !== undefined && String(v).trim() !== '';
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

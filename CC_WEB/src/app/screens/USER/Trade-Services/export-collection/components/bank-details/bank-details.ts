@@ -5,12 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-bank-details',
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    CommonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
@@ -22,6 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
 export class BankDetailsComponent{
 
   @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
   isOpen = true;
   bankTab: 'remitting' | 'presenting' | 'collecting' = 'remitting';
 
@@ -34,4 +36,18 @@ export class BankDetailsComponent{
   switchBankTab(tab: 'remitting' | 'presenting' | 'collecting') {
     this.bankTab = tab;
   }
+
+  hasPreviousValue(field: string): boolean {
+  return (
+    this.previousValues &&
+    Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+    this.previousValues[field] !== null &&
+    this.previousValues[field] !== undefined &&
+    String(this.previousValues[field]).trim() !== ''
+  );
+}
+
+getPreviousValue(field: string): any {
+  return this.previousValues?.[field] ?? '';
+}
 }

@@ -13,6 +13,59 @@
     color: theme.$text-dark;
     margin-bottom: theme.$gap-default;
   }
+
+ 
+}
+
+
+/* =====================================================
+   PAGE TITLE (MINIMAL & CENTERED)
+====================================================== */
+.page-title-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px; /* Space between title and tabs */
+  
+  /* Removed all backgrounds, borders, shadows, and padding as requested */
+}
+
+.page-title {
+  margin: 0;
+  color: theme.$primary;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  position: relative;
+  padding-bottom: 8px; 
+
+  /* Elegant centered accent line */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 4px;
+    background-color: theme.$border-primary;
+    border-radius: theme.$radius-large;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    padding-bottom: 6px;
+    
+    &::after {
+      width: 40px;
+      height: 3px;
+    }
+  }
 }
 
 /* ===========================

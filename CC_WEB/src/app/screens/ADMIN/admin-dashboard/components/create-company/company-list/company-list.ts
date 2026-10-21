@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
+import {AuthService} from '../../../../../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-customer-list',
@@ -31,7 +32,8 @@ export class CompanyList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -121,52 +123,7 @@ export class CompanyList implements OnInit {
     this.router.navigate(['/admin/create-company/' + customer.id]);
   }
 
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'company').subscribe({
-      next: (res) => {
-        console.log('Submit response:', res);
-        Swal.fire('Success', 'Company submitted successfully', 'success');
-        this.loadDraftCompany();
-        this.loadSubmittedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit company', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Company approved successfully', 'success');
-        this.loadSubmittedCompany();
-        this.loadApprovedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve company', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Company rejected successfully', 'success');
-        this.loadSubmittedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject company', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCustomer(id: number) {
-    // Move approved company back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'company').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved company moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftCompany();
-        this.loadApprovedCompany();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved company to draft', 'error')
-    });
-  }
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

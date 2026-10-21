@@ -5,7 +5,6 @@
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="onTabChange($event)"
   >
-
     <!-- ================= Draft Tab ================= -->
     <mat-tab label="Draft ({{ filteredDraftCount }})">
       <div class="search-bar">
@@ -36,39 +35,77 @@
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Field ID</th>
                 <th>Field Name</th>
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th *ngIf="hasDraftSelect">Options</th>
-                <th>recordStatus</th>
+                <th>Record Status</th>
+                <th *ngIf="hasDraftSelect">Field Options</th>
+                <th>Dropdowns</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
-                <th>Updated On</th> 
-                
+                <th>Updated On</th>
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr *ngFor="let f of storeFilteredDraftFields; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
+              <tr
+                *ngFor="let f of storeFilteredDraftFields; trackBy: trackById"
+              >
+                <td>{{ f.id }}</td>
+                <td>
+                  <a [routerLink]="['/admin/edit-field/', f.id]"
+                    >{{ f.fieldId }}</a
+                  >
+                </td>
                 <td>{{ f.fieldName }}</td>
-                <td>{{ f.label }}</td>w
+                <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                <td *ngIf="f.fieldType === 'select'">
-                  <ul style="margin:0; padding-left: 16px;">
-                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                <td>
+                  <span class="status {{ f.recordStatus }}"
+                    >{{ f.recordStatus }}</span
+                  >
+                </td>
+                <td *ngIf="hasDraftSelect">
+                  <ul
+                    *ngIf="f.fieldType === 'select'"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let opt of f.options">
+                      {{ opt.value }} - {{ opt.text }}
+                    </li>
                   </ul>
                 </td>
-                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
+                <td>
+                  <ul
+                    *ngIf="f.dropDowns?.length"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let dd of f.dropDowns">{{ dd.name }}</li>
+                  </ul>
+                </td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
-                
+                <td>{{ f.inputterId }}</td>
+                <td>{{ f.inputterDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.authorizerId }}</td>
+                <td>{{ f.authorizerDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectedBy }}</td>
+                <td>{{ f.rejectedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -100,7 +137,8 @@
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved records
+          Showing {{ filteredApprovedCount }} of {{ approvedCount }} approved
+          records
         </div>
 
         <div
@@ -110,39 +148,77 @@
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Field ID</th>
                 <th>Field Name</th>
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th *ngIf="hasApprovedSelect">Options</th>
-                <th>recordStatus</th>
+                <th>Record Status</th>
+                <th *ngIf="hasApprovedSelect">Field Options</th>
+                <th>Dropdowns</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
-                <th *ngIf="hasApprovedSelect">Options</th>
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr *ngFor="let f of storeFilteredApprovedFields; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-field/',f.id]">{{ f.fieldId }}</a></td>
+              <tr
+                *ngFor="let f of storeFilteredApprovedFields; trackBy: trackById"
+              >
+                <td>{{ f.id }}</td>
+                <td>
+                  <a [routerLink]="['/admin/edit-field/', f.id]"
+                    >{{ f.fieldId }}</a
+                  >
+                </td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                <td *ngIf="f.fieldType === 'select'">
-                  <ul style="margin:0; padding-left: 16px;">
-                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                <td>
+                  <span class="status {{ f.recordStatus }}"
+                    >{{ f.recordStatus }}</span
+                  >
+                </td>
+                <td *ngIf="hasApprovedSelect">
+                  <ul
+                    *ngIf="f.fieldType === 'select'"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let opt of f.options">
+                      {{ opt.value }} - {{ opt.text }}
+                    </li>
                   </ul>
                 </td>
-                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
+                <td>
+                  <ul
+                    *ngIf="f.dropDowns?.length"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let dd of f.dropDowns">{{ dd.name }}</li>
+                  </ul>
+                </td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
-                
+                <td>{{ f.inputterId }}</td>
+                <td>{{ f.inputterDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.authorizerId }}</td>
+                <td>{{ f.authorizerDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectedBy }}</td>
+                <td>{{ f.rejectedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -174,7 +250,8 @@
 
       <div class="tab-content">
         <div class="records-summary">
-          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted records
+          Showing {{ filteredSubmittedCount }} of {{ submittedCount }} submitted
+          records
         </div>
 
         <div
@@ -184,39 +261,77 @@
           <table class="customer-table">
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Field ID</th>
                 <th>Field Name</th>
                 <th>Label</th>
                 <th>Field Type</th>
                 <th>Screen</th>
-                <th *ngIf="hasSubmittedSelect">Options</th>
-                <th>recordStatus</th>
+                <th>Record Status</th>
+                <th *ngIf="hasSubmittedSelect">Field Options</th>
+                <th>Dropdowns</th>
                 <th>Created By</th>
                 <th>Created On</th>
                 <th>Updated By</th>
                 <th>Updated On</th>
-                
+                <th>Inputter ID</th>
+                <th>Inputter Date</th>
+                <th>Authorizer ID</th>
+                <th>Authorizer Date</th>
+                <th>Rejected By</th>
+                <th>Rejected On</th>
+                <th>Reject Reason</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr *ngFor="let f of storeFilteredSubmittedFields; trackBy: trackById">
-                <td><a [routerLink]="['/admin/edit-field/', f.id]">{{ f.fieldId }}</a></td>
+              <tr
+                *ngFor="let f of storeFilteredSubmittedFields; trackBy: trackById"
+              >
+                <td>{{ f.id }}</td>
+                <td>
+                  <a [routerLink]="['/admin/edit-field/', f.id]"
+                    >{{ f.fieldId }}</a
+                  >
+                </td>
                 <td>{{ f.fieldName }}</td>
                 <td>{{ f.label }}</td>
                 <td>{{ f.fieldType }}</td>
                 <td>{{ f.screen }}</td>
-                 <td *ngIf="f.fieldType === 'select'">
-                  <ul style="margin:0; padding-left: 16px;">
-                    <li *ngFor="let opt of f.options">{{ opt.value }} - {{ opt.text }}</li>
+                <td>
+                  <span class="status {{ f.recordStatus }}"
+                    >{{ f.recordStatus }}</span
+                  >
+                </td>
+                <td *ngIf="hasSubmittedSelect">
+                  <ul
+                    *ngIf="f.fieldType === 'select'"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let opt of f.options">
+                      {{ opt.value }} - {{ opt.text }}
+                    </li>
                   </ul>
                 </td>
-                <td><span class="status {{ f.recordStatus }}">{{ f.recordStatus }}</span></td>
+                <td>
+                  <ul
+                    *ngIf="f.dropDowns?.length"
+                    style="margin: 0; padding-left: 16px"
+                  >
+                    <li *ngFor="let dd of f.dropDowns">{{ dd.name }}</li>
+                  </ul>
+                </td>
                 <td>{{ f.createdBy }}</td>
                 <td>{{ f.createdOn | date:'dd-MMM-yyyy HH:mm' }}</td>
                 <td>{{ f.updatedBy }}</td>
                 <td>{{ f.updatedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
-               
+                <td>{{ f.inputterId }}</td>
+                <td>{{ f.inputterDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.authorizerId }}</td>
+                <td>{{ f.authorizerDttm | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectedBy }}</td>
+                <td>{{ f.rejectedOn | date:'dd-MMM-yyyy HH:mm' }}</td>
+                <td>{{ f.rejectReason }}</td>
               </tr>
             </tbody>
           </table>
@@ -227,6 +342,5 @@
         </ng-template>
       </div>
     </mat-tab>
-
   </mat-tab-group>
 </div>

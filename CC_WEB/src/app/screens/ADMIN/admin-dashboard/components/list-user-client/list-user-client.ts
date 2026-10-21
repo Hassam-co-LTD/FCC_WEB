@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import {AuthService} from '../../../../../core/services/auth.service';
 @Component({
   selector: 'app-clientUsers-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class clientUsersList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -122,51 +124,7 @@ export class clientUsersList implements OnInit {
     this.router.navigate(['/admin/create-client-user/' + clientUsers.id]);
   }
 
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'clientUsers').subscribe({
-      next: () => {
-        Swal.fire('Success', 'clientUsers submitted successfully', 'success');
-        this.loadDraftclientUsers();
-        this.loadSubmittedclientUsers();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit clientUsers', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'clientUsers').subscribe({
-      next: () => {
-        Swal.fire('Success', 'clientUsers approved successfully', 'success');
-        this.loadSubmittedclientUsers();
-        this.loadApprovedclientUsers();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve clientUsers', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
-      next: () => {
-        Swal.fire('Success', 'clientUsers rejected successfully', 'success');
-        this.loadSubmittedclientUsers();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject clientUsers', 'error')
-    });
-  }
-
-  /** ================== Edit Approved clientUsers ================== */
-  editApprovedclientUsers(id: number) {
-    // Move approved clientUsers back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved clientUsers moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftclientUsers();
-        this.loadApprovedclientUsers();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved clientUsers to draft', 'error')
-    });
-  }
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

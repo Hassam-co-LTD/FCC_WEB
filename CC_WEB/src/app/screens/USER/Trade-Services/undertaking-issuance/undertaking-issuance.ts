@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -22,10 +22,14 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { ApiService } from '../../../../core/services/api.service';
 import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
 
 @Component({
   selector: 'app-undertaking-issued',
+
   templateUrl: './undertaking-issuance.html',
+
   styleUrls: ['./undertaking-issuance.scss'],
   imports: [
     CommonModule,
@@ -40,6 +44,7 @@ import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
     UndertakingDetails,
     InstructionsBank,
     Attachments,
+    DynamicFields,
   ],
 })
 export class UndertakingIssuance implements OnInit {
@@ -64,6 +69,7 @@ export class UndertakingIssuance implements OnInit {
     { label: 'Undertaking Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
+    { label: 'Dynamic fields' },
   ];
 
   // private scrollSpyObserver?: IntersectionObserver;
@@ -77,6 +83,7 @@ export class UndertakingIssuance implements OnInit {
     private dialog: MatDialog,
     private transactionService: UndertakingIssuanceService,
     private authservice: AuthService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -91,7 +98,7 @@ export class UndertakingIssuance implements OnInit {
         this.permissionNames = JSON.parse(storedPermissions);
 
         console.log(
-          'Shipping Guarantee Permission Names:',
+          'Undertaking Issuance Permission Names:',
           this.permissionNames,
         );
       } catch (error) {
@@ -174,6 +181,10 @@ export class UndertakingIssuance implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // load dynamic fields
+
+    this.loadDynamicFields();
   }
 
   ngOnDestroy(): void {
@@ -274,6 +285,19 @@ export class UndertakingIssuance implements OnInit {
     this.api.getUndertakingByTnxId(tnxId).subscribe({
       next: (tx) => {
         this.currentTx = tx;
+        console.log('loaded tnx ', this.currentTx);
+        if (tx.status === 'S') {
+          this.api.getRejectedTransaction(tnxId, 'utg').subscribe({
+            next: (rejectedTx) => {
+              this.storeRejectedTransaction = rejectedTx;
+              console.log('Rejected transaction data:', rejectedTx);
+              this.compareUndertakingIssuanceData();
+            },
+            error: (err: any) => {
+              console.log('Error fetching rejected transaction:', err);
+            },
+          });
+        }
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -345,8 +369,12 @@ export class UndertakingIssuance implements OnInit {
       undertakingDetails: tx,
       instructions: tx,
     });
-  }
 
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
+  }
   scrollToSection(i: number) {
     this.currentStep = i;
     const section = document.getElementById(`section-${i}`);
@@ -354,6 +382,12 @@ export class UndertakingIssuance implements OnInit {
   }
 
   private flattenForm(): UndertakingGuarantee {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
       ...this.undertakingForm.value.generalDetails,
@@ -361,6 +395,7 @@ export class UndertakingIssuance implements OnInit {
       ...this.undertakingForm.value.bankForm,
       ...this.undertakingForm.value.undertakingDetails,
       ...this.undertakingForm.value.instructions,
+      dynamicFields: dynamicFields,
       attachments: this.undertakingForm.value.attachments,
     };
   }
@@ -419,8 +454,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   submitForm(): void {
-
-    
     if (!this.hasPermission('UI_InquirySubmit')) {
       this.snackBar.open(
         'You do not have permission to submit this transaction.',
@@ -432,7 +465,6 @@ export class UndertakingIssuance implements OnInit {
 
       return;
     }
-
 
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
@@ -492,8 +524,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateForm(): void {
-
-    
     if (!this.hasPermission('UI_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to update this transaction.',
@@ -547,19 +577,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   approve(): void {
-
-     if (!this.hasPermission('UI_InquiryApprove')) {
-       this.snackBar.open(
-         'You do not have permission to approve this transaction.',
-         'Close',
-         {
-           duration: 3000,
-         },
-       );
-
-       return;
-     }
-
     this.api
       .approveUndertaking(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
@@ -570,7 +587,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   openReject(): void {
-
     if (!this.hasPermission('UI_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
@@ -607,8 +623,6 @@ export class UndertakingIssuance implements OnInit {
   }
 
   updateRejected(): void {
-
-    
     if (!this.hasPermission('UI_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to update this rejected transaction.',
@@ -674,5 +688,168 @@ export class UndertakingIssuance implements OnInit {
         queryParams: { tab },
       },
     );
+  }
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    this.api.getFieldsByScreenAndStatus('UndertakingIssuance', 'A').subscribe({
+      next: (res: any[]) => {
+        this.fields = res || [];
+
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldId] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // Patch only after controls have been created
+        this.patchDynamicValues();
+      },
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (!this.dynamicFieldsForm || !this.fields?.length) {
+      return;
+    }
+
+    const savedFields = this.storeDynamicFieldsResponse || [];
+    const patchObj: any = {};
+
+    savedFields.forEach((savedField: any) => {
+      const fieldId = savedField.fieldId;
+
+      if (this.dynamicFieldsForm.contains(fieldId)) {
+        patchObj[fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Saved dynamic fields:', savedFields);
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+  // old and new values working
+
+  storeRejectedTransaction: UndertakingGuarantee | null = null;
+
+  previousValues: { [key: string]: any } = {};
+  previousDynamicValues: { [key: string]: any } = {};
+  private readonly UndertakingIssuanceFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'formOfUndertaking',
+    'purpose',
+
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
+
+    // Bank Form Details
+    'recipientBankName',
+    'issuerReference',
+    'issuanceType',
+    'swiftcode',
+    'bankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'bankCountry',
+
+    // Undertaking Details
+    'typeOfUndertaking',
+    'effectiveOption',
+    'expiryType',
+    'expiryDate',
+    'currency',
+    'undertakingAmount',
+    'variationPlus',
+    'variationMinus',
+    'issuanceCharges',
+    'correspondentCharges',
+    'supplementaryInfo',
+    'textOfUndertakingInfo',
+    'underlyingTransactionInfo',
+    'presentationInfo',
+    'basicExtensionType',
+    'increaseDecreaseType',
+    'contractType',
+    'contractDate',
+    'contractCurrency',
+    'contractAmount',
+    'percentageCovered',
+    'contractNarrative',
+    'applicableRules',
+    'countrySubdivision',
+    'jurisdiction',
+    'demandOption',
+    'governingLawsType',
+    'languageType',
+    'tsOption',
+
+    // Instructions
+    'deliveryType',
+    'deliveryMode',
+    'deliveryTo',
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
+  private compareUndertakingIssuanceData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.UndertakingIssuanceFields,
+    );
+
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
+
+    console.log('Previous undertaking issuance values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

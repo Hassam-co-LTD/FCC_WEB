@@ -1,91 +1,508 @@
-// Banking Design Tokens
-$primary-blue: #0b4eb3;
-$white: #ffffff;
-$text-dark: #1e293b;
-$text-light: #64748b;
-$success-green: #10b981;
-$header-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-$font-family: 'Poppins', sans-serif;
+// Import existing global theme file without creating local duplicates
+@use '../.././../../styles/theme' as *; 
 
-.banking-header {
-  font-family: $font-family;
-  background-color: $white;
-  height: 80px;
-  padding: 0 40px;
+.dashboard-container {
+  padding: $gap-default;
+  background-color: $bg-content;
+  min-height: calc(100vh - 64px);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: $header-shadow;
-  border-bottom: 1px solid #f1f5f9;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  flex-direction: column;
+  gap: $gap-default;
+  position: relative;
+}
 
-  .header-left {
-    .header-title {
-      font-size: 1.25rem;
-      font-weight: 600;
+/* 1. Header */
+.dashboard-header {
+  margin-bottom: 4px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: $text-dark;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: $text-medium;
+    margin: 0;
+  }
+}
+
+/* 2. Summary Cards Grid */
+.summary-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $gap-default;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-card {
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-default;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: $primary-border;
+    box-shadow: $shadow-primary;
+  }
+
+  .card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .metric-info {
+    display: flex;
+    flex-direction: column;
+
+    .metric-label {
+      font-size: 13px;
+      color: $text-medium;
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 700;
       color: $text-dark;
-      margin: 0;
-      letter-spacing: -0.01em;
+      margin-top: 4px;
     }
   }
 
-  .header-right {
-    .admin-profile {
+  .metric-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: $radius-default;
+    background: $primary-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      color: $primary;
+    }
+  }
+}
+
+/* Generic Panel Cards */
+.panel-card {
+  background: $white;
+  border: 1px solid $border-light;
+  border-radius: $radius-default;
+  padding: 16px;
+
+  .panel-header {
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $border-light;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-dark;
+      margin: 0;
+    }
+  }
+}
+
+/* 3. Main Grid */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $gap-default;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Activity Feed */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    .activity-icon-col {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: $primary-light;
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 6px 6px 6px 16px;
-      border-radius: 50px;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
+      justify-content: center;
+      flex-shrink: 0;
 
-      &:hover {
-        background-color: #f8fafc;
+      .activity-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $primary;
+      }
+    }
+
+    .activity-details {
+      display: flex;
+      flex-direction: column;
+
+      .activity-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-dark;
       }
 
-      .admin-details {
-        display: flex;
-        flex-direction: column;
-        text-align: right;
+      .activity-subtitle {
+        font-size: 13px;
+        color: $text-medium;
+      }
 
-        .admin-name {
-          font-size: 0.9rem;
-          font-weight: 500;
-          color: $text-dark;
+      .activity-time {
+        font-size: 11px;
+        color: $text-light;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+/* Overview Panel */
+.overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .overview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: $radius-default;
+
+    &:hover {
+      background-color: $hover-bg;
+    }
+
+    .overview-item-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .overview-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: $primary;
+      }
+
+      .overview-label {
+        font-size: 13px;
+        color: $text-dark;
+      }
+    }
+
+    .overview-count {
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-dark;
+    }
+  }
+}
+
+/* 4. Quick Actions */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    border-color: $border-light;
+    color: $primary;
+    border-radius: $radius-default;
+    padding: 8px 12px;
+
+    &:hover {
+      background-color: $primary-light;
+      border-color: $primary-border;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+/* 5. Recent Changes Table */
+.recent-changes-section {
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .dashboard-table {
+    width: 100%;
+    background: transparent;
+
+    th.mat-header-cell {
+      color: $text-medium;
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 1px solid $border-light;
+    }
+
+    td.mat-cell {
+      color: $text-dark;
+      font-size: 13px;
+      border-bottom: 1px solid $border-light;
+      padding: 10px 8px;
+    }
+
+    .action-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: $primary-light;
+      color: $primary;
+
+      &.updated {
+        background: $hover-bg;
+        color: $text-dark;
+      }
+    }
+  }
+}
+
+/* 7, 8, 9, 10. Integrated FCC AI Assistant Floating Panel */
+.assistant-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+
+  .assistant-trigger {
+    background-color: $primary-btn;
+    color: $white;
+    border-radius: 20px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: $button-shadow;
+
+    &:hover {
+      background-color: $primary-btn-hover;
+    }
+  }
+
+  .assistant-panel {
+    width: 340px;
+    height: 440px;
+    background: $white;
+    border: 1px solid $primary-border;
+    border-radius: $radius-large;
+    box-shadow: $shadow-primary;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    @media (max-width: 480px) {
+      width: calc(100vw - 32px);
+      right: 16px;
+      bottom: 16px;
+    }
+
+    .panel-header-bar {
+      background: $primary-light;
+      border-bottom: 1px solid $primary-border;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: $primary-dark;
+        font-weight: 600;
+        font-size: 14px;
+
+        .ai-sparkle {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: $primary;
+        }
+      }
+
+      .close-btn {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        color: $text-medium;
+      }
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: $bg-body;
+
+      .chat-message-row {
+        display: flex;
+
+        &.user {
+          justify-content: flex-end;
+
+          .chat-bubble {
+            background-color: $primary-btn;
+            color: $white;
+            border-radius: 12px 12px 0 12px;
+          }
         }
 
-        .admin-status {
-          font-size: 0.75rem;
-          color: $text-light;
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          gap: 6px;
+        .chat-bubble {
+          max-width: 85%;
+          padding: 8px 12px;
+          font-size: 12px;
+          border-radius: 12px 12px 12px 0;
+          background: $white;
+          border: 1px solid $border-light;
+          color: $text-dark;
+          white-space: pre-line;
 
-          .status-indicator {
-            width: 6px;
-            height: 6px;
-            background-color: $success-green;
-            border-radius: 50%;
+          &.entity-card, &.list-card, &.activity-card {
+            border-color: $primary-border;
+            width: 100%;
+          }
+
+          .entity-title, .card-list-title {
+            font-weight: 600;
+            color: $primary-dark;
+            margin-bottom: 4px;
+          }
+
+          .entity-meta {
+            font-size: 11px;
+            color: $text-medium;
+          }
+
+          .card-ol {
+            margin: 4px 0 0 16px;
+            padding: 0;
+
+            li {
+              font-size: 11px;
+            }
+          }
+
+          .chat-activity-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            padding: 2px 0;
+            border-bottom: 1px dashed $border-light;
+
+            &:last-child {
+              border-bottom: none;
+            }
           }
         }
       }
 
-      .avatar-wrapper {
-        position: relative;
-        
-        .admin-avatar {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid $white;
-          box-shadow: 0 2px 8px rgba($primary-blue, 0.15);
+      .suggested-prompts {
+        margin-top: auto;
+        padding-top: 8px;
+
+        .suggestions-label {
+          font-size: 11px;
+          color: $text-medium;
+          margin: 0 0 6px 0;
+        }
+
+        .chips-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+
+          .prompt-chip {
+            background: $white;
+            border: 1px solid $primary-border;
+            color: $primary;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+
+            &:hover {
+              background: $primary-light;
+            }
+          }
+        }
+      }
+    }
+
+    .chat-footer {
+      padding: 8px;
+      background: $white;
+      border-top: 1px solid $border-light;
+
+      .input-wrapper {
+        display: flex;
+        align-items: center;
+        background: $bg-body;
+        border: 1px solid $border-light;
+        border-radius: 18px;
+        padding: 0 4px 0 12px;
+
+        input {
+          flex: 1;
+          border: none;
+          background: transparent;
+          font-size: 12px;
+          outline: none;
+          color: $text-dark;
+        }
+
+        button {
+          color: $primary;
         }
       }
     }
   }
-
 }

@@ -498,52 +498,81 @@
         <p class="empty-text">No attachments uploaded.</p>
       </ng-template>
     </mat-card>
+
+    <!-- ===================================================== -->
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="dynamicFieldsArray.length > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
+          </div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
+        </div>
+      </div>
+    </mat-card>
   </div>
-</div>
 
-<!-- ========================================================= -->
-<!-- ACTIONS                                                    -->
-<!-- ========================================================= -->
+  <!-- ========================================================= -->
+  <!-- ACTIONS                                                    -->
+  <!-- ========================================================= -->
 
-<div class="actions">
-  <button mat-stroked-button (click)="back()">Back</button>
+  <div class="actions">
+    <button mat-stroked-button (click)="back()">Back</button>
 
-  <ng-container >
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="submitForm()"
-   *ngIf="
+    <ng-container>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="submitForm()"
+        *ngIf="
         currentTx?.status === 'I' &&
         hasPermission('UTG_AmendPreviewSubmit')
       "
-    >
-      Submit
-    </button>
+      >
+        Submit
+      </button>
 
-    <button
-    *ngIf="
+      <button
+        *ngIf="
         currentTx?.status === 'S' &&
         hasPermission('UTG_AmendPreviewReject')
       "
-      mat-flat-button
-      color="warn"
-      (click)="rejectTransaction()"
-       
-    >
-      Reject
-    </button>
+        mat-flat-button
+        color="warn"
+        (click)="rejectTransaction()"
+      >
+        Reject
+      </button>
 
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="approveTransaction()"
-      *ngIf="
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="approveTransaction()"
+        *ngIf="
         currentTx?.status === 'S' &&
         hasPermission('UTG_AmendPreviewApprove')
       "
-    >
-      Approve
-    </button>
-  </ng-container>
+      >
+        Approve
+      </button>
+    </ng-container>
+  </div>
 </div>

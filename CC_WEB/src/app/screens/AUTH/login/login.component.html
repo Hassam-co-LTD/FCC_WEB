@@ -1,29 +1,53 @@
 <div class="auth-container">
   <mat-card class="auth-card">
-
-    @if (authState === 'LOGIN') {
+    @if (authState === "LOGIN") {
       <div class="auth-flow-wrapper">
+        <!-- =========================
+         LOGIN HEADER
+    ========================= -->
         <div class="auth-header">
           <h2>Login</h2>
+
           <p class="auth-subtitle">Access your enterprise dashboard</p>
         </div>
 
+        <!-- =========================
+         LOGIN FIELDS
+    ========================= -->
         <div class="form-grid">
+          <!-- Login ID -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Login ID</mat-label>
-            <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
-            <input matInput [(ngModel)]="loginId" placeholder="Enter User ID" autocomplete="username" />
+
+            <mat-icon matPrefix class="field-icon"> account_circle </mat-icon>
+
+            <input
+              matInput
+              [(ngModel)]="loginId"
+              placeholder="Enter User ID"
+              autocomplete="username"
+            />
           </mat-form-field>
 
+          <!-- Company ID -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Company ID</mat-label>
-            <mat-icon matPrefix class="field-icon">business</mat-icon>
-            <input matInput [(ngModel)]="companyId" placeholder="Enter Company ID" />
+
+            <mat-icon matPrefix class="field-icon"> business </mat-icon>
+
+            <input
+              matInput
+              [(ngModel)]="companyId"
+              placeholder="Enter Company ID"
+            />
           </mat-form-field>
 
+          <!-- Password -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Password</mat-label>
-            <mat-icon matPrefix class="field-icon">lock</mat-icon>
+
+            <mat-icon matPrefix class="field-icon"> lock </mat-icon>
+
             <input
               matInput
               [type]="hidePassword ? 'password' : 'text'"
@@ -31,52 +55,230 @@
               placeholder="Enter Password"
               autocomplete="current-password"
             />
-            <button mat-icon-button matSuffix (click)="togglePassword()" type="button" class="visibility-toggle">
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              class="visibility-toggle"
+              (click)="togglePassword()"
+            >
+              <mat-icon>
+                {{ hidePassword ? "visibility_off" : "visibility" }}
+              </mat-icon>
             </button>
           </mat-form-field>
         </div>
 
-        <button mat-flat-button color="primary" class="full-width action-btn" (click)="loginApi()">
+        <!-- =========================
+         CAPTCHA / HUMAN VERIFICATION
+    ========================= -->
+        <div class="captcha-section">
+          <!-- =========================
+           I'M NOT A ROBOT
+      ========================= -->
+          @if (!captchaVerified) {
+            <button
+              type="button"
+              class="robot-check"
+              [disabled]="captchaLoading"
+              (click)="showCaptcha()"
+            >
+              <span class="robot-checkbox">
+                <mat-icon>check</mat-icon>
+              </span>
+
+              <span class="robot-text"> I'm not a robot </span>
+
+              <mat-icon class="robot-security-icon"> verified_user </mat-icon>
+            </button>
+          }
+
+          <!-- =========================
+           CAPTCHA BOX
+      ========================= -->
+          @if (showCaptchaBox && !captchaVerified) {
+            <div class="captcha-content">
+              <!-- CAPTCHA HEADER -->
+              <div class="captcha-header">
+                <mat-icon class="captcha-security-icon">
+                  verified_user
+                </mat-icon>
+
+                <div>
+                  <h3>Security Verification</h3>
+
+                  <p>Select the correct answer</p>
+                </div>
+              </div>
+
+              <!-- CAPTCHA LOADING -->
+              @if (captchaLoading) {
+                <div class="captcha-loading">
+                  <mat-icon> sync </mat-icon>
+
+                  <span> Loading... </span>
+                </div>
+              }
+
+              <!-- CAPTCHA CONTENT -->
+              @if (!captchaLoading && captcha) {
+                <!-- QUESTION -->
+                <div class="captcha-question">
+                  <span class="question-text">
+                    {{ captcha.question }}
+                  </span>
+                </div>
+
+                <!-- OPTIONS -->
+                <div class="captcha-items">
+                  @for (item of captcha.items; track item) {
+                    <button
+                      type="button"
+                      class="captcha-item"
+                      [class.selected]="selectedCaptchaItem === item"
+                      (click)="selectCaptchaItem(item)"
+                    >
+                      {{ item }}
+                    </button>
+                  }
+                </div>
+
+                <!-- CAPTCHA ERROR -->
+                @if (captchaError) {
+                  <div class="captcha-error">
+                    <mat-icon> error_outline </mat-icon>
+
+                    <span>
+                      {{ captchaError }}
+                    </span>
+                  </div>
+                }
+
+                <!-- CAPTCHA ACTIONS -->
+                <div class="captcha-actions">
+                  <!-- VERIFY -->
+                  <!-- <button
+                    type="button"
+                    mat-flat-button
+                    class="captcha-verify-btn"
+                    [disabled]="!selectedCaptchaItem || captchaVerifying"
+                    (click)="verifyCaptcha()"
+                  >
+                    @if (captchaVerifying) {
+                      Verifying...
+                    } @else {
+                      Verify
+                    }
+                  </button> -->
+
+                  <!-- REFRESH -->
+                  <button
+                    type="button"
+                    class="captcha-refresh"
+                    [disabled]="captchaLoading || captchaVerifying"
+                    (click)="loadCaptcha()"
+                  >
+                    <mat-icon> refresh </mat-icon>
+
+                    New Challenge
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- =========================
+           CAPTCHA VERIFIED
+      ========================= -->
+          @if (captchaVerified) {
+            <div class="robot-verified">
+              <mat-icon>check_circle</mat-icon>
+              <span>Verification completed</span>
+            </div>
+          }
+        </div>
+
+        <!-- =========================
+         LOGIN BUTTON
+    ========================= -->
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="loginApi()"
+        >
           Login
         </button>
 
+        <!-- =========================
+         FOOTER
+    ========================= -->
         <div class="auth-footer-actions">
           <p>
-            <a class="interactive-link" (click)="transitionTo('FORGOT_PASSWORD')">Forgot Password?</a>
+            <a
+              class="interactive-link"
+              (click)="transitionTo('FORGOT_PASSWORD')"
+            >
+              Forgot Password?
+            </a>
+
+            <a
+              class="interactive-link"
+              (click)="transitionTo('CUSTOMER_REGISTRATION')"
+            >
+              New customer
+            </a>
           </p>
         </div>
       </div>
     }
-
-    @if (authState === 'FORGOT_PASSWORD') {
+    @if (authState === "FORGOT_PASSWORD") {
       <div class="auth-flow-wrapper">
         <div class="auth-header">
           <h2>Forgot Password</h2>
-          <p class="auth-subtitle">Verify identity to request a secure password reset</p>
+          <p class="auth-subtitle">
+            Verify identity to request a secure password reset
+          </p>
         </div>
 
         <div class="form-grid">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Login ID</mat-label>
             <mat-icon matPrefix class="field-icon">account_circle</mat-icon>
-            <input matInput [(ngModel)]="forgotLoginId" placeholder="Enter Login ID" />
+            <input
+              matInput
+              [(ngModel)]="forgotLoginId"
+              placeholder="Enter Login ID"
+            />
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Company ID</mat-label>
             <mat-icon matPrefix class="field-icon">business</mat-icon>
-            <input matInput [(ngModel)]="forgotCompanyId" placeholder="Enter Company ID" />
+            <input
+              matInput
+              [(ngModel)]="forgotCompanyId"
+              placeholder="Enter Company ID"
+            />
           </mat-form-field>
         </div>
 
-        <button mat-flat-button color="primary" class="full-width action-btn" (click)="sendResetLink()">
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="sendResetLink()"
+        >
           Send Reset Link
         </button>
 
         <div class="auth-footer-actions">
           <p>
-            <a class="interactive-link navigation-back" (click)="transitionTo('LOGIN')">
+            <a
+              class="interactive-link navigation-back"
+              (click)="transitionTo('LOGIN')"
+            >
               <mat-icon>arrow_back</mat-icon> Back to Login
             </a>
           </p>
@@ -84,14 +286,16 @@
       </div>
     }
 
-    @if (authState === 'EMAIL_SENT') {
+    @if (authState === "EMAIL_SENT") {
       <div class="auth-flow-wrapper state-screen">
         <div class="state-icon-wrapper unique-info-icon">
           <mat-icon class="state-icon animated-pulse">mark_email_read</mat-icon>
         </div>
 
         <h2>Check Your Email</h2>
-        <p class="state-description">We’ve sent a secure password reset link to your verified address:</p>
+        <p class="state-description">
+          We’ve sent a secure password reset link to your verified address:
+        </p>
 
         <div class="email-box">
           <mat-icon>alternate_email</mat-icon>
@@ -99,21 +303,35 @@
         </div>
 
         <p class="state-description tertiary-text">
-          Please check your inbox and follow the secure instructions contained inside.
+          Please check your inbox and follow the secure instructions contained
+          inside.
         </p>
 
         <div class="timer-box">
           <mat-icon>schedule</mat-icon>
-          <span>Link expires in: <strong class="timer-countdown">{{ expiryDisplay }}</strong></span>
-        </div>  
+          <span
+            >Link expires in:
+            <strong class="timer-countdown">{{ expiryDisplay }}</strong></span
+          >
+        </div>
 
-        <button mat-flat-button color="primary" class="full-width action-btn" (click)="transitionTo('FORGOT_PASSWORD')">
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="transitionTo('FORGOT_PASSWORD')"
+        >
           Back
         </button>
 
         <div class="resend-box">
-          <button mat-stroked-button color="primary" class="resend-action-btn"
-                  (click)="resendEmail()" [disabled]="!canResend">
+          <button
+            mat-stroked-button
+            color="primary"
+            class="resend-action-btn"
+            (click)="resendEmail()"
+            [disabled]="!canResend"
+          >
             <mat-icon>replay</mat-icon> Resend Email
           </button>
 
@@ -132,15 +350,20 @@
       </div>
     }
 
-   @if (authState === 'RESET_PASSWORD') {
+    @if (authState === "RESET_PASSWORD") {
       <div class="auth-flow-wrapper">
         <div class="auth-header">
           <h2>Reset Password</h2>
-          <p class="auth-subtitle">Establish a highly secure password credential</p>
+          <p class="auth-subtitle">
+            Establish a highly secure password credential
+          </p>
         </div>
 
         <div class="form-grid">
-          <mat-form-field appearance="outline" class="full-width password-field-container">
+          <mat-form-field
+            appearance="outline"
+            class="full-width password-field-container"
+          >
             <mat-label>New Password</mat-label>
             <mat-icon matPrefix class="field-icon">lock_open</mat-icon>
             <input
@@ -152,8 +375,16 @@
               required
               autocomplete="new-password"
             />
-            <button mat-icon-button matSuffix (click)="toggleNewPassword()" type="button" class="visibility-toggle">
-              <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="toggleNewPassword()"
+              type="button"
+              class="visibility-toggle"
+            >
+              <mat-icon>{{
+                hideNewPassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
             </button>
           </mat-form-field>
 
@@ -161,23 +392,33 @@
             <p class="requirements-title">Password Complexity Requirements:</p>
             <ul class="checklist-grid">
               <li [class.satisfied]="hasMinLength">
-                <mat-icon class="check-icon">{{ hasMinLength ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <mat-icon class="check-icon">{{
+                  hasMinLength ? "check_circle" : "radio_button_unchecked"
+                }}</mat-icon>
                 <span>Minimum 8 characters length</span>
               </li>
               <li [class.satisfied]="hasUppercase">
-                <mat-icon class="check-icon">{{ hasUppercase ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <mat-icon class="check-icon">{{
+                  hasUppercase ? "check_circle" : "radio_button_unchecked"
+                }}</mat-icon>
                 <span>At least one uppercase letter (A-Z)</span>
               </li>
               <li [class.satisfied]="hasLowercase">
-                <mat-icon class="check-icon">{{ hasLowercase ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <mat-icon class="check-icon">{{
+                  hasLowercase ? "check_circle" : "radio_button_unchecked"
+                }}</mat-icon>
                 <span>At least one lowercase letter (a-z)</span>
               </li>
               <li [class.satisfied]="hasNumber">
-                <mat-icon class="check-icon">{{ hasNumber ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <mat-icon class="check-icon">{{
+                  hasNumber ? "check_circle" : "radio_button_unchecked"
+                }}</mat-icon>
                 <span>At least one numeric digit (0-9)</span>
               </li>
               <li [class.satisfied]="hasSpecialChar">
-                <mat-icon class="check-icon">{{ hasSpecialChar ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                <mat-icon class="check-icon">{{
+                  hasSpecialChar ? "check_circle" : "radio_button_unchecked"
+                }}</mat-icon>
                 <span>Special characters validation (@$!%*?&amp;#)</span>
               </li>
             </ul>
@@ -185,14 +426,17 @@
             @if (newPassword) {
               <div class="strength-indicator-wrapper">
                 <div class="strength-bar-container">
-                  <div class="strength-bar-fill" 
-                       [style.width.%]="passwordStrengthProgress" 
-                       [style.background-color]="passwordStrengthColor">
-                  </div>
+                  <div
+                    class="strength-bar-fill"
+                    [style.width.%]="passwordStrengthProgress"
+                    [style.background-color]="passwordStrengthColor"
+                  ></div>
                 </div>
                 <div class="strength-meta-data">
                   <span class="label">Security Rating:</span>
-                  <span class="value" [style.color]="passwordStrengthColor">{{ passwordStrength }}</span>
+                  <span class="value" [style.color]="passwordStrengthColor">{{
+                    passwordStrength
+                  }}</span>
                 </div>
               </div>
             }
@@ -209,10 +453,18 @@
               required
               autocomplete="new-password"
             />
-            <button mat-icon-button matSuffix (click)="toggleConfirmPassword()" type="button" class="visibility-toggle">
-              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="toggleConfirmPassword()"
+              type="button"
+              class="visibility-toggle"
+            >
+              <mat-icon>{{
+                hideConfirmPassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
             </button>
-            
+
             @if (confirmPassword && newPassword !== confirmPassword) {
               <mat-error class="form-level-error">
                 Verification parameters mismatch. Passwords do not match.
@@ -226,13 +478,22 @@
           color="primary"
           class="full-width action-btn"
           (click)="updatePassword()"
-          [disabled]="!newPassword || !confirmPassword || newPassword !== confirmPassword || isPasswordInvalid">
+          [disabled]="
+            !newPassword ||
+            !confirmPassword ||
+            newPassword !== confirmPassword ||
+            isPasswordInvalid
+          "
+        >
           Update Password
         </button>
 
         <div class="auth-footer-actions">
           <p>
-            <a class="interactive-link navigation-back" (click)="transitionTo('LOGIN')">
+            <a
+              class="interactive-link navigation-back"
+              (click)="transitionTo('LOGIN')"
+            >
               <mat-icon>arrow_back</mat-icon> Back to Login
             </a>
           </p>
@@ -240,7 +501,7 @@
       </div>
     }
 
-    @if (authState === 'EXPIRED') {
+    @if (authState === "EXPIRED") {
       <div class="auth-flow-wrapper state-screen">
         <div class="state-icon-wrapper unique-error-icon">
           <mat-icon class="state-icon">gpp_bad</mat-icon>
@@ -248,19 +509,25 @@
 
         <h2>Link Expired</h2>
         <p class="state-description text-center">
-          Your dynamic password reset token has expired for strict security and infrastructure compliance rules.
+          Your dynamic password reset token has expired for strict security and
+          infrastructure compliance rules.
         </p>
         <p class="state-description text-center tertiary-text">
           Please request a brand-new verification link to verify your identity.
         </p>
 
-        <button mat-flat-button color="primary" class="full-width action-btn" (click)="requestNewLink()">
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="requestNewLink()"
+        >
           Request New Link
         </button>
       </div>
     }
 
-    @if (authState === 'SUCCESS') {
+    @if (authState === "SUCCESS") {
       <div class="auth-flow-wrapper state-screen">
         <div class="state-icon-wrapper unique-success-icon">
           <mat-icon class="state-icon">check_circle</mat-icon>
@@ -271,11 +538,15 @@
           Your platform credentials have been securely refreshed.
         </p>
 
-        <button mat-flat-button color="primary" class="full-width action-btn" (click)="transitionTo('LOGIN')">
+        <button
+          mat-flat-button
+          color="primary"
+          class="full-width action-btn"
+          (click)="transitionTo('LOGIN')"
+        >
           Proceed to Secure Sign In
         </button>
       </div>
     }
-
   </mat-card>
 </div>

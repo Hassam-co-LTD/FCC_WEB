@@ -43,3 +43,11 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+# user panel ignore
+# /src/app/screens/USER/
+# /src/app/screens/AUTH/
+
+
+
+# create-generate-fields
+/src/app/screens/USER/create-generate-fields/

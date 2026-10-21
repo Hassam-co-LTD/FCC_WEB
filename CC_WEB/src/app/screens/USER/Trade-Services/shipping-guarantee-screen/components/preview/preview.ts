@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
-import { MatIcon } from "@angular/material/icon";
+import { MatIcon } from '@angular/material/icon';
 import { ShippingGuaranteeTransaction } from '../../../../../../core/models/shipping-guarantee';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { Dialog } from '@angular/cdk/dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -128,6 +128,12 @@ export class Preview implements OnInit {
       otherInstructions: [this.currentTx!.otherInstructions],
 
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
     // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
@@ -139,6 +145,9 @@ export class Preview implements OnInit {
     return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
 
+  get dynamicFieldsArray(): FormArray {
+    return this.ShippingGuaranteeForm.get('dynamicFields') as FormArray;
+  }
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',

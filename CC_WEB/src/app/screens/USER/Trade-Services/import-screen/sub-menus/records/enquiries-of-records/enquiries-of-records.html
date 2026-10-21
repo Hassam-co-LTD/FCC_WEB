@@ -5,7 +5,7 @@
     <p>Manage and track all Import LC {{ activeTab }} transactions</p>
   </div>
 </div>
-
+ 
 <!-- ================= SEARCH ================= -->
 <div class="search-system">
   <div class="search-input-group">
@@ -15,17 +15,17 @@
       [(ngModel)]="searchQuery"
       (input)="applyFilters()"
     />
-
+ 
     <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
       <mat-icon>clear</mat-icon>
     </button>
   </div>
-
+ 
   <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
     <mat-icon>tune</mat-icon> Advanced
   </button>
 </div>
-
+ 
 <!-- ================= ADVANCED SEARCH ================= -->
 <div class="advanced-search" *ngIf="showAdvanced">
   <!-- <div class="field">
@@ -34,13 +34,13 @@
             <option *ngFor="let tab of tabs" [value]="tab.key">{{ tab.label }}</option>
         </select>
     </div> -->
-
+ 
   <div class="field">
     <label>Currency</label>
     <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
   </div>
 </div>
-
+ 
 <!-- ================= TABS ================= -->
 <div class="ui-tabs">
   <div
@@ -52,41 +52,41 @@
     {{ tab.label }}
   </div>
 </div>
-
+ 
 <div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
   <button class="btn-load-records" type="button" (click)="loadTransactions()">
     <mat-icon>cloud_download</mat-icon>
     Load {{ activeTab | titlecase }} Records
   </button>
-
+ 
   <span> Click to retrieve the latest {{ activeTab }} Import LC records </span>
 </div>
-
+ 
 <div class="filter-row">
   <div class="results-summary">
     Showing <strong>{{ pagedTransactions.length }}</strong> of
     <strong>{{ filteredTransactions.length }}</strong>
     {{ activeTab }} records
   </div>
-
+ 
   <app-export-dropdown
     [disabled]="filteredTransactions.length === 0"
     (exportSelected)="onExportSelected($event)"
   >
   </app-export-dropdown>
 </div>
-
+ 
 <div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
   <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">
     <mat-icon>database</mat-icon>
-
+ 
     <h3>Records not loaded</h3>
-
+ 
     <p>
       Click the button below to retrieve {{ activeTab | titlecase }} Import LC
       records.
     </p>
-
+ 
     <button class="btn-load-records" type="button" (click)="loadTransactions()">
       <mat-icon>cloud_download</mat-icon>
       Load Records
@@ -125,7 +125,7 @@
         <th class="sticky-action">Action</th>
       </tr>
     </thead>
-
+ 
     <tbody>
       <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
         <td *ngIf="activeTab == 'live'">
@@ -161,7 +161,7 @@
           </button>
         </td>
       </tr>
-
+ 
       <tr *ngIf="pagedTransactions.length === 0">
         <td colspan="20" class="no-records">
           No {{ activeTab }} Import LC records found
@@ -169,7 +169,7 @@
       </tr>
     </tbody>
   </table>
-
+ 
   <div class="pagination">
     <button
       class="btn-pagination"
@@ -188,3 +188,5 @@
     </button>
   </div>
 </div>
+ 
+ 

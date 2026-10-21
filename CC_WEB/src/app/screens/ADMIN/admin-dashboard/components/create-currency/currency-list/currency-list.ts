@@ -5,7 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
-
+import {AuthService} from '../../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -39,7 +39,8 @@ export class CurrencyList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   // ================== Init ==================
@@ -152,48 +153,6 @@ export class CurrencyList implements OnInit {
   }
 
   // ================== Status Actions ==================
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency submitted successfully', 'success');
-        this.loadDraftCurrencies();
-        this.loadSubmittedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to submit currency', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency approved successfully', 'success');
-        this.loadSubmittedCurrencies();
-        this.loadApprovedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to approve currency', 'error')
-    });
-  }
-
-  reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Currency rejected successfully', 'success');
-        this.loadSubmittedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to reject currency', 'error')
-    });
-  }
-
-  editApprovedCurrency(id: number) {
-    this.api.setTnxByStatus('D', id, 'currency').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Moved to Draft for editing', 'success');
-        this.loadDraftCurrencies();
-        this.loadApprovedCurrencies();
-      },
-      error: () => Swal.fire('Error', 'Failed to move currency', 'error')
-    });
-  }
 
   // ================== Track By ==================
   trackById(index: number, item: any) {
