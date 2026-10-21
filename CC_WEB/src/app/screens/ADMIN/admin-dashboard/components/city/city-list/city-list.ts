@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import {AuthService} from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class CityList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -118,51 +120,7 @@ export class CityList implements OnInit {
 
   // ================== Actions ==================
   
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'city').subscribe({
-      next: () => {
-        Swal.fire('Success', 'City submitted successfully', 'success');
-        this.loadDraftCity();
-        this.loadSubmittedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit city', 'error')
-    });
-  }
-
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'city').subscribe({
-      next: () => {
-        Swal.fire('Success', 'City approved successfully', 'success');
-        this.loadSubmittedCity();
-        this.loadApprovedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve city', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'city').subscribe({
-      next: () => {
-        Swal.fire('Success', 'City rejected successfully', 'success');
-        this.loadSubmittedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject city', 'error')
-    });
-  }
-
-  /** ================== Edit Approved Customer ================== */
-  editApprovedCity(id: number) {
-    // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('I', id, 'city').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved city moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftCity();
-        this.loadApprovedCity();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved city to draft', 'error')
-    });
-  }
+ 
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

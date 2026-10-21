@@ -5,9 +5,12 @@
    PREVIEW WRAPPER
 ================================ */
 .preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   background: theme.$light-bg;
   border-radius: theme.$radius-large;
-  padding: 0;
+  padding: 20px;
   margin-top: 16px;
   box-shadow: 0 2px 8px theme.$shadow-primary;
 }
@@ -19,7 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0b4eb3;
+  background: theme.$primary-light;
   border: 1px solid theme.$border-light;
   padding: 14px 18px;
   border-radius: theme.$radius-large;
@@ -95,7 +98,21 @@ hr {
   border: 0;
   height: 1px;
   background: theme.$border-light;
-  margin: 0 0 20px 0;
+  margin: 0;
+}
+
+/* Rows that only wrap blocks (side by side) */
+.preview-section > .preview-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  padding: 0;
+  border-bottom: none;
+  align-items: stretch;
+
+  .preview-block {
+    margin-bottom: 0;
+  }
 }
 
 /* ================================
@@ -197,4 +214,8 @@ p {
   margin: 10px 0 0;
   color: theme.$text-medium;
   font-size: 14px;
+}
+
+.preview-block.full-width .actions {
+  justify-content: flex-end;
 }

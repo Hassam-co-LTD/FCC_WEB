@@ -15,7 +15,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -39,7 +39,7 @@ export class Preview implements OnInit {
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-
+  dynamicFields: any[] = [];
   currentTx: UndertakingGuarantee | null = null;
 
   constructor(
@@ -102,6 +102,9 @@ export class Preview implements OnInit {
   }
 
   private initForm(): void {
+    this.dynamicFields = Array.isArray(this.currentTx?.dynamicFields)
+      ? this.currentTx.dynamicFields
+      : [];
     this.undertakingForm = this.fb.group({
       id: [this.currentTx!.id],
       tnxId: [this.currentTx!.tnxId],
@@ -167,6 +170,23 @@ export class Preview implements OnInit {
       deliveryTo: [this.currentTx!.deliveryTo],
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
+
+      dynamicFields: this.fb.array(
+        this.dynamicFields.map((field: any) =>
+          this.fb.group({
+            fieldId: [field?.fieldId ?? ''],
+            transactionId: [field?.transactionId ?? ''],
+            fieldName: [field?.fieldName ?? ''],
+            fieldNameLabel: [field?.fieldNameLabel ?? ''],
+            fieldLabel: [field?.fieldLabel ?? ''],
+            label: [field?.label ?? ''],
+            name: [field?.name ?? ''],
+            value: [
+              field?.value ?? field?.fieldValue ?? field?.enteredValue ?? '',
+            ],
+          }),
+        ),
+      ),
       otherInstructions: [this.currentTx!.otherInstructions],
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
@@ -175,10 +195,16 @@ export class Preview implements OnInit {
     if (this.viewMode === 'readonly') {
       this.undertakingForm.disable({ emitEvent: false });
     }
+
+    console.log('load the preview data ', this.currentTx);
   }
 
   get attachmentsArray(): FormArray {
     return this.undertakingForm.get('attachments') as FormArray;
+  }
+
+  get dynamicFieldsArray(): FormArray {
+    return this.undertakingForm.get('dynamicFields') as FormArray;
   }
 
   back() {
@@ -189,19 +215,19 @@ export class Preview implements OnInit {
 
   /** SUBMIT */
   submitForm(): void {
-     if (!this.hasPermission('UI_AmendPreviewSubmit')) {
-       console.warn('User does not have UI_AmendPreviewSubmit permission');
+    if (!this.hasPermission('UI_AmendPreviewSubmit')) {
+      console.warn('User does not have UI_AmendPreviewSubmit permission');
 
-       this.snackBar.open(
-         'You do not have permission to submit this transaction',
-         'Close',
-         {
-           duration: 3000,
-         },
-       );
+      this.snackBar.open(
+        'You do not have permission to submit this transaction',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-       return;
-     }
+      return;
+    }
 
     if (this.viewMode === 'readonly') return;
 
@@ -229,7 +255,6 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-
     if (!this.hasPermission('UI_AmendPreviewApprove')) {
       console.warn('User does not have UI_AmendPreviewApprove permission');
 
@@ -277,7 +302,6 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
-
     if (!this.hasPermission('UI_AmendPreviewReject')) {
       console.warn('User does not have UI_AmendPreviewReject permission');
 

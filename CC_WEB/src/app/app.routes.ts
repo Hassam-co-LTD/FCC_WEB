@@ -36,6 +36,15 @@ export const routes: Routes = [
       ),
   },
 
+  // ============= customer register page lik =============
+  {
+    path: 'customer-registration',
+    loadComponent: () =>
+      import('./screens/ADMIN/admin-dashboard/components/register-customer/register-customer').then(
+        (m) => m.RegisterCustomer,
+      ),
+  },
+
   // Protected routes (with layout)
   {
     path: '',
@@ -436,8 +445,10 @@ export const routes: Routes = [
               ),
           },
 
+          // ==============================
           // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
           // Export Collection, Undertaking Issuance ONLY
+          // ==============================
           {
             path: 'Trade-Services',
             loadComponent: () =>
@@ -454,6 +465,34 @@ export const routes: Routes = [
                   ),
               },
               {
+                path: 'export-screen/approved-inquiry-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'export-screen/amend',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'export-screen/amend/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'export-screen/amend/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
                 path: 'export-screen/preview',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(
@@ -466,8 +505,7 @@ export const routes: Routes = [
                   import('./shared/success/success').then((m) => m.Success),
               },
               {
-                matcher: transactionIdMatcher,
-
+                path: 'export-screen/:tnxId',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-screen/export-screen').then(
                     (m) => m.ExportScreen,
@@ -783,7 +821,11 @@ export const routes: Routes = [
                 },
               },
 
-              // ---------- IMPORT LC ----------
+              // ==============================
+              // IMPORT LC
+              // ==============================
+
+              // Static routes first
               {
                 path: 'import-screen/inquiries',
                 loadComponent: () =>
@@ -810,6 +852,8 @@ export const routes: Routes = [
                     (m) => m.AmendScreen,
                   ),
               },
+
+              // Import Amend Route
               {
                 path: 'import-screen/approved-inquiry-records',
                 loadComponent: () =>
@@ -817,6 +861,7 @@ export const routes: Routes = [
                     (m) => m.ApprovedInquiryRecords,
                   ),
               },
+
               {
                 path: 'import-screen/amend/preview',
                 loadComponent: () =>
@@ -824,6 +869,8 @@ export const routes: Routes = [
                     (m) => m.Preview,
                   ),
               },
+
+              // Dynamic TNX ID route
               {
                 path: 'import-screen/:tnxId',
                 loadComponent: () =>
@@ -831,13 +878,7 @@ export const routes: Routes = [
                     (m) => m.ImportScreen,
                   ),
               },
-              {
-                matcher: transactionIdMatcher,
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-screen/import-screen').then(
-                    (m) => m.ImportScreen,
-                  ),
-              },
+
               {
                 path: 'import-screen/amend/:tnxId',
                 loadComponent: () =>
@@ -845,6 +886,8 @@ export const routes: Routes = [
                     (m) => m.AmendScreen,
                   ),
               },
+
+              // Base import screen
               {
                 path: 'import-screen',
                 loadComponent: () =>
@@ -861,30 +904,28 @@ export const routes: Routes = [
                 data: {
                   title: 'Welcome to Import LC',
                   description: 'Manage all Import LC related activities here.',
-                  createRoute: '/dashboard/Trade-Services/import-screen',
-                  templateRoute:
-                    '/dashboard/Trade-Services/import-screen?mode=template',
-                  existingRoute:
-                    '/dashboard/Trade-Services/import-screen/inquiries',
-                  uploadRoute:
-                    '/dashboard/Trade-Services/import-screen?mode=upload',
+                  createRoute: '/import-screen',
+                  templateRoute: '/import-screen?mode=template',
+                  existingRoute: '/import-screen/inquiries',
+                  uploadRoute: '/import-screen?mode=upload',
                 },
               },
             ],
           },
+
           // PAYMENT SERVICES — sibling of Trade Services, not nested inside it
           {
             path: 'my-accounts',
             children: [
               {
-                path: '',
+                path: '', // The main form (Create mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
                     (m) => m.MyAccountsComponent,
                   ),
               },
               {
-                path: 'transfer/:tnxId',
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
                     (m) => m.MyAccountsComponent,
@@ -903,14 +944,14 @@ export const routes: Routes = [
             path: 'IBFT',
             children: [
               {
-                path: '',
+                path: '', // The main form (Create mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
                     (m) => m.IBFT,
                   ),
               },
               {
-                path: 'transfer/:tnxId',
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
                     (m) => m.IBFT,
@@ -925,6 +966,8 @@ export const routes: Routes = [
               },
             ],
           },
+          // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
+          // Base fund-transfer screen
           {
             path: 'fund-transfer-welcome',
             loadComponent: () =>
@@ -936,6 +979,7 @@ export const routes: Routes = [
               description: 'Manage all activities related FUND TRANSFER here.',
             },
           },
+          // fund-transfer with-in-bank (3rd party) Route
           {
             path: 'fund-transfer/with-in',
             loadComponent: () =>
@@ -943,6 +987,7 @@ export const routes: Routes = [
                 (m) => m.ThirdPartyTransfer,
               ),
           },
+          // fund-transfer IBFT Route
           {
             path: 'fund-transfer/ibft',
             loadComponent: () =>
@@ -950,6 +995,7 @@ export const routes: Routes = [
                 (m) => m.ThirdPartyTransfer,
               ),
           },
+          // Import Fund-Records Route
           {
             path: 'fund-transfer/fund-transfer-records',
             loadComponent: () =>

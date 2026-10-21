@@ -1,5 +1,7 @@
 @use '../../../../../../../../../../styles/theme' as theme;
 
+
+
 /* ===========================
    Section Header
 =========================== */
@@ -8,29 +10,33 @@
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
-    padding: 14px 18px;
-    border-radius: 8px;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
     cursor: pointer;
-    color: theme.$text-light;
     margin-bottom: 10px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
 
     &:hover {
         background: theme.$primary-dark;
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
-        transition: transform 0.3s ease;
-    }
-
-    &.open mat-icon {
-        transform: rotate(180deg);
+        width: 22px;
+        height: 22px;
     }
 }
-
 /* ===========================
    Collapsible Container
 =========================== */
@@ -62,14 +68,6 @@ h2 {
     color: theme.$white;
 }
 
-h4 {
-    font-size: 16px;
-    margin: 20px 0 12px;
-    font-weight: 600;
-    color: theme.$primary-dark;
-    border-left: 4px solid theme.$primary;
-    padding-left: 8px;
-}
 
 /* ===========================
    Form Layout
@@ -121,9 +119,7 @@ button[mat-flat-button] {
         /* stack fields vertically */
     }
 
-    h4 {
-        font-size: 15px;
-    }
+    
 }
 
 /* Mobile ≤480px */
@@ -132,12 +128,58 @@ button[mat-flat-button] {
         padding: 12px;
     }
 
-    h4 {
-        font-size: 14px;
-    }
+   
 
     button[mat-flat-button] {
         font-size: 14px;
         padding: 8px 12px;
     }
+}
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
+}
+/* Field + previous value stacked so they never overlap neighbouring fields */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .previous-value {
+    margin-top: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+.row > .field-group,
+.form-row > .field-group {
+  flex: 1 1 0;
 }

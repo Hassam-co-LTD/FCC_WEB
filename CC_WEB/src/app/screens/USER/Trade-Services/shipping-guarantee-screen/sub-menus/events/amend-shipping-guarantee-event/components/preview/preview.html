@@ -73,6 +73,27 @@
           </div>
 
           <div class="preview-item">
+            <div class="preview-label">Expiry Date</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.expiryDate || '—' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Beneficiary Reference</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.beneficiaryReference || '—' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Customer Reference</div>
+            <div class="preview-value">
+              {{ ShippingGuaranteeForm.value.customerReference || '—' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
             <div class="preview-label">Bill Of Lading</div>
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.billoflading || '—' }}
@@ -291,6 +312,35 @@
         <p class="no-attachments">No attachments uploaded.</p>
       </ng-template>
     </mat-card>
+
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="dynamicFieldsArray.length > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
+          </div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
+        </div>
+      </div>
+    </mat-card>
   </div>
 </div>
 
@@ -305,7 +355,7 @@
       mat-flat-button
       color="primary"
       (click)="submit()"
-        *ngIf="
+      *ngIf="
         currentTx?.status === 'I' &&
         hasPermission('SG_AmendSubmit')
       "
@@ -317,7 +367,7 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-            *ngIf="
+      *ngIf="
         currentTx?.status === 'S' &&
         hasPermission('SG_AmendReject')
       "
@@ -329,7 +379,7 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-            *ngIf="
+      *ngIf="
         currentTx?.status === 'S' &&
         hasPermission('SG_AmendApprove')
       "

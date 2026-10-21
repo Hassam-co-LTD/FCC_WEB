@@ -14,14 +14,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 // Core Application Service Providers
 import { AuthService } from '../../../core/services/auth.service';
 import { ApiService } from '../../../core/services/api.service';
-import { SessionTimeoutService } from '../../../core/services/session-timeout-service/session-timeout-service';
-
+import { SessionTimeoutService } from '../../../core/services/admin-service/session-timeout-service/session-timeout-service';
+import {
+  CaptchaResponse,
+  CaptchaVerifyResponse,
+} from '../../../core/models/captcha';
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState =
   | 'LOGIN'
   | 'FORGOT_PASSWORD'
-  | 'EMAIL_SENT'
   | 'RESET_PASSWORD'
+  | 'CUSTOMER_REGISTRATION'
+  | 'EMAIL_SENT'
   | 'EXPIRED'
   | 'SUCCESS';
 
@@ -45,6 +49,12 @@ export type AuthState =
 export class LoginComponent implements OnInit, OnDestroy {
   // Centralized Finite State Machine Core
   public authState: AuthState = 'LOGIN';
+  captcha: CaptchaResponse | null = null;
+  selectedCaptchaItem: string | null = null;
+  captchaLoading = false;
+  captchaVerifying = false;
+  captchaError = '';
+  captchaVerificationToken: string | null = null;
 
   // =========================
   // LOGIN FORM STATE
@@ -109,21 +119,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const urlToken = params['token'];
 
-      // Protection against secondary router stabilization events where token might be undefined
       if (!urlToken) {
+        // Normal login flow → start with CAPTCHA
         if (
           this.authState !== 'RESET_PASSWORD' &&
           this.authState !== 'EXPIRED' &&
           this.authState !== 'SUCCESS'
         ) {
-          this.transitionTo('LOGIN');
+          this.authState = 'LOGIN';
+          this.loadCaptcha();
         }
+
         return;
       }
 
       this.token = urlToken;
 
-      // Proactively evaluate external query tokens via server backend
       this.api.validateResetToken(urlToken).subscribe({
         next: (response: any) => {
           const isValid =
@@ -131,12 +142,14 @@ export class LoginComponent implements OnInit, OnDestroy {
             (response.valid === true ||
               response.status === 'success' ||
               response.isValid === true);
+
           if (isValid) {
             this.transitionTo('RESET_PASSWORD');
           } else {
             this.transitionTo('EXPIRED');
           }
         },
+
         error: (err) => {
           console.error('Token validation network exception:', err);
           this.transitionTo('EXPIRED');
@@ -145,6 +158,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  showCaptchaBox = false;
+  captchaVerified = false;
+
+  showCaptcha(): void {
+    this.showCaptchaBox = true;
+    this.loadCaptcha();
+  }
   /**
    * Component destruction hook lifecycle interception
    */
@@ -172,18 +192,25 @@ export class LoginComponent implements OnInit, OnDestroy {
       case 'LOGIN':
         this.password = '';
         break;
+
+      case 'FORGOT_PASSWORD':
+        break;
+
       case 'RESET_PASSWORD':
         this.newPassword = '';
         this.confirmPassword = '';
         this.resetPasswordChecklist();
         break;
-      case 'FORGOT_PASSWORD':
+
+      case 'CUSTOMER_REGISTRATION':
+        this.router.navigate(['/customer-registration']);
+        break;
+
       case 'EXPIRED':
       case 'SUCCESS':
         break;
     }
   }
-
   private clearAllTimers(): void {
     if (this.expiryInterval) clearInterval(this.expiryInterval);
     if (this.resendInterval) clearInterval(this.resendInterval);
@@ -203,8 +230,87 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginHandler(): void {
     this.loginApi();
   }
+  //  GET CAPTCHA
+
+  // CAPTCHA LOADING
+  loadCaptcha(): void {
+    this.captchaLoading = true;
+    this.captchaError = '';
+    this.selectedCaptchaItem = null;
+
+    this.api.getCaptchaChallenge().subscribe({
+      next: (response) => {
+        this.captcha = response;
+
+        this.captchaLoading = false;
+      },
+
+      error: (error) => {
+        console.error('CAPTCHA loading failed:', error);
+
+        this.captchaLoading = false;
+        this.captchaError =
+          'Unable to load security verification. Please try again.';
+      },
+    });
+  }
+
+  selectCaptchaItem(item: string): void {
+    this.selectedCaptchaItem = item;
+    this.captchaError = '';
+  }
+
+  // verify captcha
+  verifyCaptcha(): void {
+    if (!this.captcha || !this.selectedCaptchaItem) {
+      this.captchaError = 'Please select an answer.';
+      return;
+    }
+
+    this.captchaVerifying = true;
+    this.captchaError = '';
+
+    this.api
+      .verifyCaptcha(this.captcha.challengeId, this.selectedCaptchaItem)
+      .subscribe({
+        next: (response: CaptchaVerifyResponse) => {
+          console.log('CAPTCHA VERIFY RESPONSE:', response);
+
+          this.captchaVerifying = false;
+
+          if (response?.verified === true) {
+            this.captchaVerificationToken = response.verificationToken;
+
+            this.authState = 'LOGIN';
+
+            return;
+          }
+
+          // WRONG ANSWER
+          this.captchaError =
+            response?.message ||
+            'Incorrect verification answer. Please try again.';
+
+          console.log('CAPTCHA ERROR:', this.captchaError);
+        },
+
+        error: (error) => {
+          console.error('CAPTCHA VERIFY ERROR:', error);
+
+          this.captchaVerifying = false;
+
+          this.captchaError =
+            error?.error?.message ||
+            error?.message ||
+            'Incorrect verification answer. Please try again.';
+
+          console.log('CAPTCHA ERROR MESSAGE:', this.captchaError);
+        },
+      });
+  }
 
   loginApi(): void {
+    this.verifyCaptcha();
     this.api
       .userLogin(
         {
@@ -222,18 +328,17 @@ export class LoginComponent implements OnInit, OnDestroy {
           console.log(res.headers);
           const loginData = res.body;
 
-
           // Save Permission Group Name
-sessionStorage.setItem(
-  'permissionGroupName',
-  loginData.permissionGroupName
-);
- 
-sessionStorage.setItem(
-  'permissionNames',
-  JSON.stringify(loginData.permissionNames)
-);
- 
+          sessionStorage.setItem(
+            'permissionGroupName',
+            loginData.permissionGroupName,
+          );
+
+          sessionStorage.setItem(
+            'permissionNames',
+            JSON.stringify(loginData.permissionNames),
+          );
+
           // Save user information
           sessionStorage.setItem('userData', JSON.stringify(loginData));
 

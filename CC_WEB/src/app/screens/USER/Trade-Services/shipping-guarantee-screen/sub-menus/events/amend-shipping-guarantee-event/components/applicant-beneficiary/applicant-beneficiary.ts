@@ -8,7 +8,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
-
+import{NgIf} from '@angular/common';
 @Component({
   selector: 'app-applicant-beneficiary',
   standalone: true,
@@ -20,7 +20,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatSlideToggleModule,
     MatButtonModule,
     MatIconModule,
-    MatRadioModule
+    MatRadioModule,
+    NgIf
 ],
   templateUrl: './applicant-beneficiary.html',
   styleUrls: ['./applicant-beneficiary.scss']
@@ -28,7 +29,7 @@ import { MatRadioModule } from '@angular/material/radio';
 export class ApplicantBeneficiary {
 
   @Input() form!: FormGroup;
-
+@Input() previousValues: { [key: string]: any } = {};
   isOpen: boolean = true;
   showAlternate: boolean = false;
 
@@ -40,5 +41,19 @@ export class ApplicantBeneficiary {
 
   toggleAlternate() {
     this.showAlternate = !this.showAlternate;
+  }
+  
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

@@ -1,5 +1,8 @@
+
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms'; // ADD ReactiveFormsModule
+import { CommonModule } from '@angular/common';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +15,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   selector: 'app-application-beneficiary',
   standalone: true,
   imports: [
-    ReactiveFormsModule, // ADD THIS
+    CommonModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -25,7 +29,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   styleUrl: './application-beneficiary.scss',
 })
 export class ApplicationBeneficiary implements OnInit {
+
   @Input() form!: FormGroup;
+
+  @Input() previousValues: { [key: string]: any } = {};
+
   isOpen: boolean = true;
   showAlternate: boolean = false;
 
@@ -48,4 +56,19 @@ export class ApplicationBeneficiary implements OnInit {
   toggleAlternate() {
     this.showAlternate = !this.showAlternate;
   }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
 }
+

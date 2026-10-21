@@ -1,5 +1,11 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -9,7 +15,7 @@ import { Upload } from './components/upload/upload';
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../core/sidebar/sidebar';
 import { SharedService } from '../../../../core/services/user-service/shared-form-service/shared-service';
-
+import { ApiService } from '../../../../core/services/api.service';
 @Component({
   selector: 'app-export-screen',
   standalone: true,
@@ -19,20 +25,19 @@ import { SharedService } from '../../../../core/services/user-service/shared-for
     Upload,
     Attachments,
     Sidebar,
-    RouterOutlet
-],
+    RouterOutlet,
+  ],
   templateUrl: './export-screen.html',
-  styleUrls: ['./export-screen.scss']
+  styleUrls: ['./export-screen.scss'],
 })
 export class ExportScreen implements AfterViewInit {
-
   currentStep = 0;
   isPreviewRoute = false;
 
   exportlcSteps = [
     { label: 'General Details' },
     { label: 'Upload MT700/MT701' },
-    { label: 'Attachments' }
+    { label: 'Attachments' },
   ];
 
   exportLCForm!: FormGroup;
@@ -42,26 +47,29 @@ export class ExportScreen implements AfterViewInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private api: ApiService,
   ) {
     this.exportLCForm = this.fb.group({
       generalDetails: this.fb.group({
         customerRef: [''],
         advisingBank: ['', Validators.required],
-        issuerRef: ['', Validators.required]
+        issuerRef: ['', Validators.required],
       }),
 
       appUpload: this.fb.group({
-        file: [null]
+        file: [null],
       }),
 
-      attachments: this.fb.array([])
+      attachments: this.fb.array([]),
     });
 
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
-        this.isPreviewRoute = event.urlAfterRedirects.includes('/export-screen/preview');
+        this.isPreviewRoute = event.urlAfterRedirects.includes(
+          '/export-screen/preview',
+        );
       });
   }
 
@@ -87,13 +95,13 @@ export class ExportScreen implements AfterViewInit {
     this.attachmentsArray.clear();
     const previewFiles: any[] = [];
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const fg = this.fb.group({
         title: file.name.replace(/\.[^/.]+$/, ''),
         fileName: file.name,
         size: file.size,
         type: file.type,
-        file
+        file,
       });
       this.attachmentsArray.push(fg);
       previewFiles.push(fg.value);
@@ -104,8 +112,8 @@ export class ExportScreen implements AfterViewInit {
       ...data,
       attachments: {
         preview: previewFiles,
-        files // actual File[] for download
-      }
+        files, // actual File[] for download
+      },
     });
   }
 
@@ -120,20 +128,20 @@ export class ExportScreen implements AfterViewInit {
     }
 
     const attachmentFiles = this.attachmentsComponent?.files || [];
-    const attachmentsPreview = attachmentFiles.map(file => ({
+    const attachmentsPreview = attachmentFiles.map((file) => ({
       title: file.name.replace(/\.[^/.]+$/, ''),
       fileName: file.name,
       size: file.size,
       type: file.type,
-      file
+      file,
     }));
 
     const fullFormData = {
       ...this.exportLCForm.value,
       attachments: {
         preview: attachmentsPreview,
-        files: attachmentFiles
-      }
+        files: attachmentFiles,
+      },
     };
 
     this.sharedService.setFormData(fullFormData);
@@ -144,21 +152,41 @@ export class ExportScreen implements AfterViewInit {
   // =======================
   // Step scroll tracking
   // =======================
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     setTimeout(() => {
-      const sections = document.querySelectorAll('section');
-      const observer = new IntersectionObserver(
-        entries => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              this.currentStep = Array.from(sections).indexOf(entry.target as HTMLElement);
-            }
-          });
-        },
-        { threshold: 0.4, root: document.querySelector('.scroll-area') }
-      );
-      sections.forEach(section => observer.observe(section));
-    }, 200);
+      const scrollArea = document.querySelector('.scroll-area') as HTMLElement;
+
+      const sections = Array.from(
+        document.querySelectorAll(
+          '.scroll-area > section[id^="section-"]:not(#section-3)',
+        ),
+      ) as HTMLElement[];
+
+      if (!scrollArea || sections.length === 0) {
+        return;
+      }
+
+      const updateActiveStep = () => {
+        const containerTop = scrollArea.getBoundingClientRect().top;
+
+        let activeIndex = 0;
+
+        sections.forEach((section, index) => {
+          const sectionTop = section.getBoundingClientRect().top;
+
+          if (sectionTop <= containerTop + 50) {
+            activeIndex = index;
+          }
+        });
+
+        this.currentStep = activeIndex;
+      };
+
+      scrollArea.addEventListener('scroll', updateActiveStep);
+
+      // Set correct active step when page initially loads
+      updateActiveStep();
+    }, 300);
   }
 
   scrollToSection(index: number) {
@@ -173,5 +201,63 @@ export class ExportScreen implements AfterViewInit {
 
   save() {
     alert('Form saved successfully!');
+  }
+
+  //============= dynamic fields =================
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log(
+      'Loading dynamic fields for ExportCollection screen with status A...',
+    );
+    this.api.getFieldsByScreenAndStatus('ExporTScreen', 'A').subscribe({
+      next: (res: any) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res;
+        console.log('Dynamic fields loaded:', this.fields);
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          group[field.fieldName] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        // patch values if customer already loaded
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => console.error('Error loading dynamic fields:', err),
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    )
+      return;
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (f: any) => f.fieldId == savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        patchObj[fieldDefinition.fieldName] = savedField.value || '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
   }
 }

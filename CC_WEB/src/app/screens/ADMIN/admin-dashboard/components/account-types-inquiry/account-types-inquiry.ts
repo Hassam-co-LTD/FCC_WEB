@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../../core/services/auth.service';
 @Component({
   selector: 'app-AccountMaster-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class AccountTypesInquiry implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -121,51 +123,9 @@ export class AccountTypesInquiry implements OnInit {
     this.router.navigate(['/admin/create-AccountMaster/' + AccountMaster.id]);
   }
 
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster submitted successfully', 'success');
-        this.loadDraftAccountTypes();
-        this.loadSubmittedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit AccountMaster', 'error')
-    });
-  }
 
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster approved successfully', 'success');
-        this.loadSubmittedAccountTypes();
-        this.loadApprovedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve AccountMaster', 'error')
-    });
-  }
-
-  Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'AccountMaster rejected successfully', 'success');
-        this.loadSubmittedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject AccountMaster', 'error')
-    });
-  }
-
-  /** ================== Edit Approved AccountMaster ================== */
-  editApprovedAccountMaster(id: number) {
-    // Move approved AccountMaster back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'AccountMaster').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved AccountMaster moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftAccountTypes();
-        this.loadApprovedAccountTypes();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved AccountMaster to draft', 'error')
-    });
-  }
+ 
+  
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

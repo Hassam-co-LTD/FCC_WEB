@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../../core/services/api.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../../../core/services/auth.service';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
@@ -31,7 +32,8 @@ export class BranchList implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -121,51 +123,10 @@ export class BranchList implements OnInit {
     this.router.navigate(['/admin/create-branch/' + branch.id]);
   }
 
-  submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch submitted successfully', 'success');
-        this.loadDraftBranches();
-        this.loadSubmittedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to submit branch', 'error')
-    });
-  }
 
-  setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch approved successfully', 'success');
-        this.loadSubmittedBranches();
-        this.loadApprovedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to approve branch', 'error')
-    });
-  }
 
-  Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Branch rejected successfully', 'success');
-        this.loadSubmittedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to reject branch', 'error')
-    });
-  }
+ 
 
-  /** ================== Edit Approved Branch ================== */
-  editApprovedBranch(id: number) {
-    // Move approved branch back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'branch').subscribe({
-      next: () => {
-        Swal.fire('Success', 'Approved branch moved to Draft for editing', 'success');
-        // Reload all tabs
-        this.loadDraftBranches();
-        this.loadApprovedBranches();
-      },
-      error: err => Swal.fire('Error', 'Failed to move approved branch to draft', 'error')
-    });
-  }
 
   // ================== Track By ==================
   trackById(index: number, item: any) {

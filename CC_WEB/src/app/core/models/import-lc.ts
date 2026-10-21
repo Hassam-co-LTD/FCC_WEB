@@ -29,6 +29,7 @@ export interface ImportLcTransaction {
 
   // Bank
   issuingBankName?: string;
+  customerReference?: string;
   issuerReference?: string;
   advisingBankName?: string;
   adviseThroughBankName?: string;
@@ -69,6 +70,13 @@ export interface ImportLcTransaction {
   principalAccount?: string;
   feeAccount?: string;
   otherInstructions?: string;
+
+  // dynamic fields
+  // Dynamic Fields
+  dynamicFields?: {
+    fieldId: string | number;
+    value: string;
+  }[];
 
   attachments?: {
     id?: number;

@@ -4,9 +4,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
-import { ApiService } from '../../../../../../../core/services/api.service';
-import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import {
   ExportDropdown,
   ExportFormat,
@@ -14,6 +11,9 @@ import {
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { ApiService } from '../../../../../../../core/services/api.service';
+import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 
 @Component({
   selector: 'app-approved-inquiry-records',
@@ -288,9 +288,6 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
   viewTransaction(tx: ImportLcTransaction): void {
-    if (!this.hasPermission('ILC_AmendPreview')) {
-      return;
-    }
     const readOnly = ['A', 'R'].includes(tx.status!);
 
     this.api.getAmendmentByTnxId(tx.tnxId!).subscribe({
@@ -310,10 +307,6 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
   openApprovedAmendTransaction(tx: ImportLcTransaction): void {
-    if (!this.hasPermission('ILC_Amend')) {
-      return;
-    }
-
     this.router.navigate(
       ['/dashboard/Trade-Services/import-screen/amend', tx.tnxId],
       {

@@ -1,0 +1,336 @@
+<div class="registration-page">
+  <div class="registration-container">
+    <!-- Header Section -->
+    <header class="registration-header">
+      <div class="brand-icon-wrapper">
+        <mat-icon class="brand-icon">account_balance</mat-icon>
+      </div>
+
+      <div class="header-text">
+        <h1 class="page-title">Online Registration</h1>
+        <p class="page-subtitle">Register for HBL Corporate Channels</p>
+      </div>
+    </header>
+
+    <!-- Visual Progress Stepper -->
+    <div class="stepper-container" aria-label="Registration Progress">
+      <div class="stepper-track"></div>
+
+      <!-- Step 1 -->
+      <div
+        class="step-item"
+        [class.active]="currentStep === 1"
+        [class.completed]="currentStep > 1"
+      >
+        <div class="step-badge">
+          @if (currentStep > 1) {
+          <mat-icon>check</mat-icon>
+          } @else {
+          <span class="step-number">1</span>
+          }
+        </div>
+
+        <span class="step-label"> Account Verification </span>
+      </div>
+
+      <!-- Step 2 -->
+      <div
+        class="step-item"
+        [class.active]="currentStep === 2"
+        [class.completed]="currentStep > 2"
+      >
+        <div class="step-badge">
+          @if (currentStep > 2) {
+          <mat-icon>check</mat-icon>
+          } @else {
+          <span class="step-number">2</span>
+          }
+        </div>
+
+        <span class="step-label"> OTP Verification </span>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-item" [class.active]="currentStep === 3">
+        <div class="step-badge">
+          <span class="step-number">3</span>
+        </div>
+
+        <span class="step-label"> Registration </span>
+      </div>
+    </div>
+
+    <!-- ===================================================== -->
+    <!-- STEP 1 : ACCOUNT VERIFICATION -->
+    <!-- ===================================================== -->
+
+    @if (currentStep === 1) {
+
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">Verify Your Account</h2>
+
+        <p class="content-description">
+          Enter your HBL account number or IBAN to begin the registration
+          process.
+        </p>
+      </div>
+
+      <!-- Registration Form -->
+      <form
+        [formGroup]="accountForm"
+        (ngSubmit)="verifyAccount()"
+        class="registration-form"
+      >
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label> Account Number / IBAN </mat-label>
+
+            <mat-icon matPrefix class="field-icon"> credit_card </mat-icon>
+
+            <input
+              matInput
+              formControlName="accountNumber"
+              placeholder="e.g. PK36HABB0000001234567801"
+              autocomplete="off"
+              required
+            />
+
+            @if ( accountForm.get('accountNumber')?.invalid &&
+            accountForm.get('accountNumber')?.touched ) {
+
+            <mat-error> Please enter a valid Account Number or IBAN </mat-error>
+
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Information / Security Callout -->
+        <div class="info-callout">
+          <mat-icon class="info-icon"> verified_user </mat-icon>
+
+          <div class="info-text">
+            <strong class="info-heading"> Account Verification Notice </strong>
+
+            <p>
+              Your account details will be verified through HBL Core Banking.
+              Please make sure you enter a valid account number.
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            mat-stroked-button
+            class="btn-secondary"
+            (click)="cancelRegistration()"
+            [disabled]="isLoading"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            mat-flat-button
+            class="btn-primary"
+            [disabled]="accountForm.invalid || isLoading"
+          >
+            @if (isLoading) {
+
+            <span class="loading-state">
+              <mat-spinner diameter="20" class="spinner-light"></mat-spinner>
+
+              <span> Verifying... </span>
+            </span>
+
+            } @else {
+
+            <ng-container>
+              <span> Continue </span>
+
+              <mat-icon class="btn-icon-right"> arrow_forward </mat-icon>
+            </ng-container>
+
+            }
+          </button>
+        </div>
+      </form>
+    </main>
+
+    }
+
+    <!-- ===================================================== -->
+    <!-- STEP 2 : OTP VERIFICATION -->
+    <!-- ===================================================== -->
+
+    @if (currentStep === 2) {
+
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">OTP Verification</h2>
+
+        <p class="content-description">
+          Enter the one-time password sent to your registered mobile number and
+          email address.
+        </p>
+      </div>
+
+      <!-- OTP Form -->
+      <form
+        [formGroup]="otpForm"
+        (ngSubmit)="verifyOtp()"
+        class="registration-form"
+      >
+        <!-- OTP Information -->
+        <div class="otp-verification-card">
+          <div class="otp-icon-wrapper">
+            <mat-icon class="otp-icon"> mark_email_read </mat-icon>
+          </div>
+
+          <div class="otp-message">
+            <h3>Enter Verification Code</h3>
+
+            <p>
+              We've sent a 6-digit verification code to your registered contact
+              details.
+            </p>
+          </div>
+        </div>
+
+        <!-- OTP Field -->
+        <div class="form-field-group">
+          <mat-form-field
+            appearance="outline"
+            class="custom-form-field otp-field"
+          >
+            <mat-label> Enter OTP </mat-label>
+
+            <mat-icon matPrefix class="field-icon"> lock </mat-icon>
+
+            <input
+              matInput
+              formControlName="otp"
+              placeholder="Enter 6-digit OTP"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              required
+            />
+
+            @if ( otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched ) {
+
+            <mat-error> Please enter a valid 6-digit OTP </mat-error>
+
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Resend OTP -->
+        <div class="otp-resend-section">
+          <span class="resend-text"> Didn't receive the code? </span>
+
+          <button
+            type="button"
+            mat-button
+            class="resend-btn"
+            (click)="resendOtp()"
+            [disabled]="isLoading"
+          >
+            Resend OTP
+          </button>
+        </div>
+
+        <!-- OTP Actions -->
+        <div class="form-actions">
+          <button
+            type="button"
+            mat-stroked-button
+            class="btn-secondary"
+            (click)="currentStep = 1"
+            [disabled]="isLoading"
+          >
+            <mat-icon> arrow_back </mat-icon>
+
+            Back
+          </button>
+
+          <button
+            type="submit"
+            mat-flat-button
+            class="btn-primary"
+            [disabled]="otpForm.invalid || isLoading"
+          >
+            @if (isLoading) {
+
+            <span class="loading-state">
+              <mat-spinner diameter="20" class="spinner-light"></mat-spinner>
+
+              <span> Verifying... </span>
+            </span>
+
+            } @else {
+
+            <ng-container>
+              <span> Verify OTP </span>
+
+              <mat-icon class="btn-icon-right"> arrow_forward </mat-icon>
+            </ng-container>
+
+            }
+          </button>
+        </div>
+      </form>
+    </main>
+
+    }
+
+    <!-- ===================================================== -->
+    <!-- STEP 3 : REGISTRATION -->
+    <!-- ===================================================== -->
+
+    @if (currentStep === 3) {
+
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">Complete Registration</h2>
+
+        <p class="content-description">
+          Your account has been successfully verified. Please continue to
+          complete your registration.
+        </p>
+      </div>
+
+      <div class="registration-success-card">
+        <div class="success-icon-wrapper">
+          <mat-icon> check_circle </mat-icon>
+        </div>
+
+        <h3>Account Verified Successfully</h3>
+
+        <p>
+          Your identity has been verified. You can now proceed with your HBL
+          Corporate Channels registration.
+        </p>
+
+        <button type="button" mat-flat-button class="btn-primary">
+          Continue Registration
+
+          <mat-icon> arrow_forward </mat-icon>
+        </button>
+      </div>
+    </main>
+
+    }
+
+    <!-- Footer Security Message -->
+    <footer class="registration-footer">
+      <mat-icon class="security-icon"> lock </mat-icon>
+
+      <span>
+        Your information is securely processed with end-to-end encryption.
+      </span>
+    </footer>
+  </div>
+</div>

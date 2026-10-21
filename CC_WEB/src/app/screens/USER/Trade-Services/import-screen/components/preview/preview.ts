@@ -1,17 +1,23 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { MatCard } from "@angular/material/card";
+import { MatCard } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { HttpClientModule } from '@angular/common/http';
-import { ApiService } from '../../../../../../core/services/api.service';
-import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { ImportLcTransaction } from "../../../../../../core/models/import-lc";
-import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+
+import { ApiService } from '../../../../../../core/services/api.service';
+
+import { ImportlcFormTransactionService } from '../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { ImportLcTransaction } from '../../../../../../core/models/import-lc';
+import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 
 @Component({
   selector: 'app-preview',
@@ -24,17 +30,15 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     MatCard,
     HttpClientModule,
     MatDialogModule,
+    // DynamicFields,
   ],
   standalone: true,
 })
 export class Preview implements OnInit {
   @Input() transaction!: ImportLcTransaction;
-  viewMode: 'submit' | 'readonly' = 'submit';
-  // @Input() readonly = false;
 
-  // get showActions(): boolean {
-  //   return this.transaction?.status === 'I';
-  // }
+  viewMode: 'submit' | 'readonly' = 'submit';
+
   importForm!: FormGroup;
 
   isOpen = true;
@@ -42,12 +46,10 @@ export class Preview implements OnInit {
   viewerContent: SafeResourceUrl | null = null;
   isImage = false;
   isPdf = false;
-
   currentTx: ImportLcTransaction | null = null;
-
-  // pageName1 = 'Update';
-  // pageName2 = 'Submit';
   permissionNames: string[] = [];
+
+  // pageName1 =
 
   constructor(
     private fb: FormBuilder,
@@ -71,6 +73,7 @@ export class Preview implements OnInit {
       this.router.navigate(['/dashboard/Trade-Services/import-screen']);
       return;
     }
+
     this.viewMode = this.transactionService.getViewMode();
     this.initForm();
   }
@@ -149,9 +152,14 @@ export class Preview implements OnInit {
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
-    // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
       this.importForm.disable({ emitEvent: false });
     }
@@ -161,13 +169,15 @@ export class Preview implements OnInit {
     return this.importForm.get('attachments') as FormArray;
   }
 
+  get dynamicFieldsArray(): FormArray {
+    return this.importForm.get('dynamicFields') as FormArray;
+  }
+
   back() {
     this.router.navigate(['/dashboard/Trade-Services/import-screen/inquiries']);
   }
 
-  /** SUBMIT */
   submitLc(): void {
-
     if (!this.hasPermission('ILC_InquirySubmit')) {
       this.snackBar.open(
         'You do not have permission to submit an Import LC.',
@@ -180,6 +190,7 @@ export class Preview implements OnInit {
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
+
     if (!tnxId) {
       this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
       return;
@@ -203,14 +214,14 @@ export class Preview implements OnInit {
   }
 
   approveTransaction(): void {
-      if (!this.hasPermission('ILC_InquiryApprove')) {
-        this.snackBar.open(
-          'You do not have permission to approve an Import LC.',
-          'Close',
-          { duration: 3000 },
-        );
-        return;
-      }
+    if (!this.hasPermission('ILC_InquiryApprove')) {
+      this.snackBar.open(
+        'You do not have permission to approve an Import LC.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
 
     if (!this.currentTx?.tnxId) return;
 
@@ -245,17 +256,21 @@ export class Preview implements OnInit {
   //   });
   // }
   rejectTransaction(): void {
-      if (!this.hasPermission('ILC_InquiryReject')) {
-        this.snackBar.open(
-          'You do not have permission to reject an Import LC.',
-          'Close',
-          { duration: 3000 },
-        );
-        return;
-      }
+    if (!this.hasPermission('ILC_InquiryReject')) {
+      this.snackBar.open(
+        'You do not have permission to reject an Import LC.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
 
     const tnxId = this.currentTx?.tnxId;
-    if (!tnxId) return;
+
+    if (!tnxId) {
+      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      return;
+    }
 
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
@@ -285,15 +300,14 @@ export class Preview implements OnInit {
   }
 
   downloadFile(index: number) {
-
-     if (!this.hasPermission('ILC_InquiryPreview')) {
-       this.snackBar.open(
-         'You do not have permission to download attachments.',
-         'Close',
-         { duration: 3000 },
-       );
-       return;
-     }
+    if (!this.hasPermission('ILC_InquiryPreview')) {
+      this.snackBar.open(
+        'You do not have permission to download attachments.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
 
     const currentTx = this.attachmentsArray.at(index)?.value;
     if (!currentTx) return;

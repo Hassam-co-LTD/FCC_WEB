@@ -1,22 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
-import { GeneralDetails } from "./components/general-details/general-details";
-import { ApplicantBeneficiary } from "./components/applicant-beneficiary/applicant-beneficiary";
+import { GeneralDetails } from './components/general-details/general-details';
+import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
 import { BankDetails } from './components/bank-details/bank-details';
 import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
 import { PaymentDetails } from './components/payment-details/payment-details';
 import { ShipmentDetails } from './components/shipment-details/shipment-details';
 import { NarrativeDetails } from './components/narrative-details/narrative-details';
-import { Licenses } from "./components/licenses/licenses";
-import { InstructionToBank } from "./components/instruction-to-bank/instruction-to-bank";
-import { Attachments } from "./components/attachments/attachments";
-import { Sidebar } from "../../../../core/sidebar/sidebar";
+import { Licenses } from './components/licenses/licenses';
+import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
+import { Attachments } from './components/attachments/attachments';
+import { Sidebar } from '../../../../core/sidebar/sidebar';
 
 import { ApiService } from '../../../../core/services/api.service';
 import { ImportLcTransaction } from '../../../../core/models/import-lc';
@@ -24,7 +30,8 @@ import { ImportlcFormTransactionService } from '../../../../core/services/user-s
 import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
 import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
 
 @Component({
   selector: 'app-import-lc',
@@ -45,6 +52,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     Attachments,
     MatDialogModule,
     Sidebar,
+    DynamicFields,
   ],
   templateUrl: './import-screen.html',
   styleUrls: ['./import-screen.scss'],
@@ -75,7 +83,11 @@ export class ImportScreen implements OnInit {
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
+    { label: 'Dynamic fields' },
   ];
+  storeRejectedTx: ImportLcTransaction | null = null;
+
+  previousDynamicValues: { [key: string]: any } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -86,6 +98,8 @@ export class ImportScreen implements OnInit {
     private dialog: MatDialog,
     private transactionService: ImportlcFormTransactionService,
     private authservice: AuthService,
+    private comparisonService: TransactionComparisonService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -129,6 +143,10 @@ export class ImportScreen implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // loading dynamic fields
+
+    this.loadDynamicFields();
   }
 
   private loadPermissions(): void {
@@ -240,56 +258,101 @@ export class ImportScreen implements OnInit {
     this.importForm.reset();
     this.buildForm();
   }
-  private enterEditMode(tnxId: string): void {
-    this.mode = 'UPDATE';
-    this.api.getTransactionByTnxId(tnxId).subscribe({
-      next: (tx) => {
-        this.currentTx = tx;
-        this.patchForm(tx);
 
-        switch (tx.status) {
-          case 'I': // pending
-            this.mode = 'UPDATE';
-            this.screenMode = 'EDIT';
-            this.importForm.enable();
-            // this.showUpdateSubmit = true;
-            // this.showApproveReject = false;
-            break;
-          case 'S': // submitted
-            this.mode = 'UPDATE';
-            this.screenMode = 'SUBMITTED';
-            this.importForm.disable();
-            // this.showUpdateSubmit = false;
-            // this.showApproveReject = true;
-            break;
-          case 'A': // Approved
-            this.mode = 'UPDATE';
-            this.screenMode = 'APPROVED';
-            this.importForm.disable();
-            break;
+private enterEditMode(tnxId: string): void {
+  this.mode = 'UPDATE';
 
-          case 'R': // Rejected
-            this.mode = 'REJECTED';
-            this.screenMode = 'EDIT';
-            this.importForm.enable(); // allow correction
-            break;
-          default:
-            this.mode = 'UPDATE';
-            this.screenMode = 'FINAL';
-            this.importForm.disable();
-          // this.showUpdateSubmit = false;
-          // this.showApproveReject = false;
-        }
-      },
-      error: () => {
-        this.snackBar.open('Transaction not found', 'Close', {
-          duration: 3000,
+  this.api.getTransactionByTnxId(tnxId).subscribe({
+    next: (tx) => {
+      this.currentTx = tx;
+
+      console.log('Transaction loaded from backend:', tx);
+
+      this.patchForm(tx);
+
+      if (tx.status === 'S') {
+        this.api.getRejectedTransaction(tnxId, 'importlc').subscribe({
+          next: (rejectedTx) => {
+            this.storeRejectedTransaction = rejectedTx;
+
+            console.log('Rejected transaction data:', rejectedTx);
+
+            this.compareImportLcData();
+          },
+          error: (err: any) => {
+            console.error('Error fetching rejected transaction:', err);
+          }
         });
-        this.router.navigate([
-          '/dashboard/Trade-Services/import-screen/inquiries',
-        ]);
-      },
-    });
+      }
+
+      switch (tx.status) {
+        case 'I':
+          this.mode = 'UPDATE';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        case 'S':
+          this.mode = 'UPDATE';
+          this.screenMode = 'SUBMITTED';
+          this.importForm.disable();
+          break;
+
+        case 'A':
+          this.mode = 'UPDATE';
+          this.screenMode = 'APPROVED';
+          this.importForm.disable();
+          break;
+
+        case 'R':
+          this.mode = 'REJECTED';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        default:
+          this.mode = 'UPDATE';
+          this.screenMode = 'FINAL';
+          this.importForm.disable();
+      }
+    },
+    error: () => {
+      this.snackBar.open('Transaction not found', 'Close', {
+        duration: 3000
+      });
+
+      this.router.navigate([
+        '/dashboard/Trade-Services/import-screen/inquiries'
+      ]);
+    }
+  });
+}
+
+  // Reuses the form itself as the field list, so there's nothing to hardcode.
+  // This works because flattenForm() already merges all groups into one flat object.
+  private getAllFormFieldNames(): string[] {
+    const groups = [
+      'generalDetails',
+      'applicantForm',
+      'bankForm',
+      'amountChargeForm',
+      'paymentDetailsForm',
+      'shipmentForm',
+      'narrativeForm',
+      'instructionForm',
+    ];
+    return groups.flatMap((g) =>
+      Object.keys((this.importForm.get(g) as FormGroup).controls),
+    );
+  }
+
+  hasPreviousDynamicValue(fieldId: string): boolean {
+    const v = this.previousDynamicValues?.[fieldId];
+    return v !== null && v !== undefined && String(v).trim() !== '';
+  }
+
+  getPreviousDynamicValue(fieldId: string): any {
+    return this.previousDynamicValues?.[fieldId] ?? '';
   }
   // Safe getters for html form access of the specific form groups
   get generalDetailsForm(): FormGroup {
@@ -331,6 +394,12 @@ export class ImportScreen implements OnInit {
       narrativeForm: tx,
       instructionForm: tx,
     });
+
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
   }
 
   // scrollToSection(i: number) {
@@ -344,8 +413,16 @@ export class ImportScreen implements OnInit {
     section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   private flattenForm(): ImportLcTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
+
     return {
       companyId: this.companyId,
+
       ...this.importForm.value.generalDetails,
       ...this.importForm.value.applicantForm,
       ...this.importForm.value.bankForm,
@@ -354,24 +431,25 @@ export class ImportScreen implements OnInit {
       ...this.importForm.value.shipmentForm,
       ...this.importForm.value.narrativeForm,
       ...this.importForm.value.instructionForm,
+
+      dynamicFields: dynamicFields,
+
       attachments: this.importForm.value.attachments,
     };
   }
 
   saveForm(): void {
+    if (!this.hasPermission('ILC_CreateSave')) {
+      this.snackBar.open(
+        'You do not have permission to create an Import LC.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-  if (!this.hasPermission('ILC_CreateSave')) {
-    this.snackBar.open(
-      'You do not have permission to create an Import LC.',
-      'Close',
-      {
-        duration: 3000,
-      },
-    );
-
-    return;
-  }
-
+      return;
+    }
 
     if (this.importForm.invalid) {
       this.importForm.markAllAsTouched();
@@ -410,18 +488,17 @@ export class ImportScreen implements OnInit {
   }
 
   submitLc(): void {
+    if (!this.hasPermission('ILC_InquirySubmit')) {
+      this.snackBar.open(
+        'You do not have permission to submit this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
 
-      if (!this.hasPermission('ILC_InquirySubmit')) {
-        this.snackBar.open(
-          'You do not have permission to submit this transaction.',
-          'Close',
-          {
-            duration: 3000,
-          },
-        );
-
-        return;
-      }
+      return;
+    }
 
     const tnxId = this.currentTx?.tnxId;
     const companyId = this.currentTx?.companyId;
@@ -484,10 +561,7 @@ export class ImportScreen implements OnInit {
     );
   }
 
-
   update(): void {
-
-    
     if (!this.hasPermission('ILC_InquiryPendingUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
@@ -557,20 +631,6 @@ export class ImportScreen implements OnInit {
   }
 
   approve(): void {
-
-    
-    if (!this.hasPermission('ILC_InquiryApprove')) {
-      this.snackBar.open(
-        'You do not have permission to approve this transaction.',
-        'Close',
-        {
-          duration: 3000,
-        },
-      );
-
-      return;
-    }
-
     this.api
       .approveTransaction(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
@@ -580,7 +640,6 @@ export class ImportScreen implements OnInit {
       });
   }
   openReject(): void {
-    
     if (!this.hasPermission('ILC_InquiryReject')) {
       this.snackBar.open(
         'You do not have permission to reject this transaction.',
@@ -593,15 +652,13 @@ export class ImportScreen implements OnInit {
       return;
     }
 
-
-
     const dialogRef = this.dialog.open(RejectDialogComponent, {
       width: '400px',
     });
 
     dialogRef.afterClosed().subscribe((reason: string | undefined) => {
       if (!reason) return; // user cancelled
-
+      console.log('Rejection reason:', reason);
       this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
         next: (res) => {
           this.snackBar.open('Transaction rejected successfully', 'Close', {
@@ -636,9 +693,45 @@ export class ImportScreen implements OnInit {
     );
   }
 
-  updateRejected(): void {
+  private getFormValidationErrors(
+    form: any = this.importForm,
+    path: string = '',
+  ): any {
+    const result: any = {};
 
-    
+    if (!form) {
+      return result;
+    }
+
+    result[path || '(root)'] = { status: form.status, errors: form.errors };
+
+    if (form.controls) {
+      const keys = Array.isArray(form.controls)
+        ? form.controls.map((_: any, i: number) => i)
+        : Object.keys(form.controls);
+
+      keys.forEach((key: any) => {
+        const control = form.controls[key];
+        const currentPath = path ? `${path}.${key}` : String(key);
+
+        if (control && control.controls) {
+          Object.assign(
+            result,
+            this.getFormValidationErrors(control, currentPath),
+          );
+        } else if (control) {
+          result[currentPath] = {
+            status: control.status,
+            errors: control.errors,
+          };
+        }
+      });
+    }
+
+    return result;
+  }
+
+  updateRejected(): void {
     if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
       this.snackBar.open(
         'You do not have permission to amend this transaction.',
@@ -650,6 +743,19 @@ export class ImportScreen implements OnInit {
 
       return;
     }
+    console.log(
+      'expiryDate errors:',
+      this.importForm.get('generalDetails.expiryDate')?.errors,
+    );
+    console.log(
+      'Form errors:',
+      JSON.stringify(this.getFormValidationErrors(), null, 2),
+    );
+    console.log('Form status:', this.importForm.status);
+    console.log('Form valid?', this.importForm.valid);
+    console.log('Form errors:', this.getFormValidationErrors()); // see helper below
+    console.log('currentTx:', this.currentTx);
+    console.log('tnxId:', this.currentTx?.tnxId);
 
     if (this.importForm.invalid || !this.currentTx?.tnxId) {
       this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
@@ -680,5 +786,180 @@ export class ImportScreen implements OnInit {
         });
       },
     });
+  }
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api.getFieldsByScreenAndStatus('ImportScreen', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res || [];
+
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    ) {
+      return;
+    }
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (field: any) => field.fieldId === savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+
+  // old and new values working
+
+  storeRejectedTransaction: ImportLcTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  private readonly ImportLcFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'expiryDate',
+    'placeOfExpiry',
+    'featureIrrevocable',
+    'featureRevolving',
+    'featureTransferable',
+    'applicableRules',
+    'confirmationInstruction',
+
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
+
+    // Bank Details
+    'issuingBankName',
+    'issuerReference',
+    'advisingBankName',
+    'adviseThroughBankName',
+
+    // Amount / Charges Details
+    'currency',
+    'amount',
+    'variationType',
+    'variationPlus',
+    'variationMinus',
+    'issuingBankCharges',
+    'outsideCountryCharges',
+    'additionalAmount',
+
+    // Payment Details
+    'creditAvailableWith',
+    'bankName',
+    'creditAvailableBy',
+    'paymentDraftAt',
+
+    // Shipment Details
+    'shipmentFrom',
+    'shipmentTo',
+    'placeOfLoading',
+    'placeOfDischarge',
+    'lastShipmentDate',
+    'shipmentPeriodNarrative',
+    'partialShipment',
+    'transhipment',
+
+    // Narrative Details
+    'descriptionOfGoods',
+    'documentsRequired',
+    'additionalInstructions',
+    'otherDetails',
+
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
+  private compareImportLcData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.ImportLcFields,
+    );
+
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
+
+    console.log('Previous import LC values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

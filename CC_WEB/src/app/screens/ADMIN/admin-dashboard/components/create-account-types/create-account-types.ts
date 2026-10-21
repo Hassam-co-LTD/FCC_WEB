@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 import { MatCard } from '@angular/material/card';
@@ -56,7 +56,8 @@ export class CreateAccountTypes implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
   // ================= INIT =================
@@ -71,7 +72,8 @@ export class CreateAccountTypes implements OnInit {
     this.accountForm = this.fb.group({
       typeName: ['', Validators.required],
       description: ['', Validators.required],
-      accountStatus: ['A', Validators.required]
+      accountStatus: ['A', Validators.required],
+      createdBy: this.authService.getLoginId() || ''
     });
   }
 
@@ -170,6 +172,7 @@ export class CreateAccountTypes implements OnInit {
 
     const payload = {
       ...this.accountForm.getRawValue(),
+      updatedBy: this.authService.getLoginId() || '',
       dynamicFields: dynamicPayload
     };
 
@@ -185,8 +188,8 @@ export class CreateAccountTypes implements OnInit {
   // ================= WORKFLOW =================
   submit(): void {
     if (!this.storeAccount?.id) return;
-
-    this.api.setTnxByStatus('S', this.storeAccount.id, 'AccountMaster').subscribe({
+    const payload  = this.authService.getSubmitPayload()
+    this.api.setTnxByStatus(payload, this.storeAccount.id, 'AccountMaster').subscribe({
       next: () =>
         Swal.fire('Submitted!', 'Account submitted successfully', 'success')
           .then(() =>
@@ -198,7 +201,8 @@ export class CreateAccountTypes implements OnInit {
   }
 
   approve(id: number): void {
-    this.api.setTnxByStatus('A', id, 'AccountMaster').subscribe({
+    const payload = this.authService.getApprovePayload()
+    this.api.setTnxByStatus(payload, id, 'AccountMaster').subscribe({
       next: () =>
         Swal.fire('Approved!', 'Account approved successfully', 'success')
           .then(() =>
@@ -210,16 +214,102 @@ export class CreateAccountTypes implements OnInit {
   }
 
   reject(id: number): void {
-    this.api.setTnxByStatus('I', id, 'AccountMaster').subscribe({
-      next: () =>
-        Swal.fire('Rejected!', 'Account rejected successfully', 'success')
-          .then(() =>
-            this.router.navigate(['/admin/account-types-inquiry'], {
-              queryParams: { tabName: 'rejected' }
-            })
-          )
-    });
-  }
+    
+      if (!id) return;
+    
+      Swal.fire({
+        title: 'Reject Transaction',
+        input: 'textarea',
+        inputLabel: 'Reject Reason',
+        inputPlaceholder: 'Please enter the reason for rejection...',
+        inputAttributes: {
+          'aria-label': 'Reject reason'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+    
+        preConfirm: (reason) => {
+    
+          if (!reason || !reason.trim()) {
+    
+            Swal.showValidationMessage(
+              'Reject reason is required'
+            );
+    
+            return false;
+          }
+    
+          return reason.trim();
+        }
+    
+      }).then((result) => {
+    
+        if (!result.isConfirmed) {
+          return;
+        }
+    
+        const rejectReason = result.value;
+    
+        // =========================
+        // CREATE REJECT PAYLOAD
+        // =========================
+    
+        const payload =
+          this.authService.getRejectPayload(rejectReason);
+    
+        console.log('Reject ID:', id);
+        console.log('Reject Payload:', payload);
+    
+        // =========================
+        // CALL API
+        // =========================
+    
+        this.api.setTnxByStatus(
+          payload,
+          id,
+          'customer'
+        ).subscribe({
+    
+          next: (res: any) => {
+    
+            console.log('Reject successful:', res);
+    
+            Swal.fire(
+              'Rejected!',
+              res?.message || 'Accounts rejected successfully',
+              'success'
+            ).then(() => {
+    
+              this.router.navigate(
+                ['/admin/customer-list'],
+                {
+                  queryParams: {
+                    tabName: 'rejected'
+                  }
+                }
+              );
+    
+            });
+    
+          },
+    
+          error: (err: any) => {
+    
+            console.error('Reject failed:', err);
+    
+            Swal.fire(
+              'Error',
+              err?.error?.message || 'Reject failed',
+              'error'
+            );
+    
+          }
+    
+        });
+    
+      });
+    }
 
   // ================= UI =================
   toggle(): void {

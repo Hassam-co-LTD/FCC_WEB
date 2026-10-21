@@ -3,8 +3,11 @@ import { finalize, delay } from 'rxjs/operators';
 import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+
 import { ShippingGuaranteeTransaction } from '../../../../../../../core/models/shipping-guarantee';
+
 import { ApiService } from '../../../../../../../core/services/api.service';
+
 import { ShippingGuaranteeFormTransactionService } from '../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -19,18 +22,35 @@ import * as XLSX from 'xlsx';
   selector: 'app-approved-inquiry-records',
   imports: [CommonModule, MatIconModule, FormsModule, ExportDropdown],
   templateUrl: './approved-inquiry-records.html',
-  styleUrls: ['./approved-inquiry-records.scss'],
+
+  styleUrls: ['./approved-inquiry-records.scss']
 })
 export class ApprovedInquiryRecords implements OnInit {
   isLoading = false;
   hasLoadedData = false;
 
   currentPage = 1;
+
   itemsPerPage = 10;
+
+
+  // =========================================================
+  // TRANSACTIONS
+  // =========================================================
+
   allTransactions: ShippingGuaranteeTransaction[] = [];
+
   filteredTransactions: ShippingGuaranteeTransaction[] = [];
+
+
+  // =========================================================
+  // SEARCH / FILTERS
+  // =========================================================
+
   showAdvanced = false;
+
   searchQuery = '';
+
   currencyFilter = '';
   activeTab = 'live';
   tabs = [
@@ -49,12 +69,43 @@ export class ApprovedInquiryRecords implements OnInit {
     | 'createdOn' = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
 
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly isBrowser = isPlatformBrowser(this.platformId);
+
+  // =========================================================
+  // PLATFORM
+  // =========================================================
+
+  private readonly platformId =
+    inject(PLATFORM_ID);
+
+  private readonly isBrowser =
+    isPlatformBrowser(this.platformId);
+
+
+  // =========================================================
+  // PERMISSIONS
+  // =========================================================
+
+  permissionGroupName = '';
+
+  permissions: string[] = [];
+
+  canInquiry = false;
+
+  canAmend = false;
+
+  canCreate = false;
+
+
+  // =========================================================
+  // CONSTRUCTOR
+  // =========================================================
 
   constructor(
     private api: ApiService,
-    private transactionService: ShippingGuaranteeFormTransactionService,
+
+    private transactionService:
+      ShippingGuaranteeFormTransactionService,
+
     private router: Router,
     private route: ActivatedRoute,
   ) {}
@@ -66,29 +117,30 @@ export class ApprovedInquiryRecords implements OnInit {
       (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
     );
   }
+private loadPermissions(): void {
+  const storedPermissions = sessionStorage.getItem('permissionNames');
 
-  private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
-
-    if (storedPermissions) {
-      try {
-        this.permissionNames = JSON.parse(storedPermissions);
-
-        console.log(
-          'Shipping Guarantee Permission Names:',
-          this.permissionNames,
-        );
-      } catch (error) {
-        console.error('Error parsing permissionNames:', error);
-
-        this.permissionNames = [];
-      }
-    } else {
-      console.warn('permissionNames not found in sessionStorage');
-
+  if (storedPermissions) {
+    try {
+      this.permissionNames = JSON.parse(storedPermissions);
+    } catch (error) {
+      console.error('Error parsing permissionNames:', error);
       this.permissionNames = [];
     }
+  } else {
+    console.warn('permissionNames not found in sessionStorage');
+    this.permissionNames = [];
   }
+
+  // Add this:
+  this.canInquiry = this.hasPermission('SG_Inquiry'); // use your actual permission name
+  this.canAmend = this.hasPermission('SG_Amend');
+  this.canCreate = this.hasPermission('SG_Create');
+}
+
+  // =========================================================
+  // ON INIT
+  // =========================================================
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
@@ -98,6 +150,7 @@ export class ApprovedInquiryRecords implements OnInit {
       const tab = params.get('tab');
       if (tab && this.tabs.some((t) => t.key === tab)) {
         this.activeTab = tab;
+
       }
       this.hasLoadedData = false;
       this.allTransactions = [];
@@ -187,8 +240,30 @@ export class ApprovedInquiryRecords implements OnInit {
   }
 
   applyFilters(): void {
-    const query = this.searchQuery.toLowerCase().trim();
-    const currency = this.currencyFilter.toLowerCase().trim();
+
+    // -------------------------------------------------------
+    // PERMISSION CHECK
+    // -------------------------------------------------------
+
+    if (!this.canInquiry) {
+
+      this.filteredTransactions = [];
+
+      return;
+    }
+
+
+    const query =
+      this.searchQuery
+        .toLowerCase()
+        .trim();
+
+
+    const currency =
+      this.currencyFilter
+        .toLowerCase()
+        .trim();
+
 
     const filtered = this.allTransactions.filter((tx) => {
       const matchesSearch =
@@ -236,11 +311,19 @@ export class ApprovedInquiryRecords implements OnInit {
         : bStr.localeCompare(aStr);
     });
 
-    this.filteredTransactions = sorted;
+    this.filteredTransactions =
+      sorted;
+
+
     this.currentPage = 1;
+
   }
 
-  private resolveColumn(tx: ShippingGuaranteeTransaction, column: string): any {
+  private resolveColumn(
+    tx: ShippingGuaranteeTransaction,
+    column: string
+  ): any {
+
     switch (column) {
       case 'tnxId':
         return tx.tnxId;
@@ -351,19 +434,29 @@ export class ApprovedInquiryRecords implements OnInit {
     return tx.tnxId!;
   }
 
-  private mapTabToBackendStatus(tab: string): string {
+  private mapTabToBackendStatus(
+    tab: string
+  ): string {
+
     switch (tab) {
+
       case 'pending':
         return 'i';
+
       case 'submitted':
         return 's';
+
       case 'approved':
         return 'a';
+
       case 'rejected':
         return 'r';
+
       default:
         return 'i';
+
     }
+
   }
   async downloadReport(): Promise<void> {
     if (!this.filteredTransactions.length) {

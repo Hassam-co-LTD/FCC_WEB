@@ -10,67 +10,227 @@
   <div class="content">
     <div class="scroll-area">
       <section id="section-0">
-        <app-general-details [form]="generalDetails"></app-general-details>
+        <app-general-details
+          [form]="generalDetails"
+          [previousValues]="previousValues"
+        ></app-general-details>
       </section>
       <hr class="section-divider" />
       <section id="section-1">
         <app-application-beneficiary
           [form]="applicantBeneficiary"
+          [previousValues]="previousValues"
         ></app-application-beneficiary>
       </section>
       <hr class="section-divider" />
       <section id="section-2">
-        <app-bank-details [form]="bankForm"></app-bank-details>
+        <app-bank-details
+          [form]="bankForm"
+          [previousValues]="previousValues"
+        ></app-bank-details>
       </section>
       <hr class="section-divider" />
       <section id="section-3">
         <app-undertaking-details
           [form]="undertakingDetails"
+          [previousValues]="previousValues"
         ></app-undertaking-details>
       </section>
       <hr class="section-divider" />
       <section id="section-4">
-        <app-instructions-bank [form]="instructions"></app-instructions-bank>
+        <app-instructions-bank
+          [form]="instructions"
+          [previousValues]="previousValues"
+        ></app-instructions-bank>
       </section>
       <hr class="section-divider" />
-      <section id="section-5"><app-attachments></app-attachments></section>
+      <section id="section-5">
+        <app-attachments></app-attachments>
+      </section>
       <hr class="section-divider" />
-      
-      <div class="actions">
 
+      <!-- Dynamic Fields -->
+      <section id="section-6">
+        <ng-container *ngIf="fields?.length">
+          <app-dynamic-fields
+            [form]="dynamicFieldsForm"
+            [fields]="fields"
+            [isOpen]="isDynamicFieldsOpen"
+            [previousDynamicValues]="previousDynamicValues"
+          >
+          </app-dynamic-fields>
+        </ng-container>
+      </section>
+      <hr class="section-divider" />
+
+      <div class="actions">
         <!-- CREATE -->
         <ng-container *ngIf="mode === 'CREATE'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
-          <button *ngIf="hasPermission('UI_CreateSave')"mat-flat-button color="accent" (click)="saveForm()">Save</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
+          <button
+            *ngIf="hasPermission('UI_CreateSave')"
+            mat-flat-button
+            color="accent"
+            (click)="saveForm()"
+          >
+            Save
+          </button>
         </ng-container>
 
         <!-- EDIT -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'UPDATE'">
-          <button  *ngIf="hasPermission('UI_InquiryPendingUpdate')"mat-stroked-button color="primary" (click)="updateForm()">Update</button>
-          <button *ngIf="hasPermission('UI_InquirySubmit')"mat-flat-button color="accent" (click)="submitForm()">Submit</button>
+          <button
+            *ngIf="hasPermission('UI_InquiryPendingUpdate')"
+            mat-stroked-button
+            color="primary"
+            (click)="updateForm()"
+          >
+            Update
+          </button>
+          <button
+            *ngIf="hasPermission('UI_InquirySubmit')"
+            mat-flat-button
+            color="accent"
+            (click)="submitForm()"
+          >
+            Submit
+          </button>
         </ng-container>
 
         <!-- APPROVAL -->
         <ng-container *ngIf="screenMode === 'SUBMITTED'">
-          <button  *ngIf="hasPermission('UI_InquiryReject')"mat-stroked-button color="primary" (click)="openReject()">Reject</button>
+          <button
+            *ngIf="hasPermission('UI_InquiryReject')"
+            mat-stroked-button
+            color="primary"
+            (click)="openReject()"
+          >
+            Reject
+          </button>
 
-          <button  *ngIf="hasPermission('UI_InquiryApprove')"mat-flat-button color="accent" (click)="approve()">Approve</button>
+          <button
+            *ngIf="hasPermission('UI_InquiryApprove')"
+            mat-flat-button
+            color="accent"
+            (click)="approve()"
+          >
+            Approve
+          </button>
         </ng-container>
 
         <!-- APPROVED -->
         <ng-container *ngIf="screenMode === 'APPROVED'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
           <!-- <button mat-flat-button color="accent" (click)="amend()">Amend</button> -->
         </ng-container>
 
         <!-- REJECTED -->
         <ng-container *ngIf="screenMode === 'EDIT' && mode === 'REJECTED'">
-          <button mat-stroked-button color="primary" (click)="back()">Back</button>
-          <button *ngIf="hasPermission('UI_InquiryRejectUpdate')" mat-flat-button color="primary" (click)="updateRejected()">Update</button>
+          <button mat-stroked-button color="primary" (click)="back()">
+            Back
+          </button>
+          <button
+            *ngIf="hasPermission('UI_InquiryRejectUpdate')"
+            mat-flat-button
+            color="primary"
+            (click)="updateRejected()"
+          >
+            Update
+          </button>
         </ng-container>
-
       </div>
-
     </div>
   </div>
+
+  <!-- <div class="ui-tabs">
+    <div *ngFor="let tab of tabs" 
+         class="tab" 
+         [class.active]="activeTab === tab.id" 
+         (click)="setActiveTab(tab.id)">
+      {{ tab.name }} ({{ getTabCount(tab.id) }})
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <div class="results-summary">
+      Showing {{ pagedUndertakings.length }} of {{ filteredUndertakings.length }} records 
+      (Page {{ currentPage }} of {{ totalPages }})
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th (click)="sortBy('channelReference')">Reference <mat-icon>{{ getSortIcon('channelReference') }}</mat-icon></th>
+          <th (click)="sortBy('lastUpdated')">Date <mat-icon>{{ getSortIcon('lastUpdated') }}</mat-icon></th>
+          <th (click)="sortBy('status')">Status <mat-icon>{{ getSortIcon('status') }}</mat-icon></th>
+          <th>Product</th>
+          <th>Beneficiary</th>
+          <th>Amount</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of pagedUndertakings">
+          <td class="highlight">{{ t.channelReference }}</td>
+          <td>{{ t.lastUpdated | date:'dd MMM yyyy' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(t.status)">
+              {{ t.status }}
+            </span>
+          </td>
+          <td>{{ t.formData?.generalDetails?.productType || '-' }}</td>
+          <td>{{ t.formData?.applicantBeneficiary?.beneficiaryName || '-' }}</td>
+          <td class="amount">
+            {{ t.formData?.undertakingDetails?.currency }} 
+            {{ t.formData?.undertakingDetails?.undertakingAmount | number:'1.2-2' }}
+          </td>
+          <td class="action-buttons">
+            
+            <button class="btn-view" (click)="viewTransaction(t)" [title]="t.status === 'Draft' ? 'Edit' : 'View'">
+              <mat-icon>{{ t.status === 'Draft' ? 'edit' : 'visibility' }}</mat-icon>
+              {{ t.status === 'Draft' ? 'Edit' : 'View' }}
+            </button>
+            
+            <button *ngIf="t.status === 'Pending Approval'" class="btn-accept" (click)="approveTransaction(t)">
+              <mat-icon>check_circle</mat-icon> Approve
+            </button>
+            
+            <button *ngIf="t.status === 'Draft'" class="btn-delete" (click)="deleteTransaction(t)">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+          </td>
+        </tr>
+        
+        <tr *ngIf="pagedUndertakings.length === 0">
+          <td colspan="7" class="no-records">
+            <div class="empty-state">
+              <mat-icon>search_off</mat-icon>
+              <p>No records found.</p>
+              <button *ngIf="searchQuery || hasActiveFilters" class="btn-outline" (click)="clearSearch()">Clear Filters</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="pagination" *ngIf="filteredUndertakings.length > itemsPerPage">
+      <button class="btn-pagination" [disabled]="currentPage === 1" (click)="previousPage()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div> 
+</div>
+</div> -->
 </div>

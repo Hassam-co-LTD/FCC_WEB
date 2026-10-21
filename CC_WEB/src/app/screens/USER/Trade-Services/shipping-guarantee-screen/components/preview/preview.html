@@ -7,6 +7,7 @@
     ================================================== -->
     <div class="preview-row">
       <!-- GENERAL DETAILS -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">General Details</h3>
 
@@ -63,12 +64,14 @@
       </mat-card>
 
       <!-- APPLICANT / BENEFICIARY -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">Applicant / Beneficiary</h3>
 
         <div class="preview-grid">
           <div class="preview-item">
             <div class="preview-label">Applicant Name</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.applicantName || '—' }}
             </div>
@@ -76,6 +79,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Applicant Address</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.applicantAddress1 }} {{
               ShippingGuaranteeForm.value.applicantAddress2 }} {{
@@ -86,6 +90,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Applicant Country</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.applicantCountry || '—' }}
             </div>
@@ -93,6 +98,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Name</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.beneficiaryName || '—' }}
             </div>
@@ -100,6 +106,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Address</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.beneficiaryAddress1 }} {{
               ShippingGuaranteeForm.value.beneficiaryAddress2 }} {{
@@ -110,6 +117,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Beneficiary Country</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.beneficiaryCountry || '—' }}
             </div>
@@ -123,6 +131,7 @@
     ================================================== -->
     <div class="preview-row three-column-row">
       <!-- BANK DETAILS -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">Bank Details</h3>
 
@@ -136,6 +145,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Issuer Reference</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.issuerReference || '—' }}
             </div>
@@ -144,6 +154,7 @@
       </mat-card>
 
       <!-- AMOUNT & CHARGES -->
+
       <mat-card class="preview-card">
         <h3 class="section-title">Amount & Charges</h3>
 
@@ -157,6 +168,7 @@
 
           <div class="preview-item">
             <div class="preview-label">Amount</div>
+
             <div class="preview-value">
               {{ ShippingGuaranteeForm.value.amount | number:'1.2-2' }}
             </div>
@@ -204,9 +216,13 @@
           <!-- HEADER -->
           <div class="attachment-grid header">
             <div>Type</div>
+
             <div>Title</div>
+
             <div>File Name</div>
+
             <div>Size</div>
+
             <div>Actions</div>
           </div>
 
@@ -251,11 +267,45 @@
         <p class="no-attachments">No attachments uploaded.</p>
       </ng-template>
     </mat-card>
+
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="dynamicFieldsArray.length > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
+          </div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
+        </div>
+      </div>
+    </mat-card>
   </div>
 </div>
 
+<!-- =====================================================
+     ACTIONS
+====================================================== -->
+
 <div class="actions">
   <!-- ALWAYS -->
+
   <button mat-stroked-button (click)="back()">Back</button>
 
   <!-- ONLY FOR SUBMITTED / PENDING -->
@@ -264,7 +314,7 @@
       mat-flat-button
       color="primary"
       (click)="submit()"
-       *ngIf="
+      *ngIf="
       viewMode === 'submit' &&
       currentTx?.status === 'I' &&
       hasPermission('SG_AmendSubmit')
@@ -277,7 +327,7 @@
       mat-flat-button
       color="warn"
       (click)="rejectTransaction()"
-          *ngIf="
+      *ngIf="
       currentTx?.status === 'S' &&
       hasPermission('SG_AmendPendingReject')
     "
@@ -289,7 +339,7 @@
       mat-flat-button
       color="primary"
       (click)="approveTransaction()"
-    *ngIf="
+      *ngIf="
       currentTx?.status === 'S' &&
       hasPermission('SG_AmendApprove')
     "
