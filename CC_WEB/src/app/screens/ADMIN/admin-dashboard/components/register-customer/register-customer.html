@@ -103,6 +103,15 @@
 
             }
           </mat-form-field>
+
+          <div
+            *ngIf="accountVerificationError && accountVerificationMessage"
+            class="verification-error"
+            role="alert"
+          >
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ accountVerificationMessage }}</span>
+          </div>
         </div>
 
         <!-- Information / Security Callout -->

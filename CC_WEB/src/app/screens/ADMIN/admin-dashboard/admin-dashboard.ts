@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -51,9 +51,38 @@ interface ChatMessage {
   templateUrl: './admin-dashboard.html',
   styleUrls: ['./admin-dashboard.scss'],
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit, OnDestroy {
   private router = inject(Router);
+  isHome = false;
 
+  private routerSubscription?: Subscription;
+
+  ngOnInit(): void {
+    this.updateHomeState();
+
+    this.routerSubscription = this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd,
+        ),
+      )
+      .subscribe(() => {
+        this.updateHomeState();
+      });
+  }
+
+  private updateHomeState(): void {
+    const currentUrl = this.router.url
+      .split('?')[0]
+      .split('#')[0]
+      .replace(/\/+$/, '');
+
+    this.isHome = currentUrl === '/admin';
+  }
+
+  ngOnDestroy(): void {
+    this.routerSubscription?.unsubscribe();
+  }
   constructor(
     private auth: AuthService,
     private api: ApiService,

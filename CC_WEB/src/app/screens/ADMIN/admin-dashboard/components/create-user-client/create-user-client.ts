@@ -125,7 +125,16 @@ export class CreateClientUser implements OnInit {
       loginId: [this.userId, Validators.required],
       userName: ['', Validators.required],
       email: ['', Validators.required],
-      password: ['', Validators.required],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S+$/,
+          ),
+        ],
+      ],
       userCategory: [''],
       companyId: ['', Validators.required],
       userStatus: [''],
@@ -749,5 +758,42 @@ export class CreateClientUser implements OnInit {
     });
 
     return Array.from(uniqueFields.values());
+  }
+
+  // password policy feature
+
+  get passwordControl() {
+    return this.clientUserForm.get('password');
+  }
+
+  get passwordValue(): string {
+    return this.passwordControl?.value ?? '';
+  }
+
+  get hasMinLength(): boolean {
+    return this.passwordValue.length >= 8;
+  }
+
+  get hasUppercase(): boolean {
+    return /[A-Z]/.test(this.passwordValue);
+  }
+
+  get hasLowercase(): boolean {
+    return /[a-z]/.test(this.passwordValue);
+  }
+
+  get hasNumber(): boolean {
+    return /\d/.test(this.passwordValue);
+  }
+
+  get hasSpecialCharacter(): boolean {
+    return /[^A-Za-z0-9\s]/.test(this.passwordValue);
+  }
+
+  someMethod(clientUserForm: FormGroup): void {
+    if (clientUserForm.invalid) {
+      clientUserForm.markAllAsTouched();
+      return;
+    }
   }
 }

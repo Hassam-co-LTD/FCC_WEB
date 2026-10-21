@@ -94,8 +94,9 @@
                 matInput
                 [type]="hidePassword ? 'password' : 'text'"
                 formControlName="password"
-                placeholder="Password"
+                placeholder="Enter password"
                 [readonly]="isReadOnly()"
+                autocomplete="new-password"
               />
 
               <mat-icon
@@ -105,7 +106,90 @@
               >
                 {{ hidePassword ? 'visibility' : 'visibility_off' }}
               </mat-icon>
+
+              <mat-error *ngIf="passwordControl?.hasError('required')">
+                Password is required.
+              </mat-error>
+
+              <mat-error
+                *ngIf="
+        passwordControl?.hasError('pattern') &&
+        passwordValue.length >= 8
+      "
+              >
+                Password does not meet all the security requirements.
+              </mat-error>
+
+              <mat-error
+                *ngIf="
+        passwordControl?.hasError('minlength') &&
+        passwordValue.length > 0
+      "
+              >
+                Password must contain at least 8 characters.
+              </mat-error>
             </mat-form-field>
+
+            <div
+              class="password-policy"
+              *ngIf="
+    !isReadOnly() &&
+    passwordValue.length > 0 &&
+    passwordControl?.invalid
+  "
+            >
+              <p class="policy-title">Password must contain:</p>
+
+              <div
+                [class.policy-valid]="hasMinLength"
+                [class.policy-invalid]="!hasMinLength"
+              >
+                <mat-icon>
+                  {{ hasMinLength ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                At least 8 characters
+              </div>
+
+              <div
+                [class.policy-valid]="hasUppercase"
+                [class.policy-invalid]="!hasUppercase"
+              >
+                <mat-icon>
+                  {{ hasUppercase ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                One uppercase letter (A-Z)
+              </div>
+
+              <div
+                [class.policy-valid]="hasLowercase"
+                [class.policy-invalid]="!hasLowercase"
+              >
+                <mat-icon>
+                  {{ hasLowercase ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                One lowercase letter (a-z)
+              </div>
+
+              <div
+                [class.policy-valid]="hasNumber"
+                [class.policy-invalid]="!hasNumber"
+              >
+                <mat-icon>
+                  {{ hasNumber ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                One number (0-9)
+              </div>
+
+              <div
+                [class.policy-valid]="hasSpecialCharacter"
+                [class.policy-invalid]="!hasSpecialCharacter"
+              >
+                <mat-icon>
+                  {{ hasSpecialCharacter ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+                One special character (@, #, !, etc.)
+              </div>
+            </div>
           </div>
 
           <div class="field-group">

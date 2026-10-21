@@ -33,7 +33,8 @@ import { ApiService } from '../../../../../core/services/api.service';
 })
 export class RegisterCustomer {
   private fb = inject(FormBuilder);
-
+  accountVerificationMessage = '';
+  accountVerificationError = false;
   constructor(
     private router: Router,
     private api: ApiService,
@@ -62,21 +63,27 @@ export class RegisterCustomer {
 
     this.api.verifyCustomerAccount(accountNumber).subscribe({
       next: (response) => {
-        console.log('customer account verification respose', response);
-        if (response.valid && response.accountExists) {
-          // Redirect to the customer screen
-          this.router.navigate(['/customer']);
-        } else if (response.valid && response.nextStep === 'OTP') {
-          // Continue with OTP verification
-          // this.sendOtp();
-        } else {
-          // Show validation error
-          alert(response.message);
+        console.log('Customer account verification response:', response);
+
+        if (!response.valid) {
+          this.accountVerificationError = true;
+          this.accountVerificationMessage = response.message;
+          return;
         }
+
+        // Account is valid: continue your existing success logic.
+        this.accountVerificationError = false;
+        this.accountVerificationMessage = '';
+
+        // Keep your existing logic for a valid account here.
       },
       error: (error) => {
         console.error('Account verification failed:', error);
-        alert('Unable to verify account. Please try again.');
+
+        this.accountVerificationError = true;
+        this.accountVerificationMessage =
+          error.error?.message ||
+          'Account verification failed. Please try again.';
       },
     });
   }
