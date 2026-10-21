@@ -318,7 +318,7 @@ export class ExportCollection implements OnInit {
         shippingFrom: [''],
         shippingTo: [''],
         shipmentDate: [''],
-        incotermsRules: [''],
+        applicableRule: [''],
         incoterms: [''],
       }),
 
@@ -1034,7 +1034,7 @@ export class ExportCollection implements OnInit {
     'shippingFrom',
     'shippingTo',
     'shipmentDate',
-    'incotermsRules',
+    'applicableRule',
     'incoterms',
 
     // Collection Instruction

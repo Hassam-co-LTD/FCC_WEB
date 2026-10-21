@@ -188,7 +188,7 @@ export class Amend implements OnInit {
     'shippingFrom',
     'shippingTo',
     'shipmentDate',
-    'incotermsRules',
+    'applicableRule',
     'incoterms',
 
     // Collection Instruction
@@ -450,7 +450,7 @@ export class Amend implements OnInit {
 
         shipmentDate: [''],
 
-        incotermsRules: [''],
+        applicableRule: [''],
 
         incoterms: [''],
       }),

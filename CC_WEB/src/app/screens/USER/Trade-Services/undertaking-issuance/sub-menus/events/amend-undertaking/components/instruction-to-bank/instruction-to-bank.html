@@ -1,90 +1,216 @@
-<ng-template #prev let-field>
-  @if (hasPreviousValue(field)) {
-    <div class="previous-value">
-      <span class="previous-label">Previous Value:</span>
-      <span class="previous-text">{{ getPreviousValue(field) }}</span>
-    </div>
-  }
-</ng-template>
 
+<!-- Section Header -->
 <div class="section-header" (click)="toggle()">
-  <h2>Instructions to Bank</h2>
+  <h2>Instructions for the Bank Only</h2>
   <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
+<!-- Collapsible Content -->
 <div class="collapsible" [class.open]="isOpen" [formGroup]="form">
-  <div class="form-row">
-    <div class="field-group">
-      <mat-form-field appearance="outline">
+
+  <!-- Form Content -->
+  <div class="form-content">
+
+    <!-- Delivery of Original Undertaking -->
+    <h4>Delivery of Original Undertaking & Mode of Delivery</h4>
+
+    <div class="form-grid-2">
+
+      <!-- Delivery Type -->
+      <div class="field-group">
+<mat-form-field appearance="outline">
         <mat-label>Delivery Type</mat-label>
+
         <mat-select formControlName="deliveryType">
-          @for (o of deliveryTypes; track o.value) {
-            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          <mat-option value="">Select</mat-option>
+
+          @for (type of deliveryTypeOptions; track type) {
+            <mat-option [value]="type.value">
+              {{ type.label }}
+            </mat-option>
           }
         </mat-select>
-      </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryType' }"></ng-container>
-    </div>
 
-    <div class="field-group">
-      <mat-form-field appearance="outline">
-        <mat-label>Delivery Mode</mat-label>
-        <mat-select formControlName="deliveryMode">
-          @for (o of deliveryModes; track o.value) {
-            <mat-option [value]="o.value">{{ o.label }}</mat-option>
-          }
-        </mat-select>
+        @if (deliveryTypeControl?.invalid && deliveryTypeControl!.touched) {
+          <mat-error>
+            Delivery type is required
+          </mat-error>
+        }
       </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryMode' }"></ng-container>
-    </div>
-
-    <div class="field-group">
-      <mat-form-field appearance="outline">
-        <mat-label>Delivery To</mat-label>
-        <mat-select formControlName="deliveryTo">
-          @for (o of deliveryTargets; track o.value) {
-            <mat-option [value]="o.value">{{ o.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'deliveryTo' }"></ng-container>
-    </div>
-  </div>
-
-  <div class="form-row">
-    <div class="field-group">
-      <mat-form-field appearance="outline">
-        <mat-label>Principal Account</mat-label>
-        <mat-select formControlName="principalAccount">
-          @for (a of accounts; track a) {
-            <mat-option [value]="a">{{ a }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'principalAccount' }"></ng-container>
-    </div>
-
-    <div class="field-group">
-      <mat-form-field appearance="outline">
-        <mat-label>Fee Account</mat-label>
-        <mat-select formControlName="feeAccount">
-          @for (a of accounts; track a) {
-            <mat-option [value]="a">{{ a }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'feeAccount' }"></ng-container>
-    </div>
-  </div>
-
-  <div class="form-row full-width">
-    <div class="field-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Other Instructions</mat-label>
-        <textarea matInput formControlName="otherInstructions" rows="4" maxlength="31525"></textarea>
-        <mat-hint align="end">{{ form.get('otherInstructions')?.value?.length || 0 }}/31525</mat-hint>
-      </mat-form-field>
-      <ng-container *ngTemplateOutlet="prev; context: { $implicit: 'otherInstructions' }"></ng-container>
-    </div>
-  </div>
+@if (hasPreviousValue('deliveryType')) {
+        <div class="previous-value">
+          <span class="previous-label">Previous Value:</span>
+          <span class="previous-text">
+            {{ getPreviousValue('deliveryType') }}
+          </span>
+        </div>
+      }
 </div>
+
+
+      <!-- Delivery Mode -->
+      <div class="field-group">
+<mat-form-field appearance="outline">
+        <mat-label>Delivery Mode</mat-label>
+
+        <mat-select formControlName="deliveryMode">
+          <mat-option value="">Select Mode</mat-option>
+
+          @for (mode of deliveryModeOptions; track mode) {
+            <mat-option [value]="mode.value">
+              {{ mode.label }}
+            </mat-option>
+          }
+        </mat-select>
+
+        @if (deliveryModeControl?.invalid && deliveryModeControl!.touched) {
+          <mat-error>
+            Delivery mode is required
+          </mat-error>
+        }
+      </mat-form-field>
+@if (hasPreviousValue('deliveryMode')) {
+        <div class="previous-value">
+          <span class="previous-label">Previous Value:</span>
+          <span class="previous-text">
+            {{ getPreviousValue('deliveryMode') }}
+          </span>
+        </div>
+      }
+</div>
+
+    </div>
+
+
+    <!-- Delivery To -->
+    <h4>Delivery To</h4>
+
+    <mat-radio-group formControlName="deliveryTo" class="radio-group">
+
+      @for (option of deliveryToOptions; track option) {
+        <mat-radio-button
+          [value]="option.value"
+          class="radio-button">
+          {{ option.label }}
+        </mat-radio-button>
+      }
+
+    </mat-radio-group>
+
+    @if (deliveryToControl?.invalid && deliveryToControl!.touched) {
+      <mat-error class="radio-error">
+        Please select where to deliver
+      </mat-error>
+    }
+
+    @if (hasPreviousValue('deliveryTo')) {
+      <div class="previous-value">
+        <span class="previous-label">Previous Value:</span>
+        <span class="previous-text">
+          {{ getPreviousValue('deliveryTo') }}
+        </span>
+      </div>
+    }
+
+
+    <!-- Accounts -->
+    <h4>Accounts</h4>
+
+    <div class="form-grid-2">
+
+      <!-- Principal Account -->
+      <div class="field-group">
+<mat-form-field appearance="outline">
+        <mat-label>Principal Account</mat-label>
+
+        <mat-select formControlName="principalAccount">
+          <mat-option value="">Select Account</mat-option>
+
+          @for (account of accounts; track account) {
+            <mat-option [value]="account">
+              {{ account }}
+            </mat-option>
+          }
+        </mat-select>
+
+        @if (principalAccountControl?.invalid && principalAccountControl!.touched) {
+          <mat-error>
+            Principal account is required
+          </mat-error>
+        }
+      </mat-form-field>
+@if (hasPreviousValue('principalAccount')) {
+        <div class="previous-value">
+          <span class="previous-label">Previous Value:</span>
+          <span class="previous-text">
+            {{ getPreviousValue('principalAccount') }}
+          </span>
+        </div>
+      }
+</div>
+
+
+      <!-- Fee Account -->
+      <div class="field-group">
+<mat-form-field appearance="outline">
+        <mat-label>Fee Account</mat-label>
+
+        <mat-select formControlName="feeAccount">
+          <mat-option value="">Same as Principal Account</mat-option>
+
+          @for (account of accounts; track account) {
+            <mat-option [value]="account">
+              {{ account }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+@if (hasPreviousValue('feeAccount')) {
+        <div class="previous-value">
+          <span class="previous-label">Previous Value:</span>
+          <span class="previous-text">
+            {{ getPreviousValue('feeAccount') }}
+          </span>
+        </div>
+      }
+</div>
+
+    </div>
+
+
+    <!-- Other Instructions -->
+    <h4>Other Instructions</h4>
+
+    <div class="instructions-container">
+
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
+
+        <textarea
+          matInput
+          formControlName="otherInstructions"
+          [maxlength]="MAX_CHARS"
+          placeholder="Type your instructions...">
+        </textarea>
+
+        <mat-hint align="end">
+          {{ charCount }}/{{ MAX_CHARS }}
+        </mat-hint>
+
+      </mat-form-field>
+@if (hasPreviousValue('otherInstructions')) {
+        <div class="previous-value">
+          <span class="previous-label">Previous Value:</span>
+          <span class="previous-text">
+            {{ getPreviousValue('otherInstructions') }}
+          </span>
+        </div>
+      }
+</div>
+
+    </div>
+
+  </div>
+
+</div>
+

@@ -17,7 +17,8 @@
     <div class="form-grid-2">
 
       <!-- Delivery Type -->
-      <mat-form-field appearance="outline">
+      <div class="field-group">
+<mat-form-field appearance="outline">
         <mat-label>Delivery Type</mat-label>
 
         <mat-select formControlName="deliveryType">
@@ -36,8 +37,7 @@
           </mat-error>
         }
       </mat-form-field>
-
-      @if (hasPreviousValue('deliveryType')) {
+@if (hasPreviousValue('deliveryType')) {
         <div class="previous-value">
           <span class="previous-label">Previous Value:</span>
           <span class="previous-text">
@@ -45,10 +45,12 @@
           </span>
         </div>
       }
+</div>
 
 
       <!-- Delivery Mode -->
-      <mat-form-field appearance="outline">
+      <div class="field-group">
+<mat-form-field appearance="outline">
         <mat-label>Delivery Mode</mat-label>
 
         <mat-select formControlName="deliveryMode">
@@ -67,8 +69,7 @@
           </mat-error>
         }
       </mat-form-field>
-
-      @if (hasPreviousValue('deliveryMode')) {
+@if (hasPreviousValue('deliveryMode')) {
         <div class="previous-value">
           <span class="previous-label">Previous Value:</span>
           <span class="previous-text">
@@ -76,6 +77,7 @@
           </span>
         </div>
       }
+</div>
 
     </div>
 
@@ -117,7 +119,8 @@
     <div class="form-grid-2">
 
       <!-- Principal Account -->
-      <mat-form-field appearance="outline">
+      <div class="field-group">
+<mat-form-field appearance="outline">
         <mat-label>Principal Account</mat-label>
 
         <mat-select formControlName="principalAccount">
@@ -136,8 +139,7 @@
           </mat-error>
         }
       </mat-form-field>
-
-      @if (hasPreviousValue('principalAccount')) {
+@if (hasPreviousValue('principalAccount')) {
         <div class="previous-value">
           <span class="previous-label">Previous Value:</span>
           <span class="previous-text">
@@ -145,10 +147,12 @@
           </span>
         </div>
       }
+</div>
 
 
       <!-- Fee Account -->
-      <mat-form-field appearance="outline">
+      <div class="field-group">
+<mat-form-field appearance="outline">
         <mat-label>Fee Account</mat-label>
 
         <mat-select formControlName="feeAccount">
@@ -161,8 +165,7 @@
           }
         </mat-select>
       </mat-form-field>
-
-      @if (hasPreviousValue('feeAccount')) {
+@if (hasPreviousValue('feeAccount')) {
         <div class="previous-value">
           <span class="previous-label">Previous Value:</span>
           <span class="previous-text">
@@ -170,6 +173,7 @@
           </span>
         </div>
       }
+</div>
 
     </div>
 
@@ -179,7 +183,8 @@
 
     <div class="instructions-container">
 
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
 
         <textarea
           matInput
@@ -193,8 +198,7 @@
         </mat-hint>
 
       </mat-form-field>
-
-      @if (hasPreviousValue('otherInstructions')) {
+@if (hasPreviousValue('otherInstructions')) {
         <div class="previous-value">
           <span class="previous-label">Previous Value:</span>
           <span class="previous-text">
@@ -202,6 +206,7 @@
           </span>
         </div>
       }
+</div>
 
     </div>
 

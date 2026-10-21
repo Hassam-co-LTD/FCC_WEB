@@ -236,6 +236,18 @@ export class Amend implements OnInit {
         currency: [''],
         amount: [''],
       }),
+      bankDetailsForm: this.fb.group({
+        remittingBankName: [''],
+        issuerReference: [''],
+        presentingBankName: [''],
+        bankAddress1: [''],
+        bankAddress2: [''],
+        bankAddress3: [''],
+        bankAddress4: [''],
+        collectingBankName: [''],
+        swiftCode: [''],
+        collectingReference: [''],
+      }),
       instructionForm: this.fb.group({
         principalAccount: [''],
         feeAccount: [''],
@@ -498,6 +510,9 @@ export class Amend implements OnInit {
   get issuingbankForm(): FormGroup {
     return this.ShippingGuaranteeForm.get('issuingbankForm') as FormGroup;
   }
+  get bankDetailsForm(): FormGroup {
+    return this.ShippingGuaranteeForm.get('bankDetailsForm') as FormGroup;
+  }
   get instructionForm(): FormGroup {
     return this.ShippingGuaranteeForm.get('instructionForm') as FormGroup;
   }
@@ -512,8 +527,9 @@ export class Amend implements OnInit {
       applicantBeneficiaryForm: tx,
 
       issuingbankForm: tx,
+      bankDetailsForm: tx,
       instructionForm: tx,
-      dynamicFields: tx.dynamicFields || this.fb.array([]),
+      dynamicFields: tx.dynamicFields || [],
     });
     // Only dynamic fields
     this.storeDynamicFieldsResponse = tx.dynamicFields ?? [];
@@ -538,6 +554,7 @@ export class Amend implements OnInit {
       ...this.ShippingGuaranteeForm.value.generalDetailsForm,
       ...this.ShippingGuaranteeForm.value.applicantBeneficiaryForm,
       ...this.ShippingGuaranteeForm.value.issuingbankForm,
+      ...this.ShippingGuaranteeForm.value.bankDetailsForm,
       ...this.ShippingGuaranteeForm.value.instructionForm,
       attachments: this.ShippingGuaranteeForm.value.attachments,
       dynamicFields: dynamicFields,

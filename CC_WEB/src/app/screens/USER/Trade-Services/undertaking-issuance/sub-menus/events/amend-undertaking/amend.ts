@@ -801,6 +801,7 @@ export class AmendScreen implements OnInit {
 
   storeRejectedTransaction: UndertakingGuarantee | null = null;
   previousValues: { [key: string]: any } = {};
+  previousDynamicValues: { [key: string]: any } = {};
 
   private readonly UndertakingAmendFields = [
     // General Details
@@ -965,6 +966,12 @@ export class AmendScreen implements OnInit {
       this.UndertakingAmendFields,
     );
 
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
+
     console.log('Previous undertaking amendment values:', this.previousValues);
     console.log(
       'CURRENT',
@@ -977,6 +984,12 @@ export class AmendScreen implements OnInit {
       this.storeRejectedTransaction?.applicantAddress2,
     );
     console.log('KEYS', Object.keys(this.previousValues));
+    console.log('CURRENT dynamicFields', this.currentTx?.dynamicFields);
+    console.log(
+      'REJECTED dynamicFields',
+      this.storeRejectedTransaction?.dynamicFields,
+    );
+    console.log('Previous dynamic values:', this.previousDynamicValues);
   }
 
   hasPreviousValue(field: string): boolean {

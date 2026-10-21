@@ -954,7 +954,7 @@ export class AmendScreen implements OnInit {
           },
         );
         this.router.navigate(
-          ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
+          ['/dashboard/Trade-Services/import-screen/approved-inquiry-records'],
           { queryParams: { tab: 'pending' } },
         );
       },

@@ -9,7 +9,8 @@
   <!-- TYPE & CATEGORY -->
   <h4>Type and Category</h4>
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Type of Undertaking</mat-label>
       <mat-select formControlName="typeOfUndertaking">
         <mat-option value="bid">Bid</mat-option>
@@ -17,8 +18,7 @@
         <mat-option value="advance">Advance</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('typeOfUndertaking')) {
+@if (hasPreviousValue('typeOfUndertaking')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -26,6 +26,7 @@
       </span>
     </div>
     }
+</div>
   </div>
 
   <!-- EFFECTIVE DATE OPTIONS -->
@@ -71,7 +72,8 @@
 
   <!-- EXPIRY DETAILS -->
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Expiry Date</mat-label>
       <input matInput [matDatepicker]="expDate" formControlName="expiryDate" />
       <mat-datepicker-toggle
@@ -81,19 +83,20 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #expDate></mat-datepicker>
     </mat-form-field>
-
-    @if (hasPreviousValue('expiryDate')) {
+@if (hasPreviousValue('expiryDate')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text"> {{ getPreviousValue('expiryDate') }} </span>
     </div>
     }
+</div>
   </div>
 
   <!-- AMOUNT & CURRENCY -->
   <h4>Amount and Charges</h4>
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Currency</mat-label>
       <mat-select formControlName="currency">
         <mat-option value="USD">USD</mat-option>
@@ -101,20 +104,20 @@
         <mat-option value="PKR">PKR</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('currency')) {
+@if (hasPreviousValue('currency')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text"> {{ getPreviousValue('currency') }} </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Undertaking Amount</mat-label>
       <input matInput type="number" formControlName="undertakingAmount" />
     </mat-form-field>
-
-    @if (hasPreviousValue('undertakingAmount')) {
+@if (hasPreviousValue('undertakingAmount')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -122,13 +125,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Percentage (+)</mat-label>
       <input matInput type="number" formControlName="variationPlus" />
     </mat-form-field>
-
-    @if (hasPreviousValue('variationPlus')) {
+@if (hasPreviousValue('variationPlus')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -136,13 +140,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Percentage (-)</mat-label>
       <input matInput type="number" formControlName="variationMinus" />
     </mat-form-field>
-
-    @if (hasPreviousValue('variationMinus')) {
+@if (hasPreviousValue('variationMinus')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -150,6 +155,7 @@
       </span>
     </div>
     }
+</div>
   </div>
 
   <!-- CHARGES -->
@@ -188,12 +194,12 @@
   }
 
   <!-- SUPPLEMENTARY INFO -->
-  <mat-form-field appearance="outline" class="full-width">
+  <div class="field-group">
+<mat-form-field appearance="outline" class="full-width">
     <mat-label>Supplementary Information About Amount</mat-label>
     <textarea matInput rows="3" formControlName="supplementaryInfo"></textarea>
   </mat-form-field>
-
-  @if (hasPreviousValue('supplementaryInfo')) {
+@if (hasPreviousValue('supplementaryInfo')) {
   <div class="previous-value">
     <span class="previous-label">Previous Value:</span>
     <span class="previous-text">
@@ -201,6 +207,7 @@
     </span>
   </div>
   }
+</div>
 
   <!-- EXTENSION TYPE -->
   <h4>Extension Date</h4>
@@ -237,15 +244,15 @@
   <!-- CONTRACT INFO -->
   <h4>Contract Information</h4>
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Contract Type</mat-label>
       <mat-select formControlName="contractType">
         <mat-option value="sale">Sale</mat-option>
         <mat-option value="service">Service</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('contractType')) {
+@if (hasPreviousValue('contractType')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -253,8 +260,10 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Date</mat-label>
       <input matInput [matDatepicker]="ctDate" formControlName="contractDate" />
       <mat-datepicker-toggle
@@ -264,8 +273,7 @@
       ></mat-datepicker-toggle>
       <mat-datepicker #ctDate></mat-datepicker>
     </mat-form-field>
-
-    @if (hasPreviousValue('contractDate')) {
+@if (hasPreviousValue('contractDate')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -273,15 +281,16 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Contract Currency</mat-label>
       <mat-select formControlName="contractCurrency">
         <mat-option value="USD">USD</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('contractCurrency')) {
+@if (hasPreviousValue('contractCurrency')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -289,13 +298,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Contract Amount</mat-label>
       <input matInput type="number" formControlName="contractAmount" />
     </mat-form-field>
-
-    @if (hasPreviousValue('contractAmount')) {
+@if (hasPreviousValue('contractAmount')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -303,13 +313,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Percentage Covered</mat-label>
       <input matInput type="number" formControlName="percentageCovered" />
     </mat-form-field>
-
-    @if (hasPreviousValue('percentageCovered')) {
+@if (hasPreviousValue('percentageCovered')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -317,13 +328,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Contract Narrative</mat-label>
       <input matInput formControlName="contractNarrative" />
     </mat-form-field>
-
-    @if (hasPreviousValue('contractNarrative')) {
+@if (hasPreviousValue('contractNarrative')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -331,6 +343,7 @@
       </span>
     </div>
     }
+</div>
   </div>
 
   <!-- APPLICABLE RULES -->
@@ -356,7 +369,8 @@
 
   <!-- GOVERNING LAWS -->
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Governing Laws</mat-label>
       <mat-select formControlName="governingLawsType">
         <mat-option value="pk">Pakistan</mat-option>
@@ -365,8 +379,7 @@
         <mat-option value="pl">Poland</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('governingLawsType')) {
+@if (hasPreviousValue('governingLawsType')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -374,13 +387,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Country Subdivision</mat-label>
       <input matInput formControlName="countrySubdivision" />
     </mat-form-field>
-
-    @if (hasPreviousValue('countrySubdivision')) {
+@if (hasPreviousValue('countrySubdivision')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -388,13 +402,14 @@
       </span>
     </div>
     }
+</div>
 
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Place of Jurisdiction</mat-label>
       <input matInput formControlName="jurisdiction" />
     </mat-form-field>
-
-    @if (hasPreviousValue('jurisdiction')) {
+@if (hasPreviousValue('jurisdiction')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -402,6 +417,7 @@
       </span>
     </div>
     }
+</div>
   </div>
 
   <!-- DEMAND INDICATOR -->
@@ -451,7 +467,8 @@
 
   <!-- LANGUAGE -->
   <div class="form-grid">
-    <mat-form-field appearance="outline">
+    <div class="field-group">
+<mat-form-field appearance="outline">
       <mat-label>Language</mat-label>
       <mat-select formControlName="languageType">
         <mat-option value="en">English</mat-option>
@@ -459,8 +476,7 @@
         <mat-option value="ar">Arabic</mat-option>
       </mat-select>
     </mat-form-field>
-
-    @if (hasPreviousValue('languageType')) {
+@if (hasPreviousValue('languageType')) {
     <div class="previous-value">
       <span class="previous-label">Previous Value:</span>
       <span class="previous-text">
@@ -468,10 +484,12 @@
       </span>
     </div>
     }
+</div>
   </div>
 
   <!-- TEXT FIELDS -->
-  <mat-form-field appearance="outline" class="full-width">
+  <div class="field-group">
+<mat-form-field appearance="outline" class="full-width">
     <mat-label>Text of Undertaking</mat-label>
     <textarea
       matInput
@@ -479,8 +497,7 @@
       formControlName="textOfUndertakingInfo"
     ></textarea>
   </mat-form-field>
-
-  @if (hasPreviousValue('textOfUndertakingInfo')) {
+@if (hasPreviousValue('textOfUndertakingInfo')) {
   <div class="previous-value">
     <span class="previous-label">Previous Value:</span>
     <span class="previous-text">
@@ -488,8 +505,10 @@
     </span>
   </div>
   }
+</div>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <div class="field-group">
+<mat-form-field appearance="outline" class="full-width">
     <mat-label>Underlying Transaction Details*</mat-label>
     <textarea
       matInput
@@ -497,8 +516,7 @@
       formControlName="underlyingTransactionInfo"
     ></textarea>
   </mat-form-field>
-
-  @if (hasPreviousValue('underlyingTransactionInfo')) {
+@if (hasPreviousValue('underlyingTransactionInfo')) {
   <div class="previous-value">
     <span class="previous-label">Previous Value:</span>
     <span class="previous-text">
@@ -506,13 +524,14 @@
     </span>
   </div>
   }
+</div>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <div class="field-group">
+<mat-form-field appearance="outline" class="full-width">
     <mat-label>Presentation Instruction</mat-label>
     <textarea matInput rows="1" formControlName="presentationInfo"></textarea>
   </mat-form-field>
-
-  @if (hasPreviousValue('presentationInfo')) {
+@if (hasPreviousValue('presentationInfo')) {
   <div class="previous-value">
     <span class="previous-label">Previous Value:</span>
     <span class="previous-text">
@@ -520,4 +539,5 @@
     </span>
   </div>
   }
+</div>
 </div>

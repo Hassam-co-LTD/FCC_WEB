@@ -161,3 +161,25 @@ button[mat-flat-button] {
   color: #b45309;
   font-weight: 500;
 }
+/* Field + previous value stacked so they never overlap neighbouring fields */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .previous-value {
+    margin-top: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+.row > .field-group,
+.form-row > .field-group {
+  flex: 1 1 0;
+}

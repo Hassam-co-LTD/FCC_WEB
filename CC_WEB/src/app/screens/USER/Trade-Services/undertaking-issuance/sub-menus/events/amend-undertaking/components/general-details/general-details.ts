@@ -1,10 +1,13 @@
+
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-general-details',
@@ -12,50 +15,41 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatIconModule,
+    MatRadioModule
   ],
   templateUrl: './general-details.html',
-  styleUrl: './general-details.scss',
+  styleUrls: ['./general-details.scss']
 })
 export class GeneralDetails {
+
   @Input() form!: FormGroup;
+
   @Input() previousValues: { [key: string]: any } = {};
+
+  preview: any = {};
 
   isOpen = true;
 
-  // TODO: replace with your real option codes (only values seen in data are certain)
-  productTypes = [
-    { value: 'performance', label: 'Performance' },
-    { value: 'advancePayment', label: 'Advance Payment' },
-    { value: 'bidBond', label: 'Bid Bond' },
-  ];
-  transmissionModes = [
-    { value: 'SWIFT', label: 'SWIFT' },
-    { value: 'Courier/Mail', label: 'Courier/Mail' },
-    { value: 'Other', label: 'Other' },
-  ];
-  formsOfUndertaking = [
-    { value: 'sloc', label: 'Standby LC' },
-    { value: 'guarantee', label: 'Guarantee' },
-  ];
-  purposes = [
-    { value: 'clundertaking', label: 'Counter / LC Undertaking' },
-    { value: 'direct', label: 'Direct Undertaking' },
-  ];
-
-  toggle(): void {
+  toggle() {
     this.isOpen = !this.isOpen;
   }
 
   hasPreviousValue(field: string): boolean {
-    const v = this.previousValues?.[field];
-    return v !== null && v !== undefined && String(v).trim() !== '';
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
   }
 
   getPreviousValue(field: string): any {
     return this.previousValues?.[field] ?? '';
   }
 }
+

@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,30 +14,27 @@ import { MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule
-],
+  ],
   templateUrl: './shipping-details.html',
   styleUrls: ['./shipping-details.scss']
 })
-export class ShippingDetailsComponent implements OnInit {
+export class ShippingDetailsComponent {
 
-  @Input() form!: FormGroup;   
-    @Input() previousValues: { [key: string]: any } = {};// <-- parent passes the form
+  @Input() form!: FormGroup;
+
+  // Previous/rejected transaction values
+  @Input() previousValues: { [key: string]: any } = {};
+
   isOpen = true;
 
   shippingMethods = ['Air', 'Sea', 'Land'];
-  incotermsRules = ['FOB', 'CIF', 'EXW'];
-  incoterms = ['DAP', 'DDP', 'FCA'];
-
-  ngOnInit(): void {
-    // ❗ Do NOT create a new form here
-    // The form must come from parent component
-  }
+  ApplicableRules = ['DAP', 'DDP', 'FCA'];
+  incoterms = ['FOB', 'CIF', 'EXW'];
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
 
-  
   hasPreviousValue(field: string): boolean {
     return (
       this.previousValues &&

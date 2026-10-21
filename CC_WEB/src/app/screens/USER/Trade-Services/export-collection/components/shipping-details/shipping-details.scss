@@ -134,3 +134,20 @@
 .form-grid-2 .full-width .sub-title {
   margin-bottom: 4px;   /* 4px + 16px row gap = 20px, same as the top heading */
 }
+/* Field + previous value stacked so they never overlap neighbouring fields */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .previous-value {
+    margin-top: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}

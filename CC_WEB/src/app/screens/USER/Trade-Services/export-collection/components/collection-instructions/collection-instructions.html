@@ -87,10 +87,20 @@
 
             <input
               matInput
-              type="text"
-              formControlName="adviceAcceptanceAndDueDateBy"
-              placeholder="Select option"
+              [matDatepicker]="adviceDatePicker"
+              [value]="getDateValue('adviceAcceptanceAndDueDateBy')"
+              [disabled]="!!form.get('adviceAcceptanceAndDueDateBy')?.disabled"
+              (dateChange)="onDateChange('adviceAcceptanceAndDueDateBy', $event)"
+              placeholder="Select date"
             />
+
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="adviceDatePicker"
+              class="date-toggle"
+            ></mat-datepicker-toggle>
+
+            <mat-datepicker #adviceDatePicker></mat-datepicker>
 
           </mat-form-field>
 
@@ -281,11 +291,11 @@
 
         <mat-radio-group formControlName="openingCharges">
 
-          <mat-radio-button value="Drawee">
+          <mat-radio-button value="DRAWEE">
             Drawee
           </mat-radio-button>
 
-          <mat-radio-button value="Drawer">
+          <mat-radio-button value="DRAWER">
             Drawer
           </mat-radio-button>
 
@@ -316,11 +326,11 @@
 
         <mat-radio-group formControlName="outsideCountryCharges">
 
-          <mat-radio-button value="Drawee">
+          <mat-radio-button value="DRAWEE">
             Drawee
           </mat-radio-button>
 
-          <mat-radio-button value="Drawer">
+          <mat-radio-button value="DRAWER">
             Drawer
           </mat-radio-button>
 

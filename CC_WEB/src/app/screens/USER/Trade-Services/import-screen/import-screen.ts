@@ -258,70 +258,75 @@ export class ImportScreen implements OnInit {
     this.importForm.reset();
     this.buildForm();
   }
-  private enterEditMode(tnxId: string): void {
-    this.mode = 'UPDATE';
-    this.api.getTransactionByTnxId(tnxId).subscribe({
-      next: (tx) => {
-        this.currentTx = tx;
-        console.log('transaction loaded from backend ', tx);
-        if (tx.status === 'S') {
-          this.api.getRejectedTransaction(tnxId, 'importlc').subscribe({
-            next: (rejectedTx) => {
-              this.storeRejectedTransaction = rejectedTx;
-              console.log('Rejected transaction data:', rejectedTx);
-              this.compareImportLcData();
-            },
-            error: (err: any) => {
-              console.log('Error fetching rejected transaction:', err);
-            },
-          });
-        }
 
-        this.patchForm(tx);
+private enterEditMode(tnxId: string): void {
+  this.mode = 'UPDATE';
 
-        switch (tx.status) {
-          case 'I': // pending
-            this.mode = 'UPDATE';
-            this.screenMode = 'EDIT';
-            this.importForm.enable();
-            // this.showUpdateSubmit = true;
-            // this.showApproveReject = false;
-            break;
-          case 'S':
-            this.mode = 'UPDATE';
-            this.screenMode = 'SUBMITTED';
-            this.importForm.disable();
+  this.api.getTransactionByTnxId(tnxId).subscribe({
+    next: (tx) => {
+      this.currentTx = tx;
 
-            break;
-          case 'A': // Approved
-            this.mode = 'UPDATE';
-            this.screenMode = 'APPROVED';
-            this.importForm.disable();
-            break;
+      console.log('Transaction loaded from backend:', tx);
 
-          case 'R': // Rejected
-            this.mode = 'REJECTED';
-            this.screenMode = 'EDIT';
-            this.importForm.enable(); // allow correction
-            break;
-          default:
-            this.mode = 'UPDATE';
-            this.screenMode = 'FINAL';
-            this.importForm.disable();
-          // this.showUpdateSubmit = false;
-          // this.showApproveReject = false;
-        }
-      },
-      error: () => {
-        this.snackBar.open('Transaction not found', 'Close', {
-          duration: 3000,
+      this.patchForm(tx);
+
+      if (tx.status === 'S') {
+        this.api.getRejectedTransaction(tnxId, 'importlc').subscribe({
+          next: (rejectedTx) => {
+            this.storeRejectedTransaction = rejectedTx;
+
+            console.log('Rejected transaction data:', rejectedTx);
+
+            this.compareImportLcData();
+          },
+          error: (err: any) => {
+            console.error('Error fetching rejected transaction:', err);
+          }
         });
-        this.router.navigate([
-          '/dashboard/Trade-Services/import-screen/inquiries',
-        ]);
-      },
-    });
-  }
+      }
+
+      switch (tx.status) {
+        case 'I':
+          this.mode = 'UPDATE';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        case 'S':
+          this.mode = 'UPDATE';
+          this.screenMode = 'SUBMITTED';
+          this.importForm.disable();
+          break;
+
+        case 'A':
+          this.mode = 'UPDATE';
+          this.screenMode = 'APPROVED';
+          this.importForm.disable();
+          break;
+
+        case 'R':
+          this.mode = 'REJECTED';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        default:
+          this.mode = 'UPDATE';
+          this.screenMode = 'FINAL';
+          this.importForm.disable();
+      }
+    },
+    error: () => {
+      this.snackBar.open('Transaction not found', 'Close', {
+        duration: 3000
+      });
+
+      this.router.navigate([
+        '/dashboard/Trade-Services/import-screen/inquiries'
+      ]);
+    }
+  });
+}
 
   // Reuses the form itself as the field list, so there's nothing to hardcode.
   // This works because flattenForm() already merges all groups into one flat object.
