@@ -141,6 +141,8 @@
         <th>Amount</th>
         <th>Applicant</th>
         <th>Beneficiary</th>
+        <th *ngIf="activeTab === 'live'">Backoffice Ref No</th>
+        <th *ngIf="activeTab === 'live'">Backoffice Date</th>
         <th class="sticky-action">Action</th>
       </tr>
     </thead>
@@ -169,6 +171,8 @@
         <td>{{ tx.amount }}</td>
         <td>{{ tx.applicantName }}</td>
         <td>{{ tx.beneficiaryName }}</td>
+        <td *ngIf="activeTab === 'live'">{{ tx.backofficeRefNo }}</td>
+        <td *ngIf="activeTab === 'live'">{{ tx.backofficeDate | date:'yyyy-MM-dd HH:mm' }}</td>
         <td class="sticky-action">
           <button
             *ngIf="hasPermission('ILC_AmendPreview')"

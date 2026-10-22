@@ -1,0 +1,84 @@
+<!-- Floating trigger button -->
+<button
+  class="chatbot-fab"
+  [class.fab-hidden]="isOpen"
+  (click)="toggle()"
+  matTooltip="Ask the AI Assistant"
+  matTooltipPosition="left"
+>
+  <mat-icon>smart_toy</mat-icon>
+</button>
+
+<!-- Chat panel -->
+<div class="chatbot-panel" [class.panel-open]="isOpen">
+  <div class="panel-header">
+    <div class="panel-header-title">
+      <mat-icon>smart_toy</mat-icon>
+      <span>AI Assistant</span>
+    </div>
+
+    <div class="panel-header-actions">
+      <button mat-icon-button matTooltip="Clear conversation" (click)="clearChat()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Close" (click)="toggle()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    @if (messages.length === 0) {
+      <div class="empty-state">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>Ask about LC status, transfers, undertakings, or anything on your platform.</p>
+      </div>
+    }
+
+    @for (msg of messages; track msg.timestamp) {
+      <div class="message-row" [class.row-user]="msg.role === 'user'">
+        <div
+          class="message-bubble"
+          [class.bubble-user]="msg.role === 'user'"
+          [class.bubble-error]="msg.isError"
+        >
+          <p>{{ msg.text }}</p>
+
+          @if (msg.sources && msg.sources.length > 0) {
+            <div class="message-sources">
+              <mat-icon>description</mat-icon>
+              <span>{{ msg.sources.join(', ') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (loading) {
+      <div class="message-row">
+        <div class="message-bubble bubble-loading">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    }
+
+    <div #scrollAnchor></div>
+  </div>
+
+  <div class="panel-input">
+    <textarea
+      [(ngModel)]="draft"
+      (keydown)="onKeydown($event)"
+      placeholder="Ask a question..."
+      rows="1"
+    ></textarea>
+    <button mat-icon-button color="primary" [disabled]="!draft.trim() || loading" (click)="send()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Backdrop, mobile only -->
+<div class="chatbot-backdrop" [class.backdrop-visible]="isOpen" (click)="toggle()"></div>

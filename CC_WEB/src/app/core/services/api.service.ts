@@ -8,6 +8,7 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ImportLcTransaction } from '../models/import-lc';
+import { ChatRequest, ChatResponse, IngestResult } from '../models/chatbot';
 import {
   TransferDTO,
   RecordsListTransferDTO,
@@ -42,6 +43,10 @@ export class ApiService {
     return `${environment.gatewayUrl}/settlementsystem/api/utg/events`;
   }
 
+  private get chatbotBaseUrl(): string {
+    return `${environment.gatewayUrl}/chatbot/api/chatbot`;
+  }
+
   private get baseECEventUrl(): string {
     return `${environment.gatewayUrl}/settlementsystem/api/export-collection/events`;
   }
@@ -55,7 +60,10 @@ export class ApiService {
     return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
 
-  // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
+  // Middleware (approve -> bank backoffice settlement)
+  private get middlewareBaseUrl(): string {
+    return `${environment.gatewayUrl}/middleware-service/mw/api/v1`;
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -114,6 +122,48 @@ export class ApiService {
   }
 
   /* -------------------- API Methods -------------------- */
+  // CHATBOT METHODS
+  // =================================================================
+  // CHATBOT (RAG) API Methods
+  // =================================================================
+
+  askChatbot(request: ChatRequest): Observable<ChatResponse> {
+    return this.http
+      .post<ChatResponse>(`${this.chatbotBaseUrl}/ask`, request, {
+        headers: this.headers,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  ingestChatbotFolder(): Observable<IngestResult> {
+    return this.http
+      .post<IngestResult>(
+        `${this.chatbotBaseUrl}/ingest/folder`,
+        {},
+        {
+          headers: this.headers,
+        },
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  ingestChatbotUpload(file: File): Observable<IngestResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Do NOT set Content-Type here — the browser must set the
+    // multipart boundary itself. Overriding it breaks the upload.
+    return this.http
+      .post<IngestResult>(`${this.chatbotBaseUrl}/ingest/upload`, formData, {
+        headers: new HttpHeaders({
+          companyid: this.companyId,
+          loginid: this.loginId,
+        }),
+      })
+      .pipe(catchError(this.handleError));
+  }
+  // ============== XXXXXXXXXXXXXX ================================
+
   // Save LC Record (pending record) - status "I"
 
   // savePending(data: ImportLcTransaction): Observable<ImportLcTransaction> {
@@ -207,7 +257,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  /** Approve transaction */
+  /** Approve transaction (via middleware -> backoffice; backoffice B goes back to pending, L goes live) */
   approveTransaction(
     tnxId: string,
     data: ImportLcTransaction,
@@ -215,7 +265,7 @@ export class ApiService {
     console.log('Approving transaction ID:', tnxId);
     return this.http
       .post<ImportLcTransaction>(
-        `${this.baseUrl}/importlc/approve/${tnxId}`,
+        `${this.middlewareBaseUrl}/importlc/approve/${tnxId}`,
         data,
         {
           headers: this.headers,
