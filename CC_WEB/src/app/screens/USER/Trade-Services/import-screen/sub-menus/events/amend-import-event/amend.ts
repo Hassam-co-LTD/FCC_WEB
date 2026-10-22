@@ -555,13 +555,16 @@ export class AmendScreen implements OnInit {
           // Show "Previous Value" for an amendment that was rejected and then resubmitted
           if (event.status === 'S') {
             this.api.getEventRejectedTransaction(event.eventRefNo!).subscribe({
-              next: (rejectedTx) => {
-                if (!rejectedTx) return;
-                this.storeRejectedTransaction = rejectedTx;
-                this.compareImportLcData();
-              },
-              error: (err) => console.log('No rejected snapshot:', err),
-            });
+  next: (rejectedTx) => {
+    console.log('REJECTED SNAPSHOT:', rejectedTx);
+    console.log('REJECTED DYN FIELDS:', rejectedTx?.dynamicFields);
+    console.log('CURRENT DYN FIELDS:', this.currentTx?.dynamicFields);
+    if (!rejectedTx) return;
+    this.storeRejectedTransaction = rejectedTx;
+    this.compareImportLcData();
+  },
+  error: (err) => console.error('Rejected snapshot error:', err), // not just log
+});
           }
           switch (event.status) {
             case 'I':
