@@ -607,12 +607,12 @@
 
   <!-- SUBMIT MODE ONLY -->
   <ng-container *ngIf="viewMode === 'submit'">
-    <!-- STATUS = I -->
+    <!-- STATUS = I or B (rejected by backoffice) -->
     <button
       mat-flat-button
       color="primary"
       (click)="submitLc()"
-      *ngIf="currentTx?.status === 'I' &&  hasPermission('ILC_InquirySubmit')"
+      *ngIf="(currentTx?.status === 'I' || currentTx?.status === 'B') &&  hasPermission('ILC_InquirySubmit')"
     >
       Submit
     </button>

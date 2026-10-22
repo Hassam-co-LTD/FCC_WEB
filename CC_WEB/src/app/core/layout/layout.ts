@@ -8,6 +8,7 @@ import { TopbarComponent } from '../topbar/topbar';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { filter } from 'rxjs/operators';
+import { ChatbotWidget } from '../../shared/chatbot-widget/chatbot-widget';
 
 interface MenuItem {
   label: string;
@@ -15,7 +16,7 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
   open?: boolean;
-  manualOpen?: boolean; //
+  manualOpen?: boolean;
 }
 
 @Component({
@@ -28,6 +29,7 @@ interface MenuItem {
     TopbarComponent,
     MatIconModule,
     MatMenuModule,
+    ChatbotWidget,
   ],
 })
 export class LayoutComponent implements OnInit {

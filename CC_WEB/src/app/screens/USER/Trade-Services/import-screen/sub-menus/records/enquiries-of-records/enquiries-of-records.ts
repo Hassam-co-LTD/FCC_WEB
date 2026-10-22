@@ -349,6 +349,14 @@ export class EnquiriesOfRecords implements OnInit {
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
 
+  // Backoffice Remarks column only when a pending LC was rejected by backoffice (status B)
+  get showBackofficeRemarks(): boolean {
+    return (
+      this.activeTab === 'pending' &&
+      this.pagedTransactions.some((tx) => tx.status === 'B')
+    );
+  }
+
   previousPage(): void {
     if (this.currentPage > 1) this.currentPage--;
   }
@@ -362,7 +370,7 @@ export class EnquiriesOfRecords implements OnInit {
   //   this.router.navigate(['/import-screen/preview']);
   // }
   viewTransaction(tx: ImportLcTransaction): void {
-    const readOnly = ['A', 'R'].includes(tx.status!);
+    const readOnly = ['A', 'L', 'R'].includes(tx.status!);
 
     this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
