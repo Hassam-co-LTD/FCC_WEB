@@ -287,6 +287,7 @@ private enterEditMode(tnxId: string): void {
 
       switch (tx.status) {
         case 'I':
+        case 'B': // rejected by backoffice, editable like pending
           this.mode = 'UPDATE';
           this.screenMode = 'EDIT';
           this.importForm.enable();
@@ -299,6 +300,7 @@ private enterEditMode(tnxId: string): void {
           break;
 
         case 'A':
+        case 'L': // Live (accepted by backoffice)
           this.mode = 'UPDATE';
           this.screenMode = 'APPROVED';
           this.importForm.disable();
@@ -634,10 +636,33 @@ private enterEditMode(tnxId: string): void {
     this.api
       .approveTransaction(this.currentTx.tnxId!, this.currentTx)
       .subscribe({
-        next: () => this.navigateBack('approved'),
+        next: (res) => this.handleBackofficeResult(res),
         error: () =>
           this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
       });
+  }
+
+  // Backoffice B (rejected) -> Pending tab, L (accepted) -> Amend Live tab
+  private handleBackofficeResult(res: ImportLcTransaction): void {
+    if (res?.status === 'B') {
+      this.snackBar.open(
+        `Rejected by backoffice: ${res.rejectionReason ?? ''}`,
+        'Close',
+        { duration: 5000 },
+      );
+      this.navigateBack('pending');
+      return;
+    }
+
+    this.snackBar.open(
+      `Accepted by backoffice. Ref No: ${res?.backofficeRefNo ?? ''}`,
+      'Close',
+      { duration: 5000 },
+    );
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-screen/approved-inquiry-records'],
+      { queryParams: { tab: 'live' } },
+    );
   }
   openReject(): void {
     if (!this.hasPermission('ILC_InquiryReject')) {

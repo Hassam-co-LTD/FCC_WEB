@@ -60,7 +60,10 @@ export class ApiService {
     return `${environment.gatewayUrl}/secondAdmin/api/v1/`;
   }
 
-  // private middlewareURl = `${environment.apiURL_MIDDLEWARE}`;
+  // Middleware (approve -> bank backoffice settlement)
+  private get middlewareBaseUrl(): string {
+    return `${environment.gatewayUrl}/middleware-service/mw/api/v1`;
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -254,7 +257,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  /** Approve transaction */
+  /** Approve transaction (via middleware -> backoffice; backoffice B goes back to pending, L goes live) */
   approveTransaction(
     tnxId: string,
     data: ImportLcTransaction,
@@ -262,7 +265,7 @@ export class ApiService {
     console.log('Approving transaction ID:', tnxId);
     return this.http
       .post<ImportLcTransaction>(
-        `${this.baseUrl}/importlc/approve/${tnxId}`,
+        `${this.middlewareBaseUrl}/importlc/approve/${tnxId}`,
         data,
         {
           headers: this.headers,
