@@ -85,7 +85,7 @@ export interface ImportLcTransaction {
   }[];
 
   // System fields
-  status?: string; // "I", "S", "A"
+  status?: string; // "I", "S", "A", "L" (live, accepted by backoffice), "B" (rejected by backoffice), "R"
   tnxId?: string;
   companyId?: string;
   createdOn?: Date;
@@ -95,4 +95,9 @@ export interface ImportLcTransaction {
   eventType?: string;
   eventRefNo?: string;
   eventSequence?: number;
+  rejectionReason?: string;
+
+  // Backoffice (bank settlement) response
+  backofficeRefNo?: string;
+  backofficeDate?: string;
 }
