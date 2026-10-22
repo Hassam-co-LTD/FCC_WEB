@@ -165,3 +165,52 @@ mat-form-field {
     color: #b45309;
     font-weight: 500;
 }
+/* ===========================
+   Datepicker Customization
+=========================== */
+::ng-deep .mat-datepicker-content,
+::ng-deep .mat-calendar,
+::ng-deep .mat-calendar-content,
+::ng-deep .mat-calendar-body,
+::ng-deep .mat-calendar-header,
+::ng-deep .mat-calendar-table {
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+::ng-deep .mat-calendar-header {
+  background: theme.$sidebar-hover-border !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+}
+
+::ng-deep .mat-calendar-table-header th {
+  font-weight: 600 !important;
+  opacity: 0.7 !important;
+}
+
+::ng-deep .mat-calendar-body-cell:hover:not(.mat-calendar-body-disabled) {
+  background-color: theme.$sidebar-hover-border !important;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: #1976d2 !important;
+  color: theme.$step-badge-text !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+::ng-deep .mat-calendar-body-today {
+  border: 2px solid black !important;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+  background: transparent !important;
+}
+
+::ng-deep .mat-datepicker-content {
+  transition: all 0.25s ease-in-out !important;
+}

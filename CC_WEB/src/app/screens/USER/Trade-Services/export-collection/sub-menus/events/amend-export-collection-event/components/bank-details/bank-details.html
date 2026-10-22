@@ -1,460 +1,414 @@
-
-<!-- Bank Details Accordion -->
 <div class="section-header" (click)="toggle()">
   <h2>Bank Details</h2>
-
-  <mat-icon>
-    {{ isOpen ? 'expand_less' : 'expand_more' }}
-  </mat-icon>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
 </div>
 
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
 
-<div
-  class="collapsible"
-  [class.open]="isOpen"
-  [formGroup]="form"
->
-
-  <!-- COLLAPSED PREVIEW -->
   @if (!isOpen) {
-
     <div class="preview-block">
 
-      <h4>Remitting Bank</h4>
-
-      <div>
-        <strong>Bank Name:</strong>
-        {{ form.value.remittingBankName }}
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Remitting</h4>
+        <div>
+          <strong>Bank:</strong>
+          {{ form.value.remittingBankName || '—' }}
+        </div>
       </div>
 
-      <div>
-        <strong>Issuer Reference:</strong>
-        {{ form.value.issuerReference }}
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Presenting</h4>
+        <div>
+          <strong>Bank:</strong>
+          {{ form.value.presentingBankName || '—' }}
+        </div>
       </div>
 
-      <div>
-        <strong>Principal Account:</strong>
-        {{ form.value.principalAccount }}
-      </div>
-
-      <div>
-        <strong>Fee Account:</strong>
-        {{ form.value.feeAccount }}
-      </div>
-
-
-      <h4>Presenting Bank</h4>
-
-      <div>
-        <strong>Bank Name:</strong>
-        {{ form.value.presentingBankName }}
-      </div>
-
-      <div>
-        <strong>Address 1:</strong>
-        {{ form.value.presentingAddress1 }}
-      </div>
-
-      <div>
-        <strong>Address 2:</strong>
-        {{ form.value.presentingAddress2 }}
-      </div>
-
-
-      <h4>Collecting Bank</h4>
-
-      <div>
-        <strong>Bank Name:</strong>
-        {{ form.value.collectingBankName }}
-      </div>
-
-      <div>
-        <strong>SWIFT Code:</strong>
-        {{ form.value.collectingSwiftCode }}
-      </div>
-
-      <div>
-        <strong>Reference:</strong>
-        {{ form.value.collectingReference }}
+      <div class="preview-column">
+        <h4 class="preview-sub-title">Collecting</h4>
+        <div>
+          <strong>Bank:</strong>
+          {{ form.value.collectingBankName || '—' }}
+        </div>
       </div>
 
     </div>
   }
 
+  <div class="form-content">
 
-  <!-- Tabs -->
-  <div class="tabs">
+    <div class="tabs">
+      <div
+        class="tab"
+        [class.active]="bankTab === 'remitting'"
+        (click)="switchBankTab('remitting')"
+      >
+        Remitting Bank
+      </div>
 
-    <div
-      class="tab"
-      [class.active]="bankTab === 'remitting'"
-      (click)="switchBankTab('remitting')"
-    >
-      Remitting
+      <div
+        class="tab"
+        [class.active]="bankTab === 'presenting'"
+        (click)="switchBankTab('presenting')"
+      >
+        Presenting Bank
+      </div>
+
+      <div
+        class="tab"
+        [class.active]="bankTab === 'collecting'"
+        (click)="switchBankTab('collecting')"
+      >
+        Collecting Bank
+      </div>
     </div>
 
-    <div
-      class="tab"
-      [class.active]="bankTab === 'presenting'"
-      (click)="switchBankTab('presenting')"
-    >
-      Presenting
-    </div>
 
-    <div
-      class="tab"
-      [class.active]="bankTab === 'collecting'"
-      (click)="switchBankTab('collecting')"
-    >
-      Collecting
-    </div>
+    <!-- ================= REMITTING BANK ================= -->
 
-  </div>
-
-
-  <!-- Form -->
-  <form class="form-grid-2">
-
-
-    <!-- =================================================
-         REMITTING
-    ================================================== -->
     @if (bankTab === 'remitting') {
 
-      <!-- Bank Name -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+      <h4 class="sub-title">Remitting Bank Details</h4>
 
-        <mat-label>Bank Name *</mat-label>
+      <div class="form-grid-2">
 
-        <mat-select formControlName="remittingBankName">
+        <!-- Remitting Bank -->
+        <div class="field-group">
 
-          <mat-option value="">
-            Select Bank
-          </mat-option>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Remitting Bank *</mat-label>
 
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">
-              {{ b }}
-            </mat-option>
-          }
+            <mat-select formControlName="remittingBankName">
+              <mat-option value="">Select Bank</mat-option>
 
-        </mat-select>
+              @for (b of bankList; track b) {
+                <mat-option [value]="b">{{ b }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('remittingBankName')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['remittingBankName'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('remittingBankName')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('remittingBankName') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Issuer Reference -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Issuer Reference -->
+        <div class="field-group">
 
-        <mat-label>Issuer Reference *</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Issuer Reference *</mat-label>
 
-        <input
-          matInput
-          formControlName="issuerReference"
-          placeholder="Enter issuer reference"
-        />
+            <input
+              matInput
+              formControlName="issuerReference"
+              placeholder="Enter issuer reference"
+            />
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('issuerReference')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['issuerReference'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('issuerReference')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('issuerReference') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Principal Account -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Principal Account -->
+        <div class="field-group">
 
-        <mat-label>Principal Account *</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Principal Account *</mat-label>
 
-        <mat-select formControlName="principalAccount">
+            <mat-select formControlName="principalAccount">
+              <mat-option value="">Select Account</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-          <mat-option value="">
-            Select Account
-          </mat-option>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('principalAccount')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['principalAccount'] }}
+            </span>
+          </div>
 
-        </mat-select>
-
-      </mat-form-field>
-
-      @if (hasPreviousValue('principalAccount')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('principalAccount') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Fee Account -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Fee Account -->
+        <div class="field-group">
 
-        <mat-label>Fee Account *</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Fee Account *</mat-label>
 
-        <mat-select formControlName="feeAccount">
+            <mat-select formControlName="feeAccount">
+              <mat-option value="">Select Account</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-          <mat-option value="">
-            Select Account
-          </mat-option>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('feeAccount')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['feeAccount'] }}
+            </span>
+          </div>
 
-        </mat-select>
-
-      </mat-form-field>
-
-      @if (hasPreviousValue('feeAccount')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('feeAccount') }}
-          </span>
         </div>
-      }
 
+      </div>
     }
 
 
-    <!-- =================================================
-         PRESENTING
-    ================================================== -->
+    <!-- ================= PRESENTING BANK ================= -->
+
     @if (bankTab === 'presenting') {
 
-      <!-- Bank Name -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+      <h4 class="sub-title">Presenting Bank Details</h4>
 
-        <mat-label>Bank Name *</mat-label>
+      <div class="form-grid-2">
 
-        <mat-select formControlName="presentingBankName">
+        <!-- Presenting Bank -->
+        <div class="field-group">
 
-          <mat-option value="">
-            Select Bank
-          </mat-option>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Presenting Bank *</mat-label>
 
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">
-              {{ b }}
-            </mat-option>
-          }
+            <mat-select formControlName="presentingBankName">
+              <mat-option value="">Select Bank</mat-option>
 
-        </mat-select>
+              @for (b of bankList; track b) {
+                <mat-option [value]="b">{{ b }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('presentingBankName')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['presentingBankName'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('presentingBankName')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('presentingBankName') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Address 1 -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Address 1 -->
+        <div class="field-group">
 
-        <mat-label>Address 1</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Address 1</mat-label>
 
-        <input
-          matInput
-          formControlName="presentingAddress1"
-          placeholder="Enter address 1"
-        />
+            <input
+              matInput
+              formControlName="bankAddress1"
+              placeholder="Enter address 1"
+            />
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('bankAddress1')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['bankAddress1'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('presentingAddress1')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('presentingAddress1') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Address 2 -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Address 2 -->
+        <div class="field-group">
 
-        <mat-label>Address 2</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Address 2</mat-label>
 
-        <input
-          matInput
-          formControlName="presentingAddress2"
-          placeholder="Enter address 2"
-        />
+            <input
+              matInput
+              formControlName="bankAddress2"
+              placeholder="Enter address 2"
+            />
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('bankAddress2')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['bankAddress2'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('presentingAddress2')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('presentingAddress2') }}
-          </span>
         </div>
-      }
 
+
+        <!-- Address 3 -->
+        <div class="field-group">
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Address 3</mat-label>
+
+            <input
+              matInput
+              formControlName="bankAddress3"
+              placeholder="Enter address 3"
+            />
+          </mat-form-field>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('bankAddress3')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['bankAddress3'] }}
+            </span>
+          </div>
+
+        </div>
+
+
+        <!-- Address 4 -->
+        <div class="field-group">
+
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Address 4</mat-label>
+
+            <input
+              matInput
+              formControlName="bankAddress4"
+              placeholder="Enter address 4"
+            />
+          </mat-form-field>
+
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('bankAddress4')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['bankAddress4'] }}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
     }
 
 
-    <!-- =================================================
-         COLLECTING
-    ================================================== -->
+    <!-- ================= COLLECTING BANK ================= -->
+
     @if (bankTab === 'collecting') {
 
-      <!-- Collecting Bank -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+      <h4 class="sub-title">Collecting Bank Details</h4>
 
-        <mat-label>Collecting Bank</mat-label>
+      <div class="form-grid-2">
 
-        <mat-select formControlName="collectingBankName">
+        <!-- Collecting Bank -->
+        <div class="field-group">
 
-          <mat-option value="">
-            Select Bank
-          </mat-option>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Collecting Bank</mat-label>
 
-          @for (b of bankList; track b) {
-            <mat-option [value]="b">
-              {{ b }}
-            </mat-option>
-          }
+            <mat-select formControlName="collectingBankName">
+              <mat-option value="">Select Bank</mat-option>
 
-        </mat-select>
+              @for (b of bankList; track b) {
+                <mat-option [value]="b">{{ b }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('collectingBankName')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['collectingBankName'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('collectingBankName')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('collectingBankName') }}
-          </span>
         </div>
-      }
 
 
-      <!-- SWIFT Code -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- SWIFT Code -->
+        <div class="field-group">
 
-        <mat-label>SWIFT Code</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>SWIFT Code</mat-label>
 
-        <input
-          matInput
-          formControlName="collectingSwiftCode"
-          placeholder="Enter SWIFT code"
-        />
+            <input
+              matInput
+              formControlName="swiftCode"
+              placeholder="Enter SWIFT code"
+            />
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('swiftCode')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['swiftCode'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('collectingSwiftCode')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('collectingSwiftCode') }}
-          </span>
         </div>
-      }
 
 
-      <!-- Reference -->
-      <mat-form-field
-        appearance="outline"
-        class="full"
-      >
+        <!-- Collecting Reference -->
+        <div class="field-group">
 
-        <mat-label>Reference</mat-label>
+          <mat-form-field appearance="outline" class="full">
+            <mat-label>Collecting Reference</mat-label>
 
-        <input
-          matInput
-          formControlName="collectingReference"
-          placeholder="Enter reference"
-        />
+            <input
+              matInput
+              formControlName="collectingReference"
+              placeholder="Enter reference"
+            />
+          </mat-form-field>
 
-      </mat-form-field>
+          <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('collectingReference')"
+          >
+            <span class="previous-label">Previous Value:</span>
+            <span class="previous-text">
+              {{ previousValues['collectingReference'] }}
+            </span>
+          </div>
 
-      @if (hasPreviousValue('collectingReference')) {
-        <div class="previous-value">
-          <span class="previous-label">
-            Previous Value:
-          </span>
-
-          <span class="previous-text">
-            {{ getPreviousValue('collectingReference') }}
-          </span>
         </div>
-      }
 
+      </div>
     }
 
-  </form>
-
+  </div>
 </div>
-

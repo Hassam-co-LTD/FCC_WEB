@@ -40,7 +40,8 @@
     <div class="form-grid-2">
 
       <!-- Shipping Method -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Shipping Method</mat-label>
 
         <mat-select formControlName="shippingMethod">
@@ -48,8 +49,8 @@
             <mat-option [value]="m">{{ m }}</mat-option>
           }
         </mat-select>
-
-        @if (hasPreviousValue('shippingMethod')) {
+      </mat-form-field>
+@if (hasPreviousValue('shippingMethod')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -57,11 +58,12 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <!-- Shipment Reference -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Shipment Reference</mat-label>
 
         <input
@@ -70,8 +72,8 @@
           formControlName="shipmentReference"
           placeholder="Enter shipment reference"
         />
-
-        @if (hasPreviousValue('shipmentReference')) {
+      </mat-form-field>
+@if (hasPreviousValue('shipmentReference')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -79,11 +81,12 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <!-- Shipping From -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Shipping From</mat-label>
 
         <input
@@ -91,8 +94,8 @@
           formControlName="shippingFrom"
           placeholder="Enter shipping from"
         />
-
-        @if (hasPreviousValue('shippingFrom')) {
+      </mat-form-field>
+@if (hasPreviousValue('shippingFrom')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -100,11 +103,12 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <!-- Shipping To -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Shipping To</mat-label>
 
         <input
@@ -112,8 +116,8 @@
           formControlName="shippingTo"
           placeholder="Enter shipping to"
         />
-
-        @if (hasPreviousValue('shippingTo')) {
+      </mat-form-field>
+@if (hasPreviousValue('shippingTo')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -121,11 +125,12 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <!-- Shipment Date -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Shipment Date</mat-label>
 
         <input
@@ -133,8 +138,8 @@
           type="date"
           formControlName="shipmentDate"
         />
-
-        @if (hasPreviousValue('shipmentDate')) {
+      </mat-form-field>
+@if (hasPreviousValue('shipmentDate')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -142,7 +147,7 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <div class="empty-cell"></div>
@@ -154,30 +159,32 @@
 
 
       <!-- Applicable Rules -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Applicable Rules</mat-label>
 
-        <mat-select formControlName="incotermsRules">
+        <mat-select formControlName="applicableRule">
           @for (rule of ApplicableRules; track rule) {
             <mat-option [value]="rule">
               {{ rule }}
             </mat-option>
           }
         </mat-select>
-
-        @if (hasPreviousValue('incotermsRules')) {
+      </mat-form-field>
+@if (hasPreviousValue('applicableRule')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
-              {{ getPreviousValue('incotermsRules') }}
+              {{ getPreviousValue('applicableRule') }}
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
 
       <!-- Incoterms -->
-      <mat-form-field appearance="outline" class="full">
+      <div class="field-group">
+<mat-form-field appearance="outline" class="full">
         <mat-label>Incoterms</mat-label>
 
         <mat-select formControlName="incoterms">
@@ -187,8 +194,8 @@
             </mat-option>
           }
         </mat-select>
-
-        @if (hasPreviousValue('incoterms')) {
+      </mat-form-field>
+@if (hasPreviousValue('incoterms')) {
           <div class="previous-value">
             <span class="previous-label">Previous Value:</span>
             <span class="previous-text">
@@ -196,7 +203,7 @@
             </span>
           </div>
         }
-      </mat-form-field>
+</div>
 
     </div>
   </div>

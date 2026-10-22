@@ -467,6 +467,34 @@ export const routes: Routes = [
                   ),
               },
               {
+                path: 'export-screen/approved-inquiry-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'export-screen/amend',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'export-screen/amend/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'export-screen/amend/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
                 path: 'export-screen/preview',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(

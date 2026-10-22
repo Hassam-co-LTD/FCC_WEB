@@ -83,20 +83,22 @@
         </app-attachments-documents>
       </section>
 
-      <!-- dynamic Fields section  -->
-
-      <ng-container *ngIf="fields?.length">
-        <app-dynamic-fields
-          [form]="dynamicFieldsForm"
-          [fields]="fields"
-          [isOpen]="isDynamicFieldsOpen"
-        >
-        </app-dynamic-fields>
-      </ng-container>
-
       <hr class="section-divider" />
 
+      <!-- Dynamic Fields -->
       <section id="section-8">
+        <ng-container *ngIf="fields?.length">
+          <app-dynamic-fields
+            [form]="dynamicFieldsForm"
+            [fields]="fields"
+            [isOpen]="isDynamicFieldsOpen"
+            [previousDynamicValues]="previousDynamicValues"
+          >
+          </app-dynamic-fields>
+        </ng-container>
+      </section>
+
+      <section id="section-9">
         <router-outlet> </router-outlet>
       </section>
 

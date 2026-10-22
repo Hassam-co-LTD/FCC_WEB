@@ -50,16 +50,20 @@
       <section id="section-5"><app-attachments></app-attachments></section>
       <hr class="section-divider" />
 
-      <!-- dynamic Fields section  -->
+      <hr class="section-divider" />
 
-      <ng-container *ngIf="fields?.length">
-        <app-dynamic-fields
-          [form]="dynamicFieldsForm"
-          [fields]="fields"
-          [isOpen]="isDynamicFieldsOpen"
-        >
-        </app-dynamic-fields>
-      </ng-container>
+      <!-- Dynamic Fields -->
+      <section id="section-6">
+        <ng-container *ngIf="fields?.length">
+          <app-dynamic-fields
+            [form]="dynamicFieldsForm"
+            [fields]="fields"
+            [isOpen]="isDynamicFieldsOpen"
+            [previousDynamicValues]="previousDynamicValues"
+          >
+          </app-dynamic-fields>
+        </ng-container>
+      </section>
 
       <!-- Footer Buttons -->
 

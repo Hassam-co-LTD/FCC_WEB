@@ -194,6 +194,7 @@ export class PreviewSection {
           shippingFrom: [tx.shippingFrom],
           shippingTo: [tx.shippingTo],
           shipmentDate: [tx.shipmentDate],
+          applicableRule: [tx.applicableRule],
           incoterms: [tx.incoterms],
         }),
         collectioninstructions: this.fb.group({

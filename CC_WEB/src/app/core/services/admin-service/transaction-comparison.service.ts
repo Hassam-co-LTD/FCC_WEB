@@ -42,41 +42,80 @@ export class TransactionComparisonService {
   // =====================================================
 
   compareDynamicFields(
-    currentFields: any[],
-    rejectedFields: any[],
+    currentFields: any,
+    rejectedFields: any,
   ): Record<string, any> {
 
     const previousValues: Record<string, any> = {};
 
-    if (!currentFields || !rejectedFields) {
+    const current = this.normalizeDynamicFields(currentFields);
+    const rejected = this.normalizeDynamicFields(rejectedFields);
+
+    if (!current.length || !rejected.length) {
       return previousValues;
     }
 
-    currentFields.forEach((currentField) => {
+    current.forEach((currentField) => {
 
-      if (!currentField?.fieldId) {
+      const fieldId = currentField?.fieldId;
+
+      if (fieldId == null || fieldId === '') {
         return;
       }
 
-      const rejectedField = rejectedFields.find(
-        (field) => field?.fieldId === currentField.fieldId,
+      // Loose id match: ids may arrive as number in one payload
+      // and string in the other
+      const rejectedField = rejected.find(
+        (field) => String(field?.fieldId) === String(fieldId),
       );
 
       if (!rejectedField) {
         return;
       }
 
-      const currentValue = currentField.value;
-      const rejectedValue = rejectedField.value;
+      const currentValue = this.getDynamicValue(currentField);
+      const rejectedValue = this.getDynamicValue(rejectedField);
 
       // Only store the rejected value when
       // the current value is different
       if (!this.areValuesEqual(currentValue, rejectedValue)) {
-        previousValues[currentField.fieldId] = rejectedValue;
+        previousValues[String(fieldId)] = rejectedValue;
       }
     });
 
     return previousValues;
+  }
+
+  // Accepts an array, a JSON string, or an object keyed by fieldId
+  private normalizeDynamicFields(fields: any): any[] {
+    if (!fields) {
+      return [];
+    }
+
+    if (typeof fields === 'string') {
+      try {
+        return this.normalizeDynamicFields(JSON.parse(fields));
+      } catch {
+        return [];
+      }
+    }
+
+    if (Array.isArray(fields)) {
+      return fields;
+    }
+
+    if (typeof fields === 'object') {
+      return Object.keys(fields).map((key) => ({
+        fieldId: key,
+        value: fields[key],
+      }));
+    }
+
+    return [];
+  }
+
+  private getDynamicValue(field: any): any {
+    return field?.value ?? field?.fieldValue ?? field?.enteredValue ?? '';
   }
 
   // =====================================================

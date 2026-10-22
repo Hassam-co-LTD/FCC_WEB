@@ -1,6 +1,8 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -9,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-drawer-drawee-details',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatFormFieldModule,
@@ -17,18 +20,14 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './drawer-drawee-details.html',
   styleUrls: ['./drawer-drawee-details.scss']
 })
-export class DrawerDraweeDetails implements OnInit {
+export class DrawerDraweeDetails {
 
   @Input() form!: FormGroup;
 
-  // Previous rejected/amended values
+  // Receive previous/rejected values from parent
   @Input() previousValues: { [key: string]: any } = {};
 
   isOpen = true;
-
-  ngOnInit(): void {
-    // Do NOT recreate form here — use the form from parent
-  }
 
   toggle() {
     this.isOpen = !this.isOpen;
@@ -48,4 +47,3 @@ export class DrawerDraweeDetails implements OnInit {
     return this.previousValues?.[field] ?? '';
   }
 }
-

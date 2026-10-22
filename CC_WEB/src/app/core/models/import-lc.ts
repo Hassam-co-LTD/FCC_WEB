@@ -29,6 +29,7 @@ export interface ImportLcTransaction {
 
   // Bank
   issuingBankName?: string;
+  customerReference?: string;
   issuerReference?: string;
   advisingBankName?: string;
   adviseThroughBankName?: string;
