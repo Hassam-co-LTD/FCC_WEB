@@ -1,0 +1,191 @@
+<div class="preview-page" *ngIf="importForm">
+  <!-- ...existing code... -->
+  <h2 class="page-title">Preview</h2>
+
+  <!-- Enhanced preview meta (Event / Event Ref No / Sequence) -->
+  <div class="preview-meta">
+    <div class="meta-left">
+      <div
+        class="event-badge"
+        [ngClass]="{
+        'badge-amd': (currentTx?.eventType === 'AMD'),
+        'badge-cre': (currentTx?.eventType === 'CRE'),
+        'badge-other': !(currentTx?.eventType)
+      }"
+      >
+        <mat-icon class="event-icon">event</mat-icon>
+        <div class="event-info">
+          <div class="event-label">Event</div>
+          <div class="event-value">{{ currentTx?.eventType || '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta-right">
+      <div class="meta-card">
+        <div class="meta-title">Event Ref No</div>
+        <div class="meta-value">
+          <span class="ref-text">{{ currentTx?.eventRefNo || '—' }}</span>
+          <mat-icon class="meta-icon" aria-hidden="true" title="Reference"
+            >assignment</mat-icon
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview-container">
+
+    <!-- ROW 1 → GENERAL + UPLOAD -->
+    <div class="preview-row">
+
+      <!-- GENERAL DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">General Details</h3>
+
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">Customer Reference</div>
+            <div class="preview-value">
+              {{ importForm.value.customerReference || '-' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Advising Bank</div>
+            <div class="preview-value">
+              {{ importForm.value.advisingBankName || '-' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Issuer Reference</div>
+            <div class="preview-value">
+              {{ importForm.value.issuerReference || '-' }}
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- UPLOAD DETAILS -->
+      <mat-card class="preview-card">
+        <h3 class="section-title">Upload MT700 / MT701</h3>
+
+        <div class="preview-grid">
+          <div class="preview-item">
+            <div class="preview-label">File</div>
+            <div class="preview-value">
+              {{ importForm.value.uploadFileName || 'No file uploaded' }}
+            </div>
+          </div>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- ATTACHMENTS -->
+    <mat-card class="preview-card full-width">
+
+      <h3 class="section-title">Attachments</h3>
+
+      <ng-container
+        *ngIf="attachmentsArray.length > 0; else noAttachments"
+      >
+
+        <div class="preview-attachments-container">
+
+          <div class="attachment-grid header">
+            <div>Type</div>
+            <div>Title</div>
+            <div>File Name</div>
+            <div>Size</div>
+            <div>Actions</div>
+          </div>
+
+          <div
+            class="attachment-grid"
+            *ngFor="let f of attachmentsArray.controls; let i = index; trackBy: trackByIndex"
+          >
+            <div>
+              <mat-icon *ngIf="f.value.type?.includes('pdf')"
+                >picture_as_pdf</mat-icon
+              >
+              <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
+            </div>
+
+            <div>{{ f.value.title }}</div>
+
+            <div>{{ f.value.fileName }}</div>
+
+            <div>
+              {{ (f.value.size / 1024) | number:'1.0-2' }} KB
+            </div>
+
+            <div>
+
+              <mat-icon
+                *ngIf="
+                  hasPermission('ILC_AmendPreview')
+                "
+                (click)="downloadFile(i)"
+                class="action-icon"
+              >
+                download
+              </mat-icon>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </ng-container>
+
+      <ng-template #noAttachments>
+        <p>No attachments uploaded.</p>
+      </ng-template>
+
+    </mat-card>
+  </div>
+</div>
+
+<div class="actions">
+  <!-- ALWAYS -->
+  <button
+    mat-stroked-button
+    (click)="back()">
+    Back
+  </button>
+
+  <!-- ONLY FOR SUBMITTED / PENDING -->
+  <ng-container *ngIf="viewMode === 'submit'">
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="submitLc()"
+      *ngIf="currentTx?.status === 'I' &&
+      hasPermission('ILC_AmendPreview')"
+    >
+      Submit
+    </button>
+  </ng-container>
+
+    <button
+      mat-flat-button
+      color="warn"
+      (click)="rejectTransaction()"
+      *ngIf="currentTx?.status === 'S' &&        
+      hasPermission('ILC_AmendPendingReject')"
+    >
+      Reject
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="approveTransaction()"
+      *ngIf="currentTx?.status === 'S' &&  hasPermission('ILC_AmendApprove')"
+    >
+      Approve
+    </button>
+</div>

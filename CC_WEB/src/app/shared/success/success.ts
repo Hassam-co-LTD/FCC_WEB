@@ -58,6 +58,11 @@ export class Success implements OnInit {
         this.createRoute = '/dashboard/Trade-Services/export-collection';
         break;
 
+      case 'IMPORT_COLLECTION':
+        this.listingRoute = '/dashboard/Trade-Services/import-collection/inquiries';
+        this.createRoute = '/dashboard/Trade-Services/import-collection/inquiries';
+        break;
+
       case 'EXPORT_LC':
         this.listingRoute = '/dashboard/Trade-Services/export-screen/inquiries-of-records';
         this.createRoute = '/dashboard/Trade-Services/export-screen';
