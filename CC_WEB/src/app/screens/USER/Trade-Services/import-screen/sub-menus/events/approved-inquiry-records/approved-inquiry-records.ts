@@ -14,6 +14,7 @@ import * as XLSX from 'xlsx';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-approved-inquiry-records',
@@ -67,7 +68,7 @@ export class ApprovedInquiryRecords implements OnInit {
   ngOnInit(): void {
     if (!this.isBrowser) return;
 
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

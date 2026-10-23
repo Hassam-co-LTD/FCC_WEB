@@ -13,6 +13,7 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
 import { ShippingGuaranteeTransaction } from '../../../../../../../../../core/models/shipping-guarantee';
 import { ShippingGuaranteeFormTransactionService } from '../../../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
 import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { getSessionItem } from '../../../../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.html',
@@ -45,7 +46,7 @@ export class Preview {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

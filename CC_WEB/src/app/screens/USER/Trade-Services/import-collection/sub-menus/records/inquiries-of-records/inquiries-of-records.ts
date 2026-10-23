@@ -17,6 +17,7 @@ import {
  
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 import { ApiService } from '../../../../../../../core/services/api.service';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-inquiries-of-records',
   standalone: true,
@@ -77,7 +78,7 @@ export class InquiriesOfRecords implements OnInit {
  
   ngOnInit(): void {
     if (!this.isBrowser) return;
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);

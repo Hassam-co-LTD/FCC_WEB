@@ -142,7 +142,7 @@ onSave(): void {
   this.api.saveTnx(payload, 'currency').subscribe({
     next: () => {
       Swal.fire('Saved!', 'Currency and dynamic fields saved successfully', 'success')
-        .then(() => this.router.navigate(['/admin/currency-inquiry']));
+        .then(() => this.router.navigate(['/admin/currency-list']));
     },
     error: err => Swal.fire('Error', 'Currency save failed', 'error')
   });

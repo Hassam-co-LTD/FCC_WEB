@@ -18,6 +18,7 @@ import { ImportlcFormTransactionService } from '../../../../../../core/services/
 import { ImportLcTransaction } from '../../../../../../core/models/import-lc';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
 import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { readSessionJson } from '../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-preview',
@@ -61,7 +62,7 @@ export class Preview implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const userData = readSessionJson<any>('userData', {});
     this.permissionNames = userData.permissionNames || [];
 
     this.currentTx =

@@ -12,6 +12,8 @@ export class SessionTimeoutService {
   ) {}
 
   startWatching() {
+    if (typeof window === 'undefined') return; // nothing to watch during SSR
+
     this.resetTimer();
 
     const events = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];

@@ -18,6 +18,7 @@ import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-d
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-shipping-guarantee',
   standalone: true,
@@ -73,7 +74,7 @@ export class ShippingGuarantee implements OnInit {
   }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

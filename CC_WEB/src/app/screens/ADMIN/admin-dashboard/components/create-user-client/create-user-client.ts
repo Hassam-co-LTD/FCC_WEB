@@ -22,6 +22,7 @@ import Swal from 'sweetalert2';
 import { ApiService } from '../../../../../core/services/api.service';
 import { AuthService } from '../../../../../core/services/auth.service';
 import { TransactionComparisonService } from '../../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../../core/utils/browser-storage';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -78,7 +79,7 @@ export class CreateClientUser implements OnInit {
   isEditMode = false;
   isOpen = true;
 
-  userId = sessionStorage.getItem('userId');
+  userId = getSessionItem('userId');
 
   // ---------- ROLES ----------
   userRoles: RoleMasterResponseDTO[] = [];

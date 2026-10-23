@@ -30,6 +30,7 @@ import { Attachments } from '../../../../shipping-guarantee-screen/sub-menus/eve
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
 import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { readSessionJson, getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-amend',
@@ -127,7 +128,7 @@ export class Amend implements OnInit {
   }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -169,7 +170,7 @@ export class Amend implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.companyId = sessionData.companyId ?? '';
 

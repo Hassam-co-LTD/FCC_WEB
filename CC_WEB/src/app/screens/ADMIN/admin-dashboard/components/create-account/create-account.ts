@@ -176,7 +176,7 @@ export class Accounts implements OnInit {
       next: (res) => {
         console.log('account saved sucsesfully ', res);
         Swal.fire('Saved!', 'Accounts saved successfully', 'success').then(() =>
-          this.router.navigate(['/admin/accounts-list']),
+          this.router.navigate(['/admin/accounts-inquiry']),
         );
       },
       error: (err) => console.error('Save failed', err),
@@ -247,7 +247,7 @@ export class Accounts implements OnInit {
             'success',
           ).then(() =>
             this.router.navigate(
-              ['/admin/accounts-inquiry', this.storeAccounts.id],
+              ['/admin/accounts-inquiry'],
               { queryParams: { tabName: 'submitted' } },
             ),
           );
@@ -338,7 +338,7 @@ export class Accounts implements OnInit {
             'success',
           ).then(() =>
             this.router.navigate(
-              ['/admin/accounts-inquiry', this.storeAccounts.id],
+              ['/admin/accounts-inquiry'],
               { queryParams: { tabName: 'approved' } },
             ),
           );

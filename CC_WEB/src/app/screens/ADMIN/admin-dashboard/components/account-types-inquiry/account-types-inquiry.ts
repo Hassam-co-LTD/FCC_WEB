@@ -120,7 +120,7 @@ export class AccountTypesInquiry implements OnInit {
 
   // ================== Actions ==================
   updateRouter(AccountMaster: any) {
-    this.router.navigate(['/admin/create-AccountMaster/' + AccountMaster.id]);
+    this.router.navigate(['/admin/edit-account-types/' + AccountMaster.id]);
   }
 
 

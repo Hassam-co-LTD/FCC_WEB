@@ -17,6 +17,7 @@ import {
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-approved-inquiry-records',
@@ -118,7 +119,7 @@ export class ApprovedInquiryRecords implements OnInit {
     );
   }
 private loadPermissions(): void {
-  const storedPermissions = sessionStorage.getItem('permissionNames');
+  const storedPermissions = getSessionItem('permissionNames');
 
   if (storedPermissions) {
     try {

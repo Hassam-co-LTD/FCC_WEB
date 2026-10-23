@@ -149,7 +149,7 @@ private updateWorkflowState(status: string) {
     this.myAccountsService.createTransferDraft(this.getFormData()).subscribe({
       next: () => {
         this.snackBar.open('Draft Saved Successfully', 'Close', { duration: 2000 });
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'pending' }});
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'pending' }});
       },
       error: (err) => {
         const errorMsg = err.message || 'Failed to save draft. Please try again.';
@@ -164,7 +164,7 @@ private updateWorkflowState(status: string) {
     this.myAccountsService.updateTransferDraft(this.tnxId, this.getFormData()).subscribe({
       next: () => {
         this.snackBar.open('Draft Updated Successfully', 'Close', { duration: 2000 });
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'pending' }});
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'pending' }});
       },
       error: (err) => {
         const errorMsg = err.message || 'Failed to update draft. Please try again.';
@@ -182,7 +182,7 @@ private updateWorkflowState(status: string) {
     this.myAccountsService.submitTransfer(this.tnxId, this.getFormData()).subscribe({
       next: () => {
         this.snackBar.open('Submitted Successfully for Approval', 'Close', { duration: 2000 });
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'submitted' }});
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'submitted' }});
       },
       error: (err) => {
         const errorMsg = err.message || 'Failed to submit transfer. Please try again.';
@@ -210,7 +210,7 @@ private updateWorkflowState(status: string) {
       next: () => {
         this.isLoading = false;
         this.snackBar.open('Transaction Approved Successfully', 'Close', { duration: 2000 });
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'approved' }});
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'approved' }});
       },
       error: (err) => {
         this.isLoading = false;
@@ -285,7 +285,7 @@ private updateWorkflowState(status: string) {
         this.snackBar.open('Transaction Rejected Successfully', 'Close', { duration: 2000 });
         
         // Navigate to the rejected tab
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { 
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { 
           queryParams: { tab: 'rejected' } 
         });
       },
@@ -307,7 +307,7 @@ private updateWorkflowState(status: string) {
         this.isLoading = false;
         this.snackBar.open('Transaction Rejected Successfully', 'Close', { duration: 2000 });
         
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { 
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { 
           queryParams: { tab: 'rejected' } 
         });
       },
@@ -390,7 +390,7 @@ private updateWorkflowState(status: string) {
   }
 
   back() { 
-    this.router.navigate(['/fund-transfer/fund-transfer-records']); 
+    this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records']); 
   }
 
   scrollToSection(index: number) {

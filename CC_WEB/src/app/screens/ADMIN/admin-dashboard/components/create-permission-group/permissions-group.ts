@@ -108,7 +108,7 @@ export class CreatePermissionGroup implements OnInit {
           'Permission Group saved successfully',
           'success',
         ).then(() =>
-          this.router.navigate(['/admin/permission-group-master-inquiry']),
+          this.router.navigate(['/admin/permission-group-inquiry']),
         );
       },
 
@@ -144,7 +144,7 @@ export class CreatePermissionGroup implements OnInit {
           'Permission Group updated successfully',
           'success',
         ).then(() =>
-          this.router.navigate(['/admin/permission-group-master-inquiry']),
+          this.router.navigate(['/admin/permission-group-inquiry']),
         );
       },
 
@@ -184,7 +184,7 @@ export class CreatePermissionGroup implements OnInit {
             'Permission Group submitted successfully',
             'success',
           ).then(() =>
-            this.router.navigate(['/admin/permission-group-master-inquiry']),
+            this.router.navigate(['/admin/permission-group-inquiry']),
           );
         },
 
@@ -276,7 +276,7 @@ export class CreatePermissionGroup implements OnInit {
             'Permission Group approved successfully',
             'success',
           ).then(() =>
-            this.router.navigate(['/admin/permission-group-master-inquiry']),
+            this.router.navigate(['/admin/permission-group-inquiry']),
           );
         },
 
@@ -297,7 +297,7 @@ export class CreatePermissionGroup implements OnInit {
             'Permission Group moved to Draft for amendment',
             'success',
           ).then(() =>
-            this.router.navigate(['/admin/permission-group-master-inquiry']),
+            this.router.navigate(['/admin/permission-group-inquiry']),
           );
         },
 

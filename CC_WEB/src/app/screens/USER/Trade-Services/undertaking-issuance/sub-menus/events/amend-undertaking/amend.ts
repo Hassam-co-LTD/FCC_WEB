@@ -26,6 +26,7 @@ import { ApiService } from '../../../../../../../core/services/api.service';
 import { finalize } from 'rxjs';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { readSessionJson, getSessionItem } from '../../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-amend',
   standalone: true,
@@ -89,7 +90,7 @@ export class AmendScreen implements OnInit {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -143,7 +144,7 @@ export class AmendScreen implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
     this.companyId = sessionData.companyId ?? '';
 
     console.log('Company ID from route:', this.companyId);

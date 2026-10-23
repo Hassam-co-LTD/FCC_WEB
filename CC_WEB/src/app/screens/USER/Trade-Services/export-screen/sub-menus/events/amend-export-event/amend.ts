@@ -22,6 +22,7 @@ import { GeneralDetails } from './components/general-details/general-details';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { finalize } from 'rxjs';
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
+import { readSessionJson, getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-amend-screen',
@@ -106,9 +107,7 @@ export class AmendScreen implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(
-      sessionStorage.getItem('userData') || '{}'
-    );
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.companyId = sessionData.companyId ?? '';
 
@@ -158,7 +157,7 @@ export class AmendScreen implements OnInit {
   // }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -832,7 +831,7 @@ update(): void {
         duration: 3000,
       });
       this.router.navigate(
-        ['/dashboard/Trade-Services/import-lc/approved-inquiry-records'], // use your actual route
+        ['/dashboard/Trade-Services/export-screen/approved-inquiry-records'],
         { queryParams: { tab: 'pending' } },
       );
     },

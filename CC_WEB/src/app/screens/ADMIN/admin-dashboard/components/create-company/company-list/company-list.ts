@@ -120,7 +120,7 @@ export class CompanyList implements OnInit {
 
   // ================== Actions ==================
   updateRouter(customer: any) {
-    this.router.navigate(['/admin/create-company/' + customer.id]);
+    this.router.navigate(['/admin/edit-company/' + customer.id]);
   }
 
   

@@ -116,7 +116,7 @@ export class ListGenerateFields implements OnInit {
 
   // ================== Actions ==================
   updateRouter(field: any) {
-    this.router.navigate(['/admin/create-field/' + field.id]);
+    this.router.navigate(['/admin/edit-field/' + field.id]);
   }
 
   

@@ -146,7 +146,7 @@ export class ExportScreen implements AfterViewInit {
 
     this.sharedService.setFormData(fullFormData);
 
-    this.router.navigate(['/export-screen/preview']);
+    this.router.navigate(['/dashboard/Trade-Services/export-screen/preview']);
   }
 
   // =======================
@@ -196,7 +196,7 @@ export class ExportScreen implements AfterViewInit {
   }
 
   back() {
-    this.router.navigate(['/exportlc-welcome']);
+    this.router.navigate(['/dashboard/Trade-Services/exportlc-welcome']);
   }
 
   save() {
