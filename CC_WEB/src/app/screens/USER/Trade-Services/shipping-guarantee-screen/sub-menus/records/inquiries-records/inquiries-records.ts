@@ -16,6 +16,7 @@ import {
 import { ShippingGuaranteeTransaction } from '../../../../../../../core/models/shipping-guarantee';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { ShippingGuaranteeFormTransactionService } from '../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-inquiries-records',
@@ -108,7 +109,7 @@ export class inquiriesRecords implements OnInit {
   }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

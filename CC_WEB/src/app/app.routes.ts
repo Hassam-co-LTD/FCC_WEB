@@ -1,20 +1,6 @@
-import { Routes, UrlMatcher, UrlSegment } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
-
-export const transactionIdMatcher: UrlMatcher = (segments: UrlSegment[]) => {
-  if (
-    segments.length === 2 &&
-    segments[0].path === 'import-screen' &&
-    /^\d+$/.test(segments[1].path)
-  ) {
-    return {
-      consumed: segments,
-    };
-  }
-
-  return null;
-};
 
 export const routes: Routes = [
   // Default redirect
@@ -163,9 +149,16 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'edit-currency/:id',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/create-currency/create-currency').then(
+                (m) => m.CreateCurrency,
+              ),
+          },
+          {
             path: 'currency-list',
             loadComponent: () =>
-              import('./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list').then(
+              import('./screens/ADMIN/admin-dashboard/components/create-currency/currency-list/currency-list').then(
                 (m) => m.CurrencyList,
               ),
           },
@@ -290,12 +283,13 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'Accounts-inquiry',
+            path: 'accounts-inquiry',
             loadComponent: () =>
-              import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then(
-                (m) => m.Accounts,
+              import('./screens/ADMIN/admin-dashboard/components/accounts-inquiry/accounts-inquiry').then(
+                (m) => m.AccountsInquiry,
               ),
           },
+          { path: 'Accounts-inquiry', redirectTo: 'accounts-inquiry' },
           {
             path: 'edit-accounts/:id',
             loadComponent: () =>
@@ -328,21 +322,21 @@ export const routes: Routes = [
           {
             path: 'create-permission',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permission-master/permission-master').then(
+              import('./screens/ADMIN/admin-dashboard/components/permission-master/permission-master').then(
                 (m) => m.PermissionMaster,
               ),
           },
           {
             path: 'edit-permission/:id',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permission-master/permission-master').then(
+              import('./screens/ADMIN/admin-dashboard/components/permission-master/permission-master').then(
                 (m) => m.PermissionMaster,
               ),
           },
           {
             path: 'permission-master-inquiry',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry').then(
+              import('./screens/ADMIN/admin-dashboard/components/permissions-inquiry/permissions-inquiry').then(
                 (m) => m.RoleMasterList,
               ),
           },
@@ -628,13 +622,6 @@ export const routes: Routes = [
                   ),
               },
               {
-                matcher: transactionIdMatcher,
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
-                    (m) => m.ShippingGuarantee,
-                  ),
-              },
-              {
                 path: 'shipping-guarantee/amend/:tnxId',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/shipping-guarantee-screen/sub-menus/events/amend-shipping-guarantee-event/amend').then(
@@ -716,13 +703,6 @@ export const routes: Routes = [
               },
               {
                 path: 'export-collection/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
-                    (m) => m.ExportCollection,
-                  ),
-              },
-              {
-                matcher: transactionIdMatcher,
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-collection/export-collection').then(
                     (m) => m.ExportCollection,
@@ -814,13 +794,6 @@ export const routes: Routes = [
               },
               {
                 path: 'undertaking-issuance/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
-                    (m) => m.UndertakingIssuance,
-                  ),
-              },
-              {
-                matcher: transactionIdMatcher,
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
                     (m) => m.UndertakingIssuance,
@@ -946,10 +919,13 @@ export const routes: Routes = [
                 data: {
                   title: 'Welcome to Import LC',
                   description: 'Manage all Import LC related activities here.',
-                  createRoute: '/import-screen',
-                  templateRoute: '/import-screen?mode=template',
-                  existingRoute: '/import-screen/inquiries',
-                  uploadRoute: '/import-screen?mode=upload',
+                  createRoute: '/dashboard/Trade-Services/import-screen',
+                  templateRoute:
+                    '/dashboard/Trade-Services/import-screen?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/import-screen/inquiries',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/import-screen?mode=upload',
                 },
               },
             ],
@@ -1050,6 +1026,14 @@ export const routes: Routes = [
 
       // Default child redirect for '/'
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./screens/AUTH/page-not-found/page-not-found').then(
+            (m) => m.PageNotFound,
+          ),
+      },
     ],
   },
   {

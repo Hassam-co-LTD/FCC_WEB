@@ -30,6 +30,7 @@ import { ExportCollectionTransaction } from '../../../../core/models/export-coll
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-export-collection',
   standalone: true,
@@ -114,7 +115,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

@@ -127,6 +127,7 @@ import { RouterModule } from '@angular/router';
 import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { ExportCollectionFormTransactionService } from '../../../../../../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
 import { MatCard } from '@angular/material/card';
+import { readSessionJson } from '../../../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-preview',
@@ -244,7 +245,7 @@ export class PreviewSection {
       });
     }
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
     this.permissionNames = sessionData.permissionNames || [];
   }
 

@@ -49,6 +49,7 @@ import { License } from './components/license/license';
 import { AttachmentsDocuments } from './components/attachments-documents/attachments-documents';
 
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
+import { readSessionJson, getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-amend',
@@ -260,7 +261,7 @@ export class Amend implements OnInit {
     // Permissions
     // ----------------------------------------------------------
 
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -300,7 +301,7 @@ export class Amend implements OnInit {
     // Session Data
     // ----------------------------------------------------------
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.companyId = sessionData.companyId ?? '';
 

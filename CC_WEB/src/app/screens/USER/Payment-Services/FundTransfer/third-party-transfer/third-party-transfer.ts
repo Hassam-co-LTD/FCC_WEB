@@ -83,7 +83,7 @@ export class ThirdPartyTransfer {
 
 
   back() {
-    this.router.navigate(['/fund-transfer-welcome']);
+    this.router.navigate(['/dashboard/fund-transfer-welcome']);
   }
 
   save() {

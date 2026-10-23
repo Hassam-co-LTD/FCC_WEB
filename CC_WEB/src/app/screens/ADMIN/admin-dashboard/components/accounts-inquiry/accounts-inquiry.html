@@ -40,7 +40,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredDraftAccounts; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-accounts', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.iban }}</td>
                 <td>{{ c.accountType }}</td>
                 <td>{{ c.accountTitle }}</td>
@@ -96,7 +96,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredApprovedAccounts; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-accounts', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.iban }}</td>
                 <td>{{ c.accountType }}</td>
                 <td>{{ c.accountTitle }}</td>
@@ -152,7 +152,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let c of storeFilteredSubmittedAccounts; trackBy: trackById">
-                <td><a [routerLink]="['/admin/create-account', c.id]">{{ c.custId }}</a></td>
+                <td><a [routerLink]="['/admin/edit-accounts', c.id]">{{ c.custId }}</a></td>
                 <td>{{ c.iban }}</td>
                 <td>{{ c.accountType }}</td>
                 <td>{{ c.accountTitle }}</td>
