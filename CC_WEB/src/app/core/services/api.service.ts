@@ -23,6 +23,25 @@ import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
 import { UserDashboardResponse } from '../models/user-dashboard-transaction-activities';
+import { getSessionItem, readSessionJson } from '../utils/browser-storage';
+
+/**
+ * Error emitted by ApiService. `message` is user-friendly; `status`, `error`
+ * (backend body) and `url` are copied from the HttpErrorResponse.
+ */
+export class ApiError extends Error {
+  readonly status: number;
+  readonly error: any;
+  readonly url: string | null;
+
+  constructor(message: string, source: HttpErrorResponse) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = source.status;
+    this.error = source.error;
+    this.url = source.url;
+  }
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -68,33 +87,43 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   /* ------------------------------------- Error Handler ------------------------------------- */
-  private handleError(error: HttpErrorResponse) {
+  // Arrow function so it can be passed directly to catchError().
+  private handleError = (error: HttpErrorResponse) => {
     let errorMessage = 'An unexpected error occurred. Please try again later.';
 
     if (error.error instanceof ErrorEvent) {
       // Client-side / network error
       console.error('Client-side error:', error.error.message);
-      errorMessage = error.error.message;
+      errorMessage = error.error.message || errorMessage;
     } else {
       // Backend error
       console.error(`Backend error [${error.status}]:`, error.error);
 
-      if (error.error?.message) {
+      if (typeof error.error === 'string' && error.error.trim()) {
+        errorMessage = error.error;
+      } else if (error.error?.message) {
         errorMessage = error.error.message;
       } else if (error.status === 0) {
         errorMessage = 'Unable to connect to server.';
+      } else if (error.status === 401) {
+        errorMessage = 'Your session has expired. Please login again.';
+      } else if (error.status === 403) {
+        errorMessage = 'You do not have permission to perform this action.';
       } else if (error.status === 404) {
         errorMessage = 'Requested resource not found.';
-      } else if (error.status === 500) {
+      } else if (error.status >= 500) {
         errorMessage = 'Internal server error.';
       }
     }
 
-    return throwError(() => new Error(errorMessage));
-  }
+    // Keep status / backend body so screens can still read err.status and
+    // err.error?.message, while err.message holds a user-friendly text.
+    return throwError(() => new ApiError(errorMessage, error));
+  };
+
   /* ------------------------------------- Helper methods ------------------------------------- */
-  private get userData() {
-    return JSON.parse(sessionStorage.getItem('userData') || '{}');
+  private get userData(): any {
+    return readSessionJson<any>('userData', {}) || {};
   }
 
   private get companyId(): string {
@@ -1332,7 +1361,7 @@ export class ApiService {
   // =================================================================
 
   saveTransferDraft(data: TransferDTO): Observable<TransferDTO> {
-    const companyId = sessionStorage.getItem('companyId') || 'ABC';
+    const companyId = this.companyId;
     const headers = new HttpHeaders().set('companyid', companyId);
 
     console.log('Sending to Backend -> companyid:', companyId);
@@ -1342,7 +1371,7 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
   getTransfersByStatus(status: string): Observable<TransferDTO[]> {
-    const companyId = sessionStorage.getItem('companyId') || '';
+    const companyId = this.companyId;
     const headers = new HttpHeaders({
       companyid: companyId,
     });
@@ -1481,9 +1510,9 @@ export class ApiService {
     accountNumber: string,
     accessType: string,
   ): Observable<boolean> {
-    const companyId = sessionStorage.getItem('companyId') || '';
-    const userId = sessionStorage.getItem('userId') || '';
-    const userRole = sessionStorage.getItem('userRole') || '';
+    const companyId = this.companyId;
+    const userId = String(this.userData.userId ?? '');
+    const userRole = getSessionItem('userRole') || '';
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -1525,7 +1554,7 @@ export class ApiService {
    * Create a new account
    */
   createAccount(accountData: any): Observable<string> {
-    const companyId = sessionStorage.getItem('companyId') || '';
+    const companyId = this.companyId;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
@@ -1774,7 +1803,7 @@ export class ApiService {
   }
 
   refreshToken() {
-    const refreshToken = sessionStorage.getItem('refreshToken');
+    const refreshToken = getSessionItem('refreshToken');
 
     return this.http.post<any>(
       environment.gatewayUrl + '/api/v1/auth/refresh-token',
@@ -1793,6 +1822,7 @@ export class ApiService {
       `${this.baseeventUrl}/amend/${eventRefNo}/rejected-history`,
     );
   }
+
   // verify customer account from core banking api
   verifyCustomerAccount(accountNumber: string) {
     return this.http.post<any>(

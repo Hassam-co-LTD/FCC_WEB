@@ -2,6 +2,14 @@ import { Injectable, PLATFORM_ID, inject, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import {
+  clearLocalStorage,
+  clearSessionStorage,
+  getSessionItem,
+  readSessionJson,
+  removeSessionItem,
+  setSessionItem,
+} from '../utils/browser-storage';
 
 @Injectable({
   providedIn: 'root',
@@ -10,8 +18,19 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private router = inject(Router);
   private ngZone = inject(NgZone);
-  private isBrowser(): boolean {
+
+  isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
+  }
+
+  /** Stored login data; always an object, never throws on missing/corrupt data */
+  private readUserData(): any {
+    const data = readSessionJson<any>('userData', {});
+    return data && typeof data === 'object' ? data : {};
+  }
+
+  private writeUserData(data: any): void {
+    setSessionItem('userData', JSON.stringify(data));
   }
 
   /** Dummy login for testing */
@@ -31,8 +50,8 @@ export class AuthService {
           companyType: companyId === 'NBP' ? 'B' : 'U',
         };
 
-        sessionStorage.setItem('userData', JSON.stringify(userData));
-        sessionStorage.setItem('token', 'dummy-token');
+        this.writeUserData(userData);
+        setSessionItem('token', 'dummy-token');
       }
 
       return true;
@@ -41,23 +60,22 @@ export class AuthService {
     return false;
   }
 
+  /** Clear auth data without showing any dialog */
+  clearSession(): void {
+    removeSessionItem('token');
+    removeSessionItem('refreshToken');
+    removeSessionItem('userData');
+    clearSessionStorage();
+    clearLocalStorage();
+  }
+
   /** Logout */
 
   logout(): void {
     if (this.isBrowser()) {
       console.log('========== LOGOUT START ==========');
 
-      // Clear authentication data
-      sessionStorage.removeItem('token');
-
-      sessionStorage.removeItem('refreshToken');
-
-      sessionStorage.removeItem('userData');
-
-      // Clear all stored session data
-      sessionStorage.clear();
-
-      localStorage.clear();
+      this.clearSession();
 
       console.log('Session storage cleared');
 
@@ -74,11 +92,13 @@ export class AuthService {
           allowOutsideClick: false,
 
           allowEscapeKey: false,
-        }).then(() => {
-          console.log('Redirecting to login...');
+        })
+          .then(() => {
+            console.log('Redirecting to login...');
 
-          this.router.navigate(['/login']);
-        });
+            this.router.navigate(['/login']);
+          })
+          .catch(() => this.router.navigate(['/login']));
       });
     } else {
       console.log('You are on the server');
@@ -86,49 +106,30 @@ export class AuthService {
   }
   /** Check if user is logged in (sessionStorage contains backend userData) */
   checkAuth(): boolean {
-    return !!sessionStorage.getItem('userData');
+    return !!getSessionItem('userData');
   }
-  /** Get normalized user category (ADMIN / USER) */
-  // getUserCategory(): 'A' | 'U' | null {
-  //   const data = sessionStorage.getItem('userData');
-  //   if (!data) return null;
-
-  //   const parsed = JSON.parse(data);
-  //   return parsed.body.userCategory?.toUpperCase() === 'A' ? 'A' : 'U';
-  // }
 
   getUserCategory(): 'A' | 'U' | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-
-    const parsed = JSON.parse(data);
+    const parsed = this.readUserData();
 
     const userCategory = parsed.body?.userCategory ?? parsed.userCategory;
 
-    if (!userCategory) return null;
+    if (!userCategory || typeof userCategory !== 'string') return null;
 
     return userCategory.toUpperCase() === 'A' ? 'A' : 'U';
   }
   /** Get companyId from sessionStorage */
   getCompanyId(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.companyId || null;
+    const parsed = this.readUserData();
+    return parsed.companyId ?? parsed.body?.companyId ?? null;
   }
 
   /** Get userId from sessionStorage */
   getUserId(): number | null {
-    const data = sessionStorage.getItem('userData');
-
-    if (!data) return null;
-
-    const parsed = JSON.parse(data);
-
-    return parsed.userId ?? null;
+    return this.readUserData().userId ?? null;
   }
   getToken(): string | null {
-    return sessionStorage.getItem('token');
+    return getSessionItem('token');
   }
   /** Get role (ADMIN / USER) */
   getUserRole(): 'A' | 'U' | null {
@@ -148,24 +149,14 @@ export class AuthService {
   canReject(): boolean {
     return this.canApprove();
   }
-  // getCompanyType(): 'B' | 'C' | null {
-  //   const data = sessionStorage.getItem('userData');
-  //   console.log("getCompanyType - raw session data:", data);
-  //   if (!data) return null;
-  //   const parsed = JSON.parse(data);
-
-  //   return parsed.body.companyType?.toUpperCase() || null;
-  // }
 
   getCompanyType(): 'B' | 'C' | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
+    const parsed = this.readUserData();
+    const companyType = parsed.body?.companyType ?? parsed.companyType;
 
-    const parsed = JSON.parse(data);
+    if (!companyType || typeof companyType !== 'string') return null;
 
-    return (
-      (parsed.body?.companyType ?? parsed.companyType)?.toUpperCase() || null
-    );
+    return companyType.toUpperCase() as 'B' | 'C';
   }
 
   getRedirectUrl(): string {
@@ -184,46 +175,38 @@ export class AuthService {
   }
   setUserCategory(value: 'A' | 'U') {
     if (!this.isBrowser()) return;
-    const data = sessionStorage.getItem('userData');
-    const parsed = data ? JSON.parse(data) : {};
+    const parsed = this.readUserData();
     parsed.userCategory = value;
-    sessionStorage.setItem('userData', JSON.stringify(parsed));
+    this.writeUserData(parsed);
   }
   setCompanyType(value: 'B' | 'C') {
     if (!this.isBrowser()) return;
-    const data = sessionStorage.getItem('userData');
-    const parsed = data ? JSON.parse(data) : {};
+    const parsed = this.readUserData();
     parsed.companyType = value;
-    sessionStorage.setItem('userData', JSON.stringify(parsed));
+    this.writeUserData(parsed);
   }
 
   // get userName()
   getUserName(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.userName || null;
+    return this.readUserData().userName || null;
   }
 
   //  get LoginId()
   getLoginId(): string | null {
-    const data = sessionStorage.getItem('userData');
-    if (!data) return null;
-    const parsed = JSON.parse(data);
-    return parsed.loginId || null;
+    return this.readUserData().loginId || null;
   }
 
   getSubmitPayload() {
     return {
       recordStatus: 'S',
-      inputterId: this.getLoginId()!,
+      inputterId: this.getLoginId() ?? '',
     };
   }
 
   getApprovePayload() {
     return {
       recordStatus: 'A',
-      authorizerId: this.getLoginId()!,
+      authorizerId: this.getLoginId() ?? '',
     };
   }
 
@@ -231,14 +214,14 @@ export class AuthService {
     return {
       recordStatus: 'R',
       rejectReason: rejectReason,
-      rejectedBy: this.getLoginId()!,
+      rejectedBy: this.getLoginId() ?? '',
     };
   }
 
   getAmendPayload() {
     return {
       recordStatus: 'I',
-      updatedBy: this.getLoginId()!,
+      updatedBy: this.getLoginId() ?? '',
     };
   }
 }

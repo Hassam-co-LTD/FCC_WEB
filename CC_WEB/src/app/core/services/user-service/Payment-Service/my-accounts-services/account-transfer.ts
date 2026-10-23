@@ -9,6 +9,7 @@ import {
   AccountsMaster,
 } from '../../../../models/my-accounts';
 import { AuthService } from '../../../auth.service';
+import { setSessionItem } from '../../../../utils/browser-storage';
  
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class MyAccountsService {
    
     // Also store in sessionStorage for backward compatibility
     if (userRole) {
-      sessionStorage.setItem('userRole', userRole);
+      setSessionItem('userRole', userRole);
     }
   }
  
@@ -659,7 +660,7 @@ export class MyAccountsService {
   updateUserRole(): void {
     const role = this.authService.getUserCategory() || '';
     this.userRoleSubject.next(role);
-    sessionStorage.setItem('userRole', role);
+    setSessionItem('userRole', role);
   }
  
   /**

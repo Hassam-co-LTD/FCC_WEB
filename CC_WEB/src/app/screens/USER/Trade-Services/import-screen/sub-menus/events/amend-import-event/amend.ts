@@ -29,6 +29,7 @@ import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog
 import { finalize } from 'rxjs';
 import { DynamicFields } from '../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
+import { readSessionJson, getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-amend-screen',
@@ -128,7 +129,7 @@ export class AmendScreen implements OnInit {
       this.requestedMode = params.get('mode')!;
     });
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.companyId = sessionData.companyId ?? '';
 
@@ -181,7 +182,7 @@ export class AmendScreen implements OnInit {
   // }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

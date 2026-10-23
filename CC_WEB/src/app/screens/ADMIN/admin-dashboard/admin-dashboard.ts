@@ -93,25 +93,25 @@ export class AdminComponent implements OnInit, OnDestroy {
       label: 'Customers',
       count: '1,245',
       icon: 'people',
-      route: '/admin/master-data/customers',
+      route: '/admin/customer-list',
     },
     {
       label: 'Companies',
       count: '86',
       icon: 'business',
-      route: '/admin/access-management/company',
+      route: '/admin/company-inquiry',
     },
     {
       label: 'Client Users',
       count: '342',
       icon: 'person_outline',
-      route: '/admin/access-management/client-user',
+      route: '/admin/user-client-inquiry',
     },
     {
       label: 'Branches',
       count: '24',
       icon: 'account_balance',
-      route: '/admin/master-data/branch',
+      route: '/admin/branch-inquiry',
     },
   ];
 
@@ -203,32 +203,32 @@ export class AdminComponent implements OnInit, OnDestroy {
   quickActions = [
     {
       label: 'Create Customer',
-      route: '/admin/master-data/customers',
+      route: '/admin/create-customer',
       icon: 'person_add',
     },
     {
       label: 'Create Client User',
-      route: '/admin/access-management/client-user',
+      route: '/admin/create-client-user',
       icon: 'group_add',
     },
     {
       label: 'Create Company',
-      route: '/admin/access-management/company',
+      route: '/admin/create-company',
       icon: 'domain_add',
     },
     {
       label: 'Create Branch',
-      route: '/admin/master-data/branch',
+      route: '/admin/create-branch',
       icon: 'add_business',
     },
     {
       label: 'Create Role',
-      route: '/admin/access-management/role-master',
+      route: '/admin/create-role-master',
       icon: 'security',
     },
     {
       label: 'Create Dynamic Field',
-      route: '/admin/dynamic-fields/create-new',
+      route: '/admin/create-dynamic-fields',
       icon: 'playlist_add',
     },
   ];
@@ -314,6 +314,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   navigateTo(path: string): void {
-    this.router.navigate([path]);
+    this.router
+      .navigateByUrl(path)
+      .catch((error) => console.error('Navigation failed:', path, error));
   }
 }

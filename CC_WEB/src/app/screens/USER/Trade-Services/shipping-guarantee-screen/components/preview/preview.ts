@@ -13,6 +13,7 @@ import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/re
 import { Dialog } from '@angular/cdk/dialog';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { getSessionItem } from '../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -45,7 +46,7 @@ export class Preview implements OnInit {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

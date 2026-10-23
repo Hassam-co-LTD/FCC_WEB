@@ -14,7 +14,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (!auth['isBrowser']()) return true; // don't block SSR
+  if (!auth.isBrowser()) return true; // don't block SSR
 
   if (!auth.checkAuth()) {
     router.navigate(['/login']);

@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
+import { readSessionJson } from '../../../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-preview',
@@ -58,7 +59,7 @@ export class Preview {
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.permissionNames = sessionData.permissionNames || [];
 

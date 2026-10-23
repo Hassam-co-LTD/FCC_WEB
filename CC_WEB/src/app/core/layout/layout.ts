@@ -155,7 +155,7 @@ export class LayoutComponent implements OnInit {
 
   ngOnInit() {
     const role = this.authService.getUserCategory();
-    const companyType = this.authService.getCompanyType();
+    let companyType = this.authService.getCompanyType();
     this.loadMenu(role, companyType);
 
     this.router.events
@@ -173,7 +173,9 @@ export class LayoutComponent implements OnInit {
           this.menuItems = this.middleOfficeMenu;
         } else {
           this.currentMenu = 'DEFAULT';
+          // Re-read: the session may have changed (e.g. login as another user)
           const role = this.authService.getUserCategory();
+          companyType = this.authService.getCompanyType();
           this.loadMenu(role, companyType);
         }
 
@@ -239,7 +241,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Branch',
               icon: 'account_balance',
-              route: '/admin/branches',
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-branch' },
@@ -274,16 +275,15 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Dynamic Field Options',
               icon: 'list_alt', // for configuring dropdown values
-              route: '/admin/create-dynamic-field-options',
               open: false,
               children: [
                 {
                   label: 'Create New',
-                  route: '/admin/create-dynamic-field-options',
+                  route: '/admin/create-dropdown-option',
                 },
                 {
                   label: 'Inquiry',
-                  route: '/admin/dynamic-field-options-inquiry',
+                  route: '/admin/dynamic-dropdown-option-inquiry',
                 },
               ],
             },
@@ -291,7 +291,7 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Account Types',
               icon: 'account_balance_wallet', // Angular Material Icon
-              route: '/admin/create-Account-types',
+              route: '/admin/create-account-types',
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-account-types' },
@@ -312,7 +312,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Client User',
               icon: 'person',
-              route: '/admin/client-user',
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-client-user' },
@@ -323,7 +322,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Company',
               icon: 'apartment',
-              route: '/admin/company',
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-company' },
@@ -334,7 +332,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Role Master',
               icon: 'admin_panel_settings',
-              route: '/admin/role',
               open: false,
               children: [
                 { label: 'Create New', route: '/admin/create-role-master' },
@@ -344,7 +341,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Permission Master',
               icon: 'verified_user',
-              route: '/admin/permission',
               open: false,
               children: [
                 {
@@ -360,7 +356,6 @@ export class LayoutComponent implements OnInit {
             {
               label: 'Permission Group',
               icon: 'group',
-              route: '/admin/permission-group',
               open: false,
               children: [
                 {
@@ -388,7 +383,6 @@ export class LayoutComponent implements OnInit {
         {
           label: 'Security',
           icon: 'security',
-          route: '/admin/security',
           open: false,
           children: [
             {
@@ -397,7 +391,7 @@ export class LayoutComponent implements OnInit {
             },
           ],
         },
-        { label: 'Users', icon: 'person', route: '/users' },
+        { label: 'Users', icon: 'person', route: '/admin/users' },
         { label: 'Logout', icon: 'logout', route: '/login' },
       ];
     } else if (companyType === 'B') {
@@ -837,12 +831,15 @@ export class LayoutComponent implements OnInit {
   goTo(item: MenuItem) {
     if (!item.route) return;
 
-    this.router.navigateByUrl(item.route).then(() => {
-      // Only highlight active branches; do NOT close other branches
-      this.menuItems.forEach((m) => {
-        this.keepActiveOpen(m); // recursive open only for active path
-      });
-    });
+    this.router
+      .navigateByUrl(item.route)
+      .then(() => {
+        // Only highlight active branches; do NOT close other branches
+        this.menuItems.forEach((m) => {
+          this.keepActiveOpen(m); // recursive open only for active path
+        });
+      })
+      .catch((error) => console.error('Menu navigation failed:', item.route, error));
   }
 
   // Keep parent open if it contains the active route

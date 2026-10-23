@@ -5,6 +5,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../../../core/services/api.service';
+import { AuthService } from '../../../../../core/services/auth.service';
 import Swal from 'sweetalert2';
 import { RouterLink } from '@angular/router';
 @Component({
@@ -31,7 +32,8 @@ export class AccountsInquiry implements OnInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -118,11 +120,11 @@ export class AccountsInquiry implements OnInit {
 
   // ================== Actions ==================
   updateRouter(customer: any) {
-    this.router.navigate(['/admin/create-account/' + customer.id]);
+    this.router.navigate(['/admin/edit-accounts/' + customer.id]);
   }
 
   submitStatus(id: number) {
-    this.api.setTnxByStatus('S', id, 'accounts').subscribe({
+    this.api.setTnxByStatus(this.auth.getSubmitPayload(), id, 'accounts').subscribe({
       next: () => {
         Swal.fire('Success', 'Account submitted successfully', 'success');
         this.loadDraftAccounts();
@@ -133,7 +135,7 @@ export class AccountsInquiry implements OnInit {
   }
 
   setApprove(id: number) {
-    this.api.setTnxByStatus('A', id, 'accounts').subscribe({
+    this.api.setTnxByStatus(this.auth.getApprovePayload(), id, 'accounts').subscribe({
       next: () => {
         Swal.fire('Success', 'Account approved successfully', 'success');
         this.loadSubmittedAccounts();
@@ -144,7 +146,7 @@ export class AccountsInquiry implements OnInit {
   }
 
   Reject(id: number) {
-    this.api.setTnxByStatus('R', id, 'accounts').subscribe({
+    this.api.setTnxByStatus(this.auth.getRejectPayload(''), id, 'accounts').subscribe({
       next: () => {
         Swal.fire('Success', 'Account rejected successfully', 'success');
         this.loadSubmittedAccounts();
@@ -156,7 +158,7 @@ export class AccountsInquiry implements OnInit {
   /** ================== Edit Approved Customer ================== */
   editApprovedCustomer(id: number) {
     // Move approved customer back to Draft for editing
-    this.api.setTnxByStatus('D', id, 'accounts').subscribe({
+    this.api.setTnxByStatus({ recordStatus: 'D' }, id, 'accounts').subscribe({
       next: () => {
         Swal.fire('Success', 'Approved account moved to Draft for editing', 'success');
         // Reload all tabs  

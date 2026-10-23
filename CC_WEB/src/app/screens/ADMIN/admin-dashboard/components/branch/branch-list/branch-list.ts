@@ -120,7 +120,7 @@ export class BranchList implements OnInit {
 
   // ================== Actions ==================
   updateRouter(branch: any) {
-    this.router.navigate(['/admin/create-branch/' + branch.id]);
+    this.router.navigate(['/admin/edit-branch/' + branch.id]);
   }
 
 

@@ -301,9 +301,9 @@ export class SearchTransactionID implements OnInit {
 
     // 2. Define Route Paths
     const routes: { [key: string]: string } = {
-      'undertaking': '/undertaking-issuance', 
-      'export-collection': '/export-collection',
-      'shipping-guarantee': '/shipping-guarantee'
+      'undertaking': '/dashboard/Trade-Services/undertaking-issuance',
+      'export-collection': '/dashboard/Trade-Services/export-collection',
+      'shipping-guarantee': '/dashboard/Trade-Services/shipping-guarantee'
     };
 
     const basePath = routes[t.type];
@@ -313,13 +313,11 @@ export class SearchTransactionID implements OnInit {
       return;
     }
 
-    // 3. Determine sub-path (Request for edits/drafts, Preview for views)
-    // Note: Adjust these sub-paths based on your actual router config
-    if (t.status === 'Draft' || t.canEdit) {
-      this.router.navigate([`${basePath}/request`, t.id]); 
-    } else {
-      this.router.navigate([`${basePath}/preview`, t.id]);
-    }
+    // 3. Open the transaction screen; it reads the mode set in SharedService
+    // above (edit for drafts / editable records, view otherwise)
+    this.router.navigate([basePath, t.id]).catch((error) =>
+      console.error('Unable to open transaction', t.id, error),
+    );
   }
 
   acceptTransaction(t: TransactionBase): void {

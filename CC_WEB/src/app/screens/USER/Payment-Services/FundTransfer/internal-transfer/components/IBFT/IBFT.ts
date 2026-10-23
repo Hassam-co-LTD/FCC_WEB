@@ -194,7 +194,7 @@ export class IBFT implements OnInit {
   private executeSubmission(id: string) {
     this.myAccountsService.submitTransfer(id, this.getRawData()).subscribe(() => {
       this.snackBar.open('Transfer Submitted Successfully', 'Close', { duration: 2000 });
-      this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'submitted' }});
+      this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'submitted' }});
     });
   }
 
@@ -202,7 +202,7 @@ export class IBFT implements OnInit {
     if (this.tnxId && confirm('Approve this transfer?')) {
       this.myAccountsService.approveTransfer(this.tnxId, this.getRawData()).subscribe(() => {
         this.snackBar.open('Transfer Approved', 'Close', { duration: 2000 });
-        this.router.navigate(['/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'approved' }});
+        this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records'], { queryParams: { tab: 'approved' }});
       });
     }
   }
@@ -239,7 +239,7 @@ export class IBFT implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/fund-transfer/fund-transfer-records']);
+    this.router.navigate(['/dashboard/fund-transfer/fund-transfer-records']);
   }
 
   scrollToSection(index: number) {
