@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
 
     // HttpClient with interceptor
     provideHttpClient(
-      withInterceptors([jwtInterceptor])  // <-- this ensures interceptor runs
+      withInterceptors([jwtInterceptor])  // ensuring that interceptor runs
     )
   ]
 };

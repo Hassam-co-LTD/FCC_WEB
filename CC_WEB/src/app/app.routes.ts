@@ -539,6 +539,48 @@ export const routes: Routes = [
                 },
               },
 
+              // ---------- IMPORT COLLECTION (inquiry + amend only) ----------
+              {
+                path: 'import-collection/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/records/inquiries-of-records/inquiries-of-records').then(
+                    (m) => m.InquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'import-collection/approved-inquiry-records',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
+                    (m) => m.ApprovedInquiryRecords,
+                  ),
+              },
+              {
+                path: 'import-collection/amend',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'import-collection/amend/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'import-collection/amend/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/amend').then(
+                    (m) => m.AmendScreen,
+                  ),
+              },
+              {
+                path: 'import-collection/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+
               // ---------- SHIPPING GUARANTEE ----------
               {
                 path: 'shipping-guarantee/inquiries-records',
