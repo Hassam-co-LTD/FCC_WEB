@@ -52,13 +52,13 @@ export class ExportPreview implements OnInit {
   }
 
   previous() {
-    this.router.navigate(['/export-screen']);
+    this.router.navigate(['/dashboard/Trade-Services/export-screen']);
   }
 
   submit() {
     const formData = this.sharedService.getFormData();
 
-    this.router.navigate(['/export-screen/success'], {
+    this.router.navigate(['/dashboard/Trade-Services/export-screen/success'], {
       state: {
         type: 'export',
         data: formData,

@@ -10,6 +10,7 @@ import { Subscription, interval } from 'rxjs';
 
 // Import the Account Search Dialog Component
 import { AccountSearchDialogComponent } from '../../../../../../../../../shared/account-search-dialog/account-search-dialog';
+import { getSessionItem } from '../../../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-general-details',
@@ -112,7 +113,7 @@ export class GeneralDetails implements OnInit, OnDestroy, OnChanges {
 
   // Method to open account search dialog
 openAccountSearchDialog(accountType: 'transferFrom' | 'transferTo') {
-  const userRole = sessionStorage.getItem('userRole') || '';
+  const userRole = getSessionItem('userRole') || '';
   
   const dialogRef = this.dialog.open(AccountSearchDialogComponent, {
     width: '800px',

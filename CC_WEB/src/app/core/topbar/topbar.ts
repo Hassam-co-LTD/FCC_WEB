@@ -4,6 +4,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatDivider } from '@angular/material/divider';
+import { readSessionJson } from '../utils/browser-storage';
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -18,7 +19,7 @@ export class TopbarComponent {
 
 
   constructor(private router:Router) { }
-       userData = sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!) : null;
+       userData = readSessionJson<any>('userData', null);
        userName = this.userData?.userName || 'User';
         lastGoodLogin = this.userData?.lastGoodLogin ? new Date(this.userData.lastGoodLogin).toLocaleString() : 'N/A';
   toggleMenu() {

@@ -150,7 +150,7 @@ export class RoleMasterList implements OnInit {
 
   // ================== Navigation ==================
   updateRouter(role: any) {
-    return this.router.navigate(['/admin/create-role', role.roleId]);
+    return this.router.navigate(['/admin/edit-role-master', role.roleId]);
   }
 
   // ================== Track By ==================

@@ -14,6 +14,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/api.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { readSessionJson, getSessionItem } from '../../../../core/utils/browser-storage';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -70,7 +71,7 @@ export class UserOfCustomer implements OnInit {
   isEditMode = false;
   isOpen = true;
   
- userId = sessionStorage.getItem('userId');
+ userId = getSessionItem('userId');
  
   // ---------- ROLES ----------
   userRoles: RoleMasterResponseDTO[] = [];       
@@ -92,7 +93,7 @@ UserData = {
   userName: '',
   password: '',
   userCategory: '',
-  companyId: sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).
+  companyId: readSessionJson<any>('userData', {}).companyId ?? '',
   appUserId: '',
 }
   ngOnInit(): void {
@@ -111,7 +112,7 @@ UserData = {
       userName: ['', Validators.required],
       password: ['', Validators.required],
       userCategory: [''],
-      companyId: [ sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).companyId : '', Validators.required],
+      companyId: [ readSessionJson<any>('userData', {}).companyId ?? '', Validators.required],
       userStatus: [''],
       createdBy:[this.authService.getLoginId() || ''],
     });

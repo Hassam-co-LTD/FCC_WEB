@@ -122,7 +122,7 @@ loadTransactions(): void {
    */
  viewTransaction(tx: RecordsListTransferDTO): void {
   // Redirects to the form in "View-Only" or "Edit" based on status logic above
-  this.router.navigate(['/my-accounts/transfer', tx.tnxId]);
+  this.router.navigate(['/dashboard/my-accounts/transfer', tx.tnxId]);
 }
 
   // ==========================================

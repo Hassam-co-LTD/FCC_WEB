@@ -90,7 +90,7 @@
                 >
                   <span
                     class="label"
-                    (click)="goTo(child); $event.stopPropagation()"
+                    (click)="child.route ? goTo(child) : toggleOnlyChildren(child); $event.stopPropagation()"
                   >
                     {{ child.label }}
                   </span>

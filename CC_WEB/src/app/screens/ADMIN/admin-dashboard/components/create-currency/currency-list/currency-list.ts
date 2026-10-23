@@ -149,7 +149,7 @@ export class CurrencyList implements OnInit {
 
   // ================== Navigation ==================
   updateRouter(currencyId: string) {
-    this.router.navigate(['/admin/create-currency/' + currencyId]);
+    this.router.navigate(['/admin/edit-currency/' + currencyId]);
   }
 
   // ================== Status Actions ==================

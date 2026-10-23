@@ -32,6 +32,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-import-lc',
@@ -150,7 +151,7 @@ export class ImportScreen implements OnInit {
   }
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

@@ -379,7 +379,7 @@ export class CreateCompany implements OnInit {
             res?.message || 'Company Amended successfully',
             'success',
           ).then(() => {
-            this.router.navigate(['/admin/company-list'], {
+            this.router.navigate(['/admin/company-inquiry'], {
               queryParams: {
                 tabName: 'Draft',
               },

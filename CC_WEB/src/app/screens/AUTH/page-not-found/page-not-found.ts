@@ -15,14 +15,7 @@ export class PageNotFound {
   constructor(private router: Router, private authService: AuthService) { }
 
   goToDashboard(): void {
-    const userCategory = this.authService.getUserCategory();
-
-    if (userCategory === 'A') {
-      this.router.navigate(['/admin']);
-    } else if (userCategory === 'U') {
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    // Same home page the login screen uses (also covers customer users)
+    this.router.navigate([this.authService.getRedirectUrl()]);
   }
 }

@@ -20,6 +20,7 @@ import {
   ExportDropdown,
   ExportFormat,
 } from '../../../../../../../shared/export-dropdown/export-dropdown';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-inquiries-records',
@@ -75,7 +76,7 @@ export class inquiriesRecords implements OnInit {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

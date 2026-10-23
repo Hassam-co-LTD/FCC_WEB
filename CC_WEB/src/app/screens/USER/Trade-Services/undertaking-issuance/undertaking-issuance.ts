@@ -24,6 +24,7 @@ import { ApiService } from '../../../../core/services/api.service';
 import { UndertakingGuarantee } from '../../../../core/models/undertaking-lc';
 import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
 import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-undertaking-issued',
@@ -91,7 +92,7 @@ export class UndertakingIssuance implements OnInit {
   private scrollSpyHandler?: () => void;
   permissionNames: string[] = [];
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {

@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -19,6 +20,7 @@ import {
   CaptchaResponse,
   CaptchaVerifyResponse,
 } from '../../../core/models/captcha';
+import { setSessionItem } from '../../../core/utils/browser-storage';
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState =
   | 'LOGIN'
@@ -55,6 +57,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   captchaVerifying = false;
   captchaError = '';
   captchaVerificationToken: string | null = null;
+
+  // TEMPORARY: captcha is skipped on login. Set to false to enforce it again.
+  readonly captchaBypass = true;
 
   // =========================
   // LOGIN FORM STATE
@@ -112,10 +117,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     private sessionTimeOut: SessionTimeoutService,
   ) {}
 
+  private platformId = inject(PLATFORM_ID);
+
   /**
    * Safe Component Initialization Hook with Race-Condition Protection
    */
   ngOnInit(): void {
+    // Captcha challenges and reset tokens are per visitor: never fetch them
+    // while prerendering, or one build-time challenge is served to everyone.
+    if (!isPlatformBrowser(this.platformId)) return;
+
     this.route.queryParams.subscribe((params) => {
       const urlToken = params['token'];
 
@@ -127,7 +138,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.authState !== 'SUCCESS'
         ) {
           this.authState = 'LOGIN';
-          this.loadCaptcha();
+          if (!this.captchaBypass) this.loadCaptcha();
         }
 
         return;
@@ -310,12 +321,25 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   loginApi(): void {
-    this.verifyCaptcha();
+    const loginId = this.loginId.trim();
+    const companyId = this.companyId.trim();
+
+    if (!loginId || !companyId || !this.password) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing Details',
+        text: 'Login ID, Company ID and Password are required.',
+      });
+      return;
+    }
+
+    if (!this.captchaBypass) this.verifyCaptcha();
+
     this.api
       .userLogin(
         {
-          loginId: this.loginId,
-          companyId: this.companyId,
+          loginId,
+          companyId,
           password: this.password,
           userStatus: this.userStatus,
         },
@@ -326,27 +350,31 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: (res) => {
           console.log(res.body);
           console.log(res.headers);
-          const loginData = res.body;
+          // Keep the company ID the user logged in with if the response omits it
+          const loginData = {
+            ...res.body,
+            companyId: res.body?.companyId ?? res.body?.body?.companyId ?? companyId,
+          };
 
           // Save Permission Group Name
-          sessionStorage.setItem(
+          setSessionItem(
             'permissionGroupName',
             loginData.permissionGroupName,
           );
 
-          sessionStorage.setItem(
+          setSessionItem(
             'permissionNames',
             JSON.stringify(loginData.permissionNames),
           );
 
           // Save user information
-          sessionStorage.setItem('userData', JSON.stringify(loginData));
+          setSessionItem('userData', JSON.stringify(loginData));
 
           // Save JWT
-          sessionStorage.setItem('token', loginData.token);
+          setSessionItem('token', loginData.token);
 
           // Save Refresh Token
-          sessionStorage.setItem('refreshToken', loginData.refreshToken);
+          setSessionItem('refreshToken', loginData.refreshToken);
 
           // START SESSION TIMEOUT WATCHER
           // this.sessionTimeOut.startWatching();
