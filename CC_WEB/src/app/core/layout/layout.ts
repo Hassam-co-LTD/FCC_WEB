@@ -8,6 +8,7 @@ import { TopbarComponent } from '../topbar/topbar';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { filter } from 'rxjs/operators';
+import { ChatbotWidget } from '../../shared/chatbot-widget/chatbot-widget';
 
 interface MenuItem {
   label: string;
@@ -15,7 +16,7 @@ interface MenuItem {
   route?: string;
   children?: MenuItem[];
   open?: boolean;
-  manualOpen?: boolean; //
+  manualOpen?: boolean;
 }
 
 @Component({
@@ -28,6 +29,7 @@ interface MenuItem {
     TopbarComponent,
     MatIconModule,
     MatMenuModule,
+    ChatbotWidget,
   ],
 })
 export class LayoutComponent implements OnInit {
@@ -160,7 +162,8 @@ export class LayoutComponent implements OnInit {
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         const url = event.urlAfterRedirects;
-        this.activeRoute = url;
+        // Ignore query string / fragment so e.g. ?tab=pending keeps the match
+        this.activeRoute = url.split(/[?#]/)[0];
 
         if (url.includes('/system-overview')) {
           this.currentMenu = 'SYSTEM';
@@ -460,6 +463,19 @@ export class LayoutComponent implements OnInit {
             },
 
             // -------------------------
+            // IMPORT COLLECTION (no create)
+            // -------------------------
+            {
+              label: 'Import Collection',
+              route: '/dashboard/Trade-Services/import-collection/inquiries',
+              open: false,
+              children: [
+                { label: 'Amend', route: '/dashboard/Trade-Services/import-collection/approved-inquiry-records' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-collection/inquiries' },
+              ]
+            },
+
+            // -------------------------
             // SHIPPING GUARANTEE
             // -------------------------
             {
@@ -659,15 +675,54 @@ export class LayoutComponent implements OnInit {
     });
   }
 
-  // Check if any child or grandchild route is active
+  // Check if any child or grandchild route is active.
+  // Besides exact matches, any page under the item's own path (e.g. a
+  // product's /amend/preview or /success page) keeps the item open, so the
+  // sidebar does not collapse after save / submit / approve / reject.
   isAnyDescendantActive(item: MenuItem): boolean {
     if (!item.children) return false;
 
-    return item.children.some(
+    const exact = item.children.some(
       (child) =>
         this.activeRoute === child.route || // exact match
         (child.children ? this.isAnyDescendantActive(child) : false),
     );
+
+    return exact || this.isUnderItemPath(item);
+  }
+
+  // True when the current URL sits under the common path of all the item's
+  // leaf routes (needs at least /dashboard/<area>/<product> to count).
+  private isUnderItemPath(item: MenuItem): boolean {
+    const base = this.commonRoutePrefix(this.collectLeafRoutes(item));
+    if (!base) return false;
+    return (
+      this.activeRoute === base || this.activeRoute.startsWith(base + '/')
+    );
+  }
+
+  private collectLeafRoutes(item: MenuItem): string[] {
+    if (!item.children?.length) return item.route ? [item.route] : [];
+    return item.children.flatMap((child) => this.collectLeafRoutes(child));
+  }
+
+  private commonRoutePrefix(routes: string[]): string {
+    const lists = routes
+      .map((r) => r.split(/[?#]/)[0].split('/').filter(Boolean))
+      .filter((segments) => segments.length > 0);
+    if (!lists.length) return '';
+
+    const prefix: string[] = [];
+    for (let i = 0; i < lists[0].length; i++) {
+      if (lists.every((segments) => segments[i] === lists[0][i])) {
+        prefix.push(lists[0][i]);
+      } else {
+        break;
+      }
+    }
+
+    // Too short a prefix (e.g. just "dashboard") would match everything
+    return prefix.length >= 3 ? '/' + prefix.join('/') : '';
   }
 
   /**

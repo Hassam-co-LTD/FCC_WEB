@@ -122,6 +122,7 @@
         <th>Amount</th>
         <th>Applicant</th>
         <th>Beneficiary</th>
+        <th *ngIf="showBackofficeRemarks">Backoffice Remarks</th>
         <th class="sticky-action">Action</th>
       </tr>
     </thead>
@@ -151,6 +152,12 @@
         <td>{{ tx.amount }}</td>
         <td>{{ tx.applicantName }}</td>
         <td>{{ tx.beneficiaryName }}</td>
+        <td *ngIf="showBackofficeRemarks">
+          <span *ngIf="tx.status === 'B'">
+            {{ tx.rejectionReason }}<br />
+            <small>Ref No: {{ tx.backofficeRefNo }}</small>
+          </span>
+        </td>
         <td class="sticky-action">
           <button
             *ngIf="hasPermission('ILC_InquiryPreview')"

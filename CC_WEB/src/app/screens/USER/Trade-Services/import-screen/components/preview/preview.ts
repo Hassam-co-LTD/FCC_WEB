@@ -229,9 +229,25 @@ export class Preview implements OnInit {
       .approveTransaction(this.currentTx.tnxId, this.currentTx)
       .subscribe({
         next: (res) => {
-          this.snackBar.open('Transaction approved', 'Close', {
-            duration: 3000,
-          });
+          // Backoffice B (rejected) -> LC is back in Pending tab
+          if (res?.status === 'B') {
+            this.snackBar.open(
+              `Rejected by backoffice: ${res.rejectionReason ?? ''}`,
+              'Close',
+              { duration: 5000 },
+            );
+            this.router.navigate(
+              ['/dashboard/Trade-Services/import-screen/inquiries'],
+              { queryParams: { tab: 'pending' } },
+            );
+            return;
+          }
+
+          this.snackBar.open(
+            `Transaction approved. Backoffice Ref No: ${res?.backofficeRefNo ?? ''}`,
+            'Close',
+            { duration: 5000 },
+          );
           this.router.navigate(
             ['/dashboard/Trade-Services/import-screen/success'],
             { state: { transaction: res } },
