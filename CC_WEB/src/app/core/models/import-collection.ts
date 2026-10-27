@@ -1,8 +1,8 @@
+// Import Collection is received from the middleware and is preview-only in CC_WEB.
 export interface ImportCollectionTransaction {
   id?: number;
 
-  // Columns still used by the copied inquiry list pages
-  // (to be replaced by Import Collection columns)
+  // Inquiry list columns
   customerReference?: string;
   advisingBankName?: string;
   issuerReference?: string;
@@ -78,6 +78,7 @@ export interface ImportCollectionTransaction {
     value: string;
   }[];
 
+  // file is Base64 text when received from the backend
   attachments?: {
     id?: number;
     fileName: string;

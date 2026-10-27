@@ -443,28 +443,25 @@ export class LayoutComponent implements OnInit {
             },
 
             // -------------------------
-            // EXPORT LC
+            // EXPORT LC (received via middleware, inquiry / preview only)
             // -------------------------
             {
               label: 'Export LC',
-              route: '/dashboard/Trade-Services/exportlc-welcome',
+              route: '/dashboard/Trade-Services/export-screen/inquiries',
               open: false,
               children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/export-screen' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/export-screen/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
               ]
             },
 
             // -------------------------
-            // IMPORT COLLECTION (no create)
+            // IMPORT COLLECTION (received via middleware, inquiry / preview only)
             // -------------------------
             {
               label: 'Import Collection',
               route: '/dashboard/Trade-Services/import-collection-welcome',
               open: false,
               children: [
-                { label: 'Amend', route: '/dashboard/Trade-Services/import-collection/approved-inquiry-records' },
                 { label: 'Inquiries', route: '/dashboard/Trade-Services/import-collection/inquiries' },
               ]
             },

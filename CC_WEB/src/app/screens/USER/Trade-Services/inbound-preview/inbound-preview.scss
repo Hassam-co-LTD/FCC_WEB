@@ -1,0 +1,136 @@
+@use '../../../../../styles/theme' as theme;
+
+/* Same look as the other Trade Services preview pages */
+.preview-page {
+  background: theme.$light-bg;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid theme.$border-light;
+  box-shadow: 0 3px 10px rgba(13, 71, 161, 0.05);
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 26px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: theme.$primary;
+  border-bottom: 2px solid theme.$border-light;
+  padding-bottom: 10px;
+}
+
+.read-only-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: theme.$primary-dark;
+  background: theme.$hover-bg;
+  border: 1px solid theme.$border-light;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.state-message {
+  color: theme.$text-dark;
+
+  &.error {
+    color: #c62828;
+  }
+}
+
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.preview-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.preview-card {
+  padding: 22px;
+  border-radius: 12px;
+  background: theme.$white;
+  border: 1px solid theme.$border-light;
+  box-shadow: 0 2px 8px rgba(13, 71, 161, 0.08);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: theme.$primary-dark;
+  border-bottom: 1px solid theme.$border-light;
+  padding-bottom: 8px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  row-gap: 12px;
+  column-gap: 30px;
+  word-wrap: break-word;
+}
+
+.preview-label {
+  font-weight: 500;
+  color: theme.$text-dark;
+}
+
+.preview-value {
+  color: theme.$text-dark;
+  font-size: small;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.attachment-grid {
+  display: grid;
+  grid-template-columns: 70px 1fr 80px;
+  padding: 8px 0;
+  border-bottom: 1px solid theme.$border-light;
+  align-items: center;
+  font-size: 14px;
+
+  &.header {
+    font-weight: 700;
+    background: theme.$hover-bg;
+    border-bottom: 2px solid theme.$border-primary;
+  }
+}
+
+.pdf-icon {
+  color: #c62828;
+}
+
+.action-icon {
+  cursor: pointer;
+
+  &:hover {
+    color: theme.$primary-hover;
+  }
+}
+
+.actions {
+  margin-top: 35px;
+  display: flex;
+  justify-content: flex-end;
+}

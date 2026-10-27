@@ -1,5 +1,5 @@
 import { Component, PLATFORM_ID, OnInit, inject } from '@angular/core';
-import { finalize, delay } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,6 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
  
-import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import {
   ExportDropdown,
   ExportFormat,
@@ -41,15 +40,6 @@ export class InquiriesOfRecords implements OnInit {
   showAdvanced = false;
   searchQuery = '';
   advisingBankFilter = '';
-  activeTab = 'pending';
-  tabs = [
-    { key: 'live', label: 'Live' },
-    { key: 'pending', label: 'Pending' },
-    { key: 'submitted', label: 'Submitted' },
-    { key: 'approved', label: 'Approved' },
-    { key: 'rejected', label: 'Rejected' },
-    // { key: 'response awaited', label: 'Response Awaited'}
-  ];
   permissionNames: string[] = [];
  
   hasPermission(permission: string): boolean {
@@ -71,7 +61,6 @@ export class InquiriesOfRecords implements OnInit {
  
   constructor(
     private api: ApiService,
-    private transactionService: ImportlcFormTransactionService,
     private router: Router,
     private route: ActivatedRoute,
   ) {}
@@ -87,18 +76,6 @@ export class InquiriesOfRecords implements OnInit {
       }
     }
     console.log('Import Collection Permissions:', this.permissionNames);
-    this.route.queryParamMap.subscribe((params) => {
-      const tab = params.get('tab');
-      if (tab && this.tabs.some((t) => t.key === tab)) {
-        this.activeTab = tab;
-      }
- 
-       this.hasLoadedData = false;
-       this.allTransactions = [];
-       this.filteredTransactions = [];
-      // this.currentPage = 1;
-      // this.loadTransactions();
-    });
  
     // this.transactionService.transactionsStream$.subscribe((txList) => {
     //   this.allTransactions = txList;
@@ -117,38 +94,9 @@ export class InquiriesOfRecords implements OnInit {
      this.allTransactions = [];
      this.filteredTransactions = [];
  
-     if (this.activeTab === 'live') {
-       this.api
-         .getLiveEventHistory()
-         .pipe(
-           finalize(() => {
-             this.isLoading = false;
-             this.hasLoadedData = true;
-           }),
-         )
-         .subscribe({
-           next: (txList) => {
-             this.allTransactions = txList;
-             this.applyFilters();
-           },
- 
-           error: (error) => {
-             console.error('Failed to load live transactions:', error);
- 
-             this.allTransactions = [];
-             this.filteredTransactions = [];
-           },
-         });
- 
-       return;
-     }
- 
-     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
- 
      this.api
-       .getRecordTransactionsByStatus(backendStatus)
+       .getImportCollectionRecords()
        .pipe(
-         delay(1500),
          finalize(() => {
            this.isLoading = false;
            this.hasLoadedData = true;
@@ -162,7 +110,7 @@ export class InquiriesOfRecords implements OnInit {
  
          error: (error) => {
            console.error(
-             `Failed to load ${this.activeTab} transactions:`,
+             'Failed to load records:',
              error,
            );
  
@@ -228,32 +176,7 @@ export class InquiriesOfRecords implements OnInit {
   //   this.applyFilters();
   // }
  
-  //  setActiveTab(tab: string): void {
-  // this.activeTab = tab;
-  // this.currentPage = 1;
-  // this.loadTransactions();
-  //  this.router.navigate([], {
-  //  relativeTo: this.route,
-  // queryParams: { tab },
-  // queryParamsHandling: 'merge'
-  // });
-  //}
-  setActiveTab(tab: string): void {
-  if (this.activeTab === tab) {
-    return;
-  }
- 
-  this.activeTab = tab;
-  this.currentPage = 1;
- 
-  // Clear existing data.
-  // User must explicitly click Load Records.
-  this.allTransactions = [];
-  this.filteredTransactions = [];
- 
-  this.hasLoadedData = false;
-  }
- 
+  // 
   // private loadByStatus(status: string): void {
   //   const backendStatus = this.mapTabToBackendStatus(status);
   //   this.api.getTransactionsByStatus(backendStatus).subscribe({
@@ -368,88 +291,35 @@ export class InquiriesOfRecords implements OnInit {
   //   this.transactionService.setCurrentTransaction(tx, true);
   //   this.router.navigate(['/import-collection/preview']);
   // }
+  // Import Collection is preview-only: received from the middleware, never edited or amended
   viewTransaction(tx: ImportCollectionTransaction): void {
     if (!this.hasPermission('ILC_InquiryPreview')) {
       return;
     }
- 
-    const readOnly = ['A', 'R'].includes(tx.status!);
- 
-    this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
-      next: (freshTx) => {
-        this.transactionService.setCurrentTransaction(freshTx, readOnly);
-        this.router.navigate([
-          '/dashboard/Trade-Services/import-collection/amend/preview',
-        ]);
-      },
-      error: () => {
-        this.transactionService.setCurrentTransaction(tx, readOnly);
-        this.router.navigate([
-          '/dashboard/Trade-Services/import-collection/amend/preview',
-        ]);
-      },
-    });
+
+    this.router.navigate([
+      '/dashboard/Trade-Services/import-collection/view',
+      tx.tnxId,
+    ]);
   }
- 
-  openExport(tx: ImportCollectionTransaction) {
-    if (!this.hasPermission('ILC_Amend')) {
-      return;
-    }
- 
-    if (this.activeTab === 'live') {
-      // Live tab rows are event records — navigate by eventRefNo
-      this.router.navigate(
-        ['/dashboard/Trade-Services/import-collection/amend', tx.tnxId],
-        {
-          queryParams: {
-            mode: 'READ_ONLY',
-            tab: 'live',
-            eventRefNo: tx.eventRefNo ?? '',
-          },
-        },
-      );
-      return;
-    }
-    // No create screen for Import Collection — open the amendment screen
-    // for the selected pending / submitted / approved / rejected event
-    this.router.navigate(
-      ['/dashboard/Trade-Services/import-collection/amend', tx.tnxId],
-      {
-        queryParams: {
-          tab: this.activeTab,
-          eventRefNo: tx.eventRefNo ?? '',
-        },
-      },
-    );
-  }
- 
+
   trackByTnxId(_: number, tx: ImportCollectionTransaction): string {
-    return tx.eventRefNo ?? tx.tnxId!;
+    return tx.tnxId!;
   }
- 
-  private resolveScreenMode(tab: string): 'EDIT' | 'APPROVAL' | 'READ_ONLY' {
-    switch (tab) {
-      case 'pending':
-        return 'EDIT';
-      case 'submitted':
-        return 'APPROVAL';
+
+  // I / S / A / R from the bank feed -> readable label
+  statusLabel(status?: string): string {
+    switch ((status ?? '').toUpperCase()) {
+      case 'I':
+        return 'Pending';
+      case 'S':
+        return 'Submitted';
+      case 'A':
+        return 'Approved';
+      case 'R':
+        return 'Rejected';
       default:
-        return 'READ_ONLY';
-    }
-  }
- 
-  private mapTabToBackendStatus(tab: string): string {
-    switch (tab) {
-      case 'pending':
-        return 'i';
-      case 'submitted':
-        return 's';
-      case 'approved':
-        return 'a';
-      case 'rejected':
-        return 'r';
-      default:
-        return 'i';
+        return status ?? '';
     }
   }
  
@@ -482,37 +352,12 @@ export class InquiriesOfRecords implements OnInit {
     const pageHeight = doc.internal.pageSize.getHeight();
  
     const reportTitle = 'Import Collection Records Report';
-    const statusTitle = this.activeTab.toUpperCase();
+    const statusTitle = 'ALL';
  
     // =========================
     // Status color
     // =========================
-    let statusColor: [number, number, number];
- 
-    switch (this.activeTab.toLowerCase()) {
-      case 'live':
-        statusColor = [40, 167, 69];
-        break;
- 
-      case 'pending':
-        statusColor = [255, 193, 7];
-        break;
- 
-      case 'submitted':
-        statusColor = [0, 123, 255];
-        break;
- 
-      case 'approved':
-        statusColor = [40, 167, 69];
-        break;
- 
-      case 'rejected':
-        statusColor = [220, 53, 69];
-        break;
- 
-      default:
-        statusColor = [108, 117, 125];
-    }
+    const statusColor: [number, number, number] = [108, 117, 125];
  
     // =========================
     // Top Header
@@ -641,26 +486,14 @@ export class InquiriesOfRecords implements OnInit {
       [key: number]: any;
     } = {};
  
-    if (this.activeTab === 'live') {
-      Object.assign(columnStyles, {
-        0: { cellWidth: 38 }, // Event Ref No
-        1: { cellWidth: 30 }, // TNX ID
-        2: { cellWidth: 12 }, // Event Seq.
-        3: { cellWidth: 18 }, // Event
-        4: { cellWidth: 22 }, // Created
-        5: { cellWidth: 45 }, // Customer Reference
-        6: { cellWidth: 55 }, // Advising Bank
-        7: { cellWidth: 45 }, // Issuer Reference
-      });
-    } else {
-      Object.assign(columnStyles, {
-        0: { cellWidth: 25 }, // TNX ID
-        1: { cellWidth: 23 }, // Created
-        2: { cellWidth: 45 }, // Customer Reference
-        3: { cellWidth: 55 }, // Advising Bank
-        4: { cellWidth: 45 }, // Issuer Reference
-      });
-    }
+    Object.assign(columnStyles, {
+      0: { cellWidth: 28 }, // TNX ID
+      1: { cellWidth: 23 }, // Created
+      2: { cellWidth: 22 }, // Status
+      3: { cellWidth: 45 }, // Customer Reference
+      4: { cellWidth: 55 }, // Advising Bank
+      5: { cellWidth: 45 }, // Issuer Reference
+    });
  
     // =========================
     // Table
@@ -773,28 +606,16 @@ export class InquiriesOfRecords implements OnInit {
     // =========================
     // File Name
     // =========================
-    const fileName = `ImportCollection_${this.activeTab}_Report_${this.getCurrentDate()}.pdf`;
+    const fileName = `ImportCollection_Report_${this.getCurrentDate()}.pdf`;
  
     doc.save(fileName);
   }
  
   private getReportHeaders(): string[] {
-    if (this.activeTab === 'live') {
-      return [
-        'Event Ref No',
-        'TNX ID',
-        'Event Seq.',
-        'Event',
-        'Created',
-        'Customer Reference',
-        'Advising Bank',
-        'Issuer Reference',
-      ];
-    }
- 
     return [
       'TNX ID',
       'Created',
+      'Status',
       'Customer Reference',
       'Advising Bank',
       'Issuer Reference',
@@ -840,22 +661,10 @@ export class InquiriesOfRecords implements OnInit {
   }
  
   private getReportRow(tx: ImportCollectionTransaction): any[] {
-    if (this.activeTab === 'live') {
-      return [
-        tx.eventRefNo ?? '',
-        tx.tnxId ?? '',
-        String(tx.eventSequence ?? ''),
-        tx.eventType ?? '',
-        this.formatReportDate(tx.createdOn),
-        tx.customerReference ?? '',
-        tx.advisingBankName ?? '',
-        tx.issuerReference ?? '',
-      ];
-    }
- 
     return [
       tx.tnxId ?? '',
       this.formatReportDate(tx.createdOn),
+      this.statusLabel(tx.status),
       tx.customerReference ?? '',
       tx.advisingBankName ?? '',
       tx.issuerReference ?? '',
@@ -928,7 +737,7 @@ export class InquiriesOfRecords implements OnInit {
  
   //   link.href = url;
  
-  //   link.download = `ImportCollection_${this.activeTab}_Report_${this.getCurrentDate()}.csv`;
+  //   link.download = `ImportCollection_Report_${this.getCurrentDate()}.csv`;
  
   //   document.body.appendChild(link);
  
@@ -1020,22 +829,10 @@ export class InquiriesOfRecords implements OnInit {
   // }
  
   private getExcelRow(tx: ImportCollectionTransaction): any[] {
-    if (this.activeTab === 'live') {
-      return [
-        tx.eventRefNo ?? '',
-        tx.tnxId ?? '',
-        tx.eventSequence ?? '',
-        tx.eventType ?? '',
-        tx.createdOn ?? '',
-        tx.customerReference ?? '',
-        tx.advisingBankName ?? '',
-        tx.issuerReference ?? '',
-      ];
-    }
- 
     return [
       tx.tnxId ?? '',
       tx.createdOn ?? '',
+      this.statusLabel(tx.status),
       tx.customerReference ?? '',
       tx.advisingBankName ?? '',
       tx.issuerReference ?? '',
@@ -1059,7 +856,7 @@ export class InquiriesOfRecords implements OnInit {
  
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Import Collection Records');
  
-    const fileName = `ImportCollection_${this.activeTab}_Report_${this.getCurrentDate()}.xlsx`;
+    const fileName = `ImportCollection_Report_${this.getCurrentDate()}.xlsx`;
  
     XLSX.writeFile(workbook, fileName);
   }
