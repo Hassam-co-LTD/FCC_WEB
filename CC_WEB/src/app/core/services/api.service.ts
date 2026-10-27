@@ -1824,15 +1824,24 @@ export class ApiService {
   }
 
   // verify customer account from core banking api
-  verifyCustomerAccount(accountNumber: string) {
+  submitCustomerRegistration(request: {
+    name: string;
+    cnic: string;
+    contactNumber: string;
+    email: string;
+    remarks: string;
+  }) {
     return this.http.post<any>(
-      `${this.adminBaseUrl}customer-registration/verify-bank-account`,
-      {
-        accountNumber: accountNumber,
-      },
+      `${this.adminBaseUrl}customer-registration-requests`,
+      request,
     );
   }
 
+  getPendingCustomerRegistrationRequests() {
+    return this.http.get<any[]>(
+      `${this.adminBaseUrl}customer-registration-requests/pending`,
+    );
+  }
   // send an user prompt
 
   sendMessage(payload: {
@@ -1884,6 +1893,26 @@ export class ApiService {
       {
         challengeId,
         answer,
+      },
+    );
+  }
+
+  getPendingRequestCount() {
+    return this.http.get<number>(
+      `${this.adminBaseUrl}customer-registration-requests/pending/count`,
+    );
+  }
+
+  // verify otp
+  verifyOtp(email: string, otp: string) {
+    return this.http.post(
+      'http://localhost:8050/secondAdmin/api/v1/otp/verify',
+      {
+        email,
+        otp,
+      },
+      {
+        responseType: 'text',
       },
     );
   }

@@ -1,1 +1,281 @@
-<p>middle-office works!</p>
+<div class="path">
+  <div class="page-header">
+    <div>
+      <div class="eyebrow">MIDDLE OFFICE</div>
+      <h1>Customer Registration Requests</h1>
+      <p class="page-description">
+        Review new-to-bank customer registration requests submitted for
+        approval.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="loadRequests()"
+      [disabled]="isLoading"
+    >
+      <span class="refresh-icon">↻</span>
+      {{ isLoading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon">▤</div>
+      <div>
+        <p class="summary-label">Loaded Requests</p>
+        <h2>{{ requests.length }}</h2>
+      </div>
+    </div>
+
+    <div class="summary-card pending-card">
+      <div class="summary-icon">◷</div>
+      <div>
+        <p class="summary-label">Pending Review</p>
+        <h2>{{ pendingCount }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <section class="content-card">
+    <div class="section-header">
+      <div>
+        <h2>Registration Queue</h2>
+        <p>Search and open a request to review its submitted details.</p>
+      </div>
+
+      <span class="request-count"> {{ filteredRequests.length }} results </span>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search name, CNIC, email or request ID..."
+          aria-label="Search customer registration requests"
+        />
+      </div>
+
+      <select
+        [(ngModel)]="statusFilter"
+        aria-label="Filter by request status"
+        class="status-filter"
+      >
+        <option value="ALL">All loaded statuses</option>
+        <option value="PENDING_REVIEW">Pending Review</option>
+        <option value="APPROVED">Approved</option>
+        <option value="REJECTED">Rejected</option>
+      </select>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <span class="alert-symbol">!</span>
+      <span>{{ errorMessage }}</span>
+      <button type="button" class="text-button" (click)="loadRequests()">
+        Try again
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="state-message">
+      <span class="loader"></span>
+      <p>Loading customer registration requests...</p>
+    </div>
+
+    <div
+      *ngIf="!isLoading && !errorMessage && filteredRequests.length === 0"
+      class="empty-state"
+    >
+      <div class="empty-icon">▤</div>
+      <h3>No registration requests found</h3>
+      <p *ngIf="searchTerm">Try changing your search text or status filter.</p>
+      <p *ngIf="!searchTerm">
+        There are currently no requests matching this filter.
+      </p>
+    </div>
+
+    <div
+      *ngIf="!isLoading && !errorMessage && filteredRequests.length > 0"
+      class="table-wrapper"
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Customer</th>
+            <th>Contact Details</th>
+            <th>Submitted On</th>
+            <th>Status</th>
+            <th class="actions-heading">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="
+              let request of filteredRequests;
+              trackBy: trackByRequestId
+            "
+          >
+            <td>
+              <span class="request-id"> #{{ request.id }} </span>
+            </td>
+
+            <td>
+              <div class="customer-cell">
+                <div class="avatar">
+                  {{ request.name?.charAt(0)?.toUpperCase() || 'C' }}
+                </div>
+                <div>
+                  <div class="customer-name">{{ request.name }}</div>
+                  <div class="secondary-text">CNIC: {{ request.cnic }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <div class="contact-cell">
+                <span>{{ request.email }}</span>
+                <span class="secondary-text">{{ request.contactNumber }}</span>
+              </div>
+            </td>
+
+            <td>
+              <span class="date-text">
+                {{ request.createdOn ? (request.createdOn | date: 'dd MMM yyyy,
+                hh:mm a') : '—' }}
+              </span>
+            </td>
+
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="{
+                  'status-pending':
+                    request.status?.toUpperCase() === 'PENDING_REVIEW',
+                  'status-approved':
+                    request.status?.toUpperCase() === 'APPROVED',
+                  'status-rejected':
+                    request.status?.toUpperCase() === 'REJECTED'
+                }"
+              >
+                {{ request.status?.replace('_', ' ') || 'UNKNOWN' }}
+              </span>
+            </td>
+
+            <td class="actions-cell">
+              <button
+                type="button"
+                class="btn-view"
+                (click)="viewDetails(request)"
+              >
+                View Details
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Request details modal -->
+  <div
+    *ngIf="showDetails && selectedRequest"
+    class="modal-backdrop"
+    (click)="closeDetails()"
+  >
+    <section
+      class="details-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="details-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">REGISTRATION REVIEW</span>
+          <h2 id="details-title">Request #{{ selectedRequest.id }}</h2>
+          <p>Review the customer information submitted for registration.</p>
+        </div>
+
+        <button
+          type="button"
+          class="close-button"
+          aria-label="Close details"
+          (click)="closeDetails()"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-profile">
+          <div class="avatar avatar-large">
+            {{ selectedRequest.name?.charAt(0)?.toUpperCase() || 'C' }}
+          </div>
+          <div>
+            <h3>{{ selectedRequest.name }}</h3>
+            <span class="status-badge status-pending">
+              {{ selectedRequest.status?.replace('_', ' ') }}
+            </span>
+          </div>
+        </div>
+
+        <h3 class="detail-section-title">Customer Information</h3>
+
+        <div class="details-grid">
+          <div class="detail-field">
+            <label>Full Name</label>
+            <p>{{ selectedRequest.name || '—' }}</p>
+          </div>
+
+          <div class="detail-field">
+            <label>CNIC</label>
+            <p>{{ selectedRequest.cnic || '—' }}</p>
+          </div>
+
+          <div class="detail-field">
+            <label>Email Address</label>
+            <p>{{ selectedRequest.email || '—' }}</p>
+          </div>
+
+          <div class="detail-field">
+            <label>Contact Number</label>
+            <p>{{ selectedRequest.contactNumber || '—' }}</p>
+          </div>
+
+          <div class="detail-field">
+            <label>Request Submitted</label>
+            <p>
+              {{ selectedRequest.createdOn ? (selectedRequest.createdOn | date:
+              'dd MMM yyyy, hh:mm a') : '—' }}
+            </p>
+          </div>
+
+          <div class="detail-field">
+            <label>Current Status</label>
+            <p>{{ selectedRequest.status?.replace('_', ' ') || '—' }}</p>
+          </div>
+        </div>
+
+        <div class="remarks-field">
+          <label>Customer Remarks</label>
+          <p>{{ selectedRequest.remarks || 'No remarks provided.' }}</p>
+        </div>
+
+        <div *ngIf="selectedRequest.reviewRemarks" class="remarks-field">
+          <label>Review Remarks</label>
+          <p>{{ selectedRequest.reviewRemarks }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeDetails()">
+          Close
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

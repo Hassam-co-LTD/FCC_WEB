@@ -191,9 +191,33 @@
             </div>
           </div>
 
-          <!-- ================================================= -->
+          <!-- cnic -->
+
+          <div class="field-group">
+            <h4>CNIC</h4>
+
+            <mat-form-field appearance="outline">
+              <input
+                matInput
+                type="text"
+                formControlName="cnic"
+                placeholder="Enter CNIC"
+                [readonly]="isReadOnly()"
+              />
+            </mat-form-field>
+
+            <!-- Previous Value -->
+
+            <div class="previous-value" *ngIf="hasPreviousValue('cnic')">
+              <span class="previous-label">Previous Value:</span>
+
+              <span class="previous-text">
+                {{ getPreviousValue('cnic') }}
+              </span>
+            </div>
+          </div>
+
           <!-- CUSTOMER STATUS -->
-          <!-- ================================================= -->
 
           <div class="field-group">
             <h4>Customer Status</h4>

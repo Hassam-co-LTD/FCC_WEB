@@ -135,7 +135,16 @@
           (click)="item.label === 'Logout' ? Logout() : goTo(item)"
         >
           <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+
           <span *ngIf="!isCollapsed()">{{ item.label }}</span>
+
+          <!-- NEW: Pending customer registration notification -->
+          <span
+            *ngIf="item.route === '/middle-office' && pendingRequestCount > 0 && !isCollapsed()"
+            class="notification-badge"
+          >
+            {{ pendingRequestCount }}
+          </span>
         </button>
       </ng-template>
     </aside>
