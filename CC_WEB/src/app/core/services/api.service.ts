@@ -22,6 +22,8 @@ import { UndertakingGuarantee } from '../models/undertaking-lc';
 import { ShippingGuaranteeTransaction } from '../models/shipping-guarantee';
 import { DynamicFieldsResponseDto } from '../../screens/ADMIN/admin-dashboard/components/create-generate-fields/create-generate-fields';
 import { ExportCollectionTransaction } from '../models/export-collection';
+import { ImportCollectionTransaction } from '../models/import-collection';
+import { ExportScreenTransaction } from '../models/export-lc';
 import { UserDashboardResponse } from '../models/user-dashboard-transaction-activities';
 import { getSessionItem, readSessionJson } from '../utils/browser-storage';
 
@@ -757,6 +759,52 @@ export class ApiService {
   }
 
   // -------------------- SHIPPING GUARANTEE API MODULE END --------------------
+
+  // =================================================================
+  // IMPORT COLLECTION / EXPORT LC (read-only, received via middleware)
+  // =================================================================
+
+  // Inquiry list. status omitted = all records of the company
+  getImportCollectionRecords(
+    status?: string,
+  ): Observable<ImportCollectionTransaction[]> {
+    const params = status ? new HttpParams().set('status', status) : undefined;
+    return this.http
+      .get<ImportCollectionTransaction[]>(
+        `${this.baseUrl}/importcollection/records`,
+        { headers: this.headers, params },
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  getImportCollectionByTnxId(
+    tnxId: string,
+  ): Observable<ImportCollectionTransaction> {
+    return this.http
+      .get<ImportCollectionTransaction>(
+        `${this.baseUrl}/importcollection/${tnxId}`,
+        { headers: this.headers },
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  getExportLcRecords(status?: string): Observable<ExportScreenTransaction[]> {
+    const params = status ? new HttpParams().set('status', status) : undefined;
+    return this.http
+      .get<ExportScreenTransaction[]>(`${this.baseUrl}/exportlc/records`, {
+        headers: this.headers,
+        params,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  getExportLcByTnxId(tnxId: string): Observable<ExportScreenTransaction> {
+    return this.http
+      .get<ExportScreenTransaction>(`${this.baseUrl}/exportlc/${tnxId}`, {
+        headers: this.headers,
+      })
+      .pipe(catchError(this.handleError));
+  }
 
   // =================================================================
   // API Methods For EXPORT COLLECTION MODULE START
