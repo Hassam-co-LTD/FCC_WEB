@@ -1,8 +1,8 @@
 <!-- ================= HEADER ================= -->
 <div class="page-header">
   <div class="title">
-    <h2>{{ activeTab | titlecase }} Export Records</h2>
-    <p>Manage and track all Export {{ activeTab }} transactions</p>
+    <h2>Export LC Records</h2>
+    <p>Preview Export LC transactions received from the bank (read only)</p>
   </div>
 </div>
  
@@ -41,32 +41,20 @@
   </div>
 </div>
  
-<!-- ================= TABS ================= -->
-<div class="ui-tabs">
-  <div
-    class="tab"
-    *ngFor="let tab of tabs"
-    [class.active]="activeTab === tab.key"
-    (click)="setActiveTab(tab.key)"
-  >
-    {{ tab.label }}
-  </div>
-</div>
- 
 <div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
   <button class="btn-load-records" type="button" (click)="loadTransactions()">
     <mat-icon>cloud_download</mat-icon>
-    Load {{ activeTab | titlecase }} Records
+    Load Records
   </button>
  
-  <span> Click to retrieve the latest {{ activeTab }} Export records </span>
+  <span> Click to retrieve the latest Export records </span>
 </div>
  
 <div class="filter-row">
   <div class="results-summary">
     Showing <strong>{{ pagedTransactions.length }}</strong> of
     <strong>{{ filteredTransactions.length }}</strong>
-    {{ activeTab }} records
+    records
   </div>
  
   <app-export-dropdown
@@ -83,7 +71,7 @@
     <h3>Records not loaded</h3>
  
     <p>
-      Click the button below to retrieve {{ activeTab | titlecase }} Export
+      Click the button below to retrieve Export
       records.
     </p>
  
@@ -110,39 +98,32 @@
   <table>
     <thead>
       <tr>
-        <th *ngIf="activeTab == 'live'">Event Ref No</th>
         <th (click)="sortBy('tnxId')">TNX ID</th>
-        <th *ngIf="activeTab == 'live'">Event Sequence</th>
-        <th *ngIf="activeTab == 'live'">Event</th>
         <th (click)="sortBy('createdOn')">Created</th>
+        <th>Status</th>
         <th>Customer Reference</th>
         <th>Advising Bank</th>
         <th>Issuer Reference</th>
+        <th (click)="sortBy('currency')">Currency</th>
+        <th (click)="sortBy('amount')">Amount</th>
+        <th (click)="sortBy('expiryDate')">Expiry</th>
         <th class="sticky-action">Action</th>
       </tr>
     </thead>
- 
+
     <tbody>
       <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
-        <td *ngIf="activeTab == 'live'">
-          <a class="tnx-link" (click)="openExport(tx)">{{ tx.eventRefNo }}</a>
-        </td>
         <td>
-          <a
-            class="tnx-link"
-            *ngIf="activeTab !== 'live'"
-            (click)="openExport(tx)"
-          >
-            {{ tx.tnxId }}
-          </a>
-          <span *ngIf="activeTab === 'live'">{{ tx.tnxId }}</span>
+          <a class="tnx-link" (click)="viewTransaction(tx)">{{ tx.tnxId }}</a>
         </td>
-        <td *ngIf="activeTab == 'live'">{{ tx.eventSequence }}</td>
-        <td *ngIf="activeTab == 'live'">{{ tx.eventType }}</td>
         <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+        <td>{{ statusLabel(tx.status) }}</td>
         <td>{{ tx.customerReference }}</td>
         <td>{{ tx.advisingBankName }}</td>
         <td>{{ tx.issuerReference }}</td>
+        <td>{{ tx.currency }}</td>
+        <td>{{ tx.amount | number:'1.2-2' }}</td>
+        <td>{{ tx.expiryDate | date:'yyyy-MM-dd' }}</td>
         <td class="sticky-action">
           <button
             *ngIf="hasPermission('ILC_InquiryPreview')"
@@ -156,7 +137,7 @@
  
       <tr *ngIf="pagedTransactions.length === 0">
         <td colspan="20" class="no-records">
-          No {{ activeTab }} Export records found
+          No Export records found
         </td>
       </tr>
     </tbody>

@@ -450,7 +450,7 @@ export const routes: Routes = [
                 (m) => m.TradeServices,
               ),
             children: [
-              // ---------- EXPORT LC ----------
+              // ---------- EXPORT LC (received via middleware, preview only) ----------
               {
                 path: 'export-screen/inquiries',
                 loadComponent: () =>
@@ -459,79 +459,15 @@ export const routes: Routes = [
                   ),
               },
               {
-                path: 'export-screen/approved-inquiry-records',
+                path: 'export-screen/view/:tnxId',
                 loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
-                    (m) => m.ApprovedInquiryRecords,
+                  import('./screens/USER/Trade-Services/inbound-preview/inbound-preview').then(
+                    (m) => m.InboundPreview,
                   ),
-              },
-              {
-                path: 'export-screen/amend',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
-                    (m) => m.AmendScreen,
-                  ),
-              },
-              {
-                path: 'export-screen/amend/preview',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/components/preview/preview').then(
-                    (m) => m.Preview,
-                  ),
-              },
-              {
-                path: 'export-screen/amend/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/sub-menus/events/amend-export-event/amend').then(
-                    (m) => m.AmendScreen,
-                  ),
-              },
-              {
-                path: 'export-screen/preview',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(
-                    (m) => m.ExportPreview,
-                  ),
-              },
-              {
-                path: 'export-screen/success',
-                loadComponent: () =>
-                  import('./shared/success/success').then((m) => m.Success),
-              },
-              {
-                path: 'export-screen/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-                    (m) => m.ExportScreen,
-                  ),
-              },
-              {
-                path: 'export-screen',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-                    (m) => m.ExportScreen,
-                  ),
-              },
-              {
-                path: 'exportlc-welcome',
-                loadComponent: () =>
-                  import('./shared/welcome-screen/welcome-screen').then(
-                    (m) => m.WelcomeScreen,
-                  ),
-                data: {
-                  title: 'Welcome to Export LC',
-                  description: 'Manage all Export LC activities here.',
-                  createRoute: '/dashboard/Trade-Services/export-screen',
-                  templateRoute:
-                    '/dashboard/Trade-Services/export-screen?mode=template',
-                  existingRoute:
-                    '/dashboard/Trade-Services/export-screen/inquiries',
-                  uploadRoute:
-                    '/dashboard/Trade-Services/export-screen?mode=upload',
-                },
+                data: { product: 'export-lc' },
               },
 
-              // ---------- IMPORT COLLECTION (inquiry + amend only) ----------
+              // ---------- IMPORT COLLECTION (received via middleware, preview only) ----------
               {
                 path: 'import-collection/inquiries',
                 loadComponent: () =>
@@ -540,37 +476,12 @@ export const routes: Routes = [
                   ),
               },
               {
-                path: 'import-collection/approved-inquiry-records',
+                path: 'import-collection/view/:tnxId',
                 loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/approved-inquiry-records/approved-inquiry-records').then(
-                    (m) => m.ApprovedInquiryRecords,
+                  import('./screens/USER/Trade-Services/inbound-preview/inbound-preview').then(
+                    (m) => m.InboundPreview,
                   ),
-              },
-              {
-                path: 'import-collection/amend',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/amend').then(
-                    (m) => m.AmendScreen,
-                  ),
-              },
-              {
-                path: 'import-collection/amend/preview',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/components/preview/preview').then(
-                    (m) => m.Preview,
-                  ),
-              },
-              {
-                path: 'import-collection/amend/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-collection/sub-menus/events/amend-import-collection-event/amend').then(
-                    (m) => m.AmendScreen,
-                  ),
-              },
-              {
-                path: 'import-collection/success',
-                loadComponent: () =>
-                  import('./shared/success/success').then((m) => m.Success),
+                data: { product: 'import-collection' },
               },
 
               // ---------- SHIPPING GUARANTEE ----------
