@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { ImportLcTransaction } from '../../../../../../../../../core/models/import-lc';
+import { ImportCollectionTransaction } from '../../../../../../../../../core/models/import-collection';
 import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
@@ -21,7 +21,6 @@ import { readSessionJson } from '../../../../../../../../../core/utils/browser-s
   imports: [
     CommonModule,
     MatIcon,
-    DecimalPipe,
     MatCard,
     HttpClientModule,
     MatDialogModule,
@@ -29,7 +28,7 @@ import { readSessionJson } from '../../../../../../../../../core/utils/browser-s
   standalone: true,
 })
 export class Preview {
-  @Input() transaction!: ImportLcTransaction;
+  @Input() transaction!: ImportCollectionTransaction;
 
   viewMode: 'submit' | 'readonly' = 'submit';
   importForm!: FormGroup;
@@ -40,7 +39,7 @@ export class Preview {
   isImage = false;
   isPdf = false;
 
-  currentTx: ImportLcTransaction | null = null;
+  currentTx: ImportCollectionTransaction | null = null;
 
   // pageName1 = 'Update';
   // pageName2 = 'Submit';
@@ -86,10 +85,56 @@ export class Preview {
       status: [this.currentTx!.status],
       createdOn: [this.currentTx!.createdOn],
 
-      customerReference: [(this.currentTx as any).customerReference],
-      advisingBankName: [this.currentTx!.advisingBankName],
-      issuerReference: [this.currentTx!.issuerReference],
-      uploadFileName: [(this.currentTx as any).uploadFileName],
+      documentRelease: [(this.currentTx as any).documentRelease],
+      productType: [(this.currentTx as any).productType],
+      receivedFromReference: [(this.currentTx as any).receivedFromReference],
+      receivedOn: [(this.currentTx as any).receivedOn],
+      collectionAmount: [(this.currentTx as any).collectionAmount],
+      sharedDirectory: [(this.currentTx as any).sharedDirectory],
+      direct: [(this.currentTx as any).direct],
+      multiplePayment: [(this.currentTx as any).multiplePayment],
+      receivedFrom: [(this.currentTx as any).receivedFrom],
+      receivedFromCode: [(this.currentTx as any).receivedFromCode],
+      receivedFromName: [(this.currentTx as any).receivedFromName],
+      receivedFromCountry: [(this.currentTx as any).receivedFromCountry],
+      sendTo: [(this.currentTx as any).sendTo],
+      sendToCode: [(this.currentTx as any).sendToCode],
+      sendToName: [(this.currentTx as any).sendToName],
+      drawerName: [(this.currentTx as any).drawerName],
+      drawerCode: [(this.currentTx as any).drawerCode],
+      drawerCountry: [(this.currentTx as any).drawerCountry],
+      draftCollectionCurrency: [(this.currentTx as any).draftCollectionCurrency],
+      draftCollectionAmount: [(this.currentTx as any).draftCollectionAmount],
+      draftAgainst: [(this.currentTx as any).draftAgainst],
+      draftIdentifier: [(this.currentTx as any).draftIdentifier],
+      draftText: [(this.currentTx as any).draftText],
+      draftAmount: [(this.currentTx as any).draftAmount],
+      tenor: [(this.currentTx as any).tenor],
+      interestRate: [(this.currentTx as any).interestRate],
+      interestStartDate: [(this.currentTx as any).interestStartDate],
+      interestEndPeriod: [(this.currentTx as any).interestEndPeriod],
+      startInterest: [(this.currentTx as any).startInterest],
+      dayBasis: [(this.currentTx as any).dayBasis],
+      startFrom: [(this.currentTx as any).startFrom],
+      interestEndDate: [(this.currentTx as any).interestEndDate],
+      graceDays: [(this.currentTx as any).graceDays],
+      waiveIfRefused: [(this.currentTx as any).waiveIfRefused],
+      goodsCode: [(this.currentTx as any).goodsCode],
+      goodsDescription: [(this.currentTx as any).goodsDescription],
+      shipmentFrom: [(this.currentTx as any).shipmentFrom],
+      expectedDate: [(this.currentTx as any).expectedDate],
+      shipmentTo: [(this.currentTx as any).shipmentTo],
+      vesselAircraft: [(this.currentTx as any).vesselAircraft],
+      urcApply: [(this.currentTx as any).urcApply],
+      acknowledgeReceipt: [(this.currentTx as any).acknowledgeReceipt],
+      adviseNonAcceptance: [(this.currentTx as any).adviseNonAcceptance],
+      adviseAcceptance: [(this.currentTx as any).adviseAcceptance],
+      advisePayment: [(this.currentTx as any).advisePayment],
+      adviseNonPayment: [(this.currentTx as any).adviseNonPayment],
+      holdDocumentsUntilArrivalOfGoods: [(this.currentTx as any).holdDocumentsUntilArrivalOfGoods],
+      protestNonAcceptance: [(this.currentTx as any).protestNonAcceptance],
+      protestNonPayment: [(this.currentTx as any).protestNonPayment],
+      allowPartPayments: [(this.currentTx as any).allowPartPayments],
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
     });
 

@@ -461,7 +461,7 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             {
               label: 'Import Collection',
-              route: '/dashboard/Trade-Services/import-collection/inquiries',
+              route: '/dashboard/Trade-Services/import-collection-welcome',
               open: false,
               children: [
                 { label: 'Amend', route: '/dashboard/Trade-Services/import-collection/approved-inquiry-records' },

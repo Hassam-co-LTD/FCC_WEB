@@ -1,0 +1,113 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Collection Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+      <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Document Release</mat-label>
+            <mat-select formControlName="documentRelease">
+              @for (option of documentReleaseOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('documentRelease')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('documentRelease') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Product Type</mat-label>
+            <mat-select formControlName="productType">
+              @for (option of productTypeOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('productType')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('productType') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Received From Reference</mat-label>
+            <input matInput type="text" formControlName="receivedFromReference" placeholder="Enter received from reference">
+          </mat-form-field>
+          @if (hasPreviousValue('receivedFromReference')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedFromReference') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Received On</mat-label>
+            <input matInput type="date" formControlName="receivedOn" placeholder="Select received on date">
+          </mat-form-field>
+          @if (hasPreviousValue('receivedOn')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedOn') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Collection Amount</mat-label>
+            <input matInput type="text" formControlName="collectionAmount" placeholder="Enter collection amount">
+          </mat-form-field>
+          @if (hasPreviousValue('collectionAmount')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('collectionAmount') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <h4>Collection Options</h4>
+      <div class="checkbox-list">
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="sharedDirectory">Shared Directory</mat-checkbox>
+          @if (hasPreviousValue('sharedDirectory')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('sharedDirectory') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="direct">Direct</mat-checkbox>
+          @if (hasPreviousValue('direct')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('direct') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="multiplePayment">Multiple Payment</mat-checkbox>
+          @if (hasPreviousValue('multiplePayment')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('multiplePayment') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

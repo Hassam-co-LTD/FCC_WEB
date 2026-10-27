@@ -15,7 +15,7 @@ import {
   ExportFormat,
 } from '../../../../../../../shared/export-dropdown/export-dropdown';
  
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { ImportCollectionTransaction } from '../../../../../../../core/models/import-collection';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 @Component({
@@ -36,8 +36,8 @@ export class InquiriesOfRecords implements OnInit {
  
   currentPage = 1;
   itemsPerPage = 10;
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
+  allTransactions: ImportCollectionTransaction[] = [];
+  filteredTransactions: ImportCollectionTransaction[] = [];
   showAdvanced = false;
   searchQuery = '';
   advisingBankFilter = '';
@@ -59,7 +59,7 @@ export class InquiriesOfRecords implements OnInit {
   }
  
   sortColumn:
-    | keyof ImportLcTransaction
+    | keyof ImportCollectionTransaction
     | 'currency'
     | 'amount'
     | 'expiryDate'
@@ -293,7 +293,7 @@ export class InquiriesOfRecords implements OnInit {
   }
  
   private applySorting(
-    source: ImportLcTransaction[] = this.allTransactions,
+    source: ImportCollectionTransaction[] = this.allTransactions,
   ): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
@@ -327,7 +327,7 @@ export class InquiriesOfRecords implements OnInit {
     this.currentPage = 1;
   }
  
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
+  private resolveColumn(tx: ImportCollectionTransaction, column: string): any {
     switch (column) {
       case 'tnxId':
         return tx.tnxId;
@@ -351,7 +351,7 @@ export class InquiriesOfRecords implements OnInit {
     return count < 1 ? 1 : count;
   }
  
-  get pagedTransactions(): ImportLcTransaction[] {
+  get pagedTransactions(): ImportCollectionTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -364,11 +364,11 @@ export class InquiriesOfRecords implements OnInit {
     if (this.currentPage < this.totalPages) this.currentPage++;
   }
  
-  // viewTransaction(tx: ImportLcTransaction): void {
+  // viewTransaction(tx: ImportCollectionTransaction): void {
   //   this.transactionService.setCurrentTransaction(tx, true);
   //   this.router.navigate(['/import-collection/preview']);
   // }
-  viewTransaction(tx: ImportLcTransaction): void {
+  viewTransaction(tx: ImportCollectionTransaction): void {
     if (!this.hasPermission('ILC_InquiryPreview')) {
       return;
     }
@@ -391,7 +391,7 @@ export class InquiriesOfRecords implements OnInit {
     });
   }
  
-  openExport(tx: ImportLcTransaction) {
+  openExport(tx: ImportCollectionTransaction) {
     if (!this.hasPermission('ILC_Amend')) {
       return;
     }
@@ -423,7 +423,7 @@ export class InquiriesOfRecords implements OnInit {
     );
   }
  
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  trackByTnxId(_: number, tx: ImportCollectionTransaction): string {
     return tx.eventRefNo ?? tx.tnxId!;
   }
  
@@ -839,7 +839,7 @@ export class InquiriesOfRecords implements OnInit {
     });
   }
  
-  private getReportRow(tx: ImportLcTransaction): any[] {
+  private getReportRow(tx: ImportCollectionTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
         tx.eventRefNo ?? '',
@@ -972,7 +972,7 @@ export class InquiriesOfRecords implements OnInit {
   //   return commonHeaders;
   // }
  
-  // private getReportRow(tx: ImportLcTransaction): any[] {
+  // private getReportRow(tx: ImportCollectionTransaction): any[] {
   //   const commonData = [
   //     tx.tnxId ?? '',
   //     tx.createdOn ? new Date(tx.createdOn).toISOString().split('T')[0] : '',
@@ -1019,7 +1019,7 @@ export class InquiriesOfRecords implements OnInit {
   //   return new Date().toISOString().split('T')[0];
   // }
  
-  private getExcelRow(tx: ImportLcTransaction): any[] {
+  private getExcelRow(tx: ImportCollectionTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
         tx.eventRefNo ?? '',

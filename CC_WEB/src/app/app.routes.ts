@@ -533,6 +533,20 @@ export const routes: Routes = [
 
               // ---------- IMPORT COLLECTION (inquiry + amend only) ----------
               {
+                path: 'import-collection-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Import Collection',
+                  description:
+                    'Manage all Import Collection related activities here.',
+                  existingRoute:
+                    '/dashboard/Trade-Services/import-collection/inquiries',
+                },
+              },
+              {
                 path: 'import-collection/inquiries',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/import-collection/sub-menus/records/inquiries-of-records/inquiries-of-records').then(

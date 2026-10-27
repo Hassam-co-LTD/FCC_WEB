@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
-import { ImportLcTransaction } from '../../../../../../../../../core/models/import-lc';
+import { ExportScreenTransaction } from '../../../../../../../../../core/models/export-screen';
 import { Router } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { HttpClientModule } from '@angular/common/http';
@@ -29,7 +29,7 @@ import { readSessionJson } from '../../../../../../../../../core/utils/browser-s
   standalone: true,
 })
 export class Preview {
-  @Input() transaction!: ImportLcTransaction;
+  @Input() transaction!: ExportScreenTransaction;
 
   viewMode: 'submit' | 'readonly' = 'submit';
   importForm!: FormGroup;
@@ -40,7 +40,7 @@ export class Preview {
   isImage = false;
   isPdf = false;
 
-  currentTx: ImportLcTransaction | null = null;
+  currentTx: ExportScreenTransaction | null = null;
 
   // pageName1 = 'Update';
   // pageName2 = 'Submit';

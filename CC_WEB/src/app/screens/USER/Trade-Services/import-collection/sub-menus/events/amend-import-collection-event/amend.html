@@ -13,28 +13,40 @@
     <div class="scroll-area">
 
       <section id="section-0">
-        <app-general-details [form]="generalDetailsForm" [previousValues]="previousValues"></app-general-details>
+        <app-collection-details [form]="collectionDetailsForm" [previousValues]="previousValues"></app-collection-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-1">
-        <app-upload [form]="uploadForm"></app-upload>
+        <app-party-details [form]="partyDetailsForm" [previousValues]="previousValues"></app-party-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-2">
-        <app-attachments
-          (filesChange)="updateAttachments($event)">
-        </app-attachments>
+        <app-draft-details [form]="draftDetailsForm" [previousValues]="previousValues"></app-draft-details>
       </section>
 
       <hr class="section-divider" />
 
       <section id="section-3">
-        <router-outlet></router-outlet>
+        <app-interest-details [form]="interestDetailsForm" [previousValues]="previousValues"></app-interest-details>
       </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-4">
+        <app-goods-details [form]="goodsDetailsForm" [previousValues]="previousValues"></app-goods-details>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section id="section-5">
+        <app-general-instruction [form]="generalInstructionForm" [previousValues]="previousValues"></app-general-instruction>
+      </section>
+
+      <hr class="section-divider" />
 
             <!-- Footer Buttons -->
             <div class="actions">

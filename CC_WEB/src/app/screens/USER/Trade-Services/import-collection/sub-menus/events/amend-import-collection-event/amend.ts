@@ -8,17 +8,20 @@ import {
   Validators,
 } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { ImportCollectionTransaction } from '../../../../../../../core/models/import-collection';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Attachments } from './components/attachments/attachments';
-import { Upload } from './components/upload/upload';
-import { GeneralDetails } from './components/general-details/general-details';
+import { CollectionDetails } from './components/collection-details/collection-details';
+import { PartyDetails } from './components/party-details/party-details';
+import { DraftDetails } from './components/draft-details/draft-details';
+import { InterestDetails } from './components/interest-details/interest-details';
+import { GoodsDetails } from './components/goods-details/goods-details';
+import { GeneralInstruction } from './components/general-instruction/general-instruction';
 import { RejectDialogComponent } from '../../../../../../../shared/reject-dialog/reject-dialog';
 import { finalize } from 'rxjs';
 import { TransactionComparisonService } from '../../../../../../../core/services/admin-service/transaction-comparison.service';
@@ -31,12 +34,14 @@ import { readSessionJson, getSessionItem } from '../../../../../../../core/utils
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    GeneralDetails,
-    Upload,
-    Attachments,
+    CollectionDetails,
+    PartyDetails,
+    DraftDetails,
+    InterestDetails,
+    GoodsDetails,
+    GeneralInstruction,
     MatDialogModule,
     Sidebar,
-    RouterOutlet,
   ],
   templateUrl: './amend.html',
   styleUrls: ['./amend.scss'],
@@ -49,7 +54,7 @@ export class AmendScreen implements OnInit {
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
   screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
 
-  currentTx: ImportLcTransaction = {} as ImportLcTransaction;
+  currentTx: ImportCollectionTransaction = {} as ImportCollectionTransaction;
 
   showUpdateSubmit = false;
   showApproveReject = false;
@@ -67,9 +72,12 @@ export class AmendScreen implements OnInit {
   permissionNames: string[] = [];
 
   exportSteps = [
-    { label: 'General Details' },
-    { label: 'Upload MT700/MT701' },
-    { label: 'Attachments' },
+    { label: 'Collection Details' },
+    { label: 'Party Details' },
+    { label: 'Draft Details' },
+    { label: 'Interest (for late payment)' },
+    { label: 'Goods' },
+    { label: 'General Instruction' },
   ];
 
   constructor(
@@ -190,17 +198,73 @@ export class AmendScreen implements OnInit {
 
     this.importForm = this.fb.group({
 
-      generalDetails: this.fb.group({
-        customerRef: [''],
-        advisingBank: ['', Validators.required],
-        issuerRef: ['', Validators.required],
+      collectionDetails: this.fb.group({
+        documentRelease: [''],
+        productType: [''],
+        receivedFromReference: [''],
+        receivedOn: [''],
+        collectionAmount: [''],
+        sharedDirectory: [false],
+        direct: [false],
+        multiplePayment: [false],
       }),
 
-      appUpload: this.fb.group({
-        file: [null],
+      partyDetails: this.fb.group({
+        receivedFrom: [''],
+        receivedFromCode: [''],
+        receivedFromName: [''],
+        receivedFromCountry: [''],
+        sendTo: [''],
+        sendToCode: [''],
+        sendToName: [''],
+        drawerName: [''],
+        drawerCode: [''],
+        drawerCountry: [''],
       }),
 
-      attachments: this.fb.array([]),
+      draftDetails: this.fb.group({
+        draftCollectionCurrency: [''],
+        draftCollectionAmount: [''],
+        draftAgainst: [''],
+        draftIdentifier: [''],
+        draftText: [''],
+        draftAmount: [''],
+        tenor: [''],
+      }),
+
+      interestDetails: this.fb.group({
+        interestRate: [''],
+        interestStartDate: [''],
+        interestEndPeriod: [''],
+        startInterest: [''],
+        dayBasis: [''],
+        startFrom: [''],
+        interestEndDate: [''],
+        graceDays: [''],
+        waiveIfRefused: [false],
+      }),
+
+      goodsDetails: this.fb.group({
+        goodsCode: [''],
+        goodsDescription: [''],
+        shipmentFrom: [''],
+        expectedDate: [''],
+        shipmentTo: [''],
+        vesselAircraft: [''],
+      }),
+
+      generalInstruction: this.fb.group({
+        urcApply: [false],
+        acknowledgeReceipt: [false],
+        adviseNonAcceptance: [false],
+        adviseAcceptance: [false],
+        advisePayment: [false],
+        adviseNonPayment: [false],
+        holdDocumentsUntilArrivalOfGoods: [false],
+        protestNonAcceptance: [false],
+        protestNonPayment: [false],
+        allowPartPayments: [false],
+      }),
     });
   }
 
@@ -210,7 +274,7 @@ export class AmendScreen implements OnInit {
     this.showApproveReject = false;
     this.isHistoricalView = false;
 
-    this.currentTx = {} as ImportLcTransaction;
+    this.currentTx = {} as ImportCollectionTransaction;
     this.importForm.reset();
     this.buildForm();
   }
@@ -427,7 +491,7 @@ export class AmendScreen implements OnInit {
             next: (tx) => {
               this.currentTx = {
                 tnxId: tx.tnxId,
-              } as ImportLcTransaction;
+              } as ImportCollectionTransaction;
 
               this.patchForm(tx);
               this.screenMode = 'EDIT';
@@ -581,25 +645,94 @@ export class AmendScreen implements OnInit {
     });
   }
   // Safe getters for html form access of the specific form groups
-  get generalDetailsForm(): FormGroup {
-    return this.importForm.get('generalDetails') as FormGroup;
+  get collectionDetailsForm(): FormGroup {
+    return this.importForm.get('collectionDetails') as FormGroup;
   }
-  get uploadForm(): FormGroup {
-    return this.importForm.get('appUpload') as FormGroup;
+  get partyDetailsForm(): FormGroup {
+    return this.importForm.get('partyDetails') as FormGroup;
+  }
+  get draftDetailsForm(): FormGroup {
+    return this.importForm.get('draftDetails') as FormGroup;
+  }
+  get interestDetailsForm(): FormGroup {
+    return this.importForm.get('interestDetails') as FormGroup;
+  }
+  get goodsDetailsForm(): FormGroup {
+    return this.importForm.get('goodsDetails') as FormGroup;
+  }
+  get generalInstructionForm(): FormGroup {
+    return this.importForm.get('generalInstruction') as FormGroup;
   }
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
   }
 
-  private patchForm(tx: ImportLcTransaction): void {
+  private patchForm(tx: ImportCollectionTransaction): void {
 
     const data = tx as any;
 
     this.importForm.patchValue({
-      generalDetails: {
-        customerRef: data.customerReference ?? '',
-        advisingBank: data.advisingBankName ?? '',
-        issuerRef: data.issuerReference ?? '',
+      collectionDetails: {
+        documentRelease: data.documentRelease ?? '',
+        productType: data.productType ?? '',
+        receivedFromReference: data.receivedFromReference ?? '',
+        receivedOn: data.receivedOn ?? '',
+        collectionAmount: data.collectionAmount ?? '',
+        sharedDirectory: !!data.sharedDirectory,
+        direct: !!data.direct,
+        multiplePayment: !!data.multiplePayment,
+      },
+      partyDetails: {
+        receivedFrom: data.receivedFrom ?? '',
+        receivedFromCode: data.receivedFromCode ?? '',
+        receivedFromName: data.receivedFromName ?? '',
+        receivedFromCountry: data.receivedFromCountry ?? '',
+        sendTo: data.sendTo ?? '',
+        sendToCode: data.sendToCode ?? '',
+        sendToName: data.sendToName ?? '',
+        drawerName: data.drawerName ?? '',
+        drawerCode: data.drawerCode ?? '',
+        drawerCountry: data.drawerCountry ?? '',
+      },
+      draftDetails: {
+        draftCollectionCurrency: data.draftCollectionCurrency ?? '',
+        draftCollectionAmount: data.draftCollectionAmount ?? '',
+        draftAgainst: data.draftAgainst ?? '',
+        draftIdentifier: data.draftIdentifier ?? '',
+        draftText: data.draftText ?? '',
+        draftAmount: data.draftAmount ?? '',
+        tenor: data.tenor ?? '',
+      },
+      interestDetails: {
+        interestRate: data.interestRate ?? '',
+        interestStartDate: data.interestStartDate ?? '',
+        interestEndPeriod: data.interestEndPeriod ?? '',
+        startInterest: data.startInterest ?? '',
+        dayBasis: data.dayBasis ?? '',
+        startFrom: data.startFrom ?? '',
+        interestEndDate: data.interestEndDate ?? '',
+        graceDays: data.graceDays ?? '',
+        waiveIfRefused: !!data.waiveIfRefused,
+      },
+      goodsDetails: {
+        goodsCode: data.goodsCode ?? '',
+        goodsDescription: data.goodsDescription ?? '',
+        shipmentFrom: data.shipmentFrom ?? '',
+        expectedDate: data.expectedDate ?? '',
+        shipmentTo: data.shipmentTo ?? '',
+        vesselAircraft: data.vesselAircraft ?? '',
+      },
+      generalInstruction: {
+        urcApply: !!data.urcApply,
+        acknowledgeReceipt: !!data.acknowledgeReceipt,
+        adviseNonAcceptance: !!data.adviseNonAcceptance,
+        adviseAcceptance: !!data.adviseAcceptance,
+        advisePayment: !!data.advisePayment,
+        adviseNonPayment: !!data.adviseNonPayment,
+        holdDocumentsUntilArrivalOfGoods: !!data.holdDocumentsUntilArrivalOfGoods,
+        protestNonAcceptance: !!data.protestNonAcceptance,
+        protestNonPayment: !!data.protestNonPayment,
+        allowPartPayments: !!data.allowPartPayments,
       },
     });
   }
@@ -615,17 +748,17 @@ export class AmendScreen implements OnInit {
       });
   }
 
-  private flattenForm(): ImportLcTransaction {
-
-    const general = this.importForm.value.generalDetails ?? {};
+  private flattenForm(): ImportCollectionTransaction {
 
     return {
       companyId: this.companyId,
-      customerReference: general.customerRef,
-      advisingBankName: general.advisingBank,
-      issuerReference: general.issuerRef,
-      attachments: this.importForm.value.attachments,
-    } as ImportLcTransaction;
+      ...(this.importForm.value.collectionDetails ?? {}),
+      ...(this.importForm.value.partyDetails ?? {}),
+      ...(this.importForm.value.draftDetails ?? {}),
+      ...(this.importForm.value.interestDetails ?? {}),
+      ...(this.importForm.value.goodsDetails ?? {}),
+      ...(this.importForm.value.generalInstruction ?? {}),
+    } as unknown as ImportCollectionTransaction;
   }
 
   // saveForm(): void {
@@ -663,7 +796,7 @@ export class AmendScreen implements OnInit {
   //   this.api.saveamendTransaction(tnxId, payload).pipe(
   //     finalize(() => this.isSaving = false)
   //   ).subscribe({
-  //     next: (res: ImportLcTransaction) => {
+  //     next: (res: ImportCollectionTransaction) => {
 
   //       this.snackBar.open(
   //         `Amendment saved (TNX ID: ${res.tnxId})`,
@@ -711,7 +844,7 @@ export class AmendScreen implements OnInit {
       .saveamendTransaction(tnxId, payload)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
-        next: (res: ImportLcTransaction) => {
+        next: (res: ImportCollectionTransaction) => {
           this.currentTx = { ...this.currentTx, ...res };
 
           console.log(
@@ -791,23 +924,6 @@ export class AmendScreen implements OnInit {
     ]);
   }
 
-  updateAttachments(files: File[]) {
-
-    const arr = this.importForm.get('attachments') as FormArray;
-
-    arr.clear();
-    files.forEach((file) =>
-      arr.push(
-        this.fb.group({
-          title: file.name.replace(/\.[^/.]+$/, ''),
-          fileName: file.name,
-          size: file.size,
-          type: file.type,
-          file: file,
-        }),
-      ),
-    );
-  }
 update(): void {
   const eventRefNo = this.currentTx?.eventRefNo;
 
@@ -960,13 +1076,70 @@ update(): void {
   }
  // old and new values working
 previousDynamicValues: { [key: string]: any } = {};
-storeRejectedTransaction: ImportLcTransaction | null = null;
+storeRejectedTransaction: ImportCollectionTransaction | null = null;
     previousValues: { [key: string]: any } = {};
     private readonly ImportLcFields = [
-    // General Details
-    'customerReference',
-    'advisingBankName',
-    'issuerReference',
+    // Collection Details
+    'documentRelease',
+    'productType',
+    'receivedFromReference',
+    'receivedOn',
+    'collectionAmount',
+    'sharedDirectory',
+    'direct',
+    'multiplePayment',
+
+    // Party Details
+    'receivedFrom',
+    'receivedFromCode',
+    'receivedFromName',
+    'receivedFromCountry',
+    'sendTo',
+    'sendToCode',
+    'sendToName',
+    'drawerName',
+    'drawerCode',
+    'drawerCountry',
+
+    // draftDetails
+    'draftCollectionCurrency',
+    'draftCollectionAmount',
+    'draftAgainst',
+    'draftIdentifier',
+    'draftText',
+    'draftAmount',
+    'tenor',
+
+    // interestDetails
+    'interestRate',
+    'interestStartDate',
+    'interestEndPeriod',
+    'startInterest',
+    'dayBasis',
+    'startFrom',
+    'interestEndDate',
+    'graceDays',
+    'waiveIfRefused',
+
+    // goodsDetails
+    'goodsCode',
+    'goodsDescription',
+    'shipmentFrom',
+    'expectedDate',
+    'shipmentTo',
+    'vesselAircraft',
+
+    // generalInstruction
+    'urcApply',
+    'acknowledgeReceipt',
+    'adviseNonAcceptance',
+    'adviseAcceptance',
+    'advisePayment',
+    'adviseNonPayment',
+    'holdDocumentsUntilArrivalOfGoods',
+    'protestNonAcceptance',
+    'protestNonPayment',
+    'allowPartPayments',
   ];
   private compareImportLcData(): void {
   this.previousValues = this.transactionComparisonService.compare(

@@ -5,13 +5,15 @@
 
     
     <div class="btn-row">
-      <button
-        mat-stroked-button
-        color="primary"
-        (click)="navigate(createRoute)"
-      >
-        Create
-      </button>
+      @if (createRoute) {
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="navigate(createRoute)"
+        >
+          Create
+        </button>
+      }
 
       <!-- <button mat-stroked-button color="primary" (click)="navigate(templateRoute)">Template</button> -->
 

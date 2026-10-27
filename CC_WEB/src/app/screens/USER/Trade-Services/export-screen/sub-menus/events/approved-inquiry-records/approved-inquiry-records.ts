@@ -13,7 +13,7 @@ import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { ExportScreenTransaction } from '../../../../../../../core/models/export-screen';
 import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
  
 @Component({
@@ -29,8 +29,8 @@ export class ApprovedInquiryRecords implements OnInit {
  
   currentPage = 1;
   itemsPerPage = 10;
-  allTransactions: ImportLcTransaction[] = [];
-  filteredTransactions: ImportLcTransaction[] = [];
+  allTransactions: ExportScreenTransaction[] = [];
+  filteredTransactions: ExportScreenTransaction[] = [];
   showAdvanced = false;
   searchQuery = '';
   advisingBankFilter = '';
@@ -52,7 +52,7 @@ export class ApprovedInquiryRecords implements OnInit {
     );
   }
  
-  sortColumn: keyof ImportLcTransaction = 'createdOn';
+  sortColumn: keyof ExportScreenTransaction = 'createdOn';
   sortDirection: 'asc' | 'desc' = 'desc';
  
   private readonly platformId = inject(PLATFORM_ID);
@@ -159,7 +159,7 @@ export class ApprovedInquiryRecords implements OnInit {
       });
   }
  
-  get pagedTransactions(): ImportLcTransaction[] {
+  get pagedTransactions(): ExportScreenTransaction[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
@@ -193,7 +193,7 @@ export class ApprovedInquiryRecords implements OnInit {
   }
  
   private applySorting(
-    source: ImportLcTransaction[] = this.allTransactions,
+    source: ExportScreenTransaction[] = this.allTransactions,
   ): void {
     const sorted = [...source].sort((a, b) => {
       let aVal = this.resolveColumn(a, this.sortColumn);
@@ -227,7 +227,7 @@ export class ApprovedInquiryRecords implements OnInit {
     this.currentPage = 1;
   }
  
-  private resolveColumn(tx: ImportLcTransaction, column: string): any {
+  private resolveColumn(tx: ExportScreenTransaction, column: string): any {
     switch (column) {
       case 'tnxId':
         return tx.tnxId;
@@ -264,7 +264,7 @@ export class ApprovedInquiryRecords implements OnInit {
   }
  
   // simple sorting helper
-  toggleSort(column: keyof ImportLcTransaction): void {
+  toggleSort(column: keyof ExportScreenTransaction): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
@@ -285,11 +285,11 @@ export class ApprovedInquiryRecords implements OnInit {
     });
   }
  
-  trackByTnxId(_: number, tx: ImportLcTransaction): string {
+  trackByTnxId(_: number, tx: ExportScreenTransaction): string {
     return tx.tnxId!;
   }
  
-  viewTransaction(tx: ImportLcTransaction): void {
+  viewTransaction(tx: ExportScreenTransaction): void {
     if (!this.hasPermission('ILC_AmendPreview')) {
       return;
     }
@@ -311,7 +311,7 @@ export class ApprovedInquiryRecords implements OnInit {
     });
   }
  
-  openApprovedAmendTransaction(tx: ImportLcTransaction): void {
+  openApprovedAmendTransaction(tx: ExportScreenTransaction): void {
     if (!this.hasPermission('ILC_Amend')) {
       return;
     }
@@ -739,7 +739,7 @@ export class ApprovedInquiryRecords implements OnInit {
     });
   }
  
-  private getReportRow(tx: ImportLcTransaction): any[] {
+  private getReportRow(tx: ExportScreenTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
         tx.tnxId ?? '',
@@ -805,7 +805,7 @@ export class ApprovedInquiryRecords implements OnInit {
     return new Date().toISOString().split('T')[0];
   }
  
-  private getExcelRow(tx: ImportLcTransaction): any[] {
+  private getExcelRow(tx: ExportScreenTransaction): any[] {
     if (this.activeTab === 'live') {
       return [
         tx.tnxId ?? '',

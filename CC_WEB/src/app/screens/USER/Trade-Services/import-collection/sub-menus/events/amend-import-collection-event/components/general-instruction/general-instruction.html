@@ -1,0 +1,104 @@
+<div class="section-header" (click)="toggle()">
+  <h2>General Instruction</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+      <div class="checkbox-list">
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="urcApply">URC Apply</mat-checkbox>
+          @if (hasPreviousValue('urcApply')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('urcApply') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="acknowledgeReceipt">Acknowledge Receipt</mat-checkbox>
+          @if (hasPreviousValue('acknowledgeReceipt')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('acknowledgeReceipt') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="adviseNonAcceptance">Advise Non-Acceptance</mat-checkbox>
+          @if (hasPreviousValue('adviseNonAcceptance')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('adviseNonAcceptance') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="adviseAcceptance">Advise Acceptance</mat-checkbox>
+          @if (hasPreviousValue('adviseAcceptance')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('adviseAcceptance') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="advisePayment">Advise Payment</mat-checkbox>
+          @if (hasPreviousValue('advisePayment')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('advisePayment') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="adviseNonPayment">Advise Non-Payment</mat-checkbox>
+          @if (hasPreviousValue('adviseNonPayment')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('adviseNonPayment') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="holdDocumentsUntilArrivalOfGoods">Hold Documents Until Arrival of Goods</mat-checkbox>
+          @if (hasPreviousValue('holdDocumentsUntilArrivalOfGoods')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('holdDocumentsUntilArrivalOfGoods') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="protestNonAcceptance">Protest Non-Acceptance</mat-checkbox>
+          @if (hasPreviousValue('protestNonAcceptance')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('protestNonAcceptance') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="protestNonPayment">Protest Non-Payment</mat-checkbox>
+          @if (hasPreviousValue('protestNonPayment')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('protestNonPayment') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="allowPartPayments">Allow Part Payments</mat-checkbox>
+          @if (hasPreviousValue('allowPartPayments')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('allowPartPayments') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
