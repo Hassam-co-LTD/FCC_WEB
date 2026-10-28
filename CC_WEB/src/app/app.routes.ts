@@ -427,9 +427,7 @@ export const routes: Routes = [
         canActivateChild: [authGuard],
         data: { role: 'U', companyType: 'C' },
         loadComponent: () =>
-          import('./screens/ADMIN/admin-dashboard/admin-dashboard').then(
-            (m) => m.AdminComponent,
-          ),
+          import('./screens/USER/Dashboard/dashboard').then((m) => m.Dashboard),
         children: [
           // { path: '', redirectTo: 'Trade-Services', pathMatch: 'full' },
 

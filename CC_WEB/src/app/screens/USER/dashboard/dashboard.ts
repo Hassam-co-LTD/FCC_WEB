@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,7 +10,7 @@ import {
   UserDashboardResponse,
   UserDashboardTransaction,
 } from '../../../core/models/user-dashboard-transaction-activities';
-import { filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 type CardFormat = 'number' | 'currency';
 
@@ -81,7 +81,9 @@ interface DashboardCalendarDay {
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
+  private routerSubscription?: Subscription;
+
   // =========================================================
   // HEADER
   // =========================================================
@@ -310,11 +312,9 @@ export class Dashboard implements OnInit {
        NEW CODE END
        ======================================================= */
 
-    this.router.events
+    this.routerSubscription = this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.isHome = event.urlAfterRedirects === '/dashboard';
-      });
+      .subscribe(() => this.updateHomeState());
 
     const store = this.getAllScreenStatusCount('R');
     console.log(store);
@@ -630,8 +630,19 @@ export class Dashboard implements OnInit {
   // HOME STATE
   // =========================================================
 
+  // Show the dashboard only on /dashboard itself (ignoring query string,
+  // fragment and trailing slash), not on its child pages
   private updateHomeState(): void {
-    this.isHome = this.router.url === '/dashboard';
+    const currentUrl = this.router.url
+      .split('?')[0]
+      .split('#')[0]
+      .replace(/\/+$/, '');
+
+    this.isHome = currentUrl === '/dashboard';
+  }
+
+  ngOnDestroy(): void {
+    this.routerSubscription?.unsubscribe();
   }
 
   openExpiredTransaction(transaction: any): void {
