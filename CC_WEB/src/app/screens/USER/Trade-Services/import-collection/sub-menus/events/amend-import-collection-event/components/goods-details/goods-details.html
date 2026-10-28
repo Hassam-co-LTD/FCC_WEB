@@ -1,0 +1,91 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Goods</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+      <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Goods Code</mat-label>
+            <input matInput type="text" formControlName="goodsCode" placeholder="Enter goods code">
+          </mat-form-field>
+          @if (hasPreviousValue('goodsCode')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('goodsCode') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="form-grid single">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Goods Description</mat-label>
+            <textarea matInput rows="3" formControlName="goodsDescription" placeholder="Enter goods description"></textarea>
+          </mat-form-field>
+          @if (hasPreviousValue('goodsDescription')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('goodsDescription') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <h4>Shipment Details</h4>
+      <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>From</mat-label>
+            <input matInput type="text" formControlName="shipmentFrom" placeholder="Enter from">
+          </mat-form-field>
+          @if (hasPreviousValue('shipmentFrom')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('shipmentFrom') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Expected Date</mat-label>
+            <input matInput type="text" formControlName="expectedDate" placeholder="Enter expected date">
+          </mat-form-field>
+          @if (hasPreviousValue('expectedDate')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('expectedDate') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>To</mat-label>
+            <input matInput type="text" formControlName="shipmentTo" placeholder="Enter to">
+          </mat-form-field>
+          @if (hasPreviousValue('shipmentTo')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('shipmentTo') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Vessel / Aircraft</mat-label>
+            <input matInput type="text" formControlName="vesselAircraft" placeholder="Enter vessel / aircraft">
+          </mat-form-field>
+          @if (hasPreviousValue('vesselAircraft')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('vesselAircraft') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

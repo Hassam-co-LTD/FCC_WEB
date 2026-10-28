@@ -43,6 +43,11 @@ export class Success implements OnInit {
         this.createRoute = '/dashboard/Trade-Services/import-screen';
         break;
  
+      case 'IMPORT_CONTRACT':
+        this.listingRoute = '/dashboard/Trade-Services/import-contract/inquiries';
+        this.createRoute = '/dashboard/Trade-Services/import-contract';
+        break;
+
       case 'UNDERTAKING_ISSUANCE':
         this.listingRoute = '/dashboard/Trade-Services/undertaking-issuance/inquiries-records';
         this.createRoute = '/dashboard/Trade-Services/undertaking-issuance';

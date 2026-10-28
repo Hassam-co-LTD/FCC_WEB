@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   captchaVerificationToken: string | null = null;
 
   // TEMPORARY: captcha is skipped on login. Set to false to enforce it again.
-  readonly captchaBypass = true;
+  readonly captchaBypass = false;
 
   // =========================
   // LOGIN FORM STATE

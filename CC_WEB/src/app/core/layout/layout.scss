@@ -317,7 +317,7 @@ nav {
 
 .submenu.open,
 .nested-submenu.open {
-  max-height: 500px;
+  max-height: 3000px; // must exceed the tallest fully-expanded menu, or lower items get clipped
   opacity: 1;
   padding-top: 5px;
   padding-bottom: 5px;

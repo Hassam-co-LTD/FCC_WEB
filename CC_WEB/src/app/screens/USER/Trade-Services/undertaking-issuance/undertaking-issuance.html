@@ -50,8 +50,8 @@
       <hr class="section-divider" />
 
       <!-- Dynamic Fields -->
-      <section id="section-6">
-        <ng-container *ngIf="fields?.length">
+      <ng-container *ngIf="fields?.length">
+        <section id="section-6">
           <app-dynamic-fields
             [form]="dynamicFieldsForm"
             [fields]="fields"
@@ -59,9 +59,9 @@
             [previousDynamicValues]="previousDynamicValues"
           >
           </app-dynamic-fields>
-        </ng-container>
-      </section>
-      <hr class="section-divider" />
+        </section>
+        <hr class="section-divider" />
+      </ng-container>
 
       <div class="actions">
         <!-- CREATE -->

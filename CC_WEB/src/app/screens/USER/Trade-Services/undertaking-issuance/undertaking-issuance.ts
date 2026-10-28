@@ -70,8 +70,10 @@ export class UndertakingIssuance implements OnInit {
     { label: 'Undertaking Details' },
     { label: 'Instructions' },
     { label: 'Attachments' },
-    { label: 'Dynamic fields' },
   ];
+
+  // Only offered in the sidebar once the screen is known to have dynamic fields
+  private readonly dynamicFieldsStep = { label: 'Dynamic fields' };
 
   // private scrollSpyObserver?: IntersectionObserver;
 
@@ -702,6 +704,13 @@ export class UndertakingIssuance implements OnInit {
     this.api.getFieldsByScreenAndStatus('UndertakingIssuance', 'A').subscribe({
       next: (res: any[]) => {
         this.fields = res || [];
+
+        if (this.fields.length) {
+          this.undertakingSteps = [
+            ...this.undertakingSteps,
+            this.dynamicFieldsStep,
+          ];
+        }
 
         const group: any = {};
 

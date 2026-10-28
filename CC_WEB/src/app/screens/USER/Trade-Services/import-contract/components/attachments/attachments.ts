@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-attachments',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule],
   templateUrl: './attachments.html',
   styleUrls: ['./attachments.scss']
 })
@@ -15,7 +14,6 @@ export class Attachments {
   isOpen = true;
   files: File[] = [];
   @Output() filesChange = new EventEmitter<File[]>(); 
-
   toggle() {
     this.isOpen = !this.isOpen;
   }

@@ -1,0 +1,167 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Party Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+
+      <h4>Received From</h4>
+      <div class="party-block">
+        <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Received From</mat-label>
+            <mat-select formControlName="receivedFrom">
+              @for (option of receivedFromOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('receivedFrom')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedFrom') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+        <div class="party-row">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput type="text" formControlName="receivedFromCode" placeholder="Enter code">
+          </mat-form-field>
+          @if (hasPreviousValue('receivedFromCode')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedFromCode') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Received From Details</mat-label>
+            <textarea matInput rows="3" formControlName="receivedFromName" placeholder="Enter received from details"></textarea>
+          </mat-form-field>
+          @if (hasPreviousValue('receivedFromName')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedFromName') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+        <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
+            <input matInput type="text" formControlName="receivedFromCountry" placeholder="Enter country">
+          </mat-form-field>
+          @if (hasPreviousValue('receivedFromCountry')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('receivedFromCountry') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+      </div>
+
+      <h4>Send To</h4>
+      <div class="party-block">
+        <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Send To</mat-label>
+            <mat-select formControlName="sendTo">
+              @for (option of sendToOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('sendTo')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('sendTo') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+        <div class="party-row">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput type="text" formControlName="sendToCode" placeholder="Enter code">
+          </mat-form-field>
+          @if (hasPreviousValue('sendToCode')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('sendToCode') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Send To Details</mat-label>
+            <textarea matInput rows="3" formControlName="sendToName" placeholder="Enter send to details"></textarea>
+          </mat-form-field>
+          @if (hasPreviousValue('sendToName')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('sendToName') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+      </div>
+
+      <h4>Drawer</h4>
+      <div class="party-block">
+        <div class="party-row party-row-reverse">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Drawer Details</mat-label>
+            <textarea matInput rows="3" formControlName="drawerName" placeholder="Enter drawer details"></textarea>
+          </mat-form-field>
+          @if (hasPreviousValue('drawerName')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('drawerName') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput type="text" formControlName="drawerCode" placeholder="Enter code">
+          </mat-form-field>
+          @if (hasPreviousValue('drawerCode')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('drawerCode') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+        <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Country</mat-label>
+            <input matInput type="text" formControlName="drawerCountry" placeholder="Enter country">
+          </mat-form-field>
+          @if (hasPreviousValue('drawerCountry')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('drawerCountry') }}</span>
+            </div>
+          }
+        </div>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

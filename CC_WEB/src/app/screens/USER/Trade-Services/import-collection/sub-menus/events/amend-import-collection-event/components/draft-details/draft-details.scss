@@ -214,3 +214,60 @@ button[mat-flat-button] {
   color: #b45309;
   font-weight: 500;
 }
+
+/* ===========================
+   Checkbox group
+=========================== */
+.checkbox-list {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid theme.$border-light;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    mat-checkbox { font-size: 13px; }
+}
+
+.field-with-previous {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===========================
+   Party rows (small + big box)
+=========================== */
+.party-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 15px;
+}
+
+.party-row {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: theme.$gap-default;
+    align-items: start;
+}
+
+.field-with-previous {
+    display: flex;
+    flex-direction: column;
+}
+
+.party-row-reverse {
+    grid-template-columns: 3fr 1fr;
+}
+
+textarea[matInput] {
+    font-size: 14px !important;
+    color: theme.$primary-dark;
+}
+
+@media (max-width: 768px) {
+    .party-row,
+    .party-row-reverse {
+        grid-template-columns: 1fr;
+    }
+}

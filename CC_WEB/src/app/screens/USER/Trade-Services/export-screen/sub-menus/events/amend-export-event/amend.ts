@@ -12,7 +12,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
+import { ExportScreenTransaction } from '../../../../../../../core/models/export-screen';
 import { ApiService } from '../../../../../../../core/services/api.service';
 import { Sidebar } from '../../../../../../../core/sidebar/sidebar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -49,7 +49,7 @@ export class AmendScreen implements OnInit {
   mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
   screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
 
-  currentTx: ImportLcTransaction = {} as ImportLcTransaction;
+  currentTx: ExportScreenTransaction = {} as ExportScreenTransaction;
 
   showUpdateSubmit = false;
   showApproveReject = false;
@@ -210,7 +210,7 @@ export class AmendScreen implements OnInit {
     this.showApproveReject = false;
     this.isHistoricalView = false;
 
-    this.currentTx = {} as ImportLcTransaction;
+    this.currentTx = {} as ExportScreenTransaction;
     this.importForm.reset();
     this.buildForm();
   }
@@ -427,7 +427,7 @@ export class AmendScreen implements OnInit {
             next: (tx) => {
               this.currentTx = {
                 tnxId: tx.tnxId,
-              } as ImportLcTransaction;
+              } as ExportScreenTransaction;
 
               this.patchForm(tx);
               this.screenMode = 'EDIT';
@@ -591,7 +591,7 @@ export class AmendScreen implements OnInit {
     return this.importForm.get('attachments') as FormArray;
   }
 
-  private patchForm(tx: ImportLcTransaction): void {
+  private patchForm(tx: ExportScreenTransaction): void {
 
     const data = tx as any;
 
@@ -615,7 +615,7 @@ export class AmendScreen implements OnInit {
       });
   }
 
-  private flattenForm(): ImportLcTransaction {
+  private flattenForm(): ExportScreenTransaction {
 
     const general = this.importForm.value.generalDetails ?? {};
 
@@ -625,7 +625,7 @@ export class AmendScreen implements OnInit {
       advisingBankName: general.advisingBank,
       issuerReference: general.issuerRef,
       attachments: this.importForm.value.attachments,
-    } as ImportLcTransaction;
+    } as ExportScreenTransaction;
   }
 
   // saveForm(): void {
@@ -663,7 +663,7 @@ export class AmendScreen implements OnInit {
   //   this.api.saveamendTransaction(tnxId, payload).pipe(
   //     finalize(() => this.isSaving = false)
   //   ).subscribe({
-  //     next: (res: ImportLcTransaction) => {
+  //     next: (res: ExportScreenTransaction) => {
 
   //       this.snackBar.open(
   //         `Amendment saved (TNX ID: ${res.tnxId})`,
@@ -711,7 +711,7 @@ export class AmendScreen implements OnInit {
       .saveamendTransaction(tnxId, payload)
       .pipe(finalize(() => (this.isSaving = false)))
       .subscribe({
-        next: (res: ImportLcTransaction) => {
+        next: (res: ExportScreenTransaction) => {
           this.currentTx = { ...this.currentTx, ...res };
 
           console.log(
@@ -960,7 +960,7 @@ update(): void {
   }
  // old and new values working
 previousDynamicValues: { [key: string]: any } = {};
-storeRejectedTransaction: ImportLcTransaction | null = null;
+storeRejectedTransaction: ExportScreenTransaction | null = null;
     previousValues: { [key: string]: any } = {};
     private readonly ImportLcFields = [
     // General Details

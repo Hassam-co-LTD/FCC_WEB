@@ -450,6 +450,19 @@ export class LayoutComponent implements OnInit {
             },
 
             // -------------------------
+            // IMPORT CONTRACT
+            // -------------------------
+            {
+              label: 'Import Contract',
+              route: '/dashboard/Trade-Services/import-contract-welcome',
+              open: false,
+              children: [
+                { label: 'Create', route: '/dashboard/Trade-Services/import-contract' },
+                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-contract/inquiries' },
+              ]
+            },
+
+            // -------------------------
             // EXPORT LC (received via middleware, inquiry / preview only)
             // -------------------------
             {
@@ -469,7 +482,7 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             {
               label: 'Import Collection',
-              route: '/dashboard/Trade-Services/import-collection/inquiries',
+              route: '/dashboard/Trade-Services/import-collection-welcome',
               open: false,
               children: [
                 {

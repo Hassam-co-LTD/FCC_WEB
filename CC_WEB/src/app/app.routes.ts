@@ -469,6 +469,20 @@ export const routes: Routes = [
 
               // ---------- IMPORT COLLECTION (received via middleware, preview only) ----------
               {
+                path: 'import-collection-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Import Collection',
+                  description:
+                    'Manage all Import Collection related activities here.',
+                  existingRoute:
+                    '/dashboard/Trade-Services/import-collection/inquiries',
+                },
+              },
+              {
                 path: 'import-collection/inquiries',
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/import-collection/sub-menus/records/inquiries-of-records/inquiries-of-records').then(
@@ -744,6 +758,60 @@ export const routes: Routes = [
                     '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
                   uploadRoute:
                     '/dashboard/Trade-Services/undertaking-issuance?mode=upload',
+                },
+              },
+
+              // ---------- IMPORT CONTRACT ----------
+              {
+                path: 'import-contract/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/sub-menus/records/enquiries-of-records/enquiries-of-records').then(
+                    (m) => m.EnquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'import-contract/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'import-contract/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'import-contract/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/import-contract').then(
+                    (m) => m.ImportContract,
+                  ),
+              },
+              {
+                path: 'import-contract',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/import-contract').then(
+                    (m) => m.ImportContract,
+                  ),
+              },
+              {
+                path: 'import-contract-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Import Contract',
+                  description:
+                    'Manage all Import Contract related activities here.',
+                  createRoute: '/dashboard/Trade-Services/import-contract',
+                  templateRoute:
+                    '/dashboard/Trade-Services/import-contract?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/import-contract/inquiries',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/import-contract?mode=upload',
                 },
               },
 

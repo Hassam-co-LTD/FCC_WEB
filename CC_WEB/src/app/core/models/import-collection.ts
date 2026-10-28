@@ -65,6 +65,7 @@ export interface ImportCollectionTransaction {
   acknowledgeReceipt?: boolean;
   adviseNonAcceptance?: boolean;
   adviseAcceptance?: boolean;
+  
   advisePayment?: boolean;
   adviseNonPayment?: boolean;
   holdDocumentsUntilArrivalOfGoods?: boolean;

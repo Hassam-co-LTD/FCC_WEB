@@ -1,25 +1,25 @@
 import { Component, Input } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import {  MatLabel } from "@angular/material/form-field";
-import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 @Component({
-  selector: 'app-general-details',
+  selector: 'app-goods-details',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIcon, MatLabel, MatSelectModule, MatInputModule],
-  templateUrl: './general-details.html',
-  styleUrls: ['./general-details.scss']
+  imports: [
+    ReactiveFormsModule,
+    MatIcon,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
+  templateUrl: './goods-details.html',
+  styleUrls: ['./goods-details.scss'],
 })
-export class GeneralDetails {
+export class GoodsDetails {
   isOpen = true;
   @Input() form!: FormGroup;
   @Input() previousValues: { [key: string]: any } = {};
-
-  constructor() {}
 
   toggle() {
     this.isOpen = !this.isOpen;
