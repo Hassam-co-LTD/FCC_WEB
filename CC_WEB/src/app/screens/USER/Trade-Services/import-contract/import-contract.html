@@ -80,10 +80,12 @@
         <app-attachments
           (filesChange)="updateAttachments($event)"
         ></app-attachments>
+      </section>
+      <hr class="section-divider" />
 
-        <hr class="section-divider" />
-        <!-- dynamic Fields section  -->
-        <ng-container *ngIf="fields?.length">
+      <!-- dynamic Fields section  -->
+      <ng-container *ngIf="fields?.length">
+        <section id="section-10">
           <app-dynamic-fields
             [form]="dynamicFieldsForm"
             [fields]="fields"
@@ -91,9 +93,9 @@
             [previousDynamicValues]="previousDynamicValues"
           >
           </app-dynamic-fields>
-        </ng-container>
-      </section>
-      <hr class="section-divider" />
+        </section>
+        <hr class="section-divider" />
+      </ng-container>
 
       <!-- Footer Buttons -->
       <div class="actions">

@@ -117,6 +117,7 @@ export class AuthService {
     if (!userCategory || typeof userCategory !== 'string') return null;
 
     return userCategory.toUpperCase() === 'A' ? 'A' : 'U';
+    console.log('User category:', userCategory);
   }
   /** Get companyId from sessionStorage */
   getCompanyId(): string | null {

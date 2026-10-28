@@ -84,8 +84,10 @@ export class ImportScreen implements OnInit {
     { label: 'Licenses' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
-    { label: 'Dynamic fields' },
   ];
+
+  // Only offered in the sidebar once the screen is known to have dynamic fields
+  private readonly dynamicFieldsStep = { label: 'Dynamic fields' };
   storeRejectedTx: ImportLcTransaction | null = null;
 
   previousDynamicValues: { [key: string]: any } = {};
@@ -829,6 +831,10 @@ private enterEditMode(tnxId: string): void {
         console.log('Field definitions:', res);
 
         this.fields = res || [];
+
+        if (this.fields.length) {
+          this.importSteps = [...this.importSteps, this.dynamicFieldsStep];
+        }
 
         const group: any = {};
 

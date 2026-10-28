@@ -6,7 +6,7 @@
 
   <ul>
     @for (s of steps; track s; let i = $index) {
-      <li #stepItem [class.active]="i === currentStep" (click)="scrollTo(i)">
+      <li #stepItem [class.active]="i === activeStep" (click)="scrollTo(i)">
         <span class="num">{{ i + 1 }}</span>
         <span class="label">{{ s.label }}</span>
       </li>
