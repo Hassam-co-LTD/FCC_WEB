@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { filter } from 'rxjs/operators';
 import { ChatbotWidget } from '../../shared/chatbot-widget/chatbot-widget';
-
+import { ApiService } from '../services/api.service';
 interface MenuItem {
   label: string;
   icon?: string;
@@ -151,12 +151,14 @@ export class LayoutComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private api: ApiService,
   ) {}
 
   ngOnInit() {
     const role = this.authService.getUserCategory();
     let companyType = this.authService.getCompanyType();
     this.loadMenu(role, companyType);
+    this.loadPendingRequestCount();
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -409,16 +411,12 @@ export class LayoutComponent implements OnInit {
             },
             {
               label: 'Inquiry',
-              route: '/customer-user/inquiry'
-            }
-          ]
-        }
-
-
-      ]
-    }
-
-    else if (companyType === 'C' && role === 'U') {
+              route: '/customer-user/inquiry',
+            },
+          ],
+        },
+      ];
+    } else if (companyType === 'C' && role === 'U') {
       this.menuItems = [
         { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
         {
@@ -427,7 +425,6 @@ export class LayoutComponent implements OnInit {
           route: '',
           open: false,
           children: [
-
             // -------------------------
             // IMPORT LC
             // -------------------------
@@ -436,10 +433,20 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/import-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/import-screen' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/import-screen/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
-              ]
+                {
+                  label: 'Create',
+                  route: '/dashboard/Trade-Services/import-screen',
+                },
+                {
+                  label: 'Amend',
+                  route:
+                    '/dashboard/Trade-Services/import-screen/approved-inquiry-records',
+                },
+                {
+                  label: 'Inquiries',
+                  route: '/dashboard/Trade-Services/import-screen/inquiries',
+                },
+              ],
             },
 
             // -------------------------
@@ -463,8 +470,20 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/export-screen/inquiries',
               open: false,
               children: [
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
-              ]
+                {
+                  label: 'Create',
+                  route: '/dashboard/Trade-Services/export-screen',
+                },
+                {
+                  label: 'Amend',
+                  route:
+                    '/dashboard/Trade-Services/export-screen/approved-inquiry-records',
+                },
+                {
+                  label: 'Inquiries',
+                  route: '/dashboard/Trade-Services/export-screen/inquiries',
+                },
+              ],
             },
 
             // -------------------------
@@ -475,8 +494,12 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/import-collection-welcome',
               open: false,
               children: [
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/import-collection/inquiries' },
-              ]
+                {
+                  label: 'Inquiries',
+                  route:
+                    '/dashboard/Trade-Services/import-collection/inquiries',
+                },
+              ],
             },
 
             // -------------------------
@@ -487,10 +510,21 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/shipping-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/shipping-guarantee' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/shipping-guarantee/inquiries-records' },
-              ]
+                {
+                  label: 'Create',
+                  route: '/dashboard/Trade-Services/shipping-guarantee',
+                },
+                {
+                  label: 'Amend',
+                  route:
+                    '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records',
+                },
+                {
+                  label: 'Inquiries',
+                  route:
+                    '/dashboard/Trade-Services/shipping-guarantee/inquiries-records',
+                },
+              ],
             },
 
             // -------------------------
@@ -501,10 +535,21 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/export-collection-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/export-collection' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/export-collection/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-collection/inquiries-records' },
-              ]
+                {
+                  label: 'Create',
+                  route: '/dashboard/Trade-Services/export-collection',
+                },
+                {
+                  label: 'Amend',
+                  route:
+                    '/dashboard/Trade-Services/export-collection/approved-inquiry-records',
+                },
+                {
+                  label: 'Inquiries',
+                  route:
+                    '/dashboard/Trade-Services/export-collection/inquiries-records',
+                },
+              ],
             },
 
             // -------------------------
@@ -515,12 +560,22 @@ export class LayoutComponent implements OnInit {
               route: '/dashboard/Trade-Services/undertaking-welcome',
               open: false,
               children: [
-                { label: 'Create', route: '/dashboard/Trade-Services/undertaking-issuance' },
-                { label: 'Amend', route: '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records' },
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/undertaking-issuance/inquiries-records' },
-              ]
+                {
+                  label: 'Create',
+                  route: '/dashboard/Trade-Services/undertaking-issuance',
+                },
+                {
+                  label: 'Amend',
+                  route:
+                    '/dashboard/Trade-Services/undertaking-issuance/approved-inquiry-records',
+                },
+                {
+                  label: 'Inquiries',
+                  route:
+                    '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
+                },
+              ],
             },
-
           ],
         },
         {
@@ -534,10 +589,16 @@ export class LayoutComponent implements OnInit {
               open: false,
               children: [
                 { label: 'IBFT', route: '/dashboard/IBFT' },
-                { label: 'With-In Bank', route: '/dashboard/fund-transfer/with-in' },
+                {
+                  label: 'With-In Bank',
+                  route: '/dashboard/fund-transfer/with-in',
+                },
                 { label: 'My Accounts', route: '/dashboard/my-accounts' },
-                { label: 'Inquiries', route: '/dashboard/fund-transfer/fund-transfer-records' },
-              ]
+                {
+                  label: 'Inquiries',
+                  route: '/dashboard/fund-transfer/fund-transfer-records',
+                },
+              ],
             },
           ],
         },
@@ -546,15 +607,21 @@ export class LayoutComponent implements OnInit {
           icon: 'person',
           open: false,
           children: [
-            { label: 'Add Beneficiary', route: '/dashboard/Trade-Services/undertaking-issuance' },
-            { label: 'Inquiries', route: '/dashboard/Trade-Services/import-screen/inquiries' },
+            {
+              label: 'Add Beneficiary',
+              route: '/dashboard/Trade-Services/undertaking-issuance',
+            },
+            {
+              label: 'Inquiries',
+              route: '/dashboard/Trade-Services/import-screen/inquiries',
+            },
           ],
         },
         {
           label: 'Logout',
           icon: 'logout',
-          route: '/login'
-        }
+          route: '/login',
+        },
       ];
     }
   }
@@ -700,9 +767,7 @@ export class LayoutComponent implements OnInit {
   private isUnderItemPath(item: MenuItem): boolean {
     const base = this.commonRoutePrefix(this.collectLeafRoutes(item));
     if (!base) return false;
-    return (
-      this.activeRoute === base || this.activeRoute.startsWith(base + '/')
-    );
+    return this.activeRoute === base || this.activeRoute.startsWith(base + '/');
   }
 
   private collectLeafRoutes(item: MenuItem): string[] {
@@ -849,7 +914,9 @@ export class LayoutComponent implements OnInit {
           this.keepActiveOpen(m); // recursive open only for active path
         });
       })
-      .catch((error) => console.error('Menu navigation failed:', item.route, error));
+      .catch((error) =>
+        console.error('Menu navigation failed:', item.route, error),
+      );
   }
 
   // Keep parent open if it contains the active route
@@ -901,5 +968,20 @@ export class LayoutComponent implements OnInit {
   isChildLinkActive(child: MenuItem): boolean {
     // Returns true if this child has a route and matches activeRoute
     return !!child.route && this.activeRoute === child.route;
+  }
+
+  // Api for customer requests
+  pendingRequestCount = 0;
+
+  loadPendingRequestCount(): void {
+    this.api.getPendingRequestCount().subscribe({
+      next: (count: number) => {
+        this.pendingRequestCount = count;
+        console.log('customer requests length is ', this.pendingRequestCount);
+      },
+      error: (error) => {
+        console.error('Failed to load pending request count', error);
+      },
+    });
   }
 }

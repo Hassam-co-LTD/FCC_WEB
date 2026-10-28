@@ -60,15 +60,15 @@ export class RegisterCustomer {
 
     const accountNumber = this.accountForm.value.accountNumber;
 
-    this.api.verifyCustomerAccount(accountNumber).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.currentStep = 2;
-      },
-      error: () => {
-        this.isLoading = false;
-      },
-    });
+    // this.api.verifyCustomerAccount(accountNumber).subscribe({
+    //   next: () => {
+    //     this.isLoading = false;
+    //     this.currentStep = 2;
+    //   },
+    //   error: () => {
+    //     this.isLoading = false;
+    //   },
+    // });
   }
 
   verifyOtp(): void {

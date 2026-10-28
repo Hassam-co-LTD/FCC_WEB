@@ -88,6 +88,7 @@ export class CreateCustomer implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       contact: ['', Validators.required],
       legalId: [''],
+      cnic: [''],
       customerStatus: ['Active'],
       branchCode: [''],
       countryCity: [''],
