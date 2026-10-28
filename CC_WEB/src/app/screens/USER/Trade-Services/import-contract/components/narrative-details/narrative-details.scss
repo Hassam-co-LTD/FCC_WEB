@@ -1,0 +1,230 @@
+@use '../../../../../../../styles/_theme.scss' as theme;
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
+
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
+}
+/* Collapsible Container */
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.35s ease-in-out;
+    transform: translateY(-5px);
+}
+
+.collapsible.open {
+    max-height: 2500px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: theme.$radius-default;
+    border: 1px solid theme.$border-light;
+}
+
+/* Titles */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$white;
+}
+
+.form-wrapper {
+    margin-top: 10px;
+}
+
+.sub-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    border-left: 3px solid theme.$primary;
+    padding-left: 8px;
+    margin: 14px 0 8px;
+    line-height: 1.3;
+}
+.tab-container,
+.inner-tabs {
+    --mat-tab-header-active-label-text-color: #{theme.$primary};
+    --mat-tab-header-active-focus-label-text-color: #{theme.$primary};
+    --mat-tab-header-active-hover-label-text-color: #{theme.$primary-dark};
+    --mat-tab-header-inactive-label-text-color: #{theme.$primary};
+    --mat-tab-header-inactive-focus-label-text-color: #{theme.$primary};
+    --mat-tab-header-inactive-hover-label-text-color: #{theme.$primary-dark};
+    --mat-tab-header-active-ripple-color: #{theme.$primary};
+    --mat-tab-header-inactive-ripple-color: #{theme.$primary};
+    --mdc-tab-indicator-active-indicator-color: #{theme.$primary};
+
+    /* All tabs blue (this wins over the tokens) */
+    ::ng-deep .mdc-tab .mdc-tab__text-label {
+        color: theme.$primary !important;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Selected tab: bolder, so it still stands out */
+    ::ng-deep .mdc-tab--active .mdc-tab__text-label {
+        color: theme.$primary !important;
+        font-weight: 600;
+    }
+
+    ::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+        color: theme.$primary-dark !important;
+    }
+}
+
+.tab-container {
+    margin-top: 10px;
+
+    ::ng-deep .mat-mdc-tab-header-pagination-controls-enabled .mat-mdc-tab-header-pagination {
+        display: none !important;
+    }
+}
+
+.inner-tabs {
+    margin-top: 12px;
+}
+/* inactive tabs */
+::ng-deep .mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+    color: theme.$text-medium !important;
+    font-weight: 500;
+}
+
+::ng-deep .mdc-tab:not(.mdc-tab--active):hover .mdc-tab__text-label {
+    color: theme.$primary !important;
+}
+.tab-content {
+    margin-top: 16px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+mat-hint {
+    color: #6b7280 !important;
+}
+
+mat-error {
+    font-size: 12px;
+    color: #e53935 !important;
+}
+
+/* ===========================
+   Responsive Adjustments
+=========================== */
+
+/* Tablets ≤992px */
+@media (max-width: 992px) {
+
+    .tab-container,
+    .inner-tabs {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 14px;
+            white-space: normal;
+            /* wrap long tab labels */
+        }
+    }
+
+    mat-form-field textarea {
+        font-size: 14px;
+    }
+
+    
+}
+
+/* Small Tablets / Large Phones ≤768px */
+@media (max-width: 768px) {
+    .tab-container {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 13px;
+        }
+    }
+
+   
+}
+
+/* Mobile ≤480px */
+@media (max-width: 480px) {
+
+    .tab-container,
+    .inner-tabs {
+        ::ng-deep .mat-mdc-tab-label-content {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        ::ng-deep .mat-mdc-tab-label {
+            min-width: 80px;
+            /* reduce tab width for small screens */
+        }
+    }
+
+    .collapsible.open {
+        padding: 10px 5px;
+    }
+
+    mat-form-field textarea {
+        font-size: 13px;
+    }
+
+   
+}
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
+}
