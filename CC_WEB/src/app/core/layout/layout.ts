@@ -471,8 +471,6 @@ export class LayoutComponent implements OnInit {
                   route: '/dashboard/Trade-Services/export-screen/inquiries',
                 },
               ],
-                { label: 'Inquiries', route: '/dashboard/Trade-Services/export-screen/inquiries' },
-              ]
             },
 
             // -------------------------
