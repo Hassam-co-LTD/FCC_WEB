@@ -1,0 +1,133 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Interest (for late payment)</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+      <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Rate</mat-label>
+            <input matInput type="text" formControlName="interestRate" placeholder="Enter rate">
+          </mat-form-field>
+          @if (hasPreviousValue('interestRate')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('interestRate') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Start Date</mat-label>
+            <input matInput type="text" formControlName="interestStartDate" placeholder="Enter start date">
+          </mat-form-field>
+          @if (hasPreviousValue('interestStartDate')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('interestStartDate') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>End Period</mat-label>
+            <input matInput type="text" formControlName="interestEndPeriod" placeholder="Enter end period">
+          </mat-form-field>
+          @if (hasPreviousValue('interestEndPeriod')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('interestEndPeriod') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Start Interest</mat-label>
+            <mat-select formControlName="startInterest">
+              @for (option of startInterestOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('startInterest')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('startInterest') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Day Basis</mat-label>
+            <mat-select formControlName="dayBasis">
+              @for (option of dayBasisOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('dayBasis')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('dayBasis') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Start From</mat-label>
+            <mat-select formControlName="startFrom">
+              @for (option of startFromOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('startFrom')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('startFrom') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Or End Date</mat-label>
+            <input matInput type="text" formControlName="interestEndDate" placeholder="Enter or end date">
+          </mat-form-field>
+          @if (hasPreviousValue('interestEndDate')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('interestEndDate') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Grace Days</mat-label>
+            <input matInput type="text" formControlName="graceDays" placeholder="Enter grace days">
+          </mat-form-field>
+          @if (hasPreviousValue('graceDays')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('graceDays') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="checkbox-list">
+        <div class="field-with-previous">
+          <mat-checkbox formControlName="waiveIfRefused">Waive if Refused</mat-checkbox>
+          @if (hasPreviousValue('waiveIfRefused')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('waiveIfRefused') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,389 @@
+<div class="registration-page">
+  <div class="registration-container">
+    <!-- Header -->
+    <header class="registration-header">
+      <div class="brand-icon-wrapper">
+        <mat-icon class="brand-icon">account_balance</mat-icon>
+      </div>
+
+      <div class="header-text">
+        <h1 class="page-title">Online Registration</h1>
+        <p class="page-subtitle">Register for FCC</p>
+      </div>
+    </header>
+
+    <!-- Progress Stepper -->
+    <div class="stepper-container" aria-label="Registration Progress">
+      <div class="stepper-track"></div>
+
+      <div
+        class="step-item"
+        [class.active]="currentStep === 1"
+        [class.completed]="currentStep > 1"
+      >
+        <div class="step-badge">
+          @if (currentStep > 1) {
+          <mat-icon>check</mat-icon>
+          } @else {
+          <span class="step-number">1</span>
+          }
+        </div>
+        <span class="step-label">Customer Details</span>
+      </div>
+
+      <div
+        class="step-item"
+        [class.active]="currentStep === 2"
+        [class.completed]="currentStep > 2"
+      >
+        <div class="step-badge">
+          @if (currentStep > 2) {
+          <mat-icon>check</mat-icon>
+          } @else {
+          <span class="step-number">2</span>
+          }
+        </div>
+        <span class="step-label">OTP Verification</span>
+      </div>
+
+      <div class="step-item" [class.active]="currentStep === 3">
+        <div class="step-badge">
+          <span class="step-number">3</span>
+        </div>
+        <span class="step-label">Registration</span>
+      </div>
+    </div>
+
+    <!-- STEP 1: CUSTOMER DETAILS AND ACCOUNT VERIFICATION -->
+    @if (currentStep === 1) {
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">Customer Registration Details</h2>
+        <p class="content-description">
+          Enter your account and personal details to begin your Channels
+          registration.
+        </p>
+      </div>
+
+      <form
+        [formGroup]="accountForm"
+        (ngSubmit)="submitRegistration()"
+        class="registration-form"
+      >
+        <!-- Customer Name -->
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label>Customer Name</mat-label>
+            <mat-icon matPrefix class="field-icon">person</mat-icon>
+
+            <input
+              matInput
+              formControlName="name"
+              placeholder="Enter your full name"
+              maxlength="100"
+              autocomplete="name"
+            />
+
+            @if ( accountForm.get('name')?.hasError('required') &&
+            accountForm.get('name')?.touched ) {
+            <mat-error>Customer name is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- CNIC -->
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label>CNIC</mat-label>
+            <mat-icon matPrefix class="field-icon">badge</mat-icon>
+
+            <input
+              matInput
+              formControlName="cnic"
+              placeholder="Enter your 13-digit CNIC without dashes"
+              maxlength="13"
+              inputmode="numeric"
+              autocomplete="off"
+            />
+
+            @if ( accountForm.get('cnic')?.hasError('required') &&
+            accountForm.get('cnic')?.touched ) {
+            <mat-error>CNIC is required.</mat-error>
+            } @if ( accountForm.get('cnic')?.hasError('pattern') &&
+            accountForm.get('cnic')?.touched ) {
+            <mat-error>
+              CNIC must contain exactly 13 digits without dashes.
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Contact Number -->
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label>Contact Number</mat-label>
+            <mat-icon matPrefix class="field-icon">phone</mat-icon>
+
+            <input
+              matInput
+              formControlName="contactNumber"
+              placeholder="Enter your contact number"
+              maxlength="15"
+              inputmode="tel"
+              autocomplete="tel"
+            />
+
+            @if ( accountForm.get('contactNumber')?.hasError('required') &&
+            accountForm.get('contactNumber')?.touched ) {
+            <mat-error>Contact number is required.</mat-error>
+            } @if ( ( accountForm.get('contactNumber')?.hasError('minlength') ||
+            accountForm.get('contactNumber')?.hasError('maxlength') ) &&
+            accountForm.get('contactNumber')?.touched ) {
+            <mat-error>
+              Contact number must contain 10 to 15 characters.
+            </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Email -->
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label>Email Address</mat-label>
+            <mat-icon matPrefix class="field-icon">email</mat-icon>
+
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="Enter your email address"
+              autocomplete="email"
+            />
+
+            @if ( accountForm.get('email')?.hasError('required') &&
+            accountForm.get('email')?.touched ) {
+            <mat-error>Email address is required.</mat-error>
+            } @if ( accountForm.get('email')?.hasError('email') &&
+            accountForm.get('email')?.touched ) {
+            <mat-error>Please enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <!-- Remarks -->
+        <div class="form-field-group">
+          <mat-form-field appearance="outline" class="custom-form-field">
+            <mat-label>Remarks (Optional)</mat-label>
+            <mat-icon matPrefix class="field-icon">notes</mat-icon>
+
+            <textarea
+              matInput
+              formControlName="remarks"
+              placeholder="Enter any additional information"
+              rows="3"
+            ></textarea>
+          </mat-form-field>
+        </div>
+
+        <!-- Account Verification Message -->
+        @if (accountVerificationMessage) {
+        <div
+          [class.verification-error]="accountVerificationError"
+          [class.verification-success]="!accountVerificationError"
+          role="status"
+          aria-live="polite"
+        >
+          <mat-icon>
+            {{ accountVerificationError ? 'error_outline' : 'check_circle' }}
+          </mat-icon>
+
+          <span>{{ accountVerificationMessage }}</span>
+        </div>
+        }
+        <!-- Information Callout -->
+        @if (showCustomerNotice) {
+        <div class="info-callout">
+          <mat-icon class="info-icon">verified_user</mat-icon>
+
+          <div class="info-text">
+            <strong class="info-heading">Customer Information Notice</strong>
+
+            <p>
+              Please ensure that your account number and contact details are
+              correct. Your account number will be verified before proceeding to
+              the next step.
+            </p>
+          </div>
+        </div>
+        }
+
+        <!-- Actions -->
+        <button
+          type="submit"
+          mat-flat-button
+          class="btn-primary"
+          [disabled]="accountForm.invalid || isLoading"
+        >
+          <span class="loading-state" *ngIf="isLoading">
+            <mat-spinner diameter="20" class="spinner-light"></mat-spinner>
+            <span>Verifying...</span>
+          </span>
+
+          <ng-container *ngIf="!isLoading">
+            <span>Continue</span>
+          </ng-container>
+        </button>
+      </form>
+    </main>
+    }
+
+    <!-- STEP 2: OTP VERIFICATION -->
+
+    @if (currentStep === 2) {
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">OTP Verification</h2>
+        <p class="content-description">
+          Enter the one-time password sent to your registered email address.
+        </p>
+      </div>
+
+      <form
+        [formGroup]="otpForm"
+        (ngSubmit)="verifyOtp()"
+        class="registration-form"
+      >
+        <div class="otp-verification-card">
+          <div class="otp-icon-wrapper">
+            <mat-icon class="otp-icon">mark_email_read</mat-icon>
+          </div>
+
+          <div class="otp-message">
+            <h3>Enter Verification Code</h3>
+            <p>
+              Enter the 6-digit verification code sent to
+              <strong>{{ accountForm.get('email')?.value }}</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="form-field-group">
+          <mat-form-field
+            appearance="outline"
+            class="custom-form-field otp-field"
+          >
+            <mat-label>Enter OTP</mat-label>
+
+            <mat-icon matPrefix class="field-icon">lock</mat-icon>
+
+            <input
+              matInput
+              type="text"
+              formControlName="otp"
+              placeholder="Enter 6-digit OTP"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+            />
+
+            @if ( otpForm.get('otp')?.hasError('required') &&
+            otpForm.get('otp')?.touched ) {
+            <mat-error>OTP is required.</mat-error>
+            } @if ( otpForm.get('otp')?.hasError('pattern') &&
+            otpForm.get('otp')?.touched ) {
+            <mat-error> Please enter a valid 6-digit OTP. </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="otp-resend-section">
+          <span class="resend-text">Didn't receive the code?</span>
+
+          <button
+            type="button"
+            mat-button
+            class="resend-btn"
+            (click)="resendOtp()"
+            [disabled]="isLoading || isResendingOtp"
+          >
+            @if (isResendingOtp) { Sending... } @else { Resend OTP }
+          </button>
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            mat-stroked-button
+            class="btn-secondary"
+            (click)="currentStep = 1"
+            [disabled]="isLoading || isResendingOtp"
+          >
+            <mat-icon>arrow_back</mat-icon>
+            Back
+          </button>
+
+          <button
+            type="submit"
+            mat-flat-button
+            class="btn-primary"
+            [disabled]="otpForm.invalid || isLoading || isResendingOtp"
+          >
+            @if (isLoading) {
+            <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+            <ng-container>
+              Submit
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </ng-container>
+            }
+          </button>
+        </div>
+      </form>
+    </main>
+    }
+
+    <!-- STEP 3: REGISTRATION -->
+    @if (currentStep === 3) {
+    <main class="registration-content">
+      <div class="content-header">
+        <h2 class="content-title">Complete Registration</h2>
+        <p class="content-description">
+          Your account verification process is complete. Continue to finalize
+          your registration.
+        </p>
+      </div>
+
+      <div class="registration-success-card">
+        <div class="success-icon-wrapper">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+
+        <h3>Verification Successful</h3>
+
+        <p>
+          Your verification step is complete. You can proceed with registration
+          once the registration API is integrated.
+        </p>
+
+        <button
+          type="button"
+          mat-flat-button
+          class="btn-primary"
+          (click)="cancelRegistration()"
+        >
+          Return to Login
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </main>
+    }
+
+    <!-- Footer -->
+    <footer class="registration-footer">
+      <mat-icon class="security-icon">lock</mat-icon>
+      <span>
+        Your information is handled securely. Never share your OTP with anyone.
+      </span>
+    </footer>
+  </div>
+</div>

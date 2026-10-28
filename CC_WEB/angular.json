@@ -17,25 +17,35 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
-            "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": [
-              "src/styles.scss",
-              "@angular/material/prebuilt-themes/azure-blue.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": ["src/styles"]
-            }
-          },
+  "browser": "src/main.ts",
+  "polyfills": [
+    "zone.js"
+  ],
+  "tsConfig": "tsconfig.app.json",
+  "inlineStyleLanguage": "scss",
+  "assets": [
+    {
+      "glob": "**/*",
+      "input": "public"
+    }
+  ],
+  "styles": [
+    "src/styles.scss",
+    "@angular/material/prebuilt-themes/azure-blue.css",
+    "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+  ],
+  "stylePreprocessorOptions": {
+    "includePaths": ["src/styles"]
+  },
+  "allowedCommonJsDependencies": [
+    "sweetalert2",
+    "html2canvas",
+    "canvg",
+    "core-js",
+    "raf",
+    "rgbcolor"
+  ]
+},
           "configurations": {
             "production": {
               "budgets": [
@@ -46,8 +56,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "16kB",
-                  "maximumError": "20kB"
+                  "maximumWarning": "12kB",
+                  "maximumError": "24kB"
                 }
               ],
               "outputHashing": "all"
@@ -64,7 +74,10 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "host": "localhost",
-            "allowedHosts": ["localhost"]
+            "allowedHosts": [
+              "muhammadtalha",
+              "localhost"
+            ]
           },
           "configurations": {
             "production": {
@@ -85,6 +98,9 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
             "assets": [
               {
                 "glob": "**/*",

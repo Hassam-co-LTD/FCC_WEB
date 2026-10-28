@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
@@ -28,7 +28,9 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ExportCollectionTransaction } from '../../../../core/models/export-collection';
 import { ExportCollectionFormTransactionService } from '../../../../core/services/user-service/export-collection-form-transaction-service/export-collection-form-transaction';
-
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-export-collection',
   standalone: true,
@@ -46,6 +48,8 @@ import { ExportCollectionFormTransactionService } from '../../../../core/service
     PaymentAmountComponent,
     MatDialogModule,
     Sidebar,
+    RouterModule,
+    DynamicFields,
   ],
   templateUrl: './export-collection.html',
   styleUrls: ['./export-collection.scss'],
@@ -91,6 +95,9 @@ export class ExportCollection implements OnInit {
     { label: 'Attachments' },
   ];
 
+  // Only offered in the sidebar once the screen is known to have dynamic fields
+  private readonly dynamicFieldsStep = { label: 'Dynamic Fields' };
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -100,6 +107,7 @@ export class ExportCollection implements OnInit {
     private dialog: MatDialog,
     private transactionService: ExportCollectionFormTransactionService,
     private authservice: AuthService,
+    private transactionComparisonService: TransactionComparisonService,
   ) {
     this.buildForm();
   }
@@ -109,7 +117,7 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -246,13 +254,17 @@ export class ExportCollection implements OnInit {
         this.enterCreateMode();
       }
     });
+
+    // load dynamic fields
+
+    this.loadDynamicFields();
   }
 
-  // =========================================================
-  // BUILD FORM
-  // =========================================================
-
+  // -----------------------------
+  // FORM CREATION
+  // -----------------------------
   private buildForm(): void {
+    // Always initialize the form to avoid null bindings
     this.ExportCollectionForm = this.fb.group({
       generalDetails: this.fb.group({
         collectionType: [''],
@@ -309,7 +321,7 @@ export class ExportCollection implements OnInit {
         shippingFrom: [''],
         shippingTo: [''],
         shipmentDate: [''],
-        incotermsRules: [''],
+        applicableRule: [''],
         incoterms: [''],
       }),
 
@@ -365,6 +377,20 @@ export class ExportCollection implements OnInit {
       next: (tx) => {
         this.currentTx = tx;
 
+        console.log('loading transaction  from backend ', tx);
+
+        if (tx.status === 'S') {
+          this.api.getRejectedTransaction(tnxId, 'exportcollection').subscribe({
+            next: (rejectedTx) => {
+              this.storeRejectedTransaction = rejectedTx;
+              console.log('Rejected transaction data:', rejectedTx);
+              this.compareExportCollectionData();
+            },
+            error: (err: any) => {
+              console.log('Error fetching rejected transaction:', err);
+            },
+          });
+        }
         this.patchForm(tx);
 
         switch (tx.status) {
@@ -475,6 +501,12 @@ export class ExportCollection implements OnInit {
 
       CollectionInstruction: tx,
     });
+
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic field values into dynamic fields form
+    this.patchDynamicValues();
   }
 
   // =========================================================
@@ -497,6 +529,12 @@ export class ExportCollection implements OnInit {
   // =========================================================
 
   private flattenForm(): ExportCollectionTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
     return {
       companyId: this.companyId,
 
@@ -511,7 +549,7 @@ export class ExportCollection implements OnInit {
       ...this.ExportCollectionForm.value.ShipmentDetails,
 
       ...this.ExportCollectionForm.value.CollectionInstruction,
-
+      dynamicFields: dynamicFields,
       attachments: this.ExportCollectionForm.value.attachments,
     };
   }
@@ -705,7 +743,7 @@ export class ExportCollection implements OnInit {
 
       return;
     }
-
+    console.log('sending payload  for the backend ', payload);
     this.api.updatePendingByTnxIdExportCollection(payload).subscribe({
       next: (res) => {
         this.snackBar.open(
@@ -878,5 +916,186 @@ export class ExportCollection implements OnInit {
           });
         },
       });
+  }
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ExportCollection with status A...');
+
+    this.api.getFieldsByScreenAndStatus('ExportCollection', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res || [];
+
+        if (
+          this.fields.length &&
+          !this.exportCollectionSteps.includes(this.dynamicFieldsStep)
+        ) {
+          this.exportCollectionSteps = [
+            ...this.exportCollectionSteps,
+            this.dynamicFieldsStep,
+          ];
+        }
+
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    ) {
+      return;
+    }
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (field: any) => field.fieldId === savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+
+  // old and new values working
+
+  storeRejectedTransaction: ExportCollectionTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  previousDynamicValues: { [key: string]: any } = {};
+  private readonly exportCollectionFields = [
+    // General Details
+    'collectionType',
+    'customerReference',
+    'draweeReference',
+
+    // Drawer / Drawee Details
+    'drawerName',
+    'drawerAddress1',
+    'drawerAddress2',
+    'drawerAddress3',
+    'drawerAddress4',
+    'draweeName',
+    'beneficiaryName',
+    'draweeAddress1',
+    'draweeAddress2',
+    'draweeAddress3',
+    'draweeAddress4',
+
+    // Bank Details
+    'remittingBankName',
+    'issuerReference',
+    'principalAccount',
+    'feeAccount',
+    'presentingBankName',
+    'bankAddress1',
+    'bankAddress2',
+    'bankAddress3',
+    'bankAddress4',
+    'collectingBankName',
+    'swiftCode',
+    'collectingReference',
+
+    // Payment and Amount
+    'currency',
+    'amount',
+    'paymentType',
+    'tenor',
+    'paymentReference',
+
+    // Shipment Details
+    'shippingMethod',
+    'shipmentReference',
+    'shippingFrom',
+    'shippingTo',
+    'shipmentDate',
+    'applicableRule',
+    'incoterms',
+
+    // Collection Instruction
+    'advicePaymentBy',
+    'adviceAcceptanceAndDueDateBy',
+    'adviceReasonOfRefusalBy',
+    'waiveAllChargesIfRefusedByDrawee',
+    'protestInCaseOfNonPayment',
+    'protestInCaseOfNonAcceptance',
+    'acceptanceMayBeDeferredPendingArrival',
+    'warehouseOrInsureGoodsIfNecessary',
+    'openingCharges',
+    'outsideCountryCharges',
+    'referTo',
+  ];
+
+  private compareExportCollectionData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.exportCollectionFields,
+    );
+
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
+
+    console.log('Previous export collection values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

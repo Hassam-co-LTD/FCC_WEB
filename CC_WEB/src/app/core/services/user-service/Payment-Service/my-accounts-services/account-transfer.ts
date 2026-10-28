@@ -9,6 +9,7 @@ import {
   AccountsMaster,
 } from '../../../../models/my-accounts';
 import { AuthService } from '../../../auth.service';
+import { setSessionItem } from '../../../../utils/browser-storage';
  
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class MyAccountsService {
    
     // Also store in sessionStorage for backward compatibility
     if (userRole) {
-      sessionStorage.setItem('userRole', userRole);
+      setSessionItem('userRole', userRole);
     }
   }
  
@@ -100,7 +101,7 @@ export class MyAccountsService {
   getTransferFromAccounts(): Observable<any[]> {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const userId = this.authService.getUserId()?.toString() || '';
  
     return this.apiService.getTransferFromAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
@@ -124,8 +125,8 @@ export class MyAccountsService {
    */
   getTransferToAccounts(): Observable<any[]> {
     const userRole = this.userRoleSubject.value;
-    const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const companyId = (this.authService.getCompanyId() ?? '') as string;
+    const userId = this.authService.getUserId()?.toString() || '';
  
     return this.apiService.getTransferToAccounts(userRole, companyId, userId).pipe(
       map(accounts => accounts.map(account => ({
@@ -659,7 +660,7 @@ export class MyAccountsService {
   updateUserRole(): void {
     const role = this.authService.getUserCategory() || '';
     this.userRoleSubject.next(role);
-    sessionStorage.setItem('userRole', role);
+    setSessionItem('userRole', role);
   }
  
   /**
@@ -677,7 +678,7 @@ export class MyAccountsService {
   getAccessibleAccounts(): Observable<AccountsMaster[]> {
     const userRole = this.userRoleSubject.value;
     const companyId = this.authService.getCompanyId() || '';
-    const userId = this.authService.getUserId() || '';
+    const userId = this.authService.getUserId()?.toString() || '';
    
     return this.apiService.getAccessibleAccounts(userRole, companyId, userId).pipe(
       catchError(() => of([]))

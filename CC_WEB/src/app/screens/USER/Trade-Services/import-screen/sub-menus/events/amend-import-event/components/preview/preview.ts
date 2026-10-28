@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from '../../../../../../../../../core/services/api.service';
 import { ImportlcFormTransactionService } from '../../../../../../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
+import { readSessionJson } from '../../../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-preview',
@@ -29,6 +30,7 @@ import { RejectDialogComponent } from '../../../../../../../../../shared/reject-
 })
 export class Preview {
   @Input() transaction!: ImportLcTransaction;
+
   viewMode: 'submit' | 'readonly' = 'submit';
   importForm!: FormGroup;
 
@@ -57,7 +59,7 @@ export class Preview {
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
 
-    const sessionData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const sessionData = readSessionJson<any>('userData', {});
 
     this.permissionNames = sessionData.permissionNames || [];
 
@@ -66,19 +68,8 @@ export class Preview {
       this.router.navigate(['/dashboard/Trade-Services/import-screen/amend']);
       return;
     }
+
     this.viewMode = this.transactionService.getViewMode();
-    // ✅ Always fetch latest approved event metadata to show correct
-    // eventType and eventRefNo — works for both CRE and AMD
-    // if (this.currentTx.tnxId && !this.currentTx.eventRefNo) {
-    //   this.api.getLatestApprovedEvent(this.currentTx.tnxId).subscribe({
-    //     next: (event) => {
-    //       this.currentTx!.eventType = event.eventType;
-    //       this.currentTx!.eventRefNo = event.eventRefNo;
-    //       this.currentTx!.eventSequence = event.eventSequence;
-    //     },
-    //     error: () => { } // badge shows '—' if nothing found yet
-    //   });
-    // }
     this.initForm();
   }
 
@@ -156,9 +147,14 @@ export class Preview {
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
-    // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
       this.importForm.disable({ emitEvent: false });
     }
@@ -166,6 +162,9 @@ export class Preview {
 
   get attachmentsArray(): FormArray {
     return this.importForm.get('attachments') as FormArray;
+  }
+  get dynamicFieldsArray(): FormArray {
+    return this.importForm.get('dynamicFields') as FormArray;
   }
 
   back() {
@@ -175,14 +174,16 @@ export class Preview {
   }
 
   submitLc(): void {
-
-        if (!this.hasPermission('ILC_AmendSubmit')) return;
+    if (!this.hasPermission('ILC_AmendSubmit')) return;
 
     if (this.viewMode === 'readonly') return;
 
     const tnxId = this.currentTx?.tnxId;
+
     if (!tnxId) {
-      this.snackBar.open('Transaction ID missing', 'Close', { duration: 3000 });
+      this.snackBar.open('Transaction ID missing', 'Close', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -204,8 +205,7 @@ export class Preview {
   }
 
   approveTransaction(): void {
-
-        if (!this.hasPermission('ILC_AmendApprove')) return;
+    if (!this.hasPermission('ILC_AmendApprove')) return;
 
     if (!this.currentTx?.tnxId) return;
 
@@ -225,8 +225,7 @@ export class Preview {
   }
 
   rejectTransaction(): void {
-
-     if (!this.hasPermission('ILC_AmendReject')) return;
+    if (!this.hasPermission('ILC_AmendReject')) return;
     const tnxId = this.currentTx?.tnxId;
     if (!tnxId) return;
 
@@ -258,12 +257,12 @@ export class Preview {
   }
 
   downloadFile(index: number) {
-
     if (!this.hasPermission('ILCAmendPreview')) {
       return;
     }
 
     const data = this.attachmentsArray.at(index)?.value;
+
     if (!data) return;
 
     const { file, fileName } = data;
@@ -278,12 +277,18 @@ export class Preview {
     if (typeof file === 'string' && file.startsWith('data:')) {
       const arr = file.split(',');
       const mime = arr[0].match(/:(.*?);/)?.[1] ?? '';
+
       const bstr = atob(arr[1]);
       const u8arr = new Uint8Array(bstr.length);
+
       for (let n = 0; n < bstr.length; n++) {
         u8arr[n] = bstr.charCodeAt(n);
       }
-      const blob = new Blob([u8arr], { type: mime });
+
+      const blob = new Blob([u8arr], {
+        type: mime,
+      });
+
       const url = URL.createObjectURL(blob);
       this.triggerDownload(url, fileName);
       URL.revokeObjectURL(url);
@@ -293,12 +298,13 @@ export class Preview {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(url: string, fileName: string) {
+  private triggerDownload(url: string, fileName: string): void {
     const a = document.createElement('a');
     a.href = url;
     a.download = fileName;
     a.click();
   }
+
   trackByIndex(index: number, item: any): any {
     return item?.id || index;
   }

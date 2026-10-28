@@ -1,0 +1,108 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Draft Details</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen" [formGroup]="form">
+
+  @if (isOpen) {
+    <div class="field-group">
+      <div class="party-row">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Currency</mat-label>
+            <input matInput type="text" formControlName="draftCollectionCurrency" placeholder="Enter currency">
+          </mat-form-field>
+          @if (hasPreviousValue('draftCollectionCurrency')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftCollectionCurrency') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Collection Amount</mat-label>
+            <input matInput type="text" formControlName="draftCollectionAmount" placeholder="Enter collection amount">
+          </mat-form-field>
+          @if (hasPreviousValue('draftCollectionAmount')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftCollectionAmount') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Draft Against</mat-label>
+            <mat-select formControlName="draftAgainst">
+              @for (option of draftAgainstOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('draftAgainst')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftAgainst') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Identifier</mat-label>
+            <input matInput type="text" formControlName="draftIdentifier" placeholder="Enter identifier">
+          </mat-form-field>
+          @if (hasPreviousValue('draftIdentifier')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftIdentifier') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Draft Text</mat-label>
+            <input matInput type="text" formControlName="draftText" placeholder="Enter draft text">
+          </mat-form-field>
+          @if (hasPreviousValue('draftText')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftText') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Draft Amount</mat-label>
+            <input matInput type="text" formControlName="draftAmount" placeholder="Enter draft amount">
+          </mat-form-field>
+          @if (hasPreviousValue('draftAmount')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('draftAmount') }}</span>
+            </div>
+          }
+        </div>
+        <div class="field-with-previous">
+          <mat-form-field appearance="outline">
+            <mat-label>Tenor</mat-label>
+            <mat-select formControlName="tenor">
+              @for (option of tenorOptions; track option.value) {
+                <mat-option [value]="option.value">{{ option.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (hasPreviousValue('tenor')) {
+            <div class="previous-value">
+              <span class="previous-label">Previous Value:</span>
+              <span class="previous-text">{{ getPreviousValue('tenor') }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

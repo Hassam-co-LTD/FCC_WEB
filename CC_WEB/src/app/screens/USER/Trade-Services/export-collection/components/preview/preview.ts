@@ -301,7 +301,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { readSessionJson } from '../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-export-preview',
   standalone: true,
@@ -342,15 +343,16 @@ export class Preview implements OnInit {
 
   ngOnInit(): void {
     // Get permissions from session
-    const userData = JSON.parse(sessionStorage.getItem('userData') || '{}');
+    const userData = readSessionJson<any>('userData', {});
     this.permissionNames = userData.permissionNames || [];
 
     this.currentTx =
       this.transaction || this.transactionService.getCurrentTransaction();
+    console.log('preview loaded ', this.currentTx);
 
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
-      this.router.navigate(['/export-collection']);
+      this.router.navigate(['/dashboard/Trade-Services/export-collection']);
       return;
     }
 
@@ -435,11 +437,21 @@ export class Preview implements OnInit {
         this.currentTx!.warehouseOrInsureGoodsIfNecessary,
       ],
       referTo: [this.currentTx!.referTo],
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
 
     if (this.viewMode === 'readonly') {
       this.ExportCollectionForm.disable({ emitEvent: false });
     }
+  }
+
+  get dynamicFieldsArray(): FormArray {
+    return this.ExportCollectionForm.get('dynamicFields') as FormArray;
   }
 
   back() {

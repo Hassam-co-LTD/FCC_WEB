@@ -1,20 +1,6 @@
-import { Routes, UrlMatcher, UrlSegment } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout';
 import { authGuard } from './core/guards/auth-guard';
-
-export const transactionIdMatcher: UrlMatcher = (segments: UrlSegment[]) => {
-  if (
-    segments.length === 2 &&
-    segments[0].path === 'import-screen' &&
-    /^\d+$/.test(segments[1].path)
-  ) {
-    return {
-      consumed: segments,
-    };
-  }
-
-  return null;
-};
 
 export const routes: Routes = [
   // Default redirect
@@ -33,6 +19,15 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./screens/AUTH/login/login.component').then(
         (m) => m.LoginComponent,
+      ),
+  },
+
+  // ============= customer register page lik =============
+  {
+    path: 'customer-registration',
+    loadComponent: () =>
+      import('./screens/ADMIN/admin-dashboard/components/register-customer/register-customer').then(
+        (m) => m.RegisterCustomer,
       ),
   },
 
@@ -154,9 +149,16 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'edit-currency/:id',
+            loadComponent: () =>
+              import('./screens/ADMIN/admin-dashboard/components/create-currency/create-currency').then(
+                (m) => m.CreateCurrency,
+              ),
+          },
+          {
             path: 'currency-list',
             loadComponent: () =>
-              import('./screens/ADMIN/admin-dashboard/components//create-currency/currency-list/currency-list').then(
+              import('./screens/ADMIN/admin-dashboard/components/create-currency/currency-list/currency-list').then(
                 (m) => m.CurrencyList,
               ),
           },
@@ -281,12 +283,13 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'Accounts-inquiry',
+            path: 'accounts-inquiry',
             loadComponent: () =>
-              import('./screens/ADMIN/admin-dashboard/components/create-account/create-account').then(
-                (m) => m.Accounts,
+              import('./screens/ADMIN/admin-dashboard/components/accounts-inquiry/accounts-inquiry').then(
+                (m) => m.AccountsInquiry,
               ),
           },
+          { path: 'Accounts-inquiry', redirectTo: 'accounts-inquiry' },
           {
             path: 'edit-accounts/:id',
             loadComponent: () =>
@@ -319,21 +322,21 @@ export const routes: Routes = [
           {
             path: 'create-permission',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permission-master/permission-master').then(
+              import('./screens/ADMIN/admin-dashboard/components/permission-master/permission-master').then(
                 (m) => m.PermissionMaster,
               ),
           },
           {
             path: 'edit-permission/:id',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permission-master/permission-master').then(
+              import('./screens/ADMIN/admin-dashboard/components/permission-master/permission-master').then(
                 (m) => m.PermissionMaster,
               ),
           },
           {
             path: 'permission-master-inquiry',
             loadComponent: () =>
-              import('./screens/admin/admin-dashboard/components/permissions-inquiry/permissions-inquiry').then(
+              import('./screens/ADMIN/admin-dashboard/components/permissions-inquiry/permissions-inquiry').then(
                 (m) => m.RoleMasterList,
               ),
           },
@@ -436,8 +439,10 @@ export const routes: Routes = [
               ),
           },
 
+          // ==============================
           // TRADE SERVICES — Import LC, Export LC, Shipping Guarantee,
           // Export Collection, Undertaking Issuance ONLY
+          // ==============================
           {
             path: 'Trade-Services',
             loadComponent: () =>
@@ -445,7 +450,21 @@ export const routes: Routes = [
                 (m) => m.TradeServices,
               ),
             children: [
-              // ---------- EXPORT LC ----------
+              // ---------- EXPORT LC (received via middleware, preview only) ----------
+                {
+                path: 'export-screen-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Export LC',
+                  description:
+                    'Manage all Export LC related activities here.',
+                  existingRoute:
+                    '/dashboard/Trade-Services/export-screen/inquiries',
+                },
+              },
               {
                 path: 'export-screen/inquiries',
                 loadComponent: () =>
@@ -454,49 +473,43 @@ export const routes: Routes = [
                   ),
               },
               {
-                path: 'export-screen/preview',
+                path: 'export-screen/view/:tnxId',
                 loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/components/preview/preview').then(
-                    (m) => m.ExportPreview,
+                  import('./screens/USER/Trade-Services/inbound-preview/inbound-preview').then(
+                    (m) => m.InboundPreview,
                   ),
+                data: { product: 'export-lc' },
               },
-              {
-                path: 'export-screen/success',
-                loadComponent: () =>
-                  import('./shared/success/success').then((m) => m.Success),
-              },
-              {
-                matcher: transactionIdMatcher,
 
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-                    (m) => m.ExportScreen,
-                  ),
-              },
+              // ---------- IMPORT COLLECTION (received via middleware, preview only) ----------
               {
-                path: 'export-screen',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-screen/export-screen').then(
-                    (m) => m.ExportScreen,
-                  ),
-              },
-              {
-                path: 'exportlc-welcome',
+                path: 'import-collection-welcome',
                 loadComponent: () =>
                   import('./shared/welcome-screen/welcome-screen').then(
                     (m) => m.WelcomeScreen,
                   ),
                 data: {
-                  title: 'Welcome to Export LC',
-                  description: 'Manage all Export LC activities here.',
-                  createRoute: '/dashboard/Trade-Services/export-screen',
-                  templateRoute:
-                    '/dashboard/Trade-Services/export-screen?mode=template',
+                  title: 'Welcome to Import Collection',
+                  description:
+                    'Manage all Import Collection related activities here.',
                   existingRoute:
-                    '/dashboard/Trade-Services/export-screen/inquiries',
-                  uploadRoute:
-                    '/dashboard/Trade-Services/export-screen?mode=upload',
+                    '/dashboard/Trade-Services/import-collection/inquiries',
                 },
+              },
+              {
+                path: 'import-collection/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-collection/sub-menus/records/inquiries-of-records/inquiries-of-records').then(
+                    (m) => m.InquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'import-collection/view/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/inbound-preview/inbound-preview').then(
+                    (m) => m.InboundPreview,
+                  ),
+                data: { product: 'import-collection' },
               },
 
               // ---------- SHIPPING GUARANTEE ----------
@@ -542,13 +555,6 @@ export const routes: Routes = [
               },
               {
                 path: 'shipping-guarantee/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
-                    (m) => m.ShippingGuarantee,
-                  ),
-              },
-              {
-                matcher: transactionIdMatcher,
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/shipping-guarantee-screen/shipping-guarantee-screen').then(
                     (m) => m.ShippingGuarantee,
@@ -636,13 +642,6 @@ export const routes: Routes = [
               },
               {
                 path: 'export-collection/:tnxId',
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/export-collection/export-collection').then(
-                    (m) => m.ExportCollection,
-                  ),
-              },
-              {
-                matcher: transactionIdMatcher,
                 loadComponent: () =>
                   import('./screens/USER/Trade-Services/export-collection/export-collection').then(
                     (m) => m.ExportCollection,
@@ -740,13 +739,6 @@ export const routes: Routes = [
                   ),
               },
               {
-                matcher: transactionIdMatcher,
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/undertaking-issuance/undertaking-issuance').then(
-                    (m) => m.UndertakingIssuance,
-                  ),
-              },
-              {
                 path: 'undertaking-issuance/amend/:tnxId',
                 pathMatch: 'full',
                 loadComponent: () =>
@@ -783,7 +775,65 @@ export const routes: Routes = [
                 },
               },
 
-              // ---------- IMPORT LC ----------
+              // ---------- IMPORT CONTRACT ----------
+              {
+                path: 'import-contract/inquiries',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/sub-menus/records/enquiries-of-records/enquiries-of-records').then(
+                    (m) => m.EnquiriesOfRecords,
+                  ),
+              },
+              {
+                path: 'import-contract/preview',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/components/preview/preview').then(
+                    (m) => m.Preview,
+                  ),
+              },
+              {
+                path: 'import-contract/success',
+                loadComponent: () =>
+                  import('./shared/success/success').then((m) => m.Success),
+              },
+              {
+                path: 'import-contract/:tnxId',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/import-contract').then(
+                    (m) => m.ImportContract,
+                  ),
+              },
+              {
+                path: 'import-contract',
+                loadComponent: () =>
+                  import('./screens/USER/Trade-Services/import-contract/import-contract').then(
+                    (m) => m.ImportContract,
+                  ),
+              },
+              {
+                path: 'import-contract-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Import Contract',
+                  description:
+                    'Manage all Import Contract related activities here.',
+                  createRoute: '/dashboard/Trade-Services/import-contract',
+                  templateRoute:
+                    '/dashboard/Trade-Services/import-contract?mode=template',
+                  existingRoute:
+                    '/dashboard/Trade-Services/import-contract/inquiries',
+                  uploadRoute:
+                    '/dashboard/Trade-Services/import-contract?mode=upload',
+                },
+              },
+
+              // ==============================
+              // IMPORT LC
+              // ==============================
+
+              // Static routes first
               {
                 path: 'import-screen/inquiries',
                 loadComponent: () =>
@@ -810,6 +860,8 @@ export const routes: Routes = [
                     (m) => m.AmendScreen,
                   ),
               },
+
+              // Import Amend Route
               {
                 path: 'import-screen/approved-inquiry-records',
                 loadComponent: () =>
@@ -817,6 +869,7 @@ export const routes: Routes = [
                     (m) => m.ApprovedInquiryRecords,
                   ),
               },
+
               {
                 path: 'import-screen/amend/preview',
                 loadComponent: () =>
@@ -824,6 +877,8 @@ export const routes: Routes = [
                     (m) => m.Preview,
                   ),
               },
+
+              // Dynamic TNX ID route
               {
                 path: 'import-screen/:tnxId',
                 loadComponent: () =>
@@ -831,13 +886,7 @@ export const routes: Routes = [
                     (m) => m.ImportScreen,
                   ),
               },
-              {
-                matcher: transactionIdMatcher,
-                loadComponent: () =>
-                  import('./screens/USER/Trade-Services/import-screen/import-screen').then(
-                    (m) => m.ImportScreen,
-                  ),
-              },
+
               {
                 path: 'import-screen/amend/:tnxId',
                 loadComponent: () =>
@@ -845,6 +894,8 @@ export const routes: Routes = [
                     (m) => m.AmendScreen,
                   ),
               },
+
+              // Base import screen
               {
                 path: 'import-screen',
                 loadComponent: () =>
@@ -872,19 +923,20 @@ export const routes: Routes = [
               },
             ],
           },
+
           // PAYMENT SERVICES — sibling of Trade Services, not nested inside it
           {
             path: 'my-accounts',
             children: [
               {
-                path: '',
+                path: '', // The main form (Create mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
                     (m) => m.MyAccountsComponent,
                   ),
               },
               {
-                path: 'transfer/:tnxId',
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/my-accounts/my-accounts').then(
                     (m) => m.MyAccountsComponent,
@@ -903,14 +955,14 @@ export const routes: Routes = [
             path: 'IBFT',
             children: [
               {
-                path: '',
+                path: '', // The main form (Create mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
                     (m) => m.IBFT,
                   ),
               },
               {
-                path: 'transfer/:tnxId',
+                path: 'transfer/:tnxId', // The main form (Edit/View mode)
                 loadComponent: () =>
                   import('./screens/USER/Payment-Services/FundTransfer/internal-transfer/components/IBFT/IBFT').then(
                     (m) => m.IBFT,
@@ -925,6 +977,8 @@ export const routes: Routes = [
               },
             ],
           },
+          // Payment Services -> Fund Transfer -> with-in bank (3rd party bank)
+          // Base fund-transfer screen
           {
             path: 'fund-transfer-welcome',
             loadComponent: () =>
@@ -936,6 +990,7 @@ export const routes: Routes = [
               description: 'Manage all activities related FUND TRANSFER here.',
             },
           },
+          // fund-transfer with-in-bank (3rd party) Route
           {
             path: 'fund-transfer/with-in',
             loadComponent: () =>
@@ -943,6 +998,7 @@ export const routes: Routes = [
                 (m) => m.ThirdPartyTransfer,
               ),
           },
+          // fund-transfer IBFT Route
           {
             path: 'fund-transfer/ibft',
             loadComponent: () =>
@@ -950,6 +1006,7 @@ export const routes: Routes = [
                 (m) => m.ThirdPartyTransfer,
               ),
           },
+          // Import Fund-Records Route
           {
             path: 'fund-transfer/fund-transfer-records',
             loadComponent: () =>
@@ -962,6 +1019,14 @@ export const routes: Routes = [
 
       // Default child redirect for '/'
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./screens/AUTH/page-not-found/page-not-found').then(
+            (m) => m.PageNotFound,
+          ),
+      },
     ],
   },
   {

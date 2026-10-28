@@ -1,0 +1,273 @@
+@use '../../../../../../../../../../styles/_theme.scss' as theme;
+
+/* ===========================
+   Section Header
+=========================== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 14px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    color: theme.$text-light;
+
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+    }
+}
+
+/* ===========================
+   Collapsible
+=========================== */
+.collapsible {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.35s ease-in-out;
+}
+
+.collapsible.open {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+    padding: 15px 10px;
+    background: theme.$light-bg;
+    border-radius: 6px;
+    border: 1px solid theme.$border-light;
+}
+
+/* ===========================
+   Headings
+=========================== */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: theme.$white;
+}
+
+h4 {
+    font-size: 16px;
+    margin: 20px 0 10px;
+    font-weight: 600;
+    color: theme.$primary-dark;
+    border-left: 4px solid theme.$primary;
+    padding-left: 8px;
+}
+
+/* ===========================
+   Form Layout
+=========================== */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: theme.$gap-default;
+    margin-bottom: 15px;
+}
+
+/* Alternating Applicant & Beneficiary Box Indicator */
+.form-grid.alternate {
+    padding-left: 10px;
+    border-left: 2px dashed theme.$border-primary;
+    margin-left: 4px;
+}
+
+/* Fields */
+mat-form-field {
+    width: 100%;
+}
+
+/* Toggle */
+mat-slide-toggle {
+    margin: 12px 0;
+    font-weight: 500;
+}
+
+/* ===========================
+   Input field styling
+=========================== */
+
+input[matInput] {
+    font-size: 14px !important;
+    color: theme.$primary-dark;
+}
+
+/* Label styling */
+.mat-mdc-floating-label,
+.mat-mdc-form-field-label {
+    font-size: 14px !important;
+}
+
+/* Input placeholder color */
+::placeholder {
+    color: theme.$primary-dark;
+    opacity: 0.8;
+}
+
+/* Material input appearance */
+.mdc-text-field {
+    background-color: theme.$white;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+.actions {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+button[mat-flat-button] {
+    background: theme.$primary !important;
+    color: theme.$text-light !important;
+    box-shadow: theme.$button-shadow;
+    border-radius: 6px;
+
+    &:hover {
+        background: theme.$primary-dark !important;
+    }
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 992px) {
+    .collapsible.open {
+        padding: 14px 12px;
+    }
+
+    h4 {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header {
+        padding: 12px 14px;
+    }
+
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .collapsible.open {
+        padding: 12px 10px;
+    }
+
+    .form-row {
+        gap: 6px;
+    }
+
+    input {
+        font-size: 13px;
+    }
+}
+/* ===========================
+   Previous value (rejected amendment)
+=========================== */
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 5px;
+  padding: 7px 10px;
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
+}
+
+/* ===========================
+   Checkbox group
+=========================== */
+.checkbox-list {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid theme.$border-light;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    mat-checkbox { font-size: 13px; }
+}
+
+.field-with-previous {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===========================
+   Party rows (small + big box)
+=========================== */
+.party-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 15px;
+}
+
+.party-row {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: theme.$gap-default;
+    align-items: start;
+}
+
+.field-with-previous {
+    display: flex;
+    flex-direction: column;
+}
+
+.party-row-reverse {
+    grid-template-columns: 3fr 1fr;
+}
+
+textarea[matInput] {
+    font-size: 14px !important;
+    color: theme.$primary-dark;
+}
+
+@media (max-width: 768px) {
+    .party-row,
+    .party-row-reverse {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,68 +1,59 @@
-
-import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatOptionModule } from '@angular/material/core';
-import { Router } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-bank-details',
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
-    MatTabsModule,
     MatFormFieldModule,
-    MatSelectModule,
     MatInputModule,
-    MatOptionModule,
-    MatIcon
-],
+    MatSelectModule,
+    MatIconModule,
+  ],
   templateUrl: './bank-details.html',
   styleUrl: './bank-details.scss',
 })
 export class BankDetails {
+  @Input() form!: FormGroup;
+  @Input() previousValues: { [key: string]: any } = {};
 
-  selectedTab = 0;
   isOpen = true;
 
-  bankForm!: FormGroup;
+  // TODO: replace with your real option codes
+  issuanceTypes = [
+    { value: 'direct', label: 'Direct' },
+    { value: 'indirect', label: 'Indirect' },
+  ];
+  countries = ['Pakistan', 'UAE', 'USA', 'UK', 'Japan'];
 
-  bankList: string[] = [
-    'Habib Bank Limited (HBL)',
-    'United Bank Limited (UBL)',
-    'MCB Bank',
-    'Standard Chartered Bank',
-    'Bank Alfalah'
+  bankFields = [
+    { key: 'recipientBankName', label: 'Recipient Bank Name' },
+    { key: 'issuerReference', label: "Issuer's Reference" },
+    { key: 'swiftcode', label: 'SWIFT Code' },
+    { key: 'bankName', label: 'Bank Name' },
+    { key: 'bankAddress1', label: 'Address 1' },
+    { key: 'bankAddress2', label: 'Address 2' },
+    { key: 'bankAddress3', label: 'Address 3' },
+    { key: 'bankAddress4', label: 'Address 4' },
   ];
 
-  constructor(private fb: FormBuilder, private router: Router) {
-    this.bankForm = this.fb.group({
-      issuingBankName: ['', Validators.required],
-      issuerReference: ['', Validators.required],
-      advisingBankName: [''],
-      adviseThroughBankName: ['']
-    });
-  }
-
-  toggle() {
+  toggle(): void {
     this.isOpen = !this.isOpen;
   }
 
-  goPrevious() {
-    this.router.navigate(['/letter-of-credit/applicant-beneficiary']);
+  hasPreviousValue(field: string): boolean {
+    const v = this.previousValues?.[field];
+    return v !== null && v !== undefined && String(v).trim() !== '';
   }
 
-  goNext() {
-    if (this.bankForm.invalid) {
-      this.bankForm.markAllAsTouched();
-      return;
-    }
-
-    this.router.navigate(['/letter-of-credit/amount-details']);
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
   }
 }

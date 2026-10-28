@@ -12,7 +12,8 @@ import { ApiService } from '../../../../../../../../../core/services/api.service
 import { RejectDialogComponent } from '../../../../../../../../../shared/reject-dialog/reject-dialog';
 import { ShippingGuaranteeTransaction } from '../../../../../../../../../core/models/shipping-guarantee';
 import { ShippingGuaranteeFormTransactionService } from '../../../../../../../../../core/services/user-service/shipping-guarantee-form-transaction-service/shipping-guarantee-form-transaction-service';
-
+import { DynamicFields } from '../../../../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { getSessionItem } from '../../../../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.html',
@@ -45,7 +46,7 @@ export class Preview {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -146,6 +147,12 @@ export class Preview {
       otherInstructions: [this.currentTx!.otherInstructions],
 
       attachments: this.fb.array(this.currentTx!.attachments ?? []),
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
     });
     // 🔒 Read-only mode (Success page)
     if (this.viewMode === 'readonly') {
@@ -157,6 +164,9 @@ export class Preview {
     return this.ShippingGuaranteeForm.get('attachments') as FormArray;
   }
 
+  get dynamicFieldsArray(): FormArray {
+    return this.ShippingGuaranteeForm.get('dynamicFields') as FormArray;
+  }
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/shipping-guarantee/approved-inquiry-records',
@@ -164,12 +174,9 @@ export class Preview {
   }
 
   submit(): void {
-     // Backend/API protection
+    // Backend/API protection
     if (!this.hasPermission('SG_AmendSubmit')) {
-
-      console.warn(
-        'User does not have SG_AmendSubmit permission'
-      );
+      console.warn('User does not have SG_AmendSubmit permission');
 
       return;
     }
@@ -200,13 +207,9 @@ export class Preview {
   }
 
   approveTransaction(): void {
-
-     // Backend/API protection
+    // Backend/API protection
     if (!this.hasPermission('SG_AmendApprove')) {
-
-      console.warn(
-        'User does not have SG_AmendApprove permission'
-      );
+      console.warn('User does not have SG_AmendApprove permission');
 
       return;
     }
@@ -233,13 +236,9 @@ export class Preview {
   }
 
   rejectTransaction(): void {
-
     // Backend/API protection
     if (!this.hasPermission('SG_AmendReject')) {
-
-      console.warn(
-        'User does not have SG_AmendPendingReject permission'
-      );
+      console.warn('User does not have SG_AmendPendingReject permission');
 
       return;
     }

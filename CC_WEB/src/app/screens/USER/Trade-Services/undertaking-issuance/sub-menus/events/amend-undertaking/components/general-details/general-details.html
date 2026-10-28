@@ -1,99 +1,199 @@
+
 <div class="section-header" (click)="toggle()">
     <h2>General Details</h2>
-    <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+
+    <mat-icon>
+        {{ isOpen ? 'expand_less' : 'expand_more' }}
+    </mat-icon>
 </div>
 
-<div class="collapsible" [class.open]="isOpen">
-    <div class="form-grid-2">
-        <!-- Product Type -->
-        <div class="field-group">
-            <h4>Product Type</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Product Type</mat-label>
-                <mat-select>
-                    <mat-option value="backtoback">Back-To-Back LC</mat-option>
-                </mat-select>
-            </mat-form-field>
+<div
+    class="collapsible"
+    [class.open]="isOpen"
+    [formGroup]="form">
+
+    @if (isOpen) {
+
+        <div class="form-grid-2">
+
+            <!-- ================= Product Type ================= -->
+            <div class="field-group">
+
+                <h4>Product Type</h4>
+
+                <mat-form-field
+                    appearance="outline"
+                    class="full">
+
+                    <mat-label>Product Type</mat-label>
+
+                    <mat-select formControlName="productType">
+
+                        <mat-option value="">
+                            Select Product Type
+                        </mat-option>
+
+                        <mat-option value="bidbond">
+                            Bid Bond
+                        </mat-option>
+
+                        <mat-option value="performance">
+                            Performance
+                        </mat-option>
+
+                        <mat-option value="advance">
+                            Advance
+                        </mat-option>
+
+                        <mat-option value="custom">
+                            Custom
+                        </mat-option>
+
+                    </mat-select>
+
+                </mat-form-field>
+
+                <!-- Previous Product Type -->
+                <div
+                    class="previous-value"
+                    *ngIf="hasPreviousValue('productType')">
+
+                    <span class="previous-label">
+                        Previous Value:
+                    </span>
+
+                    <span class="previous-text">
+                        {{ getPreviousValue('productType') }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Mode of Transmission ================= -->
+            <div class="field-group">
+
+                <h4>Mode of Transmission</h4>
+
+                <mat-form-field
+                    appearance="outline"
+                    class="full">
+
+                    <mat-label>Mode of Transmission</mat-label>
+
+                    <mat-select formControlName="modeOfTransmission">
+
+                        <mat-option value="">
+                            Select Mode
+                        </mat-option>
+
+                        <mat-option value="SWIFT">
+                            SWIFT
+                        </mat-option>
+
+                        <mat-option value="Courier/Mail">
+                            Courier/Mail
+                        </mat-option>
+
+                        <mat-option value="Other">
+                            Other
+                        </mat-option>
+
+                    </mat-select>
+
+                </mat-form-field>
+
+                <!-- Previous Mode of Transmission -->
+                <div
+                    class="previous-value"
+                    *ngIf="hasPreviousValue('modeOfTransmission')">
+
+                    <span class="previous-label">
+                        Previous Value:
+                    </span>
+
+                    <span class="previous-text">
+                        {{ getPreviousValue('modeOfTransmission') }}
+                    </span>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- Mode of Transmission -->
-        <div class="field-group">
-            <h4>Mode of Transmission</h4>
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Mode of Transmission</mat-label>
-                <mat-select>
-                    <mat-option value="SWIFT">SWIFT ✅</mat-option>
-                    <mat-option value="Courier/Mail">Courier/Mail</mat-option>
-                    <mat-option value="Other">Other</mat-option>
-                </mat-select>
-            </mat-form-field>
+
+        <!-- ================= Form Of Undertaking ================= -->
+        <h4>Form Of Undertaking</h4>
+
+        <mat-radio-group formControlName="formOfUndertaking">
+
+            <mat-radio-button value="demandguarantee">
+                Demand Guarantee
+            </mat-radio-button>
+
+            <mat-radio-button value="sloc">
+                Standby Letter Of Credit
+            </mat-radio-button>
+
+            <mat-radio-button value="dependentundertaking">
+                Dependent Undertaking
+            </mat-radio-button>
+
+        </mat-radio-group>
+
+        <!-- Previous Form Of Undertaking -->
+        <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('formOfUndertaking')">
+
+            <span class="previous-label">
+                Previous Value:
+            </span>
+
+            <span class="previous-text">
+                {{ getPreviousValue('formOfUndertaking') }}
+            </span>
+
         </div>
-    </div>
-
-    <!-- <div class="btn-row">
-        <button mat-stroked-button color="primary">SWIFT ✅</button>
-        <button mat-stroked-button>Courier/Mail</button>
-        <button mat-stroked-button>Other</button>
-    </div> -->
 
 
-    <!-- Expiry Fields -->
-    <div class="form-grid-2">
-        <mat-form-field appearance="outline">
-            <mat-label>Expiry Date *</mat-label>
-            <input matInput type="date" />
-        </mat-form-field>
+        <!-- ================= Purpose ================= -->
+        <h4>Purpose</h4>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Place of Expiry *</mat-label>
-            <mat-select>
-                <mat-option value="beneficiary">In Beneficiary's Country</mat-option>
-                <mat-option value="issuing">In Issuing Country</mat-option>
-            </mat-select>
-        </mat-form-field>
-    </div>
+        <mat-radio-group formControlName="purpose">
 
-    <h4>Feature of LC</h4>
-    <div class="form-grid">
-        <mat-checkbox>Irrevocable</mat-checkbox>
-        <mat-checkbox>Revolving</mat-checkbox>
-        <mat-checkbox>Transferable</mat-checkbox>
-    </div>
+            <mat-radio-button value="issuanceofundertaking">
+                Issuance Of Undertaking
+            </mat-radio-button>
 
-    <h4>Applicable Rules</h4>
-    <mat-form-field appearance="outline" class="full">
-        <mat-select placeholder="Applicable Rules" required>
-            <mat-option value="EUCP">EUCP LATEST VERSION</mat-option>
-            <mat-option value="EUCPURR">EUCPURR LATEST VERSION</mat-option>
-            <mat-option value="Others">OTHERS</mat-option>
-        </mat-select>
-    </mat-form-field>
+            <mat-radio-button value="clundertaking">
+                Counter And Local Undertaking
+            </mat-radio-button>
 
-    <h4>Confirmation Instructions</h4>
-    <mat-radio-group>
-        <mat-radio-button value="confirm">Confirm</mat-radio-button>
-        <mat-radio-button value="without">Without</mat-radio-button>
-        <mat-radio-button value="mayAdd">May Add</mat-radio-button>
-    </mat-radio-group>
+            <mat-radio-button value="cccundertaking">
+                Counter-Counter And Counter Undertaking
+            </mat-radio-button>
 
-    <!-- <h4>References</h4>
-    <div class="form-grid-2">
-        <mat-form-field appearance="outline">
-            <input matInput placeholder="Beneficiary Reference">
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-            <input matInput placeholder="Customer Reference">
-        </mat-form-field>
-    </div>
+        </mat-radio-group>
 
-    <mat-form-field appearance="outline" class="full">
-        <input matInput placeholder="Purchase Order(s)">
-    </mat-form-field> -->
+        <!-- Previous Purpose -->
+        <div
+            class="previous-value"
+            *ngIf="hasPreviousValue('purpose')">
 
-    <!-- <div class="actions">
-        <button mat-stroked-button>Exit</button>
-        <button mat-flat-button color="primary" (click)="next()">Next</button>
-    </div> -->
+            <span class="previous-label">
+                Previous Value:
+            </span>
 
+            <span class="previous-text">
+                {{ getPreviousValue('purpose') }}
+            </span>
+
+        </div>
+
+    }
 
 </div>
+

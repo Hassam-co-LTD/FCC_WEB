@@ -8,16 +8,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { NgIf } from '@angular/common';
 // --- SERVICE IMPORT ---
-import { 
-  UndertakingIssuanceService
-} from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
+import { UndertakingIssuanceService } from '../../../../../../core/services/user-service/Sharing-search-service/undertaking-issuance-form-transaction';
 import { UndertakingGuarantee } from '../../../../../../core/models/undertaking-lc';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiService } from '../../../../../../core/services/api.service';
 import { RejectDialogComponent } from '../../../../../../shared/reject-dialog/reject-dialog';
-
+import { DynamicFields } from '../../../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { getSessionItem } from '../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-preview',
   standalone: true,
@@ -57,7 +56,7 @@ export class Preview implements OnInit {
   permissionNames: string[] = [];
 
   private loadPermissions(): void {
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -94,7 +93,7 @@ export class Preview implements OnInit {
     this.currentTx =
       this.transaction || //  Priority: @Input() transaction (Success page)
       this.transactionService.getCurrentTransaction(); //  Fallback: service (Preview before submit)
-
+    console.log('fetched preview data from service ', this.currentTx);
     if (!this.currentTx) {
       console.error('Preview: No transaction data found');
       this.router.navigate(['/dashboard/Trade-Services/undertaking-issuance']);
@@ -102,6 +101,8 @@ export class Preview implements OnInit {
     }
     this.viewMode = this.transactionService.getViewMode();
     this.initForm();
+
+    console.log('dynamic array ', this.dynamicFieldsArray.getRawValue());
   }
 
   private initForm(): void {
@@ -171,6 +172,12 @@ export class Preview implements OnInit {
       principalAccount: [this.currentTx!.principalAccount],
       feeAccount: [this.currentTx!.feeAccount],
       otherInstructions: [this.currentTx!.otherInstructions],
+      dynamicFields: this.fb.array(
+        (Array.isArray(this.currentTx?.dynamicFields)
+          ? this.currentTx.dynamicFields
+          : []
+        ).map((field: any) => this.fb.control(field)),
+      ),
       // attachments: this.fb.array(this.currentTx!.attachments ?? [])
     });
 
@@ -184,6 +191,9 @@ export class Preview implements OnInit {
     return this.undertakingForm.get('attachments') as FormArray;
   }
 
+  get dynamicFieldsArray(): FormArray {
+    return this.undertakingForm.get('dynamicFields') as FormArray;
+  }
   back() {
     this.router.navigate([
       '/dashboard/Trade-Services/undertaking-issuance/inquiries-records',
@@ -365,10 +375,12 @@ export class Preview implements OnInit {
     console.error('Unsupported file format', file);
   }
 
-  private triggerDownload(url: string, fileName: string) {
+  private triggerDownload(url: string, fileName: string): void {
     const a = document.createElement('a');
+
     a.href = url;
     a.download = fileName;
+
     a.click();
   }
 

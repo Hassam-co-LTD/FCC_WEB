@@ -1,31 +1,42 @@
 @use '../../../../../../../../../../styles/_theme.scss' as theme;
 
+
+
 /* ===========================
    Section Header
 =========================== */
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: theme.$primary;
-  padding: 14px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  color: theme.$text-light;
-
-  &:hover {
-    background: theme.$primary-dark;
-    box-shadow: theme.$shadow-primary;
-  }
-
-  mat-icon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: theme.$primary;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
+    border-radius: theme.$radius-large;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
-    font-size: 22px;
-  }
-}
 
+    &:hover {
+        background: theme.$primary-dark;
+        box-shadow: theme.$shadow-primary;
+    }
+
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
+}
 /* Collapsible content */
 .collapsible {
   max-height: 0;
@@ -53,14 +64,7 @@ h2 {
   color: theme.$white;
 }
 
-h4 {
-  font-size: 16px;
-  margin: 20px 0 10px;
-  font-weight: 600;
-  color: theme.$primary-dark;
-  border-left: 4px solid theme.$primary;
-  padding-left: 8px;
-}
+
 
 /* Form Grids */
 .form-row {
@@ -195,9 +199,7 @@ button[mat-flat-button] {
     gap: 15px;
   }
 
-  h4 {
-    font-size: 15px;
-  }
+  
 
   .collapsible.open {
     padding: 12px 8px;
@@ -213,10 +215,6 @@ button[mat-flat-button] {
     font-size: 18px;
   }
 
-  h4 {
-    font-size: 14px;
-    margin: 15px 0 8px;
-  }
 
   .btn-row {
     flex-direction: column;
@@ -275,22 +273,18 @@ button[mat-flat-button] {
 ::ng-deep .mat-mdc-select-panel,
 ::ng-deep .mdc-menu-surface {
   padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 !important; 
   border: 1px solid #e0e0e0; // subtle professional border
-
+ 
   background-color: #ffffff !important;
-  border-radius: 5px !important;
-  /* smooth corners */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  /* soft shadow */
+  border-radius: 5px !important; /* smooth corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* soft shadow */
 }
 
 /* mat-option: base styling */
 ::ng-deep .mat-mdc-option {
-  background-color: #ffffff !important;
-  /* always white */
-  color: #000 !important;
-  /* black text */
+  background-color: #ffffff !important; /* always white */
+  color: #000 !important; /* black text */
   border-radius: 4px !important;
   padding-left: 10px !important;
   min-height: 38px !important;
@@ -304,17 +298,16 @@ button[mat-flat-button] {
 /* mat-option hover */
 ::ng-deep .mat-mdc-option:hover {
   background: linear-gradient(90deg, #4a90e2 10%, #4889cf 100%) !important; // smooth gradient
-
+ 
   color: #000 !important;
 }
 
 /* mat-option selected */
 ::ng-deep .mat-mdc-option.mat-selected {
-  background-color: #ffffff !important;
-  /* keep white even when selected */
+  background-color: #ffffff !important; /* keep white even when selected */
   color: #000 !important;
   box-shadow: none !important;
-
+  
   border: none !important;
 }
 
@@ -332,4 +325,30 @@ button[mat-flat-button] {
       width: 100%;
     }
   }
+}
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

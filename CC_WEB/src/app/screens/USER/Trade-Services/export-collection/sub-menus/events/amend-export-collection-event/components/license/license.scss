@@ -88,12 +88,15 @@
 /* ===========================
    Section Header
 =========================== */
+/* ===========================
+   Section Header
+=========================== */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: theme.$primary;
-  padding: 14px 18px;
+  padding: 11px 16px;
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 10px;
@@ -105,13 +108,22 @@
     box-shadow: theme.$shadow-primary;
   }
 
+  h2 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+    color: theme.$text-light;
+  }
+
   mat-icon {
     color: theme.$text-light;
     font-size: 22px;
+    width: 22px;
+    height: 22px;
     transition: transform 0.3s ease;
   }
 }
-
 /* ===========================
    Headings
 =========================== */

@@ -17,6 +17,7 @@ import {
   ExportDropdown,
   ExportFormat,
 } from '../../../../../../../shared/export-dropdown/export-dropdown';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 
 @Component({
   selector: 'app-inquiries-records',
@@ -85,7 +86,7 @@ export class InquiriesRecords implements OnInit {
     // LOAD USER PERMISSIONS
     // =========================================================
 
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
 
     if (storedPermissions) {
       try {
@@ -254,6 +255,7 @@ export class InquiriesRecords implements OnInit {
     this.filteredTransactions = sorted;
     this.currentPage = 1;
   }
+
 
   private resolveColumn(tx: ExportCollectionTransaction, column: string): any {
     switch (column) {

@@ -199,7 +199,7 @@ export class PermissionsGroupsInquiry implements OnInit, OnDestroy {
   // NAVIGATION METHODS
   // =========================
   public updateRouter(role: PermissionGroupRow): Promise<boolean> {
-    return this.router.navigate(['/admin/create-role', role.permissionGroupId]);
+    return this.router.navigate(['/admin/edit-permission-group', role.id]);
   }
 
   // =========================

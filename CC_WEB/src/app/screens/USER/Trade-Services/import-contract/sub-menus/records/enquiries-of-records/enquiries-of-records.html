@@ -1,0 +1,174 @@
+<!-- ================= HEADER ================= -->
+<div class="page-header">
+  <div class="title">
+    <h2>Import Contract Records</h2>
+    <p>Manage and track all Import Contract transactions</p>
+  </div>
+</div>
+ 
+<!-- ================= SEARCH ================= -->
+<div class="search-system">
+  <div class="search-input-group">
+    <input
+      type="text"
+      placeholder="Search by TNX ID, Beneficiary, Bank, Currency"
+      [(ngModel)]="searchQuery"
+      (input)="applyFilters()"
+    />
+ 
+    <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+ 
+  <button class="advanced-toggle" (click)="showAdvanced = !showAdvanced">
+    <mat-icon>tune</mat-icon> Advanced
+  </button>
+</div>
+ 
+<!-- ================= ADVANCED SEARCH ================= -->
+<div class="advanced-search" *ngIf="showAdvanced">
+  <!-- <div class="field">
+        <label>Status</label>
+        <select [(ngModel)]="activeTab" (change)="applyFilters()">
+            <option *ngFor="let tab of tabs" [value]="tab.key">{{ tab.label }}</option>
+        </select>
+    </div> -->
+ 
+  <div class="field">
+    <label>Currency</label>
+    <input type="text" [(ngModel)]="currencyFilter" (input)="applyFilters()" />
+  </div>
+</div>
+ 
+<div class="load-records-container" *ngIf="!hasLoadedData && !isLoading">
+  <button class="btn-load-records" type="button" (click)="loadTransactions()">
+    <mat-icon>cloud_download</mat-icon>
+    Load Records
+  </button>
+ 
+  <span> Click to retrieve the latest Import Contract records </span>
+</div>
+ 
+<div class="filter-row">
+  <div class="results-summary">
+    Showing <strong>{{ pagedTransactions.length }}</strong> of
+    <strong>{{ filteredTransactions.length }}</strong>
+    records
+  </div>
+ 
+  <app-export-dropdown
+    [disabled]="filteredTransactions.length === 0"
+    (exportSelected)="onExportSelected($event)"
+  >
+  </app-export-dropdown>
+</div>
+ 
+<div class="table-wrapper" *ngIf="hasLoadedData || isLoading">
+  <div class="on-demand-empty" *ngIf="!hasLoadedData && !isLoading">
+    <mat-icon>database</mat-icon>
+ 
+    <h3>Records not loaded</h3>
+ 
+    <p>
+      Click the button below to retrieve Import Contract
+      records.
+    </p>
+ 
+    <button class="btn-load-records" type="button" (click)="loadTransactions()">
+      <mat-icon>cloud_download</mat-icon>
+      Load Records
+    </button>
+  </div>
+  <!-- ================= LOADING OVERLAY ================= -->
+  <div class="table-loading-overlay" *ngIf="isLoading">
+    <div class="loader-content">
+      <div class="loader-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <div class="loader-text">
+        <span>Loading records</span>
+        <span class="loader-dots"> <i></i> <i></i> <i></i> </span>
+      </div>
+      <small> Please wait while we retrieve the latest transactions </small>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th (click)="sortBy('tnxId')">TNX ID</th>
+        <th (click)="sortBy('createdOn')">Created</th>
+        <th>Status</th>
+        <th>Product</th>
+        <th>Issuer Reference</th>
+        <th>Expiry Date</th>
+        <th>Currency</th>
+        <th>Amount</th>
+        <th>Applicant</th>
+        <th>Beneficiary</th>
+        <th *ngIf="showBackofficeRemarks">Backoffice Remarks</th>
+        <th class="sticky-action">Action</th>
+      </tr>
+    </thead>
+ 
+    <tbody>
+      <tr *ngFor="let tx of pagedTransactions; trackBy: trackByTnxId">
+        <td>
+          <a class="tnx-link" (click)="openImportLc(tx)">{{ tx.tnxId }}</a>
+        </td>
+        <td>{{ tx.createdOn | date:'yyyy-MM-dd' }}</td>
+        <td>{{ statusLabel(tx.status) }}</td>
+        <td>{{ tx.productType }}</td>
+        <td>{{tx.issuerReference}}</td>
+        <td>{{ tx.expiryDate }}</td>
+        <td>{{ tx.currency }}</td>
+        <td>{{ tx.amount }}</td>
+        <td>{{ tx.applicantName }}</td>
+        <td>{{ tx.beneficiaryName }}</td>
+        <td *ngIf="showBackofficeRemarks">
+          <span *ngIf="tx.status === 'B'">
+            {{ tx.rejectionReason }}<br />
+            <small>Ref No: {{ tx.backofficeRefNo }}</small>
+          </span>
+        </td>
+        <td class="sticky-action">
+          <button
+            *ngIf="hasPermission('ILC_InquiryPreview')"
+            class="btn-action"
+            (click)="viewTransaction(tx)"
+          >
+            <mat-icon>visibility</mat-icon> View
+          </button>
+        </td>
+      </tr>
+ 
+      <tr *ngIf="pagedTransactions.length === 0">
+        <td colspan="20" class="no-records">
+          No Import Contract records found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+ 
+  <div class="pagination">
+    <button
+      class="btn-pagination"
+      (click)="previousPage()"
+      [disabled]="currentPage === 1"
+    >
+      ‹
+    </button>
+    <span>Page {{ currentPage }} of {{ totalPages }}</span>
+    <button
+      class="btn-pagination"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      ›
+    </button>
+  </div>
+</div>
+ 
+ 

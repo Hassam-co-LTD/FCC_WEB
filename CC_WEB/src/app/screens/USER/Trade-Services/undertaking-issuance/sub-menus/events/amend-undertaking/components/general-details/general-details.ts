@@ -1,44 +1,55 @@
-import { Component } from '@angular/core';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatIcon } from "@angular/material/icon";
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+
 @Component({
   selector: 'app-general-details',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatRadioModule,
-    MatSelectModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
     MatInputModule,
-    MatCheckboxModule,
-    MatSlideToggleModule,
-    MatIcon
-],
+    MatSelectModule,
+    MatRadioModule
+  ],
   templateUrl: './general-details.html',
-  styleUrl: './general-details.scss',
+  styleUrls: ['./general-details.scss']
 })
 export class GeneralDetails {
+
+  @Input() form!: FormGroup;
+
+  @Input() previousValues: { [key: string]: any } = {};
+
+  preview: any = {};
+
   isOpen = true;
-  currentStep = 0;
-  steps = [
-    { label: "General Details" },
-    { label: "Shipment Details" },
-    { label: "Documents Upload" }
-  ];
 
   toggle() {
     this.isOpen = !this.isOpen;
   }
 
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
 
-  selectStep(i: number) { this.currentStep = i; }
-  next() { if (this.currentStep < this.steps.length - 1) this.currentStep++; }
-
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
 }
-
 

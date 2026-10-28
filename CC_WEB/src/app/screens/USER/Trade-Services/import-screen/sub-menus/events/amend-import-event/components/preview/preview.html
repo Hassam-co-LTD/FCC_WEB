@@ -109,7 +109,6 @@
         </div>
       </mat-card>
 
-      <!-- APPLICANT / BENEFICIARY -->
       <mat-card class="preview-card">
         <h3 class="section-title">Applicant Details</h3>
 
@@ -159,9 +158,7 @@
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 2 → BANK + AMOUNT         -->
-    <!-- ============================== -->
+    <!-- BENEFICIARY + BANK -->
     <div class="preview-row">
       <!-- BENEFICIARY DETAILS -->
       <mat-card class="preview-card">
@@ -399,6 +396,20 @@
           </div>
 
           <div class="preview-item">
+            <div class="preview-label">Shipment From</div>
+            <div class="preview-value">
+              {{ importForm.value.shipmentFrom || '-' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
+            <div class="preview-label">Shipment To</div>
+            <div class="preview-value">
+              {{ importForm.value.shipmentTo || '-' }}
+            </div>
+          </div>
+
+          <div class="preview-item">
             <div class="preview-label">Place of Loading</div>
             <div class="preview-value">
               {{ importForm.value.placeOfLoading || '-' }}
@@ -512,9 +523,7 @@
       </mat-card>
     </div>
 
-    <!-- ============================== -->
-    <!-- ROW 5 → ATTACHMENTS           -->
-    <!-- ============================== -->
+    <!-- ATTACHMENTS -->
     <mat-card class="preview-card full-width">
       <h3 class="section-title">Attachments</h3>
 
@@ -538,11 +547,23 @@
               >
               <mat-icon *ngIf="f.value.type?.includes('image')">image</mat-icon>
             </div>
+
             <div>{{ f.value.title }}</div>
+
             <div>{{ f.value.fileName }}</div>
+
             <div>{{ (f.value.size / 1024) | number:'1.0-2' }} KB</div>
+
             <div>
-              <mat-icon (click)="downloadFile(i)">download</mat-icon>
+              <mat-icon
+                *ngIf="
+                  hasPermission('ILC_AmendPreview')
+                "
+                (click)="downloadFile(i)"
+                class="action-icon"
+              >
+                download
+              </mat-icon>
             </div>
           </div>
         </div>
@@ -551,6 +572,35 @@
       <ng-template #noAttachments>
         <p>No attachments uploaded.</p>
       </ng-template>
+    </mat-card>
+
+    <!-- ROW 7 → DYNAMIC FIELDS                               -->
+
+    <mat-card
+      class="preview-card full-width"
+      *ngIf="dynamicFieldsArray.length > 0"
+    >
+      <h3 class="section-title">Dynamic Fields</h3>
+
+      <div class="preview-grid">
+        <div
+          class="preview-item"
+          *ngFor="
+        let field of dynamicFieldsArray.controls;
+        let i = index;
+        trackBy: trackByIndex
+      "
+        >
+          <div class="preview-label">
+            {{ field.value?.fieldName || field.value?.label || field.value?.name
+            || 'Dynamic Field' }}
+          </div>
+          <div class="preview-value">
+            {{ field.value?.value ?? field.value?.fieldValue ??
+            field.value?.enteredValue ?? '-' }}
+          </div>
+        </div>
+      </div>
     </mat-card>
   </div>
 </div>
@@ -572,22 +622,22 @@
     </button>
   </ng-container>
 
-    <button
-      mat-flat-button
-      color="warn"
-      (click)="rejectTransaction()"
-      *ngIf="currentTx?.status === 'S' &&        
+  <button
+    mat-flat-button
+    color="warn"
+    (click)="rejectTransaction()"
+    *ngIf="currentTx?.status === 'S' &&        
       hasPermission('ILC_AmendPendingReject')"
-    >
-      Reject
-    </button>
+  >
+    Reject
+  </button>
 
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="approveTransaction()"
-      *ngIf="currentTx?.status === 'S' &&  hasPermission('ILC_AmendApprove')"
-    >
-      Approve
-    </button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="approveTransaction()"
+    *ngIf="currentTx?.status === 'S' &&  hasPermission('ILC_AmendApprove')"
+  >
+    Approve
+  </button>
 </div>

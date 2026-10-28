@@ -1,0 +1,996 @@
+import { Component, OnInit } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
+
+import { GeneralDetails } from './components/general-details/general-details';
+import { ApplicantBeneficiary } from './components/applicant-beneficiary/applicant-beneficiary';
+import { BankDetails } from './components/bank-details/bank-details';
+import { AmountChargeDetails } from './components/amount-charge-details/amount-charge-details';
+import { PaymentDetails } from './components/payment-details/payment-details';
+import { ShipmentDetails } from './components/shipment-details/shipment-details';
+import { NarrativeDetails } from './components/narrative-details/narrative-details';
+import { Licenses } from './components/licenses/licenses';
+import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
+import { Attachments } from './components/attachments/attachments';
+import { Sidebar } from '../../../../core/sidebar/sidebar';
+
+import { ApiService } from '../../../../core/services/api.service';
+import { ImportLcTransaction } from '../../../../core/models/import-lc';
+import { ImportlcFormTransactionService } from '../../../../core/services/user-service/importlc-form-transaction-service/importlc-form-transaction-service';
+import { RejectDialogComponent } from '../../../../shared/reject-dialog/reject-dialog';
+import { AuthService } from '../../../../core/services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DynamicFields } from '../../../../core/services/admin-service/dynamic-fields/dynamic-fields';
+import { TransactionComparisonService } from '../../../../core/services/admin-service/transaction-comparison.service';
+import { getSessionItem } from '../../../../core/utils/browser-storage';
+
+@Component({
+  selector: 'app-import-contract',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    GeneralDetails,
+    ApplicantBeneficiary,
+    BankDetails,
+    AmountChargeDetails,
+    PaymentDetails,
+    ShipmentDetails,
+    NarrativeDetails,
+    Licenses,
+    InstructionToBank,
+    Attachments,
+    MatDialogModule,
+    Sidebar,
+    DynamicFields,
+  ],
+  templateUrl: './import-contract.html',
+  styleUrls: ['./import-contract.scss'],
+})
+export class ImportContract implements OnInit {
+  currentStep = 0;
+  importForm!: FormGroup;
+  mode: 'CREATE' | 'UPDATE' | 'REJECTED' = 'CREATE';
+  screenMode: 'EDIT' | 'SUBMITTED' | 'APPROVED' | 'FINAL' = 'EDIT';
+  currentTx: ImportLcTransaction = {} as ImportLcTransaction;
+  showUpdateSubmit = false;
+  showApproveReject = false;
+  rejectionReason = '';
+  tnxId = '';
+  companyId = '';
+
+  //permissions
+  permissionNames: string[] = [];
+
+  importSteps = [
+    { label: 'General Details' },
+    { label: 'Applicant Details' },
+    { label: 'Bank Details' },
+    { label: 'Amount & Charges' },
+    { label: 'Payment Details' },
+    { label: 'Shipment Details' },
+    { label: 'Narrative Details' },
+    { label: 'Licenses' },
+    { label: 'Instructions to Bank' },
+    { label: 'Attachments' },
+  ];
+
+  // Only offered in the sidebar once the screen is known to have dynamic fields
+  private readonly dynamicFieldsStep = { label: 'Dynamic fields' };
+  storeRejectedTx: ImportLcTransaction | null = null;
+
+  previousDynamicValues: { [key: string]: any } = {};
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private api: ApiService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private transactionService: ImportlcFormTransactionService,
+    private authservice: AuthService,
+    private comparisonService: TransactionComparisonService,
+    private transactionComparisonService: TransactionComparisonService,
+  ) {
+    this.buildForm();
+  }
+
+  ngOnInit() {
+    this.loadPermissions();
+    setTimeout(() => {
+      const sections = document.querySelectorAll('section');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              this.currentStep = Array.from(sections).indexOf(
+                entry.target as HTMLElement,
+              );
+            }
+          });
+        },
+        { threshold: 0.4, root: document.querySelector('.scroll-area') },
+      );
+      sections.forEach((section) => observer.observe(section));
+    }, 200);
+
+    const navState = history.state;
+
+    if (navState?.mode) {
+      this.screenMode = navState.mode;
+    }
+
+    this.companyId = this.authservice.getCompanyId() || '';
+    console.log('Company ID from route:', this.companyId);
+    this.tnxId = this.route.snapshot.paramMap.get('tnxId') || '';
+    console.log('TNX ID from route:', this.tnxId);
+    // const txFromState = history.state.transaction;
+    // console.log('Transaction from state:', txFromState);
+    this.route.paramMap.subscribe((params) => {
+      const tnxId = params.get('tnxId');
+      if (tnxId) {
+        this.enterEditMode(tnxId);
+      } else {
+        this.enterCreateMode();
+      }
+    });
+
+    // loading dynamic fields
+
+    this.loadDynamicFields();
+  }
+
+  private loadPermissions(): void {
+    const storedPermissions = getSessionItem('permissionNames');
+
+    if (storedPermissions) {
+      try {
+        this.permissionNames = JSON.parse(storedPermissions);
+
+        console.log('Import Contract Permission Names:', this.permissionNames);
+      } catch (error) {
+        console.error('Error parsing permissionNames:', error);
+
+        this.permissionNames = [];
+      }
+    } else {
+      console.warn('permissionNames not found in sessionStorage');
+
+      this.permissionNames = [];
+    }
+  }
+
+  hasPermission(permission: string): boolean {
+    return this.permissionNames.some(
+      (p) => p?.trim().toLowerCase() === permission.trim().toLowerCase(),
+    );
+  }
+
+  private buildForm(): void {
+    // Always initialize the form to avoid null bindings
+    this.importForm = this.fb.group({
+      generalDetails: this.fb.group({
+        productType: ['backtoback'],
+        modeOfTransmission: ['SWIFT'],
+        expiryDate: [''],
+        placeOfExpiry: ['beneficiary'],
+        featureIrrevocable: [false],
+        featureRevolving: [false],
+        featureTransferable: [false],
+        applicableRules: ['EUCP'],
+        confirmationInstruction: ['confirm'],
+      }),
+      applicantForm: this.fb.group({
+        applicantName: [''],
+        applicantAddress1: [''],
+        applicantAddress2: [''],
+        applicantAddress3: [''],
+        applicantAddress4: [''],
+        applicantCountry: [''],
+        beneficiaryName: [''],
+        beneficiaryAddress1: [''],
+        beneficiaryAddress2: [''],
+        beneficiaryAddress3: [''],
+        beneficiaryAddress4: [''],
+        beneficiaryCountry: [''],
+      }),
+      bankForm: this.fb.group({
+        issuingBankName: [''],
+        issuerReference: [''],
+        advisingBankName: [''],
+        adviseThroughBankName: [''],
+      }),
+      amountChargeForm: this.fb.group({
+        currency: [''],
+        amount: ['', Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)],
+        variationType: ['percent'],
+        variationPlus: [''],
+        variationMinus: [''],
+        issuingBankCharges: ['Applicant'],
+        outsideCountryCharges: ['Beneficiary'],
+        additionalAmount: [''],
+      }),
+      paymentDetailsForm: this.fb.group({
+        creditAvailableWith: [''],
+        bankName: [''],
+        creditAvailableBy: ['Payment'],
+        paymentDraftAt: ['Sight'],
+      }),
+      shipmentForm: this.fb.group({
+        shipmentFrom: [''],
+        shipmentTo: [''],
+        placeOfLoading: [''],
+        placeOfDischarge: [''],
+        lastShipmentDate: [''],
+        shipmentPeriodNarrative: [''],
+        partialShipment: ['Allowed'],
+        transhipment: ['Not Allowed'],
+      }),
+      narrativeForm: this.fb.group({
+        descriptionOfGoods: [''],
+        documentsRequired: [''],
+        additionalInstructions: [''],
+        otherDetails: [''],
+      }),
+      instructionForm: this.fb.group({
+        principalAccount: [''],
+        feeAccount: [''],
+        otherInstructions: [''],
+      }),
+      attachments: this.fb.array([]),
+    });
+  }
+
+  private enterCreateMode(): void {
+    this.mode = 'CREATE';
+    this.showUpdateSubmit = false;
+    this.showApproveReject = false;
+    this.currentTx = {} as ImportLcTransaction;
+    this.importForm.reset();
+    this.buildForm();
+  }
+
+private enterEditMode(tnxId: string): void {
+  this.mode = 'UPDATE';
+
+  this.api.getTransactionByTnxId(tnxId).subscribe({
+    next: (tx) => {
+      this.currentTx = tx;
+
+      console.log('Transaction loaded from backend:', tx);
+
+      this.patchForm(tx);
+
+      if (tx.status === 'S') {
+        this.api.getRejectedTransaction(tnxId, 'importlc').subscribe({
+          next: (rejectedTx) => {
+            this.storeRejectedTransaction = rejectedTx;
+
+            console.log('Rejected transaction data:', rejectedTx);
+
+            this.compareImportLcData();
+          },
+          error: (err: any) => {
+            console.error('Error fetching rejected transaction:', err);
+          }
+        });
+      }
+
+      switch (tx.status) {
+        case 'I':
+        case 'B': // rejected by backoffice, editable like pending
+          this.mode = 'UPDATE';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        case 'S':
+          this.mode = 'UPDATE';
+          this.screenMode = 'SUBMITTED';
+          this.importForm.disable();
+          break;
+
+        case 'A':
+        case 'L': // Live (accepted by backoffice)
+          this.mode = 'UPDATE';
+          this.screenMode = 'APPROVED';
+          this.importForm.disable();
+          break;
+
+        case 'R':
+          this.mode = 'REJECTED';
+          this.screenMode = 'EDIT';
+          this.importForm.enable();
+          break;
+
+        default:
+          this.mode = 'UPDATE';
+          this.screenMode = 'FINAL';
+          this.importForm.disable();
+      }
+    },
+    error: () => {
+      this.snackBar.open('Transaction not found', 'Close', {
+        duration: 3000
+      });
+
+      this.router.navigate([
+        '/dashboard/Trade-Services/import-contract/inquiries'
+      ]);
+    }
+  });
+}
+
+  // Reuses the form itself as the field list, so there's nothing to hardcode.
+  // This works because flattenForm() already merges all groups into one flat object.
+  private getAllFormFieldNames(): string[] {
+    const groups = [
+      'generalDetails',
+      'applicantForm',
+      'bankForm',
+      'amountChargeForm',
+      'paymentDetailsForm',
+      'shipmentForm',
+      'narrativeForm',
+      'instructionForm',
+    ];
+    return groups.flatMap((g) =>
+      Object.keys((this.importForm.get(g) as FormGroup).controls),
+    );
+  }
+
+  hasPreviousDynamicValue(fieldId: string): boolean {
+    const v = this.previousDynamicValues?.[fieldId];
+    return v !== null && v !== undefined && String(v).trim() !== '';
+  }
+
+  getPreviousDynamicValue(fieldId: string): any {
+    return this.previousDynamicValues?.[fieldId] ?? '';
+  }
+  // Safe getters for html form access of the specific form groups
+  get generalDetailsForm(): FormGroup {
+    return this.importForm.get('generalDetails') as FormGroup;
+  }
+  get applicantForm(): FormGroup {
+    return this.importForm.get('applicantForm') as FormGroup;
+  }
+  get bankForm(): FormGroup {
+    return this.importForm.get('bankForm') as FormGroup;
+  }
+  get amountChargeForm(): FormGroup {
+    return this.importForm.get('amountChargeForm') as FormGroup;
+  }
+  get paymentDetailsForm(): FormGroup {
+    return this.importForm.get('paymentDetailsForm') as FormGroup;
+  }
+  get shipmentForm(): FormGroup {
+    return this.importForm.get('shipmentForm') as FormGroup;
+  }
+  get narrativeForm(): FormGroup {
+    return this.importForm.get('narrativeForm') as FormGroup;
+  }
+  get instructionForm(): FormGroup {
+    return this.importForm.get('instructionForm') as FormGroup;
+  }
+  get attachmentsArray(): FormArray {
+    return this.importForm.get('attachments') as FormArray;
+  }
+
+  private patchForm(tx: ImportLcTransaction): void {
+    this.importForm.patchValue({
+      generalDetails: tx,
+      applicantForm: tx,
+      bankForm: tx,
+      amountChargeForm: tx,
+      paymentDetailsForm: tx,
+      shipmentForm: tx,
+      narrativeForm: tx,
+      instructionForm: tx,
+    });
+
+    // Store existing dynamic field values
+    this.storeDynamicFieldsResponse = tx.dynamicFields || [];
+
+    // Patch dynamic fields if definitions are already loaded
+    this.patchDynamicValues();
+  }
+
+  // scrollToSection(i: number) {
+  //   this.currentStep = i;
+  //   document.getElementById(`section-${i}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // }
+
+  scrollToSection(index: number) {
+    this.currentStep = index;
+    const section = document.getElementById(`section-${index}`);
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  private flattenForm(): ImportLcTransaction {
+    const dynamicFormValues = this.dynamicFieldsForm?.getRawValue() || {};
+
+    const dynamicFields = this.fields.map((field: any) => ({
+      fieldId: field.fieldId,
+      value: dynamicFormValues[field.fieldId] ?? '',
+    }));
+
+    return {
+      companyId: this.companyId,
+
+      ...this.importForm.value.generalDetails,
+      ...this.importForm.value.applicantForm,
+      ...this.importForm.value.bankForm,
+      ...this.importForm.value.amountChargeForm,
+      ...this.importForm.value.paymentDetailsForm,
+      ...this.importForm.value.shipmentForm,
+      ...this.importForm.value.narrativeForm,
+      ...this.importForm.value.instructionForm,
+
+      dynamicFields: dynamicFields,
+
+      attachments: this.importForm.value.attachments,
+    };
+  }
+
+  saveForm(): void {
+    if (!this.hasPermission('ILC_CreateSave')) {
+      this.snackBar.open(
+        'You do not have permission to create an Import Contract.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+    if (this.importForm.invalid) {
+      this.importForm.markAllAsTouched();
+      this.snackBar.open(
+        'Please complete all required fields before saving.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+
+    // Flatten nested form groups into single object
+    const payload = this.flattenForm();
+    console.log('Payload before saving draft:', payload);
+
+    this.api.savePending(payload).subscribe({
+      next: (res: ImportLcTransaction) => {
+        // this.currentTx = res;  // backend response has updated id, tnxId, createdOn, updatedOn
+        // this.transactionService.addOrUpdateTransaction(res);
+        this.snackBar.open(
+          `Draft saved successfully (TNX ID: ${res.tnxId})`,
+          'Close',
+          { duration: 5000 },
+        );
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-contract/inquiries',
+            ]),
+          50,
+        );
+      },
+      error: () =>
+        this.snackBar.open('Error saving draft', 'Close', { duration: 3000 }),
+    });
+  }
+
+  submitLc(): void {
+    if (!this.hasPermission('ILC_InquirySubmit')) {
+      this.snackBar.open(
+        'You do not have permission to submit this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+    const tnxId = this.currentTx?.tnxId;
+    const companyId = this.currentTx?.companyId;
+    if (!tnxId) {
+      this.snackBar.open(
+        'Transaction ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+    if (!companyId) {
+      this.snackBar.open(
+        'Company ID not found. Please save the draft first.',
+        'Close',
+        { duration: 3000 },
+      );
+      return;
+    }
+    const payload = {
+      ...this.flattenForm(), // merge current form data
+      event: 'CRE',
+      tnxId: this.tnxId,
+    };
+    this.api.submitTransaction(tnxId, payload).subscribe({
+      next: (res: ImportLcTransaction) => {
+        this.transactionService.addOrUpdateTransaction(res);
+        this.router.navigate(
+          ['/dashboard/Trade-Services/import-contract/success'],
+          {
+            state: { source: 'IMPORT_CONTRACT', transaction: res },
+          },
+        );
+      },
+      error: () => {
+        this.snackBar.open('Error submitting transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  back() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  updateAttachments(files: File[]) {
+    const arr = this.importForm.get('attachments') as FormArray;
+    arr.clear();
+    files.forEach((file) =>
+      arr.push(
+        this.fb.group({
+          title: file.name.replace(/\.[^/.]+$/, ''),
+          fileName: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,
+        }),
+      ),
+    );
+  }
+
+  update(): void {
+    if (!this.hasPermission('ILC_InquiryPendingUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to amend this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+    if (this.importForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const payload = this.flattenForm();
+    payload.tnxId = this.tnxId;
+    console.log('Payload before update:', payload);
+    if (!payload.tnxId) {
+      console.error('TNX ID is missing!');
+      return;
+    }
+    // ImportLcTransaction = {
+    //   id: this.currentTx.id,
+
+    //   // ===== FLATTEN FORM VALUES =====
+    //   ...this.importForm.value.generalDetails,
+    //   ...this.importForm.value.applicantForm,
+    //   ...this.importForm.value.bankForm,
+    //   ...this.importForm.value.amountChargeForm,
+    //   ...this.importForm.value.paymentDetailsForm,
+    //   ...this.importForm.value.shipmentForm,
+    //   ...this.importForm.value.narrativeForm,
+    //   ...this.importForm.value.instructionForm,
+
+    //   attachments: this.attachmentsArray.value,
+    //   tnxId: this.currentTx?.tnxId
+    // };
+
+    this.api.updatePendingByTnxId(payload).subscribe({
+      next: (res) => {
+        // this.transactionService.addOrUpdateTransaction(res);
+        this.snackBar.open(
+          `Data successfully updated (${res.tnxId})`,
+          'Close',
+          { duration: 3000 },
+        );
+
+        setTimeout(
+          () =>
+            this.router.navigate([
+              '/dashboard/Trade-Services/import-contract/inquiries',
+            ]),
+          300,
+        );
+      },
+      error: () => {
+        this.snackBar.open('Error updating transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  approve(): void {
+    this.api
+      .approveTransaction(this.currentTx.tnxId!, this.currentTx)
+      .subscribe({
+        next: (res) => this.handleBackofficeResult(res),
+        error: () =>
+          this.snackBar.open('Approval failed', 'Close', { duration: 3000 }),
+      });
+  }
+
+  // Backoffice B (rejected) -> Pending tab, L (accepted) -> Inquiries
+  private handleBackofficeResult(res: ImportLcTransaction): void {
+    if (res?.status === 'B') {
+      this.snackBar.open(
+        `Rejected by backoffice: ${res.rejectionReason ?? ''}`,
+        'Close',
+        { duration: 5000 },
+      );
+      this.navigateBack('pending');
+      return;
+    }
+
+    this.snackBar.open(
+      `Accepted by backoffice. Ref No: ${res?.backofficeRefNo ?? ''}`,
+      'Close',
+      { duration: 5000 },
+    );
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-contract/inquiries'],
+    );
+  }
+  openReject(): void {
+    if (!this.hasPermission('ILC_InquiryReject')) {
+      this.snackBar.open(
+        'You do not have permission to reject this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+
+    const dialogRef = this.dialog.open(RejectDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((reason: string | undefined) => {
+      if (!reason) return; // user cancelled
+      console.log('Rejection reason:', reason);
+      this.api.rejectTransaction(this.currentTx.tnxId!, reason).subscribe({
+        next: (res) => {
+          this.snackBar.open('Transaction rejected successfully', 'Close', {
+            duration: 3000,
+          });
+          this.navigateBack('rejected'); // send user to rejected tab
+        },
+        error: () => {
+          this.snackBar.open('Failed to reject transaction', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
+    });
+  }
+
+  // reject(): void {
+  //   this.api.rejectTransaction(this.currentTx.tnxId!).subscribe({
+  //     next: () => this.navigateBack('rejected'),
+  //     error: () => this.snackBar.open('Rejection failed', 'Close', { duration: 3000 })
+  //   });
+  // }
+
+  private navigateBack(tab: string) {
+    this.router.navigate(
+      ['/dashboard/Trade-Services/import-contract/inquiries'],
+      {
+        relativeTo: this.route,
+        queryParamsHandling: 'merge',
+        queryParams: { tab },
+      },
+    );
+  }
+
+  private getFormValidationErrors(
+    form: any = this.importForm,
+    path: string = '',
+  ): any {
+    const result: any = {};
+
+    if (!form) {
+      return result;
+    }
+
+    result[path || '(root)'] = { status: form.status, errors: form.errors };
+
+    if (form.controls) {
+      const keys = Array.isArray(form.controls)
+        ? form.controls.map((_: any, i: number) => i)
+        : Object.keys(form.controls);
+
+      keys.forEach((key: any) => {
+        const control = form.controls[key];
+        const currentPath = path ? `${path}.${key}` : String(key);
+
+        if (control && control.controls) {
+          Object.assign(
+            result,
+            this.getFormValidationErrors(control, currentPath),
+          );
+        } else if (control) {
+          result[currentPath] = {
+            status: control.status,
+            errors: control.errors,
+          };
+        }
+      });
+    }
+
+    return result;
+  }
+
+  updateRejected(): void {
+    if (!this.hasPermission('ILC_InquiryRejectUpdate')) {
+      this.snackBar.open(
+        'You do not have permission to amend this transaction.',
+        'Close',
+        {
+          duration: 3000,
+        },
+      );
+
+      return;
+    }
+    console.log(
+      'expiryDate errors:',
+      this.importForm.get('generalDetails.expiryDate')?.errors,
+    );
+    console.log(
+      'Form errors:',
+      JSON.stringify(this.getFormValidationErrors(), null, 2),
+    );
+    console.log('Form status:', this.importForm.status);
+    console.log('Form valid?', this.importForm.valid);
+    console.log('Form errors:', this.getFormValidationErrors()); // see helper below
+    console.log('currentTx:', this.currentTx);
+    console.log('tnxId:', this.currentTx?.tnxId);
+
+    if (this.importForm.invalid || !this.currentTx?.tnxId) {
+      this.snackBar.open('Invalid form or missing transaction ID', 'Close', {
+        duration: 3000,
+      });
+      return;
+    }
+
+    const payload = this.flattenForm(); // flatten form values
+    payload.tnxId = this.currentTx.tnxId;
+
+    this.api.updateRejectedTransaction(payload.tnxId, payload).subscribe({
+      next: (res) => {
+        this.snackBar.open(
+          `Rejected transaction updated and moved back to Pending (TNX: ${res.tnxId})`,
+          'Close',
+          { duration: 3000 },
+        );
+
+        // Navigate back to inquiries with Pending tab
+        this.router.navigate([
+          '/dashboard/Trade-Services/import-contract/inquiries',
+        ]);
+      },
+      error: () => {
+        this.snackBar.open('Failed to update rejected transaction', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  //................ Dynamic fields...................
+
+  storeDynamicFieldsResponse: any[] = [];
+  fields: any[] = [];
+  dynamicFieldsForm!: FormGroup;
+  isDynamicFieldsOpen = true;
+
+  private loadDynamicFields(): void {
+    console.log('Loading dynamic fields for ImportScreen with status A...');
+
+    this.api.getFieldsByScreenAndStatus('ImportContract', 'A').subscribe({
+      next: (res: any[]) => {
+        console.log('Field definitions:', res);
+
+        this.fields = res || [];
+
+        if (this.fields.length) {
+          this.importSteps = [...this.importSteps, this.dynamicFieldsStep];
+        }
+
+        const group: any = {};
+
+        this.fields.forEach((field: any) => {
+          // Use unique fieldId instead of duplicate fieldName
+          group[field.fieldId] = [''];
+        });
+
+        this.dynamicFieldsForm = this.fb.group(group);
+
+        console.log(
+          'Dynamic form controls:',
+          this.dynamicFieldsForm.getRawValue(),
+        );
+
+        // Restore previously saved values
+        this.patchDynamicValues();
+      },
+
+      error: (err: any) => {
+        console.error('Error loading dynamic fields:', err);
+      },
+    });
+  }
+  // ---------------- PATCH DYNAMIC VALUES ----------------
+  private patchDynamicValues(): void {
+    if (
+      !this.dynamicFieldsForm ||
+      !this.fields?.length ||
+      !this.storeDynamicFieldsResponse?.length
+    ) {
+      return;
+    }
+
+    const patchObj: any = {};
+
+    this.storeDynamicFieldsResponse.forEach((savedField: any) => {
+      const fieldDefinition = this.fields.find(
+        (field: any) => field.fieldId === savedField.fieldId,
+      );
+
+      if (fieldDefinition) {
+        // Use the same unique key used when creating the form controls
+        patchObj[fieldDefinition.fieldId] = savedField.value ?? '';
+      }
+    });
+
+    console.log('Dynamic patch object:', patchObj);
+
+    this.dynamicFieldsForm.patchValue(patchObj);
+  }
+
+  // old and new values working
+
+  storeRejectedTransaction: ImportLcTransaction | null = null;
+  previousValues: { [key: string]: any } = {};
+  private readonly ImportLcFields = [
+    // General Details
+    'productType',
+    'modeOfTransmission',
+    'expiryDate',
+    'placeOfExpiry',
+    'featureIrrevocable',
+    'featureRevolving',
+    'featureTransferable',
+    'applicableRules',
+    'confirmationInstruction',
+
+    // Applicant / Beneficiary Details
+    'applicantName',
+    'applicantAddress1',
+    'applicantAddress2',
+    'applicantAddress3',
+    'applicantAddress4',
+    'applicantCountry',
+    'beneficiaryName',
+    'beneficiaryAddress1',
+    'beneficiaryAddress2',
+    'beneficiaryAddress3',
+    'beneficiaryAddress4',
+    'beneficiaryCountry',
+
+    // Bank Details
+    'issuingBankName',
+    'issuerReference',
+    'advisingBankName',
+    'adviseThroughBankName',
+
+    // Amount / Charges Details
+    'currency',
+    'amount',
+    'variationType',
+    'variationPlus',
+    'variationMinus',
+    'issuingBankCharges',
+    'outsideCountryCharges',
+    'additionalAmount',
+
+    // Payment Details
+    'creditAvailableWith',
+    'bankName',
+    'creditAvailableBy',
+    'paymentDraftAt',
+
+    // Shipment Details
+    'shipmentFrom',
+    'shipmentTo',
+    'placeOfLoading',
+    'placeOfDischarge',
+    'lastShipmentDate',
+    'shipmentPeriodNarrative',
+    'partialShipment',
+    'transhipment',
+
+    // Narrative Details
+    'descriptionOfGoods',
+    'documentsRequired',
+    'additionalInstructions',
+    'otherDetails',
+
+    // Instructions
+    'principalAccount',
+    'feeAccount',
+    'otherInstructions',
+  ];
+  private compareImportLcData(): void {
+    this.previousValues = this.transactionComparisonService.compare(
+      this.currentTx,
+      this.storeRejectedTransaction,
+      this.ImportLcFields,
+    );
+
+    this.previousDynamicValues =
+      this.transactionComparisonService.compareDynamicFields(
+        this.currentTx?.dynamicFields ?? [],
+        this.storeRejectedTransaction?.dynamicFields ?? [],
+      );
+
+    console.log('Previous import LC values:', this.previousValues);
+    console.log('Previous dynamic values:', this.previousDynamicValues);
+  }
+
+  hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
+
+  // =====================================================
+  // GET PREVIOUS EXPORT COLLECTION VALUE
+  // =====================================================
+
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
+}

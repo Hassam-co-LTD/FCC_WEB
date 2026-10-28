@@ -32,7 +32,7 @@ export class BankDetails {
   isOpen = true;
 
   @Input() form!: FormGroup;  
-
+ @Input() previousValues: { [key: string]: any } = {};
   bankList: string[] = [
     'National Bank Of Pakistan (NBP)',
     'Habib Bank Limited (HBL)',
@@ -47,5 +47,17 @@ export class BankDetails {
   toggle() {
     this.isOpen = !this.isOpen;
   }
+hasPreviousValue(field: string): boolean {
+    return (
+      this.previousValues &&
+      Object.prototype.hasOwnProperty.call(this.previousValues, field) &&
+      this.previousValues[field] !== null &&
+      this.previousValues[field] !== undefined &&
+      String(this.previousValues[field]).trim() !== ''
+    );
+  }
 
+  getPreviousValue(field: string): any {
+    return this.previousValues?.[field] ?? '';
+  }
 }

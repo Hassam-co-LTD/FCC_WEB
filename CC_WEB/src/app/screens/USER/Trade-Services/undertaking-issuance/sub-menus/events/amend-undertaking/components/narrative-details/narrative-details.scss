@@ -8,7 +8,7 @@
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
-    padding: 14px 18px;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
     border-radius: theme.$radius-large;
     cursor: pointer;
     margin-bottom: 10px;
@@ -20,17 +20,21 @@
         box-shadow: theme.$shadow-primary;
     }
 
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
+
     mat-icon {
         color: theme.$text-light;
         font-size: 22px;
-        transition: transform 0.3s ease;
-    }
-
-    &.open mat-icon {
-        transform: rotate(180deg);
+        width: 22px;
+        height: 22px;
     }
 }
-
 /* Collapsible Container */
 .collapsible {
     max-height: 0;
@@ -177,4 +181,31 @@ mat-error {
     .sub-heading {
         font-size: 13px;
     }
+}
+
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
 }

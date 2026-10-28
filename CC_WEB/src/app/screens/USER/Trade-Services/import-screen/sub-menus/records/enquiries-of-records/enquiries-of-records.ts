@@ -17,15 +17,11 @@ import {
 
 import { ImportLcTransaction } from '../../../../../../../core/models/import-lc';
 import { ApiService } from '../../../../../../../core/services/api.service';
+import { getSessionItem } from '../../../../../../../core/utils/browser-storage';
 @Component({
   selector: 'app-enquiries-of-records',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-    FormsModule,
-    ExportDropdown
-  ],
+  imports: [CommonModule, MatIconModule, FormsModule, ExportDropdown],
   templateUrl: './enquiries-of-records.html',
   styleUrls: ['./enquiries-of-records.scss'],
 })
@@ -77,7 +73,7 @@ export class EnquiriesOfRecords implements OnInit {
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-    const storedPermissions = sessionStorage.getItem('permissionNames');
+    const storedPermissions = getSessionItem('permissionNames');
     if (storedPermissions) {
       try {
         this.permissionNames = JSON.parse(storedPermissions);
@@ -92,9 +88,9 @@ export class EnquiriesOfRecords implements OnInit {
         this.activeTab = tab;
       }
 
-       this.hasLoadedData = false;
-       this.allTransactions = [];
-       this.filteredTransactions = [];
+      this.hasLoadedData = false;
+      this.allTransactions = [];
+      this.filteredTransactions = [];
       // this.currentPage = 1;
       // this.loadTransactions();
     });
@@ -105,70 +101,70 @@ export class EnquiriesOfRecords implements OnInit {
     // });
   }
 
-   loadTransactions(): void {
-     if (this.isLoading) {
-       return;
-     }
+  loadTransactions(): void {
+    if (this.isLoading) {
+      return;
+    }
 
-     this.isLoading = true;
-     this.hasLoadedData = false;
+    this.isLoading = true;
+    this.hasLoadedData = false;
 
-     this.allTransactions = [];
-     this.filteredTransactions = [];
+    this.allTransactions = [];
+    this.filteredTransactions = [];
 
-     if (this.activeTab === 'live') {
-       this.api
-         .getLiveEventHistory()
-         .pipe(
-           finalize(() => {
-             this.isLoading = false;
-             this.hasLoadedData = true;
-           }),
-         )
-         .subscribe({
-           next: (txList) => {
-             this.allTransactions = txList;
-             this.applyFilters();
-           },
+    if (this.activeTab === 'live') {
+      this.api
+        .getLiveEventHistory()
+        .pipe(
+          finalize(() => {
+            this.isLoading = false;
+            this.hasLoadedData = true;
+          }),
+        )
+        .subscribe({
+          next: (txList) => {
+            this.allTransactions = txList;
+            this.applyFilters();
+          },
 
-           error: (error) => {
-             console.error('Failed to load live transactions:', error);
+          error: (error) => {
+            console.error('Failed to load live transactions:', error);
 
-             this.allTransactions = [];
-             this.filteredTransactions = [];
-           },
-         });
+            this.allTransactions = [];
+            this.filteredTransactions = [];
+          },
+        });
 
-       return;
-     }
+      return;
+    }
 
-     const backendStatus = this.mapTabToBackendStatus(this.activeTab);
+    const backendStatus = this.mapTabToBackendStatus(this.activeTab);
 
-     this.api
-       .getRecordTransactionsByStatus(backendStatus)
-       .pipe(
-         delay(1500),
-         finalize(() => {
-           this.isLoading = false;
-           this.hasLoadedData = true;
-         }),
-       )
-       .subscribe({
-         next: (txList) => {
-           this.allTransactions = txList;
-           this.applyFilters();
-         },
+    this.api
+      .getRecordTransactionsByStatus(backendStatus)
+      .pipe(
+        delay(1500),
+        finalize(() => {
+          this.isLoading = false;
+          this.hasLoadedData = true;
+        }),
+      )
+      .subscribe({
+        next: (txList) => {
+          this.allTransactions = txList;
+          this.applyFilters();
+        },
 
-         error: (error) => {
-           console.error(
-             `Failed to load ${this.activeTab} transactions:`,
-             error,
-           );
+        error: (error) => {
+          console.error(
+            `Failed to load ${this.activeTab} transactions:`,
+            error,
+          );
 
-           this.allTransactions = [];
-           this.filteredTransactions = [];
-         },
-       });
+          this.allTransactions = [];
+          this.filteredTransactions = [];
+        },
+      });
 
     // if (this.activeTab === 'live') {
     //   this.api.getLiveEventHistory().subscribe({
@@ -237,19 +233,19 @@ export class EnquiriesOfRecords implements OnInit {
   // });
   //}
   setActiveTab(tab: string): void {
-  if (this.activeTab === tab) {
-    return;
-  }
+    if (this.activeTab === tab) {
+      return;
+    }
 
-  this.activeTab = tab;
-  this.currentPage = 1;
+    this.activeTab = tab;
+    this.currentPage = 1;
 
-  // Clear existing data.
-  // User must explicitly click Load Records.
-  this.allTransactions = [];
-  this.filteredTransactions = [];
+    // Clear existing data.
+    // User must explicitly click Load Records.
+    this.allTransactions = [];
+    this.filteredTransactions = [];
 
-  this.hasLoadedData = false;
+    this.hasLoadedData = false;
   }
 
   // private loadByStatus(status: string): void {
@@ -354,6 +350,14 @@ export class EnquiriesOfRecords implements OnInit {
     return this.filteredTransactions.slice(start, start + this.itemsPerPage);
   }
 
+  // Backoffice Remarks column only when a pending LC was rejected by backoffice (status B)
+  get showBackofficeRemarks(): boolean {
+    return (
+      this.activeTab === 'pending' &&
+      this.pagedTransactions.some((tx) => tx.status === 'B')
+    );
+  }
+
   previousPage(): void {
     if (this.currentPage > 1) this.currentPage--;
   }
@@ -367,11 +371,7 @@ export class EnquiriesOfRecords implements OnInit {
   //   this.router.navigate(['/import-screen/preview']);
   // }
   viewTransaction(tx: ImportLcTransaction): void {
-    if (!this.hasPermission('ILC_InquiryPreview')) {
-      return;
-    }
-
-    const readOnly = ['A', 'R'].includes(tx.status!);
+    const readOnly = ['A', 'L', 'R'].includes(tx.status!);
 
     this.api.getTransactionByTnxId(tx.tnxId!).subscribe({
       next: (freshTx) => {
@@ -390,10 +390,6 @@ export class EnquiriesOfRecords implements OnInit {
   }
 
   openImportLc(tx: ImportLcTransaction) {
-    if (!this.hasPermission('ILC_Amend')) {
-      return;
-    }
-
     if (this.activeTab === 'live') {
       // Live tab rows are event records — navigate by eventRefNo
       this.router.navigate(

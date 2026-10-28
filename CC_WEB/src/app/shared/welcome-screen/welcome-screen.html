@@ -3,15 +3,17 @@
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
 
-    <h4>Create From</h4>
+    
     <div class="btn-row">
-      <button
-        mat-stroked-button
-        color="primary"
-        (click)="navigate(createRoute)"
-      >
-        Create
-      </button>
+      @if (createRoute) {
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="navigate(createRoute)"
+        >
+          Create
+        </button>
+      }
 
       <!-- <button mat-stroked-button color="primary" (click)="navigate(templateRoute)">Template</button> -->
 
@@ -20,7 +22,7 @@
         color="primary"
         (click)="navigate(existingRoute)"
       >
-        Existing LC
+        Existing Records
       </button>
 
       <!-- <button mat-stroked-button color="primary" (click)="navigate(uploadRoute)">Upload</button> -->

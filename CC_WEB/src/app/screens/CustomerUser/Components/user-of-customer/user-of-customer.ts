@@ -13,6 +13,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import Swal from 'sweetalert2';
 import { ApiService } from '../../../../core/services/api.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { readSessionJson, getSessionItem } from '../../../../core/utils/browser-storage';
 export interface UserDetails {
   id: number;
   loginId: string;
@@ -69,7 +71,7 @@ export class UserOfCustomer implements OnInit {
   isEditMode = false;
   isOpen = true;
   
- userId = sessionStorage.getItem('userId');
+ userId = getSessionItem('userId');
  
   // ---------- ROLES ----------
   userRoles: RoleMasterResponseDTO[] = [];       
@@ -82,7 +84,8 @@ export class UserOfCustomer implements OnInit {
     private api: ApiService,
     private router: Router,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private authService: AuthService
   ) {}
 
 UserData = {  
@@ -90,7 +93,7 @@ UserData = {
   userName: '',
   password: '',
   userCategory: '',
-  companyId: sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).
+  companyId: readSessionJson<any>('userData', {}).companyId ?? '',
   appUserId: '',
 }
   ngOnInit(): void {
@@ -109,8 +112,9 @@ UserData = {
       userName: ['', Validators.required],
       password: ['', Validators.required],
       userCategory: [''],
-      companyId: [ sessionStorage.getItem('userData')? JSON.parse(sessionStorage.getItem('userData')!).companyId : '', Validators.required],
-      userStatus: ['']
+      companyId: [ readSessionJson<any>('userData', {}).companyId ?? '', Validators.required],
+      userStatus: [''],
+      createdBy:[this.authService.getLoginId() || ''],
     });
   }
 
@@ -152,7 +156,10 @@ UserData = {
  
   update(id: number): void {
     if (this.clientUserForm.invalid) return;
-    const payload = this.clientUserForm.getRawValue();
+    const payload = {
+      ...this.clientUserForm.getRawValue(),
+      updatedBy: this.authService.getLoginId() || ''
+    };
     console.log('Update payload:', payload);
     this.api.updateTnx(payload, 'clientUsers', id).subscribe({
       next: () => Swal.fire('Updated!', 'Client User updated successfully', 'success')
@@ -161,22 +168,9 @@ UserData = {
     });
   }
 
-  activate(id: number): void {
-    this.api.setTnxByStatus('Active', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Activated!', 'Client User is now Active', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Activate failed', err)
-    });
-  }
+  
 
-  deactivate(id: number): void {
-    this.api.setTnxByStatus('Inactive', id, 'clientUser').subscribe({
-      next: () => Swal.fire('Deactivated!', 'Client User is now Inactive', 'success')
-        .then(() => this.loadClientUserDetails()),
-      error: err => console.error('Deactivate failed', err)
-    });
-  }
-
+  
  isReadOnly(): boolean {
   return false;
 }
@@ -189,7 +183,8 @@ UserData = {
 
   submit(): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('S', this.storeClientUser.id, 'clientUsers').subscribe({
+    const payload = this.authService.getSubmitPayload()
+    this.api.setTnxByStatus(payload, this.storeClientUser.id, 'clientUsers').subscribe({
       next: (res) => {
         console.log('Client User submitted successfully',res);
         Swal.fire('Submitted!', 'Client User submitted successfully', 'success')
@@ -202,17 +197,107 @@ UserData = {
   }
 
   reject(id: number): void {
-    if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('I', id, 'clientUsers').subscribe({
-      next: () => Swal.fire('Rejected!', 'Client User rejected successfully', 'success')
-        .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "rejected" } } )),
-      error: err => console.error('Reject failed', err)
-    });
-  }
+    
+      if (!id) return;
+    
+      Swal.fire({
+        title: 'Reject Transaction',
+        input: 'textarea',
+        inputLabel: 'Reject Reason',
+        inputPlaceholder: 'Please enter the reason for rejection...',
+        inputAttributes: {
+          'aria-label': 'Reject reason'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+    
+        preConfirm: (reason) => {
+    
+          if (!reason || !reason.trim()) {
+    
+            Swal.showValidationMessage(
+              'Reject reason is required'
+            );
+    
+            return false;
+          }
+    
+          return reason.trim();
+        }
+    
+      }).then((result) => {
+    
+        if (!result.isConfirmed) {
+          return;
+        }
+    
+        const rejectReason = result.value;
+    
+        // =========================
+        // CREATE REJECT PAYLOAD
+        // =========================
+    
+        const payload =
+          this.authService.getRejectPayload(rejectReason);
+    
+        console.log('Reject ID:', id);
+        console.log('Reject Payload:', payload);
+    
+        // =========================
+        // CALL API
+        // =========================
+    
+        this.api.setTnxByStatus(
+          payload,
+          id,
+          'customer'
+        ).subscribe({
+    
+          next: (res: any) => {
+    
+            console.log('Reject successful:', res);
+    
+            Swal.fire(
+              'Rejected!',
+              res?.message || 'Customer rejected successfully',
+              'success'
+            ).then(() => {
+    
+              this.router.navigate(
+                ['/admin/customer-list'],
+                {
+                  queryParams: {
+                    tabName: 'rejected'
+                  }
+                }
+              );
+    
+            });
+    
+          },
+    
+          error: (err: any) => {
+    
+            console.error('Reject failed:', err);
+    
+            Swal.fire(
+              'Error',
+              err?.error?.message || 'Reject failed',
+              'error'
+            );
+    
+          }
+    
+        });
+    
+      });
+    }
 
   approve(id: number): void {
     if (!this.storeClientUser?.id) return;
-    this.api.setTnxByStatus('A', id, 'clientUsers').subscribe({
+    const payload = this.authService.getApprovePayload()
+    this.api.setTnxByStatus(payload, id, 'clientUsers').subscribe({
       next: () => Swal.fire('Approved!', 'Client User approved successfully', 'success')
         .then(() => this.router.navigate(['/customer-user/inquiry'], { queryParams: { tabName: "approved" } } )),
       error: err => console.error('Approve failed', err)

@@ -1,0 +1,71 @@
+<div class="preview-page">
+  <h2 class="page-title">
+    {{ config.title }} Preview
+  </h2>
+
+  <p class="state-message" *ngIf="isLoading">Loading transaction...</p>
+  <p class="state-message error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</p>
+
+  <div class="preview-container" *ngIf="!isLoading && tx">
+    <div class="preview-row">
+      <mat-card class="preview-card" *ngFor="let section of config.sections">
+        <h3 class="section-title">{{ section.title }}</h3>
+
+        <div class="preview-grid">
+          <ng-container *ngFor="let field of section.fields">
+            <div class="preview-label">{{ field.label }}:</div>
+            <div class="preview-value" [ngSwitch]="field.type">
+              <ng-container *ngIf="tx[field.key] === null || tx[field.key] === undefined || tx[field.key] === ''; else hasValue">-</ng-container>
+              <ng-template #hasValue>
+                <ng-container *ngSwitchCase="'boolean'">{{ tx[field.key] ? 'Yes' : 'No' }}</ng-container>
+                <ng-container *ngSwitchCase="'date'">{{ tx[field.key] | date: 'yyyy-MM-dd' }}</ng-container>
+                <ng-container *ngSwitchCase="'datetime'">{{ tx[field.key] | date: 'yyyy-MM-dd HH:mm' }}</ng-container>
+                <ng-container *ngSwitchCase="'amount'">{{ tx[field.key] | number: '1.2-2' }}</ng-container>
+                <ng-container *ngSwitchDefault>{{ tx[field.key] }}</ng-container>
+              </ng-template>
+            </div>
+          </ng-container>
+        </div>
+      </mat-card>
+    </div>
+
+    <mat-card class="preview-card full-width">
+      <h3 class="section-title">Additional Fields</h3>
+      <div class="preview-grid" *ngIf="tx.dynamicFields?.length; else noDynamicFields">
+        <ng-container *ngFor="let field of tx.dynamicFields">
+          <div class="preview-label">{{ field.fieldId }}:</div>
+          <div class="preview-value">{{ field.value || '-' }}</div>
+        </ng-container>
+      </div>
+      <ng-template #noDynamicFields><p>No additional fields.</p></ng-template>
+    </mat-card>
+
+    <mat-card class="preview-card full-width">
+      <h3 class="section-title">Attachments</h3>
+      <div *ngIf="tx.attachments?.length; else noAttachments">
+        <div class="attachment-grid header">
+          <div>Type</div>
+          <div>File Name</div>
+          <div>Actions</div>
+        </div>
+        <div class="attachment-grid" *ngFor="let attachment of tx.attachments">
+          <div>
+            <mat-icon [class.pdf-icon]="attachment.fileName?.toLowerCase().endsWith('.pdf')">
+              {{ attachment.fileName?.toLowerCase().endsWith('.pdf') ? 'picture_as_pdf' : 'insert_drive_file' }}
+            </mat-icon>
+          </div>
+          <div>{{ attachment.fileName }}</div>
+          <div>
+            <mat-icon class="action-icon" (click)="downloadAttachment(attachment)">download</mat-icon>
+          </div>
+        </div>
+      </div>
+      <ng-template #noAttachments><p>No attachments.</p></ng-template>
+    </mat-card>
+  </div>
+
+</div>
+
+  <div class="actions">
+    <button mat-stroked-button color="primary" (click)="back()">Back to Inquiries</button>
+  </div>

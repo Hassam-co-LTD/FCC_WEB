@@ -317,7 +317,7 @@ nav {
 
 .submenu.open,
 .nested-submenu.open {
-  max-height: 500px;
+  max-height: 3000px; // must exceed the tallest fully-expanded menu, or lower items get clipped
   opacity: 1;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -351,4 +351,22 @@ nav {
     border-bottom-right-radius: 4px;
     background: #fff;
   }
+}
+
+// Notification scss 
+.notification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: auto;
+  border-radius: 10px;
+  background-color: #dc2626;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  box-sizing: border-box;
 }

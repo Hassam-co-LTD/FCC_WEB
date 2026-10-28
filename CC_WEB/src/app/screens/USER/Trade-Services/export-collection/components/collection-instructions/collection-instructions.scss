@@ -6,22 +6,33 @@
     justify-content: space-between;
     align-items: center;
     background: theme.$primary;
-    padding: 14px 18px;
+    padding: 11px 16px;                /* original 14px 18px, small 8px 14px */
     border-radius: theme.$radius-large;
     cursor: pointer;
     margin-bottom: 10px;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
     color: theme.$text-light;
-    transition: all 0.3s ease;
 
     &:hover {
         background: theme.$primary-dark;
         box-shadow: theme.$shadow-primary;
     }
 
-    h2 { font-size: 18px; font-weight: 600; margin: 0; color: theme.$white; }
-    mat-icon { color: theme.$text-light; font-size: 22px; }
-}
+    h2 {
+        font-size: 17px;               /* original 20px, small 15px */
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+        color: theme.$text-light;
+    }
 
+    mat-icon {
+        color: theme.$text-light;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+    }
+}
 /* ===================== Collapsible ===================== */
 .collapsible {
     max-height: 0;
@@ -53,16 +64,14 @@
 .field-group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;   /* was 4px */
 }
-
 .checkbox-list {
     // background: theme.$white;
     padding: 16px;
     border-radius: 8px;
     border: 1px solid theme.$border-light;
     
-    h4 { margin-top: 0; border-left: 4px solid theme.$primary; padding-left: 10px; font-size: 14px; color: theme.$primary-dark; margin-bottom: 12px; }
     mat-checkbox { font-size: 13px; margin-bottom: 2px; }
 }
 
@@ -113,4 +122,80 @@ mat-form-field { width: 100%; }
 @media (max-width: 768px) {
     .form-grid { grid-template-columns: 1fr; }
     .radio-item-box mat-radio-group { flex-direction: column; gap: 10px; }
+}
+
+.previous-value {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-top: 5px;
+  padding: 7px 10px;
+
+  border-left: 3px solid #f59e0b;
+  background-color: #fff7e6;
+  border-radius: 4px;
+
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.previous-label {
+  font-weight: 600;
+  color: #92400e;
+  margin-right: 6px;
+}
+
+.previous-text {
+  color: #b45309;
+  font-weight: 500;
+}
+/* ===========================
+   Datepicker Customization
+=========================== */
+::ng-deep .mat-datepicker-content,
+::ng-deep .mat-calendar,
+::ng-deep .mat-calendar-content,
+::ng-deep .mat-calendar-body,
+::ng-deep .mat-calendar-header,
+::ng-deep .mat-calendar-table {
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+::ng-deep .mat-calendar-header {
+  background: theme.$sidebar-hover-border !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+}
+
+::ng-deep .mat-calendar-table-header th {
+  font-weight: 600 !important;
+  opacity: 0.7 !important;
+}
+
+::ng-deep .mat-calendar-body-cell:hover:not(.mat-calendar-body-disabled) {
+  background-color: theme.$sidebar-hover-border !important;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: #1976d2 !important;
+  color: theme.$step-badge-text !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+::ng-deep .mat-calendar-body-today {
+  border: 2px solid black !important;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+  background: transparent !important;
+}
+
+::ng-deep .mat-datepicker-content {
+  transition: all 0.25s ease-in-out !important;
 }
