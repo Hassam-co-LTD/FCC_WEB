@@ -65,7 +65,11 @@
       </section>
       <hr class="section-divider" />
 
-      <section id="section-7"><app-licenses></app-licenses></section>
+      <section id="section-7">
+        <app-linked-reference
+          [readonly]="importForm.disabled"
+        ></app-linked-reference>
+      </section>
       <hr class="section-divider" />
 
       <section id="section-8">

@@ -19,7 +19,7 @@ import { AmountChargeDetails } from './components/amount-charge-details/amount-c
 import { PaymentDetails } from './components/payment-details/payment-details';
 import { ShipmentDetails } from './components/shipment-details/shipment-details';
 import { NarrativeDetails } from './components/narrative-details/narrative-details';
-import { Licenses } from './components/licenses/licenses';
+import { LinkedReference } from './components/linked-reference/linked-reference';
 import { InstructionToBank } from './components/instruction-to-bank/instruction-to-bank';
 import { Attachments } from './components/attachments/attachments';
 import { Sidebar } from '../../../../core/sidebar/sidebar';
@@ -48,7 +48,7 @@ import { getSessionItem } from '../../../../core/utils/browser-storage';
     PaymentDetails,
     ShipmentDetails,
     NarrativeDetails,
-    Licenses,
+    LinkedReference,
     InstructionToBank,
     Attachments,
     MatDialogModule,
@@ -81,7 +81,7 @@ export class ImportScreen implements OnInit {
     { label: 'Payment Details' },
     { label: 'Shipment Details' },
     { label: 'Narrative Details' },
-    { label: 'Licenses' },
+    { label: 'Linked Reference' },
     { label: 'Instructions to Bank' },
     { label: 'Attachments' },
     { label: 'Dynamic fields' },

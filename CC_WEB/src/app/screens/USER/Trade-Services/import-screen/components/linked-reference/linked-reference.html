@@ -1,0 +1,92 @@
+<div class="section-header" (click)="toggle()">
+  <h2>Linked Reference</h2>
+  <mat-icon>{{ isOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+</div>
+
+<div class="collapsible" [class.open]="isOpen">
+  @if (!readonly) {
+    <div class="toolbar">
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="openLinkDialog($event)"
+      >
+        <mat-icon>link</mat-icon>
+        Link
+      </button>
+    </div>
+  }
+
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="linkedReferences">
+      <ng-container matColumnDef="tnxId">
+        <th mat-header-cell *matHeaderCellDef>TNX ID</th>
+        <td mat-cell *matCellDef="let row" class="tnx-id">{{ row.tnxId }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdOn">
+        <th mat-header-cell *matHeaderCellDef>Creation Date</th>
+        <td mat-cell *matCellDef="let row">{{ displayDate(row.createdOn) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="expiryDate">
+        <th mat-header-cell *matHeaderCellDef>Expiry Date</th>
+        <td mat-cell *matCellDef="let row">{{ displayDate(row.expiryDate) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="currency">
+        <th mat-header-cell *matHeaderCellDef>Currency</th>
+        <td mat-cell *matCellDef="let row">{{ row.currency || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef class="num">Amount</th>
+        <td mat-cell *matCellDef="let row" class="num">
+          {{ displayAmount(row.amount) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="availableBalance">
+        <th mat-header-cell *matHeaderCellDef class="num">Available Balance</th>
+        <td mat-cell *matCellDef="let row" class="num">
+          {{ displayAmount(row.availableBalance) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="applicantName">
+        <th mat-header-cell *matHeaderCellDef>Applicant Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.applicantName || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="beneficiaryName">
+        <th mat-header-cell *matHeaderCellDef>Beneficiary Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.beneficiaryName || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let row">
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            (click)="remove(row)"
+            aria-label="Remove linked reference"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <tr class="mat-mdc-row no-data-row" *matNoDataRow>
+        <td class="mat-mdc-cell empty" [attr.colspan]="displayedColumns.length">
+          No references linked yet.
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

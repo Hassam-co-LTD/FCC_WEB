@@ -1,0 +1,91 @@
+@use '../../../styles/_theme.scss' as theme;
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+
+  h2 {
+    margin: 0;
+    color: theme.$primary;
+  }
+}
+
+.hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: theme.$text-medium;
+}
+
+.search-field {
+  width: 100%;
+}
+
+/* Message row inside the grid (loading / error / no data) */
+.no-data-row td {
+  text-align: center;
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 16px;
+  color: theme.$text-medium;
+
+  &.error {
+    color: theme.$danger;
+  }
+}
+
+.table-wrapper {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid theme.$border-light;
+  border-radius: theme.$radius-default;
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    white-space: nowrap;
+    font-weight: 600;
+    color: theme.$text-dark;
+    background: theme.$light-bg;
+  }
+
+  td {
+    white-space: nowrap;
+  }
+
+  .num {
+    text-align: right;
+  }
+}
+
+.tnx-link {
+  color: theme.$primary;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: theme.$primary-dark;
+  }
+}
+
+.linked-tag {
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 10px;
+  color: theme.$text-light;
+  background: theme.$primary;
+}
+
+.linked-row {
+  opacity: 0.6;
+}
