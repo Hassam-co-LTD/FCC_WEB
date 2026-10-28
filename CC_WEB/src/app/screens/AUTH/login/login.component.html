@@ -12,6 +12,37 @@
         </div>
 
         <!-- =========================
+         DEMO ACCOUNTS (demo build only)
+    ========================= -->
+        @if (isDemo) {
+          <div class="demo-panel">
+            <div class="demo-panel-title">
+              <mat-icon>info</mat-icon>
+              Live demo with sample data. Pick an account to sign in:
+            </div>
+
+            @for (account of demoAccounts; track account.loginId) {
+              <button
+                type="button"
+                class="demo-account"
+                [class.selected]="loginId === account.loginId"
+                (click)="useDemoAccount(account)"
+              >
+                <span class="demo-account-label">{{ account.label }}</span>
+                <span class="demo-account-creds">
+                  {{ account.loginId }} / {{ account.companyId }} /
+                  {{ account.password }}
+                </span>
+              </button>
+            }
+
+            <button type="button" class="demo-reset" (click)="resetDemo()">
+              Reset demo data
+            </button>
+          </div>
+        }
+
+        <!-- =========================
          LOGIN FIELDS
     ========================= -->
         <div class="form-grid">

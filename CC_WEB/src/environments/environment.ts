@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   gatewayUrl: 'http://localhost:8050', // our gateway url
+  demoMode: false, // true only in environment.demo.ts (mock backend, no gateway)
 };
 // export const environment = {
 //     production: false,

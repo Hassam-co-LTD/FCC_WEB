@@ -3,6 +3,8 @@ import { provideRouter, withNavigationErrorHandler } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { demoBackendInterceptor } from './core/demo/demo-backend.interceptor';
+import { environment } from '../environments/environment';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
@@ -44,9 +46,14 @@ export const appConfig: ApplicationConfig = {
     },
 
     // HttpClient with interceptor (fetch backend is recommended for SSR)
+    // The demo build answers every request in the browser (no gateway needed).
     provideHttpClient(
       withFetch(),
-      withInterceptors([jwtInterceptor])  // ensuring that interceptor runs
+      withInterceptors(
+        environment.demoMode
+          ? [jwtInterceptor, demoBackendInterceptor]
+          : [jwtInterceptor],
+      )
     )
   ]
 };

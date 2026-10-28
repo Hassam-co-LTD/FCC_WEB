@@ -21,6 +21,9 @@ import {
   CaptchaVerifyResponse,
 } from '../../../core/models/captcha';
 import { setSessionItem } from '../../../core/utils/browser-storage';
+import { environment } from '../../../../environments/environment';
+import { DEMO_ACCOUNTS, DemoAccount } from '../../../core/demo/demo-data';
+import { resetDemoData } from '../../../core/demo/demo-backend.interceptor';
 // Strongly typed view paths for the authentication finite state machine
 export type AuthState =
   | 'LOGIN'
@@ -60,6 +63,27 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   // TEMPORARY: captcha is skipped on login. Set to false to enforce it again.
   readonly captchaBypass = false;
+
+  // Demo build only: sample accounts shown on the login card
+  readonly isDemo = environment.demoMode;
+  readonly demoAccounts = DEMO_ACCOUNTS;
+
+  useDemoAccount(account: DemoAccount): void {
+    this.loginId = account.loginId;
+    this.companyId = account.companyId;
+    this.password = account.password;
+  }
+
+  resetDemo(): void {
+    resetDemoData();
+    Swal.fire({
+      icon: 'success',
+      title: 'Demo data reset',
+      text: 'All sample records have been restored.',
+      timer: 1800,
+      showConfirmButton: false,
+    });
+  }
 
   // =========================
   // LOGIN FORM STATE

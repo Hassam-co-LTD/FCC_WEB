@@ -1154,3 +1154,74 @@ scss
   }
 }
 
+
+/* =========================================================================
+   DEMO ACCOUNTS PANEL (demo build only)
+========================================================================= */
+.demo-panel {
+  margin: 0.25rem 0 0.75rem;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f0f7ff;
+  border: 1px solid #cfe3fb;
+  border-radius: 6px;
+}
+
+.demo-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: theme.$text-medium;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: theme.$primary;
+  }
+}
+
+.demo-account {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 8px;
+  padding: 0.4rem 0.6rem;
+  background: #ffffff;
+  border: 1px solid #dbe3ec;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.7rem;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover,
+  &.selected {
+    border-color: theme.$primary;
+  }
+}
+
+.demo-account-label {
+  font-weight: 600;
+  color: theme.$text-medium;
+}
+
+.demo-account-creds {
+  font-family: monospace;
+  color: #475569;
+}
+
+.demo-reset {
+  align-self: flex-end;
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.68rem;
+  color: theme.$primary;
+  text-decoration: underline;
+  cursor: pointer;
+}
