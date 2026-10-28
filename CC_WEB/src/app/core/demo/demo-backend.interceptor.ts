@@ -33,17 +33,21 @@ let db: DemoDb | null = null;
 function getDb(): DemoDb {
   if (db) return db;
 
+  let stored: DemoDb | null = null;
   try {
     const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
-    db = raw ? (JSON.parse(raw) as DemoDb) : createSeedDb();
+    stored = raw ? (JSON.parse(raw) as DemoDb) : null;
   } catch {
-    db = createSeedDb();
+    // unreadable storage: fall back to the seed
   }
 
+  db = stored && typeof stored === 'object' ? stored : createSeedDb();
   return db;
 }
 
 function saveDb(): void {
+  // Nothing loaded yet (e.g. a captcha POST): don't overwrite storage with "null"
+  if (!db) return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
   } catch {
