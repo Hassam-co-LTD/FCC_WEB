@@ -69,16 +69,15 @@
 <hr class="section-divider" />
 
 <!-- Dynamic Fields -->
-<section id="section-8">
-  <ng-container *ngIf="fields?.length">
-    <app-dynamic-fields
-      [form]="dynamicFieldsForm"
-      [fields]="fields"
-      [isOpen]="isDynamicFieldsOpen"
-      [previousDynamicValues]="previousDynamicValues"
-    >
-    </app-dynamic-fields>
-  </ng-container>
+<!-- Not rendered at all when the screen has no dynamic fields -->
+<section id="section-8" *ngIf="fields?.length">
+  <app-dynamic-fields
+    [form]="dynamicFieldsForm"
+    [fields]="fields"
+    [isOpen]="isDynamicFieldsOpen"
+    [previousDynamicValues]="previousDynamicValues"
+  >
+  </app-dynamic-fields>
 </section>
 
 <div class="actions">

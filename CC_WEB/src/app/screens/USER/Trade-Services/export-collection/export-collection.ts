@@ -93,8 +93,10 @@ export class ExportCollection implements OnInit {
     { label: 'Collection Instruction' },
     { label: 'License' },
     { label: 'Attachments' },
-    { label: 'Dynamic Fields' },
   ];
+
+  // Only offered in the sidebar once the screen is known to have dynamic fields
+  private readonly dynamicFieldsStep = { label: 'Dynamic Fields' };
 
   constructor(
     private fb: FormBuilder,
@@ -924,13 +926,23 @@ export class ExportCollection implements OnInit {
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {
-    console.log('Loading dynamic fields for ImportScreen with status A...');
+    console.log('Loading dynamic fields for ExportCollection with status A...');
 
-    this.api.getFieldsByScreenAndStatus('exportCollection', 'A').subscribe({
+    this.api.getFieldsByScreenAndStatus('ExportCollection', 'A').subscribe({
       next: (res: any[]) => {
         console.log('Field definitions:', res);
 
         this.fields = res || [];
+
+        if (
+          this.fields.length &&
+          !this.exportCollectionSteps.includes(this.dynamicFieldsStep)
+        ) {
+          this.exportCollectionSteps = [
+            ...this.exportCollectionSteps,
+            this.dynamicFieldsStep,
+          ];
+        }
 
         const group: any = {};
 
