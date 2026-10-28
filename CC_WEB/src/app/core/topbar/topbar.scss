@@ -33,10 +33,48 @@
   cursor: pointer;
 }
 
-.brand-logo {
+.brand {
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 36px;
   height: 36px;
-  width: auto;
-  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(11, 78, 179, 0.25));
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 500;
+  color: $text-dark;
+  letter-spacing: 0.2px;
+
+  strong {
+    font-weight: 700;
+    color: $primary-color;
+  }
+}
+
+.brand-tag {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  color: $text-medium;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+@media (max-width: 576px) {
+  .brand-tag {
+    display: none;
+  }
 }
 
 /* ===== Center Nav ===== */

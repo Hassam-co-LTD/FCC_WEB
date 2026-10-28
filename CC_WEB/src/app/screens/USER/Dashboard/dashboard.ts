@@ -259,7 +259,7 @@ export class Dashboard implements OnInit, OnDestroy {
       excerpt:
         'International trade volumes are expected to grow steadily across major markets.',
       time: new Date(),
-      link: 'https://infotechgroup.com/newsroom/',
+      link: 'https://www.wto.org/english/news_e/news_e.htm',
     },
 
     {

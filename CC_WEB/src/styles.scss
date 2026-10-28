@@ -252,3 +252,30 @@ button[mat-stroked-button] {
         transform: scale(0.97);
     }
 }
+/* =========================================================================
+   DARK THEME
+   Toggled by ThemeService (class on <html>, logged-in pages only).
+   Component styles use hard-coded light colours, so the page is inverted
+   with its hues kept (invert + hue-rotate); photos are flipped back.
+========================================================================= */
+// No `color-scheme: dark` here: native inputs, scrollbars and default text
+// must stay light so the filter turns them dark.
+html.dark-theme {
+    filter: invert(0.9) hue-rotate(180deg);
+    background: #ffffff; // inverted to the dark page background
+
+    // Exact inverse of the page filter: these keep their original colours.
+    // (invert(0.9) maps x to 0.9 - 0.8x; contrast(1.25) + invert(1) undoes it.)
+    img,
+    video,
+    picture,
+    .sidebar {
+        filter: contrast(1.25) invert(1) hue-rotate(180deg);
+    }
+
+    // Soft shadows turn into glows once inverted
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}

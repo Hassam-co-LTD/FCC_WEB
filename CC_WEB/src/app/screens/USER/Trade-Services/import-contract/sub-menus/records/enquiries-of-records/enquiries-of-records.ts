@@ -454,7 +454,7 @@ export class EnquiriesOfRecords implements OnInit {
     doc.rect(0, 0, pageWidth, 20, 'F');
 
     try {
-      const logo = await this.loadImageAsDataURL('/branding/infotech-logo.jpg');
+      const logo = await this.loadImageAsDataURL('/branding/tradefinance-logo-white.png');
 
       const logoWidth = 28;
 

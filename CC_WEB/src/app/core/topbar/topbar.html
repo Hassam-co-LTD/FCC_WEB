@@ -1,12 +1,29 @@
 <header class="topbar">
   <!-- Group hamburger + title -->
   <div class="left-group">
-    <div class="brand" routerLink="/dashboard">
-      <img
-        src="/branding/infotech-logo.jpg"
-        alt="Infotech"
-        class="brand-logo"
-      />
+    <div class="brand" routerLink="/dashboard" aria-label="TradeFinance Portal">
+      <!-- Exchange-arrows mark; inline so it follows the light/dark theme -->
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <defs>
+          <linearGradient id="brandMarkGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0b4eb3" />
+            <stop offset="1" stop-color="#1e88e5" />
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="10" fill="url(#brandMarkGradient)" />
+        <path
+          d="M11 15h17m-4.5-4.5L28 15l-4.5 4.5M29 25H12m4.5-4.5L12 25l4.5 4.5"
+          fill="none"
+          stroke="#fff"
+          stroke-width="2.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span class="brand-text">
+        <span class="brand-name">Trade<strong>Finance</strong></span>
+        <span class="brand-tag">Corporate Banking Portal</span>
+      </span>
     </div>
   </div>
 
@@ -68,6 +85,16 @@
 
   <!-- Right User Menu -->
   <div class="right">
+    <button
+      mat-icon-button
+      class="icon-btn theme-toggle"
+      (click)="theme.toggle()"
+      [attr.aria-label]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+      [title]="theme.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+    >
+      <mat-icon>{{ theme.isDark() ? "light_mode" : "dark_mode" }}</mat-icon>
+    </button>
+
     <button mat-icon-button class="icon-btn" aria-label="Notifications">
       <mat-icon>notifications</mat-icon>
     </button>

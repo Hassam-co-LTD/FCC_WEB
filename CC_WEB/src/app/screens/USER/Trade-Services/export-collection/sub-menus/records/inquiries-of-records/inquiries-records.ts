@@ -458,7 +458,7 @@ async downloadReport(): Promise<void> {
 
   try {
     const logo = await this.loadImageAsDataURL(
-      '/branding/infotech-logo.jpg'
+      '/branding/tradefinance-logo-white.png'
     );
 
     const logoWidth = 28;

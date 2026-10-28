@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RouterOutlet } from '@angular/router';
@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { filter } from 'rxjs/operators';
 import { ChatbotWidget } from '../../shared/chatbot-widget/chatbot-widget';
 import { ApiService } from '../services/api.service';
+import { ThemeService } from '../services/theme.service';
 interface MenuItem {
   label: string;
   icon?: string;
@@ -32,7 +33,10 @@ interface MenuItem {
     ChatbotWidget,
   ],
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnDestroy {
+  private theme = inject(ThemeService);
+  readonly currentYear = new Date().getFullYear();
+
   Logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
@@ -154,7 +158,12 @@ export class LayoutComponent implements OnInit {
     private api: ApiService,
   ) {}
 
+  ngOnDestroy() {
+    this.theme.setLayoutActive(false);
+  }
+
   ngOnInit() {
+    this.theme.setLayoutActive(true);
     const role = this.authService.getUserCategory();
     let companyType = this.authService.getCompanyType();
     this.loadMenu(role, companyType);

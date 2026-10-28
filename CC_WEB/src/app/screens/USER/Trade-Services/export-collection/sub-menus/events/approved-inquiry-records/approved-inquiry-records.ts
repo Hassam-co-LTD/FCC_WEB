@@ -468,7 +468,7 @@ export class ApprovedInquiryRecords implements OnInit {
     // Logo
     // =========================
     try {
-      const logo = await this.loadImageAsDataURL('/branding/infotech-logo.jpg');
+      const logo = await this.loadImageAsDataURL('/branding/tradefinance-logo-white.png');
 
       const logoWidth = 28;
       const logoHeight = (logo.height / logo.width) * logoWidth;

@@ -53,9 +53,16 @@ export function clearSessionStorage(): void {
   }
 }
 
+/** Keys that describe the device, not the session, and survive logout. */
+const PRESERVED_LOCAL_KEYS = ['theme'];
+
 export function clearLocalStorage(): void {
   try {
-    getStorage('local')?.clear();
+    const storage = getStorage('local');
+    if (!storage) return;
+    const kept = PRESERVED_LOCAL_KEYS.map((key) => [key, storage.getItem(key)] as const);
+    storage.clear();
+    kept.forEach(([key, value]) => value !== null && storage.setItem(key, value));
   } catch {
     // nothing to clean up
   }
