@@ -87,7 +87,7 @@ export class CreateClientUser implements OnInit {
   userAssignedRoles: UsersRolesResponseDTO[] = [];
   isRolesOpen = true;
   // ---------- DYNAMIC FIELDS ----------
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   fields: any[] = [];
   storeDynamicFieldsResponse: any[] = [];
   isDynamicFieldsOpen = true;

@@ -67,7 +67,7 @@ export class AddAccountDialog implements OnInit {
 
   AccountsForm!: FormGroup;
 
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   isOpen = true;
 

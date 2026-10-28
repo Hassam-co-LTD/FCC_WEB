@@ -600,7 +600,7 @@ export class ShippingGuarantee implements OnInit {
 
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {

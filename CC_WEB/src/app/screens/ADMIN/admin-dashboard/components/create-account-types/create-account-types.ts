@@ -40,7 +40,7 @@ import { MatCard } from '@angular/material/card';
 export class CreateAccountTypes implements OnInit {
 
   accountForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   storeAccount: any = {};
   fields: any[] = [];

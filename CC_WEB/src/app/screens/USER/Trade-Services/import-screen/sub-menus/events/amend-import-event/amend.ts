@@ -1089,7 +1089,7 @@ export class AmendScreen implements OnInit {
 
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {

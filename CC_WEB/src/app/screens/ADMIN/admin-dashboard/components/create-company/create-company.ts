@@ -41,7 +41,7 @@ import { TransactionComparisonService } from '../../../../../core/services/admin
 })
 export class CreateCompany implements OnInit {
   companyForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   storeCompany: any = {};
   fields: any[] = [];

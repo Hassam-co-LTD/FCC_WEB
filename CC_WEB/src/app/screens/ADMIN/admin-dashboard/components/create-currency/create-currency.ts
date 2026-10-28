@@ -36,7 +36,7 @@ import { ApiService } from '../../../../../core/services/api.service';
 export class CreateCurrency implements OnInit {
 
   currencyForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   storeCurrency: any = {};
   fields: any[] = [];

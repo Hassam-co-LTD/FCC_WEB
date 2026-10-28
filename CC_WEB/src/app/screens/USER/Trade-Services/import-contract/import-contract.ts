@@ -819,7 +819,7 @@ private enterEditMode(tnxId: string): void {
 
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {

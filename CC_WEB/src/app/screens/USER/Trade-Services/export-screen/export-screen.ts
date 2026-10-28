@@ -207,7 +207,7 @@ export class ExportScreen implements AfterViewInit {
 
   storeDynamicFieldsResponse: any[] = [];
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   isDynamicFieldsOpen = true;
 
   private loadDynamicFields(): void {

@@ -45,11 +45,11 @@ import { AuthService } from '../../../../../../core/services/auth.service';
 })
 export class CreateCustomer implements OnInit {
   customerForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   storeCustomer: any = {};
   storeDynamicFieldsResponse: any[] = [];
-  storeCustomerAccounts: any = {};
+  storeCustomerAccounts: any = [];
   storeRejectedCustomer: any = {};
   fields: any[] = [];
   allCompanies: any[] = [];

@@ -49,7 +49,7 @@ export class City implements OnInit {
   // FORMS
   // =========================
   cityForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   // =========================
   // DATA

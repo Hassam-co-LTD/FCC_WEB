@@ -43,7 +43,7 @@ import { TransactionComparisonService } from '../../../../../../core/services/ad
 })
 export class CustomerBranch implements OnInit {
   branchForm!: FormGroup;
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   storeBranch: any = {};
   storeCities: any[] = [];

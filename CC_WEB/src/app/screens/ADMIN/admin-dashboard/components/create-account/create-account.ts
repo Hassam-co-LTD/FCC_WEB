@@ -52,7 +52,7 @@ export class Accounts implements OnInit {
   // dynamicFIelds
 
   fields: any[] = [];
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
   isDynamicFieldsOpen = true;
   dynamicReady = false;
 

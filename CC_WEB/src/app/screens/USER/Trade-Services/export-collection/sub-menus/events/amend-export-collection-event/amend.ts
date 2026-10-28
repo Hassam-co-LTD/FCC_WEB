@@ -125,7 +125,7 @@ export class Amend implements OnInit {
 
   fields: any[] = [];
 
-  dynamicFieldsForm!: FormGroup;
+  dynamicFieldsForm: FormGroup = new FormGroup({});
 
   isDynamicFieldsOpen = true;
 
