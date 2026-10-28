@@ -467,7 +467,7 @@ export class LayoutComponent implements OnInit {
             // -------------------------
             {
               label: 'Export LC',
-              route: '/dashboard/Trade-Services/export-screen/inquiries',
+              route: '/dashboard/Trade-Services/export-screen-welcome',
               open: false,
               children: [
                 {

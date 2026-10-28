@@ -451,6 +451,20 @@ export const routes: Routes = [
               ),
             children: [
               // ---------- EXPORT LC (received via middleware, preview only) ----------
+                {
+                path: 'export-screen-welcome',
+                loadComponent: () =>
+                  import('./shared/welcome-screen/welcome-screen').then(
+                    (m) => m.WelcomeScreen,
+                  ),
+                data: {
+                  title: 'Welcome to Export LC',
+                  description:
+                    'Manage all Export LC related activities here.',
+                  existingRoute:
+                    '/dashboard/Trade-Services/export-screen/inquiries',
+                },
+              },
               {
                 path: 'export-screen/inquiries',
                 loadComponent: () =>
